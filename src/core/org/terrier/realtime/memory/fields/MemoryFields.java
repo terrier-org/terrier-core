@@ -132,8 +132,7 @@ public abstract class MemoryFields extends MemoryIndex {
     protected FieldDocumentPostingList fdpl;
     protected Set<String>              docFields;
 
-    @SuppressWarnings("unused")
-	protected TermPipeline getEndOfPipeline() {
+   protected TermPipeline getEndOfPipeline() {
         return new TermProcessor();
     }
 
