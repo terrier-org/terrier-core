@@ -55,7 +55,7 @@ import org.terrier.structures.FilePosition;
 import org.terrier.utility.io.RandomDataInputMemory;
 
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "resource"})
 @RunWith(Suite.class)
 @SuiteClasses({
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_Streams.class,

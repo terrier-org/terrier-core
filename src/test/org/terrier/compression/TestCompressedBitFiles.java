@@ -67,7 +67,7 @@ import org.terrier.utility.Files;
 import org.terrier.utility.io.RandomDataInputMemory;
 
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "resource"})
 @RunWith(Suite.class)
 @SuiteClasses({
 	TestCompressedBitFiles.TestCompressedBitFiles_Streams.class,
