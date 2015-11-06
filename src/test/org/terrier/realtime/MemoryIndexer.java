@@ -129,8 +129,6 @@ public class MemoryIndexer extends Indexer {
 	/** FIXME */
 	private int numberOfDocuments;
 	
-	int numFields = 0;
-
 	/** FIXME */
 	public void createDirectIndex(Collection[] collections) {
 		final int collections_length = collections.length;
