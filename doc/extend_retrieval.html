@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Extending Retrieval</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="extend_indexing.html">Previous: Extending Indexing</a>] [<a href="index.html">Contents</a>] [<a href="compression.html">Next: Pluggable Compression</a>]
+</br><br><h1>Extending Retrieval in Terrier</h1>
+
+
+<h2>Altering the retrieval process</h2>
+<P>
+It is very easy to alter the retrieval process in Terrier, as there are many "hooks" at which external classes can be involved. Firstly, you are free when writing your own application to render the results from Terrier in your own way. Results in Terrier come in the form of a <a href="javadoc/org/terrier/matching/ResultSet.html">ResultSet</a>.
+</p>
+<P>
+An application's interface with Terrier is through the <a href="javadoc/org/terrier/querying/Manager.html">Manager</a> class. The manager firstly pre-processes the query, by applying it to the configured <a href="javadoc/org/terrier/terms/TermPipeline.html">TermPipeline</a>. Then it calls the <a herf="javadoc/org/terrier/matching/Matching.html">Matching</a> class, which is responsible for matching documents to the query, and scoring the documents using a <a href="javadoc/org/terrier/matching/models/WeightingModel.html">WeightingModel</a>. Internally, Matching implementations use the <a href="javadoc/org/terrier/matching/PostingListManager.html">PostingListManager</a> to open an <a href="javadoc/org/terrier/structures/postings/IterablePosting.html">IterablePosting</a> for each query term. The overall score of a document to the entire query can be modified by using a <a href="javadoc/org/terrier/matching/dsms/DocumentScoreModifier.html">DocumentScoreModifier</a>, which can be set by the <tt>matching.dsms</tt> property.</p>
+
+<P>Once the <a href="javadoc/org/terrier/matching/ResultSet.html">ResultSet</a> has been returned to the <a href="javadoc/org/terrier/querying/Manager.html">Manager</a>, there are two further phases, namely <a href="javadoc/org/terrier/querying/PostProcess.html">PostProcessing</a> and <a href="javadoc/org/terrier/querying/PostFilter.html">PostFiltering</a>. In PostProcessing, the ResultSet can be altered in any way - for example, <a href="javadoc/org/terrier/querying/QueryExpansion.html">QueryExpansion</a> expands the query, and then calls Matching again to generate an improved ranking of documents. PostFiltering is simpler, allowing documents to be either included or excluded - this is ideal for interactive applications where users want to restrict the domain of the documents being retrieved.</p>
+
+<h2>Changing Batch Retrieval</h2>
+<p><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">TRECQuerying</a> is the main way in which retrieval is deployed for batch retrieval experiments.
+ It has a multitude of ways in which it can be extended:
+<ul>
+<li><b>Format of input topics</b>: Terrier supports topics in two formats (<a href="javadoc/org/terrier/structures/TRECQuery.html">TREC tagged</a>, or <a href="javadoc/org/terrier/structures/SingleLineTRECQuery.html">one query per line</a>). If neither of these is suitable, then you can implement another <a href="javadoc/org/terrier/applications/batchquerying/QuerySource.html">QuerySource</a> that knows how parse your topics files. Use the <tt>trec.topics.parser</tt> property to configure Terrier to use your new QuerySource. E.g. <tt>trec.topics.parser=my.package.DBTopicsSource</tt>.</li>
+<li><b>Format of output results</b>: You can implement another <a href="javadoc/org/terrier/structures/outputformat/OutputFormat.html">OutputFormat</a> to change the format of the results in the .res files. Use the <tt>trec.querying.outputformat</tt> property to configure Terrier to use your new OutputFormat. E.g. <tt>trec.querying.outputformat=my.package.MyTRECResultsFormat</tt>.</li>
+</ul>
+
+<h2>Altering query expansion</h2>
+<p><a href="javadoc/org/terrier/querying/QueryExpansion.html">QueryExpansion</a> has various ways in which it can be extended:
+<ul>
+<li>To change the exact formula used to score occurrences, implement <a href="javadoc/org/terrier/matching/models/queryexpansion/QueryExpansionModel.html">QueryExpansionModel</a>.</li>
+<li>Currently, terms are weighted from the entire feedback set as one large "bag of words". To change this, extend <a href="javadoc/org/terrier/querying/ExpansionTerms.html">ExpansionTerms</a>.</li>
+<li>To change the way feedback documents are selected, implement <a href="javadoc/org/terrier/querying/FeedbackSelector.html">FeedbackSelector</a>.</li>
+</ul> 
+
+
+<h2>Advanced Weighting Models</h2>
+<P>It is very easy to implement your own weighting models in Terrier. Simply write a new class that extends <a href="javadoc/org/terrier/matching/models/WeightingModel.html">WeightingModel</a>. What's more, there are many examples weighting models in <a href="javadoc/org/terrier/matching/models/package-summary.html">org.terrier.matching.models</a>.
+<p></p>
+<b>Generic Divergence From Randomness (DFR) Weighting Models</b>
+<P>The <a href="javadoc/org/terrier/matching/models/DFRWeightingModel.html">DFRWeightingModel</a> class provides an interface for freely combining different components of the DFR framework. It breaks a DFR weighting model into three components: the basic model for randomness, the first normalisation by the after effect, and term frequency normalisation. Details of these three components can be found from <a HREF="dfr_description.html">a description of the DFR framework</a>. The DFRWeightingModel class provides an alternate and more flexible way of using the DFR weighting models in Terrier. For example, to use the <a href="javadoc/org/terrier/matching/models/PL2.html">PL2</a> model, the name of the model <tt>PL2</tt> should be given in <tt>etc/trec.models</tt>, or set using the property <tt>trec.model</tt>. Alternatively, using the DFRWeightingModel class, we can replace <tt>PL2</tt> with <tt>DFRWeightingModel(P, L, 2)</tt>, where the three components of PL2 are specified in the brackets, separated by commas. If we do not want to use one of the three components, for example the first normalisation L, we can leave the space for this component blank (i.e. <tt>DFRWeightingModel(P, , 2)</tt>). We can also discard term
+frequency normalisation by removing the 2 between the brackets (i.e. <tt>DFRWeightingModel(P, , )</tt>). However, a basic randomness model must always be given.</P>
+
+<P>The basic randomness models, the first normalisation methods, and the term frequency normalisation methods are included in packages <a href="javadoc/org/terrier/matching/models/basicmodel/package-summary.html">org.terrier.matching.models.basicmodel</a>, <a href="javadoc/org/terrier/matching/models/aftereffect/package-summary.html">org.terrier.matching.models.aftereffect</a> and <a href="javadoc/org/terrier/matching/models/normalisation/package-summary.html"> org.terrier.matching.models.normalisation</a>, respectively. Many implementations of each are provided, allowing a vast number of DFR weighting models to be generated.</P>
+
+<h2>Matching strategies</h2>
+<p>Terrier implements three main alternatives for matching documents for a given query, each of which implements the <a href="javadoc/org/terrier/matching/Matching.html">Matching</a> interface:</p>
+<ul>
+<li>Term-At-A-Time (TAAT) (as per <a href="javadoc/org/terrier/matching/taat/Full.html">taat.Full</a>) - exhaustive Matching strategy that scores all postings for a single query term, before moving onto the next query term. taat.Full is the default Matching strategy for Terrier.</li>
+<li>Document-At-A-Time (DAAT) (as per <a href="javadoc/org/terrier/matching/daat/Full.html">daat.Full</a>) - exhaustive Matching strategy that scores all matching query terms for a document before moving onto the next documemt. Using daat.Full is advantageous for retrieving from large indices.</li>
+<li><a href="javadoc/org/terrier/matching/TRECResultsMatching.html">TRECResultsMatching</a> - retrieves results from a TREC result file rather than the current index, based on the query id. Such a result file must be compatible with <a href="http://trec.nist.gov/trec_eval">trec_eval</a>. TRECResultsMatching can introduce a repeatable efficiency gain for batch experiments. </li> 
+</ul>
+<p>If you have a more complex document weighting strategy that cannot be handled as a <a href="javadoc/org/terrier/matching/models/WeightingModel.html">WeightingModel</a> or <a href="javadoc/org/terrier/matching/dsms/DocumentScoreModifier.html">DocumentScoreModifier</a>, you may wish to implement your own Matching strategy. In particular, <a href="javadoc/org/terrier/matching/BaseMatching.html">BaseMatching</a> is a useful base class. Moreover, the <a href="javadoc/org/terrier/matching/PostingListManager.html">PostingListManager</a> should be used for opening the <a href="javadoc/org/terrier/structures/postings/IterablePosting.html">IterablePosting</a> posting stream for each query term.</p>
+
+<h2>Using Terrier Indices in your own code</h2>
+<ul><li><b>How many documents does term X occur in?</b></li><br>
+<pre>
+Index index = Index.createIndex();
+Lexicon&lt;String&gt; lex = index.getLexicon();
+LexiconEntry le = lex.getLexiconEntry("term");
+if (le != null)
+	System.out.println("Term term occurs in "+ le.getDocumentFrequency() + " documents");
+else
+	System.out.println("Term term does not occur");
+</pre>
+<br>
+<li><b>What is the probability of term Y occurring in the collection?</b><br></li>
+<pre>
+Index index = Index.createIndex();
+Lexicon&lt;String&gt; lex = index.getLexicon();
+LexiconEntry le = lex.getLexiconEntry("X");
+double p = le == null 
+	?  0.0d
+	: (double) le.getFrequency() / index.getCollectionStatistics().getNumberOfTokens();
+	<br>
+</pre>
+<br>
+<li><b>What terms occur in the 11th document?</b><br></li>
+<pre>
+Index index = Index.createIndex();
+DirectIndex di = index.getDirectIndex();
+DocumentIndex doi = index.getDocumentIndex();
+Lexicon&lt;String&gt; lex = index.getLexicon();
+int docid = 10; //docids are 0-based
+IterablePosting postings = di.getPostings((BitIndexPointer)doi.getDocumentEntry(docid));
+while (postings.next() != IterablePosting.EOL) {
+	Map.Entry&lt;String,LexiconEntry&gt; lee = lex.getLexiconEntry(postings.getId());
+	System.out.print(lee.getKey() + " with frequency " + postings.getFrequency());
+}
+</pre>
+<br>
+<li><b>What documents does term Z occur in?</b><br></li>
+<pre>
+Index index = Index.createIndex();
+InvertedIndex inv = index.getInvertedIndex();
+MetaIndex meta = index.getMetaIndex();
+Lexicon&lt;String&gt; lex = index.getLexicon();
+LexiconEntry le = lex.getLexiconEntry( "Z" );
+IterablePosting postings = inv.getPostings((BitIndexPointer) le);
+while (postings.next() != IterablePosting.EOL) {
+	String docno = meta.getItem("docno", postings.getId());
+	System.out.println(docno + " with frequency " + postings.getFrequency());
+}
+</pre>
+</ul>
+<p>
+Moreover, if you're not comfortable with using Java, you can dump the indices of a collection using the --print* options of TrecTerrier. See the javadoc of <a href="javadoc/org/terrier/applications/TrecTerrier.html">TrecTerrier</a> for more information.</p>
+<p></p>
+
+<h3>Example Querying Code</h3>
+<p aling="justify">Below, you can find a example sample of using the querying functionalities of Terrier.</p>
+<pre>
+String query = "term1 term2";
+SearchRequest srq = queryingManager.newSearchRequest("queryID0", query);
+srq.addMatchingModel("Matching", "PL2");
+queryingManager.runPreProcessing(srq);
+queryingManager.runMatching(srq);
+queryingManager.runPostProcessing(srq);
+queryingManager.runPostFilters(srq);
+ResultSet rs = srq.getResultSet();
+</pre>
+
+<p></p>
+
+[<a href="extend_indexing.html">Previous: Extending Indexing</a>] [<a href="index.html">Contents</a>] [<a href="compression.html">Next: Pluggable Compression</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

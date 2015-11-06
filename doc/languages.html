@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Non English language support in Terrier</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="compression.html">Previous: Pluggable Compression</a>] [<a href="index.html">Contents</a>] [<a href="dfr_description.html">Next: DFR Description</a>]
+</br><br><h1>Non English language support in Terrier</h1>
+
+<h2>Indexing</h2>
+<p>Terrier internally represents all terms as UTF. All provided Document classes use 
+<a href="javadoc/org/terrier/indexing/tokenisation/Tokeniser.html">Tokeniser</a> classes to tokenise
+text into terms during indexing. Likewise, during retrieval,
+<a href="javadoc/org/terrier/structures/TRECQuery.html">TRECQuery</a> uses the same
+tokeniser to parse queries (note that, different from TRECQuery, 
+<a href="javadoc/org/terrier/structures/SingleLineTRECQuery.html">SingleLineTRECQuery</a>
+does not perform any tokenisation by default). To change the tokeniser being used for indexing
+and retrieval, set the <tt>tokeniser</tt> property to the name of the tokeniser you wish to use (NB: British English spelling). 
+When indexing a batch collection using <a href="javadoc/org/terrier/indexing/TRECCollection.html">
+TRECCollection</a>, the <a href="javadoc/org/terrier/indexing/Document.html">Document</a> implementations
+should be informed of the expected character set using the property <tt>trec.encoding</tt>.
+</p>
+
+<h2>File Encodings</h2>
+<p>While Terrier uses UTF internally to represent terms, the Collection and Document classes need 
+to ensure that they are correctly opening files using the correct character encodings. For instance,
+while valid XML files will specify the encoding at the top of the file, a corpus of Hungarian
+in TREC format may be encoded in ISO 8859-16 or UTF-8. You should specify the encoding that
+TRECCollection should use to open the files, using the <tt>trec.encoding</tt> property. Note that
+Terrier will default to the Java default encoding if <tt>trec.encoding</tt> is not set. In a Unix-like
+operating system, Java's choice of default encoding may be influenced by the LANG environment variable -
+e.g. LANG=en_US.UTF-8 will cause Java to default to opening files using UTF-8 encoding, while 
+en_US will use ISO-8859-1.</p>
+
+<h2>Tokenisers</h2>
+<p>Tokenisers are designed to identify the terms from a stream of text. It is expected that no markup will be present in the text passed to the tokenisers (for indexing, the removal of markup is handled by <a href="javadoc/org/terrier/indexing/Document.html">Document</a> implementations - e.g. HTML tags are parsed by <a href="javadoc/org/terrier/indexing/TaggedDocument.html">TaggedDocument</a>). The choice of tokeniser to use depends on the language being dealt with. Terrier 3.5 ships with three different tokenisers for use when indexing text or parsing queries. The choice of tokeniser is specified by the tokeniser property, e.g. <tt>tokeniser=EnglishTokeniser</tt>.</p>
+<ul>
+ <li><a href="javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html">EnglishTokeniser</a> - assumes that all valid characters in terms are A-Z, a-z and 0-9. Obviously this assumption is incorrect when indexing documents in languages other than English.</li>
+ <li><a href="javadoc/org/terrier/indexing/tokenisation/UTFTokeniser.html">UTFTokeniser</a> - uses Java's Character class to determine what valid characters in indexing terms are. In particular, a
+ term can only contain characters matching one of Character.isLetterOrDigit(), Character.getType() returns Character.NON_SPACING_MARK or Character.getType() returns Character.COMBINING_SPACING_MARK.
+ <li><a href="javadoc/org/terrier/indexing/tokenisation/IdentityTokeniser.html">IdentityTokeniser</a> - a simple tokeniser that returns the input text as is, and is used internally by 
+ <a href="javadoc/org/terrier/structures/SingleLineTRECQuery.html">SingleLineTRECQuery</a>.</li>
+ </li>
+ </ul>
+ 
+
+<h3>Stemmers</h3>
+<p>Terrier includes all stemmers from the <a href="http://snowball.tartarus.org/">Snowball</a> stemmer project, namely:</p>
+<ul>
+<li><a href="javadoc/org/terrier/terms/DanishSnowballStemmer.html">DanishSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/DutchSnowballStemmer.html">DutchSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/EnglishSnowballStemmer.html">EnglishSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/FinnishSnowballStemmer.html">FinnishSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/FrenchSnowballStemmer.html">FrenchSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/GermanSnowballStemmer.html">GermanSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/HungarianSnowballStemmer.html">HungarianSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/ItalianSnowballStemmer.html">ItalianSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/NorwegianSnowballStemmer.html">NorwegianSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/PortugueseSnowballStemmer.html">PortugueseSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/RomanianSnowballStemmer.html">RomanianSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/RussianSnowballStemmer.html">RussianSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/SpanishSnowballStemmer.html">SpanishSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/SwedishSnowballStemmer.html">SwedishSnowballStemmer</a></li>
+<li><a href="javadoc/org/terrier/terms/TurkishSnowballStemmer.html">TurkishSnowballStemmer</a></li>
+</ul>
+
+<h2>Batch Retrieval</h2>
+<p>When experimenting with topics in files other than English, use the same <tt>tokeniser</tt> setting
+used during indexing. Moreover, you should also use the property <tt>trec.encoding</tt> to ensure that the correct encoding is used when reading the topic files.</p>
+
+[<a href="compression.html">Previous: Pluggable Compression</a>] [<a href="index.html">Contents</a>] [<a href="dfr_description.html">Next: DFR Description</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

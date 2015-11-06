@@ -1,0 +1,640 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>What's New in Terrier</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="overview.html">Previous: Overview</a>] [<a href="index.html">Contents</a>] [<a href="quickstart.html">Next: Installing and Running Terrier</a>]
+</br><br><h1>What's New in Terrier</h1>
+
+<h2>Terrier 4.0 - 18/06/2014</h2>
+<p>Major update adding significant new features:</p> 
+<ul><li><a href="realtime_indices.html">Real-time index structures</a> facilitate incremental indexing of new documents as over time.</li>
+<li><a href="compression.html">Pluggable state-of-the-art index compression</a> reduces the size of Terrier's index structures.</li>
+<li><a href="learning.html">Learning-to-rank</a> support enables out-of-the-box supervised ranking models. </li>
+<li><a href="website_search.html">A website Search application</a> is now provided, illustrating real-time crawling, indexing and retrieval within Terrier.</li> 
+</ul>
+
+<p>Additionally various bugs fixes and other small improvements are also included. Some code may need to have imports adjusted, and indices will need to be upgraded.</p> 
+
+<h3>Indexing</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-240">TR-240</a>: WARC10Collection logger info</li>
+<li><a href="http://terrier.org/issues/browse/TR-289">TR-289</a>: Docid alignment is broken for MapReduce indexing when map tasks are repeated</li>
+<li><a href="http://terrier.org/issues/browse/TR-292">TR-292</a>: All structure classes that take Index in their constructor instead take IndexOnDisk</li> 
+<li><a href="http://terrier.org/issues/browse/TR-295">TR-295</a>: WARC10Collection incorrectly misses some documents</li>  
+<li><a href="http://terrier.org/issues/browse/TR-297">TR-297</a>: Should reverse metakeys not include docno by default?</li>
+<li><a href="http://terrier.org/issues/browse/TR-303">TR-303</a>: Make compression pluggable/selectable during indexing (contributed by Matteo Catena)</li>  	
+<li><a href="http://terrier.org/issues/browse/TR-306">TR-306</a>: Locking index structures during writes</li>	
+<li><a href="http://terrier.org/issues/browse/TR-307">TR-307</a>: PostingIndex.getPostings (POINTERTYPE extends Pointer lEntry) becomes PostingIndex.getPostings(Pointer lEntry)</li>
+<li><a href="http://terrier.org/issues/browse/TR-308">TR-308</a>: Implement extensible flushing and loading of memory indices</li>
+<li><a href="http://terrier.org/issues/browse/TR-290">TR-290</a>: Integer compression properties should be more uniform with others</li>
+<li><a href="http://terrier.org/issues/browse/TR-291">TR-291</a>: NoDuplicatesSinglePassIndexing could be simpler</li>
+<li><a href="http://terrier.org/issues/browse/TR-300">TR-300</a>: (Block)Inverted2Direct should not use old int[][] getNextDocuments()</li>
+<li><a href="http://terrier.org/issues/browse/TR-314">TR-314</a>: InvertedIndexBuilder should use DirectInvertedOutputStream internally</li>
+</ul>
+
+<h3>Retrieval</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-284">TR-284</a>: Improve logging on CompressingMetaIndex on disk to suggest fix SLOW WARNings</li>
+<li><a href="http://terrier.org/issues/browse/TR-287">TR-287</a>: Terrier assumes that all retrieved document should have score > 0</li>
+<li><a href="http://terrier.org/issues/browse/TR-293">TR-293</a>: Breakout the many inner classes of TRECQuerying</li> 	
+<li><a href="http://terrier.org/issues/browse/TR-299">TR-299</a>: Document the use of DAAT for fast (default?) retrieval</li> 	
+<li><a href="http://terrier.org/issues/browse/TR-301">TR-301</a>: Negative requirement not functioning correctly</li> 	
+<li><a href="http://terrier.org/issues/browse/TR-304">TR-304</a>: Make appropriate fat and learning to rank techniques within the open source release</li>  	
+</ul>
+
+<h3>Testing</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-315">TR-315</a>: TestTaggedDocument does not test abstract extracting</li>
+<li><a href="http://terrier.org/issues/browse/TR-286">TR-286</a>: MemoryFieldsIndex doesn't have a unit test</li>
+</ul>
+
+<h3>Other</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-296">TR-296</a>: Support indexing upgrading 3.x -> 4.x</li>
+<li><a href="http://terrier.org/issues/browse/TR-288">TR-288</a>: TrecTerrier moved to the trec subpackage to facilitate ant building</li> 
+<li><a href="http://terrier.org/issues/browse/TR-302">TR-302</a>: Significant source layout changes</li> 		
+<li><a href="http://terrier.org/issues/browse/TR-305">TR-305</a>: Simple website search engine</li> 
+<li><a href="http://terrier.org/issues/browse/TR-294">TR-294</a>: BlockLexiconEntry & BlockFieldLexiconEntry can be deprecated</li>
+<li><a href="http://terrier.org/issues/browse/TR-298">TR-298</a>: Deprecate old index structure classes</li>
+</ul>
+
+<h3>Acknowledgements</h3>
+<p>The release of Terrier 4.0 was supported by the following projects and funding bodies</p>
+<ul>
+<li> <a href="http://www.smartfp7.eu/">SMART: Search engine for MultimediA enviRonment generated contenT</a> - EU FP7 Project, Grant Number 287583. Funded the development of the new learning-to-rank and pluggable compression technologies in the Terrier 4.0 release.</li>
+<li> <a href="http://demeter.inf.ed.ac.uk/redites/">ReDites: Real-time Detection, Tracking, Monitoring and Interpretation of Events in Social Media</a> - EPSRC Project, Grant Number EP/L010690/1. Funded the development of the new real-time indexing and search technologies in the Terrier 4.0 release.</li>
+</ul>
+
+<h2>Terrier 3.6 - 03/04/2014</h2>
+<p>Substantial update: 
+Provides numerous updates and fixes to issues in Terrier 3.5. This is 
+primarily a bug-fix release clearing issues before the release of 
+Terrier 4.0 that adds new functionality.</p>
+
+<h3>Indexing</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-174">TR-174</a>: Indexing a directory breaks on special pdf- or excel files</li>
+<li><a href="http://terrier.org/issues/browse/TR-178">TR-178</a>: Private method setPostingImplementation in BitPostingIndex</li>
+<li><a href="http://terrier.org/issues/browse/TR-179">TR-179</a>: BitIn implementations should both inherit from a common base class</li>
+<li><a href="http://terrier.org/issues/browse/TR-180">TR-180</a>: RandomDataInputMemory has an unnecessary binary search for every read()</li>
+<li><a href="http://terrier.org/issues/browse/TR-181">TR-181</a>: Hadoop indexing should not copy hadoop libraries to a job classpath (contributed by Marco Didonna)</li>
+<li><a href="http://terrier.org/issues/browse/TR-186">TR-186</a>: Inverted to Direct indexing is not exposed via the Trec_Terrier application</li>
+<li><a href="http://terrier.org/issues/browse/TR-188">TR-188</a>: Stopwords incorrectly handles reset (contributed by Steven)</li>
+<li><a href="http://terrier.org/issues/browse/TR-192">TR-192</a>: On Windows, the document.fsarrayfile is not closed, resulting in a _1 in the filename when indexing</li>
+<li><a href="http://terrier.org/issues/browse/TR-194">TR-194</a>: TRECCollection docnos should be trimmed of whitespace</li>
+<li><a href="http://terrier.org/issues/browse/TR-197">TR-197</a>: Terrier refuses to parse some topics (example included)</li>
+<li><a href="http://terrier.org/issues/browse/TR-199">TR-199</a>: Block compression support (contributed by Benjamin Piwowarski)</li>
+<li><a href="http://terrier.org/issues/browse/TR-200">TR-200</a>: Non unique keys in reverse index</li>
+<li><a href="http://terrier.org/issues/browse/TR-201">TR-201</a>: Log4j conflicts can occur for hadoop indexing</li>
+<li><a href="http://terrier.org/issues/browse/TR-202">TR-202</a>: Documentation for tokeniser property</li>
+<li><a href="http://terrier.org/issues/browse/TR-205">TR-205</a>: Hadoop jar folder in distribution should not mention 0.20</li>
+<li><a href="http://terrier.org/issues/browse/TR-206">TR-206</a>: Tag information are not loaded within BlockDirectIndex & BlockInvertedIndex (contributed by Sadi Samy)</li>
+<li><a href="http://terrier.org/issues/browse/TR-207">TR-207</a>: Adhoc Evaluation returns bad precision at percent (contributed by Sadi Samy)</li>
+<li><a href="http://terrier.org/issues/browse/TR-209">TR-209</a>: Allow long metaindex values to be cropped automatically by the MetaIndex</li>
+<li><a href="http://terrier.org/issues/browse/TR-211">TR-211</a>: Indexer meta keys are case-sensitive, apart from docno</li>
+<li><a href="http://terrier.org/issues/browse/TR-214">TR-214</a>: Indexing of metatags for XMLDocuments (contributed by Daniel Jimenez Kwast, Menno Tammens, Nicolas Faessel and Dennis Pallett)</li>
+<li><a href="http://terrier.org/issues/browse/TR-216">TR-216</a>: Changing Hadoop temporary folder without recompiling</li>
+<li><a href="http://terrier.org/issues/browse/TR-220">TR-220</a>: SimpleXMLCollection raise null pointer exception if document contains doctype with same the name than xml.doctag (contributed by Nicolas Faessel)</li>
+<li><a href="http://terrier.org/issues/browse/TR-235">TR-235</a>: LexiconBuilder fails on empty term</li>
+<li><a href="http://terrier.org/issues/browse/TR-247">TR-247</a>: WARC09Collection and TRECWebCollection are not consistent about the return format for parseDate</li>
+<li><a href="http://terrier.org/issues/browse/TR-252">TR-252</a>: Update Apache POI versions to parse newer Word/Excel/Powerpoint files</li>
+<li><a href="http://terrier.org/issues/browse/TR-257">TR-257</a>: IndexUtil.rename() should check rename() returns.</li>
+<li><a href="http://terrier.org/issues/browse/TR-262">TR-262</a>: PostingIndex is the new DirectIndex and InvertedIndex abstract type</li>
+<li><a href="http://terrier.org/issues/browse/TR-279">TR-279</a>: Termids should be assigned by decreasing frequency for highest direct file compression [single pass indexers]</li>
+</ul>
+
+<h3>Retrieval</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-170">TR-170</a>: ArrayIndexOutOfBoundsException in PostingListManager, add unit test for PostingListManager</li>
+<li><a href="http://terrier.org/issues/browse/TR-173">TR-173</a>: The Decorate class incorrectly adds meta index properties when used as a PostProcess rather than a PostFilter</li>
+<li><a href="http://terrier.org/issues/browse/TR-175">TR-175</a>: Decorate class does not remove field qualifiers when generating query-biased summaries </li>
+<li><a href="http://terrier.org/issues/browse/TR-176">TR-176</a>: Allow abitrary context objects in SearchRequest</li>
+<li><a href="http://terrier.org/issues/browse/TR-185">TR-185</a>: TRECQuery should not tokenise the topic number</li>
+<li><a href="http://terrier.org/issues/browse/TR-189">TR-189</a>: TRECFullTokenizer may discard DOCNO tag, causing terrier to crash (contributed by Steven)</li>
+<li><a href="http://terrier.org/issues/browse/TR-198">TR-198</a>: Conservative QE incorrectly weights queryterms (contributed by Saul Vargas)</li>
+<li><a href="http://terrier.org/issues/browse/TR-203">TR-203</a>: MRF formula applies w_o twice</li>
+<li><a href="http://terrier.org/issues/browse/TR-204">TR-204</a>: Relevance feedback for query expansion in queries without relevance judgements could throw NullPointerException</li>
+<li><a href="http://terrier.org/issues/browse/TR-217">TR-217</a>: CS query expansion model is incorrect</li>
+<li><a href="http://terrier.org/issues/browse/TR-228">TR-228</a>: ML2 and MDL2 are missing default constructors</li>
+<li><a href="http://terrier.org/issues/browse/TR-229">TR-229</a>: BasicIterablePosting next(int)</li>
+<li><a href="http://terrier.org/issues/browse/TR-230">TR-230</a>: Proximity operator ()</li>
+<li><a href="http://terrier.org/issues/browse/TR-242">TR-242</a>: Problem with query terms frequency (key frequency = 1) using BM25</li>
+<li><a href="http://terrier.org/issues/browse/TR-248">TR-248</a>: Error instantiating topic file QuerySource called TRECQuery</li>
+<li><a href="http://terrier.org/issues/browse/TR-251">TR-251</a>: ResultSet implementation should know how to sort themselves</li>
+<li><a href="http://terrier.org/issues/browse/TR-258">TR-258</a>: PhraseScoreModifier should use IterablePosting</li>
+<li><a href="http://terrier.org/issues/browse/TR-259">TR-259</a>: FieldORIterablePosting doesnt save field lengths correctly</li>
+<li><a href="http://terrier.org/issues/browse/TR-260">TR-260</a>: Block(Field)ORIterablePosting are inefficient</li>
+<li><a href="http://terrier.org/issues/browse/TR-263">TR-263</a>: PostingListManager should retain the String of the term</li>
+<li><a href="http://terrier.org/issues/browse/TR-264">TR-264</a>: Manager crops resultsets unnecessarily</li>
+<li><a href="http://terrier.org/issues/browse/TR-266">TR-266</a>: TRECQuerying should support non textual OutputFormats</li>
+<li><a href="http://terrier.org/issues/browse/TR-268">TR-268</a>: Query term counting doesn't work</li>
+<li><a href="http://terrier.org/issues/browse/TR-276">TR-276</a>: Bump DFI models in core</li>
+<li><a href="http://terrier.org/issues/browse/TR-278">TR-278</a>: The cache in WeightingModelFactory should be clearable</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-195">TR-195</a>: Documentation should make clear that inverted files produced by different methods are identical</li>
+<li><a href="http://terrier.org/issues/browse/TR-218">TR-218</a>: Documentation confuses block.size and blocks.size</li>
+<li><a href="http://terrier.org/issues/browse/TR-223">TR-223</a>: Refactoring/Cleaning up of the package org.terrier.matching.models (contributed by Francois Rousseau)</li>
+<li><a href="http://terrier.org/issues/browse/TR-224">TR-224</a>: configure_retrieval.html doesn't mention Dirichlet</li>
+<li><a href="http://terrier.org/issues/browse/TR-227">TR-227</a>: Errors in Javadoc of In_expB2 and InB2 models</li>
+<li><a href="http://terrier.org/issues/browse/TR-239">TR-239</a>: Clarify when Terrier Query language can be used viz TREC</li>
+<li><a href="http://terrier.org/issues/browse/TR-269">TR-269</a>: Document default values for indexing.singlepass.max.postings.memory and indexing.max.docs.per.builder</li>
+</ul>
+
+<h3>Other</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-172">TR-172</a>: Upgrade PDFBox</li>
+<li><a href="http://terrier.org/issues/browse/TR-210">TR-210</a>: InteractiveQuerying displays documents with scores of negative infinity</li>
+<li><a href="http://terrier.org/issues/browse/TR-212">TR-212</a>: Evaluation doesn't support graded relevance judgements</li>
+<li><a href="http://terrier.org/issues/browse/TR-219">TR-219</a>: TRECQrels has poor error messages</li>
+<li><a href="http://terrier.org/issues/browse/TR-243">TR-243</a>: Terrier query language does not document multi-term field search syntax FIELD:(term1 term2)</li>
+<li><a href="http://terrier.org/issues/browse/TR-253">TR-253</a>: Decorate & SimpleDecorate needs unit tests</li>
+<li><a href="http://terrier.org/issues/browse/TR-254">TR-254</a>: Refactor query-biased summarisation out of Decorate</li>
+<li><a href="http://terrier.org/issues/browse/TR-255">TR-255</a>: PostingListManager has no unit test</li>
+<li><a href="http://terrier.org/issues/browse/TR-256">TR-256</a>: Files should check FileSystem return code for rename operation</li>
+<li><a href="http://terrier.org/issues/browse/TR-261">TR-261</a>: CollectionStatistics should be Writable</li>
+<li><a href="http://terrier.org/issues/browse/TR-264">TR-264</a>: Make TerrierTimer more useful</li>
+<li><a href="http://terrier.org/issues/browse/TR-267">TR-267</a>: Get a clone of an EntryStatistics</li>
+<li><a href="http://terrier.org/issues/browse/TR-270">TR-270</a>: Sorting of resultsets needs unit testing</li>
+<li><a href="http://terrier.org/issues/browse/TR-271">TR-271</a>: CollectionStatistics should have a toString()</li>
+<li><a href="http://terrier.org/issues/browse/TR-272">TR-272</a>: TerrierTimer is too verbose</li>
+<li><a href="http://terrier.org/issues/browse/TR-273">TR-273</a>: DFR constituent models & PFN models should be Cloneable</li>
+<li><a href="http://terrier.org/issues/browse/TR-274">TR-274</a>: Block Shakespeare tests are failing</li>
+<li><a href="http://terrier.org/issues/browse/TR-275">TR-275</a>: TRECWebCollection doesn't normalise encodings</li>
+<li><a href="http://terrier.org/issues/browse/TR-277">TR-277</a>: RandomDataInputMemory improvements</li>
+</ul>
+
+
+<h2>Terrier 3.5 - 16/06/2011</h2>
+<p>Significant update: 
+Added Document-at-a-time (DAAT) retrieval for large indices;
+Refactored tokenisation for enhanced multi-language support;
+Upgraded Hadoop support to version 0.20 (NB: Terrier now requires Java 1.6); 
+Added synonym support in query language and retrieval;
+Added out-of-the-box indexing support for query-biased summaries and improved example web-based interface;
+Added new, 2nd generation DFR models as well as other recent effective information-theoretic effective models; 
+Included many more JUnit tests (now 300+). 
+Terrier 3.0 indices are compatible with Terrier 3.5.</p>
+
+<h3>Indexing</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-117">TR-117</a>: Improve fields support by SimpleXMLCollection</li>
+<li><a href="http://terrier.org/issues/browse/TR-120">TR-120</a>: Error loading an additional MetaIndex structure (contributed by Javier Ortega, Universidad de Sevilla)</li>
+<li><a href="http://terrier.org/issues/browse/TR-106">TR-106</a>: Pipeline Query/Doc Policy Lifecycle (contributed by Giovanni Stilo, University degli Studi dell'Aquila and Nestor Laboratory - University of Rome "Tor Vergata")</li>
+<li><a href="http://terrier.org/issues/browse/TR-110">TR-116</a>: Lexicon not properly renamed on Windows </li>
+<li><a href="http://terrier.org/issues/browse/TR-118">TR-118</a>: SimpleXMLCollection - the term near the closing tag is ignored (contributed by Damien Dudognon, Institut de Recherche en Informatique de Toulouse)</li>
+<li><a href="http://terrier.org/issues/browse/TR-123">TR-123</a>: Null pointer exception while trying to index simple document (contributed by Ilya Bogunov)</li>
+<li><a href="http://terrier.org/issues/browse/TR-123">TR-126</a>: Logging improvements</li>
+<li><a href="http://terrier.org/issues/browse/TR-123">TR-124</a>: When processing docid tag in MEDLINE format XML file, xml context path is needed</li>
+<li><a href="http://terrier.org/issues/browse/TR-127">TR-127</a>: Easier refactoring of SinglePass indexers (contributed by Jonathon Hare, University of Southampton)</li>
+<li><a href="http://terrier.org/issues/browse/TR-108">TR-108</a>: Some indexers do not set the IterablePosting class for the DirectIndex (contributed by Richard Eckart de Castilho, Darmstadt University of Technology)</li>
+<li><a href="http://terrier.org/issues/browse/TR-136">TR-136</a>: Hadoop indexing misbehaves when terrier.index.prefix is not "data"</li>
+<li><a href="http://terrier.org/issues/browse/TR-137">TR-137</a>: TRECCollection cannot add properties from the document tags to the meta index at indexing time </li>
+<li><a href="http://terrier.org/issues/browse/TR-150">TR-150</a>: TRECCollection parse DOCHDR tags, including URLs should they exist (see <a href="javadoc/org/terrier/indexing/TRECWebCollection.html">TRECWebCollection</a>) </li>
+<li><a href="http://terrier.org/issues/browse/TR-138">TR-138</a>: IndexUtil.copyStructure fails when source and destination indices are same</li>
+<li><a href="http://terrier.org/issues/browse/TR-140">TR-140</a>: Indexing support for query-biased summarisation</li>
+<li><a href="http://terrier.org/issues/browse/TR-144">TR-144</a>: CollectionRecordReader.next should not be recursive</li>
+<li><a href="http://terrier.org/issues/browse/TR-146">TR-146</a>, <a href="http://terrier.org/issues/browse/TR-148">TR-148</a>: Tokenisation should be done separately from Document parsing (the tokeniser can be set using the property <tt>tokeniser</tt> - see <a href="languages.html">Non English language support in Terrier</a> for more information on changing the tokenisation used by Terrier); Refactor Document implementations (e.g. <a href="javadoc/org/terrier/indexing/TRECDocument.html">TRECDocument</a> and <a href="javadoc/org/terrier/indexing/HTMLDocument.html">HTMLDocument</a> are now deprecated in favour of the new <a href="javadoc/org/terrier/indexing/TaggedDocument.html">TaggedDocument</a>)</li>
+<li><a href="http://terrier.org/issues/browse/TR-147">TR-147</a>: Allow various Collection implementations to use different Document implementations</li>
+<li><a href="http://terrier.org/issues/browse/TR-158">TR-158</a>: Single pass indexing with default configuration doesn't ever flush memory</li>
+</ul>
+
+<h3>Retrieval</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-16">TR-16</a>,<a href="http://terrier.org/issues/browse/TR-166">TR-166</a>: Extending query language and Matching to support synonyms</li> 
+<li><a href="http://terrier.org/issues/browse/TR-157">TR-157</a>: Remove TRECQuerying scripting files: <tt>trec.models</tt>, <tt>qemodels</tt>, <tt>trec.topics.list</tt> and <tt>trec.qrels</tt> - use properties in <a href="javadoc/org/terrier/applications/TRECQuerying.html">TRECQuerying</a> instead.</li>
+<li><a href="http://terrier.org/issues/browse/TR-156">TR-156</a>: Deploy a DAAT matching strategy - see <a href="javadoc/org/terrier/matching/daat/package-summary.html">org.terrier.matching.daat</a> (partially contributed by Nicola Tonellotto, CNR)</li> 
+<li><a href="http://terrier.org/issues/browse/TR-113">TR-113</a>: The <a href="javadoc/org/terrier/matching/models/LGD.html">LGD</a> Loglogistic weighting model (contributed by Gianni Amati, FUB)</li>
+<li><a href="http://terrier.org/issues/browse/TR-105">TR-105</a>: Index should check version number as it can't open older indices </li>
+<li><a href="http://terrier.org/issues/browse/TR-105">TR-107</a>: DirectIndex.getTerms() is broken </li>
+<li><a href="http://terrier.org/issues/browse/TR-110">TR-110</a>: TRECDocnoOutputFormat assumes metadata key is "docno" </li>
+<li><a href="http://terrier.org/issues/browse/TR-110">TR-112</a>: "Term not found" log message should not be a warning </li>
+<li><a href="http://terrier.org/issues/browse/TR-121">TR-121</a>: Distance.noTimesSameOrder() can throw ArrayIndexOutOfBoundsException</li>
+<li><a href="http://terrier.org/issues/browse/TR-129">TR-129</a>: Posting.getDocumentLength() does not work for postings from the direct file</li>
+<li><a href="http://terrier.org/issues/browse/TR-130">TR-130</a>: Manager should use Index specified in Request object</li>
+<li><a href="http://terrier.org/issues/browse/TR-131">TR-131</a>: Parsing of WeightingModel class names could be better</li>
+<li><a href="http://terrier.org/issues/browse/TR-132">TR-132</a>: Some BitIn implementations don't pass unit tests</li>
+<li><a href="http://terrier.org/issues/browse/TR-139">TR-139</a>: Manager should balk at null Index in constructor</li>
+<li><a href="http://terrier.org/issues/browse/TR-141">TR-141</a>: GammaFunction is not good enough for proximity - this fixes the retrieval effectiveness of <a href="javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html">DFRDependenceScoreModifier</a></li>
+<li><a href="http://terrier.org/issues/browse/TR-142">TR-142</a>: Matching implementations should not overwrite the EntryStatistics stored in the MatchingQueryTerms object</li>
+<li><a href="http://terrier.org/issues/browse/TR-143">TR-143</a>: BitFileBuffered creates unnecessary byte arrays</li>
+<li><a href="http://terrier.org/issues/browse/TR-145">TR-145</a>: ResultSet implementations don't retain exactResultSize() in child ResultSets</li>
+<li><a href="http://terrier.org/issues/browse/TR-149">TR-149</a>: Added first Divergence from Independence model, <a href="javadoc/org/terrier/matching/models/DFI0.html">DFI0</a> (contributed by B.T. Dincer, Mugla University)</li>
+<li><a href="http://terrier.org/issues/browse/TR-153">TR-153</a>,<a href="http://terrier.org/issues/browse/TR-154">TR-154</a>,<a href="http://terrier.org/issues/browse/TR-155">TR-155</a>: Provide a Matching implementation that reads results from TREC run files (see <a href="javadoc/org/terrier/matching/TRECResultsMatching.html">TRECResultsMatching</a>)</li>
+<li><a href="http://terrier.org/issues/browse/TR-160">TR-160</a>: Inv2DirectMultiReduce needs improvement to allow direct split across multiple files</li>
+<li><a href="http://terrier.org/issues/browse/TR-161">TR-161</a>: Use Tokenisers in query side tokenisation</li>
+<li><a href="http://terrier.org/issues/browse/TR-163">TR-163</a>: Index does not explicitly close the properties file</li>
+<li><a href="http://terrier.org/issues/browse/TR-164">TR-164</a>: Document index structure is left open when index.close() is called</li>
+<li><a href="http://terrier.org/issues/browse/TR-165">TR-165</a>: SingleLineTRECQuery opens all files as UTF</li>
+<li><a href="http://terrier.org/issues/browse/TR-167">TR-167</a>: Large document metadata are stored incorrectly by MetaIndex</li>
+<li>Two new 2nd generation Divergence from Randomness models: <a href="javadoc/org/terrier/matching/models/Js_KLs.html">JsKLs</a> and <a href="javadoc/org/terrier/matching/models/XSqrA_M.html">XSqrA_M</a> (contributed by Gianni Amati, Fondazione Ugo Bordoni)</li>
+
+</ul>
+
+<h3>Testing</h3>
+<ul>
+<li>Added a considerable number of additional JUnit tests</li>
+<li><a href="http://terrier.org/issues/browse/TR-134">TR-134</a>: BitPostingIndexInputFormat needs a unit test</li>
+<li><a href="http://terrier.org/issues/browse/TR-135">TR-135</a>: TestPostingStructures should test skipping of stream structures</li>
+<li><a href="http://terrier.org/issues/browse/TR-151">TR-151</a>: SimpleFileCollection and chums (FileDocument etc) have no unit test</li>
+<li><a href="http://terrier.org/issues/browse/TR-159">TR-159</a>: Junit end-to-end test for WT2G test collection</li>
+</ul>
+<h3>Desktop</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-103">TR-103</a>: Desktop search cant open files on 64bit Windows</li>
+</ul>
+
+
+<h3>Other</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-168">TR-168</a>: Terrier batch scripts can fail when the TERRIER_HOME environment variable is set on Windows 64bit</li>
+<li><a href="http://terrier.org/issues/browse/TR-115">TR-115</a>: Upgrade Hadoop support for 0.20</li>
+<li><a href="http://terrier.org/issues/browse/TR-115">TR-104</a>: Move to Java 6</li>
+<li><a href="http://terrier.org/issues/browse/TR-119">TR-119</a>: Temporary jar/properties in HDFS /tmp are not deleted</li>
+<li><a href="http://terrier.org/issues/browse/TR-152">TR-152</a>: TagSet should detect a tag in both process and skip entries</li>
+
+</ul>
+
+
+
+<h2>Terrier 3.0 - 10/03/2010</h2>
+<p>Major update: Support for indexing WARC collections; improved index structure layout; improved MapReduce mode indexing; refined, scalable structure access at retrieval time; moved all code to terrier.org namespace; added field-based and proximity term dependence models; added HTTP-based retrieval interface; added many JUnit tests. <b>All indices must be rebuilt</b>.</p>
+<h3>Indexing</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-14">TR-14</a>, <a href="http://terrier.org/issues/browse/TR-42">TR-42</a>, <a href="http://terrier.org/issues/browse/TR-56">TR-56</a>, <a href="http://terrier.org/issues/browse/TR-102">TR-102</a>: Various changes to the format of the index, to promote reuse, scalability and speed.</li>
+<li><a href="http://terrier.org/issues/browse/TR-17">TR-17</a>, <a href="http://terrier.org/issues/browse/TR-50">TR-50</a>, <a href="http://terrier.org/issues/browse/TR-54">TR-54</a>, <a href="http://terrier.org/issues/browse/TR-77">TR-77</a>: Added MetaIndex for document metadata. DOCNOs etc need not be in lexographical order.</li>
+
+
+<li><a href="http://terrier.org/issues/browse/TR-">TR-43</a>, <a href="http://terrier.org/issues/browse/TR-48">TR-48</a>, <a href="http://terrier.org/issues/browse/TR-69">TR-69</a>, <a href="http://terrier.org/issues/browse/TR-70">TR-70</a>: Fields should contain frequency information.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-39">TR-39</a>, <a href="http://terrier.org/issues/browse/TR-40">TR-40</a>, <a href="http://terrier.org/issues/browse/TR-41">TR-41</a>, <a href="http://terrier.org/issues/browse/TR-46">TR-46</a>, <a href="http://terrier.org/issues/browse/TR-50">TR-50</a>, <a href="http://terrier.org/issues/browse/TR-83">TR-83</a>, <a href="http://terrier.org/issues/browse/TR-88">TR-88</a>: Various improvements and bug fixes to MapReduce indexing.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-44">TR-44</a>, <a href="http://terrier.org/issues/browse/TR-55">TR-55</a>: Improve robustness of single-pass indexing.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-71">TR-71</a>, <a href="http://terrier.org/issues/browse/TR-98">TR-98</a>: Allow Bit posting structures to be split across multiple files.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-28">TR-28</a>, <a href="http://terrier.org/issues/browse/TR-91">TR-91</a>: Index WARC collections (UK-2006, ClueWeb09).</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-34">TR-34</a>: Documentation update: Property values for single-pass indexing are not scaled.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-37">TR-37</a>, <a href="http://terrier.org/issues/browse/TR-38">TR-38</a>, <a href="http://terrier.org/issues/browse/TR-47">TR-47</a>,<a href="http://terrier.org/issues/browse/TR-57">TR-57</a>, <a href="http://terrier.org/issues/browse/TR-78">TR-78</a>, <a href="http://terrier.org/issues/browse/TR-79">TR-79</a>, <a href="http://terrier.org/issues/browse/TR-93">TR-93</a>, <a href="http://terrier.org/issues/browse/TR-94">TR-94</a>: Generate the direct file from an inverted index as a MapReduce job.</li>
+
+
+
+</ul>
+
+<h3>Retrieval</h3>
+<ul>
+
+<li><a href="http://terrier.org/issues/browse/TR-20">TR-20</a>, <a href="http://terrier.org/issues/browse/TR-42">TR-42</a>, <a href="http://terrier.org/issues/browse/TR-64">TR-64</a>: Access the posting list for one term as a stream - see <a href="javadoc/org/terrier/structures/postings/Posting.html">Posting</a> and <a href="javadoc/org/terrier/structures/postings/IterablePosting.html">IterablePosting</a>.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-86">TR-86</a>: Matching should be an interface.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-87">TR-87</a>: PorterStemmer doesn't match expected output by Porter himself.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-81">TR-81</a>: Implements proximity term dependence models. For more information, see <a href="configure_retrieval.html#proximity">Configuring Retrieval</a>.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-19">TR-19</a>: Support relevance feedback as well as pseudo-relevance feedback. </li>
+
+<li><a href="http://terrier.org/issues/browse/TR-68">TR-68</a>, <a href="http://terrier.org/issues/browse/TR-73">TR-73</a>, <a href="http://terrier.org/issues/browse/TR-73">TR-74</a>, <a href="http://terrier.org/issues/browse/TR-94">TR-94</a>: Implement field-based weighting models. For more information, see <a href="configure_retrieval.html#fields">Configuring Retrieval</a>.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-99">TR-99</a>: Provide way to integrate static doc prior easily. For more information, see <a href="configure_retrieval.html#priors">Configuring Retrieval</a>.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-90">TR-90</a>: MatchingQueryTerms does not retain query term order.</li>
+
+
+
+
+<li><a href="http://terrier.org/issues/browse/TR-26">TR-26</a>: Parse Million Query track topic files.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-49">TR-49</a>: Let TRECQuerying filename be predetermined by property.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-75">TR-75</a>: Allow to set runtag in runs.</li>
+
+
+
+
+<li><a href="http://terrier.org/issues/browse/TR-60">TR-60</a>: Removed PonteCroft language modelling.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-66">TR-66</a>, <a href="http://terrier.org/issues/browse/TR-84">TR-84</a>: Refactor TRECQuery.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-67">TR-67</a>: Request object should contain the Index.</li>
+
+
+
+<li>TermScoreModifiers have been deprecated, and no longer work. You should use WeightingModel instead.</li>
+
+</ul>
+
+<h3>Testing</h3>
+<ul>
+<li>Added considerable number of end-to-end and unit tests.</li>
+<li><a href="http://terrier.org/issues/browse/TR-59">TR-59</a>: Fixed reset problem in Terrier evaluation tool.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-76">TR-76</a>: Bump Junit version.</li>
+
+</ul>
+
+<h3>Desktop</h3>
+<ul>
+
+<li><a href="http://terrier.org/issues/browse/TR-61">TR-61</a>: Desktop example app should use MetaIndex.</li>
+
+
+</ul>
+
+
+<h3>Other</h3>
+<ul>
+
+<li><a href="http://terrier.org/issues/browse/TR-89">TR-89</a>: Check all .java and .sh files have Terrier license header.</li>
+
+
+<li><a href="http://terrier.org/issues/browse/TR-82">TR-82</a>: Have a simple webapps search results interface.</li>
+
+
+
+<li><a href="http://terrier.org/issues/browse/TR-80">TR-80</a>: Move code to terrier.org Java package namespaces.</li>
+
+
+<li><a href="http://terrier.org/issues/browse/TR-45">TR-45</a>: Add (read|write)(Delta|Golomb) etc to BitIn/BitOut.</li>
+<li><a href="http://terrier.org/issues/browse/TR-52">TR-52</a>: FSOrderedMapFile causes seek(-1) when searching for an entry less than the first.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-">TR-72</a>: FSOrderedMapFile.EntryIterator.skip() breaks FSOrderedMapFile.EntryIterator.hasNext().</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-95">TR-95</a>: FSArrayFile.ArrayFileIterator.skip() does not update entry index correctly.</li>
+
+
+<li><a href="http://terrier.org/issues/browse/TR-92">TR-92</a>: utility.io.CountingInputStream does not count single bytes correctly.</li>
+
+
+<li><a href="http://terrier.org/issues/browse/TR-53">TR-53</a>: Rounding.toString() doesnt work for 10dp.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-62">TR-62</a>: Files layer can transparently cache files.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-2">TR-2</a>, <a href="http://terrier.org/issues/browse/TR-">TR-65</a>: Replace Terrier's Makefile with Ant build.xml. Makefile, compile.sh, compile.bat have now been removed. See <a href="terrier_develop.html">Developing with Terrier</a> to see how to compile Terrier.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-63">TR-63</a>,<a href="http://terrier.org/issues/browse/TR-101">TR-101</a>: Documentation updates.</li>
+
+<li><a href="http://terrier.org/issues/browse/TR-100">TR-100</a>: Update default and sample terrier.properties files.</li>
+
+</ul>
+
+<h2>Terrier 2.2.1 - 29/01/2009</h2>
+<p>Minor update - fixes some small bugs in 2.2 relating to MapReduce mode indexing, clarifies some documentation, and includes a missing source file.</p>
+<ul>
+<li>Added missing source file for <a href="javadoc/org/terrier/terms/SkipTermPipeline.html">SkipTermPipeline</a>.</li>
+<li>Clarified java documentation for single-pass indexing memory control.</li>
+<li><a href="http://terrier.org/issues/browse/TR-8">TR-8</a>: Delay index path checking during indexing till HDFS is loaded.</li> 
+<li><a href="http://terrier.org/issues/browse/TR-7">TR-7</a>: Files.list() does not work for HDFS paths.</li>
+<li><a href="http://terrier.org/issues/browse/TR-4">TR-4</a>: Update the year for the copyright to 2009.</li>
+<li><a href="http://terrier.org/issues/browse/TR-3">TR-3</a>: Partitioned Mode fails unexpectedly due to missing run status files.</li>
+</ul>
+
+<h2>Terrier 2.2 - 23/12/2008</h2>
+<p>Substantial update, consisting of new support for <a href="http://hadoop.apache.org/core/">Hadoop</a>, a Hadoop MapReduce indexing system, and various minor improvements and bug fixes. This is intended to be the ultimate release in the 2.x series.</p>
+<h3>Indexing</h3>
+<ul>
+<li>Added new <a href="hadoop_indexing.html">Hadoop MapReduce indexing system</a>, and corresponding support for <a href="hadoop_configuration.html">Hadoop MapReduce</a> jobs.</li>
+<li>Refactoring of various indexing (in particular single pass indexing) to support MapReduce indexing.</li>
+<li>Block indexing can now use marker tokens to designate block boundaries. See <a href="configure_indexing.html">Configuring Indexing</a> for more details.</li>
+<li>Indexing supports named tokens which should not be passed through the term pipeline. See <a href="configure_indexing.html">Configuring Indexing</a> and <a href="javadoc/org/terrier/terms/SkipTermPipeline.html">SkipTermPipeline</a> for more details.</li>
+<li>TRECCollection and TRECUTFCollection now index CDATA sections, to support indexing of <a href="http://www.ir.iit.edu/projects/CDIP.html">CDIP1</a> collection, as used by the <a href="http://trec-legal.umiacs.umd.edu/">TREC Legal track</a>.</li>
+<li>SimpleXMLCollection now indexes CDATA sections. contributed by Giovanni Stilo (University of Roma "Tor Vergata").</li> 
+<li>LexiconBuilder no longer uses java.io.File to create temporary directories.</li>
+<li>Double memory reserve threshold for singlepass indexing on 64bit Sun JVMs.</li>
+<li>Record <tt>docno.byte.length</tt> setting in index properties file, so that indices with different docno lengths can be loaded at once.</li>
+<li>CollectionFactory now supports non-default Collection constructors.</li>
+</ul>
+
+<h3>Retrieval</h3>
+<ul>
+<li>BUG: Lexicon and sub-classes could give incorrect results for very large lexicons (15M terms+) due to overflow of file offsets. contributed by Giovanni Stilo (University of Roma "Tor Vergata") and Gianni Amati (Fondazione Ugo Bordoni).</li>
+<li>BUG: Lexicon hashing would produce NPE when no term in lexicon had same initial character as query term. contributed by Gianni Amati (Fondazione Ugo Bordoni).</li>
+<li>BUG: .res.setting files not created for query expansion runs.</li>
+<li>BUG: <tt>rocchio_beta</tt> was property name while <tt>rocchio.beta</tt> was documented. <tt>rocchio.beta</tt> is now the property, while <tt>rocchio_beta</tt> is supported but deprecated.</li>
+<li>WeightingModels are now cloneable.</li>
+</ul>
+
+<h3>Other</h3>
+<ul>
+<li>Added <a href="javadoc/org/terrier/utility/io/HadoopPlugin.html">HadoopPlugin</a>, allowing the HDFS filesystem paths (e.g. <tt>hdfs://namenode:9000/path/to/file</tt>) to be accessed directly from Terrier. Hadoop MapReduce jobs can also be created, using Hadoop on Demand if so-configured.</li>
+<li>Filesystem layer can now support deleteOnExit() semantics for filesystems.</li>
+<li>Worked to reduce javac generics and other compiler warnings.</li>
+<li>BUG: Adding a Terrier Application plugin does not cause an NPE.</li>
+<li>Added method to reconfigure ApplicationSetup during MapReduce jobs.</li>
+</ul>
+
+<h2>Terrier 2.1 - 19/03/2008</h2>
+<p>Minor update, containing mostly bug fixes, and a FileSystem abstraction layer.</p>
+<h3>Indexing</h3>
+<ul>
+<li>BUG: <tt>trec_terrier -i -d</tt> then <tt>trec_terrier -i -v</tt> doesn't work.</li>
+<li>BUG: Indexing on Windows doesn't work as the index properties output streams aren't closed.</li>
+<li>BUG: DocumentExtraction doesn't work (thanks Brantman).</li>
+<li>BUG: LM Indexing throws NPE if Index doesnt exist (thanks Brantman).</li>
+<li>BUG: Mixed-case TrecDocTag specifications dont work (thanks Marco Bianchi and Giovanni Stilo, University of Rome "Tor Vergata").
+<li>BUG: Corner-case HTML terms from HTMLDocument and TRECDocument may contain whitespace. trim() terms in both classes to prevent indexing problems (contributed by Carlos M Lorenzetti).</li>
+<li>Allow case-sensitive and case-insensitive TrecDocTag specifications. Default is case-sensitive, change using <tt>TrecDocTags.casesensitive</tt> property.</li>
+<li>Add useful error message when DOCNO is longer than <tt>docno.byte.length</tt></li>
+<li>Retrofit all indexing file IO to <a href="javadoc/org/terrier/utility/Files.html">Files</a> class.</li>
+</ul>
+<h3>Retrieval</h3>
+<ul>
+<li>Retrofit all retrieval file IO to <a href="javadoc/org/terrier/utility/Files.html">Files</a> class.</li>
+<li>Added a new <a href="javadoc/org/terrier/indexing/TRECFullUTFTokenizer.html">TREC topics tokeniser</a> for non-English topics. This is automatically used by <a href="javadoc/org/terrier/structures/TRECQuery.html">TRECQuery</a> if <tt>string.use_utf</tt> is set.</li>
+<li>Allow case-sensitive and case-insensitive TrecQueryTag specifications. Default is case-insensitive, change using <tt>TrecQueryTags.casesensitive</tt> property.</li>
+<li>Interactive Querying: Added properties to allow model, manager and matching to be controlled: <tt>interactive.manager</tt>, <tt>interactive.matching</tt>, and <tt>interactive.model</tt>.</li>
+<li>Try harder to allow weighting models to use their default parameter value, if no parameter value is specified.</li>
+</ul>
+<h3>Desktop</h3>
+<ul>
+<li>Added a property <tt>desktop.indexing.singlepass</tt> to the DesktopTerrier to allow the use of single-pass indexing.</li>
+<li>Added properties to allow model, manager and matching to be controlled: <tt>desktop.manager</tt>, <tt>desktop.matching</tt>, and <tt>desktop.model</tt>.</li>
+</ul>
+<h3>Testing</h3>
+<ul><li>Test the <tt>trec_terrier -i -d</tt> then <tt>trec_terrier -i -v</tt> indexing strategy.</li></ul>
+<h3>Other</h3>
+<ul><li>Trec_setup.bat should sort collection.spec file: change to FindFiles.</li>
+<li>Adding missing environment options to trec_terrier.bat and anyclass.bat.</li>
+<li>Fix the documentation concerning specifying TREC topic file tags in <a href="configure_retrieval.html">Configuring Retrieval</a>.</li>
+<li>Add API to TRECQrelsInMemory for getting docnos of pooled documents with graded/non-graded relevance assessments.</li>
+<li>Add the FileSystem abstraction layer, which allows various types of files to be accessed through a uniform API. For example, indexing an HTTP Web page is as straightforward as indexing a local document. The FileSystem abstraction layer is described in detail in <a href="terrier_develop.html">Developing Terrier</a>.</li>
+<li>Removed deprecated code in CollectionStatistics.</li>
+<li>Removed entire <tt>uk.ac.gla.terrier.structures.trees</tt> package which had been deprecated since 1.1.0. Indexing code based on the 1.0.x release series may break.</li>
+<li>FindBugs: Some minor changes to the source-code reflect issues identified by <a href="http://findbugs.sourceforge.net/">FindBugs</a>. We continue to work to address issues raised by FindBugs.</li>
+</ul>
+
+
+<h2>Terrier 2.0 - 04/01/2008</h2>
+<p>Major update, integrating a new (alternative) single-pass indexing architecture, and a new index format. Some bug fixes and some change of APIs.</p>
+<h3>Indexing</h3>
+<ul>
+<li>New single-pass indexing, contributed by <a href="http://www.dc.fi.udc.es/~roi/">Roi Blanco</a> (<a href="http://www.udc.es/principal/en/">University of A Coru&ntilde;a</a>). This indexing method is faster, can build larger indices, and is more robust to memory usage during indexing. To use single-pass indexing, add the <tt>-j</tt> option to TrecTerrier:  <tt>bin/trec_terrier.sh -i -j</tt>. For more information on single-pass indexing, see <a href="configure_indexing.html">Configuring Indexing</a>, or <a href="trec_examples.html">TREC Example</a> for examples of its use.</li>
+<li>New index on disk format: <tt>prefix.log</tt> has been replaced by <tt>prefix.properties</tt>, which records much more metadata about an index, including the Terrier version used to create it, the classes (and their constructor parameters) to read the Index, and the statistics of the index. The compressed data structures (DirectIndex and InvertedIndex) have also changed (the endian-ness of the index format changed, for efficiency reasons). However, Terrier 2.0 can read all Terrier 1.x indices, so <i>indices do <b>not</b> have to be upgraded or recreated.</i></li>
+<li>The format of block (term positions) has been altered slightly, so that a term can exist in 0 blocks in a document. Again, this change does not require older indices to be upgrade or recreated.</li>
+</ul>
+
+<h3>Retrieval</h3>
+<ul>
+<li>The new <a href="javadoc/org/terrier/matching/models/DFRee.html">DFRee</a> DFR weighting model is included, which provides robust performance on a range of test collections.</li>
+<li>Query parsing is now performed by the <a href="javadoc/org/terrier/querying/Manager.html#newSearchRequest(java.lang.String,%20java.lang.String)">Manager.newSearchRequest(String,String)</a>. Direct access to the query parser is now not recommended, as the query parsing is likely to evolve in future versions of Terrier. See <a href="extending_retrieval.html">Extending Retrieval</a> for the recommended querying code for applications.</li>
+</ul>
+<h3>Desktop</h3>
+<ul>
+<li>BUG: When no terrier.properties present, the Desktop cannot perform query expansion using <tt>qe:on</tt> control.</li>
+<li>BUG: Set reasonable defaults when no terrier.properties file open.</li>
+</ul>
+<h3>Testing</h3>
+<ul>
+<li>Merchant of Venice test harness now tests indexing using TRECUTFCollection.</li>
+<li>Merchant of Venice test harness now tests indexing using merging.</li>
+<li>Merchant of Venice test harness now tests single-pass indexing.</li>
+<li>Merchant of Venice test harness now tests required (+/-) term queries.</li>
+</ul>
+<h3>Other</h3>
+<ul>
+<li>Documentation: We provide indexing times and recommended parameters settings with corresponding MAP performances in <a href="trec_examples.html">Example TREC Experiments</a>.</li>
+<li>Deprecation: Methods which do not return a LexiconEntry have been deprecated in the Lexicon.</li>
+<li>FindBugs: Many minor changes to the source-code reflect issues identified by <a href="http://findbugs.sourceforge.net/">FindBugs</a>. We continue to work to address issues raised by FindBugs.</li>
+<li>Upgraded <a href="trove4j.sourceforge.net/">trove4j</a> to latest version.</li>
+</ul>
+
+<h2>Terrier 1.1.1 - 24/10/2007</h2>
+<p>Minor update. Mostly bug fixes. Some minor code enhancements, plus the inclusion of a test harness. Snowball stemmers were added to boost support for languages other than English. This will likely be the last release in the 1.x.x series.</p>
+<h3>Indexing</h3>
+<ul>
+<li>BUG: When merging block indices, ensure that the resulting inverted index has blocks.</li>
+<li>BUG: Field indexing not working properly.</li>
+<li>BUG: Block ids recorded incorrectly when fields are enabled.</li>
+<li>BUG Resilience: Don't throw NPE in SimpleFileCollection if no files are processed.</li>
+<li>BUG Resilience: Don't throw exceptions if index has no terms/documents - fail more gracefully (LexiconBuilder, Indexer).</li>
+<li>When parsing a TREC-like document collection, use Streams at TRECCollection level, and Reader at Document level. This allows easier change of encoding, etc.
+</ul>
+<h3>Retrieval</h3>
+<ul>
+<li>BUG: When retrieving phrases, prevent Exception from debugging code in Manager.</li>
+<li>BUG: Regression when retrieving phrases, some documents not matched.</li>
+<li>BUG: DFRWeightingModel breaks when first normalisation or tf normalisation is not specified.</li>
+<li>BUG Resilience: Do not throw NPE in ExpansionTerms if original query terms are not set by client code.</li>
+<li>Create a .settings file for each TREC results file, so that it is easy to determine the setting for a run.</li>
+<li>Added an alternative batch query parser, known as <a href="javadoc/org/terrier/structures/SingleLineTRECQuery.html">SingleLineTRECQuery</a>, mostly to support the test harness.
+</ul>
+<h3>Desktop</h3>
+<ul>
+<li>BUG: PDF parsing too noisy through log4j, indexing may never finish. Turned down default logging level to info.</li>
+<li>BUG: Logging may not appear for indexing Terrier's own documentation. Indexing run in new Thread, not SwingUtilities.invokeLater().</li>
+</ul>
+<h3>Other</h3>
+<ul>
+<li>Tokenisation: Added Snowball stemmers. For more information, see documentation on <a href="languages.html">Non English language support</a>.</li>
+<li>Java: Various Java Generics changed.</li>
+<li>Testing: Added test harness, which checks that the correct documents are retrieved for various queries and index formats. Uses Shakespeare's Merchant of Venice play for the test document collection.</li>
+<li>Shell scripts: Take notice of TERRIER_ETC environment variable and pass to Terrier.</li>
+<li>Shell scripts: added anyclass.bat.</li>
+</ul>
+
+<h2>Terrier 1.1.0 - 15/06/2007</h2>
+<p>Major update. Many changes to the source code, including more robust indexing and index structure merging.</p>
+<h3>Indexing</h3>
+<p>Indexing architecture has been updated for Terrier 1.1.0, however indices created with 1.1.0 are completely compatible with those created with 1.0.x, and vice-versa.</p>
+<ul><li>Separated <tt>string.byte.length property</tt> into two properties: <tt>max.term.length</tt> and <tt>docno.byte.length</tt>.</li>
+<li>Allow UTF characters in indexing, and use a compatible method for saving these in the Lexicon. This enables Terrier to be used for non-English languages. Set <tt>string.use_utf</tt> to true when indexing, and use <a href="javadoc/org/terrier/indexing/TRECUTFCollection.html">TRECUTFCollection</a> to parse the collection.</li>
+<li>Merge multiple temporary lexicons at once in <a href="javadoc/org/terrier/structures/indexing/LexiconBuilder.html">LexiconBuilder</a>s. 16 seems to be a good default setting.</li>
+<li>Don't use tree structures for indexing, they are slower and larger (20% indexing speed improvement). New classes <a href="javadoc/org/terrier/structures/indexing/DocumentPostingList.html">DocumentPostingList</a> and <a href="javadoc/org/terrier/structures/indexing/LexiconMap.html">LexiconMap</a>.</li>
+<li>Writing structures (direct and inverted) flush normally, to reduce memory consumption.</li>
+<li>Add lexicon hashing to reduce size of binary search.</li>
+<li><a href="javadoc/org/terrier/utility/LookAheadStream.html">LookAheadStream</a> and <a href="javadoc/org/terrier/utility/LookAheadReader.html">LookAheadReader</a> are now case-sensitive, as the <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/lang/String.html#toUpperCase()">String.toUpperCase()</a> affects indexing speed.</li>
+<li>When the current indexing hits a threshold, finish it, then start a new index. Merge indices at completion. See <a href="javadoc/org/terrier/indexing/Indexer.html">Indexer</a>.</li>
+<li>Added code for merging indices - see <a href="javadoc/org/terrier/structures/merging/StructureMerger.html">StructureMerger</a> and <a href="javadoc/org/terrier/structures/merging/StructureMerger.html">BlockStructureMerger</a>.</li>
+<li>Added a <a href="javadoc/org/terrier/indexing/CollectionFactory.html">CollectionFactory</a>, to allow <a href="javadoc/org/terrier/indexing/Collection.html">Collection</a>s to wrap other Collections.</li>
+<li><a href="javadoc/org/terrier/indexing/TRECCollection.html">TRECCollection</a> no longer throws exception when used for re-indexing and docPointers.col exists (contributed by Dolf Trieschnigg, Univ of Twente).</li></ul>
+<h3>Retrieval</h3>
+<ul><li>CollectionStatistics is now non-static.</li>
+<li>Added Hiemstra LM and Lemur TF_IDF weighting models.</li>
+<li>BUG: <a href="javadoc/org/terrier/structures/Lexicon.html">Lexicon</a> would match prefixes of terms when the desired term does not exist in the Lexicon.</li>
+<li>Use a <a href="javadoc/org/terrier/structures/LexiconEntry.html">LexiconEntry</a>, to support easier thread-safety with the <a href="javadoc/org/terrier/structures/Lexicon.html">Lexicon</a>.</li>
+<li>Added generic <a href="javadoc/org/terrier/matching/models/DFRWeightingModel.html">DFRWeightingModel</a>, which can generate many DFR document weighting models. More information in <a href="extend_retrieval.html">Extending Retrieval</a>.</li>
+</ul>
+<h3>Other</h3>
+<ul>
+<li>Improved documentation.</li>
+<li>Java: Move to Java 1.5 source, and upgrade GNU Trove jar.</li>
+<li>Logging: Use log4j throughout source. Log4j config can be read from etc/terrier-log.xml.</li>
+<li>Java: Various source code changes, to allow easier extension and re-use.</li>
+<li>Compiling: Included compile.bat, by Jurrie Overgoor (Univ of Twente).</li>
+</ul>
+
+
+
+<H2>Terrier 1.0.2 - 17/03/2005</h2>
+<ul>
+<li>BUG: Language modelling didn't index properly when block indexing was enabled.</li>
+<li>BUG: Lexicon Merging compare strings the same way as the LexiconTree outputs them, to ensure sorting is correct.</li>
+<li>BUG: Block ids are correctly recorded in the inverted index for large collections.</li>
+<li>BUG: Block ids are correctly read from the direct index.</li>
+<li>BUG: The phrase score modifier has been rewritten to a more correct implementation.</li>
+<li>BUG: HTML Stack only lives for one document.</li>
+<li>BUG: Cropping the resultset did not function properly with metadata.</li>
+<li>BUG: If more than one control mapped to a post(process/filter) then only the last one would be noted. This is now fixed, and simpler data structures are used for the controls and the post(process/filter).</li>
+<li>TREC: During indexing, start indexing from the beginning of a new file, not from the previous state.</li>
+<li>TREC: Added <tt>trec.collection.class</tt> property to allow TRECIndexing to determine the TREC class to be used during indexing.</li>
+<li>Added DLH Divergence From Randomness model - this hyper-geometric weighting model is completely parameter free and is very robust over many test collections.</li>
+<li>Query Parser: Allow characters in the extended character set to be in terms.</li>
+<li>LookAheadReader: Corrected implementation of Reader interface to give better support wrt EOF and subsequent method calls.</li>
+<li>Added more TermPipeline classes: CropTerm, DumpTerm.</li>
+<li>Updated and organised documentation and Javadoc.</li>
+</ul>
+
+<h2>Terrier 1.0.1 - 09/02/2005</H2>
+<ul>
+<li>BUG 1: <tt>bin/interactive_terrier.bat</tt> doesn't run the correct class.</li>
+<li>BUG 2: <tt>bin/compile.sh</tt> compiles the ANTLR parser correctly.</li>
+<li>BUG: Lexicon binary search failed when searching for the last entry. Binary search has been updated.</li>
+<li>Document Index binary search made more robust for different types of documentIds.</li>
+<li>Desktop Terrier: starts new threads using correct Swing utility API.</li>
+<li>Desktop Terrier: close PDF documents correctly.</li>
+<li>Desktop Terrier: search text logging is slightly more robust.</li>
+<li>Desktop Terrier: always disable search tab while indexing.</li>
+<li>Desktop Terrier: temporary lexicon folders are deleted if they exist in the index folder before indexing.</li>
+<li>Desktop Terrier: process only 25,000 terms at a time during block inverted index building, as only 120MB heap space is restrictive.</li>
+<li>TREC: Model, QEModel &amp; C value is displayed correctly in TREC querying and results file.</li>
+<li>Documentation: Removed Known Issue 1 from doc/todo.html.</li>
+<li>Documentation: Updated javadoc in ApplicationSetup.java.</li>
+<li>Documentation: Added more details about compiling in doc/terrier_develop.html.</li>
+</ul>
+
+<h2>Terrier 1.0.0 - 28/01/2005</H2>
+<ul>
+<li>New Indexing APIs, that allow more diverse forms of collections to be easily indexed.</li>
+<li>New Querying API and languages (eg fields, phrases, proximity, requirements).</li>
+<li>More Statistical IR Models: tf-idf, BM25, Divergence From Randomness models, and Ponte-Croft language model.</li>
+<li>More example applications, including a Desktop Search application.</li>
+</ul>  
+
+<h2>Terrier 1.0 Beta2 - 22/11/2004</H2>
+<ul><li>Minor bugfix release - documentation error.</li></ul>
+
+<h2>Terrier 1.0 Beta - 18/11/2004</h2>
+<ul><li>First public release of Terrier.</li></ul>
+
+[<a href="overview.html">Previous: Overview</a>] [<a href="index.html">Contents</a>] [<a href="quickstart.html">Next: Installing and Running Terrier</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

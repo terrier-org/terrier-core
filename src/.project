@@ -1,0 +1,48 @@
+/*
+ * Terrier - Terabyte Retriever 
+ * Webpage: http://terrier.org/
+ * Contact: terrier{a.}dcs.gla.ac.uk
+ * University of Glasgow - School of Computing Science
+ * http://www.gla.ac.uk/
+ * 
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is .project
+ *
+ * The Original Code is Copyright (C) 2004-2011 the University of Glasgow.
+ * All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Ben He <ben{a.}dcs.gla.ac.uk> (original contributor)
+ */
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>terrier2</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.antlr.eclipse.core.antlrbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.antlr.eclipse.core.antlrnature</nature>
+	</natures>
+</projectDescription>

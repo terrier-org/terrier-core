@@ -1,0 +1,345 @@
+#This file provides some examples of how to set up properties.
+
+#index path - where terrier stores its index
+#terrier.index.path=/usr/local/terrier/var/index/
+
+#etc path - terrier configuration files
+#terrier.etc=/usr/local/terrier/etc/
+
+#share path - files from the distribution terrier uses
+#terrier.share=/usr/local/terrier/share/
+
+
+###################################################################
+#indexing settings:
+###################################################################
+
+#collection.spec is where a Collection object expects to find information
+#about how it should be initialised. Eg for a TREC collection, its a file
+#containing the list of files it should index.
+collection.spec=/local/collections/WT2G/files.txt
+#default collection.spec is etc/collection.spec
+
+#To record term positions (blocks) in the index, set
+#block.indexing=true
+
+#block indexing can be controlled using several properties:
+#blocks.size=1 = this property records the accuracy of one block
+#blocks.max - how many blocks to record in a document
+
+#fields: Terrier can save the frequency of term occurrences in various tags
+#to specify fields to not during indexing
+FieldTags.process=TITLE,ELSE
+#note that ELSE is a special field, which is everything not in one of the other fields
+
+#which collection to use to index?
+#or if you're indexing nonEnglish collections:
+#trec.collection.class=TRECUTFCollection
+
+###################################################################
+#TRECCollection specific properties
+###################################################################
+
+#If you're using TRECCollection to Index, you should specify the tags that should be indexed:
+#document tags specification
+#for processing the contents of
+#the documents, ignoring DOCHDR
+TrecDocTags.doctag=DOC
+TrecDocTags.idtag=DOCNO
+TrecDocTags.skip=DOCHDR
+#set to false if the tags can be of various case eg DOC and DoC
+TrecDocTags.casesensitive=true
+
+###################################################################
+#Web Interface and Query-biased summarisation
+###################################################################
+
+#TRECWebCollection extends the traditional TRECCollection by saving meta-data from the
+#document headers (url,crawldate,etc) as document properties.
+#trec.collection.class=TRECWebCollection
+
+#We want to save two additional tags as abstracts in the properties of each document, called title and body
+#TaggedDocument.abstracts=title,body
+
+#They come from the tags in the TRECCollection, in this case the WT2G collection. We will save the 
+#TITLE tags in the title abstract. ELSE is a special case that saves everything that is not added to 
+#an existing abstract (everything but the TITLE tag). In this case we are saving ELSE to the body abstract.
+#TaggedDocument.abstracts.tags=TITLE,ELSE
+
+#We also need to specify how many characters we should save in each field
+#TaggedDocument.abstracts.lengths=120,500
+
+#Next we need to tell the meta index to save all of these extra document properties
+#so that they are not thrown away. In addition to the docno which is always available, 
+#and the title and url tasks saved by TaggedDocument, we will also save the url and 
+#crawldate which are added to each document by the TRECWebCollection class.
+#indexer.meta.forward.keys=docno,title,body,url,crawldate
+
+#Again, we need to specify how many characters long each meta index entry is. Note that the title and body
+#abstract lengths should be the same here as in TaggedDocument.abstracts.
+#indexer.meta.forward.keylens=32,120,500,140,35
+
+###################################################################
+#Collections for WARC files
+###################################################################
+#these collection classes have no properties to configure them
+#trec.collection.class=WARC09Collection
+#trec.collection.class=WARC018Collection
+
+
+###################################################################
+#SimpleFileCollection specific properties
+###################################################################
+#trec.collection.class=SimpleFileCollection
+
+#indexing.simplefilecollection.extensionsparsers - use this to define parsers for know file extensions
+#indexing.simplefilecollection.extensionsparsers=txt:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument, pdf:PDFDocument,html:TaggedDocument,htm:TaggedDocument,xhtml:TaggedDocument, xml:TaggedDocument,doc:MSWordDocument,ppt:MSPowerpointDocument,xls:MSExcelDocument
+
+#indexing.simplefilecollection.defaultparser
+#if this is defined, then terrier will attempt to open any file it doesn't have an explicit parser for with the parser given
+#indexing.simplefilecollection.defaultparser=FileDocument
+
+###################################################################
+#SimpleXMLCollection specific properties
+###################################################################
+#trec.collection.class=SimpleXMLCollection
+
+#what tag defines the document
+xml.doctag=document
+#what tag defines the document number
+xml.idtag=docno
+#what tags hold text to be indexed
+xml.terms=text
+#will the text be in non-English?
+#string.use_utf=false
+
+#Terrier has two indexing strategies:
+#classical two-pass and single-pass. Different properies control each
+
+#####################
+#(a) classical two-pass indexing
+#####################
+#control the number of terms to invert at once (defined by # of pointers).
+invertedfile.processpointers=20000000
+#default is less for block indexing
+invertedfile.processpointers=2000000
+#reduce these if you experience OutOfMemory while inverted the direct file
+
+
+####################
+#(b) single-pass indexing
+#####################
+#the properties about single-pass indexing are related to memory consumption:
+#
+#memory.reserved: least amount of memory (bytes) before commit a run to disk. Set this too low and
+#an OutOfMemoryError will occur while saving the run. Set this too high and 
+#more runs will be saved, making indexing slower
+memory.reserved=50000000
+#memory.heap.usage: how much of the heap must be allocated (%) before a run can be committed to disk
+#set this too low and runs will be committed very often, before the java heap has reached full size.
+memory.heap.usage=0.85
+#docs.checks: how often to check memory consumption. Set this too high and OutOfMemoryError may
+#occur between as memory checks (i.e. {docs.checks} docs may fill {memory.reserved}+1 MB.
+docs.checks=20
+
+#####################################################
+#shared indexing and retrieval settings:
+#####################################################
+#stop-words file, relative paths are assumed to be in terrier.share
+stopwords.filename=stopword-list.txt
+
+
+#the processing stages a term goes through. Following is
+#the default setting:
+termpipelines=Stopwords,PorterStemmer
+#Using the above default setting, the system stops a
+#term and then stem it if it is not a stop-word. If you
+#want to keep all the stop-words and use a weak version of
+#the Porter's stemmer, the setting should be as follows:
+#termpipelines=WeakPorterStemmer
+
+#The stemmers have changed since Terrier v2.0. If you wish to use the
+#older stemmers, use TRv2PorterStemmer and TRv2WeakPorterStemmer 
+
+#If you wish to keep all terms unchanged, use
+#termpipelines=
+
+
+#####################################################
+# retrieval controls
+#####################################################
+
+#default controls for query expansion
+querying.postprocesses.order=QueryExpansion
+querying.postprocesses.controls=qe:QueryExpansion
+
+#default controls for the web-based interface. SimpleDecorate
+#is the simplest metadata decorator. For more control, see
+#Decorate.
+querying.postfilters.order=SimpleDecorate,SiteFilter,Scope
+querying.postfilters.controls=decorate:SimpleDecorate,site:SiteFilter,scope:Scope
+
+#default and allowed controls
+querying.default.controls=
+querying.allowed.controls=scope,qe,qemodel,start,end,site,scope
+#start control - sets the first result to be retrieved (default to rank 0)
+#end control - sets the last result to be retrieved (defaults to 0 - display all results)
+#qe control - enable query expansion (needs a direct index)
+#qemodel control - specify the name of the model for QueryExpansion (default to Bo1, set automatically by TRECQuerying to value of trec.qe.model property)
+#site control - filter the retrieved results by the suffix of their URL's hostname
+#scope control - filter the retrieved results by the prefix of their docno
+
+#####################################################
+#Advanced Web-based Interface Controls
+#####################################################
+
+#an example of using the full Decorate class, it does text highlighing
+#and query-biased summarisation.
+#querying.postfilters.controls=decorate:org.terrier.querying.Decorate
+#querying.postfilters.order=org.terrier.querying.Decorate
+
+#here we turn decorate on, generate a summary from the body meta index entry and add emphasis
+#to the query terms in both the title and body fields. Note that summaries overwrite the original
+#field, emphasis creates a new meta index entry of the form <name>_emph, e.g. title_emph
+#querying.default.controls=start:0,end:9,decorate:on,summaries:body,emphasis:title;body
+#querying.allowed.controls=scope,decorate,start,end
+
+#####################################################
+#batch retrieval
+#####################################################
+
+#TrecTerrier -r does batch querying, by using a QuerySource to find 
+#a stream of queries to retrieve documents for
+
+#the list of query files to process are normally listed in the file etc/trec.topics.list
+#instead, you can override this by specifying a query file
+#trec.topics=/path/to/some/queries.gz
+
+
+
+#you can change what QuerySource is used.
+#the default QuerySource, TRECQuery, parses TREC notation topic files
+#trec.topics.parser=TRECQuery
+
+#TRECQuery can be configured as follows:
+#query tags specification
+#TrecQueryTags.doctag stands for the name of tag that marks
+#the start of a TREC topic.
+TrecQueryTags.doctag=TOP
+#TrecQueryTags.idtag stands for the name of tag that marks 
+#the id of a TREC topic.
+TrecQueryTags.idtag=NUM
+#TrecQueryTags.process stands for the fields in a TREC 
+#topic to process. TrecQueryTags.skip stands for the fields
+#in a TREC topic to ignore. Following is the default setting:
+TrecQueryTags.process=TOP,NUM,TITLE
+TrecQueryTags.skip=DESC,NARR
+#Using the above default setting, Terrier processes the titles
+#in a TREC topic, while ignores descriptions and narratives. If
+#you want to run a querying process with description-only 
+#queries, the setting should be:
+#TrecQueryTags.process=TOP,NUM,DESC
+#TrecQueryTags.skip=TITLE,NARR
+#Note that "TITLE" is in the list of tags to ignore.
+
+#Alternatively, topics may be in a single file
+#trec.topics.parser=SingleLineTRECQuery
+#the first token on each line is the query id
+SingleLineTRECQuery.queryid.exists=true
+#should periods be removed from the query stream (there break the query parser)
+#SingleLineTRECQuery.periods.allowed=false
+
+
+#batch results are written to var/results/
+#you can override this with
+#trec.results=/path/to/results/for/WT2G
+#files are written to this folder using the querycounter. However, this is a problem if Terrier instances
+#are writing to the same folder
+#trec.querycounter.type=random
+
+
+#or just specify the exact filename for the results
+#trec.results.file=/path/to/myExperiment.res
+
+#you can override the format of the results file:
+#trec.querying.outputformat=my.package.some.other.OutputFormat
+
+#####################################################
+# query expansion during retrieval
+#####################################################
+
+#Terrier also provides the functionality of query 
+#expansion (pseudo-relevance feedback). Using the following setting, the query 
+#expansion component extracts the 40 most informative 
+#terms from the 10 top-returned documents
+#in first-pass retrieval as the expanded query terms.
+
+expansion.documents=3
+expansion.terms=10
+
+#If the above two properties are not specified 
+#in terrier.properties, Terrier will use the default 
+#setting which is expansion.documents=3 and 
+#expansion.terms=10.
+
+#Terrier applies a parameter-free query expansion mechanism
+#by default. An alternate approach is the Rocchio's query
+#expansion. To enable the latter, user should set property
+#parameter.free.expansion to false:
+
+#parameter.free.expansion=false
+
+#To set the parameter beta of the Rocchio's query expansion,
+#input rocchio.beta=X in terrier.properties. For example:
+
+#rocchio.beta=0.8
+
+#If rocchio.beta is not specified in terrier.properties, Terrier
+#applies rocchio.beta=0.4 by default.
+
+#####################################################
+# field-based models
+#####################################################
+#Field based models take the frequency in each field 
+#into account. 
+#trec.model=BM25F
+#trec.model=PL2F
+#For these models, you need a length normalisation property
+#for each field, starting at 0. Note that field names (as specified by FieldTags.process)
+#are NOT used here. 
+#c.0=1
+#c.1=1
+#etc
+
+#Similarly, each field needs a weight. Some models may implicitly have a restriction
+#on these weights (e.g. sum to 1)
+#w.0=1
+#w.1=1
+#etc
+#####################################################
+# term dependence models
+#####################################################
+
+#choose between DFR or Markov Random Fields dependence models
+#matching.dsms=DFRDependenceScoreModifier
+#matching.dsms=MRFDependenceScoreModifier
+
+#choose SD or FD (sequential or full dependence)
+proximity.dependency.type=SD
+
+#size of window: 2 is an exact phrase, 10 is a larger window
+proximity.ngram.length=2
+#weight of SD
+proximity.w_o=1
+#weight of FD
+proximity.w_u=1
+
+#for DFR, choose between pBiL and pBiL2
+#true for pBiL
+proximity.norm2=true
+#default length normalisation is 1
+proximity.norm2.c=1
+
+#for MRF
+#mu in the dirichlet formula. 
+mrf.mu=4000

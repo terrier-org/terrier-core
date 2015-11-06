@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>org.terrier.structures.postings package</title>
+<!--
+Terrier - Terabyte Retriever 
+Webpage: http://ir.dcs.gla.ac.uk/terrier 
+Contact: terrier{a.}dcs.gla.ac.uk
+University of Glasgow - School of Computing Science
+Information Retrieval Group
+ 
+The contents of this file are subject to the Mozilla Public
+License Version 1.1 (the "License"); you may not use this file except 
+compliance with the License. You may obtain a copy of the
+License at http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or
+implied. See the License for the specific language governing rights and
+limitations under the License.
+
+Copyright (C) 2004-2014 the University of Glasgow. All Rights Reserved.
+-->
+</head>
+<body bgcolor="white">
+<p>Provides classes representing single postings and atreams of postings in a posting list 
+(e.g. an inverted index or a direct index). </p>
+<p>A single posting (e.g. occurrences of a term in document) is represented
+by a <a href="Posting.html">Posting</a> object.
+<pre>
+Posting p;
+System.out.println("Docid "+ p.getId() + " has " + p.getFrequency() + " occurrences");
+</pre>
+
+<p>A stream of postings (e.g. terms in a document or occurrences of a term) are
+represented by an <a href="IterablePosting.html">IterablePosting</a> stream.</p>
+<pre>
+IterablePosting ip = //obtain from InvertedIndex;
+while(ip.next() != IterablePosting.EOL)
+{
+  System.err.println("Docid "+ ip.getId() + " has " + ip.getFrequency() + " occurrences");
+}
+</pre>
+
+<p>More complex posting implementations are supported by other Posting child interfaces:
+<ul>
+<li><a href="Posting.html">Posting</a> - basic posting: id, frequency and document length only.</li>
+<li><a href="BlockPosting.html">BlockPosting</a> - positions of occurrences are available.</li>
+<li><a href="FieldPosting.html">FieldPosting</a> - the frequencies in each field, as well as field lengths are available.</li>
+</ul>
+In all cases during retrieval, IterablePosting implementations which also implement Posting, BlockPosting and/or FieldPosting are used, depending on how indexing has been performed. To see how to configure indexing, see <a href="../../../../../configure_indexing.html">Configure Indexing</a>.
+
+</body>
+</html>

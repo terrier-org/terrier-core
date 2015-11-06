@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Desktop Search in Terrier</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="evaluation.html">Previous: Evaluation of Experiments</a>] [<a href="index.html">Contents</a>] 
+[<a href="terrier_http.html">Next: Web-based Terrier</a>]
+</br><br><h1>Using the Desktop Search example application:</h1>
+<p>Desktop Terrier is an example application we have provided with Terrier for
+two purposes:</p>
+<ul>
+<li>To provide a Desktop Search application that will allow users to quickly test out features of Terrier such as 
+	for example the Terrier query language.</li>
+<li>To give developers an example of using Terrier in an interactive setting.</li>
+</ul>
+
+<p>Importantly, Desktop Terrier is only a sample application to help users become used to the functionality that Terrier provides. We do not recommend Desktop Terrier to perform large or complex indexing jobs. Instead, once you are comfortable with the Terrier functionality, indexing and batch retrieval should be performed using the command line. You have been warned.</p>
+
+<h2>Starting Desktop Terrier</h2>
+
+<p>
+<ul>
+<li><b>Windows</b>: Double click on bin\desktop_terrier.bat to start Desktop Terrier - on some versions of Windows you may receive a warning about the file being suspicious, but you can safely ignore this. Note that you will need at least Java 1.5 or later to run Desktop Terrier.</li>
+<br />
+<li><b>MacOS X</b>: Double click on bin/desktop_terrier.sh to start Desktop Terrier.
+Should this fail:
+<ol><li>Make sure you have Java 1.7</li> 
+<li>Select bin/desktop_terrier.sh in Finder</li>
+	<li>In File menu, select Get Info (Command-I)</li>
+	<li>Select "Terminal" application with "Open with". Terminal is in the Folder Applications/Utilities.</li>
+</ol>
+<br/>
+<li>
+ <b>Unix/Linux</b>: execute the bin/desktop_terrier.sh shell script to start Desktop Terrier. You can do
+this from an Xterm environment (or similar), or by double clicking bin/desktop_terrier.sh in a Konqueror or Nautilus window (KDE or Gnome).
+</li></ul>
+</p>
+
+<h2>Running Desktop Terrier</h2>
+
+<p>
+The application window of the Desktop Search features two main tabs: "Search" and
+"Index". In the following, we will explain how you can use the application
+to index and search documents on your computer.
+</p>
+
+<h3>Indexing</h3>
+
+<p>Here we will explain how you can specify which documents you want Desktop Terrier to index.</p>
+
+<p>Indexing is the process where Terrier examines all the files 
+  in the folders you specified, reads the documents if it can, and creates an
+  index. There are only two buttons on the "Index" tab. The &quot;Select Folders...&quot; 
+  button opens a dialog that will allow you to select which folders should be 
+  indexed.  The application will examine these folders recursively, and will
+  index all the supported document types.
+  Based on the file extension, the application will try to find a corresponding
+  parser. If no appropriate parser can be found, the file will be ignored.
+  At the moment Terrier supports parsing of Simple text, PDF, MS Word,
+  MS PowerPoint, MS Excel, HTML, XML, XHTML, Tex, and Bib documents. Importantly, 
+  Desktop Terrier uses SimpleFileCollection, hence each file counts as a single document. 
+  More complex formats like those used at TREC are not detected by default. We recommend 
+  using Terrier from the command line to process these types of collection.
+  </p>  
+
+<p>The "Create Index" button will initiate the indexing process.
+  At the moment the Desktop Terrier does not support the updatable indices. That means that
+  every time you press the "Create Index" button Terrier will remove the old index and
+  index all specified folders from scratch.
+  Once you have selected the folders to index, you may click 
+  the &quot;Create Index&quot; button in order to start the indexing process. The progress 
+  of the indexing is documented in the text field at the bottom of the window,
+  After the indexing has finished, the application will automatically switch to
+  the "Search tab".</p>
+
+<p>You can now use the Search tab of Desktop Terrier to search 
+  for documents. Enter terms that you think your document may contain in the text 
+  box beside the Search button, and press Search. Documents Terrier thinks are 
+  relevant will be displayed in the list below. You can open a document by double 
+  clicking on that row in the table. The type of the document is shown in the 
+  second column.
+
+<h3>Searching</h3>
+<p>In the searching tab, you can enter a query in the text field and press the
+button &quot;Search&quot; to obtain the retrieval results. The results are
+shown in the table below the search field, as a ranked list of documents. The
+table has four columns. The first one contains the rank of a document, the second
+one contains the file name of a document. The third one contains the full path to
+the document and finally the fourth one contains the score of the document.</p>
+<p>To formulate a query, you can incorporate the <a href="querylanguage.html">query language of Terrier</a>. For example:</p>
+<ul>
+<li>The query <tt>&quot;information retrieval&quot;</tt>
+should retrieve documents where the two query terms are either in the same, or in
+consecutive blocks.</li>
+<li>The query <tt>&quot;information retrieval&quot;~5</tt>
+should retrieve documents in which the query terms appear within 5 blocks,
+irrespectively of the query term order.</li> 
+<li>With the operators plus or minus, we may specify that a term should, or 
+shouldn't appear in the retrieved documents. For example, for the query 
+<tt>information retrieval +book</tt>, the retrieved documents should at least 
+contain the term book.</li>
+<li>In the query <tt>information retrieval^2.5</tt>, the query term <tt>retrieval</tt> has a 2.5 times
+higher weight than what it would have normally.</li>
+<li>The query <tt>information retrieval c:7</tt> will perform retrieval for the query terms
+<tt>information</tt> and <tt>retrieval</tt>, setting the value of the term frequency normalisation
+parameter <tt>c</tt> equal to 7.</li>
+</ul>
+
+<p>By default, Terrier Desktop Search retrieves the documents that contain all 
+the query terms. If there are no such documents, then it returns the documents that contain at
+least one of the query terms.</p>
+
+<p>In order to open one of the retrieved documents, you may double-click on
+its filename, i.e. the corresponding cell of the second column. Opening the
+retrieved files is a platform-dependent function. In Windows and Mac OS X environments,
+the application uses the file associations used by the operating system,
+while in other environments, such as Linux the file associations
+need to be set by the user. In these cases, the associations are saved in
+a file with the default name desktop.fileassoc in the var directory of
+your installation.</p>
+<p>If there is already an application associated with the file, then this
+application will start and open the file you double-clicked on. In the
+case when there is no application associated, a dialog will appear, in
+order to assist you with selecting an appropriate application.</p><br>
+
+
+<h2>Help</h2>
+<p>This documentation is also available from the Help menu of the
+Desktop Terrier version.</p>
+
+
+<h2>Advanced Options</h2>
+
+<p>Should you have trouble using Desktop Terrier, e.g. if the application 
+is not running as expected, you can make use of the "--debug" option:</p>
+<pre>
+bin/desktop_terrier.sh --debug (Linux, Mac OS X)
+bin\desktop_terrier.bat --debug (Windows)
+</pre>
+
+<p>If you use Desktop Terrier regularly, you may wish to have Terrier re-index 
+your documents automatically at set times. You can do this by scheduling Terrier to run with the "--reindex" option: </p>
+<pre>
+bin/desktop_terrier.sh --reindex (Linux, Mac OS X)
+bin\desktop_terrier.bat --reindex (Windows)
+</pre>
+
+<p>In order to schedule this command line for repetitive execution on Unix use the crontab utility. 
+On Windows use the Scheduled Tasks functionality, which can be found in the Control Panel.</p>
+<p></p>
+
+<h2>Advanced Configuration</h2>
+<p>You can configure the Desktop using many of the properties listed elsewhere in the Terrier documentation. These can be set in the <tt>etc/terrier.properties</tt> file. Moreover, it is possible to configure the Desktop using the following properties:</p>
+<p><b>Properties:</b>
+ <ul><li><tt>desktop.directories.spec</tt> - Where is the collection.spec for the desktop. Defaults to <tt>var/desktop.spec</tt></li>
+ <li><tt>desktop.matching</tt> - Which matching class to use for desktop. Defaults to org.terrier.matching.taat.Full.</li>
+ <li><tt>desktop.model</tt> - Which weighting model to use for the desktop. Defaults to PL2.</li>
+ <li><tt>desktop.manager</tt> - Which Manager class to use for the desktop. Defaults to Manager.</li>
+ <li><tt>desktop.indexing.singlepass</tt> - Set to true to use the single-pass indexer.</li>
+ <li><tt>desktopsearch.filetype.colors</tt> - Mapping of file type to colour. Default value <tt>Text:(221 221 221),TeX:(221 221 221),Bib:(221 221 221),PDF:(236 67 69),HTML:(177 228 250),Word:(100 100 255),Powerpoint:(250 110 49),Excel:(38 183 78),XHTML:(177 228 250),XML:(177 228 250)</tt></li>
+ <li><tt>desktopsearch.filetype.types</tt> - Comma-delimited mapping of file extensions to File types. Default value is <tt>txt:Text,text:Text,tex:TeX,bib:Bib,pdf:PDF,html:HTML,htm:HTML,xhtml:XHTML,xml:XML,doc:Word,ppt:Powerpoint,xls:Excel</tt></li>
+ </ul>
+
+[<a href="evaluation.html">Previous: Evaluation of Experiments</a>] [<a href="index.html">Contents</a>] [<a href="trec_examples.html">Next: TREC Experiment Examples</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

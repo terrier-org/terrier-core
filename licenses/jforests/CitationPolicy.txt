@@ -1,0 +1,22 @@
+Citation Policy
+If you use jforests for a research purpose, please use the following citation:
+
+Y. Ganjisaffar, R. Caruana, C. Lopes, Bagging Gradient-Boosted Trees for High Precision, Low Variance Ranking Models, in SIGIR 2011, Beijing, China.
+
+Bibtex:
+
+ @inproceedings{Ganji:2011:SIGIR,
+  author = {Yasser Ganjisaffar and Rich Caruana and Cristina Lopes},
+  title = {Bagging Gradient-Boosted Trees for High Precision, Low Variance Ranking Models},
+  booktitle = {Proceedings of the 34th international ACM SIGIR conference on Research and development in Information},
+  series = {SIGIR '11},
+  year = {2011},
+  isbn = {978-1-4503-0757-4},
+  location = {Beijing, China},
+  pages = {85--94},
+  numpages = {10},
+  doi = {http://doi.acm.org/10.1145/2009916.2009932},
+  acmid = {2009932},
+  publisher = {ACM},
+  address = {New York, NY, USA},
+ }

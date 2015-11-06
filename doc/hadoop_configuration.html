@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Contents</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+
+[<a href="trec_examples.html">Previous: TREC Experiment Examples</a>] [<a href="index.html">Contents</a>] [<a href="hadoop_indexing.html">Next: Hadoop MapReduce Indexing with Terrier</a>]
+</br><br><h1>Configuring Terrier for Hadoop</h1>
+
+<h2>Overview</h2>
+<p>
+From version 2.2 onwards, Terrier has supported the Hadoop MapReduce framework. Currently, Terrier provides <a href="hadoop_indexing.html">single-pass distributed indexing under MapReduce</a>, however, Terrier has been designed to be compatible with other Hadoop driven functionality. In this document, we describe how to integrate your Hadoop and Terrier setups. Hadoop is useful because it allows extremely large-scale operations, using MapReduce technology, built on a distributed file system. More information can be found about deploying Hadoop using a cluster of nodes in the <a href="http://hadoop.apache.org/core/docs/current/">Hadoop Core documentation</a>.
+</p>
+
+
+<h2>Pre-requisites</h2>
+Terrier requires a working Hadoop setup, built using a cluster of one or more machines, currently of Hadoop version 0.20.x. The core <i>may not</i> currently support newer versions of Hadoop due to minor changes in the Hadoop API. However, should you 
+wish to use a newer version to take advantage of the numerous bug fixes and efficiency improvements introduced, we anticipate 
+that the core can be updated to achieve this (see the <a href="http://ir.dcs.gla.ac.uk/wiki/Terrier/Hadoop">Terrier/Hadoop wiki page</a> for more information on upgrading Hadoop in Terrier). In the Hadoop Core documentation, we recommend <a href="http://hadoop.apache.org/docs/r0.19.0/quickstart.html">quickstart</a> and <a href="http://hadoop.apache.org/docs/r0.19.0/cluster_setup.html">cluster setup</a> documents. If you do not have a dedicated cluster of machines with Hadoop running and do not wish to create one, an alternative is to use use <a href="http://hadoop.apache.org/docs/r0.19.0/hod_user_guide.html">Hadoop on Demand (HOD)</a>. In particular, HOD allows a MapReduce cluster to be built upon an existing <a href="http://www.adaptivecomputing.com/products/open-source/torque/">Torque PBS job</a> cluster. 
+
+<p>In general, Terrier can be configured to use an existing Hadoop installation, by two changes:</p>
+<ol>
+<li> Add the location of your $HADOOP_HOME/conf folder to the CLASSPATH environment variable before running Terrier.</li>
+<li> Set property <tt>terrier.plugins=org.terrier.utility.io.HadoopPlugin</tt> in your terrier.properties file.</li>
+<li> You must also ensure that there is a world-writable <tt>/tmp</tt> directory on Hadoop's default file system.</li>
+</ol>
+
+<p>This will allow Terrier to access the shared file system described in your <tt>core-site.xml</tt>. If you also have the MapReduce job tracker setup specified in <tt>mapred-site.xml</tt>, then Terrier can now directly access the MapReduce job tracker to submit jobs.</p>
+
+<h2>Using Hadoop On Demand (HOD)</h2>
+<p>If you don't have a dedicated Hadoop cluster yet, don't worry. Hadoop provides a utility called Hadoop On Demand (HOD), which can use a <a href="http://www.adaptivecomputing.com/products/open-source/torque/">Torque</a> PBS cluster to create a Hadoop cluster. Terrier fully supports accessing Hadoop clusters created by HOD, and can even call HOD to create the cluster when its needed for a job. If your cluster is based on <a href="http://gridengine.sunsource.net/">Sun Grid Engine</a>, this supports Hadoop.</p>
+
+<p>If you are using HOD, then Terrier can be configured to automatically access it. Firstly, ensure HOD is working correctly, as described in the HOD <a href="http://hadoop.apache.org/docs/r0.19.0/hod_user_guide.html">user</a> and <a href="http://hadoop.apache.org/docs/r0.19.0/hod_admin_guide.html">admin</a> guides. When Terrier wants to submit a MapReduce job, it will use the <a href="javadoc/org/terrier/utility/io/HadoopPlugin.html">HadoopPlugin</a> to request a MapReduce cluster from HOD. To configure this use the following properties:</p>
+<ul>
+<li> <tt>plugin.hadoop.hod</tt> - set the full path to the local HOD executable. If this is not set, then HOD will not be used.</li>
+<li> <tt>plugin.hadoop.hod.nodes</tt> - the number of nodes to request from HOD. Defaults to 6 nodes (sometimes CPUs).</li>
+<li> <tt>plugin.hadoop.hod.params</tt> - any additional options you want to set on the HOD command line.
+</ul>
+<p>For more information on using HOD, see our <a href="javadoc/org/terrier/utility/io/HadoopPlugin.html">HadoopPlugin documentation</a>.</p>
+
+<h2>Indexing with Hadoop MapReduce</h2>
+We provide a <a href="hadoop_indexing.html"> guide for configuring single-pass indexing with MapReduce under Hadoop</a>.
+
+<h2>Developing MapReduce jobs with Terrier</h2>
+<p>Importantly, it should be possible to modify Terrier to perform other information retrieval tasks using MapReduce. Terrier requires some careful configuration to use in the MapReduce setting. The included, <a href="javadoc/org/terrier/utility/io/HadoopPlugin.html">HadoopPlugin</a> and <a href="javadoc/org/terrier/utility/io/HadoopUtility.html">HadoopUtility</a> should be used to link Terrier to Hadoop. In particular, HadoopPlugin/HadoopUtility ensure that Terrier's share/ folder and the terrier.properties file are copied to a shared space that all job tasks can access. In the configure() method of the map and reduce tasks, you must call <tt>HadoopUtility.loadTerrierJob(jobConf)</tt>. For more information, see <a href="javadoc/org/terrier/utility/io/HadoopPlugin.html">HadoopPlugin</a>. Furthermore, we suggest that you browse the MapReduce indexing source code, both for the map and reduce functions stored in the <a href="javadoc/org/terrier/structures/indexing/singlepass/hadoop/Hadoop_BasicSinglePassIndexer.html">Hadoop_BasicSinglePassIndexer</a> and as well as the <a href="javadoc/org/terrier/structures/indexing/singlepass/hadoop/MultiFileCollectionInputFormat.html">input format</a> and <a href="javadoc/org/terrier/structures/indexing/singlepass/hadoop/SplitEmittedTerm.html">partitioner</a>.</p>
+
+<p></p>
+
+[<a href="trec_examples.html">Previous: TREC Experiment Examples</a>] [<a href="index.html">Contents</a>] [<a href="hadoop_indexing.html">Next: Hadoop MapReduce Indexing with Terrier</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+<tr><td colspan="2">&nbsp;</td></tr>
+</body>
+</html>

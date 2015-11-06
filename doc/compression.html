@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Pluggable Compression</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+<style>
+th  {font-size:150%}
+</style>
+</head>
+
+<body>
+<!--!bodystart-->
+
+[<a href="extend_retrieval.html">Previous: Extending Retrieval</a>] [<a href="index.html">Contents</a>] [<a href="languages.html">Next: Non English language support</a>] 
+<br><br><h1>Pluggable Compression</h1>
+
+<h2>Introduction</h2>
+The inverted index data structure contains a collection of postings lists, a data structure which maintains information about the occurrence of terms in documents. These are represented within Terrier as implementations of two specific interfaces, namely <a href="javadoc/org/terrier/structures/postings/Posting.html">Posting</a> and <a href="javadoc/org/terrier/structures/postings/IterablePosting.html">IterablePosting</a>. Terrier supports four different types of payload contained within each Posting (or children interfaces):
+<ul>
+<li>document identifier</li>
+<li>term frequency</li>
+<li>term frequency by field (e.g.: URL, title, body, incoming anchor text) a.k.a. field frequencies (implemented by <a href="javadoc/org/terrier/structures/postings/FieldPosting.html">FieldPosting</a>)</li>
+<li>term positions within the document (implemented by <a href="javadoc/org/terrier/structures/postings/BlockPosting.html">BlockPosting</a>)</li>
+</ul>
+
+By default, Terrier compresses posting lists as a stream of postings. It uses <a href="http://en.wikipedia.org/wiki/Elias_gamma_coding">Elias' Gamma</a> compression schema (codec) to compress doc ids and term positions; it uses <a href="http://en.wikipedia.org/wiki/Unary_coding">Unary</a> codec to compress term and field frequencies. The particular compression configuration is defined by the CompressionConfiguration class. For more information, please refer to <a href="">org.terrier.structures.bit.DirectInvertedOutputStream</a>  (and children) for documentation on postings compression, and <a href="javadoc/org/terrier/structures/postings/bit/BasicIterablePosting.html">org.terrier.structures.postings.bit.BasicIterablePosting</a> (and children) documentation for postings decompression.
+
+New in version 4.0, Terrier now supports more modern compression codecs, such as the state-of-the-art PForDelta codec. In particular, a new integer compression layer allows the transparent use of compression schemes from <a href="https://github.com/lemire/FastPFOR">Java_FastPFOR</a> by Daniel Lemire, and <a href="http://data.linkedin.com/opensource/kamikaze">Kamikaze</a> by LinkedIn.  
+Indeed, the new integer compression layer defines a new CompressionConfiguration (namely <a href="javadoc/org/terrier/structures/integer/IntegerCodecCompressionConfiguration.html">IntegerCodecCompressionConfiguration</a>, which can be configured to use various codecs for each compression payload (document ids, term frequencies, field frequencies, term positions):
+
+<table>
+<th><tr><td><b>Name</b></td><td><b>Description</b></td><td><b>Codec Class name (in <tt>org.terrier.compression.integer.codec</tt>)</b></td></tr></th>
+<tr><td>VInt</td><td><a href="http://hadoop.apache.org">Hadoop</a>'s Variable byte [1] implementation</td><td><a href="javadoc/org/terrier/compression/integer/codec/VIntCodec.html">VIntCodec</a></td></tr>
+
+<tr><td>Simple16</td><td>JavaFastPFOR's Simple16 [2,3] implementation</td><td><a href="javadoc/org/terrier/compression/integer/codec/LemireSimple16Codec.html">LemireSimple16Codec</a></td></tr>
+<tr><td>Frame-of-Reference (FOR)</td><td>JavaFastPFOR's Frame-of-Reference [4] implementation</td><td><a href="javadoc/org/terrier/compression/integer/codec/LemireFORVBCodec.html">LemireFORVBCodec</a></td></tr>
+<tr><td>NewPFD</td><td>JavaFastPFOR's NewPFD [5] implementation</td><td><a href="javadoc/org/terrier/compression/integer/codec/LemireNewPFDVBCodec.html">LemireNewPFDVBCodec</a></td></tr>
+<tr><td>OptPFD</td><td>JavaFastPFOR's OptPFD [5] implementation</td><td>
+<a href="javadoc/org/terrier/compression/integer/codec/LemireOptPFDVBCodec.html">LemireOptPFDVBCodec</a></td></tr>
+<tr><td>FastPFOR</td><td>JavaFastPFOR's FastPFOR [6] implementation - NB: A larger chunk-size is recommended for this codec.</td><td><a href="javadoc/org/terrier/compression/integer/codec/LemireFastPFORVBCodec.html">LemireFastPFORVBCodec</a></td></tr>
+<tr><td>PForDelta</td><td>Linkedin's Kamikaze PForDelta [3,5]</td><td><a href="javadoc/org/terrier/compression/integer/codec/KamikazePForDeltaVBCodec.html">KamikazePForDeltaVBCodec</a></td></tr>
+</table>
+
+When using these codecs, the Terrier infrastructure (de)compresses postings in chunks. The size of these chunks can be set at indexing time using the properties <tt>index.inverted.compression.integer.chunk.size</tt> for the direct index, and <tt>index.inverted.compression.integer.chunk.size</tt> for the inverted index.
+
+<h2>Indexing</h2>
+
+Terrier 4.0 can perform classical two-pass indexing (i.e. bin/trec_terrier.sh -i), using the aforementioned codecs. To do so, some properties have to be set. For instance, to store the direct and inverted index compressed in blocks of 1024 posting using NewPFD codec:
+<pre>
+index.direct.compression.integer.chunk.size=1024
+indexing.direct.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+index.direct.compression.integer.chunk.size=1024
+index.direct.compression.integer.ids.codec=LemireNewPFDVBCodec
+index.direct.compression.integer.tfs.codec=LemireNewPFDVBCodec
+indexing.inverted.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+index.inverted.compression.integer.chunk.size=1024
+index.inverted.compression.integer.ids.codec=LemireNewPFDVBCodec
+index.inverted.compression.integer.tfs.codec=LemireNewPFDVBCodec
+index.inverted.compression.integer.fields.codec=LemireNewPFDVBCodec
+index.inverted.compression.integer.blocks.codec=LemireNewPFDVBCodec
+</pre>
+
+You can also plug into Terrier a new compression schema by implementing your own CompressionConfiguration. If IntegerCodec meets your requirements, you can implement it, and directly use  IntegerCodecCompressionConfiguration.
+
+List of properties for indexing:
+<table><th><tr><td><b>Name</b></td><td><b>Description</b></td><td><b>Values</b></td></tr></th>
+<tr><td><tt>indexing.inverted.compression.configuration</tt><br>
+<tt>indexing.direct.compression.configuration</tt></td><td>The class that defines the compression configuration to be used on the inverted (direct) index at indexing time. Only classical indexing supports pluggable compression.</td><td>org.terrier.structures.indexing.CompressionFactory$BitCompressionConfiguration (default);
+org.terrier.structures.indexing.IntegerCodecCompressionConfiguration</tr></tr>
+<tr><td><tt>index.inverted.compression.integer.chunk.size</tt><br><tt>index.direct.compression.integer.chunk.size</tt></td><td>Number of postings to be compressed at a time (used only w/ IntegerCodecCompressionConfiguration)</td><td>integer (default: 1024)</td></tr>
+<tr><td><tt>index.inverted.compression.integer.ids.codec</tt><br>
+<tt>index.direct.compression.integer.ids.codec</tt></td><td>The codec to be used to compress document identifiers in the inverted index (used only w/ IntegerCodecCompressionConfiguration). For the direct index, the codec to be used for the term identifiers.</td><td>See codecs table</td></tr>
+<tr><td><tt>index.inverted.compression.integer.tfs.codec</tt><br>
+<tt>index.direct.compression.integer.tfs.codec</tt></td>
+<td>The codec to be used to compress term frequencies in the inverted (direct) index (used only w/ IntegerCodecCompressionConfiguration)</td><td>"</td></tr>
+<tr><td><tt>index.inverted.compression.integer.fields.codec</tt><br>
+<tt>index.direct.compression.integer.fields.codec</tt>
+</td><td>The codec to be used to compress field frequencies in the inverted (direct) index (used only w/ IntegerCodecCompressionConfiguration, optional)</td><td>"</td></tr>
+<tr><td><tt>index.inverted.compression.integer.blocks.codec</tt><br>
+<tt>index.direct.compression.integer.blocks.codec</tt>
+</td><td>The codec to be used to compress term positions in the inverted (direct) index (used only w/ IntegerCodecCompressionConfiguration, optional)</td><td>"</td></tr>
+</table>
+
+
+<h2>Recompression</h2>
+
+Inverted indices built by single-pass (i.e. bin/trec_terrier.sh -i -j) or MapReduce  (i.e. bin/trec_terrier.sh -i -H) indexing can be re-compressed using the InvertedIndexRecompresser class. For example, one can re-compress an inverted index using the OptPFD codec. This can be performed using InvertedIndexRecompresser with the following properties:
+<pre>
+indexing.tmp-inverted.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+index.tmp-inverted.compression.integer.chunk.size=1024
+index.tmp-inverted.compression.integer.ids.codec=LemireOptPFDVBCodec
+index.tmp-inverted.compression.integer.tfs.codec=LemireOptPFDVBCodec
+index.tmp-inverted.compression.integer.fields.codec=LemireOptPFDVBCodec
+index.tmp-inverted.compression.integer.blocks.codec=LemireOptPFDVBCodec
+</pre>
+Please notice that InvertedIndexRecompresser overwrites the original inverted index with the re-compressed one. Be sure to have one backup copy of the inverted index before using InvertedIndexRecompresser.
+
+Different codecs have different effects on index size and query response time. When storage space is a concern, it is suggested to use Terrier's default compression configuration (Simple16 and OptPFD are options too). Instead, when the inverted index can fit in main memory, the best practices derived in [7] recommend to use the FOR codec to reduce the query response time, as follows:
+<pre>
+index.direct.compression.integer.chunk.size=1024
+indexing.direct.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+compression.direct.integer.ids.codec=LemireFORVBCodec
+compression.direct.integer.tfs.codec=LemireFORVBCodec
+indexing.inverted.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+compression.inverted.integer.ids.codec=LemireFORVBCodec
+compression.inverted.integer.tfs.codec=LemireFORVBCodec
+compression.inverted.integer.fields.codec=LemireFORVBCodec
+compression.inverted.integer.blocks.codec=LemireFORVBCodec
+</pre>
+
+<h2>Citation Policy</h2>
+If you make use of this package for efficient research, please cite: 
+
+<quote>
+Catena, M., Macdonald, C., Ounis, I.: On Inverted Index Compression for Search Engine Efficiency. In: Proceedings of ECIR 2014. [<a href="http://www.dcs.gla.ac.uk/~craigm/publications/catena14compression.pdf">PDF</a>]
+</quote>
+
+<h2>References</h2>
+<ol>
+<li>Williams, H.E., Zobel, J.: Compressing integers for fast file access. The Computer Journal 42 (1999)</li>
+<li>Anh, V.N., Moffat, A.: Inverted index compression using word-aligned binary codes. Inf.Retr. 8 (1) (2005)</li>
+<li>Zhang, J., Long, X., Suel, T.: Performance of compressed inverted list caching in search engines. In: Proc. WWW ’08. (2008)</li>
+<li>Goldstein, J., Ramakrishnan, R., Shaft, U.: Compressing relations and indexes. In: Proc. ICDE ’98. (1998)</li>
+<li>Yan, H., Ding, S., Suel, T.: Inverted index compression and query processing with optimized document ordering. In: Proc. WWW ’09. (2009)</li>
+<li>Lemire, D., Boytsov, L.: Decoding billions of integers per second through vectorization. Software: Practice and Experience (2013)</li>
+<li>Catena, M., Macdonald, C., Ounis, I.: On Inverted Index Compression for Search Engine Efficiency. In: Proc. ECIR '14 (2014) [<a href="http://www.dcs.gla.ac.uk/~craigm/publications/catena14compression.pdf">PDF</a>]</li>
+<li>Elias, P.: Universal codeword sets and representations of the integers. Trans. Info. Theory 21 (2) (1975)</li>
+<li>Zukowski, M., Heman, S., Nes, N., Boncz, P.: Super-scalar RAM-CPU cache compression. In: Proc. ICDE ’06. (2006)</li>
+</ol>
+[<a href="extend_retrieval.html">Previous: Extending Retrieval</a>] [<a href="index.html">Contents</a>] [<a href="languages.html">Next: Non English language support</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+<tr><td colspan="2">&nbsp;</td></tr>
+</body>
+</html>
+
+

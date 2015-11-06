@@ -1,0 +1,29 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
+}
+
+#poweredby a {
+	margin: 30px;
+	font-size:75%;
+	text-decoration:none;
+}
+
+#queryform {
+	margin: 30px;
+}
+
+#summary {
+	margin: 30px;
+	background-color: #2a5a8a;
+}
+
+#pages {
+	margin: 30px
+}
+
+
+#results {
+	margin: 30px
+}
+

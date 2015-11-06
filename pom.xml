@@ -1,0 +1,583 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>TerrierCore</groupId>
+  <artifactId>TerrierCore</artifactId>
+  <version>4.1</version>
+  <name>Terrier Information Retrieval Platform</name>
+  <description>Mavenized version of Terrier</description>
+  
+  <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+  
+  <repositories> 
+
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+	
+  	</repositories>
+  
+  	<dependencies>
+
+	<dependency>
+	    <groupId>com.github.yasserg</groupId>
+	    <artifactId>jforests</artifactId>
+	    <version>v0.5</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>me.lemire.integercompression</groupId>
+	    <artifactId>JavaFastPFOR</artifactId>
+	    <version>0.1.3</version>
+	</dependency>
+
+	<dependency>
+		<groupId>antlr</groupId>
+		<artifactId>antlr</artifactId>
+		<version>20030911</version>
+	</dependency>
+
+	<dependency>
+		<groupId>commons-lang</groupId>
+		<artifactId>commons-lang</artifactId>
+		<version>2.3</version>
+	</dependency>
+
+	<dependency>
+		<groupId>fastutil</groupId>
+		<artifactId>fastutil</artifactId>
+		<version>5.0.9</version>
+	</dependency>
+
+	<dependency>
+		<groupId>net.sourceforge.findbugs</groupId>
+		<artifactId>annotations</artifactId>
+		<version>1.3.2</version>
+	</dependency>
+	
+	<dependency>
+	  <groupId>org.antlr</groupId>
+	  <artifactId>antlr-runtime</artifactId>
+	  <version>3.4</version>
+	</dependency>
+
+
+	<dependency>
+		<groupId>org.apache.pdfbox</groupId>
+		<artifactId>fontbox</artifactId>
+		<version>1.8.4</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.google.code.gson</groupId>
+		<artifactId>gson</artifactId>
+		<version>1.7.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.hadoop</groupId>
+		<artifactId>hadoop-core</artifactId>
+		<version>0.20.2</version> <!-- Should be 0.20.2+228 -->
+	</dependency>
+
+	<dependency>
+		<groupId>org.jsoup</groupId>
+		<artifactId>jsoup</artifactId>
+		<version>1.7.3</version>
+	</dependency>
+
+  	<dependency>
+      		<groupId>junit</groupId>
+      		<artifactId>junit</artifactId>
+      		<version>4.8.1</version>
+    	</dependency>
+
+	<dependency>
+		<groupId>com.sna-projects.kamikaze</groupId>
+		<artifactId>kamikaze</artifactId>
+		<version>3.0.3</version>
+	</dependency>
+
+
+	<dependency>
+		<groupId>org.mortbay.jetty</groupId>
+		<artifactId>jetty</artifactId>
+		<version>4.2.12</version> <!-- Should be 5.1.15 -->
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.pdfbox</groupId>
+		<artifactId>pdfbox</artifactId>
+		<version>1.8.4</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi</artifactId>
+		<version>3.8</version> <!-- Should be 3.8-20120326 -->
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi-ooxml</artifactId>
+		<version>3.8</version> <!-- Should be 3.8-20120326 -->
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi-ooxml-schemas</artifactId>
+		<version>3.8</version> <!-- Should be 3.8-20120326 -->
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi-scratchpad</artifactId>
+		<version>3.8</version> <!-- Should be 3.8-20120326 -->
+	</dependency>
+
+	<dependency> <!-- This is to include sam-1.108.jar-->
+		<groupId>org.utgenome.thirdparty</groupId>
+		<artifactId>picard</artifactId>
+		<version>1.86.0</version>
+	</dependency>
+
+	<dependency> <!-- Terrier 4 does not incude a version number -->
+		<groupId>javax.servlet</groupId>
+		<artifactId>servlet-api</artifactId>
+		<version>2.5</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.lucene</groupId>
+		<artifactId>lucene-snowball</artifactId>
+		<version>3.0.3</version> <!-- Should be snowball-20071024 -->
+	</dependency>
+
+	<dependency>
+		<groupId>net.sf.trove4j</groupId>
+		<artifactId>trove4j</artifactId>
+		<version>2.0.2</version>
+	</dependency>
+
+	<!-- _________________________ CRAWLER4J _________________________ --> 
+
+	<dependency>
+		<groupId>org.apache.james</groupId>
+		<artifactId>apache-mime4j-core</artifactId>
+		<version>0.7</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.james</groupId>
+		<artifactId>apache-mime4j-dom</artifactId>
+		<version>0.7</version>
+	</dependency>
+
+	<dependency>
+		<groupId>asm</groupId>
+		<artifactId>asm</artifactId>
+		<version>3.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>de.l3s.boilerpipe</groupId>
+		<artifactId>boilerpipe</artifactId>
+		<version>1.1.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>commons-codec</groupId>
+		<artifactId>commons-codec</artifactId>
+		<version>1.6</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-compress</artifactId>
+		<version>1.3</version>
+	</dependency>
+
+	<dependency>
+		<groupId>commons-logging</groupId>
+		<artifactId>commons-logging</artifactId>
+		<version>1.1.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>edu.uci.ics</groupId>
+		<artifactId>crawler4j</artifactId>
+		<version>4.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.geronimo.specs</groupId>
+		<artifactId>geronimo-stax-api_1.0_spec</artifactId>
+		<version>1.0.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+		<version>4.2.3</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpcore</artifactId>
+		<version>4.2.2</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.sleepycat</groupId>
+		<artifactId>je</artifactId>
+		<version>4.0.92</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.drewnoakes</groupId>
+		<artifactId>metadata-extractor</artifactId>
+		<version>2.4.0-beta-1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.ccil.cowan.tagsoup</groupId>
+		<artifactId>tagsoup</artifactId>
+		<version>1.2.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.tika</groupId>
+		<artifactId>tika-core</artifactId>
+		<version>1.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.tika</groupId>
+		<artifactId>tika-parsers</artifactId>
+		<version>1.0</version>
+	</dependency>
+
+<!-- _________________________ HADOOP _________________________ --> 
+
+	<dependency> <!-- Terrier 4 does not incude a version number -->
+		<groupId>org.apache.thrift</groupId>
+		<artifactId>libthrift</artifactId>
+		<version>0.9.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+		<version>5.0.8</version>
+	</dependency>
+
+	<dependency>
+		<groupId>xmlenc</groupId>
+		<artifactId>xmlenc</artifactId>
+		<version>0.52</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-mapper-asl</artifactId>
+		<version>1.0.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-core-asl</artifactId>
+		<version>1.0.1</version>
+	</dependency>
+
+	<dependency> <!-- Terrier 4 does not incude a version number -->
+		<groupId>org.apache.thrift</groupId>
+		<artifactId>libfb303</artifactId>
+		<version>0.9.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>tomcat</groupId>
+		<artifactId>jasper-runtime</artifactId>
+		<version>5.5.12</version>
+	</dependency>
+
+	<dependency>
+		<groupId>commons-cli</groupId>
+		<artifactId>commons-cli</artifactId>
+		<version>1.2</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+		<version>1.7.10</version>
+	</dependency>
+
+	<dependency>
+		<groupId>tomcat</groupId>
+		<artifactId>jasper-compiler</artifactId>
+		<version>5.5.12</version>
+	</dependency>
+
+	<dependency>
+		<groupId>hsqldb</groupId>
+		<artifactId>hsqldb</artifactId>
+		<version>1.8.0.10</version>
+	</dependency>
+
+	<dependency>
+		<groupId>ch.qos.logback</groupId>
+		<artifactId>logback-classic</artifactId>
+		<version>1.1.2</version>
+	</dependency>
+
+
+	<dependency>
+		<groupId>org.eclipse.jdt</groupId>
+		<artifactId>core</artifactId>
+		<version>3.1.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>commons-el</groupId>
+		<artifactId>commons-el</artifactId>
+		<version>1.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>oro</groupId>
+		<artifactId>oro</artifactId>
+		<version>2.0.8</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.mockito</groupId>
+		<artifactId>mockito-all</artifactId>
+		<version>1.8.0</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>net.sf.kosmosfs</groupId>
+	  <artifactId>kfs</artifactId>
+	  <version>0.3</version> <!-- Should be 0.2.2 -->
+	</dependency>
+
+	<dependency>
+		<groupId>commons-net</groupId>
+		<artifactId>commons-net</artifactId>
+		<version>1.4.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>commons-httpclient</groupId>
+		<artifactId>commons-httpclient</artifactId>
+		<version>3.0.1</version>
+	</dependency>
+
+<!-- _________________________ JETTY-EXP _________________________ --> 
+
+	<dependency> <!-- Terrier 4 does not incude a version number -->
+		<groupId>javax.servlet</groupId>
+		<artifactId>jsp-api</artifactId>
+		<version>2.0</version>
+	</dependency>
+
+	<dependency> <!-- Terrier 4 does not incude a version number -->
+		<groupId>ant</groupId>
+		<artifactId>ant</artifactId>
+		<version>1.6.5</version>
+	</dependency>
+
+<!-- _________________________ POI _________________________ --> 
+
+	<dependency>
+		<groupId>org.apache.xmlbeans</groupId>
+		<artifactId>xmlbeans</artifactId>
+		<version>2.3.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>dom4j</groupId>
+		<artifactId>dom4j</artifactId>
+		<version>1.6.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>stax</groupId>
+		<artifactId>stax-api</artifactId>
+		<version>1.0.1</version>
+	</dependency>
+	
+  </dependencies>
+  
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>src/test/main</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/core</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/webapps</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/trec</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/websitesearch</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/desktop</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/learning</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/test</directory>
+          <excludes>
+            <exclude>**/*.java</exclude>
+          </excludes>
+      </resource>
+      <resource>
+          <directory>etc</directory>
+          <excludes>
+            <exclude>**/*.java</exclude>
+          </excludes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
+    <pluginManagement>
+    	<plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-resources-plugin</artifactId>
+                                        <versionRange>2.4.3</versionRange>
+                                        <goals>
+                                            <goal>resources</goal>
+                                            <goal>testResources</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute />
+                                    </action>
+                                </pluginExecution>
+								<pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-compiler-plugin</artifactId>
+                                        <versionRange>2.3.2</versionRange>
+                                        <goals>
+                                            <goal>testCompile</goal>
+                                            <goal>compile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute />
+                                    </action>
+                                </pluginExecution>
+                                
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+        
+
+	     <plugin>
+  			<artifactId>exec-maven-plugin</artifactId>
+  			<groupId>org.codehaus.mojo</groupId>
+  			<executions>
+    				<execution>
+      					<id>ant-build</id>
+      					<phase>generate-sources</phase>
+      					<goals>
+        					<goal>exec</goal>
+      					</goals>
+      					<configuration>
+        					<executable>${basedir}/ant-compile.sh</executable>
+      					</configuration>
+				</execution>
+  			</executions>
+		</plugin>
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <fork>true</fork>
+                    <executable>${JAVA_HOME}/bin/javac</executable>
+                </configuration>
+            </plugin> 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+      			<artifactId>maven-assembly-plugin</artifactId>
+      			<configuration>
+        			<archive>
+          				<manifest>
+            				<mainClass>TrecTerrier</mainClass>
+          				</manifest>
+        			</archive>
+        			<descriptorRefs>
+          				<descriptorRef>jar-with-dependencies</descriptorRef>
+        			</descriptorRefs>
+      			</configuration>
+    		</plugin>
+
+		<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-surefire-plugin</artifactId>
+		        <version>2.19</version>
+		        <configuration>
+		          <includes>
+		            <include>TerrierDefaultTestSuite.java</include>
+		          </includes>
+		        </configuration>
+		</plugin>
+        </plugins>
+  </build>
+</project>

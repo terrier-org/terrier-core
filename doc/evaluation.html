@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Evaluation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="querylanguage.html">Previous: Terrier Query Language</a>] [<a href="index.html">Contents</a>] [<a href="realtime_indices.html">Next: Real-time Index Structures</a>]
+</br><br><h1>Evaluation</h1>
+
+<p> Terrier provides a Java implementation of trec_eval for evaluating results of TREC adhoc and named-page finding tasks. Before running an evaluation, we need to specify the relevance assessments file in /etc/trec.qrels. To evaluate all .res result files in folder /var/results, we can type the following:
+</p>
+
+<pre>bin/trec_terrier.sh -e</pre>
+
+<p>
+The above command evaluates each .res file in folder /var/results for TREC adhoc task. We can evaluate for a particular result file by giving the filename in the command line:
+</p>
+
+<pre>bin/trec_terrier.sh -e PL2c1.0_0.res</pre> or
+
+<pre>bin/trec_terrier.sh -e ./var/results/PL2c1.0_0.res</pre>
+<p>
+The above command evaluates only ./var/results/PL2c1.0_0.res. For a result file named x.res, the evaluation result is saved in file x.eval, which contains the content as shown in the following example:
+</p>
+
+<pre>
+____________________________________
+Number of queries  = 50
+Retrieved          = 48831
+Relevant           = 2279
+Relevant retrieved = 1814
+____________________________________
+Average Precision: 0.2977
+R Precision      : 0.3271
+____________________________________
+Precision at    1: 0.5600
+Precision at    2: 0.5500
+Precision at    3: 0.5400
+Precision at    4: 0.5150
+Precision at    5: 0.5000
+Precision at   10: 0.4540
+Precision at   15: 0.4200
+Precision at   20: 0.3920
+Precision at   30: 0.3280
+Precision at   50: 0.2692
+Precision at  100: 0.1964
+Precision at  200: 0.1329
+Precision at  500: 0.0658
+Precision at 1000: 0.0363
+____________________________________
+Precision at   0%: 0.7325
+Precision at  10%: 0.6022
+Precision at  20%: 0.5180
+Precision at  30%: 0.4212
+Precision at  40%: 0.3616
+Precision at  50%: 0.3026
+Precision at  60%: 0.2292
+Precision at  70%: 0.1696
+Precision at  80%: 0.1151
+Precision at  90%: 0.0582
+Precision at 100%: 0.0151
+____________________________________
+Average Precision: 0.2977
+</pre>
+
+<p> The above displayed evaluation measures are averaged over a batch of queries. We can save the average precision of each query by using option -p in the command line:</p>
+<pre>bin/trec_terrier.sh -e PL2c1.0_0.res -p</pre>
+
+<p> In addition to adhoc task, we can also evaluate for TREC named-page finding task by using option -n: </p>
+<pre>bin/trec_terrier.sh -e PL2c1.0_0.res -n</pre>
+
+<p>
+The evaluation result, including the average reciprocal rank over all queries, are saved in file var/results/PL2c1.0_0.eval. The evaluation result contains the rank of the first relevant retrieved document for each query. It also contains the overall evaluation information as shown in the following example:
+</p>
+
+<p><tt>Average Reciprocal Rank: 0.5320129003570543</tt></p>
+<p><tt>Percentage of answers found in the first rank: 0.44</tt></p>
+<p><tt>Percentage of answers found among the top 5 documents: 3.033333333333333</tt></p>
+<p><tt>Percentage of answers found among the top 10 documents: 0.72</tt></p>
+<p><tt>Percentage of answers found among the top 20 documents: 0.7933333333333333</tt></p>
+<p><tt>Percentage of answers found among the top 50 documents: 0.8666666666666667</tt></p>
+<p><tt>Percentage of documents not found in top 50 documents: 0.13333333333333333</tt></p>
+
+<p>If option -p is applied, the .eval file contains the reciprocal rank of each query. </p>
+
+<b>TREC_EVAL</b><p>
+Runs created by Terrier are compatible with the Trec_Eval tool developed by Chris Buckley. You can download Trec_Eval from <a href="http://trec.nist.gov/trec_eval/">http://trec.nist.gov/trec_eval/</a>.
+</p>
+
+[<a href="querylanguage.html">Previous: Terrier Query Language</a>] [<a href="index.html">Contents</a>] [<a href="realtime_indices.html">Next: Real-time Index Structures</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

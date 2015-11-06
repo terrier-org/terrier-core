@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Website Search Application</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+
+[<a href="terrier_http.html">Previous: Web-based Terrier</a>] [<a href="index.html">Contents</a>] [<a href="trec_examples.html">Next: TREC Experiment Examples</a>]
+</br><br><h1>Real-time Indexing and Search of Websites</h1>
+
+<p>
+In Terrier 4.0, a new website search application was added to facilitate easy indexing and search of websites. This application combines the crawling functionality of 
+<a href="http://code.google.com/p/crawler4j/">Crawler4J</a>, the Terrier's <a href="realtime_indices.html">updatable Memory index structures</a> and a 
+<a href="terrier_http.html">Web-based Terrier front-end</a> to demonstrate real-time indexing and retrieval of content from the Web. In particular, this application
+allows websites to be added dynamically to a frontier of pages to be crawled. Pages from the added websites will be downloaded in the background and indexed automatically.
+The browser-based search interface provides a basic search facility over the index produced. 
+</p>
+
+<br><h2>Launching the Website Search Application</h2>
+<p>The website search application is comprised of two main components. First, the <a href="javadoc/org/terrier/services/websitesearch/package-summary.html">org.terrier.services.websitesearch</a> package contains a service class named <a href="javadoc/org/terrier/services/websitesearch/WebsiteSearch.html">WebsiteSearch</a> 
+that provides methods to crawl new websites, index documents from those websites, search over the index produced and write the index to disk. Second, a JSP (java servlet page)
+search interface is stored in <i>src/webapps/websitesearch/</i> that provides search controls and rendering capability for the search results. The website search application is
+launched via the JSP search interface, which calls the java WebsiteSearch service internally top access all needed functionality.</p>    
+
+<p>Since the interface is represented as a java servlet page, it can be loaded into a Jetty webserver using <a href="terrier_http.html">http_terrier.sh</a> by specifying the 
+website search interface as follows:<p>
+<pre>
+bin/http_terrier.sh 8080 src/webapps/websitesearch/
+</pre>
+
+<p>This will host the website search demo at:</p>
+<pre><a href="http://localhost:8080/">http://localhost:8080/</a></pre>
+
+<p>It is worth noting that the website search application configures itself automatically, regardless of the contents of the <tt>etc/terrier.properties</tt> file. 
+It does this by overriding relevant variables in the <a href="javadoc/org/terrier/services/websitesearch/WebsiteSearch.html">WebsiteSearch</a> and 
+<a href="javadoc/org/terrier/services/websitesearch/crawler4j/CrawlStrategy.html">CrawlStrategy</a> classes with reasonable defaults for Web search.</p>
+
+<br><h2>Using the Application</h2>
+
+<p>When first loaded, the splash screen will ask for you to enter a website to index, as shown below:</p>
+<center><img style="border:1px solid black;" src="images/WebsiteSearch1.png" width="100%" height="100%"/></center>
+
+<p>When the 'Crawl Website' button is clicked, the given hostname will be added to a crawl frontier (list of pages to crawl). A Web crawler will first download the page for
+that URL, and if it exists adds it to a <a href="javadoc/org/terrier/realtime/memory/MemoryIndex.html">MemoryIndex</a>. Then any links on the page are added to the crawl frontier. The 'crawl depth' parameter specifies how many
+successive pages to follow the links from to find new documents. The crawler will restrict itself to crawling only pages from the originally named host, i.e. URL's that
+contain the hostname you originally entered.</p>
+
+<p>Once crawling is underway, the main search interface will be loaded:</p>
+<center><img style="border:1px solid black;" src="images/WebsiteSearch2.png" width="100%" height="100%"/></center>
+
+<p>The top search bar facilitates retrieval over all documents crawled so far. The left sidebar provides statistics for the current index, allows new hosts to be added to the
+crawl frontier and for the current index to be saved as a classical Terrier on-disk index.</p></br>
+
+[<a href="terrier_http.html">Previous: Web-based Terrier</a>] [<a href="index.html">Contents</a>] [<a href="trec_examples.html">Next: TREC Experiment Examples</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+<tr><td colspan="2">&nbsp;</td></tr>
+</body>
+</html>

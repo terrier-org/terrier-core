@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Configuring Terrier</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="basicComponents.html">Previous: Terrier Components</a>] [<a href="index.html">Contents</a>] [<a href="configure_indexing.html">Next: Configuring Indexing</a>]
+</br></br><h1>Configuring Terrier</h1>
+
+<p>
+
+<h2>Configuring Overview</h2>
+<p>
+</br></br><h1>Configuring Terrier</h1>
+
+<p>
+
+<h2>Configuring Overview</h2>
+<p>
+Terrier is configured overall by a few files, all in the <tt>etc/</tt> directory. The most central files are <tt>terrier.properties</tt> and <tt>terrier-log.xml</tt>. In <tt>terrier.properties</tt>, you can specify any of the various properties that are defined in Terrier. The <a href="properties.html">Properties</a> documentation page lists the most used properties that you need to configure Terrier, while the <a href="javadoc/">javadoc</a> for any class lists the properties that directly affect the class. The default <tt>terrier.properties</tt> file is given below:
+</p>
+
+<pre>
+
+#default controls for query expansion
+querying.postprocesses.order=QueryExpansion
+querying.postprocesses.controls=qe:QueryExpansion
+
+#default and allowed controls
+querying.default.controls=
+querying.allowed.controls=qe,start,end,qemodel
+
+#document tags specification
+#for processing the contents of
+#the documents, ignoring DOCHDR
+TrecDocTags.doctag=DOC
+TrecDocTags.idtag=DOCNO
+TrecDocTags.skip=DOCHDR
+
+#query tags specification
+TrecQueryTags.doctag=TOP
+TrecQueryTags.idtag=NUM
+TrecQueryTags.process=TOP,NUM,TITLE
+TrecQueryTags.skip=DESC,NARR
+
+#stop-words file
+stopwords.filename=stopword-list.txt
+
+#the processing stages a term goes through
+termpipelines=Stopwords,PorterStemmer
+</pre>
+
+<p>
+In the terrier.properties file, properties are specified in the format <tt>name=value</tt> (the default Java Properties format). Comments are lines starting with <tt>#</tt>.
+</p>
+
+<p></p>
+
+<h3>Scripting Properties</h3>
+<p>
+TrecTerrier supports specifying properties on the command line. This allows the easy over-riding of properties, even if they are specified in the <tt>etc/terrier.properties</tt> file. For example, to create an index without using a stemmer, you could use the command line:
+</p>
+<pre>
+[user@machine]$ bin/trec_terrier.sh -i -Dtermpipelines=Stopwords
+</pre>
+
+<p>Aside: When looking for properties, Terrier also checks the <a href="http://download.oracle.com/javase/tutorial/essential/environment/sysprop.html">System properties provided by Java</a>. This means that you can set a property anywhere within Java code, or on the Java command line.
+
+<p>As another example, you can use shell scripting (e.g. Bash) to run Terrier with many settings for the <tt>expansion.terms</tt> property of query expansion:</p>
+<pre>
+[user@machine]$ for((i=2;i<10;i++)); do 
+	bin/trec_terrier.sh -r -q -Dexpansion.terms=$i 
+done
+</pre>
+
+<p></p>
+
+<h3>Configuring Logging</h3>
+<p>
+Terrier uses <a href="http://logging.apache.org/log4j/1.2/">Log4j</a> for logging. You can control the amount of logging information (the logging level) that Terrier outputs by altering the log4j config in <tt>etc/terrier-log.xml</tt>. For more information about configuring Log4j, see the <a href="http://logging.apache.org/log4j/1.2/manual.html">Log4j documentation</a>.
+
+<p></p>
+
+
+[<a href="basicComponents.html">Previous: Terrier Components</a>] [<a href="index.html">Contents</a>] [<a href="configure_indexing.html">Next: Configuring Indexing</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

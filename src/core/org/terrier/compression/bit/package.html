@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>org.terrier.compression package</title>
+<!--
+Terrier - Terabyte Retriever 
+Webpage: http://ir.dcs.gla.ac.uk/terrier 
+Contact: terrier{a.}dcs.gla.ac.uk
+University of Glasgow - School of Computing Science
+Information Retrieval Group
+ 
+The contents of this file are subject to the Mozilla Public
+License Version 1.1 (the "License"); you may not use this file except 
+compliance with the License. You may obtain a copy of the
+License at http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or
+implied. See the License for the specific language governing rights and
+limitations under the License.
+
+Copyright (C) 2004-2014 the University of Glasgow. All Rights Reserved.
+-->
+</head>
+<body bgcolor="white">
+<p>Provides implementation of a random access  and input and output streams 
+where gamma, unary and binary, delta Golomb encoded integers can be read or written.</p>
+
+<h2>Reading and Writing Stream Examples</h2>
+<p>Writing and reading of streams of compressed integers can be made using <a href="BitOutputStream.html"> BitOutputStream</a> and 
+<a href="BitInputStream.html">BitInputStream</a> classes, while the general contracts are specified using the <a href="BitOut.html">BitOut</a>
+and <a href="BitIn.html">BitIn</a> interfaces.</p>
+<pre>
+//Golomb coding parameter
+final int GOLOM_B = 10;
+
+//write a bit compressed stream to the file test.bf
+BitOut out = new BitOutputStream("test" + BitIn.USUAL_EXTENSION);
+//note that the numbers written must be greater than 0. The result for writing numbers less
+//than 1 is undefined
+for(int i=1;i&lt;number;i++)
+{
+ //unary, gamma, delta, and int write compressed integers
+ out.writeUnary(i);
+ out.writeGamma(i);
+ out.writeDelta(i);
+ out.writeInt(i);
+ //write a number given knowledge of how large it can be
+ out.writeMinimalBinary(i, number);
+ out.writeGolomb(i, GOLOM_B);
+ out.writeSkewedGolomb(i, GOLOM_B);
+ //get the position. This is used for creating pointers into the bit file
+ long byteOffset = out.getByteOffset();
+ byte bitOffset = out.getBitOffset();
+}
+out.close();
+
+//now read in the compressed stream
+BitIn in = new BitInputStream("test" + BitIn.USUAL_EXTENSION);
+for(int i=1;i&lt;number;i++)
+{
+ int num;
+ //unary, gamma, delta, and int write compressed integers
+ num = in.readUnary();
+ num = in.readGamma();
+ num = in.readDelta();
+ num = in.writeInt();
+ //write a number given knowledge of how large it can be
+ num = in.writeMinimalBinary(number);
+ num = in.writeGolomb(GOLOM_B);
+ num = in.writeSkewedGolomb(GOLOM_B);
+ //get the position. This is used for creating pointers into the bit file
+ long byteOffset = in.getByteOffset();
+ byte bitOffset = in.getBitOffset();
+ //save or write the pointer for later use
+}
+in.close();
+</pre>
+
+<h2>Reading RandomAccess</h2>
+As an alternative to reading and writing streams, a <a href="BitInSeekable.html">BitInSeekable</a> implemenation can be used to access a random point within
+a bit compressed file. In general, <a href="BitFileBuffered.html">BitFileBuffered</a> is the preferred BitInSeekable implementation, 
+however <a href="BitFileInMemory.html">BitFileInMemory</a> and <a href="BitFileInMemoryLarge.html">BitFileInMemoryLarge</a> are also available
+for keeping files in memory.
+<pre>
+BitInSeekable bitFile = new BitFileBuffered("test" + BitIn.USUAL_EXTENSION);
+//position to seek to
+long byteOffset = ?;
+byte bitOffset = ?;
+BitIn in = bitFile.readReset(byteOffset, bitOffset);
+int num;
+num = in.readUnary();
+num = in.readGamma();
+num = in.readDelta();
+num = in.writeInt();
+//write a number given knowledge of how large it can be
+num = in.writeMinimalBinary(number);
+num = in.writeGolomb(GOLOM_B);
+num = in.writeSkewedGolomb(GOLOM_B);
+</pre>
+
+</body>
+</html>

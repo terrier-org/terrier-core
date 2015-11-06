@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>org.terrier.matching.models package</title>
+<!--
+Terrier - Terabyte Retriever 
+Webpage: http://ir.dcs.gla.ac.uk/terrier 
+Contact: terrier{a.}dcs.gla.ac.uk
+University of Glasgow - School of Computing Science
+Information Retrieval Group
+ 
+The contents of this file are subject to the Mozilla Public
+License Version 1.1 (the "License"); you may not use this file except 
+compliance with the License. You may obtain a copy of the
+License at http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or
+implied. See the License for the specific language governing rights and
+limitations under the License.
+
+Copyright (C) 2004-2014 the University of Glasgow. All Rights Reserved.
+-->
+</head>
+<body bgcolor="white">
+<p>Provides the classes that implement various weighting models. Generally, the models fall into two classes: </p>
+<ul>
+<li>Term weighting models - score an occurrence of a document regardless of where the occurrences appear.</li>
+<li>Field-based weighting models - score an occurrence of a document depending on the fields that the term occurs in.</li>
+</ul>
+Various different families of weighting models are implemented:
+<ul>
+<li>IDF: e.g. <a href="TF_IDF.html">TF_IDF</a> (aka BM11), <a href="BM25.html">BM25</a>, <a href="LemurTF_IDF.html">LemurTF_IDF</a>.</li>
+<li>Divergence from Randomness: e.g. <a href="PL2.html">PL2</a>, <a href="InL2.html">InL2</a>. Arbitrary DFR models can also be generated
+using <a href="DFRWeightingModel.html">DFRWeightingModel</a></li>
+<li>hyper-geometric Divergence from Randomness: e.g. <a href="DLH.html">DLH</a>, <a href="DPH.html">DPH</a>, <a href="DFRee.html">DFRee</a></li>
+<li>Language modelling: e.g. <a href="Hiemstra_LM.html">Hiemstra_LM</a>, <a href="Dirichlet_LM.html">Dirichlet_LM</a></li>
+<li>Divergence from Independence: <a href="DFI0.html">DFI0</a></li>
+</ul>
+
+Of the field-based models, the following are implemented:
+<ul>
+<li><a href="BM25F.html">BM25F</a></li>
+
+<li><a href="PL2F.html">PL2F</a></li>
+<li><a href="MDL2.html">MDL2</a></li>
+<li><a href="ML2.html">ML2</a></li>
+<li>Arbitrary per-field normalisation models can be generated using the <a href="PerFieldNormWeightingModel.html">PerFieldNormWeightingModel</a> model.</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,39 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
+}
+
+#poweredby a {
+	margin: 30px;
+	font-size:75%;
+	text-decoration:none;
+}
+
+#queryform {
+	margin: 30px;
+}
+
+#summary {
+	margin: 30px;
+	background-color: #CCCCCC;
+}
+
+#pages {
+	margin: 30px
+}
+
+
+#results {
+	margin: 30px
+}
+
+#results span {
+	display:block;
+}
+
+#results span.results_score {
+	//display:none;
+}
+#results span.results_rank {
+	display:none;
+}

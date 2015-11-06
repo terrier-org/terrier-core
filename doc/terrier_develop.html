@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Guide for developing applications With Terrier</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="realtime_indices.html">Previous: Real-time Index Structures</a>] [<a href="index.html">Contents</a>] [<a href="extend_indexing.html">Next: Extending Indexing</a>]
+</br><br><h1>Developing Applications with Terrier</h1>
+<p>Terrier provides APIs for <a href="extend_indexing.html">indexing</a> documents, and <a href="extend_retrieval.html">querying</a> 
+  the generated indices. If you are developing applications using Terrier or extending it for your own research, then 
+  you may find the following information useful.</p>
+
+<h2>Extending Terrier</h2>
+<p>Terrier has a very flexible and modular architecture, with many classes, some with various alternatives. It is very easy to change many parts of the indexing and retrieval process. Essential to any in-depth extension of Terrier is to examine the very many <a href="properties.html">properties</a> that can be configured in Terrier. For instance, if you write a new Matching class, you can use this in a TREC-like setting by setting the property <tt>trec.matching</tt>, while if you write a new document weighting model you should set the property <tt>trec.model</tt> to use it. For more information about extending the retrieval functionalities of Terrier, see <a href="extend_retrieval.html">Extending Retrieval</a>, and <a href="extend_indexing.html">Extending Indexing</a> for more information about the indexing process Terrier uses.</p>
+
+<h3>FileSystem Abstraction Layer</h3>
+<p>All File IO in Terrier (excluding the Desktop application and Terrier configuration) is performed using the <a href="javadoc/org/terrier/utility/Files.html">Files</a> class. This affords various opportunities for allowing Terrier to run in various environments. In Terrier, a FileSystem abstraction layer was integrated into the Files class, such that other <a href="javadoc/org/terrier/utility/io/FileSystem.html">FileSystem</a> implementations could be plugged in. By default, Terrier ships with two implementation, namely <a href="javadoc/org/terrier/utility/io/LocalFileSystem.html">LocalFileSystem</a> for reading the local file system using the Java API, and <a href="javadoc/org/terrier/utility/io/HTTPFileSystem.html">HTTPFileSystem</a> for reading files accessible by HTTP or HTTPS protocols. A filename is searched for a prefixing scheme (eg "file://"), similar to a URI or URL. If a scheme is detected, then Terrier will search through its known file system implementations for a file system supporting the found scheme. file:// is the default scheme if no scheme can be found in the filename; if the filename starts http://, then the file will be fetched by HTTP. Since Terrier 2.2, this abstraction layer has also supported Hadoop Distributed Filesystem for prefixes with hdfs:// - for more information, see <a href="hadoop_configuration.html">Configuring Terrier for Hadoop</a>. 
+
+<p>The Files layer can also transform paths to filenames on the fly. For example, if a certain HTTP namespace is accessible as a local file system, the Files layer can be informed using <tt>Files.addPathTransformation()</tt>. If you have a slow network file system, consider using the in-built caching layer in Files.</p>
+
+<p>Additional implementations can implement methods of the FileSystem interface that they support, and register themselves by calling the <tt>Files.addFileSystemCapability()</tt> method. The FileSystem denotes the operations it supports on a file or path by returning the bit-wise OR of the constants named in Files.FSCapability.  </p>
+
+<p>Finally, the Files layer supports transparent compression for reading or writing file streams. In particular, compressed files using Gzip (.gz) and Bzip2 (.bz2) can be obtained by just adding the extension to the file. Moreover, alternative compression/decompression libraries can be added using the <tt>addFilterInputStreamMapping()</tt> method.</p>
+
+<h2>Compiling Terrier</h2>
+<p>The main Terrier distribution comes pre-compiled as Java, and can be run on
+any Java 1.7 JDK. You should have no need to compile Terrier unless you have altered the Terrier source code and wish to check or use your changes.
+
+<p>Terrier is distributed with an <a href="http://ant.apache.org/">Ant</a> build.xml file. It compiles files in the src folder, and creates terrier-$VERSION.jar files in the lib/ folder. The following Ant targets are defined:
+<ul>
+<li>clean - removes all build process files.</li>
+<li>jar - compiles both the core and testing jar files.</li>
+<li>javadoc - compiles the latest javadoc to the doc/javadoc folder.</li>
+<li>test - runs the unit and end-to-end tests.</li>
+<li>batch-test - runs the end-to-end test using the WT2G corpus.</li>
+<li>dist - creates the .tar.gz, .tar.bz2, .zip distributables.</li>
+</ul>
+
+<p>If you use the <a href="http://www.eclipse.org">Eclipse IDE</a>, then you can get it to correctly compile Terrier by installing the <a href="http://antlreclipse.sourceforge.net/">Antlr Eclipse Plugin</a>.</p>
+
+
+<h2>Testing Terrier</h2>
+<p>Terrier now has many JUnit test classes, located into the <tt>src/test</tt> folder. In particular, JUnit tests are now provided for a great many of the classes in Terrier, including (but not limited to) indexers, toknisation, retrieval, query parsing, compression, and evaluation.</p> 
+
+<p> In addition, there are JUnit-based end-to-end tests that ensure that the expected results are obtained from a small (22 document) corpus consisting of Shakespeare's play, the Merchant of Venice. The end-to-end tests test all indexers, as well as retrieval functionality behaves as expected. The corpus, test topics and relevance assesments are located in <tt>share/tests/shakespeare</tt>. Running the unit and Shakespeare end-to-end tests takes about 5 minutes, and can be performed from the command line using the Ant <tt>test</tt> target. </p>
+
+<p>New in Terrier 3.5 is an end-to-end test based on the TREC WT2G corpus. This is good method test to ensure that a change on Terrier has not negatively impacted on retrieval performance. Note that while indexing the WT2G corpus only takes a few minutes, the end-to-end test suite runs different indexing varieties, so you should allow about about an hour for this test to run. To run this test, you need to specify the location of the WT2G corpus, topics and relevance assessments (qrels):</p> 
+
+<pre>
+ant batch-test  -Dwt2g.corpus=/path/to/WT2G/ -Dwt2g.topics=/path/to/WT2G_topics/small_web/topics.401-450 -Dwt2g.qrels=/path/to/WT2G_topics/small_web/qrels.trec8
+</pre>
+
+<p></p>
+[<a href="realtime_indices.html">Previous: Real-time Index Structures</a>] [<a href="index.html">Contents</a>] [<a href="extend_indexing.html">Next: Extending Indexing</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

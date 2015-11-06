@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Real-time Index Structures</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+
+[<a href="evaluation.html">Previous: Evaluation</a>] [<a href="index.html">Contents</a>] [<a href="terrier_desktop.html">Next: Desktop Search in Terrier</a>]
+</br><br><h1>Real-time Indexing with Terrier</h1>
+
+<h2>Introduction</h2>
+<p>
+
+In addition to traditional on-disk indices, Terrier provides both memory-only and hybrid memory+disk index structures that can be updated dynamically
+with new documents over time. Since Terrier 4.0, the top level <a href="javadoc/org/terrier/structures/Index.html">Index</a> class became abstract  
+such that different types of indices can be supported. The pre-Terrier 4.0 index functionality is contained within the <a href="javadoc/org/terrier/structures/IndexOnDisk.html">IndexOnDisk</a>
+class, while new index types were added to enable search systems that can be updated in real-time without a lengthy batch indexing process. 
+
+</p>
+
+
+<h2>Index Interfaces</h2>
+
+<p>
+To support real-time indexing, two new interfaces have been defined, namely <a href="javadoc/org/terrier/realtime/UpdatableIndex.html">UpdatableIndex</a>
+and <a href="javadoc/org/terrier/realtime/WritableIndex.html">WritableIndex</a>. An index class that implements WritableIndex supports the dynamic addition
+of new documents via a indexDocument() method. When indexDocument() is called, that document will be added to the index immediately and will be searchable once
+the indexDocument() returns. The WritableIndex interface represents an index that can be written to disk. In particular,
+a class that implements WritableIndex will implement a write() method that will convert each of the index structures into equivalent on-disk structures and will be written out
+to a specified path and with a named prefix. An index written in this way can then be later loaded as an IndexOnDisk index.
+</p>
+
+<h2>Real-time Index Types</h2>
+
+<p>
+There are two real-time index structures supported in Terrier 4.0:
+</p>
+<ul>
+<li><a href="javadoc/org/terrier/realtime/memory/MemoryIndex.html">MemoryIndex</a>: 
+Represents an index that is held wholly in memory. MemoryIndex is both an UpdatableIndex and a WritableIndex. MemoryIndex is designed to provide a fast updatable
+index structure for relatively small numbers of documents. </li>
+<li><a href="javadoc/org/terrier/realtime/incremental/IncrementalIndex.html">IncrementalIndex</a>: 
+A hybrid index structure that combines a MemoryIndex with zero or more IndexOnDisk indices, facilitating the  updating of a large index that could not be
+stored in memory alone. An incremental index is a <a href="javadoc/org/terrier/realtime/multi/MultiIndex.html">MultiIndex</a>,
+where one index shard is stored in memory and the rest are stored on disk. Periodically, the
+memory index is then written to disk, defined as per a FlushPolicy. When the memory index has
+been flushed to disk, optionally the on-disk portion of the incremental index can then be merged
+together (based upon a MergePolicy) and/or deleted (based upon a DeletePolicy). Incremental index uses the following properties:</p>
+<ul><li>incremental.flush: the flush policy to use. Four possible values are supported: noflush (default), flushdocs, flushmem, flushtime</li></ul>
+<ul><li>incremental.merge: the merge policy to use. Three possible values are supported: nomerge (default), single, geometric</li></ul>
+<ul><li>incremental.delete: the delete policy to use. Two possible values are supported: nodelete (default), deleteFixedSize</li></ul></li>
+</ul>
+
+<h2>Usage</h2>
+Below we give some examples for using the real-time Terrier index structures.
+
+<ul>
+<li>We provide a Website search demo that illustrates a use of MemoryIndex to search over webpages as they are crawled. For more information about this demo see
+<a href="website_search.html">Real-time Indexing and Search of Websites</a>.</li>
+<li>Any custom Java application can make use of an updatable index using MemoryIndex or IncrementalIndex, a code sample that illustrates indexing of a document
+and then search for that document is provided below:</li>
+</ul>
+
+<pre>
+// define an example document and query
+String docContent = "Real-time indexing and retrieval is easy to use in Terrier";
+String query = "Indexing";
+
+// create a new index
+MemoryIndex memIndex = new MemoryIndex();
+
+// get the default tokeniser to break the document down into words
+Tokeniser tokeniser = Tokeniser.Tokeniser.getTokeniser();
+
+// create a Terrier document from the content string
+Reader contentReader = new StringReader(docContent);
+Map<String,String> documentProperties = new HashMap<String,String>();
+FileDocument document = new FileDocument(contentReader, documentProperties, tokeniser);
+
+// index the document
+memIndex.indexDocument(document);
+
+// the document is now available for searching
+
+// create a search manager (runs the search process over an index)
+Manager queryingManager = new Manager(memIndex);
+
+// a search request represents the search to be carried out
+SearchRequest srq = queryingManager.newSearchRequest("query", sb.toString());
+srq.setOriginalQuery(sb.toString());
+
+// define a matching model, in this case use the classical BM25 retrieval model
+srq.addMatchingModel("Matching","BM25");
+
+// run the four stages of a Terrier search
+queryingManager.runPreProcessing(srq);
+queryingManager.runMatching(srq);
+queryingManager.runPostProcessing(srq);
+queryingManager.runPostFilters(srq);
+
+ResultSet results = srq.getResultSet();
+</pre>
+
+
+
+[<a href="evaluation.html">Previous: Evaluation</a>] [<a href="index.html">Contents</a>] [<a href="terrier_desktop.html">Next: Desktop Search in Terrier</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+<tr><td colspan="2">&nbsp;</td></tr>
+</body>
+</html>

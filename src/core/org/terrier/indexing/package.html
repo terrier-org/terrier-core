@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>org.terrier.indexing package</title>
+<!--
+Terrier - Terabyte Retriever 
+Webpage: http://ir.dcs.gla.ac.uk/terrier 
+Contact: terrier{a.}dcs.gla.ac.uk
+University of Glasgow - School of Computing Science
+Information Retrieval Group
+ 
+The contents of this file are subject to the Mozilla Public
+License Version 1.1 (the "License"); you may not use this file except 
+compliance with the License. You may obtain a copy of the
+License at http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or
+implied. See the License for the specific language governing rights and
+limitations under the License.
+
+Copyright (C) 2004-2014 the University of Glasgow. All Rights Reserved.
+-->
+</head>
+<body bgcolor="white">
+<p>Provides classes and interfaces related to the indexing of documents.
+There are three main abstract concepts that are related to the code
+of this package.</p>
+<p>The first is the concept of a <a href="Collection.html">Collection</a> of documents. This can be 
+a standard TREC test collection, or a connection to a database from 
+where the documents are extracted.</p>
+
+<p>The second abstraction is the concept of a <a href="Document.html">Document</a>. An implementation 
+of a collection should iterate through the documents in the collection 
+and return one at a time. The document encapsulates the parser required
+to extract the information to index. Implementations of documents are
+provided for TREC documents, PDF documents and standard Microsoft Office
+formats, such as MS Word, MS Powerpoint and MS Excel.</p>
+
+<p>The third abstraction is related to the <a href="Indexer.html">Indexer</a>, the process that 
+iterates through the documents of a collection and creates the 
+necessary data structures. There are several implemented indexers:
+<ul>
+<li><a href="BasicIndexer.html">BasicIndexer</a> - indexes a Collection without recording position information.
+A <a href="../structures/DirectIndex.html">DirectIndex</a> is also built.</li>
+<li><a href="BlockIndexer.html">BlockIndexer</a> - as BasicIndexer, but also records position information.</li>
+<li><a href="BasicSinglePassIndexer.html">BasicSinglePassIndexer</a> - creates an index without building a DirectIndex. This is approach is inherently more scalable than BasicIndexer.</li>
+<li><a href="BlockSinglePassIndexer.html">BlockSinglePassIndexer</a> - as BasicSinglePassIndexer, but also records position information.</li>
+<li><a href="hadoop/Hadoop_BasicSinglePassIndexer.html">Hadoop_BasicSinglePassIndexer</a> - a distributed singlepass indexer that makes use of a <a href="http://hadoop.apache.org">Hadoop</a> MapReduce cluster.</li> 
+<li><a href="hadoop/Hadoop_BlockSinglePassIndexer.html">Hadoop_BasicSinglePassIndexer</a> - as Hadoop_BasicSinglePassIndexer, but also records position information.</li>
+</ul>
+</p>
+</body>
+</html>

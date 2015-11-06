@@ -1,0 +1,2732 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Description of Configurable properties of Terrier</title>
+ <link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css"> 
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+</head>
+  <body>
+<!--!bodystart--> 
+ [<a href="hadoop_indexing.html">Previous: Hadoop MapReduce Indexing with Terrier</a>] [<a href="index.html">Contents</a>] [<a href="terrier_develop.html">Next: Developing with Terrier</a>]
+</br><br><h1>Description of Configurable properties of Terrier</h1>
+
+ 
+<p>Terrier allows the user to configure many different aspects
+of the framework, in order to be adaptable to the specific needs of different
+applications. Here, we describe the properties that are used while indexing
+or  retrieving. A sample of how to set up the basic properties can be found
+in <a href="../etc/terrier.properties.sample">etc/terrier.properties.sample</a>.
+This page contains many of the properties in Terrier, broken down by category:
+<a href="#general">General</a>, <a href="#indexing">Indexing</a>, <a href="#retrieval">Retrieval</a>,
+<a href="#desktop">Desktop Search</a> and <a href="#misc">Miscellaneous</a>.
+
+</p>
+
+
+
+
+
+
+<h2><a name="general">General properties</a></h2>
+
+ 
+  <table border="1" width="100%">
+ <tbody>
+ <tr>
+      <td width="15%">Property</td>
+      <td><b>terrier.setup</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Absolute directory path</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Specifies where Terrier finds the terrier.properties file, which is usually in the etc/ directory. Analogous to terrier.etc property</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+ <tr>
+      <td width="15%">Property</td>
+      <td><b>terrier.home</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Absolute directory path</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>ApplicationSetup.TERRIER_HOME. Where Terrier is installed.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+  
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>terrier.etc</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Absolute directory path</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>TERRIER_HOME + "etc/"</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>TERRIER_ETC. Where terrier finds it's terrier.properties file if
+-Dterrier.setup is not specified</td>
+    </tr>
+ 
+  </tbody>
+</table>
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>terrier.share</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a href="javadoc/org/terrier/terms/Stopwords.html">org.terrier.terms.Stopwords</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Absolute directory path</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>TERRIER_HOME + "share/"</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>ApplicationSetup.TERRIER_SHARE. Where static distribution files are found, for instance the stopword files.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+  
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>terrier.var</b></td>
+    </tr>
+ <tr>
+      
+    </tr>
+    <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a
+ href="javadoc/org/terrier/applications/desktop/filehandling/WindowsFileOpener.html">org.terrier.applications.desktop.filehandling.WindowsFileOpener</a>,
+       <a href="javadoc/org/terrier/structures/Index.html">org.terrier.structures.Index</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Absolute directory path</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>TERRIER_HOME + "var/"</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>TERRIER_VAR. Where Terrier puts files that it creates, e.g. indices and results files.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>terrier.plugins</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>A comma-separated list of plugins.</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>not specified</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The list of plugins to be preloaded.</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>log4j.config</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>A valid log4j configuration file</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>terrier-log.xml</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>ApplicationSetup.LOG4J_CONFIG. The configuration file used by log4j.</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2><a name="indexing">Indexing</a></h2>
+
+
+ <br>
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>terrier.index.path</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a
+ href="javadoc/org/terrier/indexing/SimpleFileCollection.html">org.terrier.indexing.SimpleFileCollection</a>,
+       <a href="javadoc/org/terrier/indexing/TRECCollection.html">org.terrier.indexing.TRECCollection</a>
+     </td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>fully path of a directory</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>TERRIER_VAR + "index/"</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>TERRIER_INDEX_PATH. The name of the directory in which the data
+structures        created by Terrier are stored</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+ 
+ 
+ 
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>terrier.index.prefix</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a href="javadoc/org/terrier/structures/indexing/Indexer.html">org.terrier.structures.indexing.Indexer</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Filename prefix for all the indices</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>"data"</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>TERRIER_INDEX_PREFIX. Filename prefix for all the indices.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>stopwords.filename</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a href="javadoc/org/terrier/terms/Stopwords.html">org.terrier.terms.Stopwords</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>absolute path to file</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>TERRIER_SHARE + "stopword-list.txt"</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The name of the file which contains a list of stopwords.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>collection.spec</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a
+ href="javadoc/org/terrier/indexing/SimpleFileCollection.html">org.terrier.indexing.SimpleFileCollection</a>,
+       <a href="javadoc/org/terrier/indexing/TRECCollection.html">org.terrier.indexing.TRECCollection</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Absolute filename</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>TERRIER_ETC + value of "collection.spec"</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>COLLECTION_SPEC. Where the indexing process should find it's configuration
+for the Collection object. This is often a list of files or directories.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>ignore.empty.documents</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a href="javadoc/org/terrier/structures/indexing/Indexer.html">org.terrier.structures.indexing.Indexer
+       </a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>true, false</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>false</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>IGNORE_EMPTY_DOCUMENTS. Whether empty documents have an entry in
+the document index.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+ 
+
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>???.process</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/utility/TagSet.html">org.terrier.utility.TagSet</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited list of tags to process</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>For many of the tokenisers, configures which tags should be processed. ??? can be TrecDocTags or TrecQueryTags, to configure the TREC Collection and Query parsers respectively. ??? as FieldTags specifies the field that should be stored in the index.
+      </td>
+    </tr>
+ 
+  </tbody>
+</table>
+ 
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>???.skip</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/utility/TagSet.html">org.terrier.utility.TagSet</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited list of tags to not process</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>For many of the tokenisers, configures which tags should be skipped completely. ??? can be TrecDocTags or TrecQueryTags, to configure the
+    TREC Collection and Query parsers respectively.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>???.doctag</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/utility/TagSet.html">org.terrier.utility.TagSet</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Name of tag that marks the start of the document (trec only)</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>For some of the tokenisers, configures which tag which contains
+the opening tag (or query ID). ??? can be TrecDocTags or TrecQueryTags, to configure the
+    TREC Collection and Query parsers respectively.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+  
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>???.idtag</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/utility/TagSet.html">org.terrier.utility.TagSet</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Name of tag that contains the unique identifier (trec only)</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>For some of the tokenisers, configures which tag which contains
+the document ID (or query ID). ??? can be TrecDocTags or TrecQueryTags, to configure the
+    TREC Collection and Query parsers respectively.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>???.casesensitive</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/utility/TagSet.html">org.terrier.utility.TagSet</a>
+		<a href="javadoc/org/terrier/indexing/TRECCollection.html">org.terrier.indexing.TRECCollection</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>true or false</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>true for TrecDocTags, false otherwise</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>For some of the tokenisers, configures if the tag matching is case-sensitive or not. The default is true for TRECCollection (TrecDocTags), and false for FieldTags and TrecQueryTags (TRECFullTokenizer which is used by the TREC query parser (TRECQuery)).</td></tr>
+
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>???.propertytags</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/utility/TagSet.html">org.terrier.utility.TagSet</a>
+		<a href="javadoc/org/terrier/indexing/TRECCollection.html">org.terrier.indexing.TRECCollection</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited list of tags to add as document properties</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>During indexing this enables document tags to be saved as document properties instead of being indexed. This is useful to store document properties in the meta index for use later, e.g. for display by the Terrier Web-based interface.</td></tr>
+
+  </tbody>
+</table>
+
+
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>block.indexing</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>, 
+      <a href="javadoc/org/terrier/applications/TRECIndexing.html">org.terrier.applications.TRECIndexing</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>true, false</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>false</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>ApplicationSetup.BLOCK_INDEXING. Sets whether block positions should
+be saved during indexing. This is required to do phrasal searches. Client
+code should examine this to determine whether to use the BasicIndexer or
+the BlockIndexer.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+  
+ 
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>blocks.size</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a href="javadoc/org/terrier/structures/indexing/classical/BasicIndexer.html">org.terrier.structures.indexing.classical.BasicIndexer</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>integer &gt; 0</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>1</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>ApplicationSetup.BLOCK_SIZE. The number of terms contained in the
+same block</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>blocks.max</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a href="javadoc/org/terrier/structures/indexing/classical/BasicIndexer.html">org.terrier.structures.indexing.classical.BasicIndexer</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>integer &gt;= 0</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>100000</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>MAX_BLOCKS. The maximum number of blocks a document may contain.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>lowercase</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a href="javadoc/org/terrier/indexing/TaggedDocument.html">org.terrier.indexing.TaggedDocument</a>,
+       <a
+ href="javadoc/org/terrier/indexing/TRECFullTokenizer.html">org.terrier.indexing.TRECFullTokenizer</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>true, or false</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>true</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>Whether text is converted to lowercase before parsing</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>tokeniser</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a href="javadoc/org/terrier/indexing/tokenisation/Tokeniser.html">org.terrier.indexing.tokenisation.Tokeniser</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>a classname implementing the Tokeniser interface</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>EnglishTokeniser</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The Tokeniser implementation to be used when splitting text into tokens. This allows for 
+     corpora in different languages to be indexed by setting a Tokeniser implementation appropriate
+     for each language.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>indexing.max.tokens</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a href="javadoc/org/terrier/structures/indexing/Indexer.html">org.terrier.structures.indexing.Indexer</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>integer &gt;=0</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>0</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>Sets a limit to the maximum number of tokens indexed for a document.
+The default value 0 means that there is no limit.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>indexing.max.docs.per.builder</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a href="javadoc/org/terrier/structures/indexing/Indexer.html">org.terrier.structures.indexing.Indexer</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>integer &gt;=0</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>18,000,000</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>Sets a limit to the maximum number of documents in one index during indexing. After this point, 
+a new index will be created, and at the end, all the indices will be merged. 
+Reasoning: During classical two-pass indexing, memory is constrained by the TermCodes table. If too many different unique terms are indexed, then an OutOfMemoryError will occur. For TREC GOV2 collection, 18 million documents is a good point to start a new index. The special value 0 means that there is no limit. 
+This property also applies for single-pass indexing, although it can be safely set higher. It does not apply for MapReduce indexing.</td>
+   </tr>
+
+  </tbody>
+</table>
+ 
+ 
+
+
+
+<h3>Advanced</h3>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>termpipelines</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/querying/Manager.html">org.terrier.querying.Manager</a>,
+      <a href="javadoc/org/terrier/structures/indexing/Indexer.html">org.terrier.structures.indexing.Indexer</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited list of term pipeline entities to pass query terms through. Use blank to denote
+		no termpipeline objects</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>Stopwords,PorterStemmer</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Defines which term pipeline entities to pass query terms through.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+ 
+  
+  
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>invertedfile.processpointers</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/structures/indexing/classical/InvertedIndexBuilder.html">org.terrier.structures.indexing.classical.InvertedIndexBuilder</a>,
+      <a
+ href="javadoc/org/terrier/structures/indexing/classical/BlockInvertedIndexBuilder.html">org.terrier.structures.indexing.classical.BlockInvertedIndexBuilder</a></t
+d>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Integer value &gt; 0</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>20000000</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Defines the number of pointers that should be processed at once when
+building the inverted index. The InvertedIndexBuilder first works out how many terms
+correspond to that many pointers, then scans the direct index
+looking for each of these term, then writes them to inverted index, then
+repeats scan for next bunch of terms. Increasing this speeds up inverted
+index building for large collections, but uses more memory. Decrease this
+if you encounter OutOfMemory errors while building the inverted index.
+Note that for block indexing, the default is lower: 2,000,000 pointers.
+<p>This option supersedes invertedfile.processterms. For the invertedfile.processterms strategy
+to be used, set invertedfile.processpointers to 0.
+</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>lexicon.builder.merge.lex.max</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/structures/indexing/LexiconBuilder.html">org.terrier.structures.indexing.LexiconBuilder</a>,
+      </td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>integer values &gt; 1</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>16</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>The number of temporary lexicons to merge at once during indexing.
+during lexicon building. Bigger is generally faster, but too many open file-handles causes slowness. 16 is a good trade-off. (See also the MERGE_FACTOR in GNU sort source code).</td>
+    </tr>
+
+  </tbody>
+</table>
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>indexing.excel.maxfilesize.mb</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/indexing/MSExcelDocument.html">org.terrier.indexing.MSExcelDocument</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>size of a file in megabytes</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>0.5</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The maximum file size of an Excel spreadsheet to be parsed.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+  
+
+<table border="1" width="100%">
+   <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>indexing.simplefilecollection.extensionsparsers</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/indexing/SimpleFileCollection.html">org.terrier.indexing.SimpleFileCollection</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>comma delimited list of file extensions and associated parsers to
+use        for the corresponding files.</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>txt:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument, 
+      pdf:PDFDocument,html:HTMLDocument,htm:HTMLDocument,xhtml:HTMLDocument, 
+      xml:HTMLDocument,doc:MSWordDocument,ppt:MSPowerpointDocument,xls:MSExcelDocument</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The parsers to be used for processing files with the specified extensions.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+   <tbody>
+    <tr>
+     <td width="15%">Property</td>
+     <td><b>indexing.simplefilecollection.defaultparser</b></td>
+   </tr>
+   <tr>
+     <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/indexing/SimpleFileCollection.html">org.terrier.indexing.SimpleFileCollection</a></td>
+   </tr>
+   <tr>
+     <td>Possible values</td>
+     <td>fully qualified class name</td>
+   </tr>
+   <tr>
+     <td>Default value</td>
+     <td>not specified</td>
+   </tr>
+   <tr>
+     <td>Configures</td>
+     <td>The parser to use by default for processing files with unknown extensions</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>trec.blacklist.docids</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/indexing/TRECCollection.html">org.terrier.indexing.TRECCollection</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>full path to filename</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>not specified</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The name of a file that contains a black list of document identifiers
+       to be ignored during indexing</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>trec.collection.class</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/applications/TRECIndexing.html">org.terrier.applications.TRECIndexing</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>a classname implementing Collection interface</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>TRECCollection</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The Collection object to be used to parse the collection. This allows test collection similar but not identical
+	 to TREC to be parsed using Terrier's TREC tools. New in Terrier 1.1.0 is the ability to chain Collections. The Collection
+	specified last is the inner-most one of the chain, the first is the outer-most (i.e. instantiation right-to-left). the first
+	collection should have a default constructor (no arguments), while the other collections should take as argument in their
+	constructor the inner-collection class. E.g. <tt>trec.collection.class=RemoveSmallDocsCollection,TRECCollection</tt>.
+	Instantiation handled by the CollectionFactory class.
+       </td>
+   </tr>
+
+  </tbody>
+</table>
+ 
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>indexer.meta.forward.keys</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/structures/indexing/CompressingMetaIndexBuilder.html">CompressingMetaIndexBuilder</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>comma delimited list of properties of a <a
+ href="javadoc/org/terrier/indexing/Document.html">Document</a> object that should be used as metadata.</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>docno</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The document properties that should be recorded as document metadata.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>indexer.meta.forward.keylens</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/structures/indexing/CompressingMetaIndexBuilder.html">CompressingMetaIndexBuilder</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>comma delimited list of the lengths of the values corresponding to the keys to be used as document metadata.</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>20</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>How long values can be in the MetaIndex.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>indexer.meta.reverse.keys</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/structures/indexing/CompressingMetaIndexBuilder.html">CompressingMetaIndexBuilder</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>comma delimited list of the keys that can be used to uniquely identify documents.</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>20</td>
+   </tr>
+    <tr>
+      <td>Configures</td>
+     <td>The MetaIndex keys that can unique identify a document. E.g. docno,url.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>max.term.length</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a>,
+       <a href="javadoc/org/terrier/indexing/FileDocument.html">org.terrier.indexing.FileDocument</a>,
+       <a
+ href="javadoc/org/terrier/indexing/TRECFullTokenizer.html">org.terrier.indexing.TRECFullTokenizer</a>,
+       <a href="javadoc/org/terrier/structures/Lexicon.html">org.terrier.structures.Lexicon</a>,
+     </td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Integer value &gt; 0</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>20</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>MAX_TERM_LENGTH. The size in the lexicon reserved for a string, i.e. the max length of any term in the index.
+term.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>memory.reserved</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html">org.terrier.structures.indexing.singlepass.BasicSinglePassIndexer</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>integer &gt; 0, probably around 50 million</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>50000000</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Free memory threshold that forces a run to be committed to disk in the single-pass indexer. Higher values means less chance of OutOfMemoryError occurring, but slower indexing speed as more runs will be generated. </td>
+    </tr>
+
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>memory.heap.usage</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html">org.terrier.structures.indexing.singlepass.BasicSinglePassIndexer</a></td>
+    </tr>
+ <tr> 
+      <td>Possible values</td> 
+      <td>positive float, range 0.0f - 1.0f</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>0.70</td>
+    </tr> 
+ <tr>
+      <td>Configures</td>
+      <td>amount of max heap allocated to JVM before a run is committed. Smaller values mean more runs and hence slower indexing. Larger values means more risk of OutOfMemoryError occurrences.</td>
+    </tr>
+    
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>docs.check</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html">org.terrier.structures.indexing.singlepass.BasicSinglePassIndexer</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>positive integer &gt; 0 </td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>20</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td> how often to check the amount of free memory. Lower values gives more protection from OutOfMemoryError.</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>inverted2direct.processtokens</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html">org.terrier.structures.indexing.singlepass.Inverted2DirectIndexBuilder</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>positive long &gt; 0 </td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>100000000, 10000000 for blocks</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td> total number of tokens to attempt each iteration of building the direct index. Use a lower value if OutOfMemoryError occurs.</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>terrier.index.retrievalLoadingProfile.default</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/structures/Index.html">org.terrier.structures.Index</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>true, false</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>true</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>Index.RETRIEVAL_LOADING_PROFILE. Whether index structures should be preloaded for retrieval.</td>
+		</tr>
+	</tbody>
+</table>
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>TaggedDocument.abstracts</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/indexing/TaggedDocument.html">org.terrier.indexing.TaggedDocument</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>Comma delimited list of abstract names to save as document properties</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>not specified</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The list of abstract names to save as document properties when indexing a TaggedDocument or one of its subclasses.</td>
+		</tr>
+	</tbody>
+</table>
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>TaggedDocument.abstracts.tags</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/indexing/TaggedDocument.html">org.terrier.indexing.TaggedDocument</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>Comma delimited list of tags from which to save abstracts</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>not specified</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The names of tags to save text from. ELSE is special tag name, which means anything not consumed by other tags.</td>
+		</tr>
+	</tbody>
+</table>
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>TaggedDocument.abstracts.tags.casesensitive</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/indexing/TaggedDocument.html">org.terrier.indexing.TaggedDocument</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>true or false</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>false</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>Configures if the tag matching is case-sensitive or not.</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>TaggedDocument.abstracts.lengths</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/indexing/TaggedDocument.html">org.terrier.indexing.TaggedDocument</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>Comma delimited list of maximum lengths for each abstract</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>Length 0</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The max lengths of the abstracts. Defaults to empty.</td>
+		</tr>
+	</tbody>
+</table>
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>FileDocument.abstract</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/indexing/FileDocument.html">org.terrier.indexing.FileDocument</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>Name to call the abstract</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>not specified</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The name of the abstract to save from the document. Note that only if this is set will an abstract be generated. Only a single abstract can be generated from a FileDocument.</td>
+		</tr>
+	</tbody>
+</table>
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>FileDocument.abstract.length</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/indexing/FileDocument.html">org.terrier.indexing.FileDocument</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>The maximum length for the abstract</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The maximum length for the abstract.</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2><a name="retrieval">Retrieval</a></h2> 
+
+<h3>Model</h3>
+
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>ignore.low.idf.terms</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/matching/Matching.html">org.terrier.matching.Matching</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>true, false</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>true</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Ignores a term that has a low IDF, ie appears in many documents.
+You may wish to turn this off for small or focused collections.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+  
+ 
+
+<h3>Interactive Retrieval</h3>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>interactive.output.format.length</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/applications/InteractiveQuerying.html">org.terrier.applications.InteractiveQuerying</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>integer number &gt; 0</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>1000</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>the maximum number of results to be displayed for Interactive querying</td>
+    </tr>
+ 
+  </tbody>
+</table>
+  
+
+<h3>TREC-style Batch Retrieval</h3>
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>trec.model</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Name of weighting models</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>InL2</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>The weighting model to use during retrieval.
+</td>
+    </tr>
+
+  </tbody>
+</table>
+  
+  <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>trec.results</b></b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Absolute directory path</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>TERRIER_VAR + value of "trec.results""</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>TREC_RESULTS. Where TREC*Querying applications should store their
+results files and where evaluation files should be placed.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+ 
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.results.file</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>A valid file name.</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>not specified</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>An arbitrary name for a TREC results file.</td>
+		</tr>
+	</tbody>
+</table>
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.querycounter.type</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>sequential, random</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>sequential</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>Whether to use sequential (auto-incremented) or randomly generated suffixes for run names.</td>
+		</tr>
+	</tbody>
+</table>
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.results.suffix</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>string</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>.res</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>ApplicationSetup.TREC_RESULTS_SUFFIX. The suffix to be used for result files.</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.runtag</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>string</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>not specified</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>An arbitrary runtag (6th field) for a TREC results file.</td>
+		</tr>
+	</tbody>
+</table>
+ 
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.topics</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>A valid topics file name</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>not specified</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>A single file containing the topics to be processed.</td>
+		</tr>
+	</tbody>
+</table>
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.topics.parser</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>A sub-class of org.terrier.structures.QuerySource</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>TRECQuery</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The class to be used when parsing a topics file.</td>
+		</tr>
+	</tbody>
+</table>
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.encoding</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/structures/TRECQuery.html">org.terrier.structures.TRECQuery</a>,
+			<a href="javadoc/org/terrier/indexing/TRECCollection.html">org.terrier.indexing.TRECCollection</a>,
+			<a href="javadoc/org/terrier/indexing/TRECUTFCollection.html">org.terrier.indexing.TRECUTFCollection</a>,
+			<a href="javadoc/org/terrier/terms/Stopwords.html">org.terrier.terms.Stopwords</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>A valid encoding scheme.</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>The system's default charset.</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The encoding to use for topics, documents, and stopwords files.</td>
+		</tr>
+	</tbody>
+</table>
+  
+  
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>trec.qrels</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/utility/ApplicationSetup.html">org.terrier.utility.ApplicationSetup</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Absolute filename</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>A single file containing the qrels to evaluate with.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+ 
+
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>trec.output.format.length</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a>,
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>integer number &gt; 0</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>1000</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>the maximum number of results to be displayed for TREC querying</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.querying.outputformat</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>A sub-class of TRECQuerying$OutputFormat</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>TRECQuerying$TRECDocnoOutputFormat</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The class used to write the results file.</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.querying.resultscache</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>A sub-class of TRECQuerying$QueryResultCache</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>TRECQuerying$NullQueryResultCache</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>The class used to cache the results.</td>
+		</tr>
+	</tbody>
+</table>
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>trec.querying.dump.settings</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>true, false</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>true</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>Whether the settings used to generate a results file should be dumped to a .settings file in conjunction with the .res file.</td>
+		</tr>
+	</tbody>
+</table>
+
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>trec.iteration</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>String</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>Q</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Related to standard format of TREC results</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>trec.manager</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a>,
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>String, Class name in org.terrier.querying</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>Manager</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>The Manager class to use during querying</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>trec.matching</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a>,
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>String, Class name in org.terrier.matching</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>org.terrier.matching.taat.Full</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>The Matching class to use during querying</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>matching.trecresults.file</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/matching/TRECResultsMatching.html">org.terrier.matching.TRECResultsMatching</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>A valid TREC results file</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>The TREC-formatted results file containing search results for each of the topics specified in the <tt>trec.topics</tt> property</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>matching.trecresults.format</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/matching/TRECResultsMatching.html">org.terrier.matching.TRECResultsMatching</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td><tt>DOCNO</tt>, <tt>DOCID</tt></td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td><tt>DOCNO</tt></td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Whether the TREC-formatted results file contains DOCNOs or Terrier's internal (integer) docids</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>matching.trecresults.scores</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/matching/TRECResultsMatching.html">org.terrier.matching.TRECResultsMatching</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>true, false</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>true</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Whether Terrier should use the relevance scores from the TREC-formatted results file</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>matching.trecresults.length</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a
+ href="javadoc/org/terrier/matching/TRECResultsMatching.html">org.terrier.matching.TRECResultsMatching</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>a non-negative integer</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>1000</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>The maximum number of results to be retrieved from a TREC results file for each query. If set to 0, all 
+      available results are retrieved (note that setting this property to 0 may slow down the retrieval process
+      for large collections, as a result set of the size of the collection will be allocated in memory)</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<h3>Query Expansion</h3>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>parameter.free.expansion</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/matching/models/queryexpansion/QueryExpansionModel.html">org.terrier.matching.models.queryexpansion.QueryExpansionModel</a>
+     </td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>true or false</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>true</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>Whether we apply parameter-free query expansion or not.</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+ 
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>rocchio.beta</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/matching/models/queryexpansion/QueryExpansionModel.html">org.terrier.matching.models.queryexpansion.QueryExpansionModel</a>
+     </td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>float</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>0.4</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The parameter of Rocchio's automatic query expansion</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>trec.qe.model</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/applications/batchquerying/TRECQuerying.html">org.terrier.applications.batchquerying.TRECQuerying</a>
+     </td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>Query expansion models</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>Bo1</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>A name of a query expansion model</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+ 
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>expansion.documents</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/matching/models/queryexpansion/QueryExpansionModel.html">org.terrier.matching.models.queryexpansion.QueryExpansionModel</a>
+     </td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>integer</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>3</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The number of top-ranked documents to be considered in the pseudo relevance set</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+ 
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>expansion.terms</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/matching/models/queryexpansion/QueryExpansionModel.html">org.terrier.matching.models.queryexpansion.QueryExpansionModel</a>,
+     </td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>integer</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>10</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>The number of the highest weighted terms from the pseudo relevance set 
+	  to be added to the original query. There can be overlap between the 
+	 original query terms and the added terms from the pseudo relevance set</td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+	<td><b>expansion.mindocuments</b></td>
+  </tr>
+ <tr>
+      <td>Used in</td>
+<td>
+<a
+ href="javadoc/org/terrier/querying/ExpansionTerms.html">org.terrier.querying.ExpansionTerms</a>
+     </td>
+ <tr>
+      <td>Possible values</td>
+     <td>integer</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>2</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>
+The minimum number of documents a term must exist in
+before it can be considered to be informative. Defaults to 2. For more information, see
+Giambattista Amati: Information Theoretic Approach to Information Extraction. FQAS 2006: 519-529 <a href="http://dx.doi.org/10.1007/11766254_44">DOI 10.1007/11766254_44</a></td>
+  </tr>
+
+  </tbody>
+</table>
+ 
+ 
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+	<td><b>qe.feedback.selector</b></td>
+  </tr>
+ <tr>
+      <td>Used in</td>
+<td>
+<a
+ href="javadoc/org/terrier/querying/QueryExpansion.html">org.terrier.querying.QueryExpansion</a>
+     </td>
+ <tr>
+      <td>Possible values</td>
+     <td>classname, or comma-delimited class names</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>PseudoRelevanceFeedbackSelector</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>
+Class(es) that select feedback documents for query expansion. All classes must implement <a href="javadoc/org/terrier/querying/FeedbackSelector.html">FeedbackSelector</a>. If more than one is specified, then a chain is assumed, with last being innermost in the chain.
+  </tr>
+
+  </tbody>
+</table>
+ 
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+	<td><b>qe.expansion.terms.class</b></td>
+  </tr>
+ <tr>
+      <td>Used in</td>
+<td>
+<a
+ href="javadoc/org/terrier/querying/QueryExpansion.html">org.terrier.querying.QueryExpansion</a>
+     </td>
+ <tr>
+      <td>Possible values</td>
+     <td>classname, or comma-delimited class names</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>DFRBagExpansionTerms</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>
+Class(es) that select terms during query expansion. All classes must extend <a href="javadoc/org/terrier/querying/ExpansionTerms.html">ExpansionTerms</a>. If more than one is specified, then a chain is assumed, with last being innermost in the chain.
+  </tr>
+
+  </tbody>
+</table>
+ 
+ 
+
+<h3>Querying</h3>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>match.empty.query</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/matching/Matching.html">org.terrier.matching.Matching</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>true, false</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>true</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>If true, return all documents for an empty query. Use this if you
+have post filter/processes to filter out the documents. E.g. link: site: etc</td>
+    </tr>
+ 
+  </tbody>
+</table>
+  
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>querying.allowed.controls</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/querying/Manager.html">org.terrier.querying.Manager</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited list of which controls are allowed to be specified
+on the query. For use in interactive querying.</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>c, range</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Comma delimited list of which controls are allowed to be specified
+on the query. For use in interactive querying. "String:String" in the query
+are assumed to be fields unless the first string is an allowed control. An
+example value would be: c, range, link, site.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+ 
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>querying.default.controls</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/querying/Manager.html">org.terrier.querying.Manager</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited list of control names and values. Names and values
+are separated by colon.</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Sets the defaults control values for the querying process. Controls
+are used to control the querying process, and may be used to set matching
+models, post filters post processes etc. An example value would be: c:10,site:gla.ac.uk</td>
+    </tr>
+ 
+  </tbody>
+</table>
+ 
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>querying.postprocesses.order</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/querying/Manager.html">org.terrier.querying.Manager</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited list of all allowed post processes.</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Specifies the order in which post processes may be be called, and
+those that may be called. This is because post processes often have inter-dependencies.
+An example value would be: QueryExpansion,Scope,Site</td>
+    </tr>
+ 
+  </tbody>
+</table>
+  
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>querying.postprocesses.controls</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/querying/Manager.html">org.terrier.querying.Manager</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma and colon delimited list of control names and post process
+names.</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Specifies which controls enable which post processes. An example
+value would be: site:Site,qe:QueryExpansion,scope:Scope</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>querying.postfilters.order</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/querying/Manager.html">org.terrier.querying.Manager</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited list of all allowed post filters.</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Specifies the order in which post filters may be be called, and
+those that may be called. This is because post filters often have inter-dependencies.
+An example value would be: LinkFilter</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+ 
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>querying.postfilters.controls</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/querying/Manager.html">org.terrier.querying.Manager</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma and colon delimited list of control names and post filter
+names.</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Specifies which controls enable which post filters. An example
+value would be: link:LinkFilter</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+ 
+
+
+<h3>Advanced </h3>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>matching.dsms</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/matching/Matching.html">org.terrier.matching.Matching</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>Comma delimited names of classes in uk/ac/gla/terrier/matching/dsms,
+or other fully qualified models</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>not specified</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Specifies the static <a
+ href="javadoc/org/terrier/matching/dsms/DocumentScoreModifier.html">org.terrier.matching.dsms.DocumentScoreModifier</a>s
+that should be applied to all terms of all queries.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+
+<table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+      <td><b>matching.retrieved_set_size</b></td>
+    </tr>
+ <tr>
+      <td>Used in</td>
+      <td><a href="javadoc/org/terrier/matching/Matching.html">org.terrier.matching.Matching</a></td>
+    </tr>
+ <tr>
+      <td>Possible values</td>
+      <td>integer values &gt; 0</td>
+    </tr>
+ <tr>
+      <td>Default value</td>
+      <td>1000</td>
+    </tr>
+ <tr>
+      <td>Configures</td>
+      <td>Maximum size of the result set.</td>
+    </tr>
+ 
+  </tbody>
+</table>
+
+ 
+
+  <h2><a name="desktop">Desktop Terrier</a></h2>
+
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>desktop.file.associations</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/applications/desktop/filehandling/AssociationFileOpener.html">org.terrier.applications.desktop.filehandling.AssociationFileOpener</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>absolute path to filename</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>TERRIER_VAR/desktop.fileassoc</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>the name of the file in which we save the file type associations
+with applications. If no absolute path is specified it will be presumed by
+TERRIER_HOME/var </td>
+   </tr>
+ 
+  </tbody>
+</table>
+
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>desktop.indexing.singlepass</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/applications/desktop/DesktopTerrier.html">org.terrier.applications.desktop.DesktopTerrier</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>true, false</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>false</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>Whether single-pass indexing is used by in the Desktop Terrier.</td>
+   </tr>
+
+  </tbody>
+</table
+  
+ 
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>desktop.directories.spec</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/applications/desktop/DesktopTerrier.html">org.terrier.applications.desktop.DesktopTerrier</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>absolute path to filename</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>TERRIER_VAR/desktop.spec</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>the name of the file that holds a list of directories that are to be indexed
+     by the Desktop Terrier application</td>
+   </tr>
+ 
+  </tbody>
+</table>
+  
+ 
+ <table border="1" width="100%">
+ <tbody>
+    <tr>
+      <td width="15%">Property</td>
+     <td><b>desktop.directories.filelist</b></td>
+   </tr>
+ <tr>
+      <td>Used in</td>
+     <td><a
+ href="javadoc/org/terrier/applications/desktop/DesktopTerrier.html">org.terrier.applications.desktop.DesktopTerrier</a></td>
+   </tr>
+ <tr>
+      <td>Possible values</td>
+     <td>absolute path to filename</td>
+   </tr>
+ <tr>
+      <td>Default value</td>
+     <td>TERRIER_VAR\index\data.filelist</td>
+   </tr>
+ <tr>
+      <td>Configures</td>
+     <td>the name of the file in which we list all files that have been indexed</td>
+   </tr>
+ 
+  </tbody>
+</table>
+ 
+ 
+
+
+   
+ <h2><a name="misc">Miscellaneous</a></h2>
+ 
+ 
+ 
+  
+
+<table border="1" width="100%">
+	<tbody>
+		<tr>
+			<td width="15%">Property</td>
+			<td><b>stopwords.intern.terms</b></td>
+		</tr>
+		<tr>
+			<td>Used in</td>
+			<td><a href="javadoc/org/terrier/terms/Stopwords.html">org.terrier.terms.Stopwords</a></td>
+		</tr>
+		<tr>
+			<td>Possible values</td>
+			<td>true, false</td>
+		</tr>
+		<tr>
+			<td>Default value</td>
+			<td>false</td>
+		</tr>
+		<tr>
+			<td>Configures</td>
+			<td>Whether stopwords should be <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/lang/String.html#intern()">interned</a> during indexing.</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<! EOL trec.encoding trecquery.ignore.desc.narr.name.tokens xml.doctag xml.idtag
+xml.terms max.number.retrieved>
+ 
+<p></p>
+[<a href="hadoop_indexing.html">Previous: Hadoop MapReduce Indexing with Terrier</a>] [<a href="index.html">Contents</a>] [<a href="terrier_develop.html">Next: Developing with Terrier</a>]
+
+<!--!bodyend-->
+<hr> <small> Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+ Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+ <a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+  Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>
+</body>
+</html>

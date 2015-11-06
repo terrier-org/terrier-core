@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Extending Indexing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="terrier_develop.html">Previous: Developing with Terrier</a>] [<a href="index.html">Contents</a>] [<a href="extend_retrieval.html">Next: Extending Retrieval</a>]
+</br><br><h1>Extending Indexing in Terrier</h1>
+
+<p>Unless your data is in files (1 file per document, or in XML or TREC files), you will probably need to create your own collection decoder. Examples of such scenarios could be extracting documents to be indexed from a database. This is done by implementing the <a href="javadoc/org/terrier/indexing/Collection.html">Collection</a> interface, and setting this to be used with the <tt>trec.collection.class</tt> property.</p>
+
+
+<p>A Collection implementation returns a <a href="javadoc/org/terrier/indexing/Document.html">Document</a> object for every document in the corpus. Simple textual contents can be handled by <a href="javadoc/org/terrier/indexing/FileDocument.html">FileDocument</a>, while HTML documents can be handled by <a href="javadoc/org/terrier/indexing/TaggedDocument.html">TaggedDocument</a>. Otherwise, if your documents are of a non-standard format, you'll need to implement your own Document. The purpose of a Document object is to parse a Document, and extract the text that should be indexed -- optionally, you can designate the fields that contain the text to be extracted and, if <a href="configure_indexing.html#fields">configured</a>, the indexer will note the fields where each term occurs in a document.</p>
+
+<p>The Document typically provides the extracted text  as input to a tokeniser, which identifies multiple tokens, and return them as stream, in their order of occurrence. For languages where tokens are naturally delimited by whitespace characters, Terrier provides <a href="javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html">English</a> and <a href="javadoc/org/terrier/indexing/tokenisation/UTFTokeniser.html">UTF</a> tokenisers. If your particular corpus has more complicated tokenisation than just whitespace, you can implement the <a href="javadoc/org/terrier/indexing/tokenisation/Tokeniser.html">Tokeniser</a> interface to suit your needs.
+
+
+<h2>Indexers</h2>
+
+As discussed in <a href="configure_indexing.html">Configuring Indexing</a>, Terrier has three different indexing implementations. In the following, we describe how the classical two-pass and single-pass indexing are implemented. Details are on the <a href="hadoop_indexing.html">Hadoop MapReduce indexing are described elsewhere</a>.
+
+<h3>Classical two-pass indexing</h3>
+
+<p>There are two variants of  two-pass indexing: the BlockIndexer provides the same functionality as 
+  BasicIndexer, but uses a larger DirectIndex and InvertedIndex for storing the 
+  positions that each word occurs at in each document. This allows querying to 
+  use term positions information - for example Phrasal search (&quot;&quot;) and proximity 
+  search (&quot;&quot;~10). For more details about the querying process, you may refer to 
+  <a href="extend_retrieval.html">querying with Terrier</a> and the description of the 
+  <a href="querylanguage.html">query language</a>.</p>
+
+ <p>The indexer iterates through the documents of the collection, using a <a href="javadoc/org/terrier/indexing/tokenisation/Tokeniser.html">Tokeniser</a>
+ to identify terms to index. Each term found is sent through the <a href="javadoc/org/terrier/terms/TermPipeline.html">TermPipeline</a>. The TermPipeline
+transforms the terms, and can remove terms that should not be indexed. The TermPipeline chain in use is
+<tt>termpipelines=Stopwords,PorterStemmer</tt>, which removes terms from the document using the <a href="javadoc/org/terrier/terms/Stopwords.html">Stopwords</a> object, and then applies Porter's Stemming algorithm for English to the terms (<a href="javadoc/org/terrier/terms/PorterStemmer.html">PorterStemmer</a>). If you wanted to use a different stemmer, this is the point at which it should be implemented.
+</p>
+
+<p> Once terms have been processed through the TermPipeline, they are aggregated by the <a href="javadoc/org/terrier/structures/indexing/DocumentPostingList.html">DocumentPostingList</a> and the <a href="javadoc/org/terrier/structures/indexing/LexiconMap.html">LexiconMap</a>, to create the following data structures:</p>
+<ul>
+<li><a href="javadoc/org/terrier/structures/bit/DirectIndex.html">DirectIndex</a> : a compressed file, where we store the terms contained in each document. The direct index is used for automatic query expansion.</li>
+
+<li><a href="javadoc/org/terrier/structures/DocumentIndex.html">DocumentIndex</a> : a fixed-length entry file, where we store information about documents, such as the number of indexed tokens (document length), the identifier of a document, and the offset of its corresponding entry in the direct index. Created by the <a href="javadoc/org/terrier/structures/indexing/DocumentIndexBuilder.html">DocumentIndexBuilder</a>.</li>
+
+<li><a href="javadoc/org/terrier/structures/Lexicon.html">Lexicon</a> : a fixed-length entry file, where we store information about the 
+   vocabulary of the indexed collection. Built as a series of temporary Lexicons by the <a href="javadoc/org/terrier/structures/indexing/LexiconBuilder.html">LexiconBuilder</a>s, which
+are then merged at the end of the DirectIndex build phase. </li>
+</ul>
+
+<p>As the indexer iterates through the documents of the collection, it appends the direct and document indexes. For saving the vocabulary information, the indexer creates temporary lexicons for parts of the collection, which are merged once all the documents have been processed.</p>
+
+<p>Once the direct index, the document index and the lexicon have been created, the inverted index is created, by the <a href="javadoc/org/terrier/structures/indexing/classical/InvertedIndexBuilder.html">InvertedIndexBuilder</a>, which inverts the direct index.</p>
+
+<h3>Single-pass indexing</h3>
+<p>Terrier 2.0 adds the single-pass indexing architecture. In this architecture, indexing is performed to build up in-memory posting lists (<a href="javadoc/org/terrier/structures/indexing/singlepass/MemoryPostings.html">MemoryPostings</a> containing <a href="javadoc/org/terrier/structures/indexing/singlepass/Posting.html">Posting</a> objects), which are written to disk as 'runs' by the <a href="javadoc/org/terrier/structures/indexing/singlepass/RunWriter.html">RunWriter</a> when most of the available memory is consumed.</p>
+
+<p>Once the collection has been parsed, all runs are merged by the <a href="javadoc/org/terrier/structures/indexing/singlepass/RunsMerger.html">RunsMerger</a>, which uses a <a href="javadoc/org/terrier/structures/indexing/singlepass/SimplePostingInRun.html">SimplePostingInRun</a> to represent each posting list when iterating through the contents of each run.</p>
+
+<p>If a direct file is required, the <a href="javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html">Inverted2DirectIndexBuilder</a> can be used to create one.</p>
+
+<h2>Block Delimiter Terms</h2>
+<p>Block indexing can be configured to consider bounded instead of fixed-size blocks. Basically, a list of pre-defined terms must be specified as special-purpose block delimiters. By using sentence boundaries as block delimiters, for instance, one can have blocks to represent sentences. BlockIndexer, BlockSinglePassIndexer, and Hadoop_BlockSinglePassIndexer all implement this feature.</p>
+
+<p>Bounded block indexing can be used by configuring the following properties:</p>
+<ul><li><tt>block.delimiters.enabled</tt> - Whether delimited blocks should be used instead of fixed-size blocks. Defaults to false.</li>
+<li><tt>block.delimiters</tt> - Comma-separated list of terms that cause the block counter to be incremented.</li>
+<li><tt>block.delimiters.index.terms</tt> - Whether delimiters should be themselves indexed as normal terms. Defaults to false.</li>
+<li><tt>block.delimiters.index.doclength</tt> - Whether indexed delimiters should contribute to document length statistics. Defaults to false; if set to true, this property only has effect if <tt>block.delimiters.index.terms</tt> is enabled.</li>
+<li><tt>termpipeline.skip</tt> - Comma-separated list of tokens to be skipped by the configured term pipelines. In practice, this should be set to the value of block.delimiters in order to prevent the specified delimiters from being stemmed or removed during indexing.</li>
+</ul>
+
+<h2>Compression</h2>
+<p>Terrier uses highly compressed data structures as much as possible. In particular, the inverted and direct index structures are encoded using bit-level compression, namely Elias Gamma and Elias Unary encoding of integers (namely term ids, docids and frequencies). The underlying compression is provided by the org.terrier.compression package. For document metadata, the default <a href="javadoc/org/terrier/structures/MetaIndex.html">MetaIndex</a>, namely <a href="javadoc/org/terrier/structures/CompressingMetaIndex.html">CompressingMetaIndex</a> uses Zip compression to minimise the number of bytes necessary for every document.</p>
+
+
+<h2>Changing Indexing</h2>
+<p>To replace the default indexing structures in Terrier with others is very easy, as the data.properties file contains information about which classes should be used to load the five main data structures of the Index: <a href="javadoc/org/terrier/structures/DocumentIndex.html">DocumentIndex</a>, <a href="javadoc/org/terrier/structures/MetaIndex.html">MetaIndex</a>, <a href="javadoc/org/terrier/structures/bit/DirectIndex.html">DirectIndex</a>, <a href="javadoc/org/terrier/structures/Lexicon.html">Lexicon</a> and <a href="javadoc/org/terrier/structures/bit/InvertedIndex.html">InvertedIndex</a>. A more detailed summary of the standard index structures is given at <a href="http://ir.dcs.gla.ac.uk/wiki/Terrier/IndexStructures">Index Structures (Terrier wiki)</a>.  To implement a replacement index data structure, it may sufficient to subclass a builder, and then subclass the appropriate Indexer class to ensure it is used.</p>
+
+<p>Adding other data structures to a Terrier index is also straightforward. The abstract <a href="javadoc/org/terrier/structures/Index.html">Index</a> class defines methods such as <a href="javadoc/org/terrier/structures/Index.html#addIndexStructure(java.lang.String,%20java.lang.String)">addIndexStructure(String, String)</a> which allow a class to be associated with a structure name (e.g. org.terrier.structures.InvertedIndex is associated to the "inverted" structure. You can retrieve your structure by casting the result of <a href="javadoc/org/terrier/structures/Index.html#getIndexStructure(java.lang.String)">getIndexStructure(String)</a>. For structures with more complicated constructors, other addIndexStructure methods are provided. Finally, your application can check that the desired structure exists using <a href="javadoc/org/terrier/structures/Index.html#hasIndexStructure(java.lang.String)">hasIndexStructure(String)</a>.</p> 
+ 
+<p>Terrier indices specify the random-access and in-order structure classes for each of the main structure types: direct, inverted, lexicon and document. When generating new data structures, it is good practice to provide in-order (stream) classes as well as random-access classes to your data structures, should other developers wish to access these index structures at another indexing stage. For instance, for the <tt>inverted</tt> structure, Terrier provides the <a href="javadoc/org/terrier/structures/bit/InvertedIndex.html">InvertedIndex</a> and <a href="javadoc/org/terrier/structures/bit/InvertedIndexInputStream.html">InvertedIndexInputStream</a> classes.</p>
+
+<p>Many of Terrier's index structures can be accessed from Hadoop MapReduce. In particular, we provide <a href="javadoc/org/terrier/structures/indexing/singlepass/hadoop/BitPostingIndexInputFormat.html">BitPostingIndexInputFormat</a> which allows an inverted index or direct index to be split across many map tasks, with an orthogonal <a href="javadoc/org/terrier/structures/CompressingMetaIndex.CompressingMetaIndexInputFormat.html">CompressingMetaIndexInputFormat</a> for the MetaIndex.</p>
+
+[<a href="terrier_develop.html">Previous: Developing with Terrier</a>] [<a href="index.html">Contents</a>] [<a href="extend_retrieval.html">Next: Extending Retrieval</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

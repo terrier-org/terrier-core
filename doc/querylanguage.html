@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Query Language</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="learning.html">Previous: Learning to Rank with Terrier</a>] [<a href="index.html">Contents</a>] [<a href="evaluation.html">Next: Evaluation of Experiments</a>]
+</br><br><h1>Query Language</h1>
+<p>Terrier offers a flexible and powerful query language for searching with
+phrases, fields, or specifying that terms are required to appear in the 
+retrieved documents. Some examples of queries are the following:</p>
+<table border="1">
+<tr><td>term1 term2 </td><td>retrieves documents that contain term1 or term2 (they do not need to contain both of them).</td></tr>
+<tr><td>{term1 term2} </td><td>retrieves documents that contain term1 or term2, where they are treated as synonyms of each other (they do not need to contain both of them).</td></tr>
+<tr><td>term1^2.3</td><td>the weight of term1 is multiplied by 2.3.</td></tr>
+<tr><td>+term1 +term2</td><td>retrieves documents that contain both term1 
+                             and term2.</td></tr>
+<tr><td>+term1 -term2</td><td>retrieves documents that contain term1 and
+                             do not contain term2.</td></tr>
+<tr><td>title:term1 </td><td>retrieves documents that contain term1 in the title field (<a href="configure_indexing.html#fields">Field indexing</a> must be configured to record the title field).</td></tr>                         
+<tr><td>title:(term1 term2) </td><td>retrieves documents that contain term1 or term2 in the title field (<a href="configure_indexing.html#fields">Field indexing</a> must be configured to record the title field).</td></tr>   
+<tr><td>term1 -title:term2 </td><td>retrieves documents that contain term1, but must not contain term2 in the title field.</td></tr>                         
+
+<tr><td>&quot;term1 term2&quot;</td><td>retrieves documents where the terms term1
+                             and term2 appear in a phrase.</td></tr>
+<tr><td>&quot;term1 term2&quot;~n</td><td>retrieves documents where the terms term1
+                             and term2 appear within a distance of n
+                             blocks. The order of the terms is not
+                             considered.</td></tr>
+                            
+</table>  
+
+<p>Combinations of the different constructs are possible as well. For 
+example, the query <tt>term1 term2 -&quot;term1 term2&quot;</tt> would retrieve all the documents that contain at least one of the terms
+term1 and term2, but not the documents where the phrase &quot;term1 term2&quot; appears.</p>
+
+<p>Note that in some configurations, the Terrier query language may not be available by default. In particular, if batch processing queries from a
+file using a class that extends <a href="javadoc/org/terrier/structures/TRECQuery.html">TRECQuery</a>, for instance <a href="javadoc/org/terrier/structures/SingleLineTRECQuery.html">SingleLineTRECQuery</a>, then the queries are pre-processed by a tokeniser
+that may remove the query language characters (e.g. brackets and colons). To use the Terrier query language in this case, you need to
+configure Terrier to use a tokeniser that retains all characters, such as <a href="javadoc/org/terrier/indexing/TRECFullTokenizer.html">TRECFullTokenizer</a>. This can be done by setting <tt>tokeniser=TRECFullTokenizer</tt> 
+in the <tt>terrier.properties</tt> file.</p>
+
+[<a href="learning.html">Previous: Learning to Rank with Terrier</a>] [<a href="index.html">Contents</a>] [<a href="evaluation.html">Next: Evaluation of Experiments</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

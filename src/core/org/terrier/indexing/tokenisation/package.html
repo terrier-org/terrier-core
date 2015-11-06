@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>org.terrier.indexing.tokenisation package</title>
+<!--
+Terrier - Terabyte Retriever 
+Webpage: http://ir.dcs.gla.ac.uk/terrier 
+Contact: terrier{a.}dcs.gla.ac.uk
+University of Glasgow - School of Computing Science
+Information Retrieval Group
+ 
+The contents of this file are subject to the Mozilla Public
+License Version 1.1 (the "License"); you may not use this file except 
+compliance with the License. You may obtain a copy of the
+License at http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or
+implied. See the License for the specific language governing rights and
+limitations under the License.
+
+Copyright (C) 2004-2014 the University of Glasgow. All Rights Reserved.
+-->
+</head>
+<body bgcolor="white">
+<p>Provides classes related to the tokenisation of documents. Tokenisers
+are responsible for breaking chunks of text into words to be indexed.
+Different tokenisers may be used for different languages. In particular,
+two tokenisers are provided by Terrier:
+<ul>
+<li><a href="EnglishTokeniser.html">EnglishTokeniser</a> - splits words on containing characters
+not in [A-Za-z0-9].</li> 
+<li><a href="UTFTokeniser.html">UTFTokeniser</a> - splits words on containing characters
+that are not one of the following:
+<ol>
+ <li>Character.isLetterOrDigit() returns true</li>
+ <li>Character.getType() returns Character.NON_SPACING_MARK</li>
+ <li>Character.getType() returns Character.COMBINING_SPACING_MARK</li> 
+</ol>
+</li>
+</ul>
+
+In addition, both default Tokenisers apply rules such as:
+<ul>
+<li>Removing punctuation</li>
+<li>Lowercasing all terms if the property <tt>lowercase</tt> is set (default to true).</li>
+<li>Tokens longer than max.term.length are dropped.</li>
+<li>Any term which has more than 4 digits is discarded.</li>
+<li>Any term which has more than 3 consecutive identical characters are discarded.</li>
+</ul>
+
+<p>
+<b>Example Code</b><br>
+<pre>
+//get the default tokeniser, as set by property <tt>tokeniser</tt>
+Tokeniser tokeniser = Tokeniser.getTokeniser();
+String sentence = "This is a sentence.";
+TokenStream toks = tokeniser.tokenise(new StringReader(sentence));
+while(toks.hasNext())
+{
+  String token = toks.next();
+}
+
+
+</body>
+</html>

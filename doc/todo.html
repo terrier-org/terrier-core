@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Future Features and Known Issues</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="dfr_description.html">Previous: DFR Description</a>] [<a href="index.html">Contents</a>] [<a href="bibliography.html">Next: Bibliography</a>]
+</br><br><h1>Terrier Future Features and Known Issues</h1>
+<p>List of features and known issues that are marked for future Terrier versions:<br/>
+<h2>Future Features</h2>
+<ul>
+<li>Consider the use of Maven to build and package Terrier</li>
+<li>The addition of Terrier's own Exceptions for setup, indexing, querying.</li>
+</ul> 
+<h2>Known Issues</h2>
+<ul>
+<li>CompressionFactory/CompressionConfig is not supported by single-pass or Hadoop indexing.</li>
+<li>Query language should be refined: In particular, ambiguity warnings when generating the parser with ANTLR should be removed, and a more structured query language should be introduced.</li>
+<li>The real-time index structures do not currently support block indexing</li>
+</ul>
+<h2>Deprecations, Scheduled Refactorings</h2>
+<p>The following classes and interfaces are/may be deprecated in this version of Terrier and will likely be removed or refactored in a future release:</p>
+<ul>
+<li>BlockLexiconEntry & BlockFieldLexiconEntry will be removed in a future version of Terrier</li>
+<li><a href="javadoc/org/terrier/utility/ApplicationSetup.html">ApplicationSetup</a> will be replaced with a new non-global configuration API.</li>
+<li>The five field weighting model score() methods are being deprecated since only the two field versions are used.
+<li>Terrier currently uses Hadoop version 0.20. Future releases of Terrier will upgrade to a later branch. Instructions to upgrade Terrier yourself can be found <a href="http://ir.dcs.gla.ac.uk/wiki/Terrier/UpgradingHadoop">here</a></li> 
+</ul>
+
+<p>
+<b>Contributions</b><br>
+<p>All community contributions to the Terrier framework are welcome. 
+  In addition, you can find more information about contributing on 
+  the <a href="http://terrier.org/">Terrier website</a>.</p>
+
+[<a href="dfr_description.html">Previous: DFR Description</a>] [<a href="index.html">Contents</a>] [<a href="bibliography.html">Next: Bibliography</a>]
+<!--!bodyend-->
+<hr>
+<small> Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
+Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. 
+All Rights Reserved. </small> 
+</body>
+</html>
