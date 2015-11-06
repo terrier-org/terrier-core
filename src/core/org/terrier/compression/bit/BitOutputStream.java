@@ -293,7 +293,7 @@ public class BitOutputStream implements BitOut {
 	public int writeDelta( int x ) throws IOException {
 		final int msb = BitUtilities.mostSignificantBit( ++x );
 		final int l = writeGamma( msb );
-		return l + ( msb != 0 ? writeInt( x, msb ) : 0 );
+		return l + ( msb != 0 ? writeInt( x & ((2 << (msb - 1)) - 1), msb ) : 0 );
 	}
 
 	

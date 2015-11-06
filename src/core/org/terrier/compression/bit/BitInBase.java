@@ -134,8 +134,8 @@ public abstract class BitInBase implements BitIn {
 		final int log2b = BitUtilities.mostSignificantBit(b);
 		final int m = ( 1 << log2b + 1 ) - b; 
 		final int x = readBinary( log2b );		
-		if ( x < m ) return x + 1;
-		else { int temp =  ( x << 1 ) + readBinary(1)  ;
+		if ( x < m ) return x;
+		else { int temp =  ( x << 1 ) + readBinary(1) - m;
 		return temp;
 		}
 	}

@@ -262,7 +262,7 @@ public class BitFile implements BitInSeekable, BitIn, BitOut {
 	public int writeDelta( int x ) throws IOException {
 		final int msb = BitUtilities.mostSignificantBit( ++x );
 		final int l = writeGamma( msb );
-		return l + ( msb != 0 ? writeInt( x, msb ) : 0 );
+		return l + ( msb != 0 ? writeInt( x & ((2 << (msb - 1)) - 1), msb ) : 0 );
 	}
 	
 	/** {@inheritDoc} **/
@@ -506,8 +506,8 @@ public class BitFile implements BitInSeekable, BitIn, BitOut {
 		final int log2b = BitUtilities.mostSignificantBit(b);
 		final int m = ( 1 << log2b + 1 ) - b; 
 		final int x = readBinary( log2b );		
-		if ( x < m ) return x + 1;
-		else { int temp =  ( x << 1 ) + readBinary(1)  ;
+		if ( x < m ) return x;
+		else { int temp =  ( x << 1 ) + readBinary(1) - m;
 		return temp;
 		}
 	}

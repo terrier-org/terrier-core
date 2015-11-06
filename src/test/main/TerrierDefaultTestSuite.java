@@ -29,6 +29,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.terrier.compression.TestCompressedBitFiles;
+import org.terrier.compression.TestCompressedBitFilesDelta;
+import org.terrier.compression.TestCompressedBitFilesGolomb;
 import org.terrier.evaluation.TestAdhocEvaluation;
 import org.terrier.evaluation.TestTRECQrelsInMemory;
 import org.terrier.fat.TestFatCandidateResultSet;
@@ -141,6 +143,9 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	
 	//.compression
 	TestCompressedBitFiles.class,
+	TestCompressedBitFilesDelta.class,
+	TestCompressedBitFilesGolomb.class,
+	
 	
 	//.evaluation
 	TestAdhocEvaluation.class,
