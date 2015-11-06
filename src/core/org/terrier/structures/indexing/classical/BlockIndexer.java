@@ -515,6 +515,7 @@ public class BlockIndexer extends Indexer {
 			if (currentIndex == null)
 			{
 				logger.error("No index at ("+path+","+prefix+") to build an inverted index for ");
+				return;
 			}
 		}
 		long beginTimestamp = System.currentTimeMillis();

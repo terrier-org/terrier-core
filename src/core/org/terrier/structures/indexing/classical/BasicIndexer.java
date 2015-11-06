@@ -404,6 +404,7 @@ public class BasicIndexer extends Indexer
 			if (currentIndex == null)
 			{
 				logger.error("No index at ("+path+","+prefix+") to build an inverted index for ");
+				return;
 			}
 		}
 		final long beginTimestamp = System.currentTimeMillis();
