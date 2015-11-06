@@ -39,10 +39,9 @@ example, the query <tt>term1 term2 -&quot;term1 term2&quot;</tt> would retrieve 
 term1 and term2, but not the documents where the phrase &quot;term1 term2&quot; appears.</p>
 
 <p>Note that in some configurations, the Terrier query language may not be available by default. In particular, if batch processing queries from a
-file using a class that extends <a href="javadoc/org/terrier/structures/TRECQuery.html">TRECQuery</a>, for instance <a href="javadoc/org/terrier/structures/SingleLineTRECQuery.html">SingleLineTRECQuery</a>, then the queries are pre-processed by a tokeniser
-that may remove the query language characters (e.g. brackets and colons). To use the Terrier query language in this case, you need to
-configure Terrier to use a tokeniser that retains all characters, such as <a href="javadoc/org/terrier/indexing/TRECFullTokenizer.html">TRECFullTokenizer</a>. This can be done by setting <tt>tokeniser=TRECFullTokenizer</tt> 
-in the <tt>terrier.properties</tt> file.</p>
+file using a class that extends <a href="javadoc/org/terrier/applications/batchquerying/TRECQuery.html">TRECQuery</a>, then the queries are pre-processed by a tokeniser
+that may remove the query language characters (e.g. brackets and colons). To use the Terrier query language in this case, you should
+use <a href="javadoc/org/terrier/applications/batchquerying/SingleLineTRECQuery.html">SingleLineTRECQuery</a> and set <tt>SingleLineTRECQuery.tokenise</tt> to false in the <tt>terrier.properties</tt> file.</p>
 
 [<a href="learning.html">Previous: Learning to Rank with Terrier</a>] [<a href="index.html">Contents</a>] [<a href="evaluation.html">Next: Evaluation of Experiments</a>]
 <!--!bodyend-->
