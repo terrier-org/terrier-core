@@ -98,6 +98,12 @@
 		<groupId>com.sna-projects.kamikaze</groupId>
 		<artifactId>kamikaze</artifactId>
 		<version>3.0.3</version>
+		<exclusions>
+        		<exclusion>
+            		<groupId>org.apache.lucene</groupId>
+            		<artifactId>lucene-core</artifactId>
+        		</exclusion>
+    		</exclusions>
 	</dependency>
 
 
@@ -153,6 +159,13 @@
 		<groupId>org.apache.lucene</groupId>
 		<artifactId>lucene-snowball</artifactId>
 		<version>3.0.3</version> <!-- Should be snowball-20071024 -->
+                <exclusions>
+                        <exclusion>
+                        <groupId>org.apache.lucene</groupId>
+                        <artifactId>lucene-core</artifactId>
+                        </exclusion>
+                </exclusions>
+
 	</dependency>
 
 	<dependency>
