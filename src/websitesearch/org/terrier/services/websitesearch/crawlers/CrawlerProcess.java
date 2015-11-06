@@ -74,7 +74,7 @@ public class CrawlerProcess implements CrawlerAPI{
 		try {
 			controller = new CrawlController(config, pageFetcher, robotstxtServer);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 
         /*
