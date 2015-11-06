@@ -64,18 +64,9 @@ public class WARC09Collection extends MultiDocumentFileCollection
 {
 	protected long currentDocumentBlobLength = 0;
 	/** properties for the current document */
-	protected Map<String,String> DocProperties = null;
-	/** The list of files to process. */
-	protected ArrayList<String> FilesToProcess = new ArrayList<String>();
-	/** The index in the FilesToProcess of the currently processed file.*/
-	protected int FileNumber = 0;
 	
 	protected String currentDocno;
 	
-	/** Class to use for all documents parsed by this class */
-	protected Class<? extends Document> documentClass;
-	/** Tokeniser to use for all documents parsed by this class */
-	protected Tokeniser tokeniser = Tokeniser.getTokeniser();
 
 	
 	final static SimpleDateFormat dateWARC = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -226,71 +217,6 @@ public class WARC09Collection extends MultiDocumentFileCollection
 		}
 		//logger.debug("readLine: "+ s.toString());
 		return s.toString();
-	}
-
-	/**
-	 * Opens the next document from the collection specification.
-	 * @return boolean true if the file was opened successufully. If there
-	 *	   are no more files to open, it returns false.
-	 * @throws IOException if there is an exception while opening the
-	 *	   collection files.
-	 */
-	protected boolean openNextFile() throws IOException {
-		//try to close the currently open file
-		if (is!=null)
-			try{
-				is.close();
-			}catch (IOException ioe) {
-				logger.warn("IOException while closing file being read", ioe);
-			}
-		//keep trying files
-		boolean tryFile = true;
-		//return value for this fn
-		boolean rtr = false;
-		while(tryFile)
-		{
-			if (FileNumber < FilesToProcess.size()) {
-				//SkipFile = true;
-				String filename = FilesToProcess.get(FileNumber);
-				FileNumber++;
-				//check the filename is sane
-				File f = new File(filename);
-				if (! f.exists())
-				{
-					logger.warn("Could not open "+filename+" : File Not Found");
-				}
-				else if (! f.canRead())
-				{
-					logger.warn("Could not open "+filename+" : Cannot read");
-				}
-				else
-				{//filename seems ok, open it
-					if (filename.toLowerCase().endsWith(".gz"))
-					{
-						/* WARC format files have multiple compressed records. JDK one can't deal with this
-						 * See: http://crawler.archive.org/apidocs/index.html?org/archive/io/arc/ARCWriter.html
-						 * We get around this by using an external zcat process
-						 */
-						is = new java.io.BufferedInputStream(new ProcessInputStream("/usr/bin/gzip -dc ", filename));
-					}
-					else
-						is = Files.openFileStream(filename); //throws an IOException, throw upwards
-					logger.info("WARCCollection processing "+filename);
-					//no need to loop again
-					tryFile = false;
-					//return success
-					rtr = true;
-					//accurately record file offset
-					documentsInThisFile = 0;
-				}
-			} else {
-				//last file of the collection has been read, EOC
-				eoc = true;
-				rtr = false;
-				tryFile = false;
-			}
-		}
-		return rtr;
 	}
 
 	/** Resets the Collection iterator to the start of the collection. */
