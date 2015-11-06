@@ -17,9 +17,9 @@ public class UnitUtils
 		if (str == null) 
 			throw new NullPointerException(); 
 		int notNumberIndex = StringUtils.indexOfAnyBut(str, "0123456789"); 
+		if (notNumberIndex == -1)
+			return Long.parseLong(str);
 		long ret = Long.parseLong(str.substring(0, notNumberIndex)); 
-		if (notNumberIndex == -1) 
-			return ret; 
 		switch (str.substring(notNumberIndex).trim()) { 
 		case "G": 
 			return ret * G_FACTOR; 
@@ -41,10 +41,10 @@ public class UnitUtils
 	{ 
 		if (str == null) 
 			throw new NullPointerException(); 
-		int notNumberIndex = StringUtils.indexOfAnyBut(str, "0123456789"); 
+		final int notNumberIndex = StringUtils.indexOfAnyBut(str, "0123456789");
+		if (notNumberIndex == -1)
+			return Integer.parseInt(str);
 		int ret = Integer.parseInt(str.substring(0, notNumberIndex)); 
-		if (notNumberIndex == -1) 
-			return ret; 
 		switch (str.substring(notNumberIndex).trim()) { 
 		case "G": 
 			return (int) (ret * G_FACTOR); 
@@ -67,9 +67,9 @@ public class UnitUtils
 		if (str == null) 
 			throw new NullPointerException(); 
 		int notNumberIndex = StringUtils.indexOfAnyBut(str, "0123456789"); 
+		if (notNumberIndex == -1)
+			return Float.parseFloat(str);
 		float ret = Float.parseFloat(str.substring(0, notNumberIndex)); 
-		if (notNumberIndex == -1) 
-			return ret; 
 		switch (str.substring(notNumberIndex).trim()) { 
 		case "G": 
 			return ret * G_FACTOR; 
@@ -92,9 +92,9 @@ public class UnitUtils
 		if (str == null) 
 			throw new NullPointerException(); 
 		int notNumberIndex = StringUtils.indexOfAnyBut(str, "0123456789"); 
+		if (notNumberIndex == -1)
+			return Double.parseDouble(str);
 		double ret = Double.parseDouble(str.substring(0, notNumberIndex)); 
-		if (notNumberIndex == -1) 
-			return ret; 
 		switch (str.substring(notNumberIndex).trim()) { 
 		case "G": 
 			return ret * G_FACTOR; 
