@@ -65,7 +65,7 @@ public class DLH extends WeightingModel {
 	 *         tf and docLength, and other preset parameters
 	 */
 	public final double score(double tf, double docLength) {
-		double f  = tf/docLength ;
+		double f = WeightingModelLibrary.relativeFrequency(tf, docLength);
   		return 
 			 keyFrequency
 			* (tf*WeightingModelLibrary.log ((tf* averageDocumentLength/docLength) *
@@ -96,7 +96,7 @@ public class DLH extends WeightingModel {
 		double n_t,
 		double F_t,
 		double keyFrequency) {
-		double f  = tf/docLength ;
+		double f = WeightingModelLibrary.relativeFrequency(tf, docLength);
   		return 
 			 keyFrequency
 			* (tf*WeightingModelLibrary.log ((tf* averageDocumentLength/docLength) *( numberOfDocuments/F_t) )

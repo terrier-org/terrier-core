@@ -94,6 +94,23 @@ public class WeightingModelLibrary {
 	public static double tf_concave_log(double tf) {
 		return 1 + log(1 + log(tf));
 	}
+	
+	/**
+	 * Computes relative term frequency.
+	 * When tf == docLength we return 0.99999 because relative frequency of 1 produces
+	 * Not a Number (NaN) or Negative Infinity as scores in hyper-geometric models (DPH, DLH and DLH13).
+	 *
+	 * @param tf        raw term frequency
+	 * @param docLength length of the document
+	 * @return relative term frequency
+	 */
+	public static final double relativeFrequency(double tf, double docLength) {
+		assert tf <= docLength : "tf cannot be greater than docLength";
+		double f = tf < docLength ? tf / docLength : 0.99999;
+		assert f > 0 : "relative frequency must be greater than zero: " + f;
+		assert f < 1 : "relative frequency must be less than one: " + f;
+		return f;
+	}
 
 	/**
 	 * Returns a concave pivot length normalized tf as described in Robertson et al., 1999.

@@ -68,7 +68,7 @@ public class DPH extends WeightingModel {
 	 *		 tf and docLength, and other preset parameters
 	 */
 	public final double score(double tf, double docLength) {
-		double f = tf/docLength;
+		double f = WeightingModelLibrary.relativeFrequency(tf, docLength);
  		double norm = (1d-f) * (1d -f)/(tf+1d);
  
  		return keyFrequency *norm
@@ -101,7 +101,7 @@ public class DPH extends WeightingModel {
 		double n_t,
 		double F_t,
 		double keyFrequency) {
-        double f = tf/docLength;
+		double f = WeightingModelLibrary.relativeFrequency(tf, docLength);
  		double norm = (1d-f) * (1d -f)/(tf+1d);
  
  		return keyFrequency *norm
