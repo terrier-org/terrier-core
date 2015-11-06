@@ -96,7 +96,7 @@ public class NormalisedLETOROutputFormat extends LETOROutputFormat {
 			featScores[j] = frs.getFeatureScores(featNames[j]);
 			StaTools.standardNormalisation(featScores[j]);
 		}
-		final boolean docnosInResultSet = frs.hasMetaItems("docno");
+		final boolean docnosInResultSet = rs.hasMetaItems("docno");
 
 		// example:
 		// 2 qid:10032 1:0.056537 2:0.000000 ... 46:0.076923 #docid = GX029-35-5894638
