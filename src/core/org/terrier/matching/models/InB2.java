@@ -70,32 +70,4 @@ public class InB2 extends WeightingModel {
 		//double f = this.termFrequency / numberOfDocuments;
 		return TF * keyFrequency * i.idfDFR(documentFrequency) * NORM;
 	}
-	/**
-	 * This method provides the contract for implementing weighting models.
-	 * 
-	 * As of Terrier 3.6, the 5-parameter score method is being deprecated
-	 * since it is not used. The two parameter score method should be used
-	 * instead. Tagged for removal in a later version.
-	 * 
-	 * @param tf The term frequency in the document
-	 * @param docLength the document's length
-	 * @param documentFrequency The document frequency of the term
-	 * @param termFrequency the term frequency in the collection
-	 * @param keyFrequency the term frequency in the query
-	 * @return the score returned by the implemented weighting model.
-	 */
-	@Deprecated
-	@Override
-	public final double score(
-		double tf,
-		double docLength,
-		double documentFrequency,
-		double termFrequency,
-		double keyFrequency) {
-		double TF =
-			tf * WeightingModelLibrary.log(1.0d + (c * averageDocumentLength) / docLength);
-		double NORM = (termFrequency + 1d) / (documentFrequency * (TF + 1d));
-		//double f = termFrequency / numberOfDocuments;
-		return TF * keyFrequency * i.idfDFR(documentFrequency) * NORM;
-	}
 }

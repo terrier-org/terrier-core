@@ -149,14 +149,9 @@ public class SingleFieldModel extends WeightingModel {
 
 	@Override
 	public double score(double tf, double docLength) {
-		return 0;
+		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public double score(double tf, double docLength, double n_t, double F_t,
-			double keyFrequency) {
-		return 0;
-	}
 
 	@Override
 	public void setParameter(double c) {

@@ -81,34 +81,6 @@ public class TF_IDF extends WeightingModel {
 		double idf = WeightingModelLibrary.log(numberOfDocuments/documentFrequency+1);
 		return keyFrequency * Robertson_tf * idf;
 	}
-	/**
-	 * This method provides the contract for implementing weighting models.
-	 * 
-	 * As of Terrier 3.6, the 5-parameter score method is being deprecated
-	 * since it is not used. The two parameter score method should be used
-	 * instead. Tagged for removal in a later version.
-	 * 
-	 * @param tf The term frequency in the document
-	 * @param docLength the document's length
-	 * @param documentFrequency The document frequency of the term
-	 * @param termFrequency the term frequency in the collection
-	 * @param keyFrequency the term frequency in the query
-	 * @return the score returned by the implemented weighting model.
-	 */
-	@Deprecated
-	@Override
-	public final double score(
-		double tf,
-		double docLength,
-		double documentFrequency,
-		double termFrequency,
-		double keyFrequency) 
-	{
-		double Robertson_tf = k_1*tf/(tf+k_1*(1-b+b*docLength/averageDocumentLength));
-		double idf = WeightingModelLibrary.log(numberOfDocuments/documentFrequency+1);
-		return keyFrequency*Robertson_tf * idf;
-
-	}
 
 	/**
 	 * Sets the b parameter to ranking formula

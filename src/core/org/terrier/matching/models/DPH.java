@@ -79,37 +79,5 @@ public class DPH extends WeightingModel {
  			 );
  	}
 
-	/**
-	 * This method provides the contract for implementing weighting models.
-	 * 
-	 * As of Terrier 3.6, the 5-parameter score method is being deprecated
-	 * since it is not used. The two parameter score method should be used
-	 * instead. Tagged for removal in a later version.
-	 * 
-	 * @param tf The term frequency in the document
-	 * @param docLength the document's length
-	 * @param n_t The document frequency of the term
-	 * @param F_t the term frequency in the collection
-	 * @param keyFrequency the term frequency in the query
-	 * @return the score returned by the implemented weighting model.
-	 */
-	@Deprecated
-	@Override
-	public final double score(
-		double tf,
-		double docLength,
-		double n_t,
-		double F_t,
-		double keyFrequency) {
-		double f = WeightingModelLibrary.relativeFrequency(tf, docLength);
- 		double norm = (1d-f) * (1d -f)/(tf+1d);
- 
- 		return keyFrequency *norm
- 			 * (tf*WeightingModelLibrary.log ((tf*
-			averageDocumentLength/docLength) *
-			( numberOfDocuments/F_t) )
- 			   + 0.5d* WeightingModelLibrary.log(2d*Math.PI*tf*(1d-f))
- 			   );
- 	}
 
 }

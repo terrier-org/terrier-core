@@ -56,28 +56,6 @@ public class DirichletLM extends WeightingModel {
 		return WeightingModelLibrary.log(1 + (tf/(c * (super.termFrequency / numberOfTokens))) ) + WeightingModelLibrary.log(c/(docLength+c));
 	}
 
-	/**
-	 * This method provides the contract for implementing weighting models.
-	 * 
-	 * As of Terrier 3.6, the 5-parameter score method is being deprecated
-	 * since it is not used. The two parameter score method should be used
-	 * instead. Tagged for removal in a later version.
-	 * 
-	 * @param tf The term frequency in the document
-	 * @param docLength the document's length
-	 * @param n_t The document frequency of the term
-	 * @param F_t the term frequency in the collection
-	 * @param keyFrequency the term frequency in the query
-	 * @return the score returned by the implemented weighting model.
-	 */
-	@Deprecated
-	@Override
-	public double score(double tf, double docLength, double n_t, double F_t,
-			double keyFrequency)
-	{
-		return WeightingModelLibrary.log(1 + (tf/(c * (F_t / numberOfTokens))) ) + WeightingModelLibrary.log(c/(docLength+c));
-	}
-
 	@Override
 	public String getInfo() {
 		return "DirichletLM";

@@ -198,12 +198,4 @@ public class TermInFieldModifier
 	public void setIndex(Index i) {
 		this.index = i;
 	}
-
-	@Override
-	@Deprecated
-	public double score(double tf, double docLength, double n_t, double F_t,
-			double _keyFrequency) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

@@ -112,12 +112,4 @@ public class RequiredTermModifier extends WeightingModel implements Serializable
 			return Double.NEGATIVE_INFINITY;
 		return 0;
 	}
-
-	@Override
-	@Deprecated
-	public double score(double tf, double docLength, double n_t, double F_t,
-			double _keyFrequency) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

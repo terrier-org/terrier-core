@@ -44,21 +44,13 @@ public class Dl extends WeightingModel {
 		this();
 	}
 
+	@Override
 	public final String getInfo() {
 		return name;
 	}
 
+	@Override
 	public final double score(double tf, double docLength) {
-		return docLength;
-	}
-
-	public final double score(
-		double tf,
-		double docLength,
-		double documentFrequency,
-		double termFrequency,
-		double keyFrequency) 
-	{
 		return docLength;
 	}
 
@@ -66,6 +58,7 @@ public class Dl extends WeightingModel {
 	 * Sets the b parameter to ranking formula
 	 * @param b the b parameter value to use.
 	 */
+	@Override
 	public void setParameter(double b) {
 	}
 
@@ -73,6 +66,7 @@ public class Dl extends WeightingModel {
 	/**
 	 * Returns the b parameter to the ranking formula as set by setParameter()
 	 */
+	@Override
 	public double getParameter() {
 		return 0;
 	}

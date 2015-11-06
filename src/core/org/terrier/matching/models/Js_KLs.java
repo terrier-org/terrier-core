@@ -78,34 +78,7 @@ public class Js_KLs extends WeightingModel {
 	 * @return the score assigned to a document with the given 
 	 *         tf and docLength, and other preset parameters
 	 */
-		public final double score(double tf, double docLength) {
-		 return    score (tf, docLength,documentFrequency , termFrequency , keyFrequency) ;
-	}
-
-	
-		/**
-		 * This method provides the contract for implementing weighting models.
-		 * 
-		 * As of Terrier 3.6, the 5-parameter score method is being deprecated
-		 * since it is not used. The two parameter score method should be used
-		 * instead. Tagged for removal in a later version.
-		 * 
-		 * @param tf The term frequency in the document
-		 * @param docLength the document's length
-		 * @param documentFrequency The document frequency of the term
-		 * @param termFrequency the term frequency in the collection
-		 * @param keyFrequency the term frequency in the query
-		 * @return the score returned by the implemented weighting model.
-		 */
-		@Deprecated
-		@Override
-	public final double score(
-		double tf,
-		double docLength,
-		double documentFrequency,
-		double termFrequency,
-		double keyFrequency) 
-	{
+	public final double score(double tf, double docLength) {
 	    
 	    //Two neighbouring distributions in the document: the true and the smoothed one.
 	    double maximumLikelihoodEstimate = tf/docLength;                     //the true probability
