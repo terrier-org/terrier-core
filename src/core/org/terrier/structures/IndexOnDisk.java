@@ -89,7 +89,7 @@ public class IndexOnDisk extends Index {
 		this.path = _path;
 		this.prefix = _prefix;
 
-		if (isNew && (! Files.exists(this.path) || Files.canWrite(this.path)))
+		if (isNew && (! Files.exists(this.path) ))
 		{
 			String message = "Cannot create new index: path " + this.path + " does not exist, or cannot be written to";
 			logger.error(message);
