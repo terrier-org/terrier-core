@@ -27,10 +27,16 @@ package org.terrier.utility;
 
 import java.io.IOException;
 
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.SocketListener;
-import org.mortbay.http.handler.ResourceHandler;
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.handler.ContextHandler;
+import org.mortbay.jetty.handler.ContextHandlerCollection;
+import org.mortbay.jetty.handler.DefaultHandler;
+import org.mortbay.jetty.handler.HandlerCollection;
+import org.mortbay.jetty.handler.ResourceHandler;
+import org.mortbay.jetty.nio.SelectChannelConnector;
+import org.mortbay.jetty.webapp.WebAppContext;
 
 
 /** Class to make a simple Jetty servlet. Two arguments: port name, and webapps root path.
@@ -40,7 +46,6 @@ import org.mortbay.jetty.Server;
  */
 public class SimpleJettyHTTPServer {
 
-	private SocketListener listener;
 	protected Server webserver;	
 	
 	/** Create a new server, bound to the specified IP address (optional), the specified port,
@@ -53,18 +58,34 @@ public class SimpleJettyHTTPServer {
 	public SimpleJettyHTTPServer(String bindAddress, int port, String webappRoot) throws IOException 
 	{
 		webserver = new Server();
-		listener = new SocketListener();
-	    listener.setPort(port);
-	    if (bindAddress != null)
-	    	listener.setHost(bindAddress);
-	    webserver.addListener(listener);
-	    webserver.addWebApplication("/", webappRoot);
-	    
-	    HttpContext imagesContext = new HttpContext();
-	    imagesContext.setContextPath("/images/*");
-	    imagesContext.setResourceBase(ApplicationSetup.TERRIER_SHARE + "/images/");
-	    imagesContext.addHandler(new ResourceHandler());
-	    webserver.addContext(imagesContext);
+
+        Connector connector= new SelectChannelConnector();
+        connector.setPort(port);
+        if (bindAddress != null)
+        	connector.setHost(bindAddress);
+       
+        webserver.setConnectors(new Connector[]{connector});
+        
+        WebAppContext webAppContext = new WebAppContext();
+        webAppContext.setContextPath("/");
+        webAppContext.setResourceBase(webappRoot);
+        
+        
+        ResourceHandler imageHandler = new ResourceHandler();
+        imageHandler.setResourceBase(ApplicationSetup.TERRIER_SHARE + "/images/");
+        ContextHandler imageContext = new ContextHandler();
+        imageContext.setContextPath("/images");
+        imageContext.setHandler(imageHandler);
+        
+        ContextHandlerCollection contexts = new ContextHandlerCollection();
+        contexts.setHandlers(new Handler[]{webAppContext,imageContext});
+        
+        HandlerCollection handlers = new HandlerCollection();
+        handlers.setHandlers(new Handler[]{contexts,new DefaultHandler()});
+        
+       
+        webserver.setHandler(handlers);
+       
 	}
 
 	/**
@@ -77,9 +98,8 @@ public class SimpleJettyHTTPServer {
 	
 	/**
 	 * stop webserver
-	 * @throws InterruptedException
 	 */
-	public void stop() throws InterruptedException {
+	public void stop() throws Exception {
 	    webserver.stop();
 	}
 	/**
