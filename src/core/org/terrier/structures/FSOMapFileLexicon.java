@@ -507,6 +507,7 @@ public class FSOMapFileLexicon extends MapLexicon
 		int firstChar = 0;
 		final TIntObjectHashMap<int[]> map = new TIntObjectHashMap<int[]>();
 		
+		@SuppressWarnings("resource")
 		Iterator<Map.Entry<Text,LexiconEntry>> iterator = 
 			new FSOrderedMapFile.EntryIterator<Text, LexiconEntry>(mapFileFilename, keyFactory, valueFactory);
 		while(iterator.hasNext())
