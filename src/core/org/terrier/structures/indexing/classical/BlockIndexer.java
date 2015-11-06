@@ -414,7 +414,7 @@ public class BlockIndexer extends Indexer {
 				catch (Exception ioe)
 				{
 					logger.error("Failed to index "+doc.getProperty("docno"),ioe);
-					ioe.printStackTrace();
+					throw new RuntimeException(ioe);
 				}
 				if (MAX_DOCS_PER_BUILDER>0 && numberOfDocuments >= MAX_DOCS_PER_BUILDER)
 				{

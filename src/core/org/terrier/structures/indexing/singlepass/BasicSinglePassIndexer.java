@@ -250,6 +250,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 				catch (Exception ioe)
 				{
 					logger.error("Failed to index "+doc.getProperty("docno"),ioe);
+					throw new RuntimeException(ioe);
 				}
 
 				if (MAX_DOCS_PER_BUILDER>0 && numberOfDocuments >= MAX_DOCS_PER_BUILDER)
