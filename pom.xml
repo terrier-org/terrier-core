@@ -378,13 +378,13 @@
 
 <!-- _________________________ JETTY-EXP _________________________ --> 
 
-	<dependency> <!-- Terrier 4 does not incude a version number -->
+	<dependency> <!-- Terrier 4 does not include a version number -->
 		<groupId>javax.servlet</groupId>
 		<artifactId>jsp-api</artifactId>
 		<version>2.0</version>
 	</dependency>
 
-	<dependency> <!-- Terrier 4 does not incude a version number -->
+	<dependency> <!-- Terrier 4 does not include a version number -->
 		<groupId>ant</groupId>
 		<artifactId>ant</artifactId>
 		<version>1.6.5</version>
@@ -482,6 +482,22 @@
                     <configuration>
                         <lifecycleMappingMetadata>
                             <pluginExecutions>
+                            	  <pluginExecution>
+                                    <pluginExecutionFilter>
+	                            		<groupId>org.apache.maven.plugins</groupId>
+								       <artifactId>maven-antlr-plugin</artifactId>
+								       <versionRange>2.0-beta-1</versionRange>
+                                        <goals>
+                                            <goal>generate</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore /> <!--  <execute />  -->
+                                    </action>                                    
+                                </pluginExecution>
+                                
+                                
+                                
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>org.apache.maven.plugins</groupId>
@@ -490,6 +506,20 @@
                                         <goals>
                                             <goal>resources</goal>
                                             <goal>testResources</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute />
+                                    </action>
+                                </pluginExecution>
+                                
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                	<groupId>org.codehaus.mojo</groupId>
+			  					 	<artifactId>build-helper-maven-plugin</artifactId>
+			  					 	<versionRange>1.9.1</versionRange>
+                                	<goals>
+                                            <goal>add-source</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
@@ -511,6 +541,22 @@
                                     </action>
                                 </pluginExecution>
                                 
+                                <!-- copy-dependency plugin -->
+                                <!--  http://stackoverflow.com/questions/26482070/using-maven-assembly-plugin-with-local-dependencies -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>2.6</versionRange>
+                                        <goals>
+                                            <goal>copy-dependencies</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
@@ -518,24 +564,44 @@
             </plugins>
         </pluginManagement>
         <plugins>
-        
 
-	     <plugin>
-  			<artifactId>exec-maven-plugin</artifactId>
-  			<groupId>org.codehaus.mojo</groupId>
-  			<executions>
-    				<execution>
-      					<id>ant-build</id>
-      					<phase>generate-sources</phase>
-      					<goals>
-        					<goal>exec</goal>
-      					</goals>
-      					<configuration>
-        					<executable>${basedir}/ant-compile.sh</executable>
-      					</configuration>
-				</execution>
-  			</executions>
-		</plugin>
+		 
+			 <plugin>
+		       <groupId>org.apache.maven.plugins</groupId>
+		       <artifactId>maven-antlr-plugin</artifactId>
+		       <version>2.0-beta-1</version>
+		       <configuration>
+		       	 <sourceDirectory>src/core/</sourceDirectory>
+		         <grammars>org/terrier/querying/parser/terrier_floatlex.g,org/terrier/querying/parser/terrier_normallex.g,org/terrier/querying/parser/terrier.g</grammars>
+		       </configuration>
+		       <executions>
+		         <execution>
+		           <goals>
+		             <goal>generate</goal>
+		           </goals>
+		         </execution>
+		       </executions>
+		     </plugin>
+		      <!--  
+		      <plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>build-helper-maven-plugin</artifactId>
+			    <executions>
+			        <execution>
+			            <id>add-source</id>
+			            <phase>generate-sources</phase>
+			            <goals>
+			                <goal>add-source</goal>
+			            </goals>
+			            <configuration>
+			                <sources>
+			                    <source>${project.build.directory}/generated-sources/antlr/</source>
+			                </sources>
+			            </configuration>
+			        </execution>
+			    </executions>
+			 </plugin> -->
+		     
              <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -543,7 +609,7 @@
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <fork>true</fork>
-                    <executable>${JAVA_HOME}/bin/javac</executable>
+                    <executable>javac</executable>
                 </configuration>
             </plugin> 
             <plugin>
@@ -556,6 +622,7 @@
             </plugin>
             <plugin>
       			<artifactId>maven-assembly-plugin</artifactId>
+      			<version>2.6</version>
       			<configuration>
         			<archive>
           				<manifest>

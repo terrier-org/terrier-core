@@ -7,6 +7,7 @@
 	<classpathentry kind="src" path="src/trec"/>
 	<classpathentry kind="src" path="src/webapps"/>
 	<classpathentry kind="src" path="src/websitesearch"/>
+	<classpathentry kind="src" path="target/generated-sources/antlr"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -17,5 +18,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="classes"/>
 </classpath>
