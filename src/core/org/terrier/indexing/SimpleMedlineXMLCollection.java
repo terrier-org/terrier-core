@@ -95,6 +95,7 @@ public class SimpleMedlineXMLCollection extends SimpleXMLCollection
 				currentFileDocCounter=0;
 			}catch(IOException ioe){
 				logger.error("Could not open next file", ioe);
+				throw new RuntimeException(ioe);
 			}
 		}
 		String filename = currentFilename+".tmp.gz";
