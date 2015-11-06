@@ -166,8 +166,7 @@ public class TwitterJSONDocument implements Document{
 		try {
 			json = parser.parse(JSONTweet).getAsJsonObject();
 		} catch (JsonSyntaxException e) {
-			System.err.println("TwitterJSONDocument: Syntax Failure");
-			e.printStackTrace();
+			throw new IllegalArgumentException("TwitterJSONDocument: Syntax Failure", e);
 		}
 		doParsing(json);
 	}
@@ -179,8 +178,7 @@ public class TwitterJSONDocument implements Document{
 		try {
 			json = parser.parse(JSONTweet).getAsJsonObject();
 		} catch (JsonSyntaxException e) {
-			System.err.println("TwitterJSONDocument: Syntax Failure");
-			e.printStackTrace();
+			throw new IllegalArgumentException("TwitterJSONDocument: Syntax Failure", e);
 		}
 		doParsing(json);
 	}
