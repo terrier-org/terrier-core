@@ -74,7 +74,7 @@ public abstract class Query implements Serializable, Cloneable{
 		if (child != null)
 			newQ.child = (Query)child.clone();
 		return (Object)newQ;
-		} catch (Exception e) { /* DUH ? */ return null; }
+		} catch (Exception e) { throw new AssertionError(); }
     }
 
 	/** Force anything concrete to provide toString method */
