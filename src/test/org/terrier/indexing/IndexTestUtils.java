@@ -37,6 +37,7 @@ import org.terrier.structures.Index;
 import org.terrier.structures.indexing.Indexer;
 import org.terrier.structures.indexing.classical.BasicIndexer;
 import org.terrier.structures.indexing.classical.BlockIndexer;
+import org.terrier.structures.indexing.singlepass.BasicSinglePassIndexer;
 import org.terrier.utility.ApplicationSetup;
 
 public class IndexTestUtils {
@@ -47,6 +48,12 @@ public class IndexTestUtils {
 	{
 		count++;
 		return makeIndex(docnos, documents, new BasicIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count), ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count);
+	}
+	
+	public static Index makeIndexSinglePass(String[] docnos, String[] documents) throws Exception
+	{
+		count++;
+		return makeIndex(docnos, documents, new BasicSinglePassIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count), ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count);
 	}
 	
 	public static Index makeIndexFields(String[] docnos, String[] documents) throws Exception

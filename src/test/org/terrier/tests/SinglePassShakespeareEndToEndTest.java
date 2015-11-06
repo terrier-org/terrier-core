@@ -28,6 +28,7 @@ package org.terrier.tests;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.indexing.singlepass.BlockInverted2DirectIndexBuilder;
 import org.terrier.structures.indexing.singlepass.Inverted2DirectIndexBuilder;
+import org.terrier.utility.ApplicationSetup;
 
 public class SinglePassShakespeareEndToEndTest 
 {
@@ -42,8 +43,20 @@ public class SinglePassShakespeareEndToEndTest
 		protected void addDirectStructure(IndexOnDisk index) throws Exception {
 			new Inverted2DirectIndexBuilder(index).createDirectIndex();
 		}
+	}
 		
+	static public class MultiPassBasicSinglePassShakespeareEndToEndTest extends BasicSinglePassShakespeareEndToEndTest
+	{
+		public MultiPassBasicSinglePassShakespeareEndToEndTest()
+		{
+			indexingOptions.add("-Dindexing.singlepass.max.documents.flush=12");
+		}
 		
+		@Override
+		protected void addDirectStructure(IndexOnDisk index) throws Exception {
+			ApplicationSetup.setProperty("inverted2direct.processtokens", "4272");
+			super.addDirectStructure(index);
+		}
 	}
 	
 	static public class BlockSinglePassShakespeareEndToEndTest extends BlockShakespeareEndToEndTest
@@ -58,5 +71,19 @@ public class SinglePassShakespeareEndToEndTest
 			new BlockInverted2DirectIndexBuilder(index).createDirectIndex();
 		}
 		
+	}
+	
+	static public class MultiPassBlockSinglePassShakespeareEndToEndTest extends BlockSinglePassShakespeareEndToEndTest
+	{
+		public MultiPassBlockSinglePassShakespeareEndToEndTest()
+		{
+			indexingOptions.add("-Dindexing.singlepass.max.documents.flush=12");
+		}
+
+		@Override
+		protected void addDirectStructure(IndexOnDisk index) throws Exception {
+			ApplicationSetup.setProperty("inverted2direct.processtokens", "4272");
+			super.addDirectStructure(index);
+		}
 	}
 }

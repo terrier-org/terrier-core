@@ -173,13 +173,12 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 	}
 	
 	
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "resource" })
 	public void checkMetaIndex(Index index, String[] docnos) throws Exception {
 		int docid = -1;
 		//check as a stream
 		Iterator<String[]> iMi = (Iterator<String[]>) index.getIndexStructureInputStream("meta");
 		//not a close problem, because its the same object
-		@SuppressWarnings("resource")
 		CompressingMetaIndex.InputStream cmiis = (InputStream) iMi;
 		assertNotNull("Failed to get a meta input stream", iMi);
 		while(iMi.hasNext())

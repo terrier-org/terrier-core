@@ -140,7 +140,6 @@ public class Inverted2DirectIndexBuilder {
 		
 		logger.info("Generating a "+destinationStructure+" structure from the "+sourceStructure+" structure");
 		int firstDocid = 0;
-		int lastDocid = 0;
 		final long totalTokens = index.getCollectionStatistics().getNumberOfTokens();
 		final String iterationSuffix = (processTokens > totalTokens) 
 			? " of 1 iteration" 
@@ -161,13 +160,14 @@ public class Inverted2DirectIndexBuilder {
 				//get a copy of the inverted index
 				final PostingIndexInputStream iiis = (PostingIndexInputStream) index.getIndexStructureInputStream(sourceStructure);
 				//work out how many document we can scan for
-				lastDocid = firstDocid + scanDocumentIndexForTokens(processTokens, diis);
-				logger.info("Generating postings for documents with ids "+firstDocid + " to " + lastDocid);
+				int countDocsThisIteration = scanDocumentIndexForTokens(processTokens, diis);
+				//lastDocid = firstDocid + 
+				logger.info("Generating postings for "+countDocsThisIteration+" documents starting from id "+firstDocid);
 				//get a set of posting objects to save the compressed postings for each of the documents to
-				final Posting[] postings = getPostings(lastDocid - firstDocid +1 );
+				final Posting[] postings = getPostings(countDocsThisIteration);
 				//get postings for these documents
-				numberOfTokensFound += traverseInvertedFile(iiis, firstDocid, lastDocid, postings);
-				logger.info("Writing the postings to disk");
+				numberOfTokensFound += traverseInvertedFile(iiis, firstDocid, countDocsThisIteration, postings);
+				logger.info("Writing postings for iteration "+iteration+" to disk");
 				for (Posting p : postings) //for each document
 				{	
 					//logger.debug("Document " + id  + " length="+ p.getDocF());
@@ -205,8 +205,11 @@ public class Inverted2DirectIndexBuilder {
 					offsetsTmpFile.writeInt(p.getDocF());
 				}// /for document postings
 				iiis.close();
-				firstDocid = lastDocid +1;
-			} while(firstDocid <  -1 + index.getCollectionStatistics().getNumberOfDocuments());
+				firstDocid = firstDocid + countDocsThisIteration;
+			} while(firstDocid < index.getCollectionStatistics().getNumberOfDocuments());
+
+			logger.info("Completed after " + iteration + " iterations");
+			assert firstDocid == index.getCollectionStatistics().getNumberOfDocuments() : " firstDocid=" + firstDocid;
 
 			if (numberOfTokensFound != totalTokens)
 			{
@@ -308,7 +311,7 @@ public class Inverted2DirectIndexBuilder {
 	
 	/** traverse the inverted file, looking for all occurrences of documents in the given range
 	  * @return the number of tokens found in all of the document. */
-	protected long traverseInvertedFile(final PostingIndexInputStream iiis, int firstDocid, int lastDocid, final Posting[] directPostings)
+	protected long traverseInvertedFile(final PostingIndexInputStream iiis, int firstDocid, int countDocuments, final Posting[] directPostings)
 		throws IOException
 	{
 		//foreach posting list in the inverted index
@@ -317,23 +320,35 @@ public class Inverted2DirectIndexBuilder {
 		long tokens = 0; long numPostings = 0;
 		int termId = -1;
 		//array recording which of the current set of documents has had any postings written thus far
-		boolean[] prevUse = new boolean[lastDocid - firstDocid+1];
+		boolean[] prevUse = new boolean[countDocuments];
+		
+		int lastDocid = firstDocid + countDocuments -1;
 		Arrays.fill(prevUse, false);
 		int[] fieldFs = null;
+
 		TerrierTimer tt = new TerrierTimer("Inverted index processing for this iteration", index.getCollectionStatistics().getNumberOfPointers());
 		tt.start();
 		try{
 			while(iiis.hasNext())
 			{
 				IterablePosting ip = iiis.next();
+				org.terrier.structures.postings.FieldPosting fip = null;
 				//after TR-279, termids are not lexographically assigned in single-pass indexers
 				//TODO the algorithm of this class does not support TR-279.
 				termId = ((LexiconEntry) iiis.getCurrentPointer()).getTermId();
 				final int numPostingsForTerm = iiis.getNumberOfCurrentPostings();
 				int docid = ip.next(firstDocid);
-				if (docid == IterablePosting.EOL)
+
+				//TR-344: check first posting not too great for this pass (c.f. lastDocid)
+				if (docid == IterablePosting.EOL  || docid > lastDocid )
 					continue;
 				
+				assert docid >= firstDocid;
+				assert docid <= firstDocid + countDocuments;
+
+				if (saveTagInformation)
+					fip = (org.terrier.structures.postings.FieldPosting) ip;
+
 				do {
 					tokens += ip.getFrequency();
 					numPostings++;
@@ -342,7 +357,7 @@ public class Inverted2DirectIndexBuilder {
 					{
 						if (saveTagInformation)
 						{
-							fieldFs = ((org.terrier.structures.postings.FieldPosting) ip).getFieldFrequencies();
+							fieldFs = fip.getFieldFrequencies();
 							((FieldPosting)directPostings[writerOffset]).insert(termId, ip.getFrequency(), fieldFs);
 						}
 						else
@@ -353,7 +368,7 @@ public class Inverted2DirectIndexBuilder {
 						prevUse[writerOffset] = true;
 						if (saveTagInformation)
 						{	
-							fieldFs = ((org.terrier.structures.postings.FieldPosting) ip).getFieldFrequencies();
+							fieldFs = fip.getFieldFrequencies();
 							((FieldPosting)directPostings[writerOffset]).writeFirstDoc(termId, ip.getFrequency(), fieldFs);
 						}
 						else
@@ -366,29 +381,29 @@ public class Inverted2DirectIndexBuilder {
 		} finally {
 			tt.finished();
 		}
-		logger.info("Finished scanning "+sourceStructure+" structure, identified "+numPostings+" postings ("+tokens+" tokens) from "+termId + " terms");
+		logger.info("Finished scanning "+sourceStructure+" structure, identified "+numPostings+" postings ("+tokens+" tokens) from "+countDocuments + " documents");
 		return tokens;
 	}
 	
 	/** Iterates through the document index, until it has reached the given number of terms
-	  * @param _processTokens Number of tokens to stop reading the lexicon after
+	  * @param _processTokens Number of tokens to stop reading the documentindex after
 	  * @param docidStream the document index stream to read 
 	  * @return the number of documents to process
 	  */
-	protected int scanDocumentIndexForTokens(
+	protected static int scanDocumentIndexForTokens(
 		final long _processTokens, 
 		final Iterator<DocumentIndexEntry> docidStream)
 		throws IOException
 	{
-		long tokens = 0; int i=0;
+		long tokens = 0; int i=1;
 		while(docidStream.hasNext())
 		{
 			tokens += docidStream.next().getDocumentLength();
-			if (tokens > _processTokens)
-				break;
+			if (tokens >= _processTokens)
+				return i;
 			i++;
 		}
-		return i;
+		return i-1;
 	}
 	/**
 	 * main

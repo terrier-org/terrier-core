@@ -33,19 +33,26 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses( { 
 	BasicShakespeareEndToEndTest.class,
 	BlockShakespeareEndToEndTest.class,
+	
 	MatchingShakespeareEndToEndTests.TestDAATFullMatchingShakespeareEndToEndTest.class,
 	MatchingShakespeareEndToEndTests.TestDAATFullNoPLMMatchingShakespeareEndToEndTest.class,
 	MatchingShakespeareEndToEndTests.TestTAATFullNoPLMMatchingShakespeareEndToEndTest.class,	
+	
 	SinglePassShakespeareEndToEndTest.BasicSinglePassShakespeareEndToEndTest.class,
 	SinglePassShakespeareEndToEndTest.BlockSinglePassShakespeareEndToEndTest.class,
+	SinglePassShakespeareEndToEndTest.MultiPassBasicSinglePassShakespeareEndToEndTest.class,
+	SinglePassShakespeareEndToEndTest.MultiPassBlockSinglePassShakespeareEndToEndTest.class,
+	
 	MergingShakespeareEndToEndTests.BasicMerging.class,
 	MergingShakespeareEndToEndTests.BlockMerging.class,
 	MergingShakespeareEndToEndTests.BasicSinglePassMerging.class,
 	MergingShakespeareEndToEndTests.BlockSinglePassMerging.class,
+	
 	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTest.class,
 	HadoopShakespeareEndToEndTest.BlockHadoopShakespeareEndToEndTest.class,
 	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTestLowMem.class,
 	HadoopShakespeareEndToEndTest.BlockHadoopShakespeareEndToEndTestLowMem.class,
+	
 	OnDiskShakespeareEndToEndTest.class,
 	BlockOnDiskShakespeareEndToEndTest.class
 } )

@@ -96,7 +96,7 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
 	
 	/** traverse the inverted file, looking for all occurrences of documents in the given range */
     @Override
-    protected long traverseInvertedFile(final PostingIndexInputStream iiis, int firstDocid, int lastDocid, final Posting[] directPostings)
+    protected long traverseInvertedFile(final PostingIndexInputStream iiis, int firstDocid, int countDocuments, final Posting[] directPostings)
         throws IOException
     {
         //foreach posting list in the inverted index
@@ -105,7 +105,8 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
 		long tokens = 0; 
         int termId = -1;
         //array recording which of the current set of documents has had any postings written thus far
-        boolean[] prevUse = new boolean[lastDocid - firstDocid + 1];
+	    boolean[] prevUse = new boolean[countDocuments];
+	    int lastDocid = firstDocid + countDocuments -1;
         Arrays.fill(prevUse, false);
         int[] fieldFs = null;
         
@@ -115,23 +116,32 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
 			while(iiis.hasNext())
 			{
 				IterablePosting ip = iiis.next();
+				org.terrier.structures.postings.FieldPosting fip = null;
+				org.terrier.structures.postings.BlockPosting bip = (org.terrier.structures.postings.BlockPosting) ip;
+				if (saveTagInformation)
+					fip = (org.terrier.structures.postings.FieldPosting) ip;
 				//after TR-279, termids are not lexographically assigned in single-pass indexers
 				termId = ((LexiconEntry) iiis.getCurrentPointer()).getTermId();
 				final int numPostingsForTerm = iiis.getNumberOfCurrentPostings();
 				int docid = ip.next(firstDocid);
-				if (docid == IterablePosting.EOL)
+
+				//TR-344: check first posting not too great for this pass (c.f. lastDocid)
+				if (docid == IterablePosting.EOL || docid > lastDocid)
 					continue;
+				
+				assert docid >= firstDocid;
+				assert docid <= firstDocid + countDocuments;
 				
 				do {
 					tokens += ip.getFrequency();
 					final int writerOffset = docid - firstDocid;
-					final int[] blocks = ((org.terrier.structures.postings.BlockPosting) ip).getPositions();
+					final int[] blocks = bip.getPositions();
 					if (prevUse[writerOffset])
 					{
 						
 						if (saveTagInformation)
 						{
-							fieldFs = ((org.terrier.structures.postings.FieldPosting) ip).getFieldFrequencies();
+							fieldFs = fip.getFieldFrequencies();
 							((BlockFieldPosting)directPostings[writerOffset]).insert(termId, ip.getFrequency(), fieldFs, blocks);
 						}
 						else
@@ -142,7 +152,7 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
 						prevUse[writerOffset] = true;
 						if (saveTagInformation)
 						{	
-							fieldFs = ((org.terrier.structures.postings.FieldPosting) ip).getFieldFrequencies();
+							fieldFs = fip.getFieldFrequencies();
 							((BlockFieldPosting)directPostings[writerOffset]).writeFirstDoc(termId, ip.getFrequency(), fieldFs, blocks);
 						}
 						else
