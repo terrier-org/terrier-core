@@ -27,7 +27,8 @@
 package org.terrier.matching.models.queryexpansion;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class QueryExpansionModelFactory {
 	/** The default namespace for expansion models. */
 	public static final String NAMESPACE = "org.terrier.matching.models.queryexpansion.";
 	/** A cache for instantiated weighting models. */
-	private static Hashtable<String, QueryExpansionModel> cache = new Hashtable<String, QueryExpansionModel>();
+	private static Map<String, QueryExpansionModel> cache = new HashMap<String, QueryExpansionModel>();
 	
 	/**
 	 * Returns the requested weighting model.

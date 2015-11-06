@@ -66,7 +66,7 @@ public class CandidateResult implements Comparable<CandidateResult>
 	public boolean equals(Object obj) {
 		if (! (obj instanceof CandidateResult))
 			return false;
-		return ((CandidateResult)obj).score == this.score;
+		return Double.compare(((CandidateResult)obj).score, this.score) == 0;
 	}
 
 	/** {@inheritDoc} */
