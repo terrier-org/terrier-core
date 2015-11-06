@@ -380,7 +380,6 @@ public class TRECCollection extends MultiDocumentFileCollection {
 			}
 			bScanning = false;
 		}
-		System.err.println("Doc found " + ThisDocID);
 		return true;
 	}
 		
