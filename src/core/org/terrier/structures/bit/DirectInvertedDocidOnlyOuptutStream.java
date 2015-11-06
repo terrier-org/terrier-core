@@ -28,10 +28,12 @@ package org.terrier.structures.bit;
 import java.io.IOException;
 
 import org.terrier.compression.bit.BitOut;
+import org.terrier.structures.indexing.CompressionFactory.BitIdOnlyCompressionConfiguration;
 import org.terrier.structures.postings.Posting;
-/** A BitPosting writing class that doesnt write any frequency information 
+/** A BitPosting writing class that doesn't write any frequency information 
  * @since 3.0
  * @author Craig Macdonald
+ * @see BitIdOnlyCompressionConfiguration
  */
 public class DirectInvertedDocidOnlyOuptutStream extends
 		DirectInvertedOutputStream {

@@ -37,10 +37,12 @@ import org.terrier.structures.bit.BitPostingIndex;
 import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.bit.BlockDirectInvertedOutputStream;
 import org.terrier.structures.bit.BlockFieldDirectInvertedOutputStream;
+import org.terrier.structures.bit.DirectInvertedDocidOnlyOuptutStream;
 import org.terrier.structures.bit.DirectInvertedOutputStream;
 import org.terrier.structures.bit.FieldDirectInvertedOutputStream;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
+import org.terrier.structures.postings.bit.BasicIterablePostingDocidOnly;
 import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
 import org.terrier.structures.postings.bit.BlockIterablePosting;
 import org.terrier.structures.postings.bit.FieldIterablePosting;
@@ -174,6 +176,21 @@ public class CompressionFactory {
 				structureName, fieldNames, blocks,
 				fieldNames.length > 0 ? blocks ? BlockFieldDirectInvertedOutputStream.class : FieldDirectInvertedOutputStream.class : blocks ? BlockDirectInvertedOutputStream.class : DirectInvertedOutputStream.class,
 				fieldNames.length > 0 ? blocks ? BlockFieldIterablePosting.class : FieldIterablePosting.class : blocks ? BlockIterablePosting.class : BasicIterablePosting.class,
+				BitPostingIndex.class, 
+				BitPostingIndexInputStream.class,
+				BitIn.USUAL_EXTENSION
+			);
+		}
+	}
+	
+	public static class BitIdOnlyCompressionConfiguration extends SpecificCompressionConfiguration
+	{
+		public BitIdOnlyCompressionConfiguration(String structureName, String[] fieldNames, boolean blocks)
+		{
+			super(
+				structureName, fieldNames, blocks,
+				DirectInvertedDocidOnlyOuptutStream.class,
+				BasicIterablePostingDocidOnly.class,
 				BitPostingIndex.class, 
 				BitPostingIndexInputStream.class,
 				BitIn.USUAL_EXTENSION
