@@ -43,9 +43,9 @@ import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.SimpleDocumentIndexEntry;
+import org.terrier.structures.indexing.CompressionFactory.BitCompressionConfiguration;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.indexing.DocumentPostingList;
-import org.terrier.structures.indexing.CompressionFactory.BitCompressionConfiguration;
 import org.terrier.structures.indexing.classical.BasicIndexer;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
 import org.terrier.structures.postings.bit.FieldIterablePosting;
@@ -55,6 +55,7 @@ import org.terrier.utility.FieldScore;
 import org.terrier.utility.Files;
 import org.terrier.utility.MemoryChecker;
 import org.terrier.utility.RuntimeMemoryChecker;
+import org.terrier.utility.UnitUtils;
 /**
  * This class indexes a document collection (skipping the direct file construction). It implements a single-pass algorithm,
  * that operates in two phases:<br>
@@ -183,8 +184,8 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		
 		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new SimpleDocumentIndexEntry();
 		
-		MAX_DOCS_PER_BUILDER = Integer.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "0"));
-		maxMemory = Long.parseLong(ApplicationSetup.getProperty("indexing.singlepass.max.postings.memory", "0"));
+		MAX_DOCS_PER_BUILDER = UnitUtils.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "0"));
+		maxMemory = UnitUtils.parseLong(ApplicationSetup.getProperty("indexing.singlepass.max.postings.memory", "0"));
 		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
 		final int collections_length = collections.length;
 		boolean stopIndexing = false;

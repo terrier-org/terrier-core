@@ -39,6 +39,7 @@ import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
 import org.terrier.structures.postings.bit.BlockIterablePosting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.TerrierTimer;
+import org.terrier.utility.UnitUtils;
 
 
 /** Create a block direct index from a BlockInvertedIndex.
@@ -62,7 +63,7 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
     	directIndexInputStreamClass = BitPostingIndexInputStream.class.getName();
     	basicDirectIndexPostingIteratorClass = BlockIterablePosting.class.getName();
     	fieldDirectIndexPostingIteratorClass = BlockFieldIterablePosting.class.getName();
-		processTokens = Long.parseLong(ApplicationSetup.getProperty("inverted2direct.processtokens", "10000000"));
+		processTokens = UnitUtils.parseLong(ApplicationSetup.getProperty("inverted2direct.processtokens", "10000000"));
 	}
 
     /** get an array of posting object of the specified size. These will be used to hold

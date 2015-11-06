@@ -55,6 +55,7 @@ import org.terrier.structures.postings.bit.FieldIterablePosting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 import org.terrier.utility.TerrierTimer;
+import org.terrier.utility.UnitUtils;
 
 /** Create a direct index from an InvertedIndex. The algorithm is similar to that followed by
   * InvertedIndexBuilder. To summarise, InvertedIndexBuilder builds an InvertedIndex from a DirectIndex.
@@ -98,7 +99,7 @@ public class Inverted2DirectIndexBuilder {
 	protected String fieldDirectIndexPostingIteratorClass = FieldIterablePosting.class.getName();
 	
 	/** number of tokens limit per iteration */
-	protected long processTokens = Long.parseLong(ApplicationSetup.getProperty("inverted2direct.processtokens", "100000000"));
+	protected long processTokens = UnitUtils.parseLong(ApplicationSetup.getProperty("inverted2direct.processtokens", "100000000"));
 	
 	protected String sourceStructure = "inverted";
 	protected String destinationStructure = "direct";

@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -199,24 +198,7 @@ public class ApplicationSetup {
 	 * TERRIER_VAR will be prefixed.
 	 */
 	public static String TREC_RESULTS;
-	/**
-	 * @deprecated As of Terrier 3.5
-	 * The name of the file that contains a list of
-	 * files where queries are stored. The corresponding property
-	 * is <tt>trec.topics.list</tt> and the default value
-	 * is <tt>trec.topics.list</tt>. If a relative path is given, 
-	 * TERRIER_ETC will be prefixed.
-	 */
-	public static String TREC_TOPICS_LIST;
-	
-	/**
-	 * @deprecated As of Terrier 3.5
-	 * The name of the file that contains a list of qrels files 
-	 * to be used for evaluation. The corresponding property is 
-	 * <tt>trec.qrels</tt> and its default value is <tt>trec.qrels</tt>.  
-	 * If a relative path is given, TERRIER_ETC will be prefixed.
-	 */
-	public static String TREC_QRELS;
+
 	
 	/** 
 	 * The suffix of the files, where the results are stored.
@@ -224,16 +206,7 @@ public class ApplicationSetup {
 	 * and the default value is <tt>.res</tt>. 
 	 */
 	public static String TREC_RESULTS_SUFFIX;
-	
-	/** 
-	 * @deprecated As of Terrier 3.5
-	 * The filename of the file that contains 
-	 * the weighting models to be used. The corresponding
-	 * property is <tt>trec.models</tt> and the default value
-	 * is <tt>trec.models</tt>. If a relative path is given, then
-	 * it is prefixed with TERRIER_ETC.
-	 */
-	public static String TREC_MODELS;
+
 	//end of TREC specific section
 		
 	
@@ -274,15 +247,7 @@ public class ApplicationSetup {
 	 */
 	public static int EXPANSION_DOCUMENTS;
 	
-	/**
-	 * @deprecated As of Terrier 3.5
-	 * The name of the file which contains the query expansion
-	 * methods used. The corresponding property is 
-	 * <tt>expansion.models</tt> and the default
-	 * value is <tt>qemodels</tt>. If a relative path is given, 
-	 * it is prefixed with TERRIER_ETC.
-	 */
-	public static String EXPANSION_MODELS;
+
 	//block related properties
 	/** 
 	 * The size of a block of terms in a document.
@@ -437,10 +402,8 @@ public class ApplicationSetup {
 		TERRIER_INDEX_PREFIX = getProperty("terrier.index.prefix", "data");
 				
 		//TREC specific
-		TREC_TOPICS_LIST = makeAbsolute( getProperty("trec.topics.list","trec.topics.list"), TERRIER_ETC);
-		TREC_QRELS = makeAbsolute( getProperty("trec.qrels","trec.qrels"), TERRIER_ETC);
-		TREC_RESULTS = makeAbsolute(getProperty("trec.results", "results"), TERRIER_VAR);
-		TREC_MODELS = makeAbsolute(getProperty("trec.models", "trec.models"), TERRIER_ETC);
+		
+		TREC_RESULTS = makeAbsolute(getProperty("trec.results", "results"), TERRIER_VAR);		
 		TREC_RESULTS_SUFFIX = getProperty("trec.results.suffix", ".res");
 			
 		//The following properties specify the filenames and suffixes
@@ -467,7 +430,6 @@ public class ApplicationSetup {
 		//query expansion properties
 		EXPANSION_TERMS = Integer.parseInt(getProperty("expansion.terms", "10"));
 		EXPANSION_DOCUMENTS = Integer.parseInt(getProperty("expansion.documents", "3"));
-		EXPANSION_MODELS = makeAbsolute(getProperty("expansion.models", "qemodels"), TERRIER_ETC);
 		//html tags and proximity related properties		
 		BLOCK_INDEXING = Boolean.parseBoolean(getProperty("block.indexing", "false"));
 		BLOCK_SIZE = Integer.parseInt(getProperty("blocks.size", "1"));
@@ -475,7 +437,7 @@ public class ApplicationSetup {
 		FIELD_QUERYING = Boolean.parseBoolean(getProperty("field.querying", "false"));
 	
 		//double the amount of memory if using 64bit JVM.	
-		MEMORY_THRESHOLD_SINGLEPASS = Integer.parseInt(getProperty("memory.reserved", 
+		MEMORY_THRESHOLD_SINGLEPASS = UnitUtils.parseInt(getProperty("memory.reserved", 
 			System.getProperty("sun.arch.data.model", "32").equals("64") ? "100000000" : "50000000")); 
 		DOCS_CHECK_SINGLEPASS = Integer.parseInt(getProperty("docs.check", "20"));
 		
