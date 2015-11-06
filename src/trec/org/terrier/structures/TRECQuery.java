@@ -36,27 +36,22 @@ public class TRECQuery extends org.terrier.applications.batchquerying.TRECQuery 
 
 	public TRECQuery() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public TRECQuery(File queryfile) {
 		super(queryfile);
-		// TODO Auto-generated constructor stub
 	}
 
 	public TRECQuery(File[] queryfiles) {
 		super(queryfiles);
-		// TODO Auto-generated constructor stub
 	}
 
 	public TRECQuery(String queryfilename) {
 		super(queryfilename);
-		// TODO Auto-generated constructor stub
 	}
 
 	public TRECQuery(String[] queryfilenames) {
 		super(queryfilenames);
-		// TODO Auto-generated constructor stub
 	}
 
 }
