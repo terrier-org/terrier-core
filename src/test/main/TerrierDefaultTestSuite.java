@@ -86,6 +86,7 @@ import org.terrier.statistics.TestGammaFunction.TestWikipediaLanczosGammaFunctio
 import org.terrier.structures.TestBasicLexiconEntry;
 import org.terrier.structures.TestBitIndexPointer;
 import org.terrier.structures.TestCompressingMetaIndex;
+import org.terrier.structures.TestIndexOnDisk;
 import org.terrier.structures.TestIndexUtil;
 import org.terrier.structures.TestTRECQuery;
 import org.terrier.structures.bit.TestBitPostingIndex;
@@ -212,6 +213,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestPostingStructures.class,
 	TestIndexUtil.class,
 	TestTRECQuery.class,
+	TestIndexOnDisk.class,
 	
 	//.structures.collections
 	TestFSOrderedMapFile.class,
