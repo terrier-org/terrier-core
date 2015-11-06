@@ -152,7 +152,9 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		TrecTerrier.main(new String[]{"-e", "-Dtrec.qrels=" + qrels});
 		float MAP = -1.0f;
 		int queryCount = 0;
-		for (File f : new File(ApplicationSetup.TREC_RESULTS).listFiles())
+		File[] fs = new File(ApplicationSetup.TREC_RESULTS).listFiles();
+		assertNotNull(fs);
+		for (File f : fs)
 		{
 			if (f.getName().endsWith(".eval"))
 			{
@@ -182,7 +184,9 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		//System.err.println(Arrays.deepToString(new File(ApplicationSetup.TREC_RESULTS).listFiles()));
 		
 		//delete all runs and evaluations
-		for (File f : new File(ApplicationSetup.TREC_RESULTS).listFiles())
+		fs = new File(ApplicationSetup.TREC_RESULTS).listFiles();
+		assertNotNull(fs);
+		for (File f :fs)
 		{
 			//System.err.println("Checking file for possible deletion: "+f);
 			if (f.getName().endsWith(".res") || f.getName().endsWith(".eval"))
