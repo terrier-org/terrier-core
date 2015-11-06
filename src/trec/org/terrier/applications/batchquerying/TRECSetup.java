@@ -85,54 +85,7 @@ public class TRECSetup {
 			System.out.println("Creating collection.spec file.");
 			adCollection.println("#add the files to index");
 			adCollection.close();
-			
-			//creating a file containing the names of the qrels files
-//			PrintWriter qrels = new PrintWriter(new FileWriter(ETC_Dir + "trec.qrels"));
-//			System.out.println("Creating trec.qrels file.");
-//			qrels.println("#add the qrels files to use for evaluation");
-//			qrels.close();
-//			
-//			//creating a topics file
-//			PrintWriter topics = new PrintWriter(new FileWriter(ETC_Dir + "trec.topics.list"));
-//			System.out.println("Creating topics file.");
-//			topics.println("#add the topic files to use for querying");
-//			topics.close();
-			
-			//creating a models file
-//			PrintWriter methods = new PrintWriter(new FileWriter(ETC_Dir + "trec.models"));
-//			System.out.println("Creating models file.");
-//			methods.println("#Add the weighting models to use for retrieval");
-//			methods.println("#The possible values are the following classnames:");
-//			methods.println("#org.terrier.matching.models.BM25");
-//			methods.println("#org.terrier.matching.models.DFR_BM25");
-//			methods.println("#org.terrier.matching.models.TF_IDF");
-//			methods.println("#org.terrier.matching.models.BB2");
-//			methods.println("#org.terrier.matching.models.IFB2");
-//			methods.println("#org.terrier.matching.models.In_expB2");
-//			methods.println("#org.terrier.matching.models.In_expC2");
-//			methods.println("#org.terrier.matching.models.InL2");
-//			methods.println("#org.terrier.matching.models.PL2");
-//			methods.println("#If you enter a not fully-qualified name of a ");
-//			methods.println("#class, then the default namespace");
-//			methods.println("#org.terrier.matching.models is prepended");
-//			methods.println("#to the class name.");
-//			methods.println("org.terrier.matching.models.InL2");
-//			methods.close();
-			
-			//creating a query expansion methods file
-//			PrintWriter qemethods = new PrintWriter(new FileWriter(ETC_Dir + "qemodels"));
-//			System.out.println("Creating query expansion models (qemodels) file.");
-//			qemethods.println("#Add the term weighting models to use for query expansion");
-//			qemethods.println("#The possible values are the following classnames:");
-//			qemethods.println("#org.terrier.matching.models.queryexpansion.Bo1");
-//			qemethods.println("#org.terrier.matching.models.queryexpansion.Bo2");
-//			qemethods.println("#org.terrier.matching.models.queryexpansion.KL");
-//			qemethods.println("#If you enter a not fully-qualified name of a ");
-//			qemethods.println("#class, then the default namespace");
-//			qemethods.println("#org.terrier.matching.models.queryexpansion");
-//			qemethods.println("#is prepended to the class name.");
-//			qemethods.println("org.terrier.matching.models.queryexpansion.Bo1");
-//			qemethods.close();
+
 	
 			//creating a terrier-log.xml file
 			PrintWriter terrierlog = new PrintWriter(new FileWriter(ETC_Dir+ "terrier-log.xml"));
