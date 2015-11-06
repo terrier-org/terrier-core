@@ -168,13 +168,6 @@ public abstract class StaticScoreModifierWeightingModel extends WeightingModel {
 	public double score(double tf, double docLength) {
 		throw new UnsupportedOperationException();
 	}
-
-	@Override
-	public double score(double tf, double docLength, double n_t, double F_t,
-			double _keyFrequency)
-	{
-		throw new UnsupportedOperationException();
-	}
 	
 	protected void loadDocid2score(int numDocs, String inputFile, final int column) {
 		logger.info("Opening docid2score feature file " + inputFile);
