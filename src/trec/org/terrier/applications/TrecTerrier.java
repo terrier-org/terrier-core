@@ -421,9 +421,10 @@ public class TrecTerrier {
 			if (i == null)
 			{
 				logger.error("No such index : "+ Index.getLastIndexLoadError());				
+			} else {
+				IndexUtil.printDocumentIndex(i, "document");
+				i.close();
 			}
-			IndexUtil.printDocumentIndex(i, "document");
-			i.close();
 		} else if (printmeta) {
 			Index.setIndexLoadingProfileAsRetrieval(false);
 			Index i = Index.createIndex();
@@ -431,8 +432,11 @@ public class TrecTerrier {
 			{
 				logger.error("No such index : "+ Index.getLastIndexLoadError());				
 			}
-			IndexUtil.printMetaIndex(i, "meta");
-			i.close();
+			else
+			{
+				IndexUtil.printMetaIndex(i, "meta");
+				i.close();
+			}
 		} else if (printlexicon) {
 			Index.setIndexLoadingProfileAsRetrieval(false);
 			Index i = Index.createIndex();
@@ -440,11 +444,14 @@ public class TrecTerrier {
 			{
 				logger.error("No such index : "+ Index.getLastIndexLoadError());				
 			}
-			if (! i.hasIndexStructureInputStream("lexicon"))
+			else if (! i.hasIndexStructureInputStream("lexicon"))
 			{
 				logger.warn("Sorry, no lexicon index structure in index");
 			}
-			LexiconUtil.printLexicon(i, "lexicon");
+			else
+			{
+				LexiconUtil.printLexicon(i, "lexicon");
+			}
 		} else if (printdirect) {
 			Index.setIndexLoadingProfileAsRetrieval(false);
 			Index i = Index.createIndex();
@@ -452,7 +459,7 @@ public class TrecTerrier {
 			{
 				logger.error("No such index : "+ Index.getLastIndexLoadError());				
 			}
-			if (! i.hasIndexStructureInputStream("direct"))
+			else if (! i.hasIndexStructureInputStream("direct"))
 			{
 				logger.warn("Sorry, no direct index structure in index");
 			}
@@ -470,17 +477,18 @@ public class TrecTerrier {
 			{
 				logger.error("No such index : "+ Index.getLastIndexLoadError());				
 			}
-			if (i.hasIndexStructureInputStream("inverted"))
+			else if (i.hasIndexStructureInputStream("inverted"))
 			{
 				PostingIndexInputStream invIndex = (PostingIndexInputStream)(i.getIndexStructureInputStream("inverted"));
 				invIndex.print();
 				invIndex.close();
+				i.close();
 			}
 			else
 			{
 				logger.warn("Sorry, no inverted index inputstream structure in index");
 			}
-			i.close();
+			
 		} else if (printstats) {
 			Index.setIndexLoadingProfileAsRetrieval(false);
 			Index i = Index.createIndex();
@@ -488,14 +496,15 @@ public class TrecTerrier {
 			{
 				logger.error("No such index : "+ Index.getLastIndexLoadError());				
 			}
-			else if(logger.isInfoEnabled()){
+			else {
 				logger.info("Collection statistics:");
 				logger.info("number of indexed documents: " + i.getCollectionStatistics().getNumberOfDocuments());
 				logger.info("size of vocabulary: " +  i.getCollectionStatistics().getNumberOfUniqueTerms());
 				logger.info("number of tokens: " +  i.getCollectionStatistics().getNumberOfTokens());
 				logger.info("number of pointers: " +  i.getCollectionStatistics().getNumberOfPointers());
+				i.close();
 			}
-			i.close();
+			
 		} else if (evaluation) {
 			Evaluation te = null;
 			if (evaluation_type.equals("adhoc"))
@@ -503,15 +512,16 @@ public class TrecTerrier {
 			else if (evaluation_type.equals("named"))
 				te = new NamedPageEvaluation();
 			String[] nomefile = null;
-			if (evaluationFilename == null)
-			{
+			if (evaluationFilename == null) {
 				/* list all the result files and then evaluate them */
 				File fresdirectory = new File(ApplicationSetup.TREC_RESULTS);
 				nomefile = fresdirectory.list();
+				if (nomefile == null)
+					nomefile = new String[0];
 			}
 			else
 			{
-				nomefile =new String[]{evaluationFilename}; 
+				nomefile = new String[]{evaluationFilename}; 
 			}
 			for (int i = 0; i < nomefile.length; i++) {
 				if (nomefile[i].endsWith(".res")) {
