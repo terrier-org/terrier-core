@@ -140,7 +140,8 @@ public class CrawlStrategy extends WebCrawler {
 					try {
 						inputStream = new ByteArrayInputStream(html.getBytes("UTF-8"));
 					} catch (UnsupportedEncodingException e1) {
-						e1.printStackTrace();
+						//UTF-8 must always be supported
+						throw new AssertionError(e1);
 					}
                 	
                     TaggedDocument tg = new TaggedDocument(inputStream,docProperties,tokeniser,doctags,exacttags,fieldtags);
