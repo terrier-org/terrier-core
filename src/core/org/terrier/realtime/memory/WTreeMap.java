@@ -48,7 +48,8 @@ public class WTreeMap<K, V> extends TreeMap<K, V> implements OrderedMap<K, V> {
 	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	public java.util.Map.Entry<K, V> get(int index) {
-		return new MapEntry<K, V>((K) super.keySet().toArray()[index],
-				super.get(super.keySet().toArray()[index]));
+		//from the JDK documentation of keySet() The set's iterator returns the keys in ascending order.
+		final K _key = (K) super.keySet().toArray()[index];
+		return new MapEntry<K, V>(_key, super.get(_key));
 	}
 }
