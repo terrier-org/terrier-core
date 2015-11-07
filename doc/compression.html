@@ -24,7 +24,7 @@ The inverted index data structure contains a collection of postings lists, a dat
 <li>term positions within the document (implemented by <a href="javadoc/org/terrier/structures/postings/BlockPosting.html">BlockPosting</a>)</li>
 </ul>
 
-By default, Terrier compresses posting lists as a stream of postings. It uses <a href="http://en.wikipedia.org/wiki/Elias_gamma_coding">Elias' Gamma</a> compression schema (codec) to compress doc ids and term positions; it uses <a href="http://en.wikipedia.org/wiki/Unary_coding">Unary</a> codec to compress term and field frequencies. The particular compression configuration is defined by the CompressionConfiguration class. For more information, please refer to <a href="">org.terrier.structures.bit.DirectInvertedOutputStream</a>  (and children) for documentation on postings compression, and <a href="javadoc/org/terrier/structures/postings/bit/BasicIterablePosting.html">org.terrier.structures.postings.bit.BasicIterablePosting</a> (and children) documentation for postings decompression.
+By default, Terrier compresses posting lists as a stream of postings. It uses <a href="http://en.wikipedia.org/wiki/Elias_gamma_coding">Elias' Gamma</a> compression schema (codec) to compress doc ids and term positions; it uses <a href="http://en.wikipedia.org/wiki/Unary_coding">Unary</a> codec to compress term and field frequencies. The particular compression configuration is defined by the CompressionConfiguration class. For more information, please refer to <a href="javadoc/org/terrier/structures/bit/DirectInvertedOutputStream.html">org.terrier.structures.bit.DirectInvertedOutputStream</a>  (and children) for documentation on postings compression, and <a href="javadoc/org/terrier/structures/postings/bit/BasicIterablePosting.html">org.terrier.structures.postings.bit.BasicIterablePosting</a> (and children) documentation for postings decompression.
 
 New in version 4.0, Terrier now supports more modern compression codecs, such as the state-of-the-art PForDelta codec. In particular, a new integer compression layer allows the transparent use of compression schemes from <a href="https://github.com/lemire/FastPFOR">Java_FastPFOR</a> by Daniel Lemire, and <a href="http://data.linkedin.com/opensource/kamikaze">Kamikaze</a> by LinkedIn.  
 Indeed, the new integer compression layer defines a new CompressionConfiguration (namely <a href="javadoc/org/terrier/structures/integer/IntegerCodecCompressionConfiguration.html">IntegerCodecCompressionConfiguration</a>, which can be configured to use various codecs for each compression payload (document ids, term frequencies, field frequencies, term positions):
@@ -49,11 +49,11 @@ When using these codecs, the Terrier infrastructure (de)compresses postings in c
 Terrier 4.0 can perform classical two-pass indexing (i.e. bin/trec_terrier.sh -i), using the aforementioned codecs. To do so, some properties have to be set. For instance, to store the direct and inverted index compressed in blocks of 1024 posting using NewPFD codec:
 <pre>
 index.direct.compression.integer.chunk.size=1024
-indexing.direct.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+indexing.direct.compression.configuration=org.terrier.structures.integer.IntegerCodecCompressionConfiguration
 index.direct.compression.integer.chunk.size=1024
 index.direct.compression.integer.ids.codec=LemireNewPFDVBCodec
 index.direct.compression.integer.tfs.codec=LemireNewPFDVBCodec
-indexing.inverted.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+indexing.inverted.compression.configuration=org.terrier.structures.integer.IntegerCodecCompressionConfiguration
 index.inverted.compression.integer.chunk.size=1024
 index.inverted.compression.integer.ids.codec=LemireNewPFDVBCodec
 index.inverted.compression.integer.tfs.codec=LemireNewPFDVBCodec
@@ -67,7 +67,7 @@ List of properties for indexing:
 <table><th><tr><td><b>Name</b></td><td><b>Description</b></td><td><b>Values</b></td></tr></th>
 <tr><td><tt>indexing.inverted.compression.configuration</tt><br>
 <tt>indexing.direct.compression.configuration</tt></td><td>The class that defines the compression configuration to be used on the inverted (direct) index at indexing time. Only classical indexing supports pluggable compression.</td><td>org.terrier.structures.indexing.CompressionFactory$BitCompressionConfiguration (default);
-org.terrier.structures.indexing.IntegerCodecCompressionConfiguration</tr></tr>
+org.terrier.structures.integer.IntegerCodecCompressionConfiguration</tr></tr>
 <tr><td><tt>index.inverted.compression.integer.chunk.size</tt><br><tt>index.direct.compression.integer.chunk.size</tt></td><td>Number of postings to be compressed at a time (used only w/ IntegerCodecCompressionConfiguration)</td><td>integer (default: 1024)</td></tr>
 <tr><td><tt>index.inverted.compression.integer.ids.codec</tt><br>
 <tt>index.direct.compression.integer.ids.codec</tt></td><td>The codec to be used to compress document identifiers in the inverted index (used only w/ IntegerCodecCompressionConfiguration). For the direct index, the codec to be used for the term identifiers.</td><td>See codecs table</td></tr>
@@ -87,7 +87,7 @@ org.terrier.structures.indexing.IntegerCodecCompressionConfiguration</tr></tr>
 
 Inverted indices built by single-pass (i.e. bin/trec_terrier.sh -i -j) or MapReduce  (i.e. bin/trec_terrier.sh -i -H) indexing can be re-compressed using the InvertedIndexRecompresser class. For example, one can re-compress an inverted index using the OptPFD codec. This can be performed using InvertedIndexRecompresser with the following properties:
 <pre>
-indexing.tmp-inverted.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+indexing.tmp-inverted.compression.configuration=org.terrier.structures.integer.IntegerCodecCompressionConfiguration
 index.tmp-inverted.compression.integer.chunk.size=1024
 index.tmp-inverted.compression.integer.ids.codec=LemireOptPFDVBCodec
 index.tmp-inverted.compression.integer.tfs.codec=LemireOptPFDVBCodec
@@ -99,10 +99,10 @@ Please notice that InvertedIndexRecompresser overwrites the original inverted in
 Different codecs have different effects on index size and query response time. When storage space is a concern, it is suggested to use Terrier's default compression configuration (Simple16 and OptPFD are options too). Instead, when the inverted index can fit in main memory, the best practices derived in [7] recommend to use the FOR codec to reduce the query response time, as follows:
 <pre>
 index.direct.compression.integer.chunk.size=1024
-indexing.direct.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+indexing.direct.compression.configuration=org.terrier.structures.integer.IntegerCodecCompressionConfiguration
 compression.direct.integer.ids.codec=LemireFORVBCodec
 compression.direct.integer.tfs.codec=LemireFORVBCodec
-indexing.inverted.compression.configuration=org.terrier.structures.indexing.IntegerCodecCompressionConfiguration
+indexing.inverted.compression.configuration=org.terrier.structures.integer.IntegerCodecCompressionConfiguration
 compression.inverted.integer.ids.codec=LemireFORVBCodec
 compression.inverted.integer.tfs.codec=LemireFORVBCodec
 compression.inverted.integer.fields.codec=LemireFORVBCodec
