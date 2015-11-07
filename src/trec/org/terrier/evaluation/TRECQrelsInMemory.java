@@ -521,7 +521,7 @@ public class TRECQrelsInMemory{
 	/**
      * Models the set of relevant documents for one query.
      */
-    static public class QrelsHashSet{
+    static public class QrelsHashSet implements Cloneable {
             /** The identifier of the query.*/
             public String queryid = "";
             /** All relevance grades indicated in the qrels. */
@@ -549,6 +549,7 @@ public class TRECQrelsInMemory{
              * Creates a clone of the current instance of the class.
              * @return Object the clone of the current object.
              */
+            @Override
             public Object clone() {
             		QrelsHashSet dup;
             		try{
