@@ -98,6 +98,7 @@ public class TRECSetup {
 			terrierlog.println("     <encoder>");
 			terrierlog.println("          <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>");
 			terrierlog.println("     </encoder>");
+			terrierlog.println("  </appender>");
 			if (debug)
 				terrierlog.println("  <root level=\"debug\">");
 			else
