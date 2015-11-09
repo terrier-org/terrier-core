@@ -17,9 +17,8 @@ import org.terrier.utility.Files;
 public class TestTweetJSONCollection extends ApplicationSetupBasedTest {
 
 	final String text = "If only Bradley's arm was longer. Best photo ever. #oscars http://t.co/C9U5NOtGap";
-	//TODO: why is the term pipeline already applied by here?
 	final String[] terms = new String[]{
-		"only", "bradley", "arm", "longer", "best", "photo", "oscars", "http", "c9u5notgap"
+		"if", "only", "bradley", "s", "arm", "was", "longer", "best", "photo", "ever", "oscars", "http", "t", "co", "c9u5notgap"
 	};
 	
 	

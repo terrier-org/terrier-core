@@ -39,11 +39,7 @@ import java.util.Set;
 
 import org.apache.hadoop.io.Text;
 import org.terrier.indexing.tokenisation.Tokeniser;
-import org.terrier.structures.Index;
-import org.terrier.structures.Lexicon;
 import org.terrier.structures.seralization.FixedSizeTextFactory;
-import org.terrier.terms.BaseTermPipelineAccessor;
-import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 
@@ -154,9 +150,6 @@ public class TwitterJSONDocument implements Document{
 	private boolean ignoreURLs = Boolean.parseBoolean(ApplicationSetup.getProperty("JSONDocument.ignoreURLs", "true"));
 	private boolean ignoreMentions = Boolean.parseBoolean(ApplicationSetup.getProperty("JSONDocument.ignoreMentions", "true"));
 	
-	/** TermPipeline processing */
-	protected static TermPipelineAccessor tpa = null;
-	
 	String jsonText = null;
 	
 	public TwitterJSONDocument(String JSONTweet) {
@@ -185,11 +178,6 @@ public class TwitterJSONDocument implements Document{
 	
 	public void doParsing(JsonObject json) {
 		
-		
-		
-		//System.err.println("Parsing Tweet");
-		
-		if (tpa==null) load_pipeline();
 		Set<String> processFields = new HashSet<String>();
 		for (String field : fieldsToProcess) processFields.add(field);
 		int i = 0;
@@ -225,12 +213,8 @@ public class TwitterJSONDocument implements Document{
 			tokenisedterms = t.getTokens(r);
 			pipedTerms.clear();
 			for (int j=0; j<tokenisedterms.length; j++) {
-				if ((ignoreURLs && tokenisedterms[j].contains("/")) || (ignoreMentions && tokenisedterms[j].contains("@"))) {
-					//System.err.println("Ignoring "+tokenisedterms[j]);
-					continue;
-				}
-				String term = tpa.pipelineTerm(tokenisedterms[j]);
-				if (term!=null) pipedTerms.add(term);
+				if ((ignoreURLs && tokenisedterms[j].contains("/")) || (ignoreMentions && tokenisedterms[j].contains("@"))) continue;
+				if (tokenisedterms[j]!=null) pipedTerms.add(tokenisedterms[j]);
 			}
 			tokenisedterms=pipedTerms.toArray(new String[pipedTerms.size()]);
 		} catch (IOException e) {
@@ -292,8 +276,7 @@ public class TwitterJSONDocument implements Document{
 				username = t.getTokens(r);
 				pipedTerms.clear();
 				for (int j=0; j<username.length; j++) {
-					String term = tpa.pipelineTerm(username[j]);
-					if (term!=null) pipedTerms.add(term);
+					if (username[j]!=null) pipedTerms.add(username[j]);
 				}
 				username=pipedTerms.toArray(new String[pipedTerms.size()]);
 			} catch (IOException e) {
@@ -307,8 +290,7 @@ public class TwitterJSONDocument implements Document{
 				screenname = t.getTokens(r);
 				pipedTerms.clear();
 				for (int j=0; j<screenname.length; j++) {
-					String term = tpa.pipelineTerm(screenname[j]);
-					if (term!=null) pipedTerms.add(term);
+					if (screenname[j]!=null) pipedTerms.add(screenname[j]);
 				}
 				screenname=pipedTerms.toArray(new String[pipedTerms.size()]);
 			} catch (IOException e) {
@@ -397,8 +379,7 @@ public class TwitterJSONDocument implements Document{
 		    	placenameA = t.getTokens(r);
 		    	pipedTerms.clear();
 				for (int j=0; j<placenameA.length; j++) {
-					String term = tpa.pipelineTerm(placenameA[j]);
-					if (term!=null) pipedTerms.add(term);
+					if (placenameA[j]!=null) pipedTerms.add(placenameA[j]);
 				}
 				placenameA=pipedTerms.toArray(new String[pipedTerms.size()]);
 			} catch (IOException e) {
@@ -498,10 +479,6 @@ public class TwitterJSONDocument implements Document{
 		for (String key : pk) {
 			if (!saveAll && !keyslengths.contains(key)) properties.remove(key);
 		}
-		
-		//System.err.println("Finished Parsing Tweet");
-		
-		
 	}
 	
 	public TwitterJSONDocument(JsonObject json) {
@@ -577,61 +554,6 @@ public class TwitterJSONDocument implements Document{
 			assert false;
 			return -1;
 		}
-	}
-	
-	/** load in the term pipeline */
-	public static void load_pipeline()
-	{
-		//final String[] pipes = ApplicationSetup.getProperty(
-		//		"termpipelines", "Stopwords,PorterStemmer").trim()
-		//		.split("\\s*,\\s*");
-			tpa = new BaseTermPipelineAccessor("Stopwords");
-	}
-	
-	
-	
-	public static void main(String[] args) {
-		String testterms = "@BBC World Service staff cuts 2022 FIFA soccer  Haiti Aristide return Mexico drug war NIST computer security NSA  Pakistan diplomat arrest murder phone hacking British politicians Toyota Recall Egyptian protesters attack museum Kubica crash Assange Nobel peace nomination Oprah Winfrey half-sister release of The Rite Thorpe return in 2012 Olympics release of Known and Unknown White Stripes breakup  William and Kate fax save-the-date Cuomo budget cuts Taco Bell filling lawsuit Emanuel residency court rulings healthcare law unconstitutional  Amtrak train service Super Bowl, seats TSA airport screening US unemployment reduce energy consumption Detroit Auto Show global warming and weather  Keith Olbermann new job Special Olympics athletes State of the Union  and jobs Dog Whisperer Cesar Millan's techniques MSNBC Rachel Maddow Sargent Shriver tributes Moscow airport bombing Giffords' recovery protests in Jordan Egyptian curfew Beck attacks Piven Obama birth certificate Holland Iran envoy recall Kucinich olive pit lawsuit White House spokesman replaced political campaigns and social media Bottega Veneta organic farming requirements Egyptian evacuation carbon monoxide law war prisoners, Hatch Act";
-		if (tpa==null) load_pipeline();
-		String[] tokenisedterms = {};
-		Reader r = new StringReader(testterms);
-		Tokeniser t = Tokeniser.getTokeniser();
-		List<String> pipedTerms = new ArrayList<String>();
-		
-		Set<String> stem1terms = new HashSet<String>();
-		Set<String> stem2terms = new HashSet<String>();
-		try {
-			tokenisedterms = t.getTokens(r);
-			pipedTerms.clear();
-			for (int j=0; j<tokenisedterms.length; j++) {
-				String term = tpa.pipelineTerm(tokenisedterms[j]);
-				String term2 = tpa.pipelineTerm(term);
-				if (term!=null) {
-					pipedTerms.add(term);
-					stem1terms.add(term);
-					stem2terms.add(term2);
-					if (term2==null) System.err.println("WARN: "+tokenisedterms[j]+" "+term+" "+term2);
-					else if (!term.equalsIgnoreCase(term2)) System.err.println("WARN: "+tokenisedterms[j]+" "+term+" "+term2);
-				}
-			}
-			tokenisedterms=pipedTerms.toArray(new String[pipedTerms.size()]);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Index.setIndexLoadingProfileAsRetrieval(false);
-		Index index = Index.createIndex("/users/richardm/tr.richardm/Twitter/TRECMicroblog2012/", "Twitter2012TIndexNoUM");
-		Lexicon<String> lex = index.getLexicon();
-		int match1 = 0;
-		int match2 = 0;
-		for (int i =0; i<index.getCollectionStatistics().getNumberOfUniqueTerms(); i++) {
-			String te = (String)lex.getIthLexiconEntry(i).getKey();
-			if (stem1terms.contains(te)) match1++;
-			if (stem2terms.contains(te)) match2++;
-			
-		}
-		
-		System.err.println("Matched 1 stem "+match1+" of "+stem1terms.size());
-		System.err.println("Matched 2 stem "+match2+" of "+stem2terms.size());
 	}
 
 	public String getJsonText() {
