@@ -78,6 +78,7 @@ public class TRECSetup {
 		}
 	
 		String ETC_Dir = System.getProperty("terrier.etc", installDirectory + File.separator + "etc" ) + File.separator;
+		String Classes_Dir = installDirectory + File.separator + "target"+ File.separator + "classes" + File.separator;
 		try {	
 			//creating an collection specification file
 			//with only a comment line
@@ -88,23 +89,22 @@ public class TRECSetup {
 
 	
 			//creating a terrier-log.xml file
-			PrintWriter terrierlog = new PrintWriter(new FileWriter(ETC_Dir+ "terrier-log.xml"));
-			System.out.println("Creating logging configuration (terrier-log.xml) file.");
-			terrierlog.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-			terrierlog.println("<!DOCTYPE log4j:configuration SYSTEM \"log4j.dtd\">");
-			terrierlog.println("<log4j:configuration xmlns:log4j=\"http://jakarta.apache.org/log4j/\">");
-			terrierlog.println(" <appender name=\"console\" class=\"org.apache.log4j.ConsoleAppender\">");
-			terrierlog.println("  <param name=\"Target\" value=\"System.err\"/>");
-			terrierlog.println("  <layout class=\"org.apache.log4j.SimpleLayout\"/>");
-			terrierlog.println(" </appender>");
-			terrierlog.println(" <root>");
+			PrintWriter terrierlog = new PrintWriter(new FileWriter(Classes_Dir+ "logback.xml"));
+			System.out.println("Creating logging configuration (logback.xml) file in "+Classes_Dir);
+			terrierlog.println("<configuration>");
+			terrierlog.println("  <appender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\">");
+			terrierlog.println("      <!-- encoders are assigned the type");
+			terrierlog.println("                    ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->");
+			terrierlog.println("     <encoder>");
+			terrierlog.println("          <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>");
+			terrierlog.println("     </encoder>");
 			if (debug)
-				terrierlog.println("  <priority value=\"debug\" /><!-- Terrier: change debug to info to get less output -->");
+				terrierlog.println("  <root level=\"debug\">");
 			else
-				terrierlog.println("  <priority value=\"info\" /><!-- Terrier: change to debug to get more output -->");
-			terrierlog.println("  <appender-ref ref=\"console\" />");
-			terrierlog.println(" </root>");
-			terrierlog.println("</log4j:configuration>");
+				terrierlog.println("  <root level=\"info\">");
+			terrierlog.println("      <appender-ref ref=\"STDOUT\" />");
+			terrierlog.println("  </root>");
+			terrierlog.println("</configuration>");
 			terrierlog.close();
 			
 			//creating the terrier.properties file
