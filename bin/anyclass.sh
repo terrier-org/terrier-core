@@ -80,9 +80,9 @@ fi
 
 if [ ! -n "$CLASSPATH" ]
 then
-	CLASSPATH=$TERRIER_HOME/target/TerrierCore-4.1.jar
+	CLASSPATH=$TERRIER_HOME/target/TerrierCore-4.1.jar:$TERRIER_HOME/etc/logback.xml
 else
-	CLASSPATH=$CLASSPATH:$TERRIER_HOME/target/TerrierCore-4.1.jar
+	CLASSPATH=$CLASSPATH:$TERRIER_HOME/target/TerrierCore-4.1.jar:$TERRIER_HOME/etc/logback.xml
 fi
 
 
