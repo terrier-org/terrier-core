@@ -96,6 +96,7 @@ import org.terrier.structures.collections.TestFSArrayFile;
 import org.terrier.structures.collections.TestFSOrderedMapFile;
 import org.terrier.structures.indexing.TestCompressingMetaIndexBuilderPartitioner;
 import org.terrier.structures.indexing.TestIndexingFatalErrors;
+import org.terrier.structures.indexing.singlepass.TestInverted2DirectIndexBuilder;
 import org.terrier.structures.indexing.singlepass.hadoop.TestBitPostingIndexInputFormat;
 import org.terrier.structures.indexing.singlepass.hadoop.TestPositingAwareSplit;
 import org.terrier.structures.indexing.singlepass.hadoop.TestSplitEmittedTerm;
@@ -224,6 +225,9 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	//.structures.indexing
 	TestCompressingMetaIndexBuilderPartitioner.class,
 	TestIndexingFatalErrors.class,
+	
+	//.structures.indexing.sp.hadoop
+	TestInverted2DirectIndexBuilder.class,
 	
 	//.structures.indexing.sp.hadoop
 	TestBitPostingIndexInputFormat.class,
