@@ -55,34 +55,14 @@ echo Set TERRIER_HOME to be %TERRIER_HOME%
 if defined TERRIER_ETC goto terrier_lib
 SET TERRIER_ETC=%TERRIER_HOME%\etc
 
-:terrier_lib
-if defined TERRIER_LIB goto classpath
-SET TERRIER_LIB=%TERRIER_HOME%\lib
-
 :classpath
 
 REM ------------------------
 REM -- Build up class path 
 REM ------------------------
 call "%BIN%\lcp.bat" %CLASSPATH%
-FOR %%i IN ("%TERRIER_LIB%\*.jar") DO call "%BIN%\lcp.bat" "%%i"
-FOR %%i IN ("%TERRIER_LIB%\hadoop\*.jar") DO call "%BIN%\lcp.bat" "%%i"
-FOR %%i IN ("%TERRIER_LIB%\poi\*.jar") DO call "%BIN%\lcp.bat" "%%i"
-FOR %%i IN ("%TERRIER_LIB%\jetty-ext\*.jar") DO call "%BIN%\lcp.bat" "%%i"
-FOR %%i IN ("%TERRIER_LIB%\crawler4j\*.jar") DO call "%BIN%\lcp.bat" "%%i"
+call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\TerrierCore-4.1.jar"
 
-REM ------------------------
-REM -- Derive logging setup 
-REM ------------------------
-SET LOGGING_OPTIONS=
-if not EXIST "%TERRIER_ETC%\terrier-log.xml" goto log4jxml
-SET LOGGING_OPTIONS=-Dlog4j.configuration=file:%TERRIER_ETC%\terrier-log.xml
-:log4jxml
-if not EXIST "%TERRIER_ETC%\log4j.xml" goto log4jproperties
-SET LOGGING_OPTIONS=-Dlog4j.configuration=file:%TERRIER_ETC%\log4j.xml
-:log4jproperties
-if not EXIST "%TERRIER_ETC%\log4j.properties" goto dorun
-SET LOGGING_OPTIONS=-Dlog4j.configuration=file:%TERRIER_ETC%\log4j.properties
 
 :dorun
 

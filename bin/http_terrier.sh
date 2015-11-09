@@ -52,21 +52,6 @@ then
 	#echo "Setting TERRIER_HOME to $TERRIER_HOME"
 fi
 
-if [ -z "$TERRIER_LIB" ];
-then
-	TERRIER_LIB=$TERRIER_HOME/lib/
-fi
-
-for f in $TERRIER_LIB/jetty-ext/*.jar $TERRIER_LIB/crawler4j/*.jar;
-do
-	if [ -z "$CLASSPATH" ]
-	then
-		CLASSPATH=$f
-	else
-		CLASSPATH=$CLASSPATH:$f
-	fi
-done
-
 export CLASSPATH
 
 if [ "$#" == "0" ];

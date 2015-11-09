@@ -80,16 +80,14 @@ then
 fi
 
 #setup CLASSPATH
-for jar in $TERRIER_HOME/lib/*.jar; do
-	if [ ! -n "$CLASSPATH" ]
-	then
-		CLASSPATH=$jar
-	else
-		CLASSPATH=$CLASSPATH:$jar
-	fi
-done
+if [ ! -n "$CLASSPATH" ]
+then
+	CLASSPATH=$TERRIER_HOME/target/TerrierCore-4.1.jar
+else
+	CLASSPATH=$CLASSPATH:$TERRIER_HOME/target/TerrierCore-4.1.jar
+fi
 
-
+echo $CLASSPATH
 
 
 $JAVA_HOME/bin/java $JAVA_OPTIONS -cp $CLASSPATH \
