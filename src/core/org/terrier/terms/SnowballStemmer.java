@@ -50,7 +50,6 @@ abstract public class SnowballStemmer extends StemmerTermPipeline {
 	protected SnowballStemmer(String StemLanguage, TermPipeline next)
 	{
 		super(next);
-		StemLanguage = StemLanguage.toLowerCase();
 		try{
 			Class<? extends SnowballProgram> stemClass = 
 				(Class<? extends SnowballProgram>) Class.forName("org.tartarus.snowball.ext." + StemLanguage + "Stemmer");
