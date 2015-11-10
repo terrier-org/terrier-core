@@ -203,11 +203,11 @@ public class TaggedDocument implements Document {
 				elseAbstractSpecialTag = i;
 		}
 		
-		if (abstractnames.length>0) {
+		if (abstracttags.length>0) {
 			considerAbstracts=true;
 			abstractName2Index = new TObjectIntHashMap<String>();
 			int aIndex = 0;
-			for (String abstractName : abstractnames) {
+			for (String abstractName : abstracttags) {
 				abstractName2Index.put(abstractName, aIndex);
 				aIndex++;
 			}
@@ -229,11 +229,11 @@ public class TaggedDocument implements Document {
 		this.tokeniser = _tokeniser;
 		this.currentTokenStream = Tokeniser.EMPTY_STREAM;
 		
-		if (abstractnames.length>0) {
+		if (abstracttags.length>0) {
 			considerAbstracts=true;
 			abstractName2Index = new TObjectIntHashMap<String>();
 			int aIndex = 0;
-			for (String abstractName : abstractnames) {
+			for (String abstractName : abstracttags) {
 				abstractName2Index.put(abstractName, aIndex);
 				aIndex++;
 			}
