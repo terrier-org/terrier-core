@@ -481,7 +481,7 @@ public class FSOMapFileLexicon extends MapLexicon
 	 * @param numEntries
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "resource"})
 	public static void optimise(
 			String structureName, 
 			IndexOnDisk index,
@@ -507,38 +507,48 @@ public class FSOMapFileLexicon extends MapLexicon
 		int firstChar = 0;
 		final TIntObjectHashMap<int[]> map = new TIntObjectHashMap<int[]>();
 		
-		@SuppressWarnings("resource")
+		
 		Iterator<Map.Entry<Text,LexiconEntry>> iterator = 
 			new FSOrderedMapFile.EntryIterator<Text, LexiconEntry>(mapFileFilename, keyFactory, valueFactory);
-		while(iterator.hasNext())
-		{
-			Map.Entry<Text,LexiconEntry> lee = iterator.next();
-			//System.err.println(lee.toString());
-			//System.err.println(lee.toString() +" "+lee.getValue().getTermId()+" "+lee.getValue().getFrequency());
-			
-			//term id
-			int termId = lee.getValue().getTermId();
-			if (! (termId == lastTermId+1))
-				termIdsAligned = false;
-			if (termid2index[termId] != -1)
+		Map.Entry<Text,LexiconEntry> lee = null;
+		int termId = Integer.MIN_VALUE;
+		try {
+			while(iterator.hasNext())
 			{
-				throw new WrappedIOException(new IllegalArgumentException("Termid " + termId + " is not unique - used at entries " +termid2index[termId]+ " and" + counter));
+				lee = iterator.next();
+				//System.err.println(lee.toString());
+				//System.err.println(lee.toString() +" "+lee.getValue().getTermId()+" "+lee.getValue().getFrequency());
+				
+				//term id
+				termId = lee.getValue().getTermId();
+				if (! (termId == lastTermId+1))
+					termIdsAligned = false;
+				if (termid2index[termId] != -1)
+				{
+					throw new WrappedIOException(new IllegalArgumentException("Termid " + termId + " is not unique - used at entries " +termid2index[termId]+ " and" + counter));
+				}
+				termid2index[termId] = counter;
+				lastTermId = termId;
+				
+				//bsearch reduction optimisaion
+				firstChar = lee.getKey().charAt(0);
+				if (firstChar!=previousFirstChar) {
+					int[] boundaries = new int[] {counter, 0};
+					map.put(firstChar, boundaries);
+					previousFirstChar = firstChar;
+				}
+				
+				//increments
+				statsCounter.count(lee.getValue());
+				counter++;
 			}
-			termid2index[termId] = counter;
-			lastTermId = termId;
-			
-			//bsearch reduction optimisaion
-			firstChar = lee.getKey().charAt(0);
-			if (firstChar!=previousFirstChar) {
-				int[] boundaries = new int[] {counter, 0};
-				map.put(firstChar, boundaries);
-				previousFirstChar = firstChar;
-			}
-			
-			//increments
-			statsCounter.count(lee.getValue());
-			counter++;
+		} catch (ArrayIndexOutOfBoundsException ae) {
+			logger.error("Termid " + termId + " is  too large (expected only "
+					+termid2index.length +" entries). Bad lexicon entry is: " 
+					+ lee.getKey().toString() + " -> " + lee.getValue().toString() );
+			throw ae;
 		}
+		
 		if (counter != numEntries)
 			termIdsAligned = false;
 		IndexUtil.close(iterator);
