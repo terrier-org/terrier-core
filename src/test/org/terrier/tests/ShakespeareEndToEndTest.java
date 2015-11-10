@@ -277,6 +277,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 	{
 		//check as random access
 		Lexicon<String> lex = index.getLexicon();
+		assertNotNull(lex);
 		for(String notFoundTerm : CHECK_TERMS_NOT_EXIST)
 		{
 			assertNull("Found entry for term " + notFoundTerm + " that we shouldn't have!", lex.getLexiconEntry(notFoundTerm));
