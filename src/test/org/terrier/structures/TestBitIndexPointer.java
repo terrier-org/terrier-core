@@ -172,6 +172,20 @@ public class TestBitIndexPointer {
 	{
 		test((FixedSizeWriteableFactory<? extends BitIndexPointer>)(FixedSizeWriteableFactory)new FieldLexiconEntry.Factory(3));
 	}
+
+	@Test
+	public void testBlockFieldLE() throws Exception
+	{
+ 
+		test((FixedSizeWriteableFactory<? extends BitIndexPointer>)(FixedSizeWriteableFactory)new BlockFieldLexiconEntry.Factory(3));
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testBlockLE() throws Exception
+	{
+		test((FixedSizeWriteableFactory<? extends BitIndexPointer>)(FixedSizeWriteableFactory)new BlockLexiconEntry.Factory());
+	}
 	
 	
 	@Test
