@@ -26,6 +26,7 @@
 package org.terrier.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -41,6 +42,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.terrier.applications.batchquerying.TRECSetup;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.utility.Files;
 
 /** Base class for a test that requires ApplicationSetup to be correctly initialised.
@@ -97,6 +99,7 @@ public class ApplicationSetupBasedTest {
 		assertEquals(terrier_home, org.terrier.utility.ApplicationSetup.TERRIER_HOME);
 		assertEquals(terrier_etc, org.terrier.utility.ApplicationSetup.TERRIER_ETC);
 		assertEquals(terrier_etc, org.terrier.utility.ApplicationSetup.TERRIER_INDEX_PATH);
+		assertFalse(IndexOnDisk.existsIndex(org.terrier.utility.ApplicationSetup.TERRIER_INDEX_PATH, "data"));
 	}
 	
 	static String propertyFileEscape(String s)

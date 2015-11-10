@@ -34,6 +34,7 @@ import java.util.Map;
 
 import org.terrier.indexing.tokenisation.EnglishTokeniser;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.indexing.Indexer;
 import org.terrier.structures.indexing.classical.BasicIndexer;
 import org.terrier.structures.indexing.classical.BlockIndexer;
@@ -91,6 +92,8 @@ public class IndexTestUtils {
 	
 	public static Index makeIndex(String[] docnos, String[] documents, Indexer indexer, String path, String prefix) throws Exception
 	{
+		assertFalse("Index at "+ path + "," +  prefix + " already exists!", 
+				IndexOnDisk.existsIndex(path, prefix));
 		assertEquals(docnos.length, documents.length);
 		Document[] sourceDocs = new Document[docnos.length];
 		for(int i=0;i<docnos.length;i++)
@@ -110,6 +113,8 @@ public class IndexTestUtils {
 	
 	public static Index makeIndexFields(String[] docnos, String[] documents, Indexer indexer, String path, String prefix) throws Exception
 	{
+		assertFalse("Index at "+ path + "," +  prefix + " already exists!", 
+			IndexOnDisk.existsIndex(path, prefix));
 		assertEquals(docnos.length, documents.length);
 		Document[] sourceDocs = new Document[docnos.length];
 		for(int i=0;i<docnos.length;i++)
