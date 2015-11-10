@@ -106,6 +106,7 @@ import org.terrier.structures.postings.TestPhraseIterablePosting;
 import org.terrier.structures.postings.TestProximityIterablePosting;
 import org.terrier.structures.serialization.TestFixedSizeTextFactory;
 import org.terrier.terms.TestPorterStemmer;
+import org.terrier.terms.TestSnowball;
 import org.terrier.terms.TestTermPipelineAccessor;
 import org.terrier.tests.ShakespeareEndToEndTestSuite;
 import org.terrier.utility.TestArrayUtils;
@@ -246,6 +247,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	//.terms
 	TestTermPipelineAccessor.class,
 	TestPorterStemmer.class,
+	TestSnowball.class,
 	
 	//.utility
 	TestArrayUtils.class,
