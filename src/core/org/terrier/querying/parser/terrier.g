@@ -207,5 +207,9 @@ disjunctiveQuery returns [Query q]
   )+
   CLOSE_DISJUNCTIVE
   {q = dq;}
+  (HAT {selector.push("numbers");}
+		(w_f:NUM_FLOAT {dq.setWeight(Double.parseDouble(w_f.getText())); selector.pop();}
+		|w_i:NUM_INT {dq.setWeight(Double.parseDouble(w_i.getText())); selector.pop();})
+  )?
   ;
 
