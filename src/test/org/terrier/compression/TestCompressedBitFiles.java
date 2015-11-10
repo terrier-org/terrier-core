@@ -47,7 +47,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.terrier.compression.bit.BitByteOutputStream;
-import org.terrier.compression.bit.BitFile;
 import org.terrier.compression.bit.BitFileBuffered;
 import org.terrier.compression.bit.BitFileInMemory;
 import org.terrier.compression.bit.BitFileInMemoryLarge;
@@ -67,7 +66,7 @@ import org.terrier.utility.Files;
 import org.terrier.utility.io.RandomDataInputMemory;
 
 
-@SuppressWarnings({"deprecation", "resource"})
+@SuppressWarnings({"resource"})
 @RunWith(Suite.class)
 @SuiteClasses({
 	TestCompressedBitFiles.TestCompressedBitFiles_Streams.class,
@@ -377,21 +376,6 @@ public class TestCompressedBitFiles  {
 		
 	}
 	
-	public static class TestCompressedBitFiles_BitFile extends TestCompressedBitFiles_OnFile
-	{
-		public TestCompressedBitFiles_BitFile(){}
-		
-		protected BitOut getBitOut() throws Exception
-		{
-			return new BitOutputStream(filename = tmpfolder.newFile("test.bf").toString());
-		}
-		
-		protected BitIn getBitIn() throws Exception
-		{
-			return new BitFile(filename, "r").readReset((long)0, (byte)0, new File(filename).length()-1, (byte)7);
-		}				
-	}
-	
 	public static class TestCompressedBitFiles_BitFileBuffered extends TestCompressedBitFiles_OnFile
 	{
 		public TestCompressedBitFiles_BitFileBuffered(){}
@@ -439,16 +423,6 @@ public class TestCompressedBitFiles  {
 		protected BitIn getBitIn() throws Exception
 		{
 			return new BitFileInMemoryLarge(filename).readReset((long)0, (byte)0, new File(filename).length()-1, (byte)7);
-		}
-	}
-	
-	public static class TestCompressedBitFiles_BitFile_RandomDataInputMemory extends TestCompressedBitFiles_OnFile
-	{
-		public TestCompressedBitFiles_BitFile_RandomDataInputMemory(){}
-				
-		protected BitIn getBitIn() throws Exception
-		{
-			return new BitFile(new RandomDataInputMemory(filename)).readReset((long)0, (byte)0, new File(filename).length()-1, (byte)7);
 		}
 	}
 	
