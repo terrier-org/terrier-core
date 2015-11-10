@@ -23,7 +23,7 @@
  * Contributor(s):
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
-package org.terrier.compression;
+package org.terrier.compression.bit;
 
 import static org.junit.Assert.assertEquals;
 import gnu.trove.TByteArrayList;
@@ -41,33 +41,21 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.terrier.compression.bit.BitByteOutputStream;
-import org.terrier.compression.bit.BitFile;
-import org.terrier.compression.bit.BitFileBuffered;
-import org.terrier.compression.bit.BitFileInMemory;
-import org.terrier.compression.bit.BitFileInMemoryLarge;
-import org.terrier.compression.bit.BitIn;
-import org.terrier.compression.bit.BitInputStream;
-import org.terrier.compression.bit.BitOut;
-import org.terrier.compression.bit.BitOutputStream;
-import org.terrier.compression.bit.DebuggingBitIn;
 import org.terrier.structures.FilePosition;
 import org.terrier.utility.io.RandomDataInputMemory;
 
 
-@SuppressWarnings({"deprecation", "resource"})
+@SuppressWarnings({"resource"})
 @RunWith(Suite.class)
 @SuiteClasses({
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_Streams.class,
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_BitByteStreams.class,
-	//TestCompressedBitFiles.TestCompressedBitFiles_BitFile.class,
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_Specific1.class,
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_Specific3.class,	
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_BitFileBuffered.class,
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_BitFileBufferedSmallBuffer.class,
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_BitFileInMemory.class,
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_BitFileInMemoryLarge.class,
-	//TestCompressedBitFiles.TestCompressedBitFiles_BitFile_RandomDataInputMemory.class,
 	TestCompressedBitFilesGolomb.TestCompressedBitFiles_BitFileBuffered_RandomDataInputMemory.class
 })
 
@@ -367,21 +355,6 @@ public class TestCompressedBitFilesGolomb  {
 		
 	}
 	
-	public static class TestCompressedBitFiles_BitFile extends TestCompressedBitFiles_OnFile
-	{
-		public TestCompressedBitFiles_BitFile(){}
-		
-		protected BitOut getBitOut() throws Exception
-		{
-			return new BitOutputStream(filename = tmpfolder.newFile("test.bf").toString());
-		}
-		
-		protected BitIn getBitIn() throws Exception
-		{
-			return new BitFile(filename, "r").readReset((long)0, (byte)0, new File(filename).length()-1, (byte)7);
-		}				
-	}
-	
 	public static class TestCompressedBitFiles_BitFileBuffered extends TestCompressedBitFiles_OnFile
 	{
 		public TestCompressedBitFiles_BitFileBuffered(){}
@@ -429,16 +402,6 @@ public class TestCompressedBitFilesGolomb  {
 		protected BitIn getBitIn() throws Exception
 		{
 			return new BitFileInMemoryLarge(filename).readReset((long)0, (byte)0, new File(filename).length()-1, (byte)7);
-		}
-	}
-	
-	public static class TestCompressedBitFiles_BitFile_RandomDataInputMemory extends TestCompressedBitFiles_OnFile
-	{
-		public TestCompressedBitFiles_BitFile_RandomDataInputMemory(){}
-				
-		protected BitIn getBitIn() throws Exception
-		{
-			return new BitFile(new RandomDataInputMemory(filename)).readReset((long)0, (byte)0, new File(filename).length()-1, (byte)7);
 		}
 	}
 	

@@ -78,7 +78,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 		try{
 			return super.clone();
 		} catch (Exception e) {
-			return null;
+			throw new AssertionError();
 		}
 	}
 	
@@ -160,7 +160,10 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 			
 			final int phraseLength = phraseTerms.length;
 			if (phraseLength == 1)
+			{
+				plm.close();
 				return false;
+			}
 			
 			final double[] phraseTermWeights = new double[phraseLength];
 			for (int i = 0; i < phraseLength; i++) {
@@ -180,9 +183,12 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 			
 			if (dependency.equals("FD")) {
 				doDependency(index, es, ips, set, phraseTermWeights, false);
+				plm.close();
 			} else if (dependency.equals("SD")) {
 				doDependency(index, es, ips, set, phraseTermWeights, true);
+				plm.close();
 			} else {
+				plm.close();
 				System.err.println("WARNING: proximity.dependency.type not set. Set it to either FD or SD");
 				return false;
 			}
@@ -217,11 +223,6 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 	{
 				
 		final int numPhraseTerms = phraseTerms.length;
-//		final EntryStatistics es[] = new EntryStatistics[numPhraseTerms];
-//		final IterablePosting ips[] = new IterablePosting[numPhraseTerms];
-//		
-		
-//		openPostingLists(index, es, ips);
 		final boolean[] postingListFinished = new boolean[numPhraseTerms];
 		
 		for(int i=0;i<numPhraseTerms;i++)

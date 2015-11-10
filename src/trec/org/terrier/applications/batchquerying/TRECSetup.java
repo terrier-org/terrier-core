@@ -78,7 +78,6 @@ public class TRECSetup {
 		}
 	
 		String ETC_Dir = System.getProperty("terrier.etc", installDirectory + File.separator + "etc" ) + File.separator;
-		String Classes_Dir = installDirectory + File.separator + "target"+ File.separator + "classes" + File.separator;
 		try {	
 			//creating an collection specification file
 			//with only a comment line
@@ -89,8 +88,8 @@ public class TRECSetup {
 
 	
 			//creating a terrier-log.xml file
-			PrintWriter terrierlog = new PrintWriter(new FileWriter(Classes_Dir+ "logback.xml"));
-			System.out.println("Creating logging configuration (logback.xml) file in "+Classes_Dir);
+			PrintWriter terrierlog = new PrintWriter(new FileWriter(ETC_Dir+ "logback.xml"));
+			System.out.println("Creating logging configuration (logback.xml) file in "+ETC_Dir);
 			terrierlog.println("<configuration>");
 			terrierlog.println("  <appender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\">");
 			terrierlog.println("      <!-- encoders are assigned the type");
