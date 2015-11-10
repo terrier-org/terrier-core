@@ -108,6 +108,7 @@ import org.terrier.structures.serialization.TestFixedSizeTextFactory;
 import org.terrier.terms.TestPorterStemmer;
 import org.terrier.terms.TestSnowball;
 import org.terrier.terms.TestTermPipelineAccessor;
+import org.terrier.terms.TestRemoveDiacritics;
 import org.terrier.tests.ShakespeareEndToEndTestSuite;
 import org.terrier.utility.TestArrayUtils;
 import org.terrier.utility.TestCollectionStatistics;
@@ -248,6 +249,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestTermPipelineAccessor.class,
 	TestPorterStemmer.class,
 	TestSnowball.class,
+        TestRemoveDiacritics.class,
 	
 	//.utility
 	TestArrayUtils.class,
