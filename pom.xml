@@ -623,8 +623,8 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <fork>true</fork>
                     <executable>javac</executable>
-                    <source>1.7</source>
-		          	<target>1.7</target>  				
+		    <source>1.7</source>
+		    <target>1.7</target>		
                 </configuration>
             </plugin> 
             <plugin>
@@ -649,6 +649,46 @@
         			</descriptorRefs>
       			</configuration>
     		</plugin>
+    		
+    		<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <!--<artifactSet>
+                            <excludes>
+                                <exclude>jarname</exclude>
+                            </excludes>
+                        </artifactSet> -->
+                        <filters>
+			  <filter>
+			    <artifact>*:*</artifact>
+			    <excludes>
+			      <exclude>META-INF/*.SF</exclude>
+			      <exclude>META-INF/*.DSA</exclude>
+			      <exclude>META-INF/*.RSA</exclude>
+			    </excludes>
+			  </filter>
+			 </filters>
+
+                         <transformers>
+                            <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <!-- Main class -->
+                                <mainClass>TrecTerrier</mainClass>
+                            </transformer>
+                     </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
 
 		<plugin>
 		        <groupId>org.apache.maven.plugins</groupId>

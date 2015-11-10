@@ -25,6 +25,8 @@
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk>  
  */
 package org.terrier.indexing;
+import gnu.trove.TObjectIntHashMap;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -136,6 +138,11 @@ public class TaggedDocument implements Document {
 	protected final int abstractCount = abstractnames.length;
 	/** builders for each abstract */
 	protected final StringBuilder[] abstracts = new StringBuilder[abstractCount];
+	/** A mapping for quick lookup of abstract tag names */
+	protected TObjectIntHashMap<String> abstractName2Index = null;
+	/** Flag to check that determines whether to short-cut the abstract generation method */
+	protected boolean considerAbstracts = false;
+	
 	/** else field index **/
 	protected int elseAbstractSpecialTag = -1;
 	
@@ -195,6 +202,16 @@ public class TaggedDocument implements Document {
 			if (abstracttags[i].toUpperCase().equals("ELSE"))
 				elseAbstractSpecialTag = i;
 		}
+		
+		if (abstractnames.length>0) {
+			considerAbstracts=true;
+			abstractName2Index = new TObjectIntHashMap<String>();
+			int aIndex = 0;
+			for (String abstractName : abstractnames) {
+				abstractName2Index.put(abstractName, aIndex);
+				aIndex++;
+			}
+		}
 	}
 	
 	/** 
@@ -211,6 +228,16 @@ public class TaggedDocument implements Document {
 		this._fields = new TagSet(TagSet.FIELD_TAGS);
 		this.tokeniser = _tokeniser;
 		this.currentTokenStream = Tokeniser.EMPTY_STREAM;
+		
+		if (abstractnames.length>0) {
+			considerAbstracts=true;
+			abstractName2Index = new TObjectIntHashMap<String>();
+			int aIndex = 0;
+			for (String abstractName : abstractnames) {
+				abstractName2Index.put(abstractName, aIndex);
+				aIndex++;
+			}
+		}
 	}
 
 	/** Returns the underlying buffered reader, so that client code can tokenise the
@@ -233,6 +260,8 @@ public class TaggedDocument implements Document {
 	 */
 	public String getNextTerm() {
 
+		String upperCaseTagName = null;
+		
 		// consumes the current token stream
 		if (currentTokenStream.hasNext()) {
 			return currentTokenStream.next();
@@ -334,6 +363,7 @@ public class TaggedDocument implements Document {
 						if (! endOfTagName && Character.isWhitespace((char)ch)) {
 							endOfTagName = true;
 							tagName = tagNameSB.toString();
+							upperCaseTagName = tagName.toUpperCase();
 							//System.err.println("Found tag  " + tagName + (tag_open ? " open" : " close") );
 							tagNameSB.setLength(0);
 						}
@@ -342,6 +372,7 @@ public class TaggedDocument implements Document {
 					if (! endOfTagName)
 					{
 						tagName = tagNameSB.toString();
+						upperCaseTagName = tagName.toUpperCase();
 						//System.err.println("Found tag " + tagName+ (tag_open ? " open" : " close"));
 						tagNameSB.setLength(0);
 					}
@@ -373,7 +404,7 @@ public class TaggedDocument implements Document {
 				if (tag_open) {
 					//System.err.println("processing open " + tagName);
 					if ((_tags.isTagToProcess(tagName) || _tags.isTagToSkip(tagName)) && !tagName.equals("")) {
-						stk.push(tagName.toUpperCase());
+						stk.push(upperCaseTagName);
 						if (_tags.isTagToProcess(tagName)) {
 							inTagToProcess = true;
 							inTagToSkip = false;
@@ -384,14 +415,14 @@ public class TaggedDocument implements Document {
 						}
 					}
 					if (_fields.isTagToProcess(tagName) && !tagName.equals("")) {
-						htmlStk.add(tagName.toUpperCase());
+						htmlStk.add(upperCaseTagName);
 						inHtmlTagToProcess = true;
 					}
 				}
 				if (tag_close) {
 					//System.err.println("processing close " + tagName);
 					if ((_tags.isTagToProcess(tagName) || _tags.isTagToSkip(tagName)) && !tagName.equals("")) {
-						processEndOfTag(tagName.toUpperCase());
+						processEndOfTag(upperCaseTagName);
 						String stackTop = null;
 						if (!stk.isEmpty()) {
 							stackTop = stk.peek();
@@ -409,7 +440,7 @@ public class TaggedDocument implements Document {
 						}
 					}
 					if (_fields.isTagToProcess(tagName) && !tagName.equals("")) {
-						htmlStk.remove(tagName.toUpperCase());
+						htmlStk.remove(upperCaseTagName);
 					}
 				}
 				
@@ -429,7 +460,10 @@ public class TaggedDocument implements Document {
 			if (!stk.empty() && _exact.isTagToProcess(stk.peek()))
 				return lowercase ? s.toLowerCase() : s;
 			//}
-			saveToAbstract(s,tagName);
+			if (considerAbstracts) {
+				if (abstractTagsCaseSensitive) saveToAbstract(s,tagName);
+				else saveToAbstract(s,upperCaseTagName);
+			}
 			currentTokenStream = tokeniser.tokenise(new StringReader(s));
 			if (currentTokenStream.hasNext())
 				return currentTokenStream.next();
@@ -467,54 +501,42 @@ public class TaggedDocument implements Document {
 	 */
 	protected void saveToAbstract(String text, String tag) {
 		if (tag == null) return;
-		if ( ! abstractTagsCaseSensitive)
-			tag = tag.toUpperCase();
 		
-		boolean tagFound = false;
-		for (int i = 0; i<abstractCount;i++)
-		{
-			if ( abstracttags[i].equals(tag)) {
-				tagFound = true;
-				final int maxAbstractLength = abstractlengths[i];
-				final int currentAbstractLength = abstracts[i].length();
-				final int textLength = text.length();
-				//abstract >= maxAbstractLength
-				//abstract + text <= maxAbstractLength				
-				//abstract + text > maxAbstractLength 
-				if (currentAbstractLength<maxAbstractLength) 
-				{					
-					if (currentAbstractLength + textLength < maxAbstractLength)
-					{
-						abstracts[i].append(' ');
-						abstracts[i].append(text);
-					}
-					else
-					{
-						abstracts[i].append(' ');
-						abstracts[i].append(text.substring(0, maxAbstractLength - currentAbstractLength));
-					}
-				}
-			}
-		}
-		if (elseAbstractSpecialTag != -1 && ! tagFound)
-		{
-			final int maxAbstractLength = abstractlengths[elseAbstractSpecialTag];
-			final int currentAbstractLength = abstracts[elseAbstractSpecialTag].length();
+		if (abstractName2Index.containsKey(tag)) {
+			int i = abstractName2Index.get(tag);
+			final int maxAbstractLength = abstractlengths[i];
+			final int currentAbstractLength = abstracts[i].length();
 			final int textLength = text.length();
-			//abstract >= maxAbstractLength
-			//abstract + text <= maxAbstractLength				
-			//abstract + text > maxAbstractLength 
 			if (currentAbstractLength<maxAbstractLength) 
 			{					
 				if (currentAbstractLength + textLength < maxAbstractLength)
 				{
-					abstracts[elseAbstractSpecialTag].append(' ');
-					abstracts[elseAbstractSpecialTag].append(text);
+					abstracts[i].append(' ');
+					abstracts[i].append(text);
 				}
 				else
 				{
-					abstracts[elseAbstractSpecialTag].append(' ');
-					abstracts[elseAbstractSpecialTag].append(text.substring(0, maxAbstractLength - currentAbstractLength));
+					abstracts[i].append(' ');
+					abstracts[i].append(text.substring(0, maxAbstractLength - currentAbstractLength));
+				}
+			}
+		} else {
+			if (elseAbstractSpecialTag != -1) {
+				final int maxAbstractLength = abstractlengths[elseAbstractSpecialTag];
+				final int currentAbstractLength = abstracts[elseAbstractSpecialTag].length();
+				final int textLength = text.length();
+				if (currentAbstractLength<maxAbstractLength) 
+				{					
+					if (currentAbstractLength + textLength < maxAbstractLength)
+					{
+						abstracts[elseAbstractSpecialTag].append(' ');
+						abstracts[elseAbstractSpecialTag].append(text);
+					}
+					else
+					{
+						abstracts[elseAbstractSpecialTag].append(' ');
+						abstracts[elseAbstractSpecialTag].append(text.substring(0, maxAbstractLength - currentAbstractLength));
+					}
 				}
 			}
 		}

@@ -56,10 +56,6 @@ echo Set TERRIER_HOME to be %TERRIER_HOME%
 if defined TERRIER_ETC goto terrier_lib
 SET TERRIER_ETC=%TERRIER_HOME%\etc
 
-:terrier_lib
-if defined TERRIER_LIB goto classpath
-SET TERRIER_LIB=%TERRIER_HOME%\lib
-
 :classpath
 
 REM ------------------------
@@ -67,8 +63,8 @@ REM -- Build up class path
 REM ------------------------
 call "%BIN%\lcp.bat" %CLASSPATH%
 SET LOCALCLASSPATH=
-FOR %%i IN ("%TERRIER_LIB%\*.jar") DO call "%BIN%\lcp.bat" "%%i"
-
+call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\TerrierCore-4.1.jar"
+call "%BIN%\lcp.bat" "%TERRIER_HOME%\etc\logback.xml"
 
 REM ------------------------
 REM -- Run TRECSetup

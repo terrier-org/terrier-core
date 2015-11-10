@@ -69,20 +69,6 @@ then
 	echo "Setting JAVA_HOME to $JAVA_HOME"
 fi
 
-if [ ! -n "$TERRIER_LIB" ];
-then
-	TERRIER_LIB=$TERRIER_HOME/lib/
-fi
-
-if [ "$TERRIER_LIB_TMP" == "1" ];
-then
-	NEWLIB=$TMP/terrier_lib_$$/
-	#echo Copying $TERRIER_LIB to $NEWLIB
-	mkdir $NEWLIB
-	cp -r $TERRIER_LIB/* $NEWLIB
-	TERRIER_LIB=$NEWLIB
-fi
-
 #setup CLASSPATH
 if [ ! -n "$CLASSPATH" ];
 then
@@ -91,14 +77,13 @@ else
 	CLASSPATH=$CLASSPATH:$JAVA_HOME/lib/tools.jar
 fi
 
-for jar in $TERRIER_LIB/*.jar $TERRIER_LIB/hadoop/*.jar  $TERRIER_LIB/poi/*.jar $TERRIER_LIB/crawler4j/*.jar; do
-	if [ ! -n "$CLASSPATH" ]
-	then
-		CLASSPATH=$jar
-	else
-		CLASSPATH=$CLASSPATH:$jar
-	fi
-done
+
+if [ ! -n "$CLASSPATH" ]
+then
+	CLASSPATH=$TERRIER_HOME/target/TerrierCore-4.1.jar:$TERRIER_HOME/etc/logback.xml
+else
+	CLASSPATH=$CLASSPATH:$TERRIER_HOME/target/TerrierCore-4.1.jar:$TERRIER_HOME/etc/logback.xml
+fi
 
 
 if [ ! -n "$TERRIER_HEAP_MEM" ];
@@ -106,20 +91,12 @@ then
     TERRIER_HEAP_MEM=1024M
 fi
 
-if [ -e "$TERRIER_ETC/terrier-log.xml" ];
-then
-    LOGGER_OPTIONS="-Dlog4j.configuration=file:$TERRIER_ETC/terrier-log.xml"
-elif [ -e "$TERRIER_ETC/log4j.xml" ];
-then
-    LOGGER_OPTIONS="-Dlog4j.configuration=file:$TERRIER_ETC/log4j.xml"
-elif [ -e "$TERRIER_ETC/log4j.properties" ];
-then
-    LOGGER_OPTIONS="-Dlog4j.configuration=file:$TERRIER_ETC/log4j.properties"
-fi
-
 #JAVA_OPTIONS=
 
-$JAVA_HOME/bin/java -Xmx$TERRIER_HEAP_MEM $JAVA_OPTIONS $LOGGER_OPTIONS $TERRIER_OPTIONS \
+echo $CLASSPATH
+
+
+$JAVA_HOME/bin/java -Xmx$TERRIER_HEAP_MEM $JAVA_OPTIONS $TERRIER_OPTIONS \
 	 -Dterrier.etc=$TERRIER_ETC \
 	 -Dterrier.home=$TERRIER_HOME \
      -Dterrier.setup=$TERRIER_ETC/terrier.properties \
