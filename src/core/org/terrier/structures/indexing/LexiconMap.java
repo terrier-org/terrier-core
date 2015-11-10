@@ -101,7 +101,7 @@ public class LexiconMap {
 	{
 		final String[] terms = tfs.keys(new String[0]);
 		Arrays.sort(terms);
-		BasicLexiconEntry le = new BasicLexiconEntry();//TODO could use the one without positions
+		BasicLexiconEntry le = new BasicLexiconEntry();
 		for (String t : terms)
 		{
 			le.setTermId(TermCodes.getCode(t));
