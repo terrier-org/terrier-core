@@ -28,7 +28,6 @@ package org.terrier.services.websitesearch;
 
 import java.io.IOException;
 
-import org.terrier.matching.ResultSet;
 import org.terrier.querying.Manager;
 import org.terrier.querying.SearchRequest;
 import org.terrier.realtime.memory.MemoryIndex;
