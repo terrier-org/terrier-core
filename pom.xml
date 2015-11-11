@@ -343,6 +343,8 @@
       			<artifactId>maven-assembly-plugin</artifactId>
       			<version>2.6</version>
       			<configuration>
+      				<descriptor>src/assembly/bin.xml</descriptor>
+		   			 <finalName>terrier-core-${project.version}</finalName>
         			<archive>
           				<manifest>
             				<mainClass>TrecTerrier</mainClass>
@@ -404,6 +406,7 @@
 		          </includes>
 		        </configuration>
 		</plugin>
+		
         </plugins>
   </build>
 </project>
