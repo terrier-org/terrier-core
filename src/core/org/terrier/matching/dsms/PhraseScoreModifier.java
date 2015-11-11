@@ -159,14 +159,19 @@ public class PhraseScoreModifier implements DocumentScoreModifier {
 			}
 						
 			IterablePosting phrase = null;
-			if (blockDistance > 1)
-			{
-				phrase = ProximityIterablePosting.createProximityPostingList(ps, invIndex, blockDistance);
-				
-			} else {
-				
-				phrase = PhraseIterablePosting.createPhrasePostingList(ps, invIndex, false);
+			try{
+				if (blockDistance > 1)
+				{
+					phrase = ProximityIterablePosting.createProximityPostingList(ps, invIndex, blockDistance);
+					
+				} else {
+					
+					phrase = PhraseIterablePosting.createPhrasePostingList(ps, invIndex, false);
+				} 
+			} catch (ClassCastException cce) {
+				throw new RuntimeException("Index does not have positions enabled - re-index with block.indexing=true", cce);
 			}
+			
 			int foundDocid = phrase.next();
 			if (foundDocid != -1)
 				for(int targetDocid : docidsAsc)
