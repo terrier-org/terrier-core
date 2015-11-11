@@ -63,7 +63,7 @@ REM -- Build up class path
 REM ------------------------
 call "%BIN%\lcp.bat" %CLASSPATH%
 SET LOCALCLASSPATH=
-call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\TerrierCore-4.1.jar"
+call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\terrier-core-4.1.jar"
 call "%BIN%\lcp.bat" "%TERRIER_HOME%\etc\logback.xml"
 
 REM ------------------------
