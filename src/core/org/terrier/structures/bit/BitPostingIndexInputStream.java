@@ -180,6 +180,8 @@ public class BitPostingIndexInputStream implements PostingIndexInputStream, Skip
 		if (! this.hasNext())
 			return null;
 		BitIndexPointer p = _next();
+		if (p == null)//trailing empty document
+			return null;
 		assert p != null;
 		return loadPostingIterator(p);
 	}
