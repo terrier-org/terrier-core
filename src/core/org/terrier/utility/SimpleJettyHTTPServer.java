@@ -27,16 +27,16 @@ package org.terrier.utility;
 
 import java.io.IOException;
 
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.ContextHandler;
-import org.mortbay.jetty.handler.ContextHandlerCollection;
-import org.mortbay.jetty.handler.DefaultHandler;
-import org.mortbay.jetty.handler.HandlerCollection;
-import org.mortbay.jetty.handler.ResourceHandler;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 
 /** Class to make a simple Jetty servlet. Two arguments: port name, and webapps root path.
@@ -59,7 +59,7 @@ public class SimpleJettyHTTPServer {
 	{
 		webserver = new Server();
 
-        Connector connector= new SelectChannelConnector();
+		ServerConnector connector= new ServerConnector(webserver);
         connector.setPort(port);
         if (bindAddress != null)
         	connector.setHost(bindAddress);
