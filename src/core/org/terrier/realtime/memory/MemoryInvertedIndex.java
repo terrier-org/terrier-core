@@ -101,6 +101,31 @@ public class MemoryInvertedIndex implements PostingIndex<MemoryPointer>,Serializ
 			pl_doc.add(docid);
 			pl_freq.add(docfreq);
 		}
+		
+		public int getFreq(int docid) {
+			int index = pl_doc.binarySearch(docid);
+			if (index >= 0)
+			{
+				return pl_freq.get(index);
+			}
+			return -1;
+		}
+		
+		/** Returns true iff we did not already have a posting for this document */
+		public boolean addOrUpdateFreq(int docid, int freq) {
+			int index = pl_doc.binarySearch(docid);
+			if (index >= 0)
+			{
+				pl_freq.setQuick(index, freq + pl_freq.get(index));	
+				return false;
+			} else {
+				pl_doc.insert( -(index +1), docid);
+				pl_freq.insert( -(index +1), freq);	
+				return true;
+			}
+			
+		}
+		
 
 		public TIntArrayList getPl_doc() {
 			return pl_doc;
@@ -119,6 +144,24 @@ public class MemoryInvertedIndex implements PostingIndex<MemoryPointer>,Serializ
 			((BasicMemoryPostingList)postings.get(ptr)).add(docid, freq);
 		else
 			postings.put(ptr, new BasicMemoryPostingList(docid, freq));
+	}
+	
+	/** Adds or updates the frequency of the term denoted by ptr by freq.
+	 * @return true if a new posting was created, false if the document
+	 * already contained the term */
+	public boolean addOrUpdate(int ptr, int docid, int freq) {
+		assert freq > 0;
+		
+		if (postings.containsKey(ptr))
+		{
+			BasicMemoryPostingList bmpl = (BasicMemoryPostingList) postings.get(ptr);
+			return bmpl.addOrUpdateFreq(docid, freq);			
+		}
+		else
+		{				
+			postings.put(ptr, new BasicMemoryPostingList(docid, freq));
+			return true;
+		}
 	}
 	
 	/**

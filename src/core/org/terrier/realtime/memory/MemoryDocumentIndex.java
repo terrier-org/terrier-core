@@ -64,6 +64,10 @@ public class MemoryDocumentIndex implements DocumentIndex,Serializable {
 	public void addDocument(int length) {
 		docLengths.add(length);
 	}
+	
+	public void setLength(int docid, int newLength) {
+		docLengths.set(docid, newLength);
+	}
 
 	/** {@inheritDoc} */
 	public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {

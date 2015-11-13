@@ -30,8 +30,10 @@ package org.terrier.realtime.memory;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -54,12 +56,96 @@ import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndex;
+import org.terrier.structures.postings.IterablePosting;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
 
 /** Unit tests for IndexInMemory. */
 public class TestMemoryIndex extends ApplicationSetupBasedTest {
 
+	
+	@Test
+	public void test_DocumentContentUpdates() throws Exception {
+		ApplicationSetup.setProperty("termpipelines", "");
+		MemoryIndex index = new MemoryIndex();
+		Lexicon<String> lex = index.getLexicon();
+		LexiconEntry le;
+		PostingIndex<?> inv = index.getInvertedIndex();
+		IterablePosting ip;
+		
+		index.indexDocument(IndexTestUtils.makeDocumentFromText("the lazy", new HashMap<String,String>()));
+		
+		//document index
+		assertEquals(2, index.getDocumentIndex().getDocumentLength(0));
+		//stats
+		assertEquals(1, index.getCollectionStatistics().getNumberOfDocuments());
+		assertEquals(2l, index.getCollectionStatistics().getNumberOfTokens());
+		assertEquals(2l, index.getCollectionStatistics().getNumberOfUniqueTerms());
+		//lexicon
+		
+		
+		le = lex.getLexiconEntry("the");
+		assertEquals(1, le.getFrequency());
+		le = lex.getLexiconEntry("lazy");
+		assertEquals(1, le.getFrequency());
+		
+		ip = inv.getPostings(le);
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		assertNull(lex.getLexiconEntry("brown"));
+		
+		
+		index.addToDocument(0, IndexTestUtils.makeDocumentFromText("lazy brown dog", new HashMap<String,String>()));
+	
+		//document index
+		assertEquals(5, index.getDocumentIndex().getDocumentLength(0));
+		//stats
+		assertEquals(1, index.getCollectionStatistics().getNumberOfDocuments());
+		assertEquals(5l, index.getCollectionStatistics().getNumberOfTokens());
+		assertEquals(4l, index.getCollectionStatistics().getNumberOfUniqueTerms());
+		//lexicon
+		le = lex.getLexiconEntry("the");
+		assertEquals(1, le.getFrequency());
+		le = lex.getLexiconEntry("lazy");
+		assertEquals(2, le.getFrequency());
+		
+		ip = inv.getPostings(le);
+		assertEquals(0, ip.next());
+		assertEquals(2, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		le = lex.getLexiconEntry("brown");
+		assertNotNull(le);
+		assertEquals(1, le.getFrequency());
+		
+		ip = inv.getPostings(le);
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		
+		index.indexDocument(IndexTestUtils.makeDocumentFromText("jumped", new HashMap<String,String>()));
+		index.addToDocument(1, IndexTestUtils.makeDocumentFromText("over the brown brown brown fox", new HashMap<String,String>()));
+		
+		le = lex.getLexiconEntry("brown");
+		assertNotNull(le);
+		assertEquals(4, le.getFrequency());
+		
+		ip = inv.getPostings(le);
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		
+		assertEquals(1, ip.next());
+		assertEquals(3, ip.getFrequency());
+		
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		index.close();
+	}
+		
+		
 	/*
 	 * Test IndexInMemory.
 	 */
