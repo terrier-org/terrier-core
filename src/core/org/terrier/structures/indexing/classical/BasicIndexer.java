@@ -204,7 +204,9 @@ public class BasicIndexer extends Indexer
 	{
 		currentIndex = Index.createNewIndex(path, prefix);
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
-			? new LexiconBuilder(currentIndex, "lexicon", new FieldLexiconMap(FieldScore.FIELDS_COUNT), FieldLexiconEntry.class.getName())
+			? new LexiconBuilder(currentIndex, "lexicon", 
+					new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
+					FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"")
 			: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName());
 		
 		try{

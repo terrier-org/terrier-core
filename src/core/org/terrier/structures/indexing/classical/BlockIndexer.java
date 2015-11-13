@@ -328,20 +328,14 @@ public class BlockIndexer extends Indexer {
 			? " delimited-block indexing enabled" : ""));
 		currentIndex = Index.createNewIndex(path, prefix);
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
-				? new LexiconBuilder(currentIndex, "lexicon", new FieldLexiconMap(FieldScore.FIELDS_COUNT), FieldLexiconEntry.class.getName())
+				? new LexiconBuilder(currentIndex, "lexicon", 
+						new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
+						FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"")
 				: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName());
-//			
-//		
-//		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
-//			? new LexiconBuilder(currentIndex, "lexicon", new BlockFieldLexiconMap(FieldScore.FIELDS_COUNT), FieldLexiconEntry.class.getName())
-//			: new LexiconBuilder(currentIndex, "lexicon", new BlockLexiconMap(), BlockLexiconEntry.class.getName());
-//		//lexiconBuilder = new BlockLexiconBuilder(currentIndex, "lexicon");
+
 		try{
 			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
 					((IndexOnDisk) currentIndex).getPath() + ApplicationSetup.FILE_SEPARATOR + ((IndexOnDisk) currentIndex).getPrefix() + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
-			//directIndexBuilder =  FieldScore.FIELDS_COUNT > 0
-			//	? new BlockFieldDirectInvertedOutputStream(currentIndex.getPath() + ApplicationSetup.FILE_SEPARATOR + currentIndex.getPrefix() + "." + "direct" + BitIn.USUAL_EXTENSION)
-			//	: new BlockDirectInvertedOutputStream(currentIndex.getPath() + ApplicationSetup.FILE_SEPARATOR + currentIndex.getPrefix() + "." + "direct" + BitIn.USUAL_EXTENSION);
 		} catch (Exception ioe) {
 			logger.error("Cannot make DirectInvertedOutputStream:", ioe);
 		}
@@ -349,10 +343,7 @@ public class BlockIndexer extends Indexer {
 		metaBuilder = createMetaIndexBuilder();
 		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
 		
-		//int LexiconCount = 0;
 		int numberOfDocuments = 0;
-		//int numberOfTokens = 0;
-		//long startBunchOfDocuments = System.currentTimeMillis();
 		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
 		boolean stopIndexing = false;
 		for(int collectionNo = 0; !stopIndexing && collectionNo < collections.length; collectionNo++)
