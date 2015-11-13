@@ -26,14 +26,18 @@
  */
 package org.terrier.indexing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.terrier.indexing.tokenisation.EnglishTokeniser;
+import org.terrier.indexing.tokenisation.Tokeniser;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.indexing.Indexer;
 import org.terrier.structures.indexing.classical.BasicIndexer;
 import org.terrier.structures.indexing.classical.BlockIndexer;
@@ -74,6 +78,15 @@ public class IndexTestUtils {
 		return makeIndex(docnos, documents, indexClz.getConstructor(String.class, String.class).newInstance(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count), ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count);
 	}
 	
+	public static Document makeDocumentFromText(String contents, Map<String,String> docProperties) {
+		return makeDocumentFromText(contents, docProperties, new EnglishTokeniser());
+	}
+	
+	public static Document makeDocumentFromText(String contents, Map<String,String> docProperties, Tokeniser t) {
+		return new FileDocument(new ByteArrayInputStream(contents.getBytes()), docProperties, new EnglishTokeniser());
+	}
+	
+	
 	public static Collection makeCollection(String[] docnos, String[] documents) throws Exception
 	{
 		assertEquals(docnos.length, documents.length);
@@ -91,6 +104,8 @@ public class IndexTestUtils {
 	
 	public static Index makeIndex(String[] docnos, String[] documents, Indexer indexer, String path, String prefix) throws Exception
 	{
+		assertFalse("Index at "+ path + "," +  prefix + " already exists!", 
+				IndexOnDisk.existsIndex(path, prefix));
 		assertEquals(docnos.length, documents.length);
 		Document[] sourceDocs = new Document[docnos.length];
 		for(int i=0;i<docnos.length;i++)
@@ -98,7 +113,7 @@ public class IndexTestUtils {
 			Map<String,String> docProperties = new HashMap<String,String>();
 			docProperties.put("filename", docnos[i]);
 			docProperties.put("docno", docnos[i]);
-			sourceDocs[i] = new FileDocument(new ByteArrayInputStream(documents[i].getBytes()), docProperties, new EnglishTokeniser());
+			sourceDocs[i] = makeDocumentFromText(documents[i], docProperties);
 		}
 		Collection col = makeCollection(docnos, documents);
 		indexer.index(new Collection[]{col});		
@@ -110,6 +125,8 @@ public class IndexTestUtils {
 	
 	public static Index makeIndexFields(String[] docnos, String[] documents, Indexer indexer, String path, String prefix) throws Exception
 	{
+		assertFalse("Index at "+ path + "," +  prefix + " already exists!", 
+			IndexOnDisk.existsIndex(path, prefix));
 		assertEquals(docnos.length, documents.length);
 		Document[] sourceDocs = new Document[docnos.length];
 		for(int i=0;i<docnos.length;i++)

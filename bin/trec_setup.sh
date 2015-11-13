@@ -82,9 +82,9 @@ fi
 #setup CLASSPATH
 if [ ! -n "$CLASSPATH" ]
 then
-	CLASSPATH=$TERRIER_HOME/target/TerrierCore-4.1.jar:$TERRIER_HOME/etc/logback.xml
+	CLASSPATH=$TERRIER_HOME/target/terrier-core-4.1.jar:$TERRIER_HOME/etc/logback.xml
 else
-	CLASSPATH=$CLASSPATH:$TERRIER_HOME/target/TerrierCore-4.1.jar:$TERRIER_HOME/etc/logback.xml
+	CLASSPATH=$CLASSPATH:$TERRIER_HOME/target/terrier-core-4.1.jar:$TERRIER_HOME/etc/logback.xml
 fi
 
 echo $CLASSPATH

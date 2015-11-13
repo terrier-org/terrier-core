@@ -338,6 +338,22 @@ public class IncrementalIndex extends org.terrier.realtime.multi.MultiIndex impl
 	public void setPrefixID(int prefixID) {
 		this.prefixID = prefixID;
 	}
+
+	@Override
+	public boolean removeDocument(int docid) {
+		return false;
+	}
+
+	@Override
+	public boolean addToDocument(int docid, Document doc) throws Exception {
+		return false;
+	}
+
+	@Override
+	public boolean addToDocument(int docid, DocumentPostingList docContents)
+			throws Exception {
+		return false;
+	}
 	
 	
 }

@@ -49,4 +49,18 @@ public interface UpdatableIndex {
 	public void indexDocument(Map<String, String> docProperties,
 			DocumentPostingList docContents) throws Exception;
 
+	
+	/** Removes a document from the index. Returns true if successful.
+	 * No known operable implementations at this time. */
+	public boolean removeDocument(int docid);
+	
+	/** Adds specified content contents to the named document id.
+	 *  Returns true if supported & successful. */
+	public boolean addToDocument(int docid, Document doc) throws Exception;
+	
+	/** Adds relevant terms to the named document id.
+	 * Returns true if supported & successful. */
+	public boolean addToDocument(int docid, DocumentPostingList docContents) throws Exception;
+	
+	
 }

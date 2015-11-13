@@ -214,6 +214,8 @@ public class IntegerCodingPostingIndexInputStream implements
 		if (!this.hasNext())
 			return null;
 		BitIndexPointer p = _next();
+		if (p == null)
+			return null;
 		assert p != null;
 		return loadPostingIterator(p);
 	}

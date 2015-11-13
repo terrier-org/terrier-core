@@ -361,6 +361,7 @@ public class ApplicationSetup {
 			//assumed that the properties file is at ./etc/terrier.properties
 	
 			//System.err.println("Properties file is "+propertiesFile);	
+			clearAllProperties();
 			TERRIER_HOME = getProperty("terrier.home", terrier_home);
 			FileInputStream in = new FileInputStream(propertiesFile);
 			configure(new BufferedInputStream(in));
@@ -587,6 +588,7 @@ public class ApplicationSetup {
 	/** Clears ApplicationSetup of all properties */
 	public static void clearAllProperties()
 	{
+		TermCodes.reset();
 		appProperties.clear();
 		UsedAppProperties.clear();
 	}

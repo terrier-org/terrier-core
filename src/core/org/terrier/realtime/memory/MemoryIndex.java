@@ -210,20 +210,20 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	public void indexDocument(Document doc) throws Exception {
 
 		synchronized(indexingLock) {
-		
-		// Don't index null documents.
-		if (doc == null)
-			return;
-
-		// Process terms through term pipeline.
-		docPostings = new DocumentPostingList();
-		while (!doc.endOfDocument())
-			pipeline_first.processTerm(doc.getNextTerm());
-
-		indexDocument(doc.getAllProperties(), docPostings);
+			// Don't index null documents.
+			if (doc == null)
+				return;
 	
+			// Process terms through term pipeline.
+			docPostings = new DocumentPostingList();
+			while (!doc.endOfDocument())
+				pipeline_first.processTerm(doc.getNextTerm());
+	
+			indexDocument(doc.getAllProperties(), docPostings);
 		}
 	}
+	
+	
 
 	/**
 	 * Index a new document.
@@ -264,6 +264,73 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 				+ stats.getNumberOfDocuments() + ")");
 		
 		}
+	}
+
+	/** {@inheritDoc}
+	 * <p>NB: This implementation uses addToDocument(int, DocumentPostingList)
+	 * internally.
+	 */
+	@Override
+	public boolean addToDocument(int docid, Document doc) throws Exception {
+		
+		// Don't index null documents.
+		if (doc == null)
+			return false;
+		
+		synchronized(indexingLock) {
+			// Process terms through term pipeline.
+			docPostings = new DocumentPostingList();
+			while (!doc.endOfDocument())
+				pipeline_first.processTerm(doc.getNextTerm());
+			return addToDocument(docid, docPostings);
+		}
+	}
+
+	/** {@inheritDoc}
+	 *  Updates DocumentIndex and CollectionStatistics appropriately.
+	 */
+	@Override
+	public boolean addToDocument(int docid, DocumentPostingList docContents)
+		throws Exception
+	{
+		if (docid >= this.stats.getNumberOfDocuments())
+			throw new IllegalArgumentException("docid " + docid + " too large");
+		
+		synchronized(indexingLock) {
+			
+			// Don't index null documents.
+			if (docContents == null)
+				return false;
+
+			
+			// Add the document's length to the document index.
+			document.setLength(docid, 
+					docContents.getDocumentLength() + document.getDocumentLength(docid));
+
+			int pointers = 0;
+			// For each term in the document:
+			for (String term : docContents.termSet()) {
+
+				// Add/update term in lexicon.
+				int termid = lexicon.term(term, new MemoryLexiconEntry(1,
+						docContents.getFrequency(term)));
+
+				// Add document posting to inverted file.
+				boolean newPtr = inverted.addOrUpdate(termid, docid,
+						docContents.getFrequency(term));
+				if (newPtr) pointers++;
+			}
+
+			// Update collection statistics.
+			stats.update(0, docContents.getDocumentLength(),
+					pointers);
+			stats.updateUniqueTerms(lexicon.numberOfEntries());
+
+			logger.debug("***REALTIME*** MemoryIndex addToDocument ("
+					+ stats.getNumberOfDocuments() + ")");
+			
+		}
+		return true;
 	}
 
 	/**
@@ -633,11 +700,9 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		}
 	}
 	
-	public boolean removeDocument(int docid) {
-		
-		
-		
-		return true;
+	@Override
+	public boolean removeDocument(int docid) {		
+		return false;
 	}
 	
 	
