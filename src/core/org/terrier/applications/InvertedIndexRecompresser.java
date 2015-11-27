@@ -204,6 +204,7 @@ public class InvertedIndexRecompresser {
 //			System.exit(-1);
 //		}		
 
+		IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
 		IndexOnDisk index = Index.createIndex();
 		recompressInverted(index);	
 		index.close();
