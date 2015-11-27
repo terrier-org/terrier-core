@@ -58,15 +58,16 @@ import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.TermCodes;
 /**
- * An indexer that saves block information for the indexed terms. Block information is usualy recorded in terms of relative term positions (position 1, positions 2, etc),
+ * An indexer that saves block information for the indexed terms. Block information is usually recorded in terms of relative term positions (position 1, positions 2, etc),
  * however, since 2.2, Terrier supports the presence of "marker terms" during indexing which are used to increment the block counter.
+ * <p>
  * <B>Properties:</b>
+ * </p>
  * <ul> 
  * <li><tt>blocks.size</tt> - How many terms should be in one block. If you want to use phrasal search, this need to be 1 (default).</li>
- * <li><tt>max.blocks</tt> - Maximum number of blocks in a document. After this number of blocks, all subsequent terms will be in the same block. Default 100,000</li>
+ * <li><tt>blocks.max</tt> - Maximum number of blocks in a document. After this number of blocks, all subsequent terms will be in the same block. Default 100,000</li>
  * <li><tt>block.indexing</tt> - This class should only be used if the <tt>block.indexing</tt> property is set.</li>
  * <li>indexing.max.encoded.documentindex.docs - how many docs before the DocumentIndexEncoded is dropped in favour of the DocumentIndex (on disk implementation).</li>
- * <li>string.use_utf - use the UTF index structures?</li>
  * <li><i>See Also: Properties in </i>org.terrier.indexing.Indexer <i>and</i> org.terrier.indexing.BasicIndexer</li>
  * </ul>
  * <p><b>Markered Blocks</b><br>Markers are terms (artificially inserted or otherwise into the term stream that are used to denote when the block counter should
