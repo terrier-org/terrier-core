@@ -34,6 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	BasicShakespeareEndToEndTest.class,
 	BlockShakespeareEndToEndTest.class,
 	
+	BlockMaxBlocksShakespeareEndToEndTest.class,
+	
 	MatchingShakespeareEndToEndTests.TestDAATFullMatchingShakespeareEndToEndTest.class,
 	MatchingShakespeareEndToEndTests.TestDAATFullNoPLMMatchingShakespeareEndToEndTest.class,
 	MatchingShakespeareEndToEndTests.TestTAATFullNoPLMMatchingShakespeareEndToEndTest.class,	
@@ -42,6 +44,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	SinglePassShakespeareEndToEndTest.BlockSinglePassShakespeareEndToEndTest.class,
 	SinglePassShakespeareEndToEndTest.MultiPassBasicSinglePassShakespeareEndToEndTest.class,
 	SinglePassShakespeareEndToEndTest.MultiPassBlockSinglePassShakespeareEndToEndTest.class,
+	SinglePassShakespeareEndToEndTest.BlockSinglePassMaxBlocksShakespeareEndToEndTest.class,
+	
 	
 	MergingShakespeareEndToEndTests.BasicMerging.class,
 	MergingShakespeareEndToEndTests.BlockMerging.class,

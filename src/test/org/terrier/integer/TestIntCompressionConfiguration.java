@@ -39,8 +39,8 @@ public class TestIntCompressionConfiguration extends TestCompressionConfig {
 
 	@Override
 	protected CompressionConfiguration getConfig(String structure, String[] fieldNames,
-			boolean blocks) {
-		return new IntegerCodecCompressionConfiguration(structure, fieldNames, blocks);
+			int hasBlocks, int maxBlocks) {
+		return new IntegerCodecCompressionConfiguration(structure, fieldNames, hasBlocks, maxBlocks);
 	}
 
 	

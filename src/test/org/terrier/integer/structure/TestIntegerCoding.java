@@ -97,7 +97,7 @@ public class TestIntegerCoding {
 		
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = 
-				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 0, 0, idsCodec, tfsCodec, null, null);
+				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 0, 0, 0, idsCodec, tfsCodec, null, null);
 		for (BitIndexPointer p : pointerList) {
 			
 			IterablePosting ip1 = new BasicIterablePosting(bitIn, p.getNumberOfEntries(), null);
@@ -163,7 +163,7 @@ public class TestIntegerCoding {
 		
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = 
-				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 0, 1, idsCodec, tfsCodec, null, blocksCodec);
+				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 0, 1, 10000, idsCodec, tfsCodec, null, blocksCodec);
 		for (BitIndexPointer p : pointerList) {
 			
 			IterablePosting ip1 = new BlockIterablePosting(bitIn, p.getNumberOfEntries(), null);
@@ -227,7 +227,7 @@ public class TestIntegerCoding {
 		
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = 
-				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 2, 0, idsCodec, tfsCodec, fieldsCodec, null);
+				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 2, 0, 0, idsCodec, tfsCodec, fieldsCodec, null);
 		for (BitIndexPointer p : pointerList) {
 			
 			IterablePosting ip1 = new FieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 2);
@@ -301,7 +301,7 @@ public class TestIntegerCoding {
 		
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = 
-				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 2, 1, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
+				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 2, 1, 10000, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
 		for (BitIndexPointer p : pointerList) {
 			
 			IterablePosting ip1 = new BlockFieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 2);
@@ -376,7 +376,7 @@ public class TestIntegerCoding {
 		
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = 
-				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 2, 2, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
+				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 2, 2, 10000, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
 		for (BitIndexPointer p : pointerList) {
 			
 			IterablePosting ip1 = new BlockFieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 2);
@@ -453,7 +453,7 @@ public class TestIntegerCoding {
 		
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = 
-				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 2, 1, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
+				new IntegerCodingPostingOutputStream(tmpFile.toString(), chunksize, 2, 1, 10000, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
 		for (BitIndexPointer p : pointerList) {
 			
 			IterablePosting ip1 = new BlockFieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 2);
@@ -472,11 +472,13 @@ public class TestIntegerCoding {
 		assertEquals(10, icip.getId());
 		icip.next(11);
 		assertEquals(100, icip.getId());
+		icip.close();
 		
 		icip = new IntegerCodingIterablePosting(input, iterator.next().getNumberOfEntries(), null, chunksize, 2, 1, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
 		icip.next(4);
 		assertEquals(5, icip.getId());
 		bitIn.close();
 		bb.close();
+		icip.close();
 	}	
 }

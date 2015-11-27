@@ -140,7 +140,7 @@ public class MemoryFieldsIndex extends MemoryFields {
 
     	IndexOnDisk index = Index.createNewIndex(path, prefix);
 
-        compressionConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldtags, false);
+        compressionConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldtags, 0,0);
         
         /*
          * Meta-data & document index.

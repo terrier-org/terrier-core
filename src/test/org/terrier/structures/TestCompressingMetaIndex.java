@@ -262,7 +262,7 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 	}
 
 
-	protected void finishedCreatingMeta(Index index, String name) throws Exception
+	protected void finishedCreatingMeta(IndexOnDisk index, String name) throws Exception
 	{
 		assertTrue(index.hasIndexStructure(name));
 		assertTrue(index.hasIndexStructureInputStream(name));

@@ -61,6 +61,7 @@ import org.terrier.integer.tests.BasicShakFastPFORRecompress;
 import org.terrier.integer.tests.BasicShakNullRecompress;
 import org.terrier.integer.tests.BasicShakSmallChunk;
 import org.terrier.integer.tests.BlockShak;
+import org.terrier.integer.tests.BlockShakSmallMaxBlockSize;
 import org.terrier.matching.TestMatching.TestDAATFullMatching;
 import org.terrier.matching.TestMatching.TestDAATFullNoPLMMatching;
 import org.terrier.matching.TestMatching.TestTAATFullMatching;
@@ -106,9 +107,9 @@ import org.terrier.structures.postings.TestPhraseIterablePosting;
 import org.terrier.structures.postings.TestProximityIterablePosting;
 import org.terrier.structures.serialization.TestFixedSizeTextFactory;
 import org.terrier.terms.TestPorterStemmer;
+import org.terrier.terms.TestRemoveDiacritics;
 import org.terrier.terms.TestSnowball;
 import org.terrier.terms.TestTermPipelineAccessor;
-import org.terrier.terms.TestRemoveDiacritics;
 import org.terrier.tests.ShakespeareEndToEndTestSuite;
 import org.terrier.utility.TestArrayUtils;
 import org.terrier.utility.TestCollectionStatistics;
@@ -140,6 +141,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	BasicShakNullRecompress.class,
 	BasicShakSmallChunk.class,
 	BlockShak.class,
+	BlockShakSmallMaxBlockSize.class,
 
 	TestByteInByteOut.class,
 	TestIntCompressionConfiguration.class,

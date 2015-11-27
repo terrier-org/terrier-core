@@ -173,8 +173,8 @@ public class BasicIndexer extends Indexer
 		//delay the execution of init() if we are a parent class
 		if (this.getClass() == BasicIndexer.class) 
 			init();
-		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, false);
-		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, false);
+		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, 0, 0);
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
 	}
 
 

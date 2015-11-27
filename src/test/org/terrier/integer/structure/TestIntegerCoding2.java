@@ -209,7 +209,7 @@ public class TestIntegerCoding2 {
 
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = new IntegerCodingPostingOutputStream(
-				tmpFile.toString(), chunksize, 4, 1, ids, tfs, ffs, blks);
+				tmpFile.toString(), chunksize, 4, 1, 10000, ids, tfs, ffs, blks);
 		for (BitIndexPointer p : pointerList) {
 
 			IterablePosting ip1 = new BlockFieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 4);
@@ -248,7 +248,7 @@ public class TestIntegerCoding2 {
 
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = new IntegerCodingPostingOutputStream(
-				tmpFile.toString(), chunksize, 4, 2, ids, tfs, ffs, blks);
+				tmpFile.toString(), chunksize, 4, 2, 10000, ids, tfs, ffs, blks);
 		for (BitIndexPointer p : pointerList) {
 
 			IterablePosting ip1 = new BlockFieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 4);

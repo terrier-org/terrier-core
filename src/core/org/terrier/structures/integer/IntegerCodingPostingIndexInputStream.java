@@ -52,6 +52,7 @@ import org.terrier.structures.postings.integer.BasicIntegerCodingIterablePosting
 import org.terrier.structures.postings.integer.BlockFieldIntegerCodingIterablePosting;
 import org.terrier.structures.postings.integer.BlockIntegerCodingIterablePosting;
 import org.terrier.structures.postings.integer.FieldIntegerCodingIterablePosting;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 import org.terrier.utility.io.WrappedIOException;
 
@@ -83,9 +84,10 @@ public class IntegerCodingPostingIndexInputStream implements
 	protected DocumentIndex documentIndex;
 	protected String structureName;
 
-	protected int fieldsCount;
-	protected int hasBlocks;
-
+	protected final int fieldsCount;
+	protected final int hasBlocks;
+	protected final int maxBlocks;
+	
 	protected int chunkSize;
 	protected IntegerCodec idsCodec;
 	protected IntegerCodec tfsCodec;
@@ -154,7 +156,14 @@ public class IntegerCodingPostingIndexInputStream implements
 				+ ".fields.count", 0);
 		hasBlocks = index.getIntIndexProperty("index."
 				+ structureName + ".blocks", 0);
-
+		maxBlocks = index.getIntIndexProperty("index."
+				+ structureName + ".blocks.max", ApplicationSetup.MAX_BLOCKS);
+		
+		if (this.hasBlocks > 0 && index.getIndexProperty("index.terrier.version", "").equals("4.0"))
+		{
+			logger.warn("Integer compession of blocks is unstable and has changed since 4.0, re-indexing is advisable");
+		}
+		
 		String compressionPrefix = "index." + structureName + ".compression.integer";
 		chunkSize = index.getIntIndexProperty(
 				compressionPrefix + ".chunk-size", -1);
@@ -294,9 +303,9 @@ public class IntegerCodingPostingIndexInputStream implements
 			
 			if (hasBlocks > 0)
 				if (fieldsCount > 0)
-					rtr = new BlockFieldIntegerCodingIterablePosting(file, pointer.getNumberOfEntries(), fixedDi, chunkSize, fieldsCount, hasBlocks, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
+					rtr = new BlockFieldIntegerCodingIterablePosting(file, pointer.getNumberOfEntries(), fixedDi, chunkSize, fieldsCount, hasBlocks, maxBlocks, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
 				else
-					rtr = new BlockIntegerCodingIterablePosting(file, pointer.getNumberOfEntries(), fixedDi, chunkSize, hasBlocks, idsCodec, tfsCodec, blocksCodec);
+					rtr = new BlockIntegerCodingIterablePosting(file, pointer.getNumberOfEntries(), fixedDi, chunkSize, hasBlocks, maxBlocks, idsCodec, tfsCodec, blocksCodec);
 			else
 				if (fieldsCount > 0)
 					rtr = new FieldIntegerCodingIterablePosting(file, pointer.getNumberOfEntries(), fixedDi, chunkSize, fieldsCount, idsCodec, tfsCodec, fieldsCodec);

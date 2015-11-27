@@ -47,15 +47,17 @@ import org.terrier.utility.ArrayUtils;
 public class BlockIntegerCodingIterablePosting extends
 		BasicIntegerCodingIterablePosting implements BlockPosting {
 
-	protected int bf = -1;//lenght of the current blocks arrays
+	protected int bf = -1;//length of the current blocks arrays
+	
 	protected int[] blocks;//current blocks
 		
-	protected int[] bfs;//the lenghts of the blocks array for every posting 
+	protected int[] bfs;//the lengths of the blocks array for every posting 
 						//(required if the block size != 1 i.e. blocks are not positions)
 	protected int[] blocksMatrix;//all the blocks in the current chunk (uncompressed)
 
 	protected final IntegerCodec blocksCodec;
 	protected final int hasBlocks;
+	protected final int maxBlocks;
 	
 	/**
 	 * 
@@ -75,6 +77,7 @@ public class BlockIntegerCodingIterablePosting extends
 			DocumentIndex documentIndex,
 			int chunkSize, 
 			int hasBlocks,
+			int maxBlocks,
 			IntegerCodec idsCodec,
 			IntegerCodec tfsCodec, 
 			IntegerCodec blocksCodec) throws IOException {
@@ -83,14 +86,17 @@ public class BlockIntegerCodingIterablePosting extends
 
 		this.blocksCodec = blocksCodec;
 		this.hasBlocks = hasBlocks;
+		this.maxBlocks = maxBlocks;
 		assert hasBlocks > 0;
 		if (hasBlocks > 0) {
 			
-			if (hasBlocks > 1)
-				bfs = new int[chunkSize];
-			else
-				bfs = tfs; //this a trick: if block size == 1, we have positions.
-							//#positions == tf, so just reuse that and save space
+			bfs = new int[chunkSize];
+			
+//			if (hasBlocks > 1)
+//				bfs = new int[chunkSize];
+//			else
+//				bfs = tfs; //this a trick: if block size == 1, we have positions.
+//							//#positions == tf, so just reuse that and save space
 			blocksMatrix = new int[chunkSize];
 		}
 	}
@@ -120,12 +126,26 @@ public class BlockIntegerCodingIterablePosting extends
 		
 		if (hasBlocks > 0)
 		{
-			if (hasBlocks > 1) {
-				tfsCodec.decompress(input, bfs, chunkSize);
-			}
-			//System.err.println("sumBFS="+StaTools.sum(tfs));
+			tfsCodec.decompress(input, bfs, chunkSize);
+			int numBlocks = 0;
+			for (int i = 0; i < chunkSize; i++) numBlocks += bfs[i];
 			
-			int numBlocks = 0; for (int i = 0; i < chunkSize; i++) numBlocks += bfs[i]; 
+//			if (hasBlocks > 1) {
+//				tfsCodec.decompress(input, bfs, chunkSize);
+//			} else {
+//				assert tfs == bfs; //yes, check for shallow equals
+//			}
+//			//System.err.println("sumBFS="+StaTools.sum(tfs));
+//			
+//			int numBlocks = 0;
+//			System.err.println("maxBlocks="+maxBlocks);
+//			if (maxBlocks > 0)
+//				for (int i = 0; i < chunkSize; i++) numBlocks += Math.min(bfs[i], maxBlocks); 
+//			else
+//				for (int i = 0; i < chunkSize; i++) numBlocks += bfs[i];
+//			
+//			System.err.println("blocks="+numBlocks);
+			
 			blocksMatrix = ArrayUtils.growOrCreate(blocksMatrix, numBlocks);
 			blocksCodec.decompress(input, blocksMatrix, numBlocks);
 		}		
@@ -151,14 +171,14 @@ public class BlockIntegerCodingIterablePosting extends
 		super.get(pos);
 		
 		bf = bfs[pos];			
-		for (int i = currentPosting + 1; i < pos; i++) blkCnt += bfs[i]; 
+		for (int i = currentPosting + 1; i < pos; i++) blkCnt += Math.min(bfs[i], maxBlocks); 
 		blocks = Arrays.copyOfRange(blocksMatrix, blkCnt, blkCnt + bf);
 		Delta.inverseDelta(blocks, blocks.length);
 		blkCnt += bf; //<-- because currentPosting may start from -1
 		
 		numberOfEntries -= pos - currentPosting;
 		currentPosting = pos;
-		
+		System.err.println(toString());
 	}
 
 	

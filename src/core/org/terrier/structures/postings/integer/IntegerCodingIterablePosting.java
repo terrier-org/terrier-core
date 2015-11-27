@@ -240,9 +240,10 @@ public class IntegerCodingIterablePosting implements IterablePosting, FieldPosti
 		
 		if (hasBlocks > 0)
 		{
-			if (hasBlocks > 1) {
-				tfsCodec.decompress(input, bfs, chunkSize);
-			}
+//			if (hasBlocks > 1) {
+//				tfsCodec.decompress(input, bfs, chunkSize);
+//			}
+			tfsCodec.decompress(input, bfs, chunkSize);
 			
 			int numBlocks = 0; for (int i = 0; i < chunkSize; i++) numBlocks += bfs[i]; 
 			blocksMatrix = ArrayUtils.growOrCreate(blocksMatrix, numBlocks);

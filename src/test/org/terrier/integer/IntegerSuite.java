@@ -37,6 +37,7 @@ import org.terrier.integer.tests.BasicShakFastPFORRecompress;
 import org.terrier.integer.tests.BasicShakNullRecompress;
 import org.terrier.integer.tests.BasicShakSmallChunk;
 import org.terrier.integer.tests.BlockShak;
+import org.terrier.integer.tests.BlockShakSmallMaxBlockSize;
 
 
 /** This class defines the active JUnit test classes for Terrier
@@ -55,11 +56,8 @@ import org.terrier.integer.tests.BlockShak;
 	BasicShakFastPFORRecompress.class,
 	BasicShakNullRecompress.class,
 	BasicShakSmallChunk.class,
-	BlockShak.class
-	
-	
-	
-	
+	BlockShak.class,
+	BlockShakSmallMaxBlockSize.class	
 	
 })
 public class IntegerSuite {}

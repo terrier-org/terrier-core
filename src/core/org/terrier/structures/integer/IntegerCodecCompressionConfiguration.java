@@ -125,9 +125,9 @@ public class IntegerCodecCompressionConfiguration extends
 	}
 	
 	
-	public IntegerCodecCompressionConfiguration(String structureName, String[] fieldNames, boolean blocks)
+	public IntegerCodecCompressionConfiguration(String structureName, String[] fieldNames, int hasBlocks, int maxBlocks)
 	{
-		super(structureName, fieldNames, blocks);
+		super(structureName, fieldNames, hasBlocks, maxBlocks);
 		
 		compressionPrefix = "index." + structureName + ".compression.integer";
 		idsPrefix = compressionPrefix + ".ids";
@@ -156,10 +156,9 @@ public class IntegerCodecCompressionConfiguration extends
 	public AbstractPostingOutputStream getPostingOutputStream(String filename) {
 		AbstractPostingOutputStream rtr;
 		try{
-			//TODO blocks.size
 			rtr = new IntegerCodingPostingOutputStream(
 				filename,
-				chunkSize, fieldCount, blocks ? 1 : 0, 
+				chunkSize, fieldCount, hasBlocks, maxBlocks, 
 						idsCodec, 
 						tfsCodec, 
 						fieldsCodec, 
@@ -175,12 +174,13 @@ public class IntegerCodecCompressionConfiguration extends
 	{
 		String compressionPrefix = "index." + structureName + ".compression.integer";
 		p.setProperty(compressionPrefix+".chunk-size", String.valueOf(chunkSize));
-		p.setProperty("index."+structureName+".blocks", String.valueOf(blocks ? 1 : 0));		
+		p.setProperty("index."+structureName+".blocks", String.valueOf(hasBlocks));	
+		p.setProperty("index."+structureName+".blocks.max", String.valueOf(maxBlocks));	
 	}
 
 	@Override
 	public Class<? extends IterablePosting> getPostingIteratorClass() {
-		return blocks 
+		return hasBlocks > 0 
 				? fieldCount > 0 
 						? BlockFieldIntegerCodingIterablePosting.class 
 						: BlockIntegerCodingIterablePosting.class 
@@ -221,7 +221,12 @@ public class IntegerCodecCompressionConfiguration extends
 				"index,structureName,"+pointerSourceStreamStructureName);
 		index.setIndexProperty("index."+this.structureName+".fields.count", String.valueOf(this.fieldCount));
 		index.setIndexProperty("index."+this.structureName+".fields.names", ArrayUtils.join(this.fieldNames, ","));
-		index.setIndexProperty("index."+this.structureName+".blocks", this.blocks ? "1" : "0");
+		index.setIndexProperty("index."+this.structureName+".blocks", String.valueOf(this.hasBlocks));
+		index.setIndexProperty("index."+this.structureName+".blocks.max", String.valueOf(this.maxBlocks));
+		if (this.hasBlocks > 0)
+		{
+			log.warn("Compression of blocks - this format is subject to change, and may evolve in future Terrier versions");
+		}
 		
 		for(Entry<Object,Object> e : props.entrySet())
 		{

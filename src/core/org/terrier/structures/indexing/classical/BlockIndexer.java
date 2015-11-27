@@ -264,14 +264,15 @@ public class BlockIndexer extends Indexer {
 	protected int BLOCK_SIZE;
 	/** 
 	 * The maximum number allowed number of blocks in a document. 
-	 * After this value, all the remaining terms are in the final block. See Property <tt>max.blocks</tt>. */
+	 * After this value, all the remaining terms are in the final block. 
+	 * See Property <tt>blocks.max</tt>. */
 	protected int MAX_BLOCKS;
 	
 	/** The compression configuration for the direct index */
-	CompressionConfiguration compressionDirectConfig;
+	protected CompressionConfiguration compressionDirectConfig;
 	
 	/** The compression configuration for the inverted index */
-	CompressionConfiguration compressionInvertedConfig;
+	protected CompressionConfiguration compressionInvertedConfig;
 
 	/** Constructs an instance of this class, where the created data structures
 	  * are stored in the given path, with the given prefix on the filenames.
@@ -283,8 +284,11 @@ public class BlockIndexer extends Indexer {
 		super(pathname, prefix);
 		if (this.getClass() == BlockIndexer.class)
 			init();
-		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, true);
-		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, true);
+		int blockSize = BLOCK_SIZE;
+		if (Boolean.parseBoolean(ApplicationSetup.getProperty("block.delimiters.enabled", "false")))
+				blockSize = 2;
+		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, blockSize, MAX_BLOCKS);
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, blockSize, MAX_BLOCKS);
 	}
 
 	/** 

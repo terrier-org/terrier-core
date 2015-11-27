@@ -94,7 +94,7 @@ public class TestNext {
 
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = new IntegerCodingPostingOutputStream(
-				tmpFile.toString(), chunksize, 0, 0, ids, tfs, null, null);
+				tmpFile.toString(), chunksize, 0, 0, 0, ids, tfs, null, null);
 		for (BitIndexPointer p : pointerList) {
 
 			IterablePosting ip1 = new BasicIterablePosting(bitIn, p.getNumberOfEntries(), null);

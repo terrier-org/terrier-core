@@ -29,6 +29,8 @@ package org.terrier.structures.integer;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terrier.compression.integer.ByteFileBuffered;
 import org.terrier.compression.integer.ByteFileInMemory;
 import org.terrier.compression.integer.ByteIn;
@@ -45,6 +47,7 @@ import org.terrier.structures.postings.integer.BasicIntegerCodingIterablePosting
 import org.terrier.structures.postings.integer.BlockFieldIntegerCodingIterablePosting;
 import org.terrier.structures.postings.integer.BlockIntegerCodingIterablePosting;
 import org.terrier.structures.postings.integer.FieldIntegerCodingIterablePosting;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.io.WrappedIOException;
 
 /**
@@ -55,6 +58,7 @@ import org.terrier.utility.io.WrappedIOException;
  * 
  * index.structureName.fields.count=the number of fields in the postings, if any
  * index.structureName.blocks=0 (no blocks) or 1 (positions) or >1 (blocks of any size)
+ * index.structureName.blocks.max=0 (no limit) or >1 (position information limited) -- default is ApplicationSetup.MAX_BLOCKS
  * index.structureName.compression.integer.chunk-size=the maximum number of posting in a chunk
  * index.structureName.compression.integer.ids.codec=the {@link IntegerCodec} implementation to use for docIds
  * index.structureName.compression.integer.tfs.codec=the {@link IntegerCodec} implementation to use for tfs
@@ -65,12 +69,15 @@ import org.terrier.utility.io.WrappedIOException;
  * @since 4.0
  */
 public class IntegerCodingPostingIndex implements PostingIndex<BitIndexPointer> {
+	
+	Logger log = LoggerFactory.getLogger(IntegerCodingPostingIndex.class);
 
 	protected IndexOnDisk index;
 	protected ByteInSeekable[] file;
 	protected DocumentIndex documentIndex;
 	protected int fieldsCount;
 	protected int hasBlocks;
+	protected int maxBlocks;
 	protected int chunkSize;
 	protected IntegerCodec idsCodec;
 	protected IntegerCodec tfsCodec;
@@ -85,12 +92,19 @@ public class IntegerCodingPostingIndex implements PostingIndex<BitIndexPointer> 
 
 		this.fieldsCount = index.getIntIndexProperty("index." + structureName
 				+ ".fields.count", 0);
-		int hasBlocks = index.getIntIndexProperty(
+		this.hasBlocks = index.getIntIndexProperty(
 				"index." + structureName + ".blocks", 0);
+		this.maxBlocks = index.getIntIndexProperty(
+				"index." + structureName + ".blocks.max", ApplicationSetup.MAX_BLOCKS);
+		
+		if (this.hasBlocks > 0 && index.getIndexProperty("index.terrier.version", "").equals("4.0"))
+		{
+			log.warn("Integer compession of blocks is unstable and has changed since 4.0, re-indexing is advisable");
+		}
+		
 		try {
 			this.documentIndex = index.getDocumentIndex();
-			this.hasBlocks = hasBlocks;
-
+			
 			String compressionPrefix = "index." + structureName
 					+ ".compression.integer";
 			this.chunkSize = index.getIntIndexProperty(compressionPrefix
@@ -181,9 +195,9 @@ public class IntegerCodingPostingIndex implements PostingIndex<BitIndexPointer> 
 			
 		if (hasBlocks > 0)
 			if (fieldsCount > 0)
-				return new BlockFieldIntegerCodingIterablePosting(in, pointer.getNumberOfEntries(), fixedDi, chunkSize, fieldsCount, hasBlocks, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
+				return new BlockFieldIntegerCodingIterablePosting(in, pointer.getNumberOfEntries(), fixedDi, chunkSize, fieldsCount, hasBlocks, maxBlocks, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
 			else
-				return new BlockIntegerCodingIterablePosting(in, pointer.getNumberOfEntries(), fixedDi, chunkSize, hasBlocks, idsCodec, tfsCodec, blocksCodec);
+				return new BlockIntegerCodingIterablePosting(in, pointer.getNumberOfEntries(), fixedDi, chunkSize, hasBlocks, maxBlocks, idsCodec, tfsCodec, blocksCodec);
 		else
 			if (fieldsCount > 0)
 				return new FieldIntegerCodingIterablePosting(in, pointer.getNumberOfEntries(), fixedDi, chunkSize, fieldsCount, idsCodec, tfsCodec, fieldsCodec);

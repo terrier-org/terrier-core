@@ -58,7 +58,7 @@ public class BlockFieldIntegerCodingIterablePosting extends FieldIntegerCodingIt
 
 	protected final IntegerCodec blocksCodec;
 	protected final int hasBlocks;
-	
+	protected final int maxBlocks;
 	/**
 	 * 
 	 * @param input the input channel
@@ -80,6 +80,7 @@ public class BlockFieldIntegerCodingIterablePosting extends FieldIntegerCodingIt
 			int chunkSize, 
 			int fieldCount,
 			int hasBlocks,
+			int maxBlocks,
 			IntegerCodec idsCodec,
 			IntegerCodec tfsCodec, 
 			IntegerCodec fieldsCodec, 
@@ -89,13 +90,16 @@ public class BlockFieldIntegerCodingIterablePosting extends FieldIntegerCodingIt
 
 		this.blocksCodec = blocksCodec;
 		this.hasBlocks = hasBlocks;
+		this.maxBlocks = maxBlocks;
 		if (hasBlocks > 0) {
 			
-			if (hasBlocks > 1)
-				bfs = new int[chunkSize];
-			else
-				bfs = tfs; //this a trick: if block size == 1, we have positions.
-							//#positions == tf, so just reuse that and save space
+			bfs = new int[chunkSize];
+			
+			//if (hasBlocks > 1)
+			//	bfs = new int[chunkSize];
+			//else
+			//	bfs = tfs; //this a trick: if block size == 1, we have positions.
+			//				//#positions == tf, so just reuse that and save space
 			blocksMatrix = new int[chunkSize];
 		}
 	}
@@ -125,11 +129,19 @@ public class BlockFieldIntegerCodingIterablePosting extends FieldIntegerCodingIt
 		
 		if (hasBlocks > 0)
 		{
-			if (hasBlocks > 1) {
-				tfsCodec.decompress(input, bfs, chunkSize);
-			}
+			tfsCodec.decompress(input, bfs, chunkSize);
+			int numBlocks = 0;
+			for (int i = 0; i < chunkSize; i++) numBlocks += bfs[i];
 			
-			int numBlocks = 0; for (int i = 0; i < chunkSize; i++) numBlocks += bfs[i]; 
+//			if (hasBlocks > 1) {
+//				tfsCodec.decompress(input, bfs, chunkSize);
+//			}
+//			
+//			int numBlocks = 0; 
+//			if (maxBlocks > 0)
+//				for (int i = 0; i < chunkSize; i++) numBlocks += Math.min(bfs[i], maxBlocks); 
+//			else
+//				for (int i = 0; i < chunkSize; i++) numBlocks += bfs[i]; 
 			blocksMatrix = ArrayUtils.growOrCreate(blocksMatrix, numBlocks);
 			blocksCodec.decompress(input, blocksMatrix, numBlocks);
 		}		

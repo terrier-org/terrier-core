@@ -344,7 +344,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		logger.info("***REALTIME*** MemoryIndex write path: " + path
 				+ " prefix: " + prefix);
 
-		compressionConfig = CompressionFactory.getCompressionConfiguration("inverted", new String[0], false);
+		compressionConfig = CompressionFactory.getCompressionConfiguration("inverted", new String[0], 0,0);
 		
 		// FIXME: increase visibility using logger.debug
 
