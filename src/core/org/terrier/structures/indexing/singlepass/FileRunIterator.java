@@ -72,12 +72,10 @@ public class FileRunIterator<K extends PostingInRun> extends RunIterator {
 
 	/** Closes the run files being processed */	
 	@Override
-	public void close()
+	public void close() throws IOException
 	{
-		try{
-			mbis.close();
-			stringDIS.close();
-		} catch (Exception e) {}
+		mbis.close();
+		stringDIS.close();
 	}
 	
 
