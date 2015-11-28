@@ -66,7 +66,6 @@ public class InvertedIndex extends BitPostingIndex {
 	/** Indicates whether field information is used.*/
 	final boolean useFieldInformation = FieldScore.USE_FIELD_INFORMATION;
 	
-	protected DocumentIndex doi;
 	/** 
 	 * Get the BitFiles
 	 */
@@ -93,7 +92,6 @@ public class InvertedIndex extends BitPostingIndex {
 	public InvertedIndex(IndexOnDisk index, String structureName, DocumentIndex _doi) throws IOException
 	{
 		super(index, structureName, BasicIterablePosting.class);
-		doi = _doi;
 	}
 	/**
 	 * Construct an instance of the class with
@@ -106,7 +104,6 @@ public class InvertedIndex extends BitPostingIndex {
 	public InvertedIndex(IndexOnDisk index, String structureName, DocumentIndex _doi, Class<? extends IterablePosting> postingClass) throws IOException
 	{
 		super(index, structureName, postingClass);
-		doi = _doi;
 	}
 
 	/** 
