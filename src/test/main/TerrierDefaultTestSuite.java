@@ -120,6 +120,7 @@ import org.terrier.utility.TestStaTools;
 import org.terrier.utility.TestTagSet;
 import org.terrier.utility.TestTermCodes;
 import org.terrier.utility.TestUnitUtils;
+import org.terrier.utility.TestVersion;
 import org.terrier.utility.io.TestCountingInputStream;
 import org.terrier.utility.io.TestHadoopPlugin;
 import org.terrier.utility.io.TestRandomDataInputMemory;
@@ -263,6 +264,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestStaTools.class,
 	TestTermCodes.class,
 	TestUnitUtils.class,
+	TestVersion.class,
 	//TestTimer.class,
 	
 	//utility.io

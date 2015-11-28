@@ -6,9 +6,11 @@
 	<version>4.1-snapshot</version>
 	<name>Terrier Information Retrieval Platform</name>
 	<description>Terrier IR platform</description>
+	<url>http://terrier.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<year>2015</year>
 	</properties>
 
 	<repositories>
@@ -222,6 +224,16 @@
 					<include>logback.xml</include>
 				</includes>
 			</resource>
+
+			<resource>
+				<directory>share/templates</directory>
+				<includes>
+					<include>**/*.java</include>
+				</includes>
+				<filtering>true</filtering>
+				<targetPath>${project.build.directory}/generated-sources/version</targetPath>
+			</resource>
+
 		</resources>
 		<pluginManagement>
 			<plugins>
@@ -232,6 +244,8 @@
 					<configuration>
 						<lifecycleMappingMetadata>
 							<pluginExecutions>
+
+
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
@@ -246,36 +260,46 @@
 									</action>
 								</pluginExecution>
 
-
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>build-helper-maven-plugin</artifactId>
+										<versionRange>[1.0,)</versionRange>
+										<goals>
+											<goal>parse-version</goal>
+											<goal>add-source</goal>
+											<goal>maven-version</goal>
+											<goal>add-resource</goal>
+											<goal>add-test-resource</goal>
+											<goal>add-test-source</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfiguration>true</runOnConfiguration>
+											<runOnIncremental>true</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
 
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-resources-plugin</artifactId>
-										<versionRange>2.4.3</versionRange>
+										<versionRange>[1.0.0,)</versionRange>
 										<goals>
 											<goal>resources</goal>
 											<goal>testResources</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<execute />
+										<execute>
+											<runOnConfiguration>true</runOnConfiguration>
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
 									</action>
 								</pluginExecution>
 
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.mojo</groupId>
-										<artifactId>build-helper-maven-plugin</artifactId>
-										<versionRange>1.9.1</versionRange>
-										<goals>
-											<goal>add-source</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute />
-									</action>
-								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
@@ -332,6 +356,27 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/version/</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
 				<executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
 				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/antlr/</source> 
@@ -347,31 +392,100 @@
 					<executable>javac</executable>
 					<source>1.7</source>
 					<target>1.7</target>
+					<excludes>
+						<exclude>src/templates/org/terrier/*.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4.3</version>
+				<version>2.6</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<outputDirectory>${basedir}/doc/</outputDirectory>
+					<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
+					<destDir>javadoc</destDir>
+					<author>true</author>
+					<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
+					<doctitle>${project.Name} ${project.version} API</doctitle>
+					<use>true</use>
+					<version>true</version>
+					<windowtitle>${project.Name} ${project.version} API</windowtitle>
+					<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/desktop:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/</sourcepath>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
-					<descriptor>src/assembly/bin.xml</descriptor>
 					<finalName>terrier-core-${project.version}</finalName>
 					<archive>
 						<manifest>
-							<mainClass>TrecTerrier</mainClass>
+							<mainClass>org.terrier.applications.TrecTerrier</mainClass>
 						</manifest>
 					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
 				</configuration>
+				<executions>
+					<execution>
+						<!-- builds the jar-with-dependencies -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+
+					<execution>
+						<!-- builds the tar files -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<id>srczips</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<tarLongFileMode>gnu</tarLongFileMode>
+							<descriptor>src/assembly/src.xml</descriptor>
+							<descriptorRefs></descriptorRefs>
+						</configuration>
+					</execution>
+
+					<execution>
+						<!-- builds the tar files -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<id>binzips</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<tarLongFileMode>gnu</tarLongFileMode>
+							<descriptor>src/assembly/bin.xml</descriptor>
+							<descriptorRefs></descriptorRefs>
+						</configuration>
+					</execution>
+
+				</executions>
 			</plugin>
 
 			<plugin>

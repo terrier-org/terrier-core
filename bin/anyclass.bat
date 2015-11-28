@@ -61,8 +61,8 @@ REM ------------------------
 REM -- Build up class path 
 REM ------------------------
 call "%BIN%\lcp.bat" %CLASSPATH%
-call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\terrier-core-4.1.jar"
-call "%BIN%\lcp.bat" "%TERRIER_HOME%\etc\logback.xml"
+call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\terrier-core-*-jar-with-dependencies.jar"
+call "%BIN%\lcp.bat" "%TERRIER_ETC%\logback.xml"
 
 
 :dorun

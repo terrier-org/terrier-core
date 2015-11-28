@@ -1,7 +1,7 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>bin</id>
+  <id>src</id>
   <formats>
     <format>tar.gz</format>
     <format>zip</format>
@@ -21,20 +21,14 @@
       <directory>.</directory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
-      	<exclude>src/**</exclude>
+      	<exclude>doc/javadoc/**</exclude>
         <exclude>.git/**</exclude>
         <exclude>**/.gitignore</exclude>
         <exclude>**/.svn</exclude>
         <exclude>**/*.iws</exclude>
         <exclude>**/*.ipr</exclude>
         <exclude>**/*.iml</exclude>
-        <exclude>**/target/*.tar.gz</exclude>
-        <exclude>**/target/*.zip</exclude>
-        <exclude>**/target/archive-tmp/**</exclude>
-        <exclude>**/target/classes/**</exclude>
-        <exclude>**/target/generated-sources/**</exclude>
-        <exclude>**/target/javadoc-bundle-options/**</exclude>
-        <exclude>**/target/maven-archiver/**</exclude>
+        <exclude>**/target/**</exclude>
         <exclude>**/*.log</exclude>
         <exclude>**/build/**</exclude>
         <exclude>**/file:/**</exclude>
