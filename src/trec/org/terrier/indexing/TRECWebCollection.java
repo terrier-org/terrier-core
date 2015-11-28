@@ -114,7 +114,9 @@ public class TRECWebCollection extends TRECCollection {
 	final static String parseDate(String date)
 	{
 		try{
-			return Long.toString(dateWT2G.parse(date).getTime() / 1000l) ;
+			synchronized (dateWT2G) {
+				return Long.toString(dateWT2G.parse(date).getTime() / 1000l);
+			}
 		} catch (Exception e) {
 			//System.err.println("date=" + date + "exception="+e);
 			return "";

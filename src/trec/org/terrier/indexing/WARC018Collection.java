@@ -269,7 +269,9 @@ public class WARC018Collection extends MultiDocumentFileCollection implements Co
 		if (date == null)
 			return "";
 		try{
-			return Long.toString(dateWARC.parse(date).getTime());
+			synchronized (dateWARC) {
+				return Long.toString(dateWARC.parse(date).getTime() / 1000l);
+			}
 		} catch (ParseException pe ) {
 			return "";
 		}
