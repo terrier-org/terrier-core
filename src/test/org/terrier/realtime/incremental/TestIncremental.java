@@ -31,8 +31,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionDocumentList;

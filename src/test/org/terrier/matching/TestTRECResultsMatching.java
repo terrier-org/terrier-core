@@ -31,8 +31,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.Writer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;

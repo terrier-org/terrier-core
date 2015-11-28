@@ -515,6 +515,7 @@ public class TestFSOrderedMapFile {
 		
 		k = keyFactory.newInstance(); k.set("c");
 		assertEquals(3, map.get(k).get());
+		map.close();
 		
 	}
 	

@@ -152,7 +152,8 @@ public class InvertedIndexRecompresser {
 	{
 		CompressionConfiguration compressionConfig = CompressionFactory.getCompressionConfiguration("tmp-inverted", 
 				ArrayUtils.parseCommaDelimitedString(index.getIndexProperty("index.inverted.fields.names", "")), 
-				index.getIntIndexProperty("index.inverted.blocks", 0) > 0);
+				index.getIntIndexProperty("index.inverted.blocks", 0), 
+				index.getIntIndexProperty("index.inverted.blocks.max", 0));
 		logger.info("Recompressing inverted structure using " + compressionConfig.toString());
 		
 		AbstractPostingOutputStream icpw = compressionConfig.getPostingOutputStream(

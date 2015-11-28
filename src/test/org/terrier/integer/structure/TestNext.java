@@ -117,6 +117,7 @@ public class TestNext {
 			assertEquals(10, icip.getId());
 			icip.next(600);
 			assertEquals(600, icip.getId());
+			icip.close();
 		}
 		bfb.close();
 		bitIn.close();
