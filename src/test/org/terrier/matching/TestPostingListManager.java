@@ -17,7 +17,7 @@
  *
  * The Original is in 'TestPostingListManager.java'
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -59,6 +59,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);
 		p.prepare(true);
 		assertEquals(0, p.size());
+		p.close();
 	}
 	
 	@Test public void testSingleTerm() throws Exception {
@@ -79,7 +80,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getId());
 		assertEquals(1, ip.getFrequency());
 		assertEquals(IterablePosting.EOL, ip.next());
-		
+		p.close();
 		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);
 		p.prepare(false);
 		assertEquals(1, p.size());
@@ -91,6 +92,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		assertEquals(1, p.getStatistics(0).getFrequency());
 		assertEquals(1, p.getStatistics(0).getDocumentFrequency());
 		assertEquals(IterablePosting.EOL, ip.next());
+		p.close();
 	}
 	
 	@Test public void testMultipleTermBothMatch() throws Exception {
@@ -116,6 +118,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		assertEquals(0, ip.getId(), 0);
 		assertEquals(1, ip.getFrequency(), 1);
 		assertEquals(IterablePosting.EOL, ip.next());
+		p.close();
 	}
 	
 	@Test public void testMultipleTermOneMatch() throws Exception {
@@ -137,7 +140,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getId());
 		assertEquals(1, ip.getFrequency());
 		assertEquals(IterablePosting.EOL, ip.next());
-		
+		p.close();
 		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);
 		p.prepare(false);
 		assertEquals(1, p.size());
@@ -146,6 +149,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getId());
 		assertEquals(1, ip.getFrequency());
 		assertEquals(IterablePosting.EOL, ip.next());
+		p.close();
 	}
 	
 	@Test public void testMultipleTermNoMatch() throws Exception {
@@ -158,6 +162,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);
 		p.prepare(true);
 		assertEquals(0, p.size());
+		p.close();
 	}
 	
 	
@@ -182,7 +187,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getId());
 		assertEquals(1, ip.getFrequency());
 		assertEquals(IterablePosting.EOL, ip.next());		
-		
+		p.close();
 		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);
 		p.prepare(false);
 		assertEquals(1, p.size());
@@ -194,6 +199,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getId());
 		assertEquals(1, ip.getFrequency());
 		assertEquals(IterablePosting.EOL, ip.next());
+		p.close();
 	}
 	
 	@Test public void testSynonymOneMatch() throws Exception {
@@ -214,6 +220,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		assertEquals(0, ip.getId());
 		assertEquals(1, ip.getFrequency());
 		assertEquals(IterablePosting.EOL, ip.next());
+		p.close();
 	}
 	
 	
@@ -226,6 +233,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);
 		p.prepare(true);
 		assertEquals(0, p.size());
+		p.close();
 	}
 	
 }

@@ -17,7 +17,7 @@
  *
  * The Original Code is StructureMerger.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -151,8 +151,8 @@ public class StructureMerger {
 		assert srcFieldCount1 == fieldNames.length;
 		
 		fieldCount = srcFieldCount1;
-		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", fieldNames, false);
-		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldNames, false);
+		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", fieldNames, 0,0);
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldNames, 0,0);
 	}
 	
 
@@ -233,6 +233,7 @@ public class StructureMerger {
 				
 			} catch (Exception e) {
 				logger.error("Couldn't create specified DirectInvertedOutputStream", e);
+				lexOutStream.close();
 				return;
 			}
 

@@ -17,7 +17,7 @@
  *
  * The Original Code is DFRBagExpansionTerms.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -42,7 +42,6 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
-import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ApplicationSetup;
@@ -65,7 +64,7 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 	protected TIntObjectHashMap<ExpansionTerm> terms;
 	/** The lexicon used for retrieval. */
 	protected Lexicon<String> lexicon;
-	protected PostingIndex<Pointer> directIndex;
+	protected PostingIndex<?> directIndex;
 	protected DocumentIndex documentIndex;
 	/** The number of documents in the collection. */
 	protected int numberOfDocuments;
@@ -93,7 +92,7 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 	* @param _directIndex DirectIndex to use for finding terms for documents
 	* @param _documentIndex DocumentIndex to use for finding statistics about documents
  	*/
-	public DFRBagExpansionTerms(CollectionStatistics collStats, Lexicon<String> _lexicon, PostingIndex<Pointer> _directIndex, DocumentIndex _documentIndex) {
+	public DFRBagExpansionTerms(CollectionStatistics collStats, Lexicon<String> _lexicon, PostingIndex<?> _directIndex, DocumentIndex _documentIndex) {
 		this.numberOfDocuments = collStats.getNumberOfDocuments();
 		this.numberOfTokens = collStats.getNumberOfTokens();
 		this.averageDocumentLength = collStats.getAverageDocumentLength();

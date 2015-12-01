@@ -17,7 +17,7 @@
  *
  * The Original Code is ApplicationSetup.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -91,7 +91,7 @@ public class ApplicationSetup {
 	}
 	
 	/** Current Terrier version */
-	public static final String TERRIER_VERSION = "4.0";
+	public static final String TERRIER_VERSION = org.terrier.Version.VERSION;
 	static Logger logger = null;
 	
 	/** Default log4j config Terrier loads if no TERRIER_ETC/terrier-log.xml file exists 

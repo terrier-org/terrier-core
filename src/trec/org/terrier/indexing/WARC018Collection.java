@@ -17,7 +17,7 @@
  *
  * The Original Code is WARC018Collection.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -269,7 +269,9 @@ public class WARC018Collection extends MultiDocumentFileCollection implements Co
 		if (date == null)
 			return "";
 		try{
-			return Long.toString(dateWARC.parse(date).getTime());
+			synchronized (dateWARC) {
+				return Long.toString(dateWARC.parse(date).getTime() / 1000l);
+			}
 		} catch (ParseException pe ) {
 			return "";
 		}

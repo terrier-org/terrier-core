@@ -17,7 +17,7 @@
  *
  * The Original Code is TestCompressionConfig.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -46,16 +46,16 @@ import org.terrier.utility.ApplicationSetup;
 
 public class TestCompressionConfig extends ApplicationSetupBasedTest {
 	
-	protected CompressionConfiguration getConfig(String structure, String[] fieldNames, boolean blocks)
+	protected CompressionConfiguration getConfig(String structure, String[] fieldNames,int hasBlocks, int maxBlocks)
 	{
-		return new CompressionFactory.BitCompressionConfiguration(structure, fieldNames, blocks);
+		return new CompressionFactory.BitCompressionConfiguration(structure, fieldNames, hasBlocks, maxBlocks);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Test public void testSimple() throws IOException
 	{
 		Index index = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
-		CompressionConfiguration cc =  getConfig("inverted", new String[0], false);
+		CompressionConfiguration cc =  getConfig("inverted", new String[0], 0,0);
 		
 		AbstractPostingOutputStream pos = cc.getPostingOutputStream(((IndexOnDisk)index).getPath() + "/" + ((IndexOnDisk)index).getPrefix() + ".inverted" + cc.getStructureFileExtension());
 		Pointer p = pos.writePostings(new ArrayOfBasicIterablePosting(new int[]{0, 1}, new int[]{1,2}));

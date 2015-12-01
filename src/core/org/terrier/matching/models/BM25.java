@@ -17,7 +17,7 @@
  *
  * The Original Code is BM25.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -68,9 +68,10 @@ public class BM25 extends WeightingModel {
 	 *         tf and docLength, and other preset parameters
 	 */
 	public double score(double tf, double docLength) {
-	    double K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
-	    return (tf * (k_3 + 1d) * keyFrequency / ((k_3 + keyFrequency) * K))
-	            * WeightingModelLibrary.log((numberOfDocuments - documentFrequency + 0.5d) / (documentFrequency + 0.5d));
+		final double K = k_1 * ((1 - b) + b * docLength / averageDocumentLength);
+		return WeightingModelLibrary.log((numberOfDocuments - documentFrequency + 0.5d) / (documentFrequency + 0.5d)) *
+				((k_1 + 1d) * tf / (K + tf)) *
+				((k_3+1)*keyFrequency/(k_3+keyFrequency));
 	}
 
 

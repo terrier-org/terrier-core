@@ -17,7 +17,7 @@
  *
  * The Original Code is TestNext.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -94,7 +94,7 @@ public class TestNext {
 
 		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
 		IntegerCodingPostingOutputStream icpw = new IntegerCodingPostingOutputStream(
-				tmpFile.toString(), chunksize, 0, 0, ids, tfs, null, null);
+				tmpFile.toString(), chunksize, 0, 0, 0, ids, tfs, null, null);
 		for (BitIndexPointer p : pointerList) {
 
 			IterablePosting ip1 = new BasicIterablePosting(bitIn, p.getNumberOfEntries(), null);
@@ -117,6 +117,7 @@ public class TestNext {
 			assertEquals(10, icip.getId());
 			icip.next(600);
 			assertEquals(600, icip.getId());
+			icip.close();
 		}
 		bfb.close();
 		bitIn.close();

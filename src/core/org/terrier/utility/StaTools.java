@@ -17,7 +17,7 @@
  *
  * The Original Code is StaTools.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -124,6 +124,18 @@ public class StaTools {
     public static int sum(int[] data){
     	int sum = 0;
     	for (int i = 0; i < data.length; i++)
+    		sum+=data[i];
+    	return sum;
+    }
+    
+    /**
+     * The sum of an array of integers.
+     * @param data The integers.
+     * @return The sum.
+     */
+    public static int sum(int[] data, int length){
+    	int sum = 0;
+    	for (int i = 0; i < length; i++)
     		sum+=data[i];
     	return sum;
     }

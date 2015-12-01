@@ -17,7 +17,7 @@
  *
  * The Original Code is TestIncremental.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -31,8 +31,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionDocumentList;

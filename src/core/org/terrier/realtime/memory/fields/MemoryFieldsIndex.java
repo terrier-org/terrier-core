@@ -17,7 +17,7 @@
  *
  * The Original Code is MemoryFieldsIndex.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -140,7 +140,7 @@ public class MemoryFieldsIndex extends MemoryFields {
 
     	IndexOnDisk index = Index.createNewIndex(path, prefix);
 
-        compressionConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldtags, false);
+        compressionConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldtags, 0,0);
         
         /*
          * Meta-data & document index.

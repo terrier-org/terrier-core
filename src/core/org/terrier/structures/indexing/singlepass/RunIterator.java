@@ -17,7 +17,7 @@
  *
  * The Original Code is RunIterator.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -27,6 +27,7 @@
 
 package org.terrier.structures.indexing.singlepass;
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.Iterator;
 
 /** An abstract base class which allows PostingInRuns to be iterated over.
@@ -87,6 +88,6 @@ public abstract class RunIterator implements Iterator<PostingInRun>, Closeable {
 	}
 
 	/** close this RunIterator */	
-	public void close() {}
+	public void close() throws IOException {}
 
 }

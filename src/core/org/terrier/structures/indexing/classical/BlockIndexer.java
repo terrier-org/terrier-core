@@ -17,7 +17,7 @@
  *
  * The Original Code is BlockIndexer.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -58,15 +58,16 @@ import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.TermCodes;
 /**
- * An indexer that saves block information for the indexed terms. Block information is usualy recorded in terms of relative term positions (position 1, positions 2, etc),
+ * An indexer that saves block information for the indexed terms. Block information is usually recorded in terms of relative term positions (position 1, positions 2, etc),
  * however, since 2.2, Terrier supports the presence of "marker terms" during indexing which are used to increment the block counter.
+ * <p>
  * <B>Properties:</b>
+ * </p>
  * <ul> 
  * <li><tt>blocks.size</tt> - How many terms should be in one block. If you want to use phrasal search, this need to be 1 (default).</li>
- * <li><tt>max.blocks</tt> - Maximum number of blocks in a document. After this number of blocks, all subsequent terms will be in the same block. Default 100,000</li>
+ * <li><tt>blocks.max</tt> - Maximum number of blocks in a document. After this number of blocks, all subsequent terms will be in the same block. Default 100,000</li>
  * <li><tt>block.indexing</tt> - This class should only be used if the <tt>block.indexing</tt> property is set.</li>
  * <li>indexing.max.encoded.documentindex.docs - how many docs before the DocumentIndexEncoded is dropped in favour of the DocumentIndex (on disk implementation).</li>
- * <li>string.use_utf - use the UTF index structures?</li>
  * <li><i>See Also: Properties in </i>org.terrier.indexing.Indexer <i>and</i> org.terrier.indexing.BasicIndexer</li>
  * </ul>
  * <p><b>Markered Blocks</b><br>Markers are terms (artificially inserted or otherwise into the term stream that are used to denote when the block counter should
@@ -264,14 +265,15 @@ public class BlockIndexer extends Indexer {
 	protected int BLOCK_SIZE;
 	/** 
 	 * The maximum number allowed number of blocks in a document. 
-	 * After this value, all the remaining terms are in the final block. See Property <tt>max.blocks</tt>. */
+	 * After this value, all the remaining terms are in the final block. 
+	 * See Property <tt>blocks.max</tt>. */
 	protected int MAX_BLOCKS;
 	
 	/** The compression configuration for the direct index */
-	CompressionConfiguration compressionDirectConfig;
+	protected CompressionConfiguration compressionDirectConfig;
 	
 	/** The compression configuration for the inverted index */
-	CompressionConfiguration compressionInvertedConfig;
+	protected CompressionConfiguration compressionInvertedConfig;
 
 	/** Constructs an instance of this class, where the created data structures
 	  * are stored in the given path, with the given prefix on the filenames.
@@ -283,8 +285,11 @@ public class BlockIndexer extends Indexer {
 		super(pathname, prefix);
 		if (this.getClass() == BlockIndexer.class)
 			init();
-		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, true);
-		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, true);
+		int blockSize = BLOCK_SIZE;
+		if (Boolean.parseBoolean(ApplicationSetup.getProperty("block.delimiters.enabled", "false")))
+				blockSize = 2;
+		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, blockSize, MAX_BLOCKS);
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, blockSize, MAX_BLOCKS);
 	}
 
 	/** 
@@ -328,20 +333,14 @@ public class BlockIndexer extends Indexer {
 			? " delimited-block indexing enabled" : ""));
 		currentIndex = Index.createNewIndex(path, prefix);
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
-				? new LexiconBuilder(currentIndex, "lexicon", new FieldLexiconMap(FieldScore.FIELDS_COUNT), FieldLexiconEntry.class.getName())
+				? new LexiconBuilder(currentIndex, "lexicon", 
+						new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
+						FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"")
 				: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName());
-//			
-//		
-//		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
-//			? new LexiconBuilder(currentIndex, "lexicon", new BlockFieldLexiconMap(FieldScore.FIELDS_COUNT), FieldLexiconEntry.class.getName())
-//			: new LexiconBuilder(currentIndex, "lexicon", new BlockLexiconMap(), BlockLexiconEntry.class.getName());
-//		//lexiconBuilder = new BlockLexiconBuilder(currentIndex, "lexicon");
+
 		try{
 			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
 					((IndexOnDisk) currentIndex).getPath() + ApplicationSetup.FILE_SEPARATOR + ((IndexOnDisk) currentIndex).getPrefix() + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
-			//directIndexBuilder =  FieldScore.FIELDS_COUNT > 0
-			//	? new BlockFieldDirectInvertedOutputStream(currentIndex.getPath() + ApplicationSetup.FILE_SEPARATOR + currentIndex.getPrefix() + "." + "direct" + BitIn.USUAL_EXTENSION)
-			//	: new BlockDirectInvertedOutputStream(currentIndex.getPath() + ApplicationSetup.FILE_SEPARATOR + currentIndex.getPrefix() + "." + "direct" + BitIn.USUAL_EXTENSION);
 		} catch (Exception ioe) {
 			logger.error("Cannot make DirectInvertedOutputStream:", ioe);
 		}
@@ -349,10 +348,7 @@ public class BlockIndexer extends Indexer {
 		metaBuilder = createMetaIndexBuilder();
 		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
 		
-		//int LexiconCount = 0;
 		int numberOfDocuments = 0;
-		//int numberOfTokens = 0;
-		//long startBunchOfDocuments = System.currentTimeMillis();
 		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
 		boolean stopIndexing = false;
 		for(int collectionNo = 0; !stopIndexing && collectionNo < collections.length; collectionNo++)

@@ -18,7 +18,7 @@ package org.terrier.applications;
  *
  * The Original Code is TrecTerrier.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):

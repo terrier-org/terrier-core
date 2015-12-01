@@ -109,6 +109,14 @@ compression.inverted.integer.fields.codec=LemireFORVBCodec
 compression.inverted.integer.blocks.codec=LemireFORVBCodec
 </pre>
 
+<h2>Notes</h2>
+<ul>
+<li>The format of recompressed indices containing blocks was amended between 4.0 and 4.1. Terrier
+produces a warning if an index from 4.0 with blocks enabled is opened. We recommend that you recompress/reindex
+as appropriate if this affects you. For more information, see <a href="http://terrier.org/issues/browse/TR-320">TR-320</a>. </li>
+</ul>
+
+
 <h2>Citation Policy</h2>
 If you make use of this package for efficient research, please cite: 
 
@@ -136,7 +144,7 @@ Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
 Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
 <a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br>
 
-Copyright (C) 2004-2014 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+Copyright (C) 2004-2015 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
 </small>
 <tr><td colspan="2">&nbsp;</td></tr>
 </body>

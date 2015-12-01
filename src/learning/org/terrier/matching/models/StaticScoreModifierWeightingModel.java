@@ -17,7 +17,7 @@
  *
  * The Original Code is StaticScoreModifierWeightingModel.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -42,10 +42,10 @@ import org.terrier.utility.TerrierTimer;
 /** Base abstract class for query independent features loaded from file.
  * For types of file are supported:
  * <ul>
- * <li>oos/ois: an {@link ObjectOutputStream} file of float[] or double[] array</li>
+ * <li>oos/ois: an {@link java.io.ObjectOutputStream} file of float[] or double[] array</li>
  * <li>docid2score: a text file containing [docid] [score]</li>
  * <li>listofscores: a text file containing one score per line</li>
- * <li>tmap: a {@link TIntDoubleHashMap} saved in an {@link ObjectOutputStream} file</li>
+ * <li>tmap: a {@link TIntDoubleHashMap} saved in an {@link java.io.ObjectOutputStream} file</li>
  * </ul>
  * @since 4.0 
  * @author Craig Macdonald

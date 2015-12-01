@@ -17,7 +17,7 @@
  *
  * The Original Code is TRECWebCollection.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -114,7 +114,9 @@ public class TRECWebCollection extends TRECCollection {
 	final static String parseDate(String date)
 	{
 		try{
-			return Long.toString(dateWT2G.parse(date).getTime() / 1000l) ;
+			synchronized (dateWT2G) {
+				return Long.toString(dateWT2G.parse(date).getTime() / 1000l);
+			}
 		} catch (Exception e) {
 			//System.err.println("date=" + date + "exception="+e);
 			return "";

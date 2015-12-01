@@ -17,7 +17,7 @@
  *
  * The Original Code is IntegerCodingPostingOutputStream.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -27,7 +27,6 @@
 package org.terrier.structures.integer;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
@@ -72,25 +71,26 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 	/**
 	 * Number of posting in a chunk
 	 */
-	private int chunkSize;
+	protected int chunkSize;
 
-	private int fieldsCount;
-	private int hasBlocks;
+	protected int fieldsCount;
+	protected int hasBlocks;
+	protected int maxBlocks;
 	
 	protected int[] ids; //the ids in the chunk
-	private int[] tfs; //the tfs in the chunk
-	private int[][] fields; //the ffs in the chunk 
-	private int[] bfs; //block frequencies (i.e. lenght of the posting's blocks)
-	private int[] blocks; //the blocks for every posting in the chunk
+	protected int[] tfs; //the tfs in the chunk
+	protected int[][] fields; //the ffs in the chunk 
+	protected int[] bfs; //block frequencies (i.e. lenght of the posting's blocks)
+	protected int[] blocks; //the blocks for every posting in the chunk
 		
-	private IntegerCodec idsCodec;
-	private IntegerCodec tfsCodec;
-	private IntegerCodec fieldsCodec;
-	private IntegerCodec blocksCodec;
+	protected IntegerCodec idsCodec;
+	protected IntegerCodec tfsCodec;
+	protected IntegerCodec fieldsCodec;
+	protected IntegerCodec blocksCodec;
 
 	
-	private void init(
-			int fieldsCount, int hasBlocks,
+	protected void init(
+			int fieldsCount, int hasBlocks, int maxBlocks,
 			int chunkSize, 
 			IntegerCodec idsCodec,
 			IntegerCodec tfsCodec, 
@@ -108,14 +108,14 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 		}
 		if ((this.hasBlocks = hasBlocks) > 0) {
 			
-			if (hasBlocks > 1)
+			//if (hasBlocks > 1)
 				bfs = new int[chunkSize];
-			else
-				bfs = tfs; //trick!! if hasBlocks == 1 we're dealing with positions
+			//else
+			//	bfs = tfs; //trick!! if hasBlocks == 1 we're dealing with positions
 							//since positions.length=tf, just use tfs and save space!
 			blocks = new int[chunkSize];
 		}
-		
+		this.maxBlocks = maxBlocks;
 		this.idsCodec = idsCodec;
 		this.tfsCodec = tfsCodec;
 		this.fieldsCodec = fieldsCodec;
@@ -128,6 +128,7 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 	 * @param chunkSize the chunk size (in term of number of posting)
 	 * @param fieldsCount the number of fields, if any. 0 otherwise
 	 * @param hasBlocks 0:no blocks, 1:positions, 2:blocks of any size!=1
+	 * @param maxBlocks 0:no limit, >0 limited.
 	 * @param idsCodec the IntegerCodec to use to compress ids 
 	 * @param tfsCodec the IntegerCodec to use to compress tfs
 	 * @param fieldsCodec the IntegerCodec to use to compress fields (null if there are no fields)
@@ -137,14 +138,14 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 	public IntegerCodingPostingOutputStream(
 			String filename,
 			int chunkSize,
-			int fieldsCount, int hasBlocks,
+			int fieldsCount, int hasBlocks, int maxBlocks,
 			IntegerCodec idsCodec,
 			IntegerCodec tfsCodec,
 			IntegerCodec fieldsCodec,
 			IntegerCodec blocksCodec) throws IOException {
 		
 		this.output = new ByteOutputStream(filename);
-		init(fieldsCount, hasBlocks, chunkSize, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
+		init(fieldsCount, hasBlocks, maxBlocks, chunkSize, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
 	}
 
 
@@ -154,6 +155,7 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 	 * @param chunkSize the chunk size (in term of number of posting)
 	 * @param fieldsCount the number of fields, if any. 0 otherwise
 	 * @param hasBlocks 0:no blocks, 1:positions, 2:blocks of any size!=1
+	 * @param maxBlocks 0:no limit, >0 limited.
 	 * @param idsCodec the IntegerCodec to use to compress ids 
 	 * @param tfsCodec the IntegerCodec to use to compress tfs
 	 * @param fieldsCodec the IntegerCodec to use to compress fields (null if there are no fields)
@@ -163,14 +165,14 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 	public IntegerCodingPostingOutputStream(
 			ByteOut output,
 			int chunkSize,
-			int fieldsCount, int hasBlocks,
+			int fieldsCount, int hasBlocks, int maxBlocks,
 			IntegerCodec idsCodec,
 			IntegerCodec tfsCodec,
 			IntegerCodec fieldsCodec,
 			IntegerCodec blocksCodec) throws IOException {
 		
 		this.output = output;
-		init(fieldsCount, hasBlocks, chunkSize, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
+		init(fieldsCount, hasBlocks, maxBlocks, chunkSize, idsCodec, tfsCodec, fieldsCodec, blocksCodec);
 	}	
 	
 	/**
@@ -224,17 +226,26 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 				
 				if (hasBlocks > 0) {
 											
-					int[] b = asBlockPosting.getPositions();
+					int[] b = asBlockPosting.getPositions();					
+					bfs[i] = b.length;
 					
-					
-					if (hasBlocks > 1)
-					{
-						bfs[i] = b.length;
-					}
-					else//hasBlocks == 1: we are assuming that frequency is a replacement for bfs
-					{
-						assert b.length == postings.getFrequency();
-					}
+//					if (hasBlocks > 1)
+//					{
+//						bfs[i] = b.length;
+//					}
+//					else if (maxBlocks == 0)
+//					{//hasBlocks == 1: we are assuming that frequency is a replacement for bfs as there is no upper limit on block size
+//						assert b.length == postings.getFrequency();
+//					}
+//					else
+//					{//hasBlocks == 1: we are assuming that frequency is a replacement for bfs as there is no upper limit on block size
+//						assert maxBlocks > 0;
+//						assert b.length <= maxBlocks;
+//						assert b.length == Math.min(maxBlocks, tfs[i])
+//								: "Posting=" +postings.asWritablePosting().toString() + " maxBlocks="+maxBlocks;
+//						
+//						bfs[i] = b.length;
+//					}
 					Delta.delta(b, b.length);
 					
 					blocks = ArrayUtils.grow(blocks, cnt + b.length);
@@ -264,7 +275,7 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 		
 		Delta.delta(ids, i);
 		idsCodec.compress(ids, i, output);
-		
+		//System.err.println("tfs="+ Arrays.toString(Arrays.copyOf(tfs, i)));
 		tfsCodec.compress(tfs, i, output);
 		 
 		if (fieldsCount > 0)
@@ -274,15 +285,51 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 		}			
 		if (hasBlocks > 0) 
 		{	
-			if (hasBlocks > 1)
-				tfsCodec.compress(bfs, i, output); //if blocksize!=1, compress and write also the blocks lengths
+//			if (hasBlocks == 1)
+//			{
+//				//don't do anything, we can rely on the tfs, even if maxBlocks is set.
+//				assert maxBlocks == 0 || StaTools.sum(bfs, i) == arraySumMin(maxBlocks, tfs, i)
+//						: "maxBlocks="+maxBlocks 
+//								+" i=" + i
+//								+ " sumBfs=" + StaTools.sum(bfs, i)  
+//								+ " maxBlockTFSum="+ arraySumMin(maxBlocks, tfs, i)
+//								+ " tfs="+Arrays.toString(Arrays.copyOf(tfs, i)) 
+//								+ " bfs="+Arrays.toString(Arrays.copyOf(bfs, i)); 
+//				assert maxBlocks > 0 || arrayEquals(tfs, bfs, i);				
+//			}
+//			else
+//			{
+//				assert cnt == StaTools.sum(bfs, i);
+//				tfsCodec.compress(bfs, i, output);
+//			}
 			
-			assert hasBlocks > 1 || (hasBlocks == 1 && Arrays.equals(tfs, bfs));
-			//System.err.println("postings="+i+" cnt="+cnt + " Sum(bfs)="+ StaTools.sum(Arrays.copyOf(bfs, i)));
-			assert hasBlocks > 1 || (hasBlocks == 1 && cnt == StaTools.sum(Arrays.copyOf(bfs, i))) : "cnt="+ cnt + " bfs="+StaTools.sum(Arrays.copyOf(bfs, i));
-			
+			assert cnt == StaTools.sum(bfs, i);
+			tfsCodec.compress(bfs, i, output);
 			blocksCodec.compress(blocks, cnt, output);
 		}				
+	}
+	
+	static boolean arrayEquals(final int[] a, final int[] b, final int l)
+	{
+		for(int i=0;i<l;i++)
+		{
+			if (a[i] != b[i])
+				return false;
+		}
+		return true;
+	}
+	
+	static int arraySumMin(final int min, final int[] ar, final int length)
+	{
+		int sum = 0;
+		int i = 0;
+		for(int a : ar)
+		{
+			sum += Math.min(a, min);
+			if (++i == length)
+				break;
+		}
+		return sum;
 	}
 
 	/** close this object. suppresses any exception */

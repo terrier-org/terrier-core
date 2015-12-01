@@ -17,7 +17,7 @@
  *
  * The Original Code is TestCompressingMetaIndex.java
  *
- * The Original Code is Copyright (C) 2004-2010 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -262,7 +262,7 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 	}
 
 
-	protected void finishedCreatingMeta(Index index, String name) throws Exception
+	protected void finishedCreatingMeta(IndexOnDisk index, String name) throws Exception
 	{
 		assertTrue(index.hasIndexStructure(name));
 		assertTrue(index.hasIndexStructureInputStream(name));

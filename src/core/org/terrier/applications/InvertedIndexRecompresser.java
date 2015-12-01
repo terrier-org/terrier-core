@@ -17,7 +17,7 @@
  *
  * The Original Code is InvertedIndexRecompresser.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -152,7 +152,8 @@ public class InvertedIndexRecompresser {
 	{
 		CompressionConfiguration compressionConfig = CompressionFactory.getCompressionConfiguration("tmp-inverted", 
 				ArrayUtils.parseCommaDelimitedString(index.getIndexProperty("index.inverted.fields.names", "")), 
-				index.getIntIndexProperty("index.inverted.blocks", 0) > 0);
+				index.getIntIndexProperty("index.inverted.blocks", 0), 
+				index.getIntIndexProperty("index.inverted.blocks.max", 0));
 		logger.info("Recompressing inverted structure using " + compressionConfig.toString());
 		
 		AbstractPostingOutputStream icpw = compressionConfig.getPostingOutputStream(
@@ -204,6 +205,7 @@ public class InvertedIndexRecompresser {
 //			System.exit(-1);
 //		}		
 
+		IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
 		IndexOnDisk index = Index.createIndex();
 		recompressInverted(index);	
 		index.close();

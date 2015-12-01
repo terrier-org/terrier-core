@@ -17,7 +17,7 @@
  *
  * The Original Code is CompressionFactory.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -75,16 +75,18 @@ public class CompressionFactory {
 	{	
 		protected int fieldCount;
 		protected String[] fieldNames;
-		protected boolean blocks;
+		protected int hasBlocks;
+		protected int maxBlocks;
 		protected String structureName;
 		
 		public CompressionConfiguration(
-				String structureName, String[] fieldNames, boolean blocks)
+				String structureName, String[] fieldNames, int hasBlocks, int maxBlocks)
 		{
 			this.structureName = structureName;
 			this.fieldCount = fieldNames.length;
 			this.fieldNames = fieldNames;
-			this.blocks = blocks;
+			this.hasBlocks = hasBlocks;
+			this.maxBlocks = maxBlocks;
 		}
 		
 		/** Write a file of postings to the given location */
@@ -127,13 +129,13 @@ public class CompressionFactory {
 		final String fileExtension;
 		
 		public SpecificCompressionConfiguration(
-				String structureName, String[] fieldNames, boolean blocks,
+				String structureName, String[] fieldNames, int hasBlocks, int maxBlocks,
 				Class<? extends AbstractPostingOutputStream> outputStream,
 				Class<? extends IterablePosting> postingIterator,
 				Class<? extends PostingIndex<?>> structureClass,
 				Class<? extends Iterator<IterablePosting>> inputStream,
 				String fileExtension) {
-			super(structureName, fieldNames, blocks);
+			super(structureName, fieldNames, hasBlocks, maxBlocks);
 			this.outputStream = outputStream;
 			this.postingIterator = postingIterator;
 			this.structureClass = structureClass;
@@ -170,12 +172,12 @@ public class CompressionFactory {
 	
 	public static class BitCompressionConfiguration extends SpecificCompressionConfiguration
 	{
-		public BitCompressionConfiguration(String structureName, String[] fieldNames, boolean blocks)
+		public BitCompressionConfiguration(String structureName, String[] fieldNames, int hasBlocks, int maxBlocks)
 		{
 			super(
-				structureName, fieldNames, blocks,
-				fieldNames.length > 0 ? blocks ? BlockFieldDirectInvertedOutputStream.class : FieldDirectInvertedOutputStream.class : blocks ? BlockDirectInvertedOutputStream.class : DirectInvertedOutputStream.class,
-				fieldNames.length > 0 ? blocks ? BlockFieldIterablePosting.class : FieldIterablePosting.class : blocks ? BlockIterablePosting.class : BasicIterablePosting.class,
+				structureName, fieldNames, hasBlocks, maxBlocks,
+				fieldNames.length > 0 ? hasBlocks > 0 ? BlockFieldDirectInvertedOutputStream.class : FieldDirectInvertedOutputStream.class : hasBlocks > 0 ? BlockDirectInvertedOutputStream.class : DirectInvertedOutputStream.class,
+				fieldNames.length > 0 ? hasBlocks > 0 ? BlockFieldIterablePosting.class : FieldIterablePosting.class : hasBlocks > 0 ? BlockIterablePosting.class : BasicIterablePosting.class,
 				BitPostingIndex.class, 
 				BitPostingIndexInputStream.class,
 				BitIn.USUAL_EXTENSION
@@ -185,10 +187,10 @@ public class CompressionFactory {
 	
 	public static class BitIdOnlyCompressionConfiguration extends SpecificCompressionConfiguration
 	{
-		public BitIdOnlyCompressionConfiguration(String structureName, String[] fieldNames, boolean blocks)
+		public BitIdOnlyCompressionConfiguration(String structureName, String[] fieldNames, int hasBlocks, int maxBlocks)
 		{
 			super(
-				structureName, fieldNames, blocks,
+				structureName, fieldNames, 0, 0,
 				DirectInvertedDocidOnlyOuptutStream.class,
 				BasicIterablePostingDocidOnly.class,
 				BitPostingIndex.class, 
@@ -198,6 +200,7 @@ public class CompressionFactory {
 		}
 	}
 	
+	@Deprecated
 	public static CompressionConfiguration getCompressionConfiguration(String structureName, String[] fieldNames, boolean blocks)
 	{
 		String compressionConfiguration = ApplicationSetup.getProperty("indexing."+structureName+".compression.configuration", BitCompressionConfiguration.class.getName());
@@ -206,7 +209,25 @@ public class CompressionFactory {
 		try{
 			rtr = Class.forName(compressionConfiguration)
 					.asSubclass(CompressionConfiguration.class)
-					.getConstructor(String.class, String[].class, Boolean.TYPE).newInstance(structureName, fieldNames, blocks);
+					.getConstructor(String.class, String[].class,  Integer.TYPE, Integer.TYPE).newInstance(structureName, fieldNames, blocks ? 1 : 0, ApplicationSetup.MAX_BLOCKS);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+		return rtr;
+	}
+	
+	/** 
+	@since 4.0
+	*/
+	public static CompressionConfiguration getCompressionConfiguration(String structureName, String[] fieldNames, int hasBlocks, int maxBlocks)
+	{
+		String compressionConfiguration = ApplicationSetup.getProperty("indexing."+structureName+".compression.configuration", BitCompressionConfiguration.class.getName());
+		CompressionConfiguration rtr = null;
+		
+		try{
+			rtr = Class.forName(compressionConfiguration)
+					.asSubclass(CompressionConfiguration.class)
+					.getConstructor(String.class, String[].class, Integer.TYPE, Integer.TYPE).newInstance(structureName, fieldNames, hasBlocks, maxBlocks);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

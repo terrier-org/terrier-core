@@ -17,7 +17,7 @@
  *
  * The Original Code is TestFSArrayFile.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -100,6 +100,7 @@ public class TestFSArrayFile {
 			i++;
 		}
 		assertEquals(TEST_INTEGERS.length, i);
+		IndexUtil.close(iterator);
 	}
 	
 	/** Test that skipping in a stream works as expected */
@@ -116,7 +117,9 @@ public class TestFSArrayFile {
 				j++;
 			}
 			assertEquals(TEST_INTEGERS.length, j);
+			IndexUtil.close(iterator);
 		}
+		
 	}
 	
 }

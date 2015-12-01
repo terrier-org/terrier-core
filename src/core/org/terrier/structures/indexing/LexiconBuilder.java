@@ -17,7 +17,7 @@
  *
  * The Original Code is LexiconBuilder.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -37,7 +37,6 @@ import java.util.Map.Entry;
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.terrier.sorting.HeapSortInt;
 import org.terrier.structures.FSOMapFileLexicon;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
@@ -239,7 +238,7 @@ public class LexiconBuilder
 	 */
 	public LexiconBuilder(IndexOnDisk i, String _structureName) {
 		this(i, _structureName, 
-				instantiate(LexiconMap.class), "org.terrier.structures.BasicLexiconEntry");
+				instantiate(LexiconMap.class), "org.terrier.structures.BasicLexiconEntry", "", "");
 	}
 	/**
 	 * constructor
@@ -252,8 +251,10 @@ public class LexiconBuilder
 			Class <? extends LexiconMap> _LexiconMapClass,
 			String _lexiconEntryClass)
 	{
-		this(i, _structureName, instantiate(_LexiconMapClass), _lexiconEntryClass);
+		this(i, _structureName, instantiate(_LexiconMapClass), _lexiconEntryClass, "", "");
 	}
+	
+	
 	/**
 	 * constructor
 	 * @param i
@@ -261,10 +262,27 @@ public class LexiconBuilder
 	 * @param lexiconMap
 	 * @param _lexiconEntryClass
 	 */
-	@SuppressWarnings("unchecked")
 	public LexiconBuilder(IndexOnDisk i, String _structureName, 
 				LexiconMap lexiconMap,
 				String _lexiconEntryClass)
+	{
+		this(i, _structureName, lexiconMap, _lexiconEntryClass, "", "");
+	}
+				
+	
+	/**
+	 * constructor
+	 * @param i
+	 * @param _structureName
+	 * @param lexiconMap
+	 * @param _lexiconEntryClass
+	 * @param valueFactoryParamTypes
+	 * @param valueFactoryParamValues
+	 */
+	@SuppressWarnings("unchecked")
+	public LexiconBuilder(IndexOnDisk i, String _structureName, 
+				LexiconMap lexiconMap,
+				String _lexiconEntryClass, String valueFactoryParamTypes, String valueFactoryParamValues)
 	{
 		this.index = i;
 		this.indexPath = index.getPath();
@@ -284,7 +302,7 @@ public class LexiconBuilder
 				);
 		if (this.index.getIndexProperty("max.term.length", null) == null)
 			this.index.setIndexProperty("max.term.length", ApplicationSetup.getProperty("max.term.length", ""+20));
-		this.index.addIndexStructure(defaultStructureName+"-valuefactory", lexiconEntryFactoryValueClass+"$Factory", "", "");
+		this.index.addIndexStructure(defaultStructureName+"-valuefactory", lexiconEntryFactoryValueClass+"$Factory", valueFactoryParamTypes, valueFactoryParamValues);
 		valueFactory = (FixedSizeWriteableFactory<LexiconEntry>)this.index.getIndexStructure(defaultStructureName+"-valuefactory");
 		lexiconOutputStream = LexiconOutputStream.class;
 	}

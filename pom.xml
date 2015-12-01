@@ -1,446 +1,504 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.terrier</groupId>
-  <artifactId>terrier-core</artifactId>
-  <version>4.1</version>
-  <name>Terrier Information Retrieval Platform</name>
-  <description>Terrier IR platform</description>
-  
-  <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-  
-  <repositories> 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.terrier</groupId>
+	<artifactId>terrier-core</artifactId>
+	<version>4.1-snapshot</version>
+	<name>Terrier Information Retrieval Platform</name>
+	<description>Terrier IR platform</description>
+	<url>http://terrier.org</url>
 
-	<repository>
-	    <id>jitpack.io</id>
-	    <url>https://jitpack.io</url>
-	</repository>
-	
-  	</repositories>
-  
-  	<dependencies>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<year>2015</year>
+	</properties>
 
-	<dependency>
-	    <groupId>com.github.yasserg</groupId>
-	    <artifactId>jforests</artifactId>
-	    <version>v0.5</version>
-	</dependency>
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
-	<dependency>
-	    <groupId>me.lemire.integercompression</groupId>
-	    <artifactId>JavaFastPFOR</artifactId>
-	    <version>0.1.3</version>
-	</dependency>
+	<dependencies>
 
-	<dependency>
-		<groupId>antlr</groupId>
-		<artifactId>antlr</artifactId>
-		<version>20030911</version>
-	</dependency>
+		<dependency>
+			<groupId>com.github.yasserg</groupId>
+			<artifactId>jforests</artifactId>
+			<version>v0.5</version>
+		</dependency>
 
-	<dependency>
-		<groupId>commons-lang</groupId>
-		<artifactId>commons-lang</artifactId>
-		<version>2.3</version>
-	</dependency>
+		<dependency>
+			<groupId>me.lemire.integercompression</groupId>
+			<artifactId>JavaFastPFOR</artifactId>
+			<version>0.1.3</version>
+		</dependency>
 
-	<dependency>
-		<groupId>fastutil</groupId>
-		<artifactId>fastutil</artifactId>
-		<version>5.0.9</version>
-	</dependency>
+		<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>20030911</version>
+		</dependency>
 
-	<dependency>
-		<groupId>net.sourceforge.findbugs</groupId>
-		<artifactId>annotations</artifactId>
-		<version>1.3.2</version>
-	</dependency>
-	
-	<dependency>
-	  <groupId>org.antlr</groupId>
-	  <artifactId>antlr-runtime</artifactId>
-	  <version>3.4</version>
-	</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.3</version>
+		</dependency>
 
+		<dependency>
+			<groupId>fastutil</groupId>
+			<artifactId>fastutil</artifactId>
+			<version>5.0.9</version>
+		</dependency>
 
-	<dependency>
-		<groupId>org.apache.pdfbox</groupId>
-		<artifactId>fontbox</artifactId>
-		<version>1.8.4</version>
-	</dependency>
+		<dependency>
+			<groupId>net.sourceforge.findbugs</groupId>
+			<artifactId>annotations</artifactId>
+			<version>1.3.2</version>
+		</dependency>
 
-	<dependency>
-		<groupId>com.google.code.gson</groupId>
-		<artifactId>gson</artifactId>
-		<version>1.7.1</version>
-	</dependency>
-
-	<dependency>
-		<groupId>org.apache.hadoop</groupId>
-		<artifactId>hadoop-core</artifactId>
-		<version>0.20.2</version> <!-- Should be 0.20.2+228 -->
-		
-		<exclusions>
-                        <exclusion>
-                        	<groupId>org.mortbay.jetty</groupId>
-                        	<artifactId>jetty</artifactId>
-                        </exclusion>
-                        <exclusion>
-                        	<groupId>org.mortbay.jetty</groupId>
-                        	<artifactId>jetty-util</artifactId>
-                        </exclusion>
-                        <exclusion>
-                        	<groupId>org.mortbay.jetty</groupId>
-                        	<artifactId>jsp-api-2.1</artifactId>
-                        </exclusion>
-                        <exclusion>
-                        	<groupId>org.mortbay.jetty</groupId>
-                        	<artifactId>servlet-api-2.5</artifactId>
-                        </exclusion>
-                </exclusions>
-		
-	</dependency>
-
-	<dependency>
-		<groupId>org.jsoup</groupId>
-		<artifactId>jsoup</artifactId>
-		<version>1.7.3</version>
-	</dependency>
-
-  	<dependency>
-      		<groupId>junit</groupId>
-      		<artifactId>junit</artifactId>
-      		<version>4.8.1</version>
-    </dependency>
-
-	<dependency>
-		<groupId>com.sna-projects.kamikaze</groupId>
-		<artifactId>kamikaze</artifactId>
-		<version>3.0.3</version>
-		<exclusions>
-        		<exclusion>
-            		<groupId>org.apache.lucene</groupId>
-            		<artifactId>lucene-core</artifactId>
-        		</exclusion>
-    		</exclusions>
-	</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+			<version>3.4</version>
+		</dependency>
 
 
-	<dependency>
-	<groupId>org.eclipse.jetty</groupId>
-	<artifactId>jetty-server</artifactId>
-	<version>9.2.9.v20150224</version>
-	</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>fontbox</artifactId>
+			<version>1.8.4</version>
+		</dependency>
 
-	<dependency>
-	<groupId>org.eclipse.jetty</groupId>
-	<artifactId>jetty-webapp</artifactId>
-	<version>9.2.9.v20150224</version>
-	</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>1.7.1</version>
+		</dependency>
 
-	<dependency>
-		<groupId>org.apache.pdfbox</groupId>
-		<artifactId>pdfbox</artifactId>
-		<version>1.8.4</version>
-	</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-core</artifactId>
+			<version>0.20.2</version> <!-- Should be 0.20.2+228 -->
 
-	<dependency>
-		<groupId>org.apache.poi</groupId>
-		<artifactId>poi</artifactId>
-		<version>3.8</version> <!-- Should be 3.8-20120326 -->
-	</dependency>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>jetty</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>jetty-util</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>jsp-api-2.1</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>servlet-api-2.5</artifactId>
+				</exclusion>
+			</exclusions>
 
-	<dependency>
-		<groupId>org.apache.poi</groupId>
-		<artifactId>poi-ooxml</artifactId>
-		<version>3.8</version> <!-- Should be 3.8-20120326 -->
-	</dependency>
+		</dependency>
 
-	<dependency>
-		<groupId>org.apache.poi</groupId>
-		<artifactId>poi-ooxml-schemas</artifactId>
-		<version>3.8</version> <!-- Should be 3.8-20120326 -->
-	</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.7.3</version>
+		</dependency>
 
-	<dependency>
-		<groupId>org.apache.poi</groupId>
-		<artifactId>poi-scratchpad</artifactId>
-		<version>3.8</version> <!-- Should be 3.8-20120326 -->
-	</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+		</dependency>
 
-	<dependency> <!-- This is to include sam-1.108.jar-->
-		<groupId>org.utgenome.thirdparty</groupId>
-		<artifactId>picard</artifactId>
-		<version>1.86.0</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>org.apache.lucene</groupId>
-		<artifactId>lucene-snowball</artifactId>
-		<version>3.0.3</version> <!-- Should be snowball-20071024 -->
-                <exclusions>
-                        <exclusion>
-                        <groupId>org.apache.lucene</groupId>
-                        <artifactId>lucene-core</artifactId>
-                        </exclusion>
-                </exclusions>
-
-	</dependency>
-
-	<dependency>
-		<groupId>net.sf.trove4j</groupId>
-		<artifactId>trove4j</artifactId>
-		<version>2.0.2</version>
-	</dependency>
-
-	
-
-	<dependency>
-		<groupId>edu.uci.ics</groupId>
-		<artifactId>crawler4j</artifactId>
-		<version>4.1</version>
-	</dependency>
-
-	<dependency>
-		<groupId>ch.qos.logback</groupId>
-		<artifactId>logback-classic</artifactId>
-		<version>1.1.2</version>
-	</dependency>
-	
+		<dependency>
+			<groupId>com.sna-projects.kamikaze</groupId>
+			<artifactId>kamikaze</artifactId>
+			<version>3.0.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.lucene</groupId>
+					<artifactId>lucene-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 
-  </dependencies>
-  
-  <build>
-    <sourceDirectory>src/</sourceDirectory>
-    
-    <testSourceDirectory>src/test/main</testSourceDirectory>
-    <resources>
-      <resource>
-      <targetPath>./</targetPath>
-        <filtering>false</filtering>
-        <directory>etc</directory>
-        <includes><include>logback.xml</include></includes>
-      </resource>
-    </resources>
-    <pluginManagement>
-    	<plugins>
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                            	  <pluginExecution>
-                                    <pluginExecutionFilter>
-	                            		<groupId>org.apache.maven.plugins</groupId>
-								       <artifactId>maven-antlr-plugin</artifactId>
-								       <versionRange>2.0-beta-1</versionRange>
-                                        <goals>
-                                            <goal>generate</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore /> <!--  <execute />  -->
-                                    </action>                                    
-                                </pluginExecution>
-                                
-                                
-                                
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-resources-plugin</artifactId>
-                                        <versionRange>2.4.3</versionRange>
-                                        <goals>
-                                            <goal>resources</goal>
-                                            <goal>testResources</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute />
-                                    </action>
-                                </pluginExecution>
-                                
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                	<groupId>org.codehaus.mojo</groupId>
-			  					 	<artifactId>build-helper-maven-plugin</artifactId>
-			  					 	<versionRange>1.9.1</versionRange>
-                                	<goals>
-                                            <goal>add-source</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute />
-                                    </action>
-                                </pluginExecution>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.2.9.v20150224</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>9.2.9.v20150224</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>1.8.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-scratchpad</artifactId>
+			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+		</dependency>
+
+		<dependency> <!-- This is to include sam-1.108.jar -->
+			<groupId>org.utgenome.thirdparty</groupId>
+			<artifactId>picard</artifactId>
+			<version>1.86.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-snowball</artifactId>
+			<version>3.0.3</version> <!-- Should be snowball-20071024 -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.lucene</groupId>
+					<artifactId>lucene-core</artifactId>
+				</exclusion>
+			</exclusions>
+
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.trove4j</groupId>
+			<artifactId>trove4j</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+
+
+
+		<dependency>
+			<groupId>edu.uci.ics</groupId>
+			<artifactId>crawler4j</artifactId>
+			<version>4.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<sourceDirectory>src/</sourceDirectory>
+
+		<testSourceDirectory>src/test/main</testSourceDirectory>
+		<resources>
+			<resource>
+				<targetPath>./</targetPath>
+				<filtering>false</filtering>
+				<directory>etc</directory>
+				<includes>
+					<include>logback.xml</include>
+				</includes>
+			</resource>
+
+			<resource>
+				<directory>share/templates</directory>
+				<includes>
+					<include>**/*.java</include>
+				</includes>
+				<filtering>true</filtering>
+				<targetPath>${project.build.directory}/generated-sources/version</targetPath>
+			</resource>
+
+		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+
+
 								<pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-compiler-plugin</artifactId>
-                                        <versionRange>2.3.2</versionRange>
-                                        <goals>
-                                            <goal>testCompile</goal>
-                                            <goal>compile</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                                
-                                <!-- copy-dependency plugin -->
-                                <!--  http://stackoverflow.com/questions/26482070/using-maven-assembly-plugin-with-local-dependencies -->
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-dependency-plugin</artifactId>
-                                        <versionRange>2.6</versionRange>
-                                        <goals>
-                                            <goal>copy-dependencies</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                                
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-antlr-plugin</artifactId>
+										<versionRange>2.0-beta-1</versionRange>
+										<goals>
+											<goal>generate</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore /> <!-- <execute /> -->
+									</action>
+								</pluginExecution>
 
-		 
-			 <plugin>
-		       <groupId>org.apache.maven.plugins</groupId>
-		       <artifactId>maven-antlr-plugin</artifactId>
-		       <version>2.0-beta-1</version>
-		       <configuration>
-		       	 <sourceDirectory>src/core/</sourceDirectory>
-		         <grammars>org/terrier/querying/parser/terrier_floatlex.g,org/terrier/querying/parser/terrier_normallex.g,org/terrier/querying/parser/terrier.g</grammars>
-		       </configuration>
-		       <executions>
-		         <execution>
-		           <goals>
-		             <goal>generate</goal>
-		           </goals>
-		         </execution>
-		       </executions>
-		     </plugin>
-		      <!--  
-		      <plugin>
-			    <groupId>org.codehaus.mojo</groupId>
-			    <artifactId>build-helper-maven-plugin</artifactId>
-			    <executions>
-			        <execution>
-			            <id>add-source</id>
-			            <phase>generate-sources</phase>
-			            <goals>
-			                <goal>add-source</goal>
-			            </goals>
-			            <configuration>
-			                <sources>
-			                    <source>${project.build.directory}/generated-sources/antlr/</source>
-			                </sources>
-			            </configuration>
-			        </execution>
-			    </executions>
-			 </plugin> -->
-		     
-             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <fork>true</fork>
-                    <executable>javac</executable>
-		    <source>1.7</source>
-		    <target>1.7</target>		
-                </configuration>
-            </plugin> 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-      			<artifactId>maven-assembly-plugin</artifactId>
-      			<version>2.6</version>
-      			<configuration>
-      				<descriptor>src/assembly/bin.xml</descriptor>
-		   			 <finalName>terrier-core-${project.version}</finalName>
-        			<archive>
-          				<manifest>
-            				<mainClass>TrecTerrier</mainClass>
-          				</manifest>
-        			</archive>
-        			<descriptorRefs>
-          				<descriptorRef>jar-with-dependencies</descriptorRef>
-        			</descriptorRefs>
-      			</configuration>
-    		</plugin>
-    		
-    		<plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>1.4</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>shade</goal>
-                    </goals>
-                    <configuration>
-                        <!--<artifactSet>
-                            <excludes>
-                                <exclude>jarname</exclude>
-                            </excludes>
-                        </artifactSet> -->
-                        <filters>
-			  <filter>
-			    <artifact>*:*</artifact>
-			    <excludes>
-			      <exclude>META-INF/*.SF</exclude>
-			      <exclude>META-INF/*.DSA</exclude>
-			      <exclude>META-INF/*.RSA</exclude>
-			    </excludes>
-			  </filter>
-			 </filters>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>build-helper-maven-plugin</artifactId>
+										<versionRange>[1.0,)</versionRange>
+										<goals>
+											<goal>parse-version</goal>
+											<goal>add-source</goal>
+											<goal>maven-version</goal>
+											<goal>add-resource</goal>
+											<goal>add-test-resource</goal>
+											<goal>add-test-source</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfiguration>true</runOnConfiguration>
+											<runOnIncremental>true</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
 
-                         <transformers>
-                            <transformer
-                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                <!-- Main class -->
-                                <mainClass>TrecTerrier</mainClass>
-                            </transformer>
-                     </transformers>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-resources-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>resources</goal>
+											<goal>testResources</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfiguration>true</runOnConfiguration>
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-compiler-plugin</artifactId>
+										<versionRange>2.3.2</versionRange>
+										<goals>
+											<goal>testCompile</goal>
+											<goal>compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+
+								<!-- copy-dependency plugin -->
+								<!-- http://stackoverflow.com/questions/26482070/using-maven-assembly-plugin-with-local-dependencies -->
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>2.6</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
 
 
-		<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-surefire-plugin</artifactId>
-		        <version>2.19</version>
-		        <configuration>
-		          <includes>
-		            <include>TerrierDefaultTestSuite.java</include>
-		          </includes>
-		        </configuration>
-		</plugin>
-		
-        </plugins>
-  </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antlr-plugin</artifactId>
+				<version>2.0-beta-1</version>
+				<configuration>
+					<sourceDirectory>src/core/</sourceDirectory>
+					<grammars>org/terrier/querying/parser/terrier_floatlex.g,org/terrier/querying/parser/terrier_normallex.g,org/terrier/querying/parser/terrier.g</grammars>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/version/</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
+				<executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
+				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/antlr/</source> 
+				</sources> </configuration> </execution> </executions> </plugin> -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<fork>true</fork>
+					<executable>javac</executable>
+					<source>1.7</source>
+					<target>1.7</target>
+					<excludes>
+						<exclude>src/templates/org/terrier/*.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<outputDirectory>${basedir}/doc/</outputDirectory>
+					<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
+					<destDir>javadoc</destDir>
+					<author>true</author>
+					<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
+					<doctitle>${project.Name} ${project.version} API</doctitle>
+					<use>true</use>
+					<version>true</version>
+					<windowtitle>${project.Name} ${project.version} API</windowtitle>
+					<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/desktop:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/</sourcepath>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<finalName>terrier-core-${project.version}</finalName>
+					<archive>
+						<manifest>
+							<mainClass>org.terrier.applications.TrecTerrier</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<!-- builds the jar-with-dependencies -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+
+					<execution>
+						<!-- builds the tar files -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<id>srczips</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<tarLongFileMode>gnu</tarLongFileMode>
+							<descriptor>src/assembly/src.xml</descriptor>
+							<descriptorRefs></descriptorRefs>
+						</configuration>
+					</execution>
+
+					<execution>
+						<!-- builds the tar files -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<id>binzips</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<tarLongFileMode>gnu</tarLongFileMode>
+							<descriptor>src/assembly/bin.xml</descriptor>
+							<descriptorRefs></descriptorRefs>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19</version>
+				<configuration>
+					<includes>
+						<include>TerrierDefaultTestSuite.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
 </project>

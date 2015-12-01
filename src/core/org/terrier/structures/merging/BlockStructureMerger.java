@@ -17,7 +17,7 @@
  *
  * The Original Code is BlockStructureMerger.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -57,9 +57,10 @@ public class BlockStructureMerger extends StructureMerger {
 	{
 		super(_srcIndex1, _srcIndex2, _destIndex);
 		String[] fieldNames = ArrayUtils.parseCommaDelimitedString(srcIndex1.getIndexProperty("index.inverted.fields.names", ""));
-		
-		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", fieldNames, true);
-		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldNames, true);
+		int blocks = srcIndex1.getIntIndexProperty("index.inverted.blocks", 1);
+		int maxblocks = srcIndex1.getIntIndexProperty("index.inverted.blocks.max", ApplicationSetup.MAX_BLOCKS);
+		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", fieldNames, blocks, maxblocks);
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldNames, blocks, maxblocks);
 	}
 
 	

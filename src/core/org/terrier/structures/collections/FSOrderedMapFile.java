@@ -17,7 +17,7 @@
  *
  * The Original Code is FSOrderedMapFile.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -1309,7 +1309,7 @@ public class FSOrderedMapFile<
     		}
     	}
 
-    	@SuppressWarnings({ "unchecked"})
+    	@SuppressWarnings({ "unchecked", "resource"})
 		protected void mergeTwo(int id1, int id2, String filename) throws IOException
     	{
     		Iterator<Map.Entry<WritableComparable,Writable>> i1 = new FSOrderedMapFile.EntryIterator<WritableComparable,Writable>(
@@ -1361,9 +1361,13 @@ public class FSOrderedMapFile<
         					e2 = i2.next();
     				}
     				else
+    				{
+    					IndexUtil.close(i1);
+    		    		IndexUtil.close(i2);
     					throw new IOException("Key "+e1.getKey()+" is not unique: " 
     						+ e2.getValue().toString() + "," + e1.getValue().toString() + "\n"
     						+ "For MetaIndex, to suppress, set metaindex.compressed.reverse.allow.duplicates=true");
+    				}
     			}
     		}
     		while(hasMore1)

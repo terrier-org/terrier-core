@@ -19,7 +19,7 @@ package main;
  *
  * The Original Code is TerrierDefaultTestSuite.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -61,6 +61,7 @@ import org.terrier.integer.tests.BasicShakFastPFORRecompress;
 import org.terrier.integer.tests.BasicShakNullRecompress;
 import org.terrier.integer.tests.BasicShakSmallChunk;
 import org.terrier.integer.tests.BlockShak;
+import org.terrier.integer.tests.BlockShakSmallMaxBlockSize;
 import org.terrier.matching.TestMatching.TestDAATFullMatching;
 import org.terrier.matching.TestMatching.TestDAATFullNoPLMMatching;
 import org.terrier.matching.TestMatching.TestTAATFullMatching;
@@ -106,9 +107,9 @@ import org.terrier.structures.postings.TestPhraseIterablePosting;
 import org.terrier.structures.postings.TestProximityIterablePosting;
 import org.terrier.structures.serialization.TestFixedSizeTextFactory;
 import org.terrier.terms.TestPorterStemmer;
+import org.terrier.terms.TestRemoveDiacritics;
 import org.terrier.terms.TestSnowball;
 import org.terrier.terms.TestTermPipelineAccessor;
-import org.terrier.terms.TestRemoveDiacritics;
 import org.terrier.tests.ShakespeareEndToEndTestSuite;
 import org.terrier.utility.TestArrayUtils;
 import org.terrier.utility.TestCollectionStatistics;
@@ -119,6 +120,7 @@ import org.terrier.utility.TestStaTools;
 import org.terrier.utility.TestTagSet;
 import org.terrier.utility.TestTermCodes;
 import org.terrier.utility.TestUnitUtils;
+import org.terrier.utility.TestVersion;
 import org.terrier.utility.io.TestCountingInputStream;
 import org.terrier.utility.io.TestHadoopPlugin;
 import org.terrier.utility.io.TestRandomDataInputMemory;
@@ -140,6 +142,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	BasicShakNullRecompress.class,
 	BasicShakSmallChunk.class,
 	BlockShak.class,
+	BlockShakSmallMaxBlockSize.class,
 
 	TestByteInByteOut.class,
 	TestIntCompressionConfiguration.class,
@@ -261,6 +264,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestStaTools.class,
 	TestTermCodes.class,
 	TestUnitUtils.class,
+	TestVersion.class,
 	//TestTimer.class,
 	
 	//utility.io

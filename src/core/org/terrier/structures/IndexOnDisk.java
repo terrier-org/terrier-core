@@ -17,7 +17,7 @@
  *
  * The Original Code is IndexOnDisk.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -326,6 +326,16 @@ public class IndexOnDisk extends Index {
 						if (objs[i] == null)
 							throw new IllegalArgumentException("Property "
 									+ propertyName + " not found");
+					} 
+					else if (p.matches("^\".+\"$")) {
+						String literal = p.substring(1, p.length() - 1);
+						if (param_types[i].equals(String.class))
+							objs[i] = literal;
+						else if (param_types[i].equals(Integer.class))
+							objs[i] = Integer.valueOf(Integer.parseInt(literal));
+						else
+							throw new IllegalArgumentException("Type "
+									+ param_types[i] + " is not supported for literal parameter values");
 					} else
 						objs[i] = getIndexStructure(p);
 					i++;

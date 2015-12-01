@@ -17,7 +17,7 @@
  *
  * The Original is in 'TestWARC10Collection.java'
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -35,8 +35,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;

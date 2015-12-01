@@ -17,7 +17,7 @@
  *
  * The Original Code is WARC09Collection.java
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -25,20 +25,16 @@
  */
 package org.terrier.indexing;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 import org.terrier.indexing.tokenisation.Tokeniser;
-import org.terrier.utility.Files;
 import org.terrier.utility.FixedSizeInputStream;
-import org.terrier.utility.ProcessInputStream;
 
 /**
  * This object is used to parse WARC format web crawls, version 0.9. 
@@ -228,7 +224,9 @@ public class WARC09Collection extends MultiDocumentFileCollection
 		if (date == null)
 			return "";
 		try{
-			return Long.toString(dateWARC.parse(date).getTime() / 1000l);
+			synchronized (dateWARC) {
+				return Long.toString(dateWARC.parse(date).getTime() / 1000l);
+			}
 		} catch (ParseException pe ) {
 			return "";
 		}

@@ -17,7 +17,7 @@
  *
  * The Original Code is BasicIndexer.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -173,8 +173,8 @@ public class BasicIndexer extends Indexer
 		//delay the execution of init() if we are a parent class
 		if (this.getClass() == BasicIndexer.class) 
 			init();
-		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, false);
-		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, false);
+		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, 0, 0);
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
 	}
 
 
@@ -204,7 +204,9 @@ public class BasicIndexer extends Indexer
 	{
 		currentIndex = Index.createNewIndex(path, prefix);
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
-			? new LexiconBuilder(currentIndex, "lexicon", new FieldLexiconMap(FieldScore.FIELDS_COUNT), FieldLexiconEntry.class.getName())
+			? new LexiconBuilder(currentIndex, "lexicon", 
+					new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
+					FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"")
 			: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName());
 		
 		try{

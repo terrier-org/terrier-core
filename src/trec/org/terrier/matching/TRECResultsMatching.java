@@ -17,7 +17,7 @@
  *
  * The Original Code is TRECResultsMatching.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -81,7 +81,7 @@ public class TRECResultsMatching implements Matching {
 	/** The TREC results file reader. */
 	protected BufferedReader reader;
 	/** The input format to use when parsing document identifiers. */
-	protected final InputFormat format;
+	protected InputFormat format;
 	/** Whether document scores should be parsed from the results file. */
 	protected final boolean parseScores;
 	/** The maximum number of results to read per query. */

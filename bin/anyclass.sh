@@ -77,14 +77,13 @@ else
 	CLASSPATH=$CLASSPATH:$JAVA_HOME/lib/tools.jar
 fi
 
-
+JAR=`ls $TERRIER_HOME/target/terrier-core-*-jar-with-dependencies.jar`
 if [ ! -n "$CLASSPATH" ]
 then
-	CLASSPATH=$TERRIER_HOME/target/terrier-core-4.1.jar:$TERRIER_HOME/etc/logback.xml
+	CLASSPATH=$JAR:$TERRIER_ETC/logback.xml
 else
-	CLASSPATH=$CLASSPATH:$TERRIER_HOME/target/terrier-core-4.1.jar:$TERRIER_HOME/etc/logback.xml
+	CLASSPATH=$CLASSPATH:$JAR:$TERRIER_ETC/logback.xml
 fi
-
 
 if [ ! -n "$TERRIER_HEAP_MEM" ];
 then
@@ -92,8 +91,7 @@ then
 fi
 
 #JAVA_OPTIONS=
-
-echo $CLASSPATH
+#echo $CLASSPATH
 
 
 $JAVA_HOME/bin/java -Xmx$TERRIER_HEAP_MEM $JAVA_OPTIONS $TERRIER_OPTIONS \

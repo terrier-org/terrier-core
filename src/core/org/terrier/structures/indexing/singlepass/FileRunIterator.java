@@ -17,7 +17,7 @@
  *
  * The Original Code is FileRunIterator.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -72,12 +72,10 @@ public class FileRunIterator<K extends PostingInRun> extends RunIterator {
 
 	/** Closes the run files being processed */	
 	@Override
-	public void close()
+	public void close() throws IOException
 	{
-		try{
-			mbis.close();
-			stringDIS.close();
-		} catch (Exception e) {}
+		mbis.close();
+		stringDIS.close();
 	}
 	
 

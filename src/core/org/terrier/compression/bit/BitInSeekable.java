@@ -18,7 +18,7 @@
  *
  * The Original Code is BitInSeekable.java.
  *
- * The Original Code is Copyright (C) 2004-2014 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -35,7 +35,6 @@ import java.io.IOException;
  * that allows access to the encoded integers. Several implementations exist:
  * <ul>
  * <li>{@link org.terrier.compression.bit.BitFileBuffered} - buffers an amount of data starting that the specified offset.</li>
- * <li>{@link org.terrier.compression.bit.BitFile} - buffers the pre-specified amount starting and ending as specified. This implementation can also be used for reading. This class is deprecated.</li> 
  * <li>{@link org.terrier.compression.bit.BitFileInMemory} - reads the entire file into memory. File must be less than Integer.MAX_VALUE (2GB).</li>
  * <li>{@link org.terrier.compression.bit.BitFileInMemoryLarge} - reads the entire file into memory. File size only constrained by available memory.</li>
  * </ul>
