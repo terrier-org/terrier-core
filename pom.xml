@@ -421,6 +421,7 @@
 					<version>true</version>
 					<windowtitle>${project.Name} ${project.version} API</windowtitle>
 					<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/desktop:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/</sourcepath>
+					<additionalparam>-Xdoclint:none</additionalparam> <!-- http://stackoverflow.com/a/16743137 -->
 				</configuration>
 				<executions>
 					<execution>

@@ -89,9 +89,10 @@ public class HeapSortInt {
 
 	/**
 	 * Sorts the given arrays in ascending order, using heap-sort.
-	 * @param A double[] the first array to be sorted.
+	 * @param A int[] the first array to be sorted.
 	 * @param B int[] the second array to be sorted, according to the
 	 *		values of the first array.
+	 * @param C int[] an additional array to sort by A.
 	 */
 	public static void ascendingHeapSort(int[] A, int[] B, int[] C) {
 		int heapSize = buildMaxHeap(A, B, C);
@@ -121,10 +122,11 @@ public class HeapSortInt {
 	}
 	/**
 	 * ascendingHeapSort
-	 * @param A
-	 * @param B
-	 * @param C
-	 * @param D
+	 * @param A int[] the first array to be sorted.
+	 * @param B int[] the second array to be sorted, according to the
+	 *		values of the first array.
+	 * @param C int[] an additional array to sort by A.
+	 * @param D int[] an additional array to sort by A.
 	 */
     public static void ascendingHeapSort(int[] A, int[] B, int[] C, int[] D) {
         int heapSize = buildMaxHeap(A, B, C, D);
@@ -200,7 +202,7 @@ public class HeapSortInt {
 	
 	/** ascendingHeapSort
 	 * 
-	 * @param A
+	 * @param A an arry to sort ascending
 	 */
 	public static void ascendingHeapSort(int[][] A) {
 		int heapSize = buildMaxHeap(A);
@@ -237,11 +239,7 @@ public class HeapSortInt {
 	}
 
 	/**
-	 * Sorts the given arrays in descending order, using heap-sort.
-	 * @param A
-	 * @param B
-	 * @param C
-	 * @param D
+	 * Sorts the given arrays in descending order, using heap-sort by the first array.
 	 */
 	 
     public static void descendingHeapSort(int[] A, int[] B, int[] C, int[] D) {
@@ -480,6 +478,7 @@ public class HeapSortInt {
 	/**
 	 * Maintains the heap property.
 	 * @param A int[] The array on which we operate.
+	 * @param B int[] an additional array to sort by A.
 	 * @param i int a position in the array. This number is
 	 * between 1 and A.length inclusive.
 	 */

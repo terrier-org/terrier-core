@@ -93,7 +93,7 @@ public class AccumulatorResultSet implements ResultSet, Serializable
 
 	/**
 	 * Constructs an instance of the AccumulatorResultSet
-	 * @param numberOfDocuments
+	 * @param numberOfDocuments maximum size of the result set.
 	 */
 	public AccumulatorResultSet(int numberOfDocuments) 
 	{
@@ -247,8 +247,11 @@ public class AccumulatorResultSet implements ResultSet, Serializable
 			throw new UnsupportedOperationException("");		
 	}
 	
-	/** @see #getResultSet(int,int). Returns a ResultSet starting at the
+	/** @param start the starting offset
+	 *  @param the number of results to keep 
+	  * @see #getResultSet(int,int) Returns a ResultSet starting at the
  	  * pre-determined position, of the specified size.
+ 	  * 
 	  */
 	public AccumulatorResultSet getAccumulatorResultSet(int start, int length) 
 	{

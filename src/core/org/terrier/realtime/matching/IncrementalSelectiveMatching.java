@@ -53,8 +53,8 @@ public class IncrementalSelectiveMatching {
 	/**
 	 * Get an new IncrementalSelectiveMatching policy object of the
 	 * specified type.
-	 * @param policy
-	 * @return IncrementalSelectiveMatching unless policy is "mostrecent"
+	 * @param policy a string describing the policy to be applied. "mostrecent" results in {@link IncrementalSelectiveMostRecent}
+	 * @return {@link IncrementalSelectiveMostRecent} unless policy is "mostrecent"
 	 */
 	public static IncrementalSelectiveMatching get(String policy) {
 		if (policy.equalsIgnoreCase("mostrecent")) return new IncrementalSelectiveMostRecent();
@@ -63,7 +63,7 @@ public class IncrementalSelectiveMatching {
 	
 	/**
 	 * Return all indices (default)
-	 * @param indices
+	 * @param indices the list of indices to be filtered. 
 	 * @return all indices
 	 */
 	public List<Index> getSelectedIndices(List<Index> indices) {

@@ -36,7 +36,7 @@ import org.terrier.utility.ApplicationSetup;
  * This is useful if the shard boundaries are relevant, e.g. represent time boundaries.
  * 
  * <p><b>Properties</b></p>
- * <ul><li>incremental.selectivematch.mostrecent</tt> - number of indices to select, defaults to 6</li></ul>
+ * <ul><li><tt>incremental.selectivematch.mostrecent</tt> - number of indices to select, defaults to 6</li></ul>
  * 
  * @author Richard McCreadie
  * @since 4.0

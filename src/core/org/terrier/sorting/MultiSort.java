@@ -42,6 +42,7 @@ public class MultiSort {
 	 * @param A int[] the array which will be transformed into a heap.
 	 * @param B int[] the array which will be transformed into a heap,
 	 *		based on the values of the first argument.
+	 * @param C short[] an additional array to sort by A.
 	 */
 	private static int buildMaxHeap(double[] A, int[] B, short[] C) {
 		final int heapSize = A.length;
@@ -62,6 +63,7 @@ public class MultiSort {
 	 * @param A double[] the first array to be sorted.
 	 * @param B int[] the second array to be sorted, according to the
 	 *		values of the first array.
+	 * @param C short[] an additional array to sort by A.
 	 */
 	public static final void ascendingHeapSort(double[] A, int[] B, short[] C) {
 		int heapSize = buildMaxHeap(A, B, C);
@@ -170,6 +172,7 @@ public class MultiSort {
 	 * @param A double[] the first array to be sorted.
 	 * @param B int[] the second array to be sorted, according to the
 	 *		values of the first array.
+	 * @param C short[] an additional array to sort by A.
 	 */
 	public static final void descendingHeapSort(double[] A, int[] B, short[] C) {
 		MultiSort.ascendingHeapSort(A, B, C);
@@ -181,6 +184,7 @@ public class MultiSort {
 	 * @param A double[] the first array to be sorted.
 	 * @param B int[] the second array to be sorted, according to the
 	 *		values of the first array.
+	 * @param C short[] an additional array to sort by A.
 	 * @param topElements int the number of elements to be sorted.
 	 */
 	public static final void ascendingHeapSort(double[] A, int[] B, short[] C, int topElements) {
@@ -213,11 +217,6 @@ public class MultiSort {
 	}
 	
 	/** ascendingHeapSort
-	 * 
-	 * @param A
-	 * @param B
-	 * @param C
-	 * @param topElements
 	 */
 	public static final void ascendingHeapSort(int[] A, double[] B, short[] C, int topElements) {
 		int heapSize = buildMaxHeap(A, B, C);
@@ -254,6 +253,7 @@ public class MultiSort {
 	 * been sorted.
 	 * @param A double[] the first array.
 	 * @param B int[] the second array.
+	 * @param C short[] an additional array to sort by A.
 	 * @param topElements int the number of elements to be reversed.
 	 */
 	private static void reverse(final double[] A, final int[] B, final short[] C, final int topElements) {
@@ -289,6 +289,7 @@ public class MultiSort {
 	 * @param A double[] the first array to be sorted.
 	 * @param B int[] the second array to be sorted, according to the
 	 *		values of the first array.
+	 * @param C short[] an additional array to sort by A.
 	 * @param topElements int the number of elements to be sorted.
 	 */
 	public static final void descendingHeapSort(final double[] A, final int[] B, final short[] C, final int topElements) {

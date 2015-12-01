@@ -37,7 +37,8 @@ import java.util.concurrent.locks.Lock;
 public interface ResultSet extends Serializable {
 	
 	
-	/** Returns the names of the meta keys which this resultset has */
+	/** Returns the names of the meta keys which this resultset has 
+	 * @return the list of key names */
 	String[] getMetaKeys();
 	
 	/**
@@ -66,6 +67,7 @@ public interface ResultSet extends Serializable {
 	
 	/**
 	 * Returns the documents ids after retrieval
+	 * @return the docids
 	 */
 	int[] getDocids();
 	/**
@@ -91,7 +93,7 @@ public interface ResultSet extends Serializable {
 	String[] getMetaItems(String name); 
 	/**
 	 * Returns the occurrences array.
-	 * @return int[] the array the occurrences array.
+	 * @return short[] the array the occurrences array.
 	 */
 	short[] getOccurrences();
 	
@@ -103,6 +105,7 @@ public interface ResultSet extends Serializable {
 	
 	/**
 	 * Returns the documents scores after retrieval
+	 * @return score list in same order as docids array
 	 */
 	double[] getScores();
 	
@@ -181,6 +184,7 @@ public interface ResultSet extends Serializable {
 	
 	/** 
 	 * Sets the status code.
+	 * @param _statusCode - the code to return to the user
 	 */
 	void setStatusCode(int _statusCode);
 }

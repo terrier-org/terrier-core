@@ -31,6 +31,8 @@ package org.terrier.sorting;
  * array are placed in the array's last N positions (the maximum entry of 
  * the array will be in array[array.length-1], the second maximum in 
  * array[array.length-2] etc. 
+ * <p>
+ * <b>NB: This class is not thread-safe</b>
  * @author Vassilis Plachouras
   */
 public class HeapSort {
@@ -59,7 +61,8 @@ public class HeapSort {
 	
 	/**
 	 * Sorts the given array using heap-sort in ascending order
-	 * @param A int[] the array to be sorted
+	 * @param A double[] the array to be sorted
+	 * @param B int[] another array to be sorted in ascending order of A.
 	 */
 	public static void heapSort(double[] A, int[] B) {
 		buildMaxHeap(A, B);
@@ -77,7 +80,8 @@ public class HeapSort {
 	/**
 	 * Sorts the top <tt>topElements</tt> of the given array in 
 	 * ascending order using heap sort.
-	 * @param A int[] the array to be sorted
+	 * @param A double[] the array to be sorted
+	 * @param B int[] another array to be sorted in ascending order of A.
 	 * @param topElements int the number of elements to be sorted.
 	 */
 	public static void heapSort(double[] A, int[] B, int topElements) {
@@ -97,7 +101,8 @@ public class HeapSort {
 	}
 	/**
 	 * Maintains the heap property.
-	 * @param A int[] The array on which we operate.
+	 * @param A double[] The array on which we operate.
+	 * @param B int[] another array to be sorted in ascending order of A.
 	 * @param i int a position in the array. This number is 
 	 * between 1 and A.length inclusive.
 	 */
@@ -127,6 +132,7 @@ public class HeapSort {
 	/**
 	 * Builds a maximum heap.
 	 * @param A int[] the array which will be transformed into a heap.
+	 * @param B double[] another array to be sorted in ascending order of A.
 	 */
 	private static void buildMaxHeap(int[] A, double[] B) {
 		heapSize = A.length;
@@ -137,6 +143,7 @@ public class HeapSort {
 	/**
 	 * Sorts the given array using heap-sort in ascending order
 	 * @param A int[] the array to be sorted
+	 * @param B double[] another array to be sorted in ascending order of A.
 	 */
 	public static void heapSort(int[] A, double[] B) {
 		buildMaxHeap(A, B);
@@ -155,6 +162,7 @@ public class HeapSort {
 	 * Sorts the top <tt>topElements</tt> of the given array in 
 	 * ascending order using heap sort.
 	 * @param A int[] the array to be sorted
+	 * @param B double[] another array to be sorted in ascending order of A.
 	 * @param topElements int the number of elements to be sorted.
 	 */
 	public static void heapSort(int[] A, double[] B, int topElements) {
@@ -175,6 +183,7 @@ public class HeapSort {
 	/**
 	 * Maintains the heap property.
 	 * @param A int[] The array on which we operate.
+	 * @param B double[] another array to be sorted in ascending order of A.
 	 * @param i int a position in the array. This number is 
 	 * between 1 and A.length inclusive.
 	 */
