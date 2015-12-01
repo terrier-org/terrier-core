@@ -64,6 +64,19 @@ public class TRECDocnoOutputFormat implements OutputFormat {
 			final MetaIndex metaIndex = index.getMetaIndex();
 			docnos = metaIndex.getItems(metaIndexDocumentKey, set.getDocids());
 		}
+		
+		boolean NDN = false;
+
+		for (int i =0; i<docnos.length; i++) {
+			if (docnos[i]==null || docnos[i].length()==0) {
+				String diagnosticDOCNO = "NDN_DOCID_"+set.getDocids()[i];
+				docnos[i] = diagnosticDOCNO;
+				NDN = true;
+			}
+		}
+
+		if (NDN)  logger.warn("Not all docnos were found in the meta index during obtainDocnos(), some diagnostic docnos were added. ");
+
 		return docnos;
 	}
 
