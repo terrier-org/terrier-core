@@ -227,12 +227,17 @@ public class IndexUtil {
 		((IndexOnDisk) index).structureCache.remove(structureName);
 	}
 	
-	/** Reopen an existing index */
-	public static Index reOpenIndex(Index index) throws IOException
+	public static IndexOnDisk reOpenIndex(Index index) throws IOException
 	{
-		Index rtr = null;
-		String path = ((IndexOnDisk) index).getPath();
-		String prefix = ((IndexOnDisk) index).getPrefix();
+		return reOpenIndex((IndexOnDisk) index);
+	}
+	
+	/** Reopen an existing index */
+	public static IndexOnDisk reOpenIndex(IndexOnDisk index) throws IOException
+	{
+		IndexOnDisk rtr = null;
+		String path = index.getPath();
+		String prefix = index.getPrefix();
 		index.close();
 		rtr = Index.createIndex(path, prefix);
 		return rtr;
