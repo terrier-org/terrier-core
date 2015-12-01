@@ -346,6 +346,16 @@ public class IndexUtil {
 		return found;
 	}
 	
+	/** Checks the underlying structurecache of the specificed index to see if the 
+	 * named index structure is there.
+	 * @param index index to examine
+	 * @param structureName what structure
+	 * @return true if the structure cache contains the item
+	 */
+	public static boolean isStructureOpen(IndexOnDisk index, String structureName) {
+		return index.structureCache.containsKey(structureName);
+	}
+	
 	/** Copies an index structure from one index to another.
 	 * @param sourceIndex
 	 * @param destIndex

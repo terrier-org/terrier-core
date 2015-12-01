@@ -150,6 +150,10 @@ public class InvertedIndexRecompresser {
 	
 	public static void recompressInverted(IndexOnDisk index) throws Exception 
 	{
+		assert ! IndexUtil.isStructureOpen(index, "inverted");
+		assert ! IndexUtil.isStructureOpen(index, "lexicon");
+		
+		
 		CompressionConfiguration compressionConfig = CompressionFactory.getCompressionConfiguration("tmp-inverted", 
 				ArrayUtils.parseCommaDelimitedString(index.getIndexProperty("index.inverted.fields.names", "")), 
 				index.getIntIndexProperty("index.inverted.blocks", 0), 

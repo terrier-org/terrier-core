@@ -38,6 +38,7 @@ public class BasicShakNullRecompress extends BasicShakespeareEndToEndTest {
 	{
 		@Override
 		public void finishedIndexing(BatchEndToEndTest test) throws Exception {
+			IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
 			IndexOnDisk index = Index.createIndex();
 			InvertedIndexRecompresser.recompressInverted(index);
 			index.close();
