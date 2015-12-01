@@ -248,7 +248,7 @@ public class AccumulatorResultSet implements ResultSet, Serializable
 	}
 	
 	/** @param start the starting offset
-	 *  @param the number of results to keep 
+	 *  @param length the number of results to keep 
 	  * @see #getResultSet(int,int) Returns a ResultSet starting at the
  	  * pre-determined position, of the specified size.
  	  * 
