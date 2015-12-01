@@ -317,7 +317,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		boolean doFlush = false;
 		final boolean memCheck = memoryCheck.checkMemory();
 		String msg = null; 
-		logger.debug(msg="maxAllowedMemory="+maxMemory + " consumed="+consumed + " maxDocsPerFlush="+maxDocsPerFlush
+		logger.debug(msg="Run "+currentFile+" maxAllowedMemory="+maxMemory + " consumed="+consumed + " maxDocsPerFlush="+maxDocsPerFlush
 				+" numberOfDocsSinceFlush="+numberOfDocsSinceFlush + " memcheck="+ memCheck);
 		if (memCheck)
 		{
