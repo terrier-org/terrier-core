@@ -29,7 +29,6 @@
 package org.terrier.applications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionFactory;
 import org.terrier.structures.Index;
@@ -37,6 +36,7 @@ import org.terrier.structures.indexing.Indexer;
 import org.terrier.structures.indexing.singlepass.BasicSinglePassIndexer;
 import org.terrier.structures.indexing.singlepass.BlockSinglePassIndexer;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.TagSet;
 /**
  * This class creates the indices for a test collection.
  * <p>
@@ -69,6 +69,57 @@ public class TRECIndexing {
 		//load the appropriate collection
 		final String collectionName = ApplicationSetup.getProperty("trec.collection.class", "TRECCollection");
 		collectionTREC = CollectionFactory.loadCollection(collectionName);
+		if (collectionTREC == null)
+		{
+			logger.error("Collection class named "+ collectionName + " not found, aborting");
+		}
+
+		//load the appropriate indexer
+		String indexerName = ApplicationSetup.getProperty(
+			"trec.indexer.class",
+			ApplicationSetup.BLOCK_INDEXING
+				? "BlockIndexer"
+				: "BasicIndexer");
+		if (indexerName.indexOf('.') == -1)
+			indexerName = "org.terrier.structures.indexing.classical."+indexerName;
+		else if (indexerName.startsWith("uk.ac.gla.terrier"))
+			indexerName = indexerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
+		try{
+			indexer = (Indexer) Class.forName(indexerName)
+				.getConstructor(String.class, String.class)
+				.newInstance(path, prefix);
+		} catch (ClassNotFoundException e) {
+			logger.error("Indexer class named "+ indexerName + " not found", e);
+		} catch (InstantiationException ie) {
+			logger.error("Error while instantiating Indexer class named "+ indexerName + " : " + ie.getCause(), ie);
+		} catch (Exception e){
+			logger.error("Indexer class named "+ indexerName + "problem", e);
+		}
+	}
+	
+	/**
+	 * A constructor that initialised the data structures
+	 * to use for indexing. 
+	 * @param _path Absolute path to where the index should be created
+	 * @param _prefix Prefix of the index files, usually "data"
+	 */
+	public TRECIndexing(String _path, String _prefix, String collectionSpec)
+	{
+		path = _path; prefix = _prefix;
+		//load the appropriate collection
+		final String collectionName = ApplicationSetup.getProperty("trec.collection.class", "TRECCollection");
+		
+		Class[] constructerClasses = {String.class,String.class,String.class,String.class};
+		String[] constructorValues = {collectionSpec,TagSet.TREC_DOC_TAGS,
+			ApplicationSetup.makeAbsolute(
+				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
+				ApplicationSetup.TERRIER_ETC), 
+		    ApplicationSetup.makeAbsolute(
+			ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
+				ApplicationSetup.TERRIER_INDEX_PATH)
+		};
+		collectionTREC = CollectionFactory.loadCollection(collectionName, constructerClasses, constructorValues);
+		System.err.println(collectionTREC.getClass().getName());
 		if (collectionTREC == null)
 		{
 			logger.error("Collection class named "+ collectionName + " not found, aborting");
