@@ -139,9 +139,9 @@ public class TaggedDocument implements Document {
 	/** builders for each abstract */
 	protected final StringBuilder[] abstracts = new StringBuilder[abstractCount];
 	/** A mapping for quick lookup of abstract tag names */
-	protected TObjectIntHashMap<String> abstractName2Index = null;
+	protected final TObjectIntHashMap<String> abstractName2Index;
 	/** Flag to check that determines whether to short-cut the abstract generation method */
-	protected boolean considerAbstracts = false;
+	protected final boolean considerAbstracts;
 	
 	/** else field index **/
 	protected int elseAbstractSpecialTag = -1;
@@ -211,6 +211,9 @@ public class TaggedDocument implements Document {
 				abstractName2Index.put(abstractName, aIndex);
 				aIndex++;
 			}
+		} else {
+			considerAbstracts = false;
+			abstractName2Index = null;
 		}
 	}
 	
@@ -237,6 +240,9 @@ public class TaggedDocument implements Document {
 				abstractName2Index.put(abstractName, aIndex);
 				aIndex++;
 			}
+		} else {
+			considerAbstracts = false;
+			abstractName2Index = null;
 		}
 	}
 
