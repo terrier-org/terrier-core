@@ -61,8 +61,8 @@ REM ------------------------
 REM -- Build up class path 
 REM ------------------------
 call "%BIN%\lcp.bat" %CLASSPATH%
-call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\terrier-core-*-jar-with-dependencies.jar"
 call "%BIN%\lcp.bat" "%TERRIER_ETC%\logback.xml"
+FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\target\terrier-core-*-jar-with-dependencies.jar') DO call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\%%G"
 
 
 :dorun
@@ -70,6 +70,6 @@ call "%BIN%\lcp.bat" "%TERRIER_ETC%\logback.xml"
 REM ------------------------
 REM -- Run TRECTerrier
 REM ------------------------
-java -Xmx512M -Dterrier.home="%TERRIER_HOME%" -Dterrier.etc="%TERRIER_ETC%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% %LOGGING_OPTIONS% %JAVA_OPTIONS% %TERRIER_OPTIONS% %*
+java -Xmx512M -Dlogback.configurationFile="%TERRIER_ETC%\logback.xml" -Dterrier.home="%TERRIER_HOME%" -Dterrier.etc="%TERRIER_ETC%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% %LOGGING_OPTIONS% %JAVA_OPTIONS% %TERRIER_OPTIONS% %*
 
 if "Windows_NT"=="%OS%" endlocal

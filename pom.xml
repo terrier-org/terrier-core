@@ -216,14 +216,6 @@
 
 		<testSourceDirectory>src/test/main</testSourceDirectory>
 		<resources>
-			<resource>
-				<targetPath>./</targetPath>
-				<filtering>false</filtering>
-				<directory>etc</directory>
-				<includes>
-					<include>logback.xml</include>
-				</includes>
-			</resource>
 
 			<resource>
 				<directory>share/templates</directory>
@@ -442,6 +434,10 @@
 							<mainClass>org.terrier.applications.TrecTerrier</mainClass>
 						</manifest>
 					</archive>
+					<filters>
+						<filter>**/logback.xml</filter>
+						<filter>**\logback.xml</filter>
+          				</filters>
 				</configuration>
 				<executions>
 					<execution>

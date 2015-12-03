@@ -23,7 +23,6 @@ REM Contributor(s):
 REM   Craig Macdonald <craigm@dcs.gla.ac.uk> (original author)
 REM
 
-
 if "Windows_NT"=="%OS%" setlocal
 
 rem keep %0 in case we overwrite
@@ -57,15 +56,17 @@ if defined TERRIER_ETC goto terrier_lib
 SET TERRIER_ETC=%TERRIER_HOME%\etc
 
 :classpath
-
+echo TERRIER_HOME is set to %TERRIER_HOME%
 REM ------------------------
 REM -- Build up class path 
 REM ------------------------
 call "%BIN%\lcp.bat" %CLASSPATH%
 SET LOCALCLASSPATH=
-call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\terrier-core-4.1.jar"
+FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\target\terrier-core-*-jar-with-dependencies.jar') DO call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\%%G"
 call "%BIN%\lcp.bat" "%TERRIER_HOME%\etc\logback.xml"
 
+
+echo %CLASSPATH%
 REM ------------------------
 REM -- Run TRECSetup
 REM ------------------------

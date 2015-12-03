@@ -98,7 +98,8 @@ $JAVA_HOME/bin/java -Xmx$TERRIER_HEAP_MEM $JAVA_OPTIONS $TERRIER_OPTIONS \
 	 -Dterrier.etc=$TERRIER_ETC \
 	 -Dterrier.home=$TERRIER_HOME \
      -Dterrier.setup=$TERRIER_ETC/terrier.properties \
-     -cp $CLASSPATH $@
+     -cp $CLASSPATH $@ \
+     -Dlogback.configurationFile=$TERRIER_ETC/logback.xml
 
 if [ "$TERRIER_LIB_TMP" == "1" ];
 then
