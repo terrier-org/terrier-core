@@ -11,6 +11,39 @@
 [<a href="overview.html">Previous: Overview</a>] [<a href="index.html">Contents</a>] [<a href="quickstart.html">Next: Installing and Running Terrier</a>]
 </br><br><h1>What's New in Terrier</h1>
 
+<h2>Terrier 4.1 - 04/12/2015</h2>
+<p>Substantial update that includes a re-structuring of the Terrier build routines and dependencies to support Apache Maven compilation:</p> 
+<ul><li><a href="#">Compiling with Maven</a></li>
+</ul>
+
+<p>Additionally various bugs fixes and other small improvements are also included. Some code may need to have imports adjusted, and indices will need to be upgraded.</p> 
+
+<h3>Indexing</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-240">TR-240</a>: WARC10Collection logger info</li>
+
+<h3>Retrieval</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-284">TR-284</a>: Improve logging on CompressingMetaIndex on disk to suggest fix SLOW WARNings</li>	
+</ul>
+
+<h3>Testing</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-315">TR-315</a>: TestTaggedDocument does not test abstract extracting</li>
+</ul>
+
+<h3>Other</h3>
+<ul>
+<li><a href="http://terrier.org/issues/browse/TR-296">TR-296</a>: Support indexing upgrading 3.x -> 4.x</li>
+</ul>
+
+<h3>Acknowledgements</h3>
+<p>The release of Terrier 4.0 was supported by the following projects and funding bodies</p>
+<ul>
+<li> <a href="http://www.smartfp7.eu/">SMART: Search engine for MultimediA enviRonment generated contenT</a> - EU FP7 Project, Grant Number 287583. Funded the development of the new learning-to-rank and pluggable compression technologies in the Terrier 4.0 release.</li>
+<li> <a href="http://demeter.inf.ed.ac.uk/redites/">ReDites: Real-time Detection, Tracking, Monitoring and Interpretation of Events in Social Media</a> - EPSRC Project, Grant Number EP/L010690/1. Funded the development of the new real-time indexing and search technologies in the Terrier 4.0 release.</li>
+</ul>
+
 <h2>Terrier 4.0 - 18/06/2014</h2>
 <p>Major update adding significant new features:</p> 
 <ul><li><a href="realtime_indices.html">Real-time index structures</a> facilitate incremental indexing of new documents as over time.</li>

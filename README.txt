@@ -1,10 +1,10 @@
-Terrier - Terabyte Retriever version 4.0
+Terrier - Terabyte Retriever version 4.1
 Webpage: http://terrier.org 
 Contact: terrier{a.}dcs.gla.ac.uk
 University of Glasgow - School of Computing Science
 Information Retrieval Group
 
-Copyright (C) 2004-2014 University of Glasgow. All Rights Reserved.
+Copyright (C) 2004-2015 University of Glasgow. All Rights Reserved.
 
 Terrier is subject to the terms detailed in the Mozilla Public License
 Version 1.1. The Mozilla Public License can be found in the file
