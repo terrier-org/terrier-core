@@ -41,7 +41,7 @@ any Java 1.7 JDK. You should have no need to compile Terrier unless you have alt
 <a href="#wt2g" /><p>New in Terrier 4.0 is an end-to-end test based on the TREC WT2G corpus. This is good method test to ensure that a change on Terrier has not negatively impacted on retrieval performance. Note that while indexing the WT2G corpus only takes a few minutes, the end-to-end test suite runs different indexing varieties, so you should allow about about an hour for this test to run. To run this test, you need to specify the location of the WT2G corpus, topics and relevance assessments (qrels):</p>
 
 <pre>
-ant batch-test  -Dwt2g.corpus=/path/to/WT2G/ -Dwt2g.topics=/path/to/WT2G_topics/small_web/topics.401-450 -Dwt2g.qrels=/path/to/WT2G_topics/small_web/qrels.trec8
+bin/anyclass.sh -Dwt2g.corpus=/path/to/WT2G/ -Dwt2g.topics=/path/to/WT2G_topics/small_web/topics.401-450 -Dwt2g.qrels=/path/to/WT2G_topics/small_web/qrels.trec8 org.junit.runner.JUnitCore org.terrier.tests.TRECWT2GEndtoEndTest
 </pre>
 
 <p></p>

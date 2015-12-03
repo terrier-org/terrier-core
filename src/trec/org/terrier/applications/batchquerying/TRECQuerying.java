@@ -219,11 +219,11 @@ public class TRECQuerying {
 	protected Index index;
 
 	/** The number of results to output. Set by property <tt>trec.output.format.length</tt>.  */
-	static int RESULTS_LENGTH = Integer.parseInt(ApplicationSetup
+	protected static int RESULTS_LENGTH = Integer.parseInt(ApplicationSetup
 			.getProperty("trec.output.format.length", "1000"));
 
 	/** A TREC specific output field. */
-	static String ITERATION = ApplicationSetup.getProperty(
+	protected static String ITERATION = ApplicationSetup.getProperty(
 			"trec.iteration", "Q");
 
 	/**
