@@ -101,7 +101,7 @@ public class DefaultSummariser extends Summariser {
             }
 
         }
-        System.out.println(java.util.Arrays.toString(sentenceScores));
+
         int lastIndexOfSpace = -1;
         String sentence="";
         String secondSentence="";
