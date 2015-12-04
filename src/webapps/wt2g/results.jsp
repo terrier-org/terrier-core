@@ -107,8 +107,12 @@ protected static void displayResults(ResultSet rs, int iStart, javax.servlet.jsp
 		out.print("<td align=\"left\"><span class=\"results_url\"><font size=\"2\" color=\"#0E774A\">"+url.replace("http://", "")+"</font></span>");
 		j = key2metaoffset.get("docno");
 		out.print("<font size=\"2\"> - </font><span class=\"results_docno\"><font size=\"2\" color=\"#0E774A\">"+meta[j][i]+"</font></span>");
-		j = key2metaoffset.get("crawldate");
-		String date = meta[j][i];
+		String date = "";
+		if (! key2metaoffset.contains("crawldate"))
+		{
+			j = key2metaoffset.get("crawldate");
+			date = meta[j][i];
+		}
 		if (date.length() > 0)
 		{
 			date = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date (Long.parseLong(date)));
