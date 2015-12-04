@@ -30,7 +30,7 @@ The site offers pre-compiled releases of the newest and previous Unix and Window
 After having downloaded Terrier, copy the file to the directory where you 
 want to install Terrier. Navigate to this directory and execute the following 
 command to decompress the distribution:</p>
-<pre>tar -zxvf terrier-4.1.tar.gz</pre>
+<pre>tar -zxvf terrier-core-4.1-bin.tar.gz</pre>
 
 <p>This will result in the creation of a terrier directory in your current 
 directory. Next we will have to make sure that you have the correct Java version
@@ -73,15 +73,15 @@ the collection, along with the topics and the relevance assessments (qrels), is
 stored in the directory <tt>/local/collections/WT2G/</tt>.</p>
 
 <p>1. Go to the Terrier folder.</p>
-<pre>cd terrier</pre>
+<pre>cd terrier-core-4.1</pre>
 
 <p>2. Setup Terrier for using a TREC test collection by calling</p>
 <pre>./bin/trec_setup.sh "Absolute_Path_To_Collection_Files"</pre>
 in our example:
 <pre>./bin/trec_setup.sh /local/collections/WT2G/</pre>
 <p>
-This will result in the creation of a <tt>collection.spec</tt> file containing a 
-list of the files in the specified directory in the "etc" directory.
+This will result in the creation of a <tt>collection.spec</tt> file in the "etc" directory. This file contains a 
+list of the files contained in the specified corpus directory.
 </p>
 
 <p>3. If necessary, modify the <tt>collection.spec</tt> file.
@@ -93,7 +93,7 @@ where <tt>"PATTERN"</tt> is the regular expression used to identify the files th
 
 <p>4. Now we are ready to begin the indexing of the collection.</p>
 <pre>./bin/trec_terrier.sh -i</pre>
-<p>&nbsp;&nbsp;<small><b>NB:</b> If you do not need the direct file, e.g. for query expansion, then you can use <tt>bin/trec_terrier.sh -i -j</tt> for the faster single-pass indexing introduced for Terrier 2.0</small></p>
+<p><b>Note:</b> If you do not need the direct index structure for e.g. for query expansion, then you can use <tt>bin/trec_terrier.sh -i -j</tt> for the faster single-pass indexing.</p>
 
 <h3>Retrieval</h3>
 
