@@ -11,7 +11,7 @@
 [<a href="querylanguage.html">Previous: Terrier Query Language</a>] [<a href="index.html">Contents</a>] [<a href="realtime_indices.html">Next: Real-time Index Structures</a>]
 </br><br><h1>Evaluation</h1>
 
-<p> Terrier provides a Java implementation of trec_eval for evaluating results of TREC adhoc and named-page finding tasks. Before running an evaluation, we need to specify the relevance assessments file in /etc/trec.qrels. To evaluate all .res result files in folder /var/results, we can type the following:
+<p> Terrier provides a Java implementation of trec_eval for evaluating results of TREC adhoc and named-page finding tasks. Before running an evaluation, we need to specify the relevance assessments file in the property <tt>trec.qrels</tt>. To evaluate all .res result files in folder /var/results, we can type the following:
 </p>
 
 <pre>bin/trec_terrier.sh -e</pre>

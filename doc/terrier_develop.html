@@ -32,6 +32,13 @@ any Java 1.7 JDK. You should have no need to compile Terrier unless you have alt
 
 <p>Terrier now uses <a href="https://maven.apache.org">Maven</a> for dependencies, compiling testing and packaging. Terrier's layout does not yet follow the Maven standard layout, with various source folders located under src/. Finally, the Maven environment is configured to build with Eclipse also, although a few plugins are disabled.</p>
 
+<p>The following Maven goals can be used for recompiling Terrier:</p>
+<ul>
+<li><tt>mvn compile</tt> - compile</li>
+<li><tt>mvn package</tt> - make the jar and jar-with-dependencies, as well as the .tar.gz and .zip files</li>
+<li><tt>mvn package -DskipTests</tt> - as above, but skipping the JUnit tests</li>
+</ul>
+
 
 <h2>Testing Terrier</h2>
 <p>Terrier now has many JUnit test classes, located into the <tt>src/test</tt> folder. In particular, JUnit tests are now provided for a great many of the classes in Terrier, including (but not limited to) indexers, tokenisation, retrieval, query parsing, compression, and evaluation.</p>
