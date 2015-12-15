@@ -117,6 +117,7 @@ import org.terrier.utility.TestDistance;
 import org.terrier.utility.TestHeapSort;
 import org.terrier.utility.TestRounding;
 import org.terrier.utility.TestStaTools;
+import org.terrier.utility.TestStringTools;
 import org.terrier.utility.TestTagSet;
 import org.terrier.utility.TestTermCodes;
 import org.terrier.utility.TestUnitUtils;
@@ -262,6 +263,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestRounding.class,
 	TestTagSet.class,
 	TestStaTools.class,
+	TestStringTools.class,
 	TestTermCodes.class,
 	TestUnitUtils.class,
 	TestVersion.class,

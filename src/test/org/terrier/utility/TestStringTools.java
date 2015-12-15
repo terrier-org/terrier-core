@@ -27,9 +27,8 @@
 package org.terrier.utility;
 
 import static org.junit.Assert.assertEquals;
-import static org.terrier.utility.StringTools.*;
-import java.math.BigInteger;
-import java.security.SecureRandom;
+import static org.terrier.utility.StringTools.toLowerCase;
+import static org.terrier.utility.StringTools.toUpperCase;
 
 import org.junit.Test;
 
@@ -45,44 +44,43 @@ public class TestStringTools {
 		assertEquals(t + " does not match", t.toUpperCase(), toUpperCase(t));
 	}
 
-	@Test
-	public void timeLower() {
-
-		final SecureRandom random = new SecureRandom();
-		final int count = 100000;
-
-		long start;
-		start = System.currentTimeMillis();
-		String s = new String("");
-		boolean rtr = false;
-		for (int i = 0; i < count; i++) {
-			s = new BigInteger(130, random).toString(32).toUpperCase()
-					.toLowerCase();
-			// System.out.println(s);
-			rtr = !s.equals("");
-			// rtr = s.length() > 0;
-		}
-		System.err.println("String.toLowerCase "
-				+ (System.currentTimeMillis() - start) + " " + rtr);
-
-		start = System.currentTimeMillis();
-		for (int i = 0; i < count; i++) {
-			s = toLowerCase(new BigInteger(130, random).toString(32)
-					.toUpperCase());
-			rtr = !s.equals("");
-		}
-		System.err.println("Fast toLowerCase "
-				+ (System.currentTimeMillis() - start) + " " + rtr);
-
-		start = System.currentTimeMillis();
-		for (int i = 0; i < count; i++) {
-			s = new BigInteger(130, random).toString(32).toUpperCase();
-			rtr = !s.equals("");
-		}
-		System.err.println("None toLowerCase "
-				+ (System.currentTimeMillis() - start) + " " + rtr);
-
-	}
+//	@Test
+//	public void timeLower() {
+//
+//		final SecureRandom random = new SecureRandom();
+//		final int count = 100000;
+//
+//		long start;
+//		start = System.currentTimeMillis();
+//		String s = new String("");
+//		boolean rtr = false;
+//		for (int i = 0; i < count; i++) {
+//			s = new BigInteger(130, random).toString(32).toUpperCase()
+//					.toLowerCase();
+//			// System.out.println(s);
+//			rtr = !s.equals("");
+//			// rtr = s.length() > 0;
+//		}
+//		System.err.println("String.toLowerCase "
+//				+ (System.currentTimeMillis() - start) + " " + rtr);
+//
+//		start = System.currentTimeMillis();
+//		for (int i = 0; i < count; i++) {
+//			s = toLowerCase(new BigInteger(130, random).toString(32)
+//					.toUpperCase());
+//			rtr = !s.equals("");
+//		}
+//		System.err.println("Fast toLowerCase "
+//				+ (System.currentTimeMillis() - start) + " " + rtr);
+//
+//		start = System.currentTimeMillis();
+//		for (int i = 0; i < count; i++) {
+//			s = new BigInteger(130, random).toString(32).toUpperCase();
+//			rtr = !s.equals("");
+//		}
+//		System.err.println("None toLowerCase "
+//				+ (System.currentTimeMillis() - start) + " " + rtr);
+//	}
 
 	@Test
 	public void testLowerUpperCase() {
@@ -96,6 +94,7 @@ public class TestStringTools {
 		assertMatch("a11*-11");
 		assertMatch("A11-11*");
 		assertMatch("A11-11*");
+		assertMatch("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
 		// E acute and e acute are not altered.
 		assertEquals("\u00E9", toUpperCase("\u00E9"));
