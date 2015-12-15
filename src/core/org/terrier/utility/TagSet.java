@@ -96,37 +96,38 @@ public class TagSet {
 	/**
 	 * The set of tags to process.
 	 */
-	protected HashSet<String> whiteList;
+	protected final HashSet<String> whiteList;
 	/** Size of whiteList hashset */
 	protected final int whiteListSize;
 	
 	/**
 	 * A comma separated list of tags to process.
 	 */
-	protected String whiteListTags;
+	protected final String whiteListTags;
 	
 	/**
 	 * The set of tags to skip.
 	 */
-	protected HashSet<String> blackList;
-	
+	protected final HashSet<String> blackList;
+	/** Size of whiteList hashset */
+	protected final int blackListSize;
 	/**
 	 * A comma separated list of tags to skip.
 	 */
-	protected String blackListTags;
+	protected final String blackListTags;
 	
 	/**
 	 * The tag that is used as a unique identifier.
 	 */
-	protected String idTag;
+	protected final String idTag;
 	
 	/**
 	 * The tag that is used for denoting the beginning of a
 	 * document.
 	 */
-	protected String docTag;
+	protected final String docTag;
 	/** is this TagSet case sensitive. Defaults to true for all sets except TrecDocTags */
-	protected boolean caseSensitive = true;
+	protected final boolean caseSensitive;
 
 	/** Returns true if whiteListSize &gt; 0.
 	 *  @return Returns true if whiteListSize &gt; 0
@@ -142,8 +143,9 @@ public class TagSet {
 	 * @return boolean true if the tag should be processed
 	 */
 	public boolean isTagToProcess(String tag) {
-		return whiteList.contains(
-			caseSensitive ? tag : tag.toUpperCase());
+		return whiteListSize > 0
+			? whiteList.contains(caseSensitive ? tag : StringTools.toUpperCase(tag))
+			: false;
 	}
 	
 	/**
@@ -154,8 +156,9 @@ public class TagSet {
 	 *         otherwise it returns false.
 	 */
 	public boolean isTagToSkip(String tag) {
-		return blackList.contains(
-			caseSensitive ? tag : tag.toUpperCase());
+		return blackListSize > 0
+			? blackList.contains(caseSensitive ? tag : StringTools.toUpperCase(tag))
+			: false;
 	}
 	
 	/**
@@ -169,7 +172,7 @@ public class TagSet {
 	 */
 	public boolean isIdTag(String tag) {
 		return idTag.equals(
-			caseSensitive ? tag : tag.toUpperCase());
+			caseSensitive ? tag : StringTools.toUpperCase(tag));
 	}
 	/**
 	 * Checks whether the given tag indicates
@@ -180,7 +183,7 @@ public class TagSet {
 	 */
 	public boolean isDocTag(String tag) {
 		return docTag.equals(
-			caseSensitive ? tag : tag.toUpperCase());
+			caseSensitive ? tag : StringTools.toUpperCase(tag));
 	}
 
 	/** Returns true if this tag set has been specified as case-sensitive */
@@ -204,12 +207,17 @@ public class TagSet {
 
 		if (prefix.length() > 0)
 		{
-			whiteListTags = ApplicationSetup.getProperty(prefix+".process","");
-			blackListTags = ApplicationSetup.getProperty(prefix+".skip","");
+			String _whiteListTags = ApplicationSetup.getProperty(prefix+".process","");
+			String _blackListTags = ApplicationSetup.getProperty(prefix+".skip","");
 			if (!caseSensitive)
 			{
-				whiteListTags = whiteListTags.toUpperCase();
-				blackListTags = blackListTags.toUpperCase();
+				whiteListTags = StringTools.toUpperCase(_whiteListTags);
+				blackListTags =  StringTools.toUpperCase(_blackListTags);
+			}
+			else
+			{
+				whiteListTags = _whiteListTags;
+				blackListTags = _blackListTags;
 			}
 			for (String t: whiteListTags.split("\\s*,\\s*"))
 				if (t.length() > 0)
@@ -221,21 +229,26 @@ public class TagSet {
 						throw new IllegalArgumentException(prefix+".process" + " and " + prefix+".skip" + " cannot both contain tag " + t);
 					blackList.add(t);
 				}
-			idTag = ApplicationSetup.getProperty(prefix+".idtag","");
-			docTag = ApplicationSetup.getProperty(prefix+".doctag","");
+			String _idTag = ApplicationSetup.getProperty(prefix+".idtag","");
+			String _docTag = ApplicationSetup.getProperty(prefix+".doctag","");
 			if (!caseSensitive)
 			{
-				idTag = idTag.toUpperCase();
-				docTag = docTag.toUpperCase();
-			}
-			
+				idTag =  StringTools.toUpperCase(_idTag);
+				docTag = StringTools.toUpperCase(_docTag);
+			} else {
+				idTag = _idTag;
+				docTag = _docTag;
+			}			
 		}
 		else
 		{
+			whiteListTags = null;
+			blackListTags = null;
 			idTag = null;
 			docTag = null;
 		}
 		whiteListSize = whiteList.size();
+		blackListSize = blackList.size();
 
 		/*the id and doc tags do not have to be specified in the whitelist, as 
 		they are automatically added here*/
