@@ -166,4 +166,86 @@ public class StringTools {
         }
 		return encodingName;
 	}
+	
+	/*
+	 *  Licensed to the Apache Software Foundation (ASF) under one
+	 *  or more contributor license agreements.  See the NOTICE file
+	 *  distributed with this work for additional information
+	 *  regarding copyright ownership.  The ASF licenses this file
+	 *  to you under the Apache License, Version 2.0 (the
+	 *  "License"); you may not use this file except in compliance
+	 *  with the License.  You may obtain a copy of the License at
+	 *  
+	 *    http://www.apache.org/licenses/LICENSE-2.0
+	 *  
+	 *  Unless required by applicable law or agreed to in writing,
+	 *  software distributed under the License is distributed on an
+	 *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+	 *  KIND, either express or implied.  See the License for the
+	 *  specific language governing permissions and limitations
+	 *  under the License. 
+	 *  
+	 */
+
+	
+	/** lowerCase = 'a' .. 'z', '0'..'9', '-' */
+	private static final char[] LOWER_CASE = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '-', 0, 0, '0', '1', '2', '3',
+			'4', '5', '6', '7', '8', '9', 0, 0, 0, 0, 0, 0, 0, 'a', 'b', 'c',
+			'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+			'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 0, 0, 0, 0, 0, 0,
+			'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0 };
+
+	/** lowerCase = 'a' .. 'z', '0'..'9', '-' */
+	private static final char[] UPPER_CASE = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '-', 0, 0, '0', '1', '2', '3',
+			'4', '5', '6', '7', '8', '9', 0, 0, 0, 0, 0, 0, 0, 'A', 'B', 'C',
+			'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'K', 'M', 'N', 'O', 'P',
+			'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 0, 0, 0, 0, 0, 0,
+			'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+			'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0 };
+
+	/**
+	 * Rewrote the toLowercase method to improve performances. In Ldap,
+	 * attributesType are supposed to use ASCII chars : 'a'-'z', 'A'-'Z',
+	 * '0'-'9', '.' and '-' only.
+	 * 
+	 * @param value
+	 *            The String to lowercase
+	 * @return The lowercase string
+	 */
+	public static final String toLowerCase(String value) {
+		char[] chars = value.toCharArray();
+
+		for (int i = 0; i < chars.length; i++) {
+			final char k = chars[i];
+			final char c = k < 192 ? LOWER_CASE[k] : k;
+			chars[i] = c != 0 ? c : chars[i];
+		}
+
+		return new String(chars);
+	}
+
+	public static final String toUpperCase(String value) {
+		char[] chars = value.toCharArray();
+
+		for (int i = 0; i < chars.length; i++) {
+			final char k = chars[i];
+			char c = k < 192 ? UPPER_CASE[chars[i]] : k;
+			chars[i] = c != 0 ? c : chars[i];
+		}
+
+		return new String(chars);
+	}
 }

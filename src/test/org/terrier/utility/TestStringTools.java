@@ -26,7 +26,10 @@
  */
 package org.terrier.utility;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.terrier.utility.StringTools.*;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 import org.junit.Test;
 
@@ -34,7 +37,70 @@ public class TestStringTools {
 
 	@Test
 	public void testEncodingNorm() {
-		assertEquals("x-MacRoman", StringTools.normaliseEncoding("x-mac-roman"));		
+		assertEquals("x-MacRoman", StringTools.normaliseEncoding("x-mac-roman"));
+	}
+
+	protected void assertMatch(String t) {
+		assertEquals(t + " does not match", t.toLowerCase(), toLowerCase(t));
+		assertEquals(t + " does not match", t.toUpperCase(), toUpperCase(t));
+	}
+
+	@Test
+	public void timeLower() {
+
+		final SecureRandom random = new SecureRandom();
+		final int count = 100000;
+
+		long start;
+		start = System.currentTimeMillis();
+		String s = new String("");
+		boolean rtr = false;
+		for (int i = 0; i < count; i++) {
+			s = new BigInteger(130, random).toString(32).toUpperCase()
+					.toLowerCase();
+			// System.out.println(s);
+			rtr = !s.equals("");
+			// rtr = s.length() > 0;
+		}
+		System.err.println("String.toLowerCase "
+				+ (System.currentTimeMillis() - start) + " " + rtr);
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++) {
+			s = toLowerCase(new BigInteger(130, random).toString(32)
+					.toUpperCase());
+			rtr = !s.equals("");
+		}
+		System.err.println("Fast toLowerCase "
+				+ (System.currentTimeMillis() - start) + " " + rtr);
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < count; i++) {
+			s = new BigInteger(130, random).toString(32).toUpperCase();
+			rtr = !s.equals("");
+		}
+		System.err.println("None toLowerCase "
+				+ (System.currentTimeMillis() - start) + " " + rtr);
+
+	}
+
+	@Test
+	public void testLowerUpperCase() {
+		assertMatch("");
+		assertMatch("aa");
+		assertMatch("a111aa");
+		assertMatch("a11*-11");
+		assertMatch("a11-11*");
+		assertMatch("aa");
+		assertMatch("a111Aa");
+		assertMatch("a11*-11");
+		assertMatch("A11-11*");
+		assertMatch("A11-11*");
+
+		// E acute and e acute are not altered.
+		assertEquals("\u00E9", toUpperCase("\u00E9"));
+		assertEquals("\u00C9", toLowerCase("\u00C9"));
+
 	}
 
 }

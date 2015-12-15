@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.StringTools;
 
 /** Tokenises text obtained from a text stream assuming English language.
  * Acceptable characters are A-Z a-z and 0-9. All other 
@@ -164,20 +165,20 @@ public class EnglishTokeniser extends Tokeniser {
 		for(int i=0;i<length;i++)
 		{
 			chNew = s.charAt(i);
-			if (chNew >= 48 && chNew <= 57)
+			if (chNew >= 48 && chNew <= 57)//0 to 9
 				counterdigit++;
 			if (ch == chNew)
 				counter++;
 			else
 				counter = 1;
 			ch = chNew;
-			/* if it contains more than 3 consequtive same letters,
+			/* if it contains more than 3 consecutive same letters,
 			   or more than 4 digits, then discard the term. */
 			if (counter > maxNumOfSameConseqLettersPerTerm
 				|| counterdigit > maxNumOfDigitsPerTerm)
 				return "";
 		}
-		return LOWERCASE ? s.toLowerCase() : s;
+		return LOWERCASE ? StringTools.toLowerCase(s) : s;
 	}
 
 }
