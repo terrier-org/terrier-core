@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.terrier.indexing.tokenisation.Tokeniser;
@@ -195,17 +196,28 @@ public class TRECCollection extends MultiDocumentFileCollection {
 	public TRECCollection(String CollectionSpecFilename, String TagSet, String BlacklistSpecFilename,
 		 String ignored) {
 		
-		loadDocumentClass();		
+		super(CollectionSpecFilename);
 		setTags(TagSet);
-		readCollectionSpec(CollectionSpecFilename);
 		readDocumentBlacklist(BlacklistSpecFilename);
-			
-		//open the first file
-		try {
-			openNextFile();
-		} catch (IOException ioe) {
-			logger.error("IOException opening first file of collection - is the collection.spec correct?", ioe);
-		}
+	}
+	
+	public TRECCollection(List<String> files, String TagSet, String BlacklistSpecFilename, String ignored) {		
+		super(files);
+		setTags(TagSet);
+		readDocumentBlacklist(BlacklistSpecFilename);
+	}
+	
+	public TRECCollection(String collSpec) {
+		this(
+			collSpec,
+			TagSet.TREC_DOC_TAGS, 
+			ApplicationSetup.makeAbsolute(
+				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
+					ApplicationSetup.TERRIER_ETC), 
+			ApplicationSetup.makeAbsolute(
+				ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
+					ApplicationSetup.TERRIER_INDEX_PATH)
+		);
 	}
 
 	/**
@@ -218,16 +230,7 @@ public class TRECCollection extends MultiDocumentFileCollection {
 	 */
 	public TRECCollection()
 	{
-		this(
-			ApplicationSetup.COLLECTION_SPEC, 
-			TagSet.TREC_DOC_TAGS, 
-			ApplicationSetup.makeAbsolute(
-				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
-					ApplicationSetup.TERRIER_ETC), 
-			ApplicationSetup.makeAbsolute(
-				ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
-					ApplicationSetup.TERRIER_INDEX_PATH)
-			);
+		this(ApplicationSetup.COLLECTION_SPEC);
 	}
 	/**
 	 * A constructor that reads only the document in the specificed

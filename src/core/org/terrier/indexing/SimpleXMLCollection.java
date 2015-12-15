@@ -341,7 +341,7 @@ public class SimpleXMLCollection implements Collection
 	/**
 	 * The list of files to process.
 	 */
-	protected LinkedList<String> FilesToProcess = new LinkedList<String>();
+	protected List<String> FilesToProcess;
 	/** 
 	 * Construct a SimpleXMLCollection
 	 * @param filesToProcess
@@ -369,23 +369,7 @@ public class SimpleXMLCollection implements Collection
 	 */
 	public SimpleXMLCollection(String CollectionSpecFilename, String BlacklistSpecFilename)
 	{
-		//load up the list of files to be processed from the collection.spec
-		//reads the collection specification file
-		try {
-			BufferedReader br = Files.openFileReader(CollectionSpecFilename); 
-			String filename = null;
-			while ((filename = br.readLine()) != null) {
-				if (!filename.startsWith("#") && !filename.equals(""))
-					FilesToProcess.addLast(filename);
-			}
-			br.close();
-			if(logger.isInfoEnabled()){
-			logger.info("Finished reading collection specification");
-			}
-		} catch (IOException ioe) {
-			logger.error("Input output exception while loading the collection.spec file. "
-				+ "("+CollectionSpecFilename+").", ioe);
-		}
+		this(CollectionFactory.loadCollectionSpecFileList(CollectionSpecFilename));
 		
 		//reads the trec_blacklist_docid file
 		if (BlacklistSpecFilename != null && BlacklistSpecFilename.length() >0)
@@ -406,11 +390,6 @@ public class SimpleXMLCollection implements Collection
 							+ "Stack trace follows", ioe);
 			}
 		}
-		
-		
-		initialiseTags();
-		initialiseParser();
-		
 	}
 	
 	protected void initialiseParser()
@@ -575,7 +554,7 @@ public class SimpleXMLCollection implements Collection
 	{
 		if (FilesToProcess.size() == 0)
 			return false;
-		String filename = (String)FilesToProcess.removeFirst();
+		String filename = (String)FilesToProcess.remove(0);
 		if(logger.isDebugEnabled()){
 			logger.debug("Processing file "+filename);
 		}

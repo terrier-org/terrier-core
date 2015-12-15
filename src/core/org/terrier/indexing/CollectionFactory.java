@@ -26,10 +26,16 @@
  */
 
 package org.terrier.indexing;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terrier.indexing.Collection;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.Files;
 
 /** 
   * Implements a factory for Collection objects. Pass the name of the desired 
@@ -64,13 +70,13 @@ public class CollectionFactory
 	{
 		return loadCollections( CollectionName.split("\\s*,\\s*") );
 	}
-	/** Load collection(s) of the specified name. Types and values of the construcor as specified. Returns null on error */
+	/** Load collection(s) of the specified name. Types and values of the constructor as specified. Returns null on error */
 	public static Collection loadCollection(String CollectionName, Class<?>[] contructorTypes, Object[] constructorValues)
 	{
 		return loadCollections( CollectionName.split("\\s*,\\s*"), contructorTypes, constructorValues);
 	}
 	
-	/** Load collection(s) of the specified name. Types and values of the construcor as specified. */
+	/** Load collection(s) of the specified name. Types and values of the constructor as specified. */
 	public static Collection loadCollections(final String[] collNames, Class<?>[] contructorTypes, Object[] constructorValues)
 		{
 		final int collCount = collNames.length;
@@ -134,5 +140,37 @@ public class CollectionFactory
 		else if (collectionName.startsWith("uk.ac.gla.terrier"))
 			collectionName = collectionName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 		return collectionName;
+	}
+	
+	public static List<List<String>> splitCollectionSpecFileList(String CollectionSpecFilename, int k) {
+		List<String> all = loadCollectionSpecFileList(CollectionSpecFilename);
+		return splitList(all, k);		
+	}
+	
+	static <T> List<List<T>> splitList(final List<T> all, final int k) {
+		assert all.size() > 0;
+		return ListUtils.partition(all, Math.max(1, all.size()/k));
+	}
+
+	public static List<String> loadCollectionSpecFileList(String CollectionSpecFilename) {
+		List<String> FilesToProcess = new ArrayList<String>();
+		//load up the list of files to be processed from the collection.spec
+		//reads the collection specification file
+		try {
+			BufferedReader br = Files.openFileReader(CollectionSpecFilename); 
+			String filename = null;
+			while ((filename = br.readLine()) != null) {
+				if (!filename.startsWith("#") && !filename.equals(""))
+					FilesToProcess.add(filename);
+			}
+			br.close();
+			if(SimpleXMLCollection.logger.isInfoEnabled()){
+			SimpleXMLCollection.logger.info("Finished reading collection specification");
+			}
+		} catch (IOException ioe) {
+			SimpleXMLCollection.logger.error("Input output exception while loading the collection.spec file. "
+				+ "("+CollectionSpecFilename+").", ioe);
+		}
+		return FilesToProcess;
 	}
 }
