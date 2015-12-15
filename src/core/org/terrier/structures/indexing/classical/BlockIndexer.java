@@ -261,6 +261,12 @@ public class BlockIndexer extends Indexer {
 	protected Set<String> termFields = null;
 	/** The list of terms in this document, and for each, the block occurrences. */
 	protected DocumentPostingList termsInDocument = null;
+	/**
+	 * Mapping of terms 2 termids
+	 */
+	protected TermCodes termCodes = new TermCodes();
+	
+	
 	/** The maximum number of terms allowed in a block. See Property <tt>blocks.size</tt> */
 	protected int BLOCK_SIZE;
 	/** 
@@ -335,8 +341,9 @@ public class BlockIndexer extends Indexer {
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
 				? new LexiconBuilder(currentIndex, "lexicon", 
 						new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
-						FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"")
-				: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName());
+						FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"", 
+						termCodes)
+				: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName(), termCodes);
 
 		try{
 			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
@@ -467,7 +474,7 @@ public class BlockIndexer extends Indexer {
 			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
 		}
 		/* reset the in-memory mapping of terms to term codes.*/
-		TermCodes.reset();
+		termCodes.reset();
 		System.gc();
 		try {
 			currentIndex.flush();
@@ -489,7 +496,7 @@ public class BlockIndexer extends Indexer {
 		/* add words to lexicontree */
 		lexiconBuilder.addDocumentTerms(_termsInDocument);
 		/* add doc postings to the direct index */
-		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2());
+		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2(termCodes));
 		/* add doc to documentindex */
 		DocumentIndexEntry die = _termsInDocument.getDocumentStatistics();
 		die.setBitIndexPointer(dirIndexPost);

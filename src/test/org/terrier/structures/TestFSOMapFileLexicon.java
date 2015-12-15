@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.terrier.structures.indexing.LexiconBuilder;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.TermCodes;
 
 public class TestFSOMapFileLexicon extends ApplicationSetupBasedTest
 {
@@ -44,7 +45,7 @@ public class TestFSOMapFileLexicon extends ApplicationSetupBasedTest
 		IndexOnDisk index = Index.createNewIndex(
 				ApplicationSetup.TERRIER_INDEX_PATH,
 				ApplicationSetup.TERRIER_INDEX_PREFIX);
-		LexiconBuilder lb = new LexiconBuilder(index, "lexicon");
+		LexiconBuilder lb = new LexiconBuilder(index, "lexicon", new TermCodes());
 		for(String tok: tokens)
 		{
 			lb.addTerm(tok, 1);
@@ -60,7 +61,7 @@ public class TestFSOMapFileLexicon extends ApplicationSetupBasedTest
 		IndexOnDisk index = Index.createNewIndex(
 				ApplicationSetup.TERRIER_INDEX_PATH,
 				ApplicationSetup.TERRIER_INDEX_PREFIX);
-		LexiconBuilder lb = new LexiconBuilder(index, "lexicon");
+		LexiconBuilder lb = new LexiconBuilder(index, "lexicon", new TermCodes());
 		lb.addTerm("", 0);
 		
 	}

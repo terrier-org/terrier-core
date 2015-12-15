@@ -43,6 +43,7 @@ import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.BlockPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.WritablePosting;
+import org.terrier.utility.TermCodes;
 /** Represents the postings of one document, and saves block (term position) information. Uses HashMaps internally.
   * <p>
   * <b>Properties:</b><br>
@@ -89,7 +90,7 @@ public class BlockDocumentPostingList extends DocumentPostingList
 
 	/** returns the postings suitable to be written into the block direct index */
 	@Override
-	public int[][] getPostings()
+	public int[][] getPostings(final TermCodes termCodes)
 	{
 		final int termCount = occurrences.size();
 		final int[] termids = new int[termCount];
@@ -103,7 +104,7 @@ public class BlockDocumentPostingList extends DocumentPostingList
 			int blockTotal = 0;
 			public boolean execute(final String a, final int b)
 			{
-				termids[i] = getTermId(a);
+				termids[i] = termCodes.getCode(a);
 				tfs[i] = b;
 				final TIntHashSet ids = term_blocks.get(a);
 				blockfreqs[i] = ids.size();

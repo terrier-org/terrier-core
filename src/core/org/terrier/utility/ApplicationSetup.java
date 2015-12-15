@@ -588,7 +588,6 @@ public class ApplicationSetup {
 	/** Clears ApplicationSetup of all properties */
 	public static void clearAllProperties()
 	{
-		TermCodes.reset();
 		appProperties.clear();
 		UsedAppProperties.clear();
 	}

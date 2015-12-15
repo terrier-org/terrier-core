@@ -51,17 +51,17 @@ public class TestTermCodes extends TestCase {
 	
 	@Test
 	public void testTermCodes() {
-		TermCodes.reset();
+		TermCodes termCodes = new TermCodes();
 		TObjectIntHashMap<String> check = new TObjectIntHashMap<String>();
 		final int termsLength = terms.length;
 		for (int i = 0; i < termsLength; i++) {
-			int id = TermCodes.getCode(terms[i]);
+			int id = termCodes.getCode(terms[i]);
 			check.put(terms[i], id);
 		}
 		int code;
 		for (int j = 0; j < 1000000; j++) {
 			for (int i = 0; i < termsLength; i++) {
-				code = TermCodes.getCode(terms[i]);
+				code = termCodes.getCode(terms[i]);
 				assertEquals(check.get(terms[i]), code);
 			}
 		}
@@ -71,16 +71,16 @@ public class TestTermCodes extends TestCase {
 	
 	@Test
 	public void testTermCodesPut() {
-		TermCodes.reset();
+		TermCodes termCodes = new TermCodes();
 		final int termsLength = terms.length;
 		TObjectIntHashMap<String> check = new TObjectIntHashMap<String>();
 		for (int i = 0; i < termsLength; i++) {
-			TermCodes.setTermCode(terms[i], i);
+			termCodes.setTermCode(terms[i], i);
 			check.put(terms[i], i);
 		}
 		for (int j = 0; j < 1000000; j++) {
 			for (int i = 0; i < termsLength; i++) {
-				int code = TermCodes.getCode(terms[i]);
+				int code = termCodes.getCode(terms[i]);
 				assertEquals(check.get(terms[i]), code);
 			}
 		}
