@@ -149,7 +149,13 @@ public class CollectionFactory
 	
 	static <T> List<List<T>> splitList(final List<T> all, final int k) {
 		assert all.size() > 0;
-		return ListUtils.partition(all, Math.max(1, all.size()/k));
+		int size = all.size()/k;
+		if (all.size() % k != 0)
+			size++;
+		List<List<T>> rtr = ListUtils.partition(all, size);
+		//we can have no more than k partitions
+		assert rtr.size() <= k;
+		return rtr;
 	}
 
 	public static List<String> loadCollectionSpecFileList(String CollectionSpecFilename) {
