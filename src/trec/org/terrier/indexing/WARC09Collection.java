@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.terrier.indexing.tokenisation.Tokeniser;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FixedSizeInputStream;
 
 /**
@@ -72,7 +73,7 @@ public class WARC09Collection extends MultiDocumentFileCollection
 	
 
 	public WARC09Collection() {
-		super();
+		this(ApplicationSetup.COLLECTION_SPEC);
 	}
 
 	public WARC09Collection(InputStream input) {

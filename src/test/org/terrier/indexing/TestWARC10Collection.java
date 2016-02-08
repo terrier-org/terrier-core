@@ -32,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +49,32 @@ import org.terrier.utility.Files;
  */
 public class TestWARC10Collection extends ApplicationSetupBasedTest {
 
+	@Test public void testCollSpec() throws Exception {
+		Writer w = Files.writeFileWriter(ApplicationSetup.COLLECTION_SPEC);
+		w.append(ApplicationSetup.TERRIER_SHARE + "/tests/cw12.sample");
+		w.close();
+		
+		WARC10Collection coll = new WARC10Collection();
+		assertTrue(coll.nextDocument());
+		Document d = coll.getDocument();
+		assertNotNull(d);
+		assertEquals("clueweb12-0000tw-00-00000", d.getProperty("docno"));
+		assertEquals("http://tsawer.net/2012/02/10/france-image-pool-2012-02-10-162252/", d.getProperty("url"));
+		while(! d.endOfDocument())
+			d.getNextTerm();
+		
+		assertTrue(coll.nextDocument());
+		d = coll.getDocument();
+		assertEquals("clueweb12-0000tw-00-00010", d.getProperty("docno"));
+		assertEquals("http://tsawer.net/2012/02/10/france-image-pool-2012-02-10-162252/", d.getProperty("url"));
+		while(! d.endOfDocument())
+			d.getNextTerm();
+		
+		
+		assertFalse(coll.nextDocument());		
+		coll.close();
+	}
+	
 	@Test public void testDocuments() throws Exception {
 		InputStream is = Files.openFileStream(ApplicationSetup.TERRIER_SHARE + "/tests/cw12.sample");
 		class RedirWARC10Collection extends WARC10Collection
