@@ -41,7 +41,9 @@ path of your Java installation. (e.g. /usr/java/jre1.7.0). If this command shows
 If your system does not meet these requirements you can download a Java 1.7 from the <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">JRE 1.7 download website</a>
 and set the environment variable by including the following line either in your
 /etc/profile or ~/.bashrc files:</p>
-<pre>export JAVA_HOME="Absolute_Path_of_Java_Installation"</pre>
+<pre>export JAVA_HOME=&lt;absolute-path-of-java-installation&gt;</pre>
+e.g.
+<pre>export JAVA_HOME=/usr/java/jre1.7.0</pre>
 
 <h2>Step by Step Windows Installation</h2>
 <p>
@@ -76,7 +78,7 @@ stored in the directory <tt>/local/collections/WT2G/</tt>.</p>
 <pre>cd terrier-core-4.1</pre>
 
 <p>2. Setup Terrier for using a TREC test collection by calling</p>
-<pre>./bin/trec_setup.sh "Absolute_Path_To_Collection_Files"</pre>
+<pre>./bin/trec_setup.sh &lt;absolute-path-to-collection-files&gt;</pre>
 
 In our example we are using a collection located at <tt>/local/collections/WT2G/</tt> -- you will need to adjust this for your environment, e.g.:
 <pre>./bin/trec_setup.sh /local/collections/WT2G/</pre>
