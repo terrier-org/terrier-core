@@ -17,7 +17,7 @@
 <pre>bin/trec_terrier.sh -e</pre>
 
 <p>
-The above command evaluates each .res file in folder /var/results for TREC adhoc task. We can evaluate for a particular result file by giving the filename in the command line:
+The above command evaluates each .res file in folder var/results for TREC adhoc task. We can evaluate for a particular result file by giving the filename in the command line:
 </p>
 
 <pre>bin/trec_terrier.sh -e PL2c1.0_0.res</pre> or
@@ -69,6 +69,7 @@ Average Precision: 0.2977
 
 <p> The above displayed evaluation measures are averaged over a batch of queries. We can save the average precision of each query by using option -p in the command line:</p>
 <pre>bin/trec_terrier.sh -e PL2c1.0_0.res -p</pre>
+<p>The resulting output saved in the corresponding .eval file contains two columns, the first is query id, the second is the average precision for that query.</p>
 
 <p> In addition to adhoc task, we can also evaluate for TREC named-page finding task by using option -n: </p>
 <pre>bin/trec_terrier.sh -e PL2c1.0_0.res -n</pre>
