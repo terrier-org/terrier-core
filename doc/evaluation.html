@@ -71,20 +71,23 @@ Average Precision: 0.2977
 <pre>bin/trec_terrier.sh -e PL2c1.0_0.res -p</pre>
 <p>The resulting output saved in the corresponding .eval file contains two columns, the first is query id, the second is the average precision for that query.</p>
 
-<p> In addition to adhoc task, we can also evaluate for TREC named-page finding task by using option -n: </p>
+<p><b>Named Page Evaluation</b></p>
+<p>In addition to measures traditionally used in evaluating adhoc search tasks, Terrier can also evaluate for measures used in named-page finding tasks, by using option -n: </p>
 <pre>bin/trec_terrier.sh -e PL2c1.0_0.res -n</pre>
 
 <p>
 The evaluation result, including the average reciprocal rank over all queries, are saved in file var/results/PL2c1.0_0.eval. The evaluation result contains the rank of the first relevant retrieved document for each query. It also contains the overall evaluation information as shown in the following example:
 </p>
 
-<p><tt>Average Reciprocal Rank: 0.5320129003570543</tt></p>
-<p><tt>Percentage of answers found in the first rank: 0.44</tt></p>
-<p><tt>Percentage of answers found among the top 5 documents: 3.033333333333333</tt></p>
-<p><tt>Percentage of answers found among the top 10 documents: 0.72</tt></p>
-<p><tt>Percentage of answers found among the top 20 documents: 0.7933333333333333</tt></p>
-<p><tt>Percentage of answers found among the top 50 documents: 0.8666666666666667</tt></p>
-<p><tt>Percentage of documents not found in top 50 documents: 0.13333333333333333</tt></p>
+<pre>
+Average Reciprocal Rank: 0.5320129003570543
+Percentage of answers found in the first rank: 0.44
+Percentage of answers found among the top 5 documents: 3.033333333333333
+Percentage of answers found among the top 10 documents: 0.72
+Percentage of answers found among the top 20 documents: 0.7933333333333333
+Percentage of answers found among the top 50 documents: 0.8666666666666667
+Percentage of documents not found in top 50 documents: 0.13333333333333333
+</pre>
 
 <p>If option -p is applied, the .eval file contains the reciprocal rank of each query. </p>
 
