@@ -104,11 +104,14 @@ public class FatFeaturedScoringMatching implements Matching {
 			final List<String> models = new ArrayList<String>();
 			while((line = br.readLine()) != null)
 			{
-				//ignore linee starting with comments
+				//ignore lines starting with comments
 				if (line.startsWith("#"))
 					continue;
 				//remove trailing comments
 				line = line.replaceAll("#.+$", "");
+				//TREC-445: Empty line in feature definition file causes exception
+				if (line.length() == 0) 
+					continue;
 				models.add(line.trim());
 			}
 			br.close();
