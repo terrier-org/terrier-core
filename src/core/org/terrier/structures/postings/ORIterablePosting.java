@@ -127,6 +127,38 @@ public class ORIterablePosting extends IterablePostingImpl {
 		}
 		return id;
 	}
+	
+	
+
+	@Override
+	public int next(int target) throws IOException {
+		final IterablePosting ips[] = postingQueue.toArray(new IterablePosting[postingQueue.size()]);
+		postingQueue.clear(); boolean OK = false;
+		for(IterablePosting ip : ips)
+		{
+			if (ip.getId() >= target || (ip.next(target) != IterablePosting.EOL))
+			{
+				postingQueue.add(ip);
+				OK = true;
+			}
+		}
+		if (! OK)
+			return IterablePosting.EOL;
+		IterablePosting ip = postingQueue.poll();
+		id = ip.getId();
+		firstPosting(ip);
+		if (ip.next() != IterablePosting.EOL)
+			postingQueue.add(ip);
+		
+		while(postingQueue.size() > 0 && postingQueue.peek().getId() == id)
+		{
+			ip = postingQueue.poll();
+			addPosting(ip);
+			if (ip.next() != IterablePosting.EOL)
+				postingQueue.add(ip);
+		}
+		return id;
+	}
 
 	/** {@inheritDoc} */
 	@Override
