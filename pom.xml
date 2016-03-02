@@ -47,6 +47,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>fastutil</groupId>
 			<artifactId>fastutil</artifactId>
 			<version>5.0.9</version>
