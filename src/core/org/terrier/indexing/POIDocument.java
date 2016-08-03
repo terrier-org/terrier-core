@@ -75,6 +75,7 @@ public class POIDocument extends FileDocument {
 	
 	protected POITextExtractor getExtractor(String filename, InputStream docStream) throws IOException
 	{
+		filename = filename.toLowerCase();
 		//Word .doc: 
 		if (filename.endsWith(".doc"))
 		{
