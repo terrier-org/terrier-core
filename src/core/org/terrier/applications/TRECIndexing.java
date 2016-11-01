@@ -109,7 +109,7 @@ public class TRECIndexing {
 		//load the appropriate collection
 		final String collectionName = ApplicationSetup.getProperty("trec.collection.class", "TRECCollection");
 		
-		Class[] constructerClasses = {String.class,String.class,String.class,String.class};
+		Class<?>[] constructerClasses = {String.class,String.class,String.class,String.class};
 		String[] constructorValues = {collectionSpec,TagSet.TREC_DOC_TAGS,
 			ApplicationSetup.makeAbsolute(
 				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
