@@ -103,6 +103,7 @@ import org.terrier.structures.indexing.singlepass.hadoop.TestBitPostingIndexInpu
 import org.terrier.structures.indexing.singlepass.hadoop.TestPositingAwareSplit;
 import org.terrier.structures.indexing.singlepass.hadoop.TestSplitEmittedTerm;
 import org.terrier.structures.postings.TestFieldORIterablePosting;
+import org.terrier.structures.postings.TestFieldOnlyIterablePosting;
 import org.terrier.structures.postings.TestORIterablePosting;
 import org.terrier.structures.postings.TestPhraseIterablePosting;
 import org.terrier.structures.postings.TestProximityIterablePosting;
@@ -243,6 +244,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestPositingAwareSplit.class,
 	
 	//structures.postings
+	TestFieldOnlyIterablePosting.class,
 	TestORIterablePosting.class,
 	TestFieldORIterablePosting.class,
 	TestPhraseIterablePosting.class,
