@@ -170,11 +170,11 @@ public class CollectionFactory
 					FilesToProcess.add(filename);
 			}
 			br.close();
-			if(SimpleXMLCollection.logger.isInfoEnabled()){
-			SimpleXMLCollection.logger.info("Finished reading collection specification");
+			if(logger.isInfoEnabled()){
+				logger.info("Finished reading collection specification");
 			}
 		} catch (IOException ioe) {
-			SimpleXMLCollection.logger.error("Input output exception while loading the collection.spec file. "
+			logger.error("Input output exception while loading the collection.spec file. "
 				+ "("+CollectionSpecFilename+").", ioe);
 		}
 		return FilesToProcess;
