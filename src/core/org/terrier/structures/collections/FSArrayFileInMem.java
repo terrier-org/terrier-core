@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 import org.apache.hadoop.io.Writable;
-
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.collections.FSArrayFile;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.Files;
@@ -45,6 +45,17 @@ import org.terrier.utility.io.RandomDataInputMemory;
 public class FSArrayFileInMem<V extends Writable> extends FSArrayFile<V>
 {
 	V value;
+	
+	@SuppressWarnings("unchecked")
+	public FSArrayFileInMem(IndexOnDisk index, String structureName) throws IOException
+	{
+		this(
+				index.getPath() + "/" + index.getPrefix() + "." + structureName + FSArrayFile.USUAL_EXTENSION,
+				false,
+				(FixedSizeWriteableFactory<V>)index.getIndexStructure(structureName + "-factory")
+				);
+	}
+	
 	/** constructor
 	 * 
 	 * @param filename

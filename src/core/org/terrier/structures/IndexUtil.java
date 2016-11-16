@@ -424,6 +424,20 @@ public class IndexUtil {
 		IndexUtil.close(inputStream);
 	}
 	
+	public static int getFieldId(Index index, String structureName, String fieldName) {
+		if (fieldName == null)
+			return -1;
+		String[] fieldNames = ArrayUtils.parseCommaDelimitedString(index.getIndexProperty("index.direct.fields.names", ""));
+		int i=-1;
+		for(String f : fieldNames)
+		{
+			i++;
+			if (f.equals(fieldName))
+				return i;
+		}
+		return -1;			
+	}
+	
 	/** Rename a structure within a given index. 
 	 * @return Returns true iff a structure was successfully renamed.
 	 */

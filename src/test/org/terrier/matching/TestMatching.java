@@ -34,15 +34,21 @@ import gnu.trove.TIntHashSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
+import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
+import org.terrier.matching.indriql.QueryTerm;
+import org.terrier.matching.indriql.SingleQueryTerm;
+import org.terrier.matching.indriql.SynonymTerm;
 import org.terrier.matching.models.DLH13;
 import org.terrier.querying.Manager;
 import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.querying.parser.Query;
+import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.querying.parser.QueryParser;
 import org.terrier.querying.parser.QueryParserException;
 import org.terrier.structures.Index;
 import org.terrier.structures.LexiconEntry;
+import org.terrier.structures.collections.MapEntry;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.tests.ApplicationSetupBasedTest;
@@ -57,6 +63,13 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		{
 			return new org.terrier.matching.taat.Full(i);
 		}
+
+		@Override
+		protected Class<? extends Matching> getMatchingClass() {
+			return org.terrier.matching.taat.Full.class;
+		}
+		
+		
 	}
 	
 	public static class TestDAATFullMatching extends TestMatching
@@ -66,33 +79,12 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		{
 			return new org.terrier.matching.daat.Full(i);
 		}
-	}
-	
-	
-	public static class TestTAATFullNoPLMMatching extends TestMatching
-	{
-		@Override
-		protected Matching makeMatching(Index i)
-		{
-			return new org.terrier.matching.taat.FullNoPLM(i);
-		}
-		
-		@Override
-		public void testThreeDocumentsSynonymIndexMatching() throws Exception {}
-	}
-	
-	public static class TestDAATFullNoPLMMatching extends TestMatching
-	{
-		@Override
-		protected Matching makeMatching(Index i)
-		{
-			return new org.terrier.matching.daat.FullNoPLM(i);
-		}
 
 		@Override
-		public void testThreeDocumentsSynonymIndexMatching() throws Exception {}
+		protected Class<? extends Matching> getMatchingClass() {
+			return org.terrier.matching.daat.Full.class;
+		}
 	}
-	
 	
 	@Before public void setIndexerProperties()
 	{
@@ -102,6 +94,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 	}
 	
 	protected abstract Matching makeMatching(Index i);
+	protected abstract Class<? extends Matching> getMatchingClass();
 
 	@Test public void testSingleDocumentIndexMatching() throws Exception
 	{
@@ -237,7 +230,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt);
+		query.obtainQueryTerms(mqt, null, null, null);
 		q.setMatchingQueryTerms(mqt);
 		
 		//mqt = new MatchingQueryTerms();
@@ -265,7 +258,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		query = q.getQuery();
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt);
+		query.obtainQueryTerms(mqt, null, null, null);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -277,7 +270,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		
 		double foxScoreBody = rs.getScores()[0];
 		
-		assertTrue(foxScoreBody==foxScoreAll); // Intuitively, foxScoreBody should be less than foxScoreAll, but Terrier does not currently consider fields when scoring
+		//assertTrue(foxScoreBody==foxScoreAll); // Intuitively, foxScoreBody should be less than foxScoreAll, but Terrier does not currently consider fields when scoring
 		
 		
 		String query3 = "BODY:example";
@@ -294,16 +287,17 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		query = q.getQuery();
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt);
+		query.obtainQueryTerms(mqt, null, null, null);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
 		rs = matching.match("query3", mqt);
 		assertNotNull(rs);
-		assertEquals(3, rs.getResultSize());
 
 		assertTrue(rs.getScores()[0] > 0);
-		assertEquals(Double.NEGATIVE_INFINITY,rs.getScores()[1],0.0);
+		if (rs.getResultSize() > 1)
+			assertEquals(Double.NEGATIVE_INFINITY,rs.getScores()[1],0.0);
+		if (rs.getResultSize() > 2)
 		assertEquals(Double.NEGATIVE_INFINITY,rs.getScores()[2],0.0);
 		
 		String query4 = "TITLE:(example dog)";
@@ -321,17 +315,18 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		System.err.println(query.parseTree());
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt);
+		query.obtainQueryTerms(mqt, null, null, null);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
 		rs = matching.match("query4", mqt);
 		assertNotNull(rs);
-		assertEquals(3, rs.getResultSize());
 		
 		assertTrue(rs.getScores()[0] > 0);
 		assertTrue(rs.getScores()[1] > 0);
-		assertEquals(Double.NEGATIVE_INFINITY,rs.getScores()[2],0.0);
+		assertTrue(rs.getScores()[2] > 0);
+		if (rs.getResultSize() > 3)
+			assertEquals(Double.NEGATIVE_INFINITY,rs.getScores()[3],0.0);
 		
 		return rs;
 	}
@@ -357,7 +352,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		mqt = new MatchingQueryTerms();
-		mqt.setTermProperty("quick|waggily");
+		mqt.add(QTPBuilder.of( new SynonymTerm(new String[]{"quick","waggily"})).build());
+		//mqt.setTermProperty("quick|waggily");
 		mqt.setDefaultTermWeightingModel(new DLH13());
 		rs = matching.match("query1", mqt);
 		assertNotNull(rs);
@@ -392,12 +388,12 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		Matching matching = makeMatching(index);
 		assertNotNull(matching);
 		
-		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		mqt.setDefaultTermWeightingModel(new DLH13());
+		MatchingQueryTerms mqt = new MatchingQueryTerms();		
 		LexiconEntry le = index.getLexicon().getLexiconEntry("quick");
 		assertNotNull(le);
 		le.setStatistics(1, 40);
 		mqt.setTermProperty("quick", le);
+		mqt.setDefaultTermWeightingModel(new DLH13());
 		ResultSet rs = matching.match("query1", mqt);
 		assertNotNull(rs);
 		assertEquals(1, rs.getResultSize());
@@ -429,8 +425,10 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		mqt = new MatchingQueryTerms();
-		mqt.setTermProperty("dog");
-		mqt.setTermProperty("window");
+		mqt.add(QTPBuilder.of(new SingleQueryTerm("dog")).build());
+		mqt.add(QTPBuilder.of(new SingleQueryTerm("window")).build());
+//		mqt.setTermProperty("dog");
+//		mqt.setTermProperty("window");
 		mqt.setDefaultTermWeightingModel(new DLH13());
 		rs = matching.match("query1", mqt);
 		assertNotNull(rs);
@@ -524,59 +522,55 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		Manager m = new Manager(index);
 		SearchRequest srq = null;
 		
+		//1, are documents retrieved: single term, one document
+		srq = m.newSearchRequest("test1", "dog");
+		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		m.runPreProcessing(srq);
+		m.runMatching(srq);
+		m.runPostProcessing(srq);
+		m.runPostFilters(srq);
+		assertEquals(2, srq.getResultSet().getResultSize());
 		
-		for(String matching : new String[] {"taat.Full", "daat.Full"})
-		{
-			//1, are documents retrieved: single term, one document
-			srq = m.newSearchRequest("test1", "dog");
-			srq.addMatchingModel("org.terrier.matching."+ matching, "PL2");
-			m.runPreProcessing(srq);
-			m.runMatching(srq);
-			m.runPostProcessing(srq);
-			m.runPostFilters(srq);
-			assertEquals(2, srq.getResultSet().getResultSize());
-			
-			//2, are documents retrieved: two terms, best match
-			srq = m.newSearchRequest("test1", "brown window");
-			srq.addMatchingModel("org.terrier.matching."+ matching, "PL2");
-			m.runPreProcessing(srq);
-			m.runMatching(srq);
-			m.runPostProcessing(srq);
-			m.runPostFilters(srq);
-			assertEquals(2, srq.getResultSet().getResultSize());
+		//2, are documents retrieved: two terms, best match
+		srq = m.newSearchRequest("test1", "brown window");
+		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		m.runPreProcessing(srq);
+		m.runMatching(srq);
+		m.runPostProcessing(srq);
+		m.runPostFilters(srq);
+		assertEquals(2, srq.getResultSet().getResultSize());
+	
+		//3, are documents retrieved: two terms, one of which is positive requirement
+		srq = m.newSearchRequest("test1", "dog +window");
+		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		m.runPreProcessing(srq);
+		m.runMatching(srq);
+		m.runPostProcessing(srq);
+		m.runPostFilters(srq);
+		assertEquals(1, srq.getResultSet().getResultSize());
+	
+		//4, are documents retrieved: two terms, one of which is negative requirement
+		srq = m.newSearchRequest("test1", "dog -fox");
+		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		m.runPreProcessing(srq);
+		m.runMatching(srq);
+		m.runPostProcessing(srq);
+		m.runPostFilters(srq);
+		/*System.err.println(srq.getResultSet().getResultSize());
+		for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
+			System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
+		}*/
+		assertEquals(1, srq.getResultSet().getResultSize());	
 		
-			//3, are documents retrieved: two terms, one of which is positive requirement
-			srq = m.newSearchRequest("test1", "dog +window");
-			srq.addMatchingModel("org.terrier.matching."+ matching, "PL2");
-			m.runPreProcessing(srq);
-			m.runMatching(srq);
-			m.runPostProcessing(srq);
-			m.runPostFilters(srq);
-			assertEquals(1, srq.getResultSet().getResultSize());
-		
-			//4, are documents retrieved: two terms, one of which is negative requirement
-			srq = m.newSearchRequest("test1", "dog -fox");
-			srq.addMatchingModel("org.terrier.matching."+ matching, "PL2");
-			m.runPreProcessing(srq);
-			m.runMatching(srq);
-			m.runPostProcessing(srq);
-			m.runPostFilters(srq);
-			/*System.err.println(srq.getResultSet().getResultSize());
-			for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
-				System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
-			}*/
-			assertEquals(1, srq.getResultSet().getResultSize());	
-			
-			//5, are documents retrieved: two terms, both of which are positive requirements
-			srq = m.newSearchRequest("test1", "+dog +fox");
-			srq.addMatchingModel("org.terrier.matching."+ matching, "PL2");
-			m.runPreProcessing(srq);
-			m.runMatching(srq);
-			m.runPostProcessing(srq);
-			m.runPostFilters(srq);
-			assertEquals(1, srq.getResultSet().getResultSize());	
-			
-		}
+		//5, are documents retrieved: two terms, both of which are positive requirements
+		srq = m.newSearchRequest("test1", "+dog +fox");
+		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		m.runPreProcessing(srq);
+		m.runMatching(srq);
+		m.runPostProcessing(srq);
+		m.runPostFilters(srq);
+		assertEquals(1, srq.getResultSet().getResultSize());	
+
 	}
 	
     @Test public void testRequirementsFields() throws Exception {
@@ -592,27 +586,21 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		SearchRequest srq = null;
 		
 		
-		for(String matching : new String[] {"taat.Full", "daat.Full"})
-		{
+		//4, are documents retrieved: two terms, one of which is negative requirement
+		srq = m.newSearchRequest("test1", "dog -title:Animal");
+		srq.addMatchingModel(this.getMatchingClass().getName(), "PL2");
+		m.runPreProcessing(srq);
+		m.runMatching(srq);
+		m.runPostProcessing(srq);
+		m.runPostFilters(srq);
+		//System.err.println(srq.getResultSet().getResultSize());
+		/*for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
+			System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
+		}*/
+		assertEquals(1, srq.getResultSet().getResultSize());
+		assertEquals(1, srq.getResultSet().getDocids()[0]);	
 			
-		
-			//4, are documents retrieved: two terms, one of which is negative requirement
-			srq = m.newSearchRequest("test1", "dog -title:Animal");
-			srq.addMatchingModel("org.terrier.matching."+ matching, "PL2");
-			m.runPreProcessing(srq);
-			m.runMatching(srq);
-			m.runPostProcessing(srq);
-			m.runPostFilters(srq);
-			//System.err.println(srq.getResultSet().getResultSize());
-			/*for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
-				System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
-			}*/
-			assertEquals(1, srq.getResultSet().getResultSize());
-			assertEquals(1, srq.getResultSet().getDocids()[0]);	
-			
-			
-			
-		}
+
 	}
 	
 }

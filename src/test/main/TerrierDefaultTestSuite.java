@@ -64,9 +64,7 @@ import org.terrier.integer.tests.BasicShakSmallChunk;
 import org.terrier.integer.tests.BlockShak;
 import org.terrier.integer.tests.BlockShakSmallMaxBlockSize;
 import org.terrier.matching.TestMatching.TestDAATFullMatching;
-import org.terrier.matching.TestMatching.TestDAATFullNoPLMMatching;
 import org.terrier.matching.TestMatching.TestTAATFullMatching;
-import org.terrier.matching.TestMatching.TestTAATFullNoPLMMatching;
 import org.terrier.matching.TestMatchingQueryTerms;
 import org.terrier.matching.TestResultSets;
 import org.terrier.matching.TestTRECResultsMatching;
@@ -193,9 +191,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	//.matching
 	TestMatchingQueryTerms.class,
 	TestDAATFullMatching.class,
-	TestDAATFullNoPLMMatching.class,
 	TestTAATFullMatching.class,
-	TestTAATFullNoPLMMatching.class,
 	TestTRECResultsMatching.class,
 	TestResultSets.class,
 	

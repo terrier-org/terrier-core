@@ -83,8 +83,7 @@ public class Full extends BaseMatching
 		plm.prepare(true);
 		
 		// Check whether we need to match an empty query. If so, then return the existing result set.
-		String[] queryTermStrings = queryTerms.getTerms();
-		if (MATCH_EMPTY_QUERY && queryTermStrings.length == 0) {
+		if (MATCH_EMPTY_QUERY && plm.size() == 0) {
 			resultSet.setExactResultSize(collectionStatistics.getNumberOfDocuments());
 			resultSet.setResultSize(collectionStatistics.getNumberOfDocuments());
 			return resultSet;
@@ -107,6 +106,7 @@ public class Full extends BaseMatching
         int currentDocId = selectMinimumDocId(postingHeap);
         IterablePosting currentPosting = null;
         double threshold = 0.0d;
+        long requiredBitPattern = plm.getRequiredBitMask();
         //int scored = 0;
         
         while (currentDocId != -1)  {
@@ -119,7 +119,6 @@ public class Full extends BaseMatching
             //scored++;
             do {
             	assignScore(currentPostingListIndex, currentCandidate);
-            	//assignScore(currentPostingListIndex, wm[currentPostingListIndex], currentCandidate, currentPosting);
             	long newDocid = currentPosting.next();
             	postingHeap.dequeueLong();
                 if (newDocid != IterablePosting.EOL)
@@ -129,22 +128,29 @@ public class Full extends BaseMatching
                 long elem = postingHeap.firstLong();
                 currentPostingListIndex = (int) (elem & 0xFFFF);
                 currentPosting = plm.getPosting(currentPostingListIndex);
+                
                 nextDocid = (int) (elem >>> 32);
             } while (nextDocid == currentDocId);
             
-            
-            
             if ((! targetResultSetSizeReached) || currentCandidate.getScore() > threshold) {
-            	//System.err.println("New document " + currentCandidate.getDocId() + " with score " + currentCandidate.getScore() + " passes threshold of " + threshold);
-        		candidateResultList.add(currentCandidate);
-        		if (RETRIEVED_SET_SIZE != 0 && candidateResultList.size() == RETRIEVED_SET_SIZE + 1)
-        		{
-        			targetResultSetSizeReached = true;
-        			candidateResultList.poll();
-        			//System.err.println("Removing document with score " + candidateResultList.poll().getScore());
-        		}
-        		//System.err.println("Now have " + candidateResultList.size() + " retrieved docs");
-        		threshold = candidateResultList.peek().getScore();
+            	System.err.println("id="+currentDocId + " occurrence="+currentCandidate.getOccurrence() + " pattern="+requiredBitPattern + " match=" + (currentCandidate.getOccurrence() & requiredBitPattern));
+            	if ( (currentCandidate.getOccurrence() & requiredBitPattern) == requiredBitPattern)
+            	{     	
+            		//TODO here, we should score the non-optional postings
+            		
+	            	//System.err.println("New document " + currentCandidate.getDocId() + " with score " + currentCandidate.getScore() + " passes threshold of " + threshold);
+	        		candidateResultList.add(currentCandidate);
+	        		if (RETRIEVED_SET_SIZE != 0 && candidateResultList.size() == RETRIEVED_SET_SIZE + 1)
+	        		{
+	        			targetResultSetSizeReached = true;
+	        			candidateResultList.poll();
+	        			//System.err.println("Removing document with score " + candidateResultList.poll().getScore());
+	        		}
+	        		//System.err.println("Now have " + candidateResultList.size() + " retrieved docs");
+	        		threshold = candidateResultList.peek().getScore();
+            	} else {
+            		System.err.println("Document " + currentDocId + " was discarded as it didnt match required bit pattern, required " + requiredBitPattern + " was " + currentCandidate.getOccurrence());
+            	}
         	}
             currentDocId = selectMinimumDocId(postingHeap);
         }

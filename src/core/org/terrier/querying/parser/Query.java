@@ -30,6 +30,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
+import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
+import org.terrier.matching.indriql.QueryTerm;
+import org.terrier.matching.models.WeightingModel;
 import org.terrier.terms.TermPipelineAccessor;
 /**
  * An abstract class that models a query, that consists of 
@@ -39,6 +43,51 @@ import org.terrier.terms.TermPipelineAccessor;
   */
 public abstract class Query implements Serializable, Cloneable{
 
+	public static class QTPBuilder
+	{
+		public static QTPBuilder of(QueryTerm term)
+		{
+			return new QTPBuilder(term);
+		}
+		
+		QueryTerm t;
+		QueryTermProperties qtp = new QueryTermProperties(0);
+		QTPBuilder(QueryTerm _t) {
+			this.t = _t; 
+			qtp.weight = 1;
+		}
+		
+		public QTPBuilder addWeightingModel(WeightingModel wm)
+		{
+			qtp.termModels.add(wm);
+			return this;
+		}
+		
+		public QTPBuilder setWeight(Double w)
+		{
+			qtp.weight = w;
+			return this;
+		}
+		
+		public QTPBuilder setRequired(Boolean positiveReq)
+		{
+			qtp.required = positiveReq;
+			return this;
+		}
+		
+		public QTPBuilder setField(String field)
+		{
+			qtp.field = field;
+			return this;
+		}
+		
+		public MatchingTerm build()
+		{
+			return new MatchingTerm(t, qtp);
+		}
+		
+	}
+	
 	/**
 	 * ForEachQueryNode interface
 	 */
@@ -126,29 +175,32 @@ public abstract class Query implements Serializable, Cloneable{
 		return false;
 	}
 	
-	/**
-	 * Stores the terms of the query in an structure used for matching
-	 * documents to the query. 
-	 * @param terms MatchingQueryTerms the structure that is used for 
-	 *        modelling a query for matching.
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms) {
-		if (child != null)
-			child.obtainQueryTerms(terms);
-	}
+	public abstract void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight);
+	//abstract Map.Entry<QueryTerm,QueryTermProperties> getMatchingTerm();
 	
-	/**
-	 * Stores the terms of the query in an structure used for matching
-	 * documents to the query. 
-	 * @param terms MatchingQueryTerms the structure that is used for 
-	 *        modelling a query for matching.
-	 * @param required boolean specifies whether the subqueries are 
-	 *        required or not.
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms, boolean required) {
-		if (child != null)
-			child.obtainQueryTerms(terms, required);
-	}
+//	/**
+//	 * Stores the terms of the query in an structure used for matching
+//	 * documents to the query. 
+//	 * @param terms MatchingQueryTerms the structure that is used for 
+//	 *        modelling a query for matching.
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms) {
+//		if (child != null)
+//			child.obtainQueryTerms(terms);
+//	}
+//	
+//	/**
+//	 * Stores the terms of the query in an structure used for matching
+//	 * documents to the query. 
+//	 * @param terms MatchingQueryTerms the structure that is used for 
+//	 *        modelling a query for matching.
+//	 * @param required boolean specifies whether the subqueries are 
+//	 *        required or not.
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms, boolean required) {
+//		if (child != null)
+//			child.obtainQueryTerms(terms, required);
+//	}
 	
 	/**
 	 * Returns the terms of the query.

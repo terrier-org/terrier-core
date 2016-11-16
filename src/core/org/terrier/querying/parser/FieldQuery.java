@@ -25,13 +25,11 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk>
  */
 package org.terrier.querying.parser;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.terrier.matching.MatchingQueryTerms;
-import org.terrier.matching.tsms.TermInFieldModifier;
 /**
  * Models a query qualified with a field.
  * @author Vassilis Plachouras, Craig Macdonald
@@ -100,34 +98,38 @@ public class FieldQuery extends Query {
 		return field + ":" + child.toString();
 	}
 	
-	/**
-	 * Prepares the query for matching by transforming
-	 * the query objects to a set of query terms.
-	 * @param terms MatchingQueryTerms the object which holds the 
-	 *        query terms and their modifiers.
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms) {
-		//System.out.println("FieldQuery: obtainQueryTerms");
-		obtainQueryTerms(terms, true);
+	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight) {
+		child.obtainQueryTerms(terms, this.field, required, weight);
 	}
 	
-	/**
-	 * Prepares the query for matching by transforming
-	 * the query objects to a set of query terms.
-	 * @param terms MatchingQueryTerms the object which holds the 
-	 *        query terms and their modifiers.
-	 * @param required boolean indicates whether the field query
-	 *        is required or not.     
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms, boolean required) {
-		//System.out.println("FieldQuery: obtainQueryTerms with " + required);
-		child.obtainQueryTerms(terms);
-		ArrayList<Query> alist = new ArrayList<Query>();
-		child.getTerms(alist);
-		SingleTermQuery[] queryTerms = (SingleTermQuery[])alist.toArray(tmpSTQ);
-		for (int i=0; i<queryTerms.length; i++)
-			terms.setTermProperty(queryTerms[i].getTerm(), new TermInFieldModifier(field, required));
-	}
+//	/**
+//	 * Prepares the query for matching by transforming
+//	 * the query objects to a set of query terms.
+//	 * @param terms MatchingQueryTerms the object which holds the 
+//	 *        query terms and their modifiers.
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms) {
+//		//System.out.println("FieldQuery: obtainQueryTerms");
+//		obtainQueryTerms(terms, true);
+//	}
+//	
+//	/**
+//	 * Prepares the query for matching by transforming
+//	 * the query objects to a set of query terms.
+//	 * @param terms MatchingQueryTerms the object which holds the 
+//	 *        query terms and their modifiers.
+//	 * @param required boolean indicates whether the field query
+//	 *        is required or not.     
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms, boolean required) {
+//		//System.out.println("FieldQuery: obtainQueryTerms with " + required);
+//		child.obtainQueryTerms(terms);
+//		ArrayList<Query> alist = new ArrayList<Query>();
+//		child.getTerms(alist);
+//		SingleTermQuery[] queryTerms = (SingleTermQuery[])alist.toArray(tmpSTQ);
+//		for (int i=0; i<queryTerms.length; i++)
+//			terms.setTermProperty(queryTerms[i].getTerm(), new TermInFieldModifier(field, required));
+//	}
 	/** Checks to see if field name is a valid control name, as specified by
 	  * allowed, and if so adds it to the controls table and returns true to 
 	  * specify that this Query object is now dead. 

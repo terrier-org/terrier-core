@@ -110,6 +110,11 @@ public class TRECSetup {
 			//creating the terrier.properties file
 			PrintWriter propertiesWriter = new PrintWriter(new FileWriter(ETC_Dir+ "terrier.properties"));
 			System.out.println("Creating terrier.properties file.");		
+			
+			propertiesWriter.println("#default controls for manager");
+			propertiesWriter.println("querying.preprocesses.order=TerrierQLToControls,TerrierQLToMatchingQueryTerms,ApplyTermPipeline");
+			propertiesWriter.println("querying.preprocesses.controls=parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,applypipeline:ApplyTermPipeline");
+			
 			propertiesWriter.println("#default controls for query expansion");
 			propertiesWriter.println("querying.postprocesses.order=QueryExpansion");
 			propertiesWriter.println("querying.postprocesses.controls=qe:QueryExpansion");
@@ -119,7 +124,7 @@ public class TRECSetup {
 			propertiesWriter.println("querying.postfilters.controls=decorate:SimpleDecorate,site:SiteFilter,scope:Scope");
 			propertiesWriter.println();
 			propertiesWriter.println("#default and allowed controls");
-			propertiesWriter.println("querying.default.controls=");
+			propertiesWriter.println("querying.default.controls=parsecontrols:on,parseql:on,applypipeline:on");
 			propertiesWriter.println("querying.allowed.controls=scope,qe,qemodel,start,end,site,scope");
 			propertiesWriter.println();
 			propertiesWriter.println("#document tags specification");

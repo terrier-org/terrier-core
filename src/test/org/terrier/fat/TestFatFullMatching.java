@@ -57,6 +57,11 @@ public class TestFatFullMatching extends TestMatching {
 		return new org.terrier.matching.daat.FatFull(i);
 	}
 	
+	@Override
+	protected Class<? extends Matching> getMatchingClass() {
+		return org.terrier.matching.daat.FatFull.class;
+	}
+	
 	ResultSet _testSingleDocumentIndexMatchingFields() throws Exception
 	{
 		ApplicationSetup.setProperty("FieldTags.process", "TITLE,ELSE");
@@ -177,5 +182,7 @@ public class TestFatFullMatching extends TestMatching {
 		assertEquals(9, postings[0].getDocumentLength());
 		assertNull(postings[1]);
 	}
+
+	
 	
 }

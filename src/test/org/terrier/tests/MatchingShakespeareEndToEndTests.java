@@ -46,39 +46,39 @@ public class MatchingShakespeareEndToEndTests {
 		}
 	}
 	
-	public static class TestDAATFullNoPLMMatchingShakespeareEndToEndTest extends BasicShakespeareEndToEndTest
-	{
-		public TestDAATFullNoPLMMatchingShakespeareEndToEndTest()
-		{
-			testHooks.add(new BatchEndToEndTestEventHooks(){
-				@Override
-				public String[] processRetrievalOptions(String[] retrievalOptions) {
-					String[] options = super.processRetrievalOptions(retrievalOptions);
-					String[] newoptions = new String[options.length+1];
-					System.arraycopy(options, 0, newoptions, 0, options.length);
-					newoptions[options.length] = "-Dtrec.matching=org.terrier.matching.daat.FullNoPLM";
-					return newoptions;
-				}			
-			});
-		}
-	}
+//	public static class TestDAATFullNoPLMMatchingShakespeareEndToEndTest extends BasicShakespeareEndToEndTest
+//	{
+//		public TestDAATFullNoPLMMatchingShakespeareEndToEndTest()
+//		{
+//			testHooks.add(new BatchEndToEndTestEventHooks(){
+//				@Override
+//				public String[] processRetrievalOptions(String[] retrievalOptions) {
+//					String[] options = super.processRetrievalOptions(retrievalOptions);
+//					String[] newoptions = new String[options.length+1];
+//					System.arraycopy(options, 0, newoptions, 0, options.length);
+//					newoptions[options.length] = "-Dtrec.matching=org.terrier.matching.daat.FullNoPLM";
+//					return newoptions;
+//				}			
+//			});
+//		}
+//	}
 	
-	public static class TestTAATFullNoPLMMatchingShakespeareEndToEndTest extends BasicShakespeareEndToEndTest
-	{
-		public TestTAATFullNoPLMMatchingShakespeareEndToEndTest()
-		{
-			testHooks.add(new BatchEndToEndTestEventHooks(){
-				@Override
-				public String[] processRetrievalOptions(String[] retrievalOptions) {
-					String[] options = super.processRetrievalOptions(retrievalOptions);
-					String[] newoptions = new String[options.length+1];
-					System.arraycopy(options, 0, newoptions, 0, options.length);
-					newoptions[options.length] = "-Dtrec.matching=org.terrier.matching.taat.FullNoPLM";
-					return newoptions;
-				}			
-			});
-		}
-	}
+//	public static class TestTAATFullNoPLMMatchingShakespeareEndToEndTest extends BasicShakespeareEndToEndTest
+//	{
+//		public TestTAATFullNoPLMMatchingShakespeareEndToEndTest()
+//		{
+//			testHooks.add(new BatchEndToEndTestEventHooks(){
+//				@Override
+//				public String[] processRetrievalOptions(String[] retrievalOptions) {
+//					String[] options = super.processRetrievalOptions(retrievalOptions);
+//					String[] newoptions = new String[options.length+1];
+//					System.arraycopy(options, 0, newoptions, 0, options.length);
+//					newoptions[options.length] = "-Dtrec.matching=org.terrier.matching.taat.FullNoPLM";
+//					return newoptions;
+//				}			
+//			});
+//		}
+//	}
 }
 
 

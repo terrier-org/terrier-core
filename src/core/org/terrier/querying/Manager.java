@@ -32,27 +32,24 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.terrier.matching.Matching;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.Model;
 import org.terrier.matching.QueryResultSet;
 import org.terrier.matching.ResultSet;
-import org.terrier.matching.dsms.BooleanScoreModifier;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.matching.models.WeightingModelFactory;
-import org.terrier.querying.parser.FieldQuery;
 import org.terrier.querying.parser.Query;
 import org.terrier.querying.parser.QueryParser;
 import org.terrier.querying.parser.QueryParserException;
-import org.terrier.querying.parser.RequirementQuery;
-import org.terrier.querying.parser.SingleTermQuery;
 import org.terrier.structures.Index;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
@@ -113,18 +110,184 @@ public class Manager
 	public static final String NAMESPACE_WEIGHTING
 		= "org.terrier.matching.models.";
 
+	/** Class that keeps a cache of queries
+	 * @since 5.0
+	 */
+	static class ModuleCache<K> {
+		
+		Map<String, K> classCache = new HashMap<>();
+		boolean caching;
+		String def_namespace;
+		
+		public ModuleCache(String namespace, boolean caching) {
+			this.caching = caching;
+			this.def_namespace = namespace;
+		}
+		
+		/** Returns the post filter class named ModelName. Caches already
+		  * instantiaed matching models in map Cache_PostFilter.
+		  * If the matching model name doesn't contain '.',
+		  * then NAMESPACE_POSTFILTER is prefixed to the name.
+		  * @param Name The name of the post filter to return */
+		@SuppressWarnings("unchecked")
+		K getModule(String Name)
+		{
+			K rtr = null;
+			if (Name.indexOf(".") < 0 )
+				Name = def_namespace +'.' +Name;
+			else if (Name.startsWith("uk.ac.gla.terrier"))
+				Name = Name.replaceAll("uk.ac.gla.terrier", "org.terrier");
+			
+			//check for already loaded post filters
+			if (caching)
+				rtr = classCache.get(Name);
+			if (rtr != null)
+			{
+				return rtr;
+			}
+			try 
+			{		
+				rtr = (K) Class.forName(Name).newInstance();
+			}
+			catch(Exception e)
+			{
+				logger.error("Problem with class named: "+Name,e);
+				return null;
+			}
+			if (caching)
+				classCache.put(Name, rtr);
+			return rtr;
+		}
+	}
+	
+	/** Class that keeps a cache of queries, and helps parse controls to identify them
+	 * @since 5.0
+	 */
+	static class ModuleManager<K> extends ModuleCache<K> {
+		
+		protected static final String[] tinySingleStringArray = new String[0];
+		protected static final String[][] tinyDoubleStringArray = new String[0][0];
+		
+		/** An ordered list of post filters names. The controls at the same index in the  PostFilters_Controls
+		  * list turn on the post process in this list. */
+		protected String[] Class_Order;
+
+		/** A 2d array, contains (on 2nd level) the list of controls that turn on the PostFilters
+		  * at the same 1st level place on PostFilters_Order */
+		protected String[][] Class_Controls;
+		
+		
+		protected String typeName;
+		
+		ModuleManager(String _typeName, String namespace, boolean _caching){
+			super(namespace, _caching);
+			this.typeName = _typeName;
+			this.load_module_controls();
+		}		
+		
+		List<K> getActive(Map<String,String> controls) {
+			List<K> classes = new ArrayList<>();
+			for(int i=0; i<Class_Order.length; i++)
+			{
+				String PostFilter_Name = Class_Order[i];
+				for(int j=0; j<Class_Controls[i].length; j++)
+				{
+					String ControlName = Class_Controls[i][j];
+					String value = (String)controls.get(ControlName);
+					if (logger.isDebugEnabled()){
+						logger.debug(ControlName+ "("+PostFilter_Name+") => "+value);
+					}
+					if (value == null)
+						continue;
+					value = value.toLowerCase();
+					if(! (value.equals("off") || value.equals("false")))
+					{
+						classes.add(getModule(PostFilter_Name));
+						//we've now run this post process module, no need to check the rest of the controls for it.
+						break;
+					}
+				}
+			}
+			return classes;
+		}
+		
+		/** parses the controls hashtable, looking for references to controls, and returns the appropriate
+		  * postfilters to be run. */
+		Iterator<K> getActiveIterator(Map<String,String> controls) {
+			//TODO this implementation should check if controls have bene updated since the iterator was created.
+			return getActive(controls).iterator();
+		}
+		
+		
+		
+		/** load in the allowed post filter controls, and the order to run post processes in */
+		protected void load_module_controls()
+		{
+			/* what we have is a mapping of controls to post filters, and an order post processes should
+			   be run in.
+			   what we need is the order to check the controls in, and which pp to run for each
+			*/
+
+			String[] order_pf, control_pf;
+			String tmp = ApplicationSetup.getProperty("querying."+typeName+".order", "").trim();
+			if (tmp.length() > 0)
+				order_pf = tmp.split("\\s*,\\s*");
+			else
+				order_pf = new String[0];
+			
+			tmp = ApplicationSetup.getProperty("querying."+typeName+".controls", "").trim();
+			if (tmp.length() > 0)
+				control_pf = tmp.split("\\s*,\\s*");
+			else
+				control_pf = new String[0];
+			
+			String[] control_and_pf = new String[control_pf.length*2]; int count = 0;
+			//iterate through controls and pf names putting in 1d array
+			for(int i=0; i<control_pf.length; i++)
+			{
+				if (control_pf[i].indexOf(":") > 0)
+				{
+					String[] control_and_postfilter = control_pf[i].split(":");
+					control_and_pf[count] = control_and_postfilter[0];//control
+					control_and_pf[count+1] = control_and_postfilter[1];//postfilter
+					count+=2;
+				}
+			}
+
+			/* basically, we now invert, so we have an array of pf names, in a separate array, a list
+			of controls that can turn that pf on */
+			List<String> pf_order = new ArrayList<String>();
+			List<String[]> pf_controls = new ArrayList<String[]>();
+			for(int i=0; i<order_pf.length; i++)
+			{
+				List<String> controls_for_this_pf = new ArrayList<String>();
+				String tmpPF = order_pf[i];
+				for(int j=0;j<count;j+=2)
+				{
+					if (tmpPF.equals(control_and_pf[j+1]))
+					{
+						controls_for_this_pf.add(control_and_pf[j]);
+					}
+				}
+				//ok, there are controls that can turn this pf on, so lets enable it
+				if (controls_for_this_pf.size() > 0)
+				{
+					pf_controls.add(controls_for_this_pf.toArray(tinySingleStringArray));
+					pf_order.add(tmpPF);
+				}			
+			}
+			//cast back to arrays
+			Class_Order = pf_order.toArray(tinySingleStringArray);
+			Class_Controls = pf_controls.toArray(tinyDoubleStringArray);
+		}
+		
+	}
 
 	/* ------------------------------------------------*/
 	/* ------------Instantiation caches --------------*/
 	/** Cache loaded Matching models per Index in this map */
 	protected Map<Index, Map<String, Matching>> Cache_Matching = new HashMap<Index, Map<String, Matching>>();
-	/** Cache loaded PostProcess models in this map */
-	protected Map<String, PostProcess> Cache_PostProcess = new HashMap<String, PostProcess>();
-	/** Cache loaded PostProcess models in this map */
-	protected Map<String, Process> Cache_PreProcess = new HashMap<String, Process>();
-	/** Cache loaded PostFitler models in this map */
-	protected Map<String, PostFilter> Cache_PostFilter = new HashMap<String, PostFilter>();
-	/* ------------------------------------------------*/
+		
 	
 	/** TermPipeline processing */
 	protected TermPipelineAccessor tpa;
@@ -134,42 +297,23 @@ public class Manager
 	/** This contains a list of controls that may be set in the querying API */
 	protected Set<String> Allowed_Controls;
 	/** This contains the mapping of controls and their values that should be 
-	  * set identially for each query created by this Manager */
+	  * set identically for each query created by this Manager */
 	protected Map<String, String> Default_Controls;
 	/** How many default controls exist.
 	  * Directly corresponds to Default_Controls.size() */
 	protected int Defaults_Size = 0;
-
-	/** An ordered list of post process names. The controls at the same index in the PostProcesses_Controls
-	  * list turn on the post process in this list. */
-	protected String[] PostProcesses_Order;
 	
-	/** A 2d array, contains (on 2nd level) the list of controls that turn on the PostProcesses
-	  * at the same 1st level place on PostProcesses_Order */
-	protected String[][] PostProcesses_Controls;
+	protected boolean CACHING_FILTERS = Boolean.parseBoolean(ApplicationSetup.getProperty("manager.caching.filters","false"));
 	
-
-	/** An ordered list of post process names. The controls at the same index in the PostProcesses_Controls
-	  * list turn on the post process in this list. */
-	protected String[] PreProcesses_Order;
-	
-	/** A 2d array, contains (on 2nd level) the list of controls that turn on the PostProcesses
-	  * at the same 1st level place on PostProcesses_Order */
-	protected String[][] PreProcesses_Controls;
-
-	/** An ordered list of post filters names. The controls at the same index in the  PostFilters_Controls
-	  * list turn on the post process in this list. */
-	protected String[] PostFilters_Order;
-
-	/** A 2d array, contains (on 2nd level) the list of controls that turn on the PostFilters
-	  * at the same 1st level place on PostFilters_Order */
-	protected String[][] PostFilters_Controls;
+	ModuleManager<Process> preprocessModuleManager = new ModuleManager<>("preprocesses", "org.terrier.querying", true);
+	ModuleManager<Process> postprocessModuleManager = new ModuleManager<>("postprocesses", "org.terrier.querying", true);
+	ModuleManager<Process> postfilterModuleManager = new ModuleManager<>("postfilters", "org.terrier.querying", CACHING_FILTERS);
 	
 	/** This class is used as a TermPipelineAccessor, and this variable stores
 	  * the result of the TermPipeline run for that term. */
 	protected String pipelineOutput = null;
 
-	protected boolean CACHING_FILTERS = Boolean.parseBoolean(ApplicationSetup.getProperty("manager.caching.filters","false"));
+	
 	
 	protected final boolean MATCH_EMPTY_QUERY = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
 
@@ -192,9 +336,6 @@ public class Manager
 		this.load_pipeline();
 		this.load_controls_allowed();
 		this.load_controls_default();
-		this.load_preprocess_controls();
-		this.load_postprocess_controls();
-		this.load_postfilters_controls();
 	}
 	/* ----------------------- Initialisation methods --------------------------*/
 
@@ -234,199 +375,6 @@ public class Manager
 		}
 		//String def_c = null;
 		Defaults_Size = Default_Controls.size();
-	}
-	
-	protected static final String[] tinySingleStringArray = new String[0];
-	protected static final String[][] tinyDoubleStringArray = new String[0][0];
-	
-	/** load in the allowed postprocceses controls, and the order to run post processes in */
-	protected void load_postprocess_controls()
-	{
-		/* what we have is a mapping of controls to post processes, and an order post processes should
-		   be run in.
-		   what we need is the order to check the controls in, and which pp to run for each
-		*/
-
-		String[] order_pp, control_pp;
-		String tmp = ApplicationSetup.getProperty("querying.postprocesses.order", "").trim();
-		if (tmp.length() > 0)
-			order_pp = tmp.split("\\s*,\\s*");
-		else
-			order_pp = new String[0];
-		
-		tmp = ApplicationSetup.getProperty("querying.postprocesses.controls", "").trim();
-		if (tmp.length() > 0)
-			control_pp = tmp.split("\\s*,\\s*");
-		else
-			control_pp = new String[0];
-		
-		//control_and_pp holds an array of pairs - control, pp, control, pp, control, pp
-		String[] control_and_pp = new String[control_pp.length*2]; int count = 0;
-		
-		//iterate through controls and pp names putting in 1d array
-		for(int i=0; i<control_pp.length; i++)
-		{
-			if (control_pp[i].indexOf(":") > 0)
-			{
-				String[] control_and_postprocess = control_pp[i].split(":");
-				control_and_pp[count] = control_and_postprocess[0];//control
-				control_and_pp[count+1] = control_and_postprocess[1];//postfilter
-				count+=2;
-			}
-		}
-
-		/* basically, we now invert, so we have an array of pp names, and in a separate array, a list
-		of controls that can turn that pf on */
-		ArrayList<String> pp_order = new ArrayList<String>();
-		ArrayList<String[]> pp_controls = new ArrayList<String[]>();
-		
-		for(int i=0; i<order_pp.length; i++)
-		{
-			ArrayList<String> controls_for_this_pp = new ArrayList<String>();
-			String tmpPP = order_pp[i];
-			for(int j=0;j<count;j+=2)
-			{
-				if (tmpPP.equals(control_and_pp[j+1]))
-				{
-					controls_for_this_pp.add(control_and_pp[j]);
-				}
-			}
-			//ok, there are controls that can turn this pf on, so lets enable it
-			if (controls_for_this_pp.size() > 0)
-			{
-				pp_controls.add(controls_for_this_pp.toArray(tinySingleStringArray));
-				pp_order.add(tmpPP);
-			}
-		}
-		//cast back to arrays
-		PostProcesses_Order= pp_order.toArray(tinySingleStringArray);
-		PostProcesses_Controls = pp_controls.toArray(tinyDoubleStringArray);
-	}
-	
-	/** load in the allowed postprocceses controls, and the order to run post processes in */
-	protected void load_preprocess_controls()
-	{
-		/* what we have is a mapping of controls to post processes, and an order post processes should
-		   be run in.
-		   what we need is the order to check the controls in, and which pp to run for each
-		*/
-
-		String[] order_pp, control_pp;
-		String tmp = ApplicationSetup.getProperty("querying.preprocesses.order", "").trim();
-		if (tmp.length() > 0)
-			order_pp = tmp.split("\\s*,\\s*");
-		else
-			order_pp = new String[0];
-		
-		tmp = ApplicationSetup.getProperty("querying.preprocesses.controls", "").trim();
-		if (tmp.length() > 0)
-			control_pp = tmp.split("\\s*,\\s*");
-		else
-			control_pp = new String[0];
-		
-		//control_and_pp holds an array of pairs - control, pp, control, pp, control, pp
-		String[] control_and_pp = new String[control_pp.length*2]; int count = 0;
-		
-		//iterate through controls and pp names putting in 1d array
-		for(int i=0; i<control_pp.length; i++)
-		{
-			if (control_pp[i].indexOf(":") > 0)
-			{
-				String[] control_and_preprocess = control_pp[i].split(":");
-				control_and_pp[count] = control_and_preprocess[0];//control
-				control_and_pp[count+1] = control_and_preprocess[1];//process
-				count+=2;
-			}
-		}
-
-		/* basically, we now invert, so we have an array of pp names, and in a separate array, a list
-		of controls that can turn that pf on */
-		ArrayList<String> pp_order = new ArrayList<String>();
-		ArrayList<String[]> pp_controls = new ArrayList<String[]>();
-		
-		for(int i=0; i<order_pp.length; i++)
-		{
-			ArrayList<String> controls_for_this_pp = new ArrayList<String>();
-			String tmpPP = order_pp[i];
-			for(int j=0;j<count;j+=2)
-			{
-				if (tmpPP.equals(control_and_pp[j+1]))
-				{
-					controls_for_this_pp.add(control_and_pp[j]);
-				}
-			}
-			//ok, there are controls that can turn this pf on, so lets enable it
-			if (controls_for_this_pp.size() > 0)
-			{
-				pp_controls.add(controls_for_this_pp.toArray(tinySingleStringArray));
-				pp_order.add(tmpPP);
-			}
-		}
-		//cast back to arrays
-		PreProcesses_Order= pp_order.toArray(tinySingleStringArray);
-		PreProcesses_Controls = pp_controls.toArray(tinyDoubleStringArray);
-	}
-
-
-	/** load in the allowed post filter controls, and the order to run post processes in */
-	protected void load_postfilters_controls()
-	{
-		/* what we have is a mapping of controls to post filters, and an order post processes should
-		   be run in.
-		   what we need is the order to check the controls in, and which pp to run for each
-		*/
-
-		String[] order_pf, control_pf;
-		String tmp = ApplicationSetup.getProperty("querying.postfilters.order", "").trim();
-		if (tmp.length() > 0)
-			order_pf = tmp.split("\\s*,\\s*");
-		else
-			order_pf = new String[0];
-		
-		tmp = ApplicationSetup.getProperty("querying.postfilters.controls", "").trim();
-		if (tmp.length() > 0)
-			control_pf = tmp.split("\\s*,\\s*");
-		else
-			control_pf = new String[0];
-		
-		String[] control_and_pf = new String[control_pf.length*2]; int count = 0;
-		//iterate through controls and pf names putting in 1d array
-		for(int i=0; i<control_pf.length; i++)
-		{
-			if (control_pf[i].indexOf(":") > 0)
-			{
-				String[] control_and_postfilter = control_pf[i].split(":");
-				control_and_pf[count] = control_and_postfilter[0];//control
-				control_and_pf[count+1] = control_and_postfilter[1];//postfilter
-				count+=2;
-			}
-		}
-
-		/* basically, we now invert, so we have an array of pf names, in a separate array, a list
-		of controls that can turn that pf on */
-		ArrayList<String> pf_order = new ArrayList<String>();
-		ArrayList<String[]> pf_controls = new ArrayList<String[]>();
-		for(int i=0; i<order_pf.length; i++)
-		{
-			ArrayList<String> controls_for_this_pf = new ArrayList<String>();
-			String tmpPF = order_pf[i];
-			for(int j=0;j<count;j+=2)
-			{
-				if (tmpPF.equals(control_and_pf[j+1]))
-				{
-					controls_for_this_pf.add(control_and_pf[j]);
-				}
-			}
-			//ok, there are controls that can turn this pf on, so lets enable it
-			if (controls_for_this_pf.size() > 0)
-			{
-				pf_controls.add(controls_for_this_pf.toArray(tinySingleStringArray));
-				pf_order.add(tmpPF);
-			}			
-		}
-		//cast back to arrays
-		PostFilters_Order = pf_order.toArray(tinySingleStringArray);
-		PostFilters_Controls = pf_controls.toArray(tinyDoubleStringArray);
 	}
 
 	/** load in the term pipeline */
@@ -525,6 +473,17 @@ public class Manager
 			setProperty(propertyName, propertyValue);
 		}
 	}
+	
+	boolean hasAnnotation(Class<?> clazz, ManagerRequisite req)
+	{
+		ProcessPhaseRequisites anno =  clazz.getAnnotation(ProcessPhaseRequisites.class);
+		if (anno == null)
+			return false;
+		for(ManagerRequisite in :  anno.value())
+			if (in == req)
+				return true;
+		return false;
+	}
 
 
 	//run methods
@@ -534,83 +493,47 @@ public class Manager
 	/** runPreProcessing */
 	public void runPreProcessing(SearchRequest srq)
 	{
-		Request rq = (Request)srq;
-		Query query = rq.getQuery();
-		//System.out.println(query);
-		//get the controls
-		boolean rtr = ! query.obtainControls(Allowed_Controls, rq.getControlHashtable());
-		//we check that there is stil something left in the query
-		if (! rtr)
-		{
-			rq.setEmpty(true);
-			return;
-		}
+		Request rq = (Request)srq;		
 		
-		/*if(ApplicationSetup.getProperty("querying.manager.sendlang","").equals("true"))
+		boolean mqtObtained = rq.getMatchingQueryTerms() != null;
+		Iterator<Process> iter = preprocessModuleManager.getActiveIterator(rq.getControlHashtable());
+		int ran = 0;
+		while(iter.hasNext())
 		{
-			String lang = rq.getControl("lang").toLowerCase();
-			String marker = ApplicationSetup.getProperty("termpipelines.languageselector.markerlang", "||LANG:");
-			if(lang.length() > 0)
-			{
-				if(logger.isDebugEnabled()){
-					logger.debug("Sending marker through pipeline "+marker+lang);
-				}
-				pipelineTerm(marker+lang);
-				
-			}
-		}*/
-		synchronized(this) {
-			rtr = query.applyTermPipeline(tpa);
-			tpa.resetPipeline();
-		}
-		Map<String,String> controls = rq.getControlHashtable();
 			
-		for(int i=0; i<PreProcesses_Order.length; i++)
-		{
-			String PreProcesses_Name = PreProcesses_Order[i];
-			for(int j=0; j<PreProcesses_Controls[i].length; j++)
-			{
-				String ControlName = PreProcesses_Controls[i][j];
-				String value = (String)controls.get(ControlName);
-				//System.err.println(ControlName+ "("+ControlName+") => "+value);
-				if (value == null)
-					continue;
-				value = value.toLowerCase();
-				if(! (value.equals("off") || value.equals("false")))
-				{
-					if (logger.isDebugEnabled()){
-						logger.debug("Processing: "+PreProcesses_Name);
-					}
-					getPreProcessModule(PreProcesses_Name).process(this, srq);
-					//we've now run this pre process module, no need to check the rest of the controls for it.
-					break;
-				}
-			}
+			Process p = iter.next();
+			if (hasAnnotation(p.getClass(), ManagerRequisite.MQT) && ! mqtObtained)
+				throw new IllegalStateException("Process " + p.getInfo() + " required matchingqueryterms, but mqt not yet set for query " + rq.getQueryID());
+			logger.info("running preprocess " + p.getInfo());
+			p.process(this, srq);
+			mqtObtained = rq.getMatchingQueryTerms() != null;
+			ran++;
 		}
-		String lastPP = null;
-		if ((lastPP = ApplicationSetup.getProperty("querying.lastpreprocess",null)) != null)
-		{
-			getPreProcessModule(lastPP).process(this, srq);
-		}		
-
-		if (! rtr)
-		{
-			rq.setEmpty(true);
-			return;
-		}
-
-		if (ApplicationSetup.getProperty("querying.no.negative.requirement", "").equals("true"))
-		{
-			ArrayList<org.terrier.querying.parser.Query> terms = new ArrayList<org.terrier.querying.parser.Query>();
-			query.getTermsOf(org.terrier.querying.parser.SingleTermQuery.class, terms, true);
-			for(Query sqt : terms)
-				((org.terrier.querying.parser.SingleTermQuery)sqt).setRequired(0);
-		}
-
-		MatchingQueryTerms queryTerms = new MatchingQueryTerms(rq.getQueryID(), rq);
 		
-		query.obtainQueryTerms(queryTerms);
-		rq.setMatchingQueryTerms(queryTerms);
+		if (! mqtObtained)
+		{
+			logger.warn("After running " + ran + " pre-processes, no MQT was obtained. Matching will likely fail");
+		}
+		
+//		
+//		
+//		Query query = rq.getQuery();
+//		//System.out.println(query);
+//		//get the controls
+//		boolean rtr = ! query.obtainControls(Allowed_Controls, rq.getControlHashtable());
+//		//we check that there is stil something left in the query
+//		if (! rtr)
+//		{
+//			rq.setEmpty(true);
+//			return;
+//		}
+//		
+//		synchronized(this) {
+//			rtr = query.applyTermPipeline(tpa);
+//			tpa.resetPipeline();
+//		}
+
+		
 	}
 	/** Runs the weighting and matching stage - this the main entry
 	  * into the rest of the Terrier framework.
@@ -640,38 +563,42 @@ public class Manager
 				logger.debug("weighting model: " + wmodel.getInfo());
 			}
 			MatchingQueryTerms mqt = rq.getMatchingQueryTerms();
+			if (mqt == null)
+				throw new IllegalStateException("Cannot run matching without MatchingQueryTerms. Are preprocesses configured properly?");
+			
 			mqt.setDefaultTermWeightingModel((WeightingModel)wmodel);
 			Query q = rq.getQuery();
+			logger.info(mqt.toString());
 			
 			/* now propagate fields into requirements, and apply boolean matching
 			   for the decorated terms. */
-			ArrayList<Query> requirement_list_all = new ArrayList<Query>();
-			ArrayList<Query> requirement_list_positive = new ArrayList<Query>();
-			ArrayList<Query> requirement_list_negative = new ArrayList<Query>();
-			ArrayList<Query> field_list = new ArrayList<Query>();
-			
-			// Issue TREC-370
-			q.getTermsOf(RequirementQuery.class, requirement_list_all, true);
-			for (Query query : requirement_list_all ) {
-				if (((SingleTermQuery)query).required>=0) {
-					//System.err.println(query.toString()+" was a positive requirement "+((SingleTermQuery)query).required);
-					requirement_list_positive.add(query);
-				}
-				else {
-					//System.err.println(query.toString()+" was a negative requirement"+((SingleTermQuery)query).required);
-					requirement_list_negative.add(query);
-				}
-			}
-			for (Query negativeQuery : requirement_list_negative) {
-				//System.err.println(negativeQuery.toString()+" was a negative requirement");
-				mqt.setTermProperty(negativeQuery.toString(), Double.NEGATIVE_INFINITY);
-			}
-			
-			
-			q.getTermsOf(FieldQuery.class, field_list, true);
-			for (int i=0; i<field_list.size(); i++) 
-				if (!requirement_list_positive.contains(field_list.get(i)))
-					requirement_list_positive.add(field_list.get(i));
+//			ArrayList<Query> requirement_list_all = new ArrayList<Query>();
+//			ArrayList<Query> requirement_list_positive = new ArrayList<Query>();
+//			ArrayList<Query> requirement_list_negative = new ArrayList<Query>();
+//			ArrayList<Query> field_list = new ArrayList<Query>();
+//			
+//			// Issue TREC-370
+//			q.getTermsOf(RequirementQuery.class, requirement_list_all, true);
+//			for (Query query : requirement_list_all ) {
+//				if (((SingleTermQuery)query).required>=0) {
+//					//System.err.println(query.toString()+" was a positive requirement "+((SingleTermQuery)query).required);
+//					requirement_list_positive.add(query);
+//				}
+//				else {
+//					//System.err.println(query.toString()+" was a negative requirement"+((SingleTermQuery)query).required);
+//					requirement_list_negative.add(query);
+//				}
+//			}
+//			for (Query negativeQuery : requirement_list_negative) {
+//				//System.err.println(negativeQuery.toString()+" was a negative requirement");
+//				mqt.setTermProperty(negativeQuery.toString(), Double.NEGATIVE_INFINITY);
+//			}
+//			
+//			
+//			q.getTermsOf(FieldQuery.class, field_list, true);
+//			for (int i=0; i<field_list.size(); i++) 
+//				if (!requirement_list_positive.contains(field_list.get(i)))
+//					requirement_list_positive.add(field_list.get(i));
 
 			/*if (logger.isDebugEnabled())
 			{
@@ -687,9 +614,9 @@ public class Manager
 				}
 			}*/
 		
-			if (requirement_list_positive.size()>0) {
-				mqt.addDocumentScoreModifier(new BooleanScoreModifier(requirement_list_positive));
-			}
+//			if (requirement_list_positive.size()>0) {
+//				mqt.addDocumentScoreModifier(new BooleanScoreModifier(requirement_list_positive));
+//			}
 
 			mqt.setQuery(q);
 			mqt.normaliseTermWeights();
@@ -702,12 +629,13 @@ public class Manager
 					if (outRs.getScores()[i] == Double.NEGATIVE_INFINITY)
 						badDocuments++;
 				}
-				logger.debug("Found "+badDocuments+" documents with a score of negative infinity in the result set returned, they will be removed.");
+				if (badDocuments > 0)
+					logger.debug("Found "+badDocuments+" documents with a score of negative infinity in the result set returned, they will be removed.");
 				
 				//now crop the collectionresultset down to a query result set.
 				rq.setResultSet(outRs.getResultSet(0, outRs.getResultSize()-badDocuments));
 			} catch (IOException ioe) {
-				logger.error("Problem running Matching, returning empty result set as query"+rq.getQueryID(), ioe);
+				logger.error("Problem running Matching, returning empty result set as query "+rq.getQueryID(), ioe);
 				rq.setResultSet(new QueryResultSet(0));
 			}
 		}
@@ -724,35 +652,40 @@ public class Manager
 	public void runPostProcessing(SearchRequest srq)
 	{
 		Request rq = (Request)srq;
-		Map<String,String> controls = rq.getControlHashtable();
 		
-		for(int i=0; i<PostProcesses_Order.length; i++)
+		Iterator<Process> iter = postprocessModuleManager.getActiveIterator(rq.getControlHashtable());
+		while(iter.hasNext())
 		{
-			String PostProcesses_Name = PostProcesses_Order[i];
-			for(int j=0; j<PostProcesses_Controls[i].length; j++)
-			{
-				String ControlName = PostProcesses_Controls[i][j];
-				String value = (String)controls.get(ControlName);
-				//System.err.println(ControlName+ "("+PostProcesses_Name+") => "+value);
-				if (value == null)
-					continue;
-				value = value.toLowerCase();
-				if(! (value.equals("off") || value.equals("false")))
-				{
-					if (logger.isDebugEnabled()){
-						logger.debug("Processing: "+PostProcesses_Name);
-					}
-					getPostProcessModule(PostProcesses_Name).process(this, srq);
-					//we've now run this post process module, no need to check the rest of the controls for it.
-					break;
-				}
-			}
+			iter.next().process(this, srq);
 		}
-		String lastPP = null;
-		if ((lastPP = ApplicationSetup.getProperty("querying.lastpostprocess",null)) != null)
-		{
-			getPostProcessModule(lastPP).process(this, srq);
-		}
+//		
+//		for(int i=0; i<PostProcesses_Order.length; i++)
+//		{
+//			String PostProcesses_Name = PostProcesses_Order[i];
+//			for(int j=0; j<PostProcesses_Controls[i].length; j++)
+//			{
+//				String ControlName = PostProcesses_Controls[i][j];
+//				String value = (String)controls.get(ControlName);
+//				//System.err.println(ControlName+ "("+PostProcesses_Name+") => "+value);
+//				if (value == null)
+//					continue;
+//				value = value.toLowerCase();
+//				if(! (value.equals("off") || value.equals("false")))
+//				{
+//					if (logger.isDebugEnabled()){
+//						logger.debug("Processing: "+PostProcesses_Name);
+//					}
+//					getPostProcessModule(PostProcesses_Name).process(this, srq);
+//					//we've now run this post process module, no need to check the rest of the controls for it.
+//					break;
+//				}
+//			}
+//		}
+//		String lastPP = null;
+//		if ((lastPP = ApplicationSetup.getProperty("querying.lastpostprocess",null)) != null)
+//		{
+//			getPostProcessModule(lastPP).process(this, srq);
+//		}
 	}
 	
 	
@@ -764,7 +697,7 @@ public class Manager
 	public void runPostFilters(SearchRequest srq)
 	{
 		Request rq = (Request)srq;
-		PostFilter[] filters = getPostFilters(rq);
+		PostFilter[] filters = this.postfilterModuleManager.getActive(rq.getControlHashtable()).toArray(new PostFilter[0]);
 		final int filters_length = filters.length;
 		
 		//the results to filter
@@ -866,35 +799,7 @@ public class Manager
 			rq.getResultSet().setExactResultSize(results.getExactResultSize());
 		}
 	}
-	/** parses the controls hashtable, looking for references to controls, and returns the appropriate
-	  * postfilters to be run. */
-	private PostFilter[] getPostFilters(Request rq)
-	{
-		Map<String,String> controls = rq.getControlHashtable();
-		ArrayList<PostFilter> postfilters = new ArrayList<PostFilter>();
-		for(int i=0; i<PostFilters_Order.length; i++)
-		{
-			String PostFilter_Name = PostFilters_Order[i];
-			for(int j=0; j<PostFilters_Controls[i].length; j++)
-			{
-				String ControlName = PostFilters_Controls[i][j];
-				String value = (String)controls.get(ControlName);
-				if (logger.isDebugEnabled()){
-					logger.debug(ControlName+ "("+PostFilter_Name+") => "+value);
-				}
-				if (value == null)
-					continue;
-				value = value.toLowerCase();
-				if(! (value.equals("off") || value.equals("false")))
-				{
-					postfilters.add(getPostFilterModule(PostFilter_Name));
-					//we've now run this post process module, no need to check the rest of the controls for it.
-					break;
-				}
-			}
-		}
-		return postfilters.toArray(new PostFilter[0]);
-	}
+	
 	
 	/*-------------------------------- helper methods -----------------------------------*/
 	//helper methods. These get the appropriate modules named Name of the appropate type
@@ -997,100 +902,7 @@ public class Manager
 		return WeightingModelFactory.newInstance(rq.getWeightingModel(), rq.getIndex());
 	}
 	
-	/** Returns the PostProcess named Name. Caches already
-	  * instantiaed classes in Hashtable Cache_PostProcess.
-	  * If the post process class name doesn't contain '.', 
-	  * then NAMESPACE_POSTPROCESS is prefixed to the name. 
-	  * @param Name The name of the post process to return. */
-	protected PostProcess getPostProcessModule(String Name)
-	{
-		PostProcess rtr = null;
-		if (Name.indexOf(".") < 0 )
-			Name = NAMESPACE_POSTPROCESS +Name;
-		else if (Name.startsWith("uk.ac.gla.terrier"))
-			Name = Name.replaceAll("uk.ac.gla.terrier", "org.terrier");
-		
-		//check for already loaded models
-		rtr = Cache_PostProcess.get(Name);
-		if (rtr == null)
-		{
-			try
-			{
-				rtr = Class.forName(Name).asSubclass(PostProcess.class).newInstance();
-			}
-			catch(Exception e)
-			{
-				logger.error("Problem with postprocess named: "+Name,e);
-				return null;
-			}
-			Cache_PostProcess.put(Name, rtr);
-		}
-		return rtr;
-	}
 	
-	/** Returns the PostProcess named Name. Caches already
-	  * instantiaed classes in Hashtable Cache_PostProcess.
-	  * If the post process class name doesn't contain '.', 
-	  * then NAMESPACE_PREPROCESS is prefixed to the name. 
-	  * @param Name The name of the post process to return. */
-	protected Process getPreProcessModule(String Name)
-	{
-		Process rtr = null;
-		if (Name.indexOf(".") < 0 )
-			Name = NAMESPACE_PREPROCESS +Name;
-		else if (Name.startsWith("uk.ac.gla.terrier"))
-			Name = Name.replaceAll("uk.ac.gla.terrier", "org.terrier");
-		
-		//check for already loaded models
-		rtr = Cache_PreProcess.get(Name);
-		if (rtr == null)
-		{
-			try
-			{
-				rtr = Class.forName(Name).asSubclass(Process.class).newInstance();
-			}
-			catch(Exception e)
-			{
-				logger.error("Problem with preprocess named: "+Name,e);
-				return null;
-			}
-			Cache_PreProcess.put(Name, rtr);
-		}
-		return rtr;
-	}
-	
-	/** Returns the post filter class named ModelName. Caches already
-	  * instantiaed matching models in Hashtable Cache_PostFilter.
-	  * If the matching model name doesn't contain '.',
-	  * then NAMESPACE_POSTFILTER is prefixed to the name.
-	  * @param Name The name of the post filter to return */
-	protected PostFilter getPostFilterModule(String Name)
-	{
-		PostFilter rtr = null;
-		if (Name.indexOf(".") < 0 )
-			Name = NAMESPACE_POSTFILTER +Name;
-		else if (Name.startsWith("uk.ac.gla.terrier"))
-			Name = Name.replaceAll("uk.ac.gla.terrier", "org.terrier");
-		
-		//check for already loaded post filters
-		if (CACHING_FILTERS)
-			rtr = Cache_PostFilter.get(Name);
-		if (rtr == null)
-		{
-			try
-			{
-				rtr = Class.forName(Name).asSubclass(PostFilter.class).newInstance();
-			}
-			catch(Exception e)
-			{
-				logger.error("Problem with postprocess named: "+Name,e);
-				return null;
-			}
-			if (CACHING_FILTERS)
-				Cache_PostFilter.put(Name, rtr);
-		}
-		return rtr;
-	}
 	
 	/**
 	 * Returns information about the weighting models and 
@@ -1113,26 +925,10 @@ public class Manager
 		
 		//obtaining the post-processors information
 		Map<String,String> controls = rq.getControlHashtable();
-		
-		for(int i=0; i<PostProcesses_Order.length; i++)
+		for(Process p : postprocessModuleManager.getActive(controls))
 		{
-			String PostProcesses_Name = PostProcesses_Order[i];
-			for(int j=0; j<PostProcesses_Controls[i].length; j++)
-			{
-				String ControlName = PostProcesses_Controls[i][j];
-				String value = (String)controls.get(ControlName);
-				//System.err.println(ControlName+ "("+PostProcesses_Name+") => "+value);
-				if (value == null)
-					continue;
-				value = value.toLowerCase();
-				if(! (value.equals("off") || value.equals("false")))
-				{
-					info.append("_"+getPostProcessModule(PostProcesses_Name).getInfo());
-					//we've now run this post process module, no need to check the rest of the controls for it.
-					break;
-				}
-			}
-		}		
+			info.append("_"+p.getInfo());
+		}
 		return info.toString();
 	}
 }

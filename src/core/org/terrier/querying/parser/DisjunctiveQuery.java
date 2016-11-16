@@ -28,6 +28,9 @@ package org.terrier.querying.parser;
 import java.util.List;
 
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.indriql.SynonymTerm;
+
+import com.google.common.collect.Lists;
 
 /**
  * Models a disjunctive choice in single term queries in a query.
@@ -90,6 +93,36 @@ public class DisjunctiveQuery extends MultiTermQuery {
 	{
 		activeIndex = _activeIndex;
 	}
+	
+	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight)
+	{
+		List<String> singleTerms = Lists.newArrayList();
+		for(Query child : v)
+		{
+			SingleTermQuery term = (SingleTermQuery)child;
+			singleTerms.add(term.getTerm());
+		}
+		QTPBuilder qtp = QTPBuilder.of(new SynonymTerm(singleTerms.toArray(new String[singleTerms.size()])));
+		if (weight != null)
+		{
+			qtp.setWeight(weight * this.weight);
+		}
+		else
+		{
+			qtp.setWeight(this.weight);
+		}
+		if (required != null && required)
+		{
+			qtp.setRequired(true);
+		}
+		else if (required != null && !required)
+		{
+			qtp.setRequired(false);
+			qtp.setWeight(Double.NEGATIVE_INFINITY);
+		}
+		qtp.setField(field);
+		terms.add(qtp.build());
+	}
 
 	@Override
 	public void obtainAllOf(Class<? extends Query> c, List<Query> a) {
@@ -105,25 +138,25 @@ public class DisjunctiveQuery extends MultiTermQuery {
 			i++;
 		}
 	}
-	@Override
-	public void obtainQueryTerms(MatchingQueryTerms terms) {
-		final StringBuilder s = new StringBuilder();
-		int i = 0;
-		for(Query child : v)
-		{
-			if ((activeIndex == -1) || (activeIndex != -1 && i == activeIndex))
-			{
-				SingleTermQuery term = (SingleTermQuery)child;
-				s.append(term.getTerm());
-				s.append('|');
-			}
-			i++;
-		}
-		if (s.length() == 0)
-			return;
-		s.setLength(s.length() -1);
-		terms.addTermPropertyWeight(s.toString(), weight);
-	}
+//	@Override
+//	public void obtainQueryTerms(MatchingQueryTerms terms) {
+//		final StringBuilder s = new StringBuilder();
+//		int i = 0;
+//		for(Query child : v)
+//		{
+//			if ((activeIndex == -1) || (activeIndex != -1 && i == activeIndex))
+//			{
+//				SingleTermQuery term = (SingleTermQuery)child;
+//				s.append(term.getTerm());
+//				s.append('|');
+//			}
+//			i++;
+//		}
+//		if (s.length() == 0)
+//			return;
+//		s.setLength(s.length() -1);
+//		terms.addTermPropertyWeight(s.toString(), weight);
+//	}
 	
 	@Override
 	public String toString() {

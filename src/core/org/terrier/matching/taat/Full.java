@@ -98,6 +98,22 @@ public class Full extends BaseMatching
 		resultSet.initialise();
 		plm.close();
 		this.numberOfRetrievedDocuments = resultSet.getExactResultSize();
+		long requiredBitPattern = plm.getRequiredBitMask();
+		if (requiredBitPattern > 0)
+		{	
+			final short[] masks = resultSet.getOccurrences();
+			final double[] scores = resultSet.getScores();
+			for(int i=0;i<resultSet.getResultSize();i++)
+			{
+				if ((masks[i] & requiredBitPattern) != requiredBitPattern)
+				{
+					System.err.println("Document " + resultSet.getDocids()[i] 
+							+ " was discarded as it didnt match required bit pattern, required " + requiredBitPattern + " was "
+							+  masks[i]);
+					scores[i] = Double.NEGATIVE_INFINITY;
+				}
+			}
+		}
 		finalise(queryTerms);
 		if (logger.isDebugEnabled())
 			logger.debug("Time to match "+numberOfRetrievedDocuments+" results: " + (System.currentTimeMillis() - starttime) + "ms");

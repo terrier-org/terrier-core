@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.terrier.matching.MatchingQueryTerms;
-import org.terrier.matching.tsms.RequiredTermModifier;
+import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
 /**
@@ -180,25 +180,51 @@ public class SingleTermQuery extends Query {
 		return true;
 	}
 	
-	/**
-	 * Stores the term of the single term query in the 
-	 * given hash map.
-	 * @param terms the hashmap in which to store the query terms.
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms) {
-		terms.addTermPropertyWeight(term, weight);
+	
+	@Override
+	public void obtainQueryTerms(MatchingQueryTerms terms, String field,
+			Boolean required, Double weight) {
+		QTPBuilder qtp = QTPBuilder.of(new SingleQueryTerm(this.term));
+		if (weight != null)
+		{
+			qtp.setWeight(weight * this.weight);
+		}
+		else
+		{
+			qtp.setWeight(this.weight);
+		}
+		if (required != null && required)
+		{
+			qtp.setRequired(true);
+		}
+		else if (required != null && !required)
+		{
+			qtp.setRequired(false);
+			qtp.setWeight(Double.NEGATIVE_INFINITY);
+		}
+		qtp.setField(field);
+		terms.add(qtp.build());
 	}
 	
-	/**
-	 * Stores the term of the single term query in the 
-	 * given hash map.
-	 * @param terms the hashmap in which to store the query terms.
-	 * @param _required indicates whether the query term is required or not.
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms, boolean _required) {
-		if (term != null)
-			terms.setTermProperty(term, weight, new RequiredTermModifier(_required));
-	}
+//	/**
+//	 * Stores the term of the single term query in the 
+//	 * given hash map.
+//	 * @param terms the hashmap in which to store the query terms.
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms) {
+//		terms.addTermPropertyWeight(term, weight);
+//	}
+//	
+//	/**
+//	 * Stores the term of the single term query in the 
+//	 * given hash map.
+//	 * @param terms the hashmap in which to store the query terms.
+//	 * @param _required indicates whether the query term is required or not.
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms, boolean _required) {
+//		if (term != null)
+//			terms.setTermProperty(term, weight, new RequiredTermModifier(_required));
+//	}
 	
 	/**
 	 * Adds the query term in the given list of query terms.

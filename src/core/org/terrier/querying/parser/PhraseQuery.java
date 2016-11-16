@@ -25,13 +25,16 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk>
  */
 package org.terrier.querying.parser;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.terrier.matching.MatchingQueryTerms;
-import org.terrier.matching.dsms.PhraseScoreModifier;
+import org.terrier.matching.indriql.PhraseTerm;
+import org.terrier.matching.indriql.QueryTerm;
+import org.terrier.matching.indriql.UnorderedWindowTerm;
+
+import com.google.common.collect.Lists;
 /**
  * Models a phrase query, which can have a proximity requirement.
  * @author Vassilis Plachouras, Craig Macdonald
@@ -106,43 +109,71 @@ public class PhraseQuery extends MultiTermQuery {
 		}
 		return output.toString();
 	}
-	/**
-	 * Stores the query terms of the phrase query in the 
-	 * given matching query terms structure. The query terms
-	 * are required to appear in the matched documents.
-	 * @param terms MatchingQueryTerms the structure that stores
-	 *        the query terms for matching.
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms) {
+	
+	@Override
+	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight) {
+		
+		List<String> singleTerms = Lists.newArrayList();
 		for(Query child : v)
 		{
-			child.obtainQueryTerms(terms, true);
+			SingleTermQuery term = (SingleTermQuery)child;
+			singleTerms.add(term.getTerm());
 		}
-		ArrayList<Query> alist = new ArrayList<Query>();
-		this.getTerms(alist);
-		terms.addDocumentScoreModifier(new PhraseScoreModifier(alist, proximityDistance));
-	}
-	
-	/**
-	 * Stores the query terms of the phrase query in the 
-	 * given matching query terms structure. Whether the 
-	 * phrase is required to appear in the retrieved documents, 
-	 * depends on the value of the parameter required.
-	 * @param terms MatchingQueryTerms the structure that stores
-	 *        the query terms for matching.
-	 * @param required boolean indicates whether the phrase is
-	 *        required or not.
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms, boolean required) {
-		if (required)
-			for(Query child : v)
-			{	
-				child.obtainQueryTerms(terms, required);
-			}
-		ArrayList<Query> alist = new ArrayList<Query>();
-		this.getTerms(alist);
-		terms.addDocumentScoreModifier(new PhraseScoreModifier(alist, required, proximityDistance));
-	}
+		
+		String[] ts = singleTerms.toArray(new String[singleTerms.size()]);
+		QueryTerm t = this.proximityDistance == 1
+				? new PhraseTerm(ts)
+				: new UnorderedWindowTerm(ts, this.proximityDistance);
+		
+		QTPBuilder factory = QTPBuilder.of(t);
+		if (required == null || required == true)
+		{
+	      factory.setRequired(true);
+	      super.obtainQueryTerms(terms, field, true, weight);
+		}
+		else if (required == false)
+		{
+			factory.setWeight(Double.NEGATIVE_INFINITY);
+		}
+		terms.add(factory.build());	    
+	  }
+//	/**
+//	 * Stores the query terms of the phrase query in the 
+//	 * given matching query terms structure. The query terms
+//	 * are required to appear in the matched documents.
+//	 * @param terms MatchingQueryTerms the structure that stores
+//	 *        the query terms for matching.
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms) {
+//		for(Query child : v)
+//		{
+//			child.obtainQueryTerms(terms, true);
+//		}
+//		ArrayList<Query> alist = new ArrayList<Query>();
+//		this.getTerms(alist);
+//		terms.addDocumentScoreModifier(new PhraseScoreModifier(alist, proximityDistance));
+//	}
+//	
+//	/**
+//	 * Stores the query terms of the phrase query in the 
+//	 * given matching query terms structure. Whether the 
+//	 * phrase is required to appear in the retrieved documents, 
+//	 * depends on the value of the parameter required.
+//	 * @param terms MatchingQueryTerms the structure that stores
+//	 *        the query terms for matching.
+//	 * @param required boolean indicates whether the phrase is
+//	 *        required or not.
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms, boolean required) {
+//		if (required)
+//			for(Query child : v)
+//			{	
+//				child.obtainQueryTerms(terms, required);
+//			}
+//		ArrayList<Query> alist = new ArrayList<Query>();
+//		this.getTerms(alist);
+//		terms.addDocumentScoreModifier(new PhraseScoreModifier(alist, required, proximityDistance));
+//	}
 	/** This object cannot contain any controls, so this method will always return false.
       * @return false */
 	public boolean obtainControls(Set<String> allowed, Map<String, String> controls)

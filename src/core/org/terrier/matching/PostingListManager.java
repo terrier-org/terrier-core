@@ -32,23 +32,21 @@ import gnu.trove.TDoubleArrayList;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.matching.indriql.MatchingEntry;
+import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.models.WeightingModel;
-import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Index;
-import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
-import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
-import org.terrier.structures.postings.ORIterablePosting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 
@@ -99,7 +97,7 @@ public class PostingListManager implements Closeable
 		void processQuery(MatchingQueryTerms mqt, Index index, PostingListManager plm);
 	}
 	
-	static PostingListManagerPlugin[] plugins;
+	protected static PostingListManagerPlugin[] plugins;
 	
 	static {
 		String[] pluginNames = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("matching.postinglist.manager.plugins", ""));
@@ -141,6 +139,9 @@ public class PostingListManager implements Closeable
 	/** statistics of the collection */
 	protected CollectionStatistics collectionStatistics;
 	
+	long requiredBitMask = 0;
+
+	
 	/** Create a posting list manager for the given index and statistics */
 	@SuppressWarnings("unchecked")
 	protected PostingListManager(Index _index, CollectionStatistics cs) throws IOException
@@ -173,73 +174,40 @@ public class PostingListManager implements Closeable
 	public PostingListManager(Index _index, CollectionStatistics _cs, MatchingQueryTerms mqt, boolean splitSynonyms) throws IOException
 	{
 		this(_index, _cs);
-		for(String queryTerm : mqt.getTerms())
+		//TODO implement support for Fat indices
+		assert splitSynonyms;
+		
+		int termIndex = -1;
+		for(Map.Entry<QueryTerm, MatchingQueryTerms.QueryTermProperties> entry : mqt)
 		{
-			if (splitSynonyms && queryTerm.contains("|"))
-			{
-				String[] alternatives = queryTerm.split("\\|");
-				addSingleTermAlternatives(alternatives, queryTerm,
-						mqt.getTermWeight(queryTerm), 
-						mqt.getStatistics(queryTerm), 
-						mqt.getTermWeightingModels(queryTerm));
-			}
-			else
-			{
-				addSingleTerm(queryTerm, 
-					mqt.getTermWeight(queryTerm), 
-					mqt.getStatistics(queryTerm), 
-					mqt.getTermWeightingModels(queryTerm));
-			}
+			termIndex++;
+			QueryTerm term = entry.getKey();
+			MatchingEntry me = term.getMatcher(
+					entry.getValue(), 
+					index, 
+					lexicon, 
+					invertedIndex, 
+					collectionStatistics);
+			if (me == null)
+				continue;
+			termStrings.add(term.toString());
+			termKeyFreqs.add(me.getKeyFreq());
+			termPostings.add(me.getPostingIterator());
+			termStatistics.add(me.getEntryStats());
+			termModels.add(me.getWmodels());
+			if (me.getRequired())
+				requiredBitMask |= 1 << termIndex;
 		}
+		
+		logger.info("Query " + mqt.getQueryId() + " with "+ mqt.size() +" terms has " + termPostings.size() + " posting lists");
+		assert termPostings.size() == termStatistics.size();
+		
 		for(PostingListManagerPlugin p : plugins)
 		{
 			p.processQuery(mqt, index, this);
 		}
-		logger.info("Query " + mqt.getQueryId() + " with "+ mqt.getTerms().length +" terms has " + termPostings.size() + " posting lists");
+		logger.info("Query " + mqt.getQueryId() + " with "+ mqt.getMatchingTerms().length +" terms has " + termPostings.size() + " posting lists");
 		assert termPostings.size() == termStatistics.size();
-	}
-	
-	/** Add a single term to those to be matched for this query.
-	 * Those with more occurrences than the number of documents will be ignored if IGNORE_LOW_IDF_TERMS
-	 * is enabled.
-	 * @param queryTerm String form of the query term
-	 * @param weight influence of this query term in scoring
-	 * @param entryStats statistics to be used for this query term. If null, these will be obtained 
-	 * from the local Lexicon
-	 * @param wmodels weighting models to be applied for this query term
-	 * @throws IOException
-	 */
-	public void addSingleTerm(String queryTerm, double weight, EntryStatistics entryStats, WeightingModel[] wmodels) throws IOException
-	{
-		LexiconEntry t = lexicon.getLexiconEntry(queryTerm);
-		if (t == null) {
-			logger.debug("Term Not Found: " + queryTerm);
-			//previousTerm = false;			
-		} else if (IGNORE_LOW_IDF_TERMS && collectionStatistics.getNumberOfDocuments() < t.getFrequency()) {
-			logger.warn("query term " + queryTerm + " has low idf - ignored from scoring.");
-			//previousTerm = false;
-		} else if (wmodels.length == 0) {
-			logger.warn("No weighting models for term " + queryTerm +", skipping scoring");
-			//previousTerm = false;
-		} else {
-			termStrings.add(queryTerm);
-			termPostings.add(invertedIndex.getPostings((Pointer) t));
-			if (entryStats == null)
-				entryStats = t;
-			if (logger.isDebugEnabled())
-				logger.debug("Term " + queryTerm + " stats" + entryStats.toString());
-			termStatistics.add(entryStats);
-			termKeyFreqs.add(weight);
-			for (WeightingModel w : wmodels)
-			{
-				w.setEntryStatistics(entryStats);				
-				w.setKeyFrequency(weight);
-				w.setCollectionStatistics(collectionStatistics);
-				IndexUtil.configure(index, w);
-				w.prepare();			
-			}
-			termModels.add(wmodels);
-		}
 	}
 	
 	/** Knows how to merge several EntryStatistics for a single effective term */
@@ -251,77 +219,6 @@ public class PostingListManager implements Closeable
 		for(int i=1;i<entryStats.length;i++)
 			rtr.add(entryStats[i]);
 		return rtr;
-	}
-	
-	/** Adds a synonym group to the matching process.
-	 * EntryStatistics for all terms in the group will be combined using mergeStatistics()
-	 * @param terms String of the terms in the synonym group
-	 * @param weight influence of this synonym group during retrieval
-	 * @param entryStats statistics of the terms in the synonym group. If null, these will
-	 * be obtained from the local Lexicon. 
-	 * @param wmodels WeightingModels for the synonym group (NOT one per member).
-	 * @throws IOException
-	 */
-	public void addSingleTermAlternatives(String[] terms, String stringForm,  double weight, EntryStatistics[] entryStats, WeightingModel[] wmodels) throws IOException
-	{		
-		EntryStatistics joined = mergeStatistics(entryStats);
-		addSingleTermAlternatives(terms, stringForm, weight, joined, wmodels);
-	}
-	
-	/** Adds a synonym group to the matching process. 
-	 * @param terms String of the terms in the synonym group
-	 * @param weight influence of this synonym group during retrieval
-	 * @param entryStats statistics of the whole synonym group. If null, these will
-	 * be obtained from the local Lexicon for all terms in the group will be combined using mergeStatistics()
-	 * @param wmodels WeightingModels for the synonym group (NOT one per member).
-	 * @throws IOException
-	 */
-	public void addSingleTermAlternatives(String[] terms, String stringForm, double weight, EntryStatistics entryStats, WeightingModel[] wmodels) throws IOException
-	{
-		List<LexiconEntry> _le = new ArrayList<LexiconEntry>(terms.length);
-		List<IterablePosting> _joinedPostings = new ArrayList<IterablePosting>(terms.length);
-				
-		for(String alternative : terms)
-		{
-			LexiconEntry t = lexicon.getLexiconEntry(alternative);
-			if (t == null) {
-				logger.debug("Alternative term Not Found: " + alternative);
-				//previousTerm = false;			
-			} else if (IGNORE_LOW_IDF_TERMS && collectionStatistics.getNumberOfDocuments() < t.getFrequency()) {
-				logger.warn("query term " + alternative + " has low idf - ignored from scoring.");
-				//previousTerm = false;
-			} else if (wmodels.length == 0) {
-				logger.warn("No weighting models for term " + alternative +", skipping scoring");
-				//previousTerm = false;
-			} else {
-				_le.add(t);
-				_joinedPostings.add(invertedIndex.getPostings((BitIndexPointer) t));
-			}
-		}
-		if (_le.size() == 0)
-		{
-			logger.warn("No alternatives matched in " + Arrays.toString(terms));
-			return;
-		}
-		if (entryStats == null)
-			entryStats = mergeStatistics(_le.toArray(new LexiconEntry[_le.size()]));
-		if (logger.isDebugEnabled())
-			logger.debug("Dijunctive term " + Arrays.toString(terms) + " stats" + entryStats.toString());
-		termStrings.add(stringForm);
-		termStatistics.add(entryStats);
-		termKeyFreqs.add(weight);
-		//System.err.println(entryStats.toString());
-		IterablePosting[] joinedPostings = _joinedPostings.toArray(new IterablePosting[_joinedPostings.size()]);
-		termPostings.add(ORIterablePosting.mergePostings(joinedPostings));
-		for (WeightingModel w : wmodels)
-		{
-			w.setEntryStatistics(entryStats);
-			w.setKeyFrequency(weight);
-			w.setCollectionStatistics(collectionStatistics);
-			IndexUtil.configure(index, w);
-			w.prepare();			
-		}
-		termModels.add(wmodels);
 	}
 	
 	/** Counts the number of terms active. If firstMove is true,
@@ -379,10 +276,11 @@ public class PostingListManager implements Closeable
 	{
 		if (i >= 0)
 			if (i < numTerms)
-			{
+			{				
 				double score = 0.0d;
 				for (WeightingModel w : termModels.get(i))
 					score += w.score(termPostings.get(i));
+				//System.err.println("For term " + i + " scoring " + termPostings.get(i).getId() + "; got score " + score);
 				return score;
 			}
 
@@ -398,6 +296,10 @@ public class PostingListManager implements Closeable
 			ip.close();
 	}
 
+	
+	public long getRequiredBitMask() {
+		return this.requiredBitMask;
+	}
 
 	public String getTerm(int i) {
 		return termStrings.get(i);

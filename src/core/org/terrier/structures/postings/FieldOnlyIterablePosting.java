@@ -15,7 +15,7 @@ public class FieldOnlyIterablePosting extends IterablePostingImpl {
 	int currentId;
 	int frequency = 0;
 	
-	public FieldOnlyIterablePosting(IterablePosting _ip, int _fieldId) throws Exception
+	public FieldOnlyIterablePosting(IterablePosting _ip, int _fieldId) 
 	{
 		this.fieldId = _fieldId;
 		this.iterableParent = _ip;

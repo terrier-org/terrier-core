@@ -31,8 +31,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.querying.parser.Query;
 import org.terrier.querying.parser.QueryParser;
+import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.EntryStatistics;
 
@@ -49,13 +51,13 @@ public class TestMatchingQueryTerms {
 	{
 		final String term = "term1";
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		assertEquals(0, mqt.length());
-		assertNotNull(mqt.getTerms());
-		assertEquals(0, mqt.getTerms().length);	
+		assertEquals(0, mqt.size());
+		assertNotNull(mqt.getMatchingTerms());
+		assertEquals(0, mqt.getMatchingTerms().length);	
 		mqt.addTermPropertyWeight(term, 1.0d);
-		assertEquals(1, mqt.length());	
-		assertEquals(1, mqt.getTerms().length);	
-		assertEquals(term, mqt.getTerms()[0]);
+		assertEquals(1, mqt.size());	
+		assertEquals(1, mqt.getMatchingTerms().length);	
+		assertEquals(term, mqt.getMatchingTerms()[0].toString());
 		assertEquals(1.0d, mqt.getTermWeight(term), 0.0d);
 		assertNull(mqt.getStatistics(term));
 		EntryStatistics e = new BasicLexiconEntry(2, 1, 100);
@@ -69,18 +71,18 @@ public class TestMatchingQueryTerms {
 	{
 		final String term = "term1";
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		assertEquals(0, mqt.length());
-		assertNotNull(mqt.getTerms());
-		assertEquals(0, mqt.getTerms().length);	
+		assertEquals(0, mqt.size());
+		assertNotNull(mqt.getMatchingTerms());
+		assertEquals(0, mqt.getMatchingTerms().length);	
 		//default weight of a term is 1
-		mqt.setTermProperty(term);
+		mqt.add(QTPBuilder.of(new SingleQueryTerm(term)).build());
 		assertEquals(1.0d, mqt.getTermWeight(term), 0.0d);
 		mqt.setTermProperty(term, 1);
 		//set overwrite, should still be 1
 		assertEquals(1.0d, mqt.getTermWeight(term), 0.0d);
-		assertEquals(1, mqt.length());	
-		assertEquals(1, mqt.getTerms().length);	
-		assertEquals(term, mqt.getTerms()[0]);
+		assertEquals(1, mqt.size());	
+		assertEquals(1, mqt.getMatchingTerms().length);	
+		assertEquals(term, mqt.getMatchingTerms()[0].toString());
 		assertEquals(1.0d, mqt.getTermWeight(term), 0.0d);
 		assertNull(mqt.getStatistics(term));
 		EntryStatistics e = new BasicLexiconEntry(2, 1, 100);
@@ -97,10 +99,10 @@ public class TestMatchingQueryTerms {
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
 		mqt.addTermPropertyWeight(term1, 1.0d);
 		mqt.addTermPropertyWeight(term2, 1.0d);
-		assertEquals(2, mqt.length());	
-		assertEquals(2, mqt.getTerms().length);	
-		assertEquals(term1, mqt.getTerms()[0]);
-		assertEquals(term2, mqt.getTerms()[1]);
+		assertEquals(2, mqt.size());	
+		assertEquals(2, mqt.getMatchingTerms().length);	
+		assertEquals(term1, mqt.getMatchingTerms()[0].toString());
+		assertEquals(term2, mqt.getMatchingTerms()[1].toString());
 		
 		assertEquals(1.0d, mqt.getTermWeight(term1), 0.0d);
 		assertEquals(1.0d, mqt.getTermWeight(term2), 0.0d);
@@ -128,10 +130,10 @@ public class TestMatchingQueryTerms {
 		final String term = "term1";
 		Query q = QueryParser.parseQuery(term);
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt);
-		assertEquals(1, mqt.length());	
-		assertEquals(1, mqt.getTerms().length);	
-		assertEquals(term, mqt.getTerms()[0]);
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(1, mqt.size());	
+		assertEquals(1, mqt.getMatchingTerms().length);	
+		assertEquals(term, mqt.getMatchingTerms()[0].toString());
 		assertEquals(1.0d, mqt.getTermWeight(term), 0.0d);
 		assertNull(mqt.getStatistics(term));
 		EntryStatistics e = new BasicLexiconEntry(2, 1, 100);
@@ -145,12 +147,12 @@ public class TestMatchingQueryTerms {
 	{
 		String term = "{term1 term2}";	
 		Query q = QueryParser.parseQuery(term);
-		term = "term1|term2"; //internal notation is different
+		term = "#syn(term1 term2)"; //internal notation is different
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt);
-		assertEquals(1, mqt.length());	
-		assertEquals(1, mqt.getTerms().length);	
-		assertEquals(term, mqt.getTerms()[0]);
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(1, mqt.size());	
+		assertEquals(1, mqt.getMatchingTerms().length);	
+		assertEquals(term, mqt.getMatchingTerms()[0].toString());
 		assertEquals(1.0d, mqt.getTermWeight(term), 0.0d);
 		assertNull(mqt.getStatistics(term));
 		EntryStatistics e = new BasicLexiconEntry(2, 1, 100);
@@ -160,17 +162,62 @@ public class TestMatchingQueryTerms {
 		assertEquals(100, mqt.getStatistics(term).getFrequency());
 	}
 	
+	@Test public void checkParsedRepeatedTerm() throws Exception
+	{
+		final String term1 = "zebra";
+		Query q = QueryParser.parseQuery(term1 +" " + term1);
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(1, mqt.size());	
+		assertEquals(1, mqt.getMatchingTerms().length);	
+		assertEquals(term1, mqt.getMatchingTerms()[0].toString());
+		
+		assertEquals(2d, mqt.getTermWeight(term1), 0.0d);
+	}
+	
+	@Test public void checkParsedRepeatedTermWithDifferentReq() throws Exception
+	{
+		final String term1 = "zebra";
+		Query q;
+		MatchingQueryTerms mqt;
+		q = QueryParser.parseQuery(term1 + " " + " +"+term1);
+		mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(2, mqt.size());	
+		assertEquals(2, mqt.getMatchingTerms().length);	
+		
+		q = QueryParser.parseQuery(term1 + " " + " field:"+term1);
+		mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(2, mqt.size());	
+		assertEquals(2, mqt.getMatchingTerms().length);	
+		
+	}
+	
+	
+	@Test public void checkParsedRepeatedTermWithWeights() throws Exception
+	{
+		final String term1 = "zebra";
+		Query q = QueryParser.parseQuery(term1 +"^0.1 " + term1 + "^0.2");
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(1, mqt.size());	
+		assertEquals(1, mqt.getMatchingTerms().length);	
+		assertEquals(term1, mqt.getMatchingTerms()[0].toString());		
+		assertEquals(0.3d, mqt.getTermWeight(term1), 0.001d);
+	}
+	
 	@Test public void checkParsedTwoTerms() throws Exception
 	{
 		final String term1 = "zebra";
 		final String term2 = "crossing";
 		Query q = QueryParser.parseQuery(term1+"^0.5 " + term2 + "^1.0");
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt);
-		assertEquals(2, mqt.length());	
-		assertEquals(2, mqt.getTerms().length);	
-		assertEquals(term1, mqt.getTerms()[0]);
-		assertEquals(term2, mqt.getTerms()[1]);
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(2, mqt.size());	
+		assertEquals(2, mqt.getMatchingTerms().length);	
+		assertEquals(term1, mqt.getMatchingTerms()[0].toString());
+		assertEquals(term2, mqt.getMatchingTerms()[1].toString());
 		
 		assertEquals(0.5d, mqt.getTermWeight(term1), 0.0d);
 		assertEquals(1.0d, mqt.getTermWeight(term2), 0.0d);

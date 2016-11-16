@@ -63,6 +63,7 @@ import org.terrier.utility.Rounding;
  * </ul>
   * @author Gianni Amatti, Ben He, Vassilis Plachouras, Craig Macdonald
  */
+@ProcessPhaseRequisites({ManagerRequisite.MQT, ManagerRequisite.RESULTSET})
 public class QueryExpansion implements PostProcess {
 	protected static final Logger logger = LoggerFactory.getLogger(QueryExpansion.class);
 	/**

@@ -37,8 +37,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	BlockMaxBlocksShakespeareEndToEndTest.class,
 	
 	MatchingShakespeareEndToEndTests.TestDAATFullMatchingShakespeareEndToEndTest.class,
-	MatchingShakespeareEndToEndTests.TestDAATFullNoPLMMatchingShakespeareEndToEndTest.class,
-	MatchingShakespeareEndToEndTests.TestTAATFullNoPLMMatchingShakespeareEndToEndTest.class,	
+	//MatchingShakespeareEndToEndTests.TestDAATFullNoPLMMatchingShakespeareEndToEndTest.class,
+	//MatchingShakespeareEndToEndTests.TestTAATFullNoPLMMatchingShakespeareEndToEndTest.class,	
 	
 	SinglePassShakespeareEndToEndTest.BasicSinglePassShakespeareEndToEndTest.class,
 	SinglePassShakespeareEndToEndTest.BlockSinglePassShakespeareEndToEndTest.class,

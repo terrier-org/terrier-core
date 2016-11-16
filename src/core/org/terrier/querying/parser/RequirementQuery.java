@@ -88,16 +88,20 @@ public class RequirementQuery extends Query {
 		}
 		return (MustHave ? "+" : "-") + child.toString();
 	}
-
-	/**
-	 * Stores the terms of the query in the given structure, which 
-	 * is used for matching documents to the query. 
-	 * @param terms MatchingQueryTerms the structure that holds the query
-	 *        terms for matching to documents. 
-	 */
-	public void obtainQueryTerms(MatchingQueryTerms terms) {
-		child.obtainQueryTerms(terms, MustHave);
+	
+	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight) {
+	      child.obtainQueryTerms(terms, field, this.MustHave, weight);
 	}
+
+//	/**
+//	 * Stores the terms of the query in the given structure, which 
+//	 * is used for matching documents to the query. 
+//	 * @param terms MatchingQueryTerms the structure that holds the query
+//	 *        terms for matching to documents. 
+//	 */
+//	public void obtainQueryTerms(MatchingQueryTerms terms) {
+//		child.obtainQueryTerms(terms, MustHave);
+//	}
 	/** 
 	 * This object cannot contain any controls, 
 	 * so this method will always return false.
