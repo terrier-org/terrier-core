@@ -133,7 +133,7 @@ public class Full extends BaseMatching
             } while (nextDocid == currentDocId);
             
             if ((! targetResultSetSizeReached) || currentCandidate.getScore() > threshold) {
-            	System.err.println("id="+currentDocId + " occurrence="+currentCandidate.getOccurrence() + " pattern="+requiredBitPattern + " match=" + (currentCandidate.getOccurrence() & requiredBitPattern));
+            	//System.err.println("id="+currentDocId + " occurrence="+currentCandidate.getOccurrence() + " pattern="+requiredBitPattern + " match=" + (currentCandidate.getOccurrence() & requiredBitPattern));
             	if ( (currentCandidate.getOccurrence() & requiredBitPattern) == requiredBitPattern)
             	{     	
             		//TODO here, we should score the non-optional postings
