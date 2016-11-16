@@ -193,9 +193,6 @@ public class TrecTerrier {
 		System.out.println("				   var/results with the specified qrels file");
 		System.out.println("				   in the file etc/trec.qrels");
 		System.out.println("");
-		System.out.println("If invoked with \'-i\', then both the direct and");
-		System.out.println("inverted files are build, unless it is specified which");
-		System.out.println("of the structures to build.");
 		System.out.println("  -j --ifile	   creates the inverted file, from scratch, single pass");
 		System.out.println("  -H --hadoop	   creates the inverted file, from scratch, using Hadoop MapReduce indexing");
 		System.out.println("");
