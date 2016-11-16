@@ -60,8 +60,6 @@ usage: java TrecTerrier [flags in any order]<br>
 If invoked with '-i', then both the direct and<br>
 inverted files are build, unless it is specified which<br>
 of the structures to build.<br>
-  -d --direct	  creates the direct file<br>
-  -v --inverted	creates the inverted file, from an already existing direct<br>
 <br>
 If invoked with '-r', there are the following options.<br>
   -c value		 parameter value for term frequency normalisation.<br>
@@ -106,9 +104,11 @@ public class TrecTerrier {
 	
 	/**
 	 * Specifies whether to build the inverted file 
-	 * from scrach, sigle pass method	
+	 * from scratch, single pass method	
 	 */
 	protected boolean singlePass = false;
+	
+	protected boolean parallel = false;
 
 	/** use Hadoop indexing */
 	protected boolean hadoop = false;
@@ -144,19 +144,6 @@ public class TrecTerrier {
 	 * finding retrieval task. adhoc by default.
 	 */
 	protected String evaluation_type = "adhoc";
-
-
-	/** 
-	 * Specifies whether to build the inverted file
-	 * from an already created direct file.
-	 */
-	protected boolean inverted;
-	
-	/**
-	 * Specifies whether to build the direct file only.
-	 */
-	protected boolean direct;
-	
 	/** 
 	 * The value of the term frequency 
 	 * normalisation parameter.
@@ -209,8 +196,6 @@ public class TrecTerrier {
 		System.out.println("If invoked with \'-i\', then both the direct and");
 		System.out.println("inverted files are build, unless it is specified which");
 		System.out.println("of the structures to build.");
-		System.out.println("  -d --direct	  creates the direct file");
-		System.out.println("  -v --inverted	creates the inverted file, from an already existing direct");
 		System.out.println("  -j --ifile	   creates the inverted file, from scratch, single pass");
 		System.out.println("  -H --hadoop	   creates the inverted file, from scratch, using Hadoop MapReduce indexing");
 		System.out.println("");
@@ -288,12 +273,10 @@ public class TrecTerrier {
 				hadoop = true;
 			else if (args[pos].equals("-r") || args[pos].equals("--retrieve"))
 				retrieving = true;
-			else if (args[pos].equals("-v") || args[pos].equals("--inverted"))
-				inverted = true;
 			else if (args[pos].equals("-id") || args[pos].equals("--inverted2direct"))
 				inverted2direct = true;
-			else if (args[pos].equals("-d") || args[pos].equals("--direct"))
-				direct = true;
+			else if (args[pos].equals("-P") || args[pos].equals("--parallel"))
+				parallel = true;
 			else if (args[pos].equals("-q") || args[pos].equals("--queryexpand")) 
 				queryexpand = true;
 			else if (args[pos].equals("--printdocid"))
@@ -347,18 +330,12 @@ public class TrecTerrier {
 		if (isParameterValueSpecified && !retrieving) 
 			return ERROR_GIVEN_C_NOT_RETRIEVING;
 		
-		if ((retrieving || queryexpand || c!=0) && (direct || inverted || indexing))
+		if ((retrieving || queryexpand || c!=0) && (indexing))
 			return ERROR_CONFLICTING_ARGUMENTS;		
 
 		if (hadoop && ! indexing)
 			return ERROR_HADOOP_NOT_RETRIEVAL;
-		
-		if (direct && !indexing) 
-			return ERROR_DIRECT_NOT_INDEXING;
-		
-		if (inverted && !indexing) 
-			return ERROR_INVERTED_NOT_INDEXING;
-		
+	
 		if (queryexpand && !retrieving)
 			return ERROR_EXPAND_NOT_RETRIEVE;
 		
@@ -397,16 +374,21 @@ public class TrecTerrier {
 			}
 			else
 			{
-				TRECIndexing trecIndexing = new TRECIndexing();
-				if(singlePass)
-					trecIndexing.createSinglePass();	
-				else if (direct)
-					trecIndexing.createDirectFile();
-				else if (inverted) 
-					trecIndexing.createInvertedFile();
-				else { //if none of the options is specified, build both structures
-					trecIndexing.index();
-				}
+				BatchIndexing batch;
+				if (parallel)
+					batch = new ThreadedBatchIndexing(
+							ApplicationSetup.TERRIER_INDEX_PATH, 
+							ApplicationSetup.TERRIER_INDEX_PREFIX,
+							singlePass);
+				else if(singlePass)
+					batch = new TRECIndexingSinglePass(
+							ApplicationSetup.TERRIER_INDEX_PATH, 
+							ApplicationSetup.TERRIER_INDEX_PREFIX);
+				else //if singlepass not specified, use the classical indexer
+					batch = new TRECIndexing(
+							ApplicationSetup.TERRIER_INDEX_PATH, 
+							ApplicationSetup.TERRIER_INDEX_PREFIX);
+				batch.index();
 			}
 		} else if (retrieving) {
 			//if no value is given, then we use a default value

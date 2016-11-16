@@ -52,6 +52,11 @@ import org.junit.runners.Suite.SuiteClasses;
 	MergingShakespeareEndToEndTests.BasicSinglePassMerging.class,
 	MergingShakespeareEndToEndTests.BlockSinglePassMerging.class,
 	
+	MultiThreadedShakespeareEndToEndTest.BasicThreads.class,
+	MultiThreadedShakespeareEndToEndTest.BlockThreads.class,
+	MultiThreadedShakespeareEndToEndTest.BasicSinglePassThreads.class,
+	MultiThreadedShakespeareEndToEndTest.BlockSinglePassThreads.class,
+	
 	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTest.class,
 	HadoopShakespeareEndToEndTest.BlockHadoopShakespeareEndToEndTest.class,
 	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTestLowMem.class,
