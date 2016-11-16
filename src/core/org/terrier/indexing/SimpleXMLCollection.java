@@ -54,8 +54,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.google.common.collect.Lists;
-
 /** Initial implementation of a class that generates a Collection with Documents from a 
   * series of XML files.<p>
   * <b>Properties:</b><ul>
@@ -350,7 +348,7 @@ public class SimpleXMLCollection implements Collection
 	 */
 	public SimpleXMLCollection(List<String> filesToProcess)
 	{
-		FilesToProcess = Lists.newArrayList();
+		FilesToProcess = new ArrayList<>();
 		FilesToProcess.addAll(filesToProcess);
 		initialiseTags();
 		initialiseParser();
