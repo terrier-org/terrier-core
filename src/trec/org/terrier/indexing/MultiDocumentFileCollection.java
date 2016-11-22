@@ -196,7 +196,7 @@ public abstract class MultiDocumentFileCollection implements Collection {
 				else
 				{//filename seems ok, open it
 					is = Files.openFileStream(filename); //throws an IOException, throw upwards
-					logger.info(this.getClass().getSimpleName() + " processing "+filename);
+					logger.info(this.getClass().getSimpleName() + " "+( (100*FileNumber)/FilesToProcess.size())+"% processing "+filename);
 					//no need to loop again
 					tryFile = false;
 					//return success
