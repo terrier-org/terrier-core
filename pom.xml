@@ -468,7 +468,7 @@
 
 					<execution>
 						<!-- builds the tar files -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
+						<phase>deploy</phase> <!-- bind to the deploy phase -->
 						<id>srczips</id>
 						<goals>
 							<goal>single</goal>
@@ -482,7 +482,7 @@
 
 					<execution>
 						<!-- builds the tar files -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
+						<phase>deploy</phase> <!-- bind to the deploy phase -->
 						<id>binzips</id>
 						<goals>
 							<goal>single</goal>
