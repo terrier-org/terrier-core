@@ -195,6 +195,7 @@ public class TrecTerrier {
 		System.out.println("");
 		System.out.println("  -j --ifile	   creates the inverted file, from scratch, single pass");
 		System.out.println("  -H --hadoop	   creates the inverted file, from scratch, using Hadoop MapReduce indexing");
+		System.out.println("  -P --parallel      creates the index, using multiple threads");
 		System.out.println("");
 		System.out.println("If invoked with \'-r\', there are the following options.");
 		System.out.println("  -c value		 parameter value for term frequency normalisation.");
