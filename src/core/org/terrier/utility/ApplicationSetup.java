@@ -439,7 +439,7 @@ public class ApplicationSetup {
 	
 		//double the amount of memory if using 64bit JVM.	
 		MEMORY_THRESHOLD_SINGLEPASS = UnitUtils.parseInt(getProperty("memory.reserved", 
-			System.getProperty("sun.arch.data.model", "32").equals("64") ? "100Mi" : "50Mi")); 
+			System.getProperty("sun.arch.data.model", "32").equals("64") ? "200Mi" : "50Mi")); 
 		DOCS_CHECK_SINGLEPASS = Integer.parseInt(getProperty("docs.check", "20"));
 		
 		
