@@ -93,6 +93,23 @@ public class RuntimeMemoryChecker implements MemoryChecker
 	     }
 		return lowMemory;
 	}
+
+	@Override
+	public String toString()
+	{
+		long memoryFree = runtime.freeMemory();
+		 /* For some JVMs,  runtime.totalMemory() = Long.MAX_VALUE as the memory usage of java is not suppressed
+          * in this scenario, assume that Java has grown to full adult size */
+        final double memoryAllocated = (runtime.maxMemory() == Long.MAX_VALUE )                                                                                                              
+             ? 1.0d
+             : (double)(runtime.totalMemory()) / (double)(runtime.maxMemory());
+        String rtr = "Memory Check Free: "+memoryFree/1000000+"M, heap allocated "+(memoryAllocated*100)+"%";
+        if(memoryAllocated > MEMORY_HEAP_USAGE_MIN_THRESHOLD && memoryFree < MEMORY_RESERVED)
+        {
+            rtr += "; Free memory ("+memoryFree/1000000+"M) below threshold ("+MEMORY_RESERVED/1000000+"M)";
+        }
+		return rtr;
+	}
 	
 	
 	/** Reset the out of memory flag */
