@@ -414,7 +414,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
+				<version>2.10.4</version>
 				<configuration>
 					<outputDirectory>${basedir}/doc/</outputDirectory>
 					<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
@@ -426,6 +426,7 @@
 					<version>true</version>
 					<windowtitle>${project.Name} ${project.version} API</windowtitle>
 					<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/desktop:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/</sourcepath>
+					 <additionalparam>-Xdoclint:none</additionalparam> <!-- http://stackoverflow.com/a/16743137 -->
 				</configuration>
 				<executions>
 					<execution>
@@ -468,7 +469,7 @@
 
 					<execution>
 						<!-- builds the tar files -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
+						<phase>deploy</phase> <!-- bind to the packaging phase -->
 						<id>srczips</id>
 						<goals>
 							<goal>single</goal>
@@ -482,7 +483,7 @@
 
 					<execution>
 						<!-- builds the tar files -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
+						<phase>deploy</phase> <!-- bind to the packaging phase -->
 						<id>binzips</id>
 						<goals>
 							<goal>single</goal>
@@ -511,42 +512,4 @@
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile> <!-- http://jdpgrailsdev.github.io/blog/2014/04/03/maven_java8_javadoc.html -->
-			<id>java8</id>
-			<activation>
-				<jdk>1.8</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9.1</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/doc/</outputDirectory>
-									<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
-									<destDir>javadoc</destDir>
-									<author>true</author>
-									<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
-									<doctitle>${project.Name} ${project.version} API</doctitle>
-									<use>true</use>
-									<version>true</version>
-									<windowtitle>${project.Name} ${project.version} API</windowtitle>
-									<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/desktop:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/</sourcepath>
-									<additionalparam>-Xdoclint:none</additionalparam> <!-- http://stackoverflow.com/a/16743137 -->
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
