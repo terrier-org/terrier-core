@@ -67,7 +67,11 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 			final int threadCount = ForkJoinPool.commonPool().getParallelism();
 			logger.info("Started " + this.getClass().getSimpleName() + " with parallelism " + threadCount);
 			if (singlePass)
-				logger.warn("Multi-threaded singlepass indexing is experimental - caution advised due to threads competing for available memory!");
+			{
+				logger.warn("Multi-threaded singlepass indexing is experimental - caution advised due to threads competing for available memory! YMMV.");
+				logger.info("Increasing reserved memory for singlepass by factor of "+ threadCount);
+				ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS *= threadCount;
+			}
 			
 			List<List<String>> partitioned = CollectionFactory.splitCollectionSpecFileList(ApplicationSetup.COLLECTION_SPEC, threadCount);
 			logger.info("Partitioned collection.spec into "+ partitioned.size() + " partitions");
