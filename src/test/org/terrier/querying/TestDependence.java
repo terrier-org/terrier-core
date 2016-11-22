@@ -13,7 +13,7 @@ public class TestDependence {
 	{ 
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
 		mqt.add(QTPBuilder.of(new SingleQueryTerm("a")).build());
-		new DependenceModelPreProcess().process(mqt);
+		new DependenceModelPreProcess().process(mqt, "pBiL");
 		System.out.println(mqt.toString());
 		assertEquals(1, mqt.size());
 	}
@@ -23,7 +23,7 @@ public class TestDependence {
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
 		mqt.add(QTPBuilder.of(new SingleQueryTerm("a")).build());
 		mqt.add(QTPBuilder.of(new SingleQueryTerm("b")).build());
-		new DependenceModelPreProcess().process(mqt);
+		new DependenceModelPreProcess().process(mqt, "pBiL");
 		System.out.println(mqt.toString());
 		assertEquals(5, mqt.size());
 		
@@ -35,7 +35,7 @@ public class TestDependence {
 		mqt.add(QTPBuilder.of(new SingleQueryTerm("a")).build());
 		mqt.add(QTPBuilder.of(new SingleQueryTerm("b")).build());
 		mqt.add(QTPBuilder.of(new SingleQueryTerm("c")).build());
-		new DependenceModelPreProcess().process(mqt);
+		new DependenceModelPreProcess().process(mqt, "pBiL");
 		System.out.println(mqt.toString());
 		assertEquals(8, mqt.size());
 	}
