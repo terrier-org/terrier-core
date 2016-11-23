@@ -322,11 +322,11 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		if (memCheck)
 		{
 			doFlush = true;
-			msg += " (memory check threshold hit)";
+			msg += " (memory check threshold hit: " + memoryCheck.toString()+")";
 		}
 		if (maxDocsPerFlush > 0 && numberOfDocsSinceFlush >= maxDocsPerFlush)
 		{
-			msg += " (doc threhold hit)";
+			msg += " (doc threshold hit)";
 			doFlush = true;
 		}
 		if (maxMemory > 0 && consumed > maxMemory )

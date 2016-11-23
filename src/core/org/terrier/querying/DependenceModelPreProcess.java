@@ -24,11 +24,11 @@ public class DependenceModelPreProcess implements Process {
 	@Override
 	public void process(Manager manager, SearchRequest q) {
 		String modelName = q.getControl(CONTROL_MODEL);
-		if (modelName == null)
+		if (modelName == null || modelName.length() == 0)
 			modelName = DEFAULT_DEPENDENCE_WEIGHTING_MODEL;
 		
 		String paramValue = q.getControl(CONTROL_MODEL_PARAM);
-		param = paramValue != null ? Double.parseDouble(paramValue) : null;	
+		param = paramValue != null && paramValue.length() > 0 ? Double.parseDouble(paramValue) : null;	
 		this.process(((Request)q).getMatchingQueryTerms(), modelName);
 	}
 	
