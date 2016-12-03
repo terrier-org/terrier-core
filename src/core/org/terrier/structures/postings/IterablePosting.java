@@ -35,7 +35,8 @@ import java.io.IOException;
 public interface IterablePosting extends Posting, Closeable {
 	
 	/** Value which denotes that the end of the posting list has been reached */
-	int EOL = -1;
+	int EOL = Integer.MAX_VALUE;
+	int END_OF_LIST = Integer.MAX_VALUE;
 	
 	/** Move this iterator to the next posting.
      * @return id of next posting, or EOL if end of posting list 

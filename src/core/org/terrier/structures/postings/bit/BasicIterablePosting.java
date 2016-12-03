@@ -23,92 +23,115 @@
  * Contributor(s):
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
-
 package org.terrier.structures.postings.bit;
 
 import java.io.IOException;
 
 
+/**
+ * The most basic implementation of an iterable posting, written for postings with
+ * docid and TF only. Docids are assumed d-gapped and encoded with gamma, while TF are 
+ * encoded with unary.
+ * 
+ * @author Nicola Tonellotto
+ */
 import org.terrier.compression.bit.BitIn;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.postings.BasicPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.WritablePosting;
 
-/** Basic inverted and direct index format: [gamma(first docid +1) unary (frequency)], [gamma(delta docid) unary(frequency)]
- * @since 3.0 
- */
 @SuppressWarnings("serial")
 public class BasicIterablePosting extends BasicPostingImpl implements IterablePosting
 {
 	protected int numEntries;
+	
 	protected BitIn bitFileReader;
 	protected DocumentIndex doi;
 	
-	/** Create a new posting iterator */
-	protected BasicIterablePosting(){}
-	
-	/** Create a new posting iterator
-	 * @param _bitFileReader BitIn to read the postings from
-	 * @param _numEntries number of postings in the list
-	 * @param _doi document index to use to satisfy getDocumentLength()
-	 * @throws IOException thrown in an IO exception occurs
+	/**
+	 * Empty constructor used ONLY for reflection
 	 */
-	public BasicIterablePosting(BitIn _bitFileReader, int _numEntries, DocumentIndex _doi) throws IOException {
+	public BasicIterablePosting()
+	{
+		this.doi = null;
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param _bitFileReader			The bit file where we read the postings from
+	 * @param _numEntries				Total number of postings to read before returning EOL
+	 * @param _doi						The document index to get the doc length of the current docid
+	 * @throws IOException
+	 */
+	public BasicIterablePosting(BitIn _bitFileReader, int _numEntries, DocumentIndex _doi) throws IOException 
+	{
 		bitFileReader = _bitFileReader;
-		numEntries = _numEntries;
 		doi = _doi;
+		numEntries = _numEntries;
 	}
 
-	/** {@inheritDoc} */
-	public int next() throws IOException {
-		if (numEntries-- <= 0)
-			return EOL;
-		id = bitFileReader.readGamma() + id;
-		tf = bitFileReader.readUnary();
-		return id;
+	@Override
+	public boolean endOfPostings()
+	{
+		return (numEntries <= 0);
 	}
 	
-	/** {@inheritDoc}
-	 * This implementation of next(int) which uses next() */
-	public int next(int target) throws IOException {
-		do
-		{
-			if (this.next() == EOL)
-				return EOL;
-		} while(this.getId() < target);
-		return this.getId();
-	}
-	
-	/** {@inheritDoc} */
-	public boolean endOfPostings() {
-		return numEntries <= 0;
-	}
-
-	/** {@inheritDoc} */
+	@Override
 	public int getDocumentLength()
 	{
-		try{
+		try {
 			return doi.getDocumentLength(id);
 		} catch (Exception e) {
-			//TODO log?
+			////TODO log?
 			System.err.println("Problem looking for doclength for document "+ id);
 			e.printStackTrace();
 			return -1;
 		}
 	}
-
-	/** {@inheritDoc} */
-	public void close() throws IOException {
-		//does not close the underlying file, just the read buffer
+	
+	@Override
+	public void close() throws IOException 
+	{
+		//// does not close the underlying file, just the read buffer
 		bitFileReader.close();
 	}
 	
-	/** {@inheritDoc} */
-	public WritablePosting asWritablePosting() {
+	@Override
+	public WritablePosting asWritablePosting() 
+	{
 		BasicPostingImpl bp = new BasicPostingImpl(id, tf);
 		return bp;
+	}	
+	
+	@Override
+	public String toString()
+	{
+		return "ID(" + id + ") TF(" + tf + ")";
 	}
 
+	@Override
+	public int next() throws IOException 
+	{
+	    if (numEntries == 0) {
+			id = END_OF_LIST;
+		} else {
+			id += bitFileReader.readGamma();
+			this.tf = bitFileReader.readUnary();
+			numEntries--;
+		}
+		return id;
+	}
 	
+	@Override
+	public int next(int target) throws IOException
+	{
+	    while (id < target)
+	        if (numEntries > 0)
+	            next();
+	        else
+	            id = END_OF_LIST;
+	    return id;
+	}
 }
