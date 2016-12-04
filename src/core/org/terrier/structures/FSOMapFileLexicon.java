@@ -26,8 +26,6 @@
 package org.terrier.structures;
 import gnu.trove.TIntObjectHashMap;
 
-import java.io.Closeable;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -44,26 +42,21 @@ import org.terrier.structures.collections.FSOrderedMapFile;
 import org.terrier.structures.indexing.LexiconBuilder;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.Files;
-import org.terrier.utility.io.RandomDataInput;
-import org.terrier.utility.io.RandomDataInputMemory;
 import org.terrier.utility.io.WrappedIOException;
 
-/** Instance of a Lexicon where a FSOrderedMapFile is always used as a backing store.
+/** Instance of a Lexicon<String> where a FSOrderedMapFile is always used as a backing store.
  * <p><b>Index Properties</b>:
  * <ul>
- * <li><tt>index.STRUCTURENAME.termids</tt> - one of {aligned, file, fileinmem, disabled}. Depicts how termid to term lookups are handled.</li>
- * <li><tt>index.STRUCTURENAME.data-source</tt> - one of {file, fileinmem}. Depicts how the lexicon will be read. file means on disk, fileinmem means the entire
- * lexicon file will be read into memory and read from there. Defaults to file.</li>
  * <li><tt>index.STRUCTURENAME.bsearchshortcut</tt> - depicts if the String lookups can be sped up using a binary search shortcut. Possible 
  * values are {charmap,default}. Charmap means a hashmap object will be read into memory that defines where to look for a given starting character of the lookup string.</li>
+ * <li>See also the super-class</li>
  * </ul>
  * @author Craig Macdonald
  * @since 3.0 */
-public class FSOMapFileLexicon extends MapLexicon
+public class FSOMapFileLexicon extends FSOMapFileLexiconGeneric<String,Text>
 {
 	static final Logger logger = LoggerFactory.getLogger(FSOMapFileLexicon.class);
-	static final String MAPFILE_EXT = FSOrderedMapFile.USUAL_EXTENSION;
-	static final String ID_EXT = ".fsomapid";
+	
 	static final String HASH_EXT = ".fsomaphash";
 	
 	static class CharMapBSearchShortcut implements FSOrderedMapFile.FSOMapFileBSearchShortcut<Text>
@@ -88,101 +81,6 @@ public class FSOMapFileLexicon extends MapLexicon
 			return boundaries;
 		}	
 	}
-	
-    static class OnDiskLookup implements Id2EntryIndexLookup, java.io.Closeable
-    {
-        final RandomDataInput lexIdFile;
-        protected static final long SIZE_OF_INT = 4;
-        public OnDiskLookup(String path, String prefix, String structureName) throws IOException
-        {
-            lexIdFile = Files.openFileRandom(
-            		constructFilename(structureName, path, prefix, ID_EXT));
-        }
-        
-        public int getIndex(int termid) throws IOException
-        {
-            lexIdFile.seek(SIZE_OF_INT * (long)termid);
-            return lexIdFile.readInt();
-        }
-        
-        public void close() throws IOException
-        {
-            lexIdFile.close();
-        }
-    }
-    
-    static class InMemoryLookup implements Id2EntryIndexLookup
-    {
-        protected final int[] id2index;
-        public InMemoryLookup(String path, String prefix, String structureName, int size) 
-            throws IOException
-        {
-        	String filename = constructFilename(structureName, path, prefix, ID_EXT);
-            size = (int)(Files.length(filename) / (long)4);
-        	DataInputStream lexIdFile = new DataInputStream(Files.openFileStream(filename));
-            id2index = new int[size];
-            for(int i=0;i<size;i++)
-            {
-                id2index[i] = lexIdFile.readInt();
-            }
-            lexIdFile.close();
-        }
-        
-        public int getIndex(int termid)
-        {
-            return id2index[termid];
-        }
-    }
-    
-    /** loads an appropriate FSOrderedMapFile<Text,LexiconEntry> implementation,
-     * depending on the value of dataSource.
-     * <ol>
-     * <li>fileinmem - use a RandomDataInputMemory instance over the file</li>
-     * <li>file - use file on disk, as normal.</li>
-     * <li>anything else: assume to be a class name, and instantiate using the
-     * expected constructor.</li>
-     * </ol>
-     * @param filename - filename of mapfile
-     * @param keyFactory - factory to create keys
-     * @param valueFactory - factory to create values
-     * @param dataSource - what type of object to instantiate
-     * @return - the created FSOrderedMapFile<Text,LexiconEntry> 
-     * @throws IOException - if any problems occur
-     */
-    @SuppressWarnings("unchecked")
-	static FSOrderedMapFile<Text,LexiconEntry> loadMapFile(String filename, FixedSizeWriteableFactory<Text> keyFactory, 
-    		FixedSizeWriteableFactory<LexiconEntry> valueFactory, String dataSource) throws IOException
-    {
-    	if (dataSource.equals("fileinmem"))
-    		return new FSOrderedMapFile<Text,LexiconEntry>(
-					new RandomDataInputMemory(filename),
-					filename,
-					keyFactory,
-                    valueFactory);
-    	if (dataSource.equals("file"))
-    		return new FSOrderedMapFile<Text,LexiconEntry>(
-					filename,
-					false,
-					keyFactory,
-					valueFactory);
-    	//else, we've been given a class name to instantiate
-    	FSOrderedMapFile<Text,LexiconEntry>rtr = null;
-    	
-    	try {
-    		if (dataSource.startsWith("uk.ac.gla.terrier"))
-    			dataSource = dataSource.replaceAll("uk.ac.gla.terrier", "org.terrier");				
-			
-    		Class<?> mapClass = Class.forName(dataSource).asSubclass(FSOrderedMapFile.class);
-			rtr = (FSOrderedMapFile<Text, LexiconEntry>) mapClass
-				.getConstructor(String.class, Boolean.TYPE, FixedSizeWriteableFactory.class, FixedSizeWriteableFactory.class)
-				.newInstance(filename, false, keyFactory, valueFactory);
-    	}
-    	catch (Exception e)
-    	{
-			throw new WrappedIOException("Could not find a class for FSOMapFileLexicon", e);
-		}
-    	return rtr;
-    }
     
     /** Construct a new FSOMapFileLexicon */
     @SuppressWarnings("unchecked")
@@ -199,51 +97,13 @@ public class FSOMapFileLexicon extends MapLexicon
     		index.getIndexProperty("index."+structureName+".data-source", "file")
     		);
     }
-    /**
-     * Construct an instance of the class with
-     * @param structureName
-     * @param path
-     * @param prefix
-     * @param _keyFactory
-     * @param _valueFactory
-     * @param termIdLookup
-     * @param termLookup
-     * @param dataFile
-     * @throws IOException
-     */
+    
     public FSOMapFileLexicon(String structureName, String path, String prefix, 
     		FixedSizeWriteableFactory<Text> _keyFactory,
     		FixedSizeWriteableFactory<LexiconEntry> _valueFactory,
     		String termIdLookup, String termLookup, String dataFile) throws IOException
     {
-    	/* if dataSource is fileinmem, then the file will be wholly loaded into memory.
-    	 * file means use on disk. Otherwise use as a class name */
-    	super( loadMapFile(
-    			constructFilename(structureName, path, prefix, MAPFILE_EXT), 
-    			_keyFactory, _valueFactory, 
-    			dataFile));
-    	this.keyFactory = _keyFactory;
-    	if (termIdLookup.equals("aligned"))
-        {
-            setTermIdLookup(new IdIsIndex());
-        }
-        else if (termIdLookup.equals("file"))
-        {
-            setTermIdLookup(new OnDiskLookup(path, prefix, structureName));
-        }
-        else if (termIdLookup.equals("fileinmem"))
-        {
-            setTermIdLookup(new InMemoryLookup(path, prefix, structureName, this.map.size()));
-        }
-        else if (termIdLookup.equals("disabled"))
-        {
-        	setTermIdLookup(null);
-        }
-        else
-        {
-            throw new IOException("Unrecognised value ("+termIdLookup+") for termIdlookup for structure "+structureName);
-        }
-    	
+    	super(structureName, path, prefix, _keyFactory, _valueFactory, termIdLookup, dataFile);
     	if (termLookup.equals("charmap"))
     	{
     		try{
@@ -262,193 +122,84 @@ public class FSOMapFileLexicon extends MapLexicon
     		throw new IOException("Unrecognised value ("+termLookup+") for termLookup for structure "+structureName);
     	}
     }
-
-	@Override
-	public void close() throws IOException {
-		super.close();
-	}
-	
-	/** Iterate through the values in order */
-	public static class MapFileLexiconEntryIterator
-		implements Iterator<LexiconEntry>, Closeable, Skipable
-	{
-		protected Iterator<Map.Entry<Text, LexiconEntry>> internalIterator;
-		/**
-		 * Construct an instance of the class with
-		 * @param structureName
-		 * @param index
-		 * @throws IOException
-		 */
-		@SuppressWarnings("unchecked")
-		public MapFileLexiconEntryIterator(String structureName, IndexOnDisk index) throws IOException
-		{
-			this(	structureName.replaceFirst("-entry", ""), 
-					index.getPath(), 
-					index.getPrefix(), 
-		    		(FixedSizeWriteableFactory<Text>)index.getIndexStructure(structureName.replaceFirst("-entry", "")+"-keyfactory"),
-		    		(FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure(structureName.replaceFirst("-entry", "")+"-valuefactory"));
-		}
-		/**
-		 * Construct an instance of the class with
-		 * @param structureName
-		 * @param path
-		 * @param prefix
-		 * @param keyFactory
-		 * @param valueFactory
-		 * @throws IOException
-		 */
-		public MapFileLexiconEntryIterator(String structureName, String path, String prefix, 
-	    		FixedSizeWriteableFactory<Text> keyFactory,
-	    		FixedSizeWriteableFactory<LexiconEntry> valueFactory) throws IOException
-		{
-			this(constructFilename(structureName, path, prefix, MAPFILE_EXT), keyFactory, valueFactory);
-		}
-		/**
-		 * Construct an instance of the class with
-		 * @param filename
-		 * @param keyFactory
-		 * @param valueFactory
-		 * @throws IOException
-		 */
-		public MapFileLexiconEntryIterator(String filename, FixedSizeWriteableFactory<Text> keyFactory,
-	    		FixedSizeWriteableFactory<LexiconEntry> valueFactory) throws IOException
-	    {
-			this(new FSOrderedMapFile.EntryIterator<Text, LexiconEntry>(filename, keyFactory, valueFactory));
-	    }
-		/**
-		 * Construct an instance of the class with
-		 * @param _internalIterator
-		 */
-		public MapFileLexiconEntryIterator(Iterator<Map.Entry<Text, LexiconEntry>> _internalIterator)
-		{
-			internalIterator = _internalIterator;
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public boolean hasNext() {
-			return internalIterator.hasNext();
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public LexiconEntry next() {
-			return internalIterator.next().getValue();
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public void remove() {
-			internalIterator.remove();
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public void close() throws IOException {
-			if (internalIterator instanceof java.io.Closeable)
-				((java.io.Closeable)internalIterator).close();
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public void skip(int numEntries) throws IOException {
-			if (numEntries == 0)
-				return;
-			if (! (internalIterator instanceof Skipable))
-				throw new UnsupportedOperationException("Skipping not supported");
-			((Skipable)internalIterator).skip(numEntries);
-		}
-	
-	}
-	/** 
-	 * An iterator over the lexicon
-	 */
-	public static class MapFileLexiconIterator 
-		implements Iterator<Entry<String, LexiconEntry>>, Closeable
-	{
-		protected Iterator<Entry<Text, LexiconEntry>> parent;
-		/**
-		 * Construct an instance of the class with
-		 * @param structureName
-		 * @param index
-		 * @throws IOException
-		 */
-		@SuppressWarnings("unchecked")
-		public MapFileLexiconIterator(String structureName, IndexOnDisk index) throws IOException
-		{
-			this(
-				structureName, 
-				index.getPath(), 
-				index.getPrefix(), 
-	    		(FixedSizeWriteableFactory<Text>)index.getIndexStructure(structureName+"-keyfactory"),
-	    		(FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure(structureName+"-valuefactory"));
-		}
-		/**
-		 * Construct an instance of the class with
-		 * @param structureName
-		 * @param path
-		 * @param prefix
-		 * @param keyFactory
-		 * @param valueFactory
-		 * @throws IOException
-		 */
-		public MapFileLexiconIterator(String structureName, String path, String prefix, 
-	    		FixedSizeWriteableFactory<Text> keyFactory,
-	    		FixedSizeWriteableFactory<LexiconEntry> valueFactory) throws IOException
-		{
-			this(constructFilename(structureName, path, prefix, MAPFILE_EXT), keyFactory, valueFactory);
-		}
-		/**
-		 * Construct an instance of the class with
-		 * @param filename
-		 * @param keyFactory
-		 * @param valueFactory
-		 * @throws IOException
-		 */
-		public MapFileLexiconIterator(String filename, FixedSizeWriteableFactory<Text> keyFactory,
-	    		FixedSizeWriteableFactory<LexiconEntry> valueFactory) throws IOException
-	    {
-			this(new FSOrderedMapFile.EntryIterator<Text, LexiconEntry>(filename, keyFactory, valueFactory));
-	    }
-		/**
-		 * Construct an instance of the class with
-		 * @param _parent
-		 */
-		public MapFileLexiconIterator(Iterator<Entry<Text, LexiconEntry>> _parent)
-		{
-			parent = _parent;
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public boolean hasNext() {
-			return parent.hasNext();
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public Entry<String, LexiconEntry> next() {
-			return MapLexicon.toStringEntry(parent.next());
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public void remove() {
-			parent.remove();
-		}
-		/** 
-		 * {@inheritDoc} 
-		 */
-		public void close() throws IOException {
-			if (parent instanceof Closeable)
-				((Closeable)parent).close();
-		}
-	}
-	/** 
+    
+    /** 
 	 * {@inheritDoc} 
 	 */
 	public Iterator<Entry<String, LexiconEntry>> iterator() {
 		return new MapFileLexiconIterator(this.map.entrySet().iterator());
+	}
+
+	@Override
+	protected String toK1(Text key) {
+		return key.toString();
+	}
+
+	@Override
+	protected void setK2(String key, Text instance) {
+		instance.set(key);		
+	}
+	
+	public static class MapFileLexiconEntryIterator extends FSOMapFileLexiconGeneric.MapFileLexiconEntryIterator<Text>{
+
+		public MapFileLexiconEntryIterator(
+				Iterator<Entry<Text, LexiconEntry>> _internalIterator) {
+			super(_internalIterator);
+		}
+
+		public MapFileLexiconEntryIterator(String filename,
+				FixedSizeWriteableFactory<Text> keyFactory,
+				FixedSizeWriteableFactory<LexiconEntry> valueFactory)
+				throws IOException {
+			super(filename, keyFactory, valueFactory);
+		}
+
+		public MapFileLexiconEntryIterator(String structureName,
+				IndexOnDisk index) throws IOException {
+			super(structureName, index);
+		}
+
+		public MapFileLexiconEntryIterator(String structureName, String path,
+				String prefix, FixedSizeWriteableFactory<Text> keyFactory,
+				FixedSizeWriteableFactory<LexiconEntry> valueFactory)
+				throws IOException {
+			super(structureName, path, prefix, keyFactory, valueFactory);
+		}}
+	
+	public static class MapFileLexiconIterator extends FSOMapFileLexiconGeneric.MapFileLexiconIterator<String, Text>
+	{
+		public MapFileLexiconIterator(
+				Iterator<Entry<Text, LexiconEntry>> _parent) {
+			super(_parent);
+		}
+
+		public MapFileLexiconIterator(String filename,
+				FixedSizeWriteableFactory<Text> keyFactory,
+				FixedSizeWriteableFactory<LexiconEntry> valueFactory)
+				throws IOException {
+			super(filename, keyFactory, valueFactory);
+			// TODO Auto-generated constructor stub
+		}
+
+		public MapFileLexiconIterator(String structureName, IndexOnDisk index)
+				throws IOException {
+			super(structureName, index);
+			// TODO Auto-generated constructor stub
+		}
+
+		public MapFileLexiconIterator(String structureName, String path,
+				String prefix, FixedSizeWriteableFactory<Text> keyFactory,
+				FixedSizeWriteableFactory<LexiconEntry> valueFactory)
+				throws IOException {
+			super(structureName, path, prefix, keyFactory, valueFactory);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public Entry<String, LexiconEntry> next() {
+			Map.Entry<Text, LexiconEntry> lee = super.parent.next();
+			return new LexiconFileEntry<String>(lee.getKey().toString(), lee.getValue());
+		}		
 	}
 	
 	
@@ -593,20 +344,7 @@ public class FSOMapFileLexicon extends MapLexicon
 		index.setIndexProperty("index."+structureName+".bsearchshortcut", "charmap");
 		index.flush();
 	}
-	/** 
-	 * Constructs a filename
-	 * @param structureName
-	 * @param path
-	 * @param prefix
-	 * @param extension
-	 * @return filename
-	 */
-	public static String constructFilename(String structureName, String path, String prefix, String extension)
-	{
-		return path 
-	        + "/"+ prefix 
-	        +"." + structureName + extension;
-	}
+	
 	
 	/** Rename a FSOMapFileLexicon within the specified index location */
 	public static void renameMapFileLexicon(
@@ -630,4 +368,5 @@ public class FSOMapFileLexicon extends MapLexicon
 			Files.delete(constructFilename(structureName, path, prefix, extension));
 		}
 	}
+
 }

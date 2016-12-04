@@ -52,7 +52,7 @@ import org.terrier.utility.ApplicationSetup;
  * @author Richard McCreadie, Stuart Mackie
  * @since 4.0
  */
-public class MemoryLexicon extends MapLexicon implements Serializable {
+public class MemoryLexicon extends MapLexicon<String,Text> implements Serializable {
 
 	private static final long serialVersionUID = 6642638617614776293L;
 
@@ -167,5 +167,15 @@ public class MemoryLexicon extends MapLexicon implements Serializable {
 			public void remove() {
 			}
 		};
+	}
+
+	@Override
+	protected String toK1(Text key) {
+		return key.toString();
+	}
+
+	@Override
+	protected void setK2(String key, Text instance) {
+		instance.set(key);
 	}
 }

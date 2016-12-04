@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -182,7 +183,11 @@ public class IndexOnDisk extends Index {
 	public DocumentIndex getDocumentIndex() {
 		return (DocumentIndex) getIndexStructure("document");
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getIndexStructure(String structureName, Class<? extends T> clazz) {
+		return (T)getIndexStructure(structureName);
+	}
 	/**
 	 * Obtains the named index structure, using an already loaded one if
 	 * possible.
@@ -199,6 +204,11 @@ public class IndexOnDisk extends Index {
 		if (rtr != null)
 			structureCache.put(structureName, rtr);
 		return rtr;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getIndexStructureInputStream(String structureName, Class<? extends T> clazz) {
+		return (T)getIndexStructureInputStream(structureName);
 	}
 
 	@Override
@@ -357,6 +367,10 @@ public class IndexOnDisk extends Index {
 			// we're done
 			return rtr;
 
+		} catch (InvocationTargetException ite) {
+			logger.error("Couldn't load an index structure called "
+					+ structureName, ite.getCause());
+			return null;
 		} catch (Throwable t) {
 			logger.error("Couldn't load an index structure called "
 					+ structureName, t);

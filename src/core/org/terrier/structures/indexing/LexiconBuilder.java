@@ -39,11 +39,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.sorting.HeapSortInt;
 import org.terrier.structures.FSOMapFileLexicon;
+import org.terrier.structures.FSOMapFileLexiconGeneric;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
+import org.terrier.structures.FSOMapFileLexiconOutputStreamGeneric;
 import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
+import org.terrier.structures.Lexicon.LexiconFileEntry;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
@@ -576,7 +579,14 @@ public class LexiconBuilder
 			if (logger.isDebugEnabled())
 				logger.debug("end of merging...("+((endTime-startTime)/1000.0D)+" seconds)");
 		}
-		FSOMapFileLexiconOutputStream.addLexiconToIndex(this.index, defaultStructureName, lexiconEntryFactoryValueClass+"$Factory");
+		FSOMapFileLexiconOutputStreamGeneric.addLexiconToIndex(
+				this.index, 
+				defaultStructureName, 				
+				FSOMapFileLexicon.class,
+				FSOMapFileLexicon.MapFileLexiconIterator.class,
+				FSOMapFileLexicon.MapFileLexiconEntryIterator.class,
+				lexiconEntryFactoryValueClass+"$Factory"
+				);
 	}
 	
 	protected LexiconEntry newLexiconEntry(int termid)
@@ -892,17 +902,35 @@ public class LexiconBuilder
 	private static Iterator<Entry<String, LexiconEntry>> getLexInputStream(
 			IndexOnDisk index, String structureName)  throws IOException
 	{
-		return new FSOMapFileLexicon.MapFileLexiconIterator(structureName, index.getPath(), index.getPrefix(), 
+		return new FSOMapFileLexiconGeneric.MapFileLexiconIterator<String,Text>(structureName, index.getPath(), index.getPrefix(), 
 				(FixedSizeWriteableFactory<Text>)index.getIndexStructure(structureName+"-keyfactory"), 
-				(FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure(structureName+"-valuefactory"));
+				(FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure(structureName+"-valuefactory"))
+		{
+			/** 
+			 * {@inheritDoc} 
+			 */
+			public Entry<String, LexiconEntry> next() {
+				Entry<Text, LexiconEntry> a = parent.next();
+				return new LexiconFileEntry<String>(a.getKey().toString(), a.getValue());
+			}
+		};
 	}
 	/** return the lexicon input stream for the current index at the specified filename */	
 	@SuppressWarnings("unchecked")
 	protected Iterator<Map.Entry<String,LexiconEntry>> getLexInputStream(String structureName) throws IOException
 	{
-		return new FSOMapFileLexicon.MapFileLexiconIterator(structureName, ((IndexOnDisk) index).getPath(), ((IndexOnDisk) index).getPrefix(), 
+		return new FSOMapFileLexiconGeneric.MapFileLexiconIterator<String,Text>(structureName, ((IndexOnDisk) index).getPath(), ((IndexOnDisk) index).getPrefix(), 
 				(FixedSizeWriteableFactory<Text>)index.getIndexStructure(defaultStructureName+"-keyfactory"), 
-				(FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure(defaultStructureName+"-valuefactory"));
+				(FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure(defaultStructureName+"-valuefactory"))
+		{
+			/** 
+			 * {@inheritDoc} 
+			 */
+			public Entry<String, LexiconEntry> next() {
+				Entry<Text, LexiconEntry> a = parent.next();
+				return new LexiconFileEntry<String>(a.getKey().toString(), a.getValue());
+			}
+		};
 	}
 
 	/** return the lexicon outputstream for the current index at the specified filename */

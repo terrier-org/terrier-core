@@ -45,7 +45,7 @@ import java.util.Map;
  */
 public abstract class Lexicon<KEY> implements Closeable, Iterable<Map.Entry<KEY,LexiconEntry>>
 {
-    static class LexiconFileEntry<KEY2> implements Map.Entry<KEY2,LexiconEntry>
+    public static class LexiconFileEntry<KEY2> implements Map.Entry<KEY2,LexiconEntry>
 	{
         KEY2 key;
         LexiconEntry value;
