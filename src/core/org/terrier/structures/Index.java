@@ -87,7 +87,7 @@ public abstract class Index implements Closeable, Flushable {
 
 		@Override
 		public long getNumberOfTokens() {
-			return Long.parseLong(properties.getProperty("num.Pointers", "0"));
+			return Long.parseLong(properties.getProperty("num.Tokens", "0"));
 		}
 
 		@Override
