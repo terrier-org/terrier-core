@@ -104,7 +104,7 @@ public class TestFatFullMatching extends TestMatching {
 		assertNotNull(ip);
 		assertEquals(0,ip.next());
 		assertEquals(1,ip.getFrequency());
-		assertEquals(-1,ip.next());
+		assertEquals(IterablePosting.END_OF_LIST,ip.next());
 				
 		return rs;
 	}

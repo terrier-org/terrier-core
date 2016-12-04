@@ -62,7 +62,7 @@ public class TestMemoryInvertedIndex {
 		MemoryIterablePosting post = new MemoryIterablePosting(docindex,new TIntArrayList(docids),new TIntArrayList(docfreqs));
 		assertNotNull(post);
 		for (int i = 0; i < 10; i++) {
-			assertThat(post.next(), is(not(-1)));
+			assertThat(post.next(), is(not(IterablePosting.END_OF_LIST)));
 			assertEquals(docids[i], post.getId());
 			assertEquals(docfreqs[i], post.getFrequency());
 			assertEquals(i, post.getDocumentLength());

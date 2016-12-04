@@ -224,7 +224,7 @@ public class TestUtils {
 			assertNotNull(post1);
 			IterablePosting post2 = inverted2.getPostings(lexicon2.getLexiconEntry(firstEntry.getKey()));
 			assertNotNull(post2);
-			while ((post1.next() != -1) && (post2.next() != -1)) {
+			while ((post1.next() != IterablePosting.END_OF_LIST) && (post2.next() != IterablePosting.END_OF_LIST)) {
 				assertEquals(post1.getId(), 			post2.getId());
 				assertEquals(post1.getFrequency(), 		post2.getFrequency());
 				assertEquals(post1.getDocumentLength(), post2.getDocumentLength());	
