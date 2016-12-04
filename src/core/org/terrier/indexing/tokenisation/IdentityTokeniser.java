@@ -33,6 +33,7 @@ import java.io.Reader;
  * 
  * @author Craig Macdonald
  */
+@SuppressWarnings("serial")
 public class IdentityTokeniser extends Tokeniser {
 
 	@Override

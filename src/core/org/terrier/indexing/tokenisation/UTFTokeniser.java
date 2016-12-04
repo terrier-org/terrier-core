@@ -66,6 +66,7 @@ import org.terrier.utility.ApplicationSetup;
  * @see EnglishTokeniser
  * @see java.lang.Character
  */
+@SuppressWarnings("serial")
 public class UTFTokeniser extends Tokeniser {
 
 	/** The maximum number of digits that are allowed in valid terms. */

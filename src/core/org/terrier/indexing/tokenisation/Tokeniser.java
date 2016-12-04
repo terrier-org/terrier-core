@@ -28,6 +28,7 @@ package org.terrier.indexing.tokenisation;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -70,7 +71,8 @@ import org.terrier.utility.ApplicationSetup;
  * @see EnglishTokeniser
  * @see UTFTokeniser
  */
-public abstract class Tokeniser {
+@SuppressWarnings("serial")
+public abstract class Tokeniser implements Serializable {
 
 	/**
 	 * empty stream

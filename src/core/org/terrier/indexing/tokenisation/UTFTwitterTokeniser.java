@@ -39,6 +39,7 @@ import org.terrier.utility.ApplicationSetup;
  * @author Richard McCreadie
  * @since 4.0
  */
+@SuppressWarnings("serial")
 public class UTFTwitterTokeniser extends Tokeniser {
 
 	/** The maximum number of digits that are allowed in valid terms. */

@@ -57,6 +57,7 @@ import org.terrier.utility.StringTools;
  * 
  * @author Gianni Amati, Ben He, Vassilis Plachouras, Craig Macdonald
  */
+@SuppressWarnings("serial")
 public class EnglishTokeniser extends Tokeniser {
 
 	/** The maximum number of digits that are allowed in valid terms. */
