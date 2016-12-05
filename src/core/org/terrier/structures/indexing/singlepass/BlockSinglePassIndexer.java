@@ -295,5 +295,10 @@ public class BlockSinglePassIndexer extends BasicSinglePassIndexer{
 		blockId = 0;
 		numOfTokensInBlock = 0;
 	}
-	
+
+	public void performMultiWayMerge() throws IOException {
+		super.performMultiWayMerge();
+		currentIndex.setIndexProperty("index."+this.structureName+".blocks", String.valueOf(true));
+		currentIndex.setIndexProperty("index."+this.structureName+".blocks.max", String.valueOf(this.MAX_BLOCKS)); 
+	}	
 }
