@@ -68,7 +68,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 			logger.info("Started " + this.getClass().getSimpleName() + " with parallelism " + threadCount);
 			if (singlePass)
 			{
-				int reservationFactor = Math.min(threadCount, 8);
+				int reservationFactor = Math.min(threadCount, 10);
 				logger.warn("Multi-threaded singlepass indexing is experimental - caution advised due to threads competing for available memory! YMMV.");
 				logger.info("Memory reserved was " + ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS);
 				logger.info("Increasing reserved memory for singlepass by factor of "+ reservationFactor);
@@ -122,7 +122,9 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 			};
 			String tmpPrefix = partitioned.parallelStream().map(indexer).reduce(merger).get();
 			IndexUtil.renameIndex(path, tmpPrefix, path, prefix);
-			logger.info("Parallel indexing completed after " + (System.currentTimeMillis() - starttime)/1000 + " seconds");
+			logger.info("Parallel indexing completed after " 
+				+ (System.currentTimeMillis() - starttime)/1000 + " seconds, using " 
+				+ threadCount + " threads");
 			logger.info("Final index is at "+path+" " + prefix);
 		} catch (Throwable e) {
 			logger.error("Problem occurred during parallel indexing", e);
