@@ -117,6 +117,8 @@ public class CompressionFactory {
 						this.getPostingIteratorClass().getName() );
 			index.setIndexProperty("index."+this.structureName+".fields.count", String.valueOf(this.fieldCount));
 			index.setIndexProperty("index."+this.structureName+".fields.names", ArrayUtils.join(this.fieldNames, ","));
+			index.setIndexProperty("index."+this.structureName+".blocks", String.valueOf(this.hasBlocks));
+			index.setIndexProperty("index."+this.structureName+".blocks.max", String.valueOf(this.maxBlocks));
 		}
 	}
 	
