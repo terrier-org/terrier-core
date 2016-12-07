@@ -89,6 +89,11 @@ public class WARC018Collection extends MultiDocumentFileCollection implements Co
 		super(files);
 	}
 
+	public WARC018Collection(String CollectionSpecFilename, String TagSet, String BlacklistSpecFilename,
+         String ignored) {
+        super(CollectionSpecFilename);
+    }
+
 
 	/** Move the collection to the start of the next document. */
 	public boolean nextDocument() {

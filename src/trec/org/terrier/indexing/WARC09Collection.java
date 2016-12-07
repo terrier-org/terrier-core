@@ -31,6 +31,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.terrier.indexing.tokenisation.Tokeniser;
@@ -83,6 +84,15 @@ public class WARC09Collection extends MultiDocumentFileCollection
 	public WARC09Collection(String CollectionSpecFilename) {
 		super(CollectionSpecFilename);
 	}
+
+	public WARC09Collection(List<String> files, String TagSet, String BlacklistSpecFilename, String ignored) {
+        super(files);
+    }
+
+    public WARC09Collection(String CollectionSpecFilename, String TagSet, String BlacklistSpecFilename,
+         String ignored) {
+        super(CollectionSpecFilename);
+    }
 
 	
 
