@@ -299,7 +299,8 @@ public class BlockSinglePassIndexer extends BasicSinglePassIndexer{
 	public void performMultiWayMerge() throws IOException {
 		super.performMultiWayMerge();
 		String structureName = "inverted";
-		currentIndex.setIndexProperty("index."+structureName+".blocks", String.valueOf(true));
-		currentIndex.setIndexProperty("index."+structureName+".blocks.max", String.valueOf(this.MAX_BLOCKS)); 
+		currentIndex.setIndexProperty("index."+structureName+".blocks", String.valueOf(this.BLOCK_SIZE));
+		currentIndex.setIndexProperty("index."+structureName+".blocks.max", String.valueOf(this.MAX_BLOCKS));
+		currentIndex.flush();
 	}	
 }
