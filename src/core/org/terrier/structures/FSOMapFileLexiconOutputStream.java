@@ -75,6 +75,15 @@ public class FSOMapFileLexiconOutputStream extends FSOMapFileLexiconOutputStream
 		tempKey.set(k);
 	}
 	
+	@Override
+	public void close() {
+		super.close();
+		if (index != null)
+		{
+			addLexiconToIndex(index, this.structureName, this.leValueClassname);
+		}
+	}
+
 	/**
 	 * Adds Lexicon to index
 	 * @param index
