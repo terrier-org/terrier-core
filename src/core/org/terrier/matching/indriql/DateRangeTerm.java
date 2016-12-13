@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
@@ -25,6 +26,8 @@ import org.terrier.structures.postings.ORIterablePosting;
 
 public class DateRangeTerm extends QueryTerm {
 
+	public static final String STRING_PREFIX = "#datebetween";
+	
 	protected static final Logger logger = LoggerFactory.getLogger(MultiQueryTerm.class);
 	private static final long serialVersionUID = 1L;
 	Date lowRange;
@@ -39,28 +42,20 @@ public class DateRangeTerm extends QueryTerm {
 
 	@Override
 	public String toString() {
-		return "#datebetween("+lowRange + " " + hiRange+ ")";
+		return STRING_PREFIX + "("+lowRange + " " + hiRange+ ")";
 	}
-
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public MatchingEntry getMatcher(QueryTermProperties qtp, Index index,
-			Lexicon<String> lexTerm, PostingIndex<Pointer> invTerm,
-			CollectionStatistics collectionStats) throws IOException {
-		
+	Pair<EntryStatistics, IterablePosting> getPostingIterator(Index index)
+			throws IOException {
 		Lexicon<Date> lexDate = (Lexicon<Date>) index.getIndexStructure("datelexicon");
 		PostingIndex<Pointer> invDate = (PostingIndex<Pointer>) index.getIndexStructure("dateinverted");
-		
 		List<LexiconEntry> _le = new ArrayList<LexiconEntry>();
 		List<IterablePosting> _joinedPostings = new ArrayList<IterablePosting>();
 		
-		WeightingModel[] wmodels = qtp.termModels.toArray(new WeightingModel[0]);
-		if (wmodels.length == 0) {
-			logger.warn("No weighting models for multi-term query group "+toString()+" , skipping scoring");
-			return null;
-		}
-		EntryStatistics entryStats = qtp.stats;
-		
+		EntryStatistics entryStats;
 		for(Iterator<Map.Entry<Date,LexiconEntry>> iter = lexDate.getLexiconEntryRange(lowRange, hiRange);iter.hasNext();)
 		{
 			Map.Entry<Date,LexiconEntry> lee = iter.next();
@@ -68,8 +63,6 @@ public class DateRangeTerm extends QueryTerm {
 			LexiconEntry t = lee.getValue();
 			if (t == null) {
 				logger.debug("Component term Not Found: " + alternative);
-			} else if (IGNORE_LOW_IDF_TERMS && collectionStats.getNumberOfDocuments() < t.getFrequency()) {
-				logger.warn("query term " + alternative + " has low idf - ignored from scoring.");
 			} else {
 				_le.add(t);
 				_joinedPostings.add(invDate.getPostings((BitIndexPointer) t));
@@ -81,8 +74,31 @@ public class DateRangeTerm extends QueryTerm {
 			logger.warn("No alternatives matched in "+this.toString());
 			return null;
 		}
+		entryStats = MultiQueryTerm.mergeStatistics(_le.toArray(new LexiconEntry[_le.size()]));
+		return Pair.of(entryStats, (IterablePosting) ORIterablePosting.mergePostings(_joinedPostings.toArray(new IterablePosting[_joinedPostings.size()])));
+	}
+
+	
+	@Override
+	public MatchingEntry getMatcher(QueryTermProperties qtp, Index index,
+			Lexicon<String> lexTerm, PostingIndex<Pointer> invTerm,
+			CollectionStatistics collectionStats) throws IOException {
+		
+		
+		
+		
+		
+		WeightingModel[] wmodels = qtp.termModels.toArray(new WeightingModel[0]);
+		if (wmodels.length == 0) {
+			logger.warn("No weighting models for multi-term query group "+toString()+" , skipping scoring");
+			return null;
+		}
+		EntryStatistics entryStats = qtp.stats;
+		
+		Pair<EntryStatistics,IterablePosting> pair = this.getPostingIterator(index);
+		
 		if (entryStats == null)
-			entryStats = MultiQueryTerm.mergeStatistics(_le.toArray(new LexiconEntry[_le.size()]));
+			entryStats = pair.getKey();
 		if (logger.isDebugEnabled())
 			logger.debug("Date range term "+this.toString()+ " stats" + entryStats.toString());
 		for (WeightingModel w : wmodels)
@@ -97,7 +113,7 @@ public class DateRangeTerm extends QueryTerm {
 		boolean required = false;
 		if (qtp.required != null && qtp.required)
 			required = true;
-		return new MatchingEntry(ORIterablePosting.mergePostings(_joinedPostings.toArray(new IterablePosting[_joinedPostings.size()])), entryStats, qtp.weight, wmodels, required);
+		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required);
 	}
 
 }

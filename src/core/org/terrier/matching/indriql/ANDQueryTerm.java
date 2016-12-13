@@ -11,10 +11,16 @@ import org.terrier.utility.ArrayUtils;
 
 
 public class ANDQueryTerm extends MultiQueryTerm {
+	
+	public static final String STRING_PREFIX = "#band";
 
 	private static final long serialVersionUID = 1L;
 
 	public ANDQueryTerm(String[] ts) {
+		super(ts);
+	}
+	
+	public ANDQueryTerm(QueryTerm[] ts) {
 		super(ts);
 	}
 
@@ -30,7 +36,7 @@ public class ANDQueryTerm extends MultiQueryTerm {
 
 	@Override
 	public String toString() {
-		return "#band(" + ArrayUtils.join(terms, ' ') + ")";
+		return STRING_PREFIX + "(" + ArrayUtils.join(terms, ' ') + ")";
 	}
 	
 	public ANDQueryTerm clone()

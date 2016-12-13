@@ -12,11 +12,16 @@ import org.terrier.utility.ArrayUtils;
 
 public class SynonymTerm extends MultiQueryTerm {
 
+	public static final String STRING_PREFIX = "#syn";
 	private static final long serialVersionUID = 1L;
 	
 	
 	protected static final Logger logger = LoggerFactory.getLogger(SynonymTerm.class);
 	
+	public SynonymTerm(QueryTerm[] ts) {
+		super(ts);
+	}
+
 	
 	public SynonymTerm(String[] ts) {
 		super(ts);
@@ -24,7 +29,7 @@ public class SynonymTerm extends MultiQueryTerm {
 
 	@Override
 	public String toString() {
-		return "#syn("+ArrayUtils.join(terms, " ")+")";
+		return STRING_PREFIX + "("+ArrayUtils.join(terms, ' ')+")";
 	}
 
 	

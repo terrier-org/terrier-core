@@ -10,15 +10,21 @@ import org.terrier.utility.ArrayUtils;
 
 public class PhraseTerm extends MultiQueryTerm {
 
+	public static final String STRING_PREFIX = "#1";
+	
 	private static final long serialVersionUID = 1L;
 
+	public PhraseTerm(QueryTerm[] ts) {
+		super(ts);
+	}
+	
 	public PhraseTerm(String[] ts) {
 		super(ts);
 	}
 
 	@Override
 	public String toString() {
-		return "#1(" + ArrayUtils.join(terms, ' ') + ")";
+		return STRING_PREFIX + "(" + ArrayUtils.join(terms, ' ') + ")";
 	}
 
 	@Override

@@ -10,10 +10,17 @@ import org.terrier.utility.ArrayUtils;
 
 public class UnorderedWindowTerm extends MultiQueryTerm {
 
+	public static final String STRING_PREFIX = "#uw";
 	private static final long serialVersionUID = 1L;
 	
 	
 	int distance;
+	
+	public UnorderedWindowTerm(QueryTerm[] ts, int dist) {
+		super(ts);
+		this.distance = dist;
+	}
+	
 	public UnorderedWindowTerm(String[] ts, int dist) {
 		super(ts);
 		this.distance = dist;
@@ -21,7 +28,7 @@ public class UnorderedWindowTerm extends MultiQueryTerm {
 
 	@Override
 	public String toString() {
-		return "#uw"+distance+"("+ArrayUtils.join(terms, " ")+")";
+		return STRING_PREFIX +distance+"("+ArrayUtils.join(terms, ' ')+")";
 	}
 
 	@Override
