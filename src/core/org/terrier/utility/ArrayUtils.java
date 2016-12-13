@@ -186,6 +186,23 @@ public class ArrayUtils {
     /** Join some strings together.
 	  * @param in Strings to join
 	  * @param join Character or String to join by */
+  public static String join (Object[] in, char join)
+  {
+      final StringBuilder s = new StringBuilder();
+      if (in.length == 0)
+      	return "";
+      for(Object i : in)
+      {
+          s.append(i.toString());
+          s.append(join);
+      }
+      s.setLength(s.length() - 1);
+      return s.toString();
+  }
+    
+    /** Join some strings together.
+	  * @param in Strings to join
+	  * @param join Character or String to join by */
    public static String join (String[] in, char join)
    {
        final StringBuilder s = new StringBuilder();
