@@ -273,7 +273,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		//assertTrue(foxScoreBody==foxScoreAll); // Intuitively, foxScoreBody should be less than foxScoreAll, but Terrier does not currently consider fields when scoring
 		
 		
-		String query3 = "BODY:example";
+		String query3 = "+BODY:example";
 		
 		q = new Request();
 		q.setQueryID("query3");
@@ -300,7 +300,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		if (rs.getResultSize() > 2)
 		assertEquals(Double.NEGATIVE_INFINITY,rs.getScores()[2],0.0);
 		
-		String query4 = "TITLE:(example dog)";
+		String query4 = "+TITLE:(example dog)";
 		
 		q = new Request();
 		q.setQueryID("query4");
