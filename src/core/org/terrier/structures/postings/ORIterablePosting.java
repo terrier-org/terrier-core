@@ -42,24 +42,40 @@ import java.util.PriorityQueue;
 public class ORIterablePosting extends IterablePostingImpl {
 
 	/** Factory method to create an appropriate ORIterablePosting from the specified IterablePostings.
-	 * Four types of ORIterablePosting maybe returned, based on the type of the first IterablePosting
+	 * Four types of ORIterablePosting maybe returned, based on the type of the specified IterablePosting
 	 * classes:
 	 * <ul>
-	 * <li>BlockFieldORIterablePosting - if the first posting list is both a BlockPosting and FieldPosting</li>
-	 * <li>BlockORIterablePosting - if the first posting list is a BlockPosting but not a FieldPosting</li>
-	 * <li>FieldORIterablePosting - if the first posting list is a FieldPosting but not a BlockPosing</li>
-	 * <li>ORIterablePosting - if the first posting list is neither a FieldPosting or a BlockPosting</li>
+	 * <li>BlockFieldORIterablePosting - if the all posting lists are both a BlockPosting and FieldPosting</li>
+	 * <li>BlockORIterablePosting - if the all posting lists are a BlockPosting but not a FieldPosting</li>
+	 * <li>FieldORIterablePosting - if the all posting lists are a FieldPosting but not a BlockPosing</li>
+	 * <li>ORIterablePosting - otherwise</li>
 	 * </ul>
 	 */
 	public static ORIterablePosting mergePostings(IterablePosting[] ips) throws IOException
 	{
-		final IterablePosting ip0 = ips[0];
-		if (ip0 instanceof BlockPosting)
-			if (ip0 instanceof FieldPosting)
-				return new BlockFieldORIterablePosting(ips);
-			else
-				return new BlockORIterablePosting(ips);
-		else if (ip0 instanceof FieldPosting)
+		boolean blocks = true;
+		boolean fields = true;
+		for(IterablePosting ip : ips)
+		{
+			if (! (ip instanceof BlockPosting))
+			{
+				blocks = false;
+				break;
+			}
+		}
+		for(IterablePosting ip : ips)
+		{
+			if (! (ip instanceof FieldPosting))
+			{
+				fields = false;
+				break;
+			}
+		}
+		if (blocks && fields)
+			return new BlockFieldORIterablePosting(ips);
+		if (blocks)
+			return new BlockORIterablePosting(ips);
+		if (fields)
 			return new FieldORIterablePosting(ips);
 		return new ORIterablePosting(ips);
 	}
