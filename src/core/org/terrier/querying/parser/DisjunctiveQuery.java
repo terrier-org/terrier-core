@@ -28,6 +28,8 @@ package org.terrier.querying.parser;
 import java.util.List;
 
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.indriql.QueryTerm;
+import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.matching.indriql.SynonymTerm;
 
 import com.google.common.collect.Lists;
@@ -96,11 +98,11 @@ public class DisjunctiveQuery extends MultiTermQuery {
 	
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight)
 	{
-		List<String> singleTerms = Lists.newArrayList();
+		List<QueryTerm> singleTerms = Lists.newArrayList();
 		for(Query child : v)
 		{
 			SingleTermQuery term = (SingleTermQuery)child;
-			singleTerms.add(term.getTerm());
+			singleTerms.add(new SingleQueryTerm(term.getTerm(), field));
 		}
 		QTPBuilder qtp = QTPBuilder.of(new SynonymTerm(singleTerms.toArray(new String[singleTerms.size()])));
 		if (weight != null)
@@ -120,7 +122,7 @@ public class DisjunctiveQuery extends MultiTermQuery {
 			qtp.setRequired(false);
 			qtp.setWeight(Double.NEGATIVE_INFINITY);
 		}
-		qtp.setField(field);
+		//qtp.setField(field);
 		terms.add(qtp.build());
 	}
 

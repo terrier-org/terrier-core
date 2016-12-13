@@ -184,7 +184,7 @@ public class SingleTermQuery extends Query {
 	@Override
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field,
 			Boolean required, Double weight) {
-		QTPBuilder qtp = QTPBuilder.of(new SingleQueryTerm(this.term));
+		QTPBuilder qtp = QTPBuilder.of(new SingleQueryTerm(this.term, field));
 		if (weight != null)
 		{
 			qtp.setWeight(weight * this.weight);
@@ -202,7 +202,7 @@ public class SingleTermQuery extends Query {
 			qtp.setRequired(false);
 			qtp.setWeight(Double.NEGATIVE_INFINITY);
 		}
-		qtp.setField(field);
+		//qtp.setField(field);
 		terms.add(qtp.build());
 	}
 	

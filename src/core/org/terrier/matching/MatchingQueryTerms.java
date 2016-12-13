@@ -91,7 +91,7 @@ implements Serializable,Cloneable
 		/** The term score modifiers associated with a particular query term.*/
 		public List<WeightingModel> termModels = new ArrayList<WeightingModel>();
 		
-		public String field = null;
+		//public String field = null;
 		
 		public QueryTermProperties(int _index) {
 			this.index = _index;
@@ -199,7 +199,7 @@ implements Serializable,Cloneable
 		@Override
 		public String toString()
 		{
-			return "{ req=" + this.required + ", field="+this.field+", w=" + this.weight + ", stats=" + this.stats + ", models=" + this.termModels.toString() + "}";
+			return "{ req=" + this.required + ", w=" + this.weight + ", stats=" + this.stats + ", models=" + this.termModels.toString() + "}";
 		}
 		
 	}
@@ -394,8 +394,7 @@ implements Serializable,Cloneable
 	}
 	
 	protected QueryTermProperties combine(QueryTermProperties existingProps, QueryTermProperties newProps) {
-		if (existingProps.field != newProps.field)
-			return null;
+		
 		if (existingProps.required != newProps.required)
 			return null;
 		if (! existingProps.termModels.equals(newProps.termModels))

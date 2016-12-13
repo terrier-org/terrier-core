@@ -63,6 +63,12 @@ public abstract class Query implements Serializable, Cloneable{
 			return this;
 		}
 		
+		public QTPBuilder setWeightingModels(List<WeightingModel> wms) {
+			qtp.termModels.clear();
+			qtp.termModels.addAll(wms);
+			return this;
+		}
+		
 		public QTPBuilder setWeight(Double w)
 		{
 			qtp.weight = w;
@@ -75,11 +81,11 @@ public abstract class Query implements Serializable, Cloneable{
 			return this;
 		}
 		
-		public QTPBuilder setField(String field)
-		{
-			qtp.field = field;
-			return this;
-		}
+//		public QTPBuilder setField(String field)
+//		{
+//			qtp.field = field;
+//			return this;
+//		}
 		
 		public MatchingTerm build()
 		{
