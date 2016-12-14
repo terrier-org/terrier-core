@@ -87,6 +87,9 @@ public class Full extends BaseMatching
 			resultSet.setResultSize(collectionStatistics.getNumberOfDocuments());
 			return resultSet;
 		}
+		//a hook for subclasses
+		initialisePostings(plm);
+		
 		//DO NOT prepare the posting lists for TAAT retrieval
 		plm.prepare(false);
 				
@@ -145,7 +148,7 @@ public class Full extends BaseMatching
 	}
 
 	@Override
-	protected void initialisePostings(MatchingQueryTerms queryTerms) {
+	protected void initialisePostings(PostingListManager plm) {
 		
 	}
 }

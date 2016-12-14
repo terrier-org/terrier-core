@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.Queue;
 
 import org.terrier.matching.FatResultSet;
+import org.terrier.matching.PostingListManager;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Index;
 import org.terrier.structures.postings.FieldPosting;
@@ -49,14 +50,27 @@ import org.terrier.structures.postings.WritablePosting;
  */
 public class FatFull extends Full {
 
-	final boolean fields;
+	boolean[] fields;
 	final int fieldCount;
 	
 	public FatFull(Index index) {
 		super(index);
-		fields = super.collectionStatistics.getNumberOfFields() > 0;
 		fieldCount = super.collectionStatistics.getNumberOfFields(); 
 	}
+	
+	
+
+	@Override
+	protected void initialisePostings(PostingListManager plm) {
+		super.initialisePostings(plm);
+		fields = new boolean[plm.size()];
+		for(int i=0;i<plm.size();i++)
+		{
+			fields[i] = plm.getPosting(i) instanceof FieldPosting;
+		}		
+	}
+
+
 
 	@Override
 	protected CandidateResult makeCandidateResult(int currentDocId) {
@@ -97,7 +111,7 @@ public class FatFull extends Full {
         assert wp.getId() == cc.getDocId() : "Posting does not have same docid as candidate result";
         
         wp.setDocumentLength(p.getDocumentLength());
-        if (fields)
+        if (fields[i])
         {
         	final int[] fieldLengths =  ((FieldPosting)p).getFieldLengths();
         	final int[] newFieldLengths = new int[fieldCount];

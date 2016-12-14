@@ -68,7 +68,7 @@ public class Full extends BaseMatching
 	PostingListManager plm;
 	
 	@Override
-	protected void initialisePostings(MatchingQueryTerms queryTerms) {
+	protected void initialisePostings(PostingListManager plm) {
 		
 	}	
 	
@@ -88,6 +88,9 @@ public class Full extends BaseMatching
 			resultSet.setResultSize(collectionStatistics.getNumberOfDocuments());
 			return resultSet;
 		}
+		
+		//a hook for subclasses
+		initialisePostings(plm);
 		
 		//the number of documents with non-zero score.
 		numberOfRetrievedDocuments = 0;

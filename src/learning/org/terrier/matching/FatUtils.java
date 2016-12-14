@@ -78,7 +78,7 @@ import org.terrier.utility.io.WrappedIOException;
  */
 public class FatUtils {
 
-	private static final byte VERSION = 2;
+	private static final byte VERSION = 3;
 	private static final boolean DEBUG = false;
 	
 	static Logger logger = LoggerFactory.getLogger(FatUtils.class);
@@ -97,23 +97,39 @@ public class FatUtils {
 	{
 		if (DEBUG)
 			in = new DebuggingDataInput(in);
+		
+		try{
+			byte version = in.readByte();
+			switch (version) {
+				case 2: readFieldsV2(frs, in); break;
+				case 3: readFieldsV3(frs, in); break;
+				default: throw new IOException("Version mismatch, version " + version +" is not supported");
+			}			
+		}catch (EOFException eofe) {
+			logger.error("EOF within FatUtils.read()", eofe);
+			throw eofe;
+		}catch (IOException ioe) {
+			logger.error("EOF within FatUtils.read()", ioe);
+			throw ioe;			
+		}
+	}
+
+	protected static void readFieldsV2(FatResultSet frs, DataInput in)
+			throws IOException 
+	{
 		int i =-1;
 		int resultSize = -1;
 		int j = -1;
 		int termCount = -1;
+		
 		try{
-			if (in.readByte() != VERSION)
-			{
-				throw new IOException("Version mismatch");
-			}
-			
 			CollectionStatistics collStats = new CollectionStatistics();
 			collStats.readFields(in);
 			frs.setCollectionStatistics(collStats);
 			
 			final boolean fields = collStats.getNumberOfFields() > 0;
 			final int fieldCount = collStats.getNumberOfFields();
-				
+			
 			//read number of query terms
 			termCount = in.readInt();
 			if (termCount == 0)
@@ -138,7 +154,7 @@ public class FatUtils {
 			//hack for some older fat result versions
 			if (statsClassName.equals("org.terrier.structures.FieldIndex$FieldIndexLexiconEntry"))
 				statsClassName = FieldLexiconEntry.class.getName();
-
+	
 			Class<? extends EntryStatistics> statisticsClass = Class.forName(statsClassName).asSubclass(EntryStatistics.class);
 			Class<? extends WritablePosting> postingClass = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
 			
@@ -213,30 +229,150 @@ public class FatUtils {
 					postings[i][j] = p;
 				}
 				//leave at least one posting lying around for each document, even if it is empty
-//				if (! anyPostings)
-//				{
-//					postings[i][0] = postingClass.newInstance();
-//					postings[i][0].setId(0);
-//					postings[i][0].setDocumentLength(0);
-//				}
-//				if (docids[i] == 65936)
-//				{
-//					System.err.println("Reading 65936: " + postings[i][0].toString());
-//				}
+	//			if (! anyPostings)
+	//			{
+	//				postings[i][0] = postingClass.newInstance();
+	//				postings[i][0].setId(0);
+	//				postings[i][0].setDocumentLength(0);
+	//			}
 			}
-		frs.setScores(scores);
-		frs.setDocids(docids);
-		frs.setPostings(postings);
-		frs.setOccurrences(occurrences);
-		}catch (EOFException eofe) {
-			logger.error("EOF within FatUtils.read()", eofe);
-			throw eofe;
-		}catch (IOException ioe) {
-			logger.error("EOF within FatUtils.read()", ioe);
-			throw ioe;			
-		}catch (Exception e) {
+			frs.setScores(scores);
+			frs.setDocids(docids);
+			frs.setPostings(postings);
+			frs.setOccurrences(occurrences);
+		} catch (IOException ioe ) {
+			throw ioe;
+		} catch (Exception e) {
 			throw new WrappedIOException("Problem reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount, e);
 		}
+		
+	}
+	
+	protected static void readFieldsV3(FatResultSet frs, DataInput in)
+			throws IOException 
+	{
+		int i =-1;
+		int resultSize = -1;
+		int j = -1;
+		int termCount = -1;
+		
+		try{
+			CollectionStatistics collStats = new CollectionStatistics();
+			collStats.readFields(in);
+			frs.setCollectionStatistics(collStats);
+			
+			final int fieldCount = collStats.getNumberOfFields();
+						
+			
+			//read number of query terms
+			termCount = in.readInt();
+			if (termCount == 0)
+			{
+				frs.setResultSize(0);
+				final int[] docids 		= new int[0];
+				final double[] scores 		= new double[0];
+				final short[] occurrences = new short[0];
+				final WritablePosting[][] postings = new WritablePosting[0][];				
+				frs.setScores(scores);
+				frs.setDocids(docids);
+				frs.setPostings(postings);
+				frs.setOccurrences(occurrences);
+				
+				System.err.println("No found terms for this query");
+				return;
+			}
+			
+			
+			@SuppressWarnings("unchecked")
+			Class<? extends WritablePosting> postingClass[] = new Class[termCount];			
+			
+			//read terms and entry statistics
+			final EntryStatistics[] entryStats = new EntryStatistics[termCount];
+			final String[] queryTerms = new String[termCount];
+			final double[] keyFrequencies = new double[termCount];
+			final boolean[] fields = new boolean[termCount];
+			final boolean[] blocks = new boolean[termCount];
+			for(j=0;j<termCount;j++)
+			{
+				queryTerms[j] = in.readUTF();
+				fields[j] = in.readBoolean();
+				blocks[j] = in.readBoolean();
+				postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
+				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
+				final EntryStatistics le = fields[j]
+					? statisticsClass.getConstructor(Integer.TYPE).newInstance(fieldCount)
+					: statisticsClass.newInstance();
+				entryStats[j] = le;
+				keyFrequencies[j] = in.readDouble();
+				((Writable)le).readFields(in);
+			}
+			
+			frs.setEntryStatistics(entryStats);
+			frs.setKeyFrequencies(keyFrequencies);
+			frs.setQueryTerms(queryTerms);
+			
+			
+			//read the number of documents
+			resultSize = in.readInt();
+			//size the arrays
+			final int[] docids 		= new int[resultSize];
+			final double[] scores 		= new double[resultSize];
+			final short[] occurrences = new short[resultSize];
+			final WritablePosting[][] postings = new WritablePosting[resultSize][];
+			
+			//for each document
+			for (i = 0; i < resultSize; i++)
+			{
+				//read: docid, scores, occurrences
+				docids[i] = in.readInt();
+				scores[i] = in.readDouble();
+				occurrences[i] = in.readShort();
+				final int docLen = in.readInt();
+				final int[] fieldLens;
+				if (fieldCount > 0)
+				{
+					fieldLens = new int[fieldCount];
+					for(int fi=0;fi<fieldCount;fi++)
+						fieldLens[fi] = in.readInt();
+					//System.err.println("docid="+docids[i] + " lf=" + org.terrier.utility.ArrayUtils.join(fieldLens, ","));
+				}
+				else
+				{
+					fieldLens = null;
+				}
+				
+				postings[i] = new WritablePosting[termCount];
+				
+				//boolean anyPostings = false;
+				
+				//for each term
+				for (j = 0; j < termCount; j++) {
+					//read the id of the posting, and use Posting.read(in);
+					boolean hasPosting = in.readBoolean();
+					if (! hasPosting)
+						continue;
+					//anyPostings = true;
+					WritablePosting p = postingClass[j].newInstance();
+					p.readFields(in);
+					//check that the posting we read is assigned to the docid
+					assert docids[i] == p.getId();
+					
+					p.setDocumentLength(docLen);
+					if (fields[j])
+						((FieldPosting)p).setFieldLengths(fieldLens);
+					postings[i][j] = p;
+				}
+			}
+			frs.setScores(scores);
+			frs.setDocids(docids);
+			frs.setPostings(postings);
+			frs.setOccurrences(occurrences);
+		} catch (IOException ioe ) {
+			throw ioe;
+		} catch (Exception e) {
+			throw new WrappedIOException("Problem reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount, e);
+		}
+		
 	}
 	
 	public static void write(FatResultSet frs, DataOutput out) throws IOException
@@ -256,24 +392,33 @@ public class FatUtils {
 		
 		
 		collStats.write(out);
-		final boolean fields = collStats.getNumberOfFields() > 0;
 		final int fieldCount = collStats.getNumberOfFields();		
 		final int queryTermCount = queryTerms.length;
+		final boolean fields[] = new boolean[queryTermCount];
+		final boolean blocks[] = new boolean[queryTermCount];
+		
 		
 		//write out the number of query terms
 		out.writeInt(queryTermCount);
 		if(queryTermCount == 0)
 			return;
-	
-		//write out the classes
-		out.writeUTF(entryStats[0].getClass().getName());
-		out.writeUTF(firstPosting(postings).getClass().getName());
 		
 		
 		//write out query terms
 		//write out the entry statistics
 		for (int i = 0; i < queryTermCount; i++){
 			out.writeUTF(queryTerms[i]);
+			WritablePosting firstPostingForTerm = firstPosting(postings, i);
+			fields[i] = firstPostingForTerm instanceof FieldPosting;
+			blocks[i] = firstPostingForTerm instanceof BlockPosting;
+			out.writeBoolean(fields[i]);
+			out.writeBoolean(blocks[i]);
+			
+			
+			//write out the classes			
+			out.writeUTF(firstPostingForTerm.getClass().getName());
+			out.writeUTF(entryStats[i].getClass().getName());
+			
 			out.writeDouble(keyFrequency[i]);
 			((Writable)entryStats[i]).write(out);
 		}
@@ -295,7 +440,7 @@ public class FatUtils {
 			WritablePosting firstPosting = firstPosting(postings[i]);
 			assert firstPosting != null : "Docid " + docids[i] + " with score " + scores[i] + " has no matching postings";
 			out.writeInt(firstPosting.getDocumentLength());			
-			if (fields)
+			if (fieldCount > 0)
 			{
 				final int[] fieldLengths = ((FieldPosting)firstPosting).getFieldLengths();
 				assert fieldLengths.length == fieldCount;

@@ -168,7 +168,7 @@ public abstract class BaseMatching implements Matching
 		}
 	}
 	
-	protected void initialisePostings(MatchingQueryTerms queryTerms)
+	protected void initialisePostings(PostingListManager plm)
 	{
 		
 //		// We purge the query terms not present in the lexicon and retrieve the information from the lexicon
@@ -240,8 +240,6 @@ public abstract class BaseMatching implements Matching
 		MATCH_EMPTY_QUERY    = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
 		
 		this.numberOfRetrievedDocuments = 0;
-
-		initialisePostings(queryTerms);
 	}
 	
 	protected void finalise(MatchingQueryTerms queryTerms)
