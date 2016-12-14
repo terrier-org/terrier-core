@@ -69,7 +69,7 @@ public class SingleQueryTerm extends QueryTerm {
 		if (t == null) {
 			logger.debug("Term Not Found: " + queryTerm);
 			//previousTerm = false;	
-			return null;
+			return Pair.of((EntryStatistics) null, (IterablePosting) null);
 		}
 			
 		IterablePosting postingList = invertedIndex.getPostings((Pointer) t);

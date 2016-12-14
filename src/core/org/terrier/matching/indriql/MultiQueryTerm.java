@@ -35,6 +35,10 @@ public abstract class MultiQueryTerm extends QueryTerm {
 		this.terms = _ts;
 	}
 	
+	public QueryTerm[] getConstituents() {
+		return terms;
+	}
+	
 	static QueryTerm[] getSingleTerms(String[] ts) {
 		 QueryTerm[] rtr = new QueryTerm[ts.length];
 		 for(int i=0;i<ts.length;i++)

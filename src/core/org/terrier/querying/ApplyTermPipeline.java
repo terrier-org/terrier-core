@@ -4,6 +4,8 @@ import gnu.trove.TIntArrayList;
 
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
+import org.terrier.matching.indriql.MultiQueryTerm;
+import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
@@ -31,26 +33,66 @@ public class ApplyTermPipeline implements Process {
 		}		
 	}
 	
+	interface Visitor {
+		boolean visit(QueryTerm qt);
+		boolean visit(SingleQueryTerm sqt);
+		boolean visit(MultiQueryTerm mqt);
+	}
+	
+	
+	
 	@Override
 	public void process(Manager manager, SearchRequest q) {
 		
 		
 		TIntArrayList toDel = new TIntArrayList();
 		int i=-1;
-		MatchingQueryTerms mqt = ((Request)q).getMatchingQueryTerms();
+		
+		Visitor visitor = new Visitor()
+		{
+			@Override
+			public boolean visit(QueryTerm qt) {
+				if(qt instanceof SingleQueryTerm)
+				{
+					return this.visit((SingleQueryTerm)qt);
+				}
+				else if(qt instanceof MultiQueryTerm)
+				{
+					return this.visit((MultiQueryTerm)qt);
+				}
+				return true;
+			}
+			
+			@Override
+			public boolean visit(SingleQueryTerm sqt) {
+				String origTerm = sqt.getTerm();
+				String newTerm = tpa.pipelineTerm(origTerm);
+				if (newTerm == null)
+					return false;
+				sqt.setTerm(newTerm);
+				return true;
+			}
+
+			@Override
+			public boolean visit(MultiQueryTerm mqt) {
+				QueryTerm[] qts = mqt.getConstituents();
+				boolean OK = true;
+				for(QueryTerm qt : qts) {
+					boolean OKqt = this.visit(qt);
+				}
+				//TODO check if all required?
+				return OK;
+			}
+			
+		};
+		
+		MatchingQueryTerms mqt = ((Request)q).getMatchingQueryTerms();		
 		for(MatchingTerm t : mqt)
 		{
 			i++;
-			if (t.getKey() instanceof SingleQueryTerm)
-			{
-				SingleQueryTerm sqt = ((SingleQueryTerm)t.getKey());
-				String origTerm = sqt.toString();
-				String newTerm = tpa.pipelineTerm(origTerm);
-				if (newTerm == null)
-					toDel.add(i);
-				else if (! newTerm.equals(origTerm))
-					sqt.setTerm(newTerm);
-			}
+			boolean OK = visitor.visit(t.getKey());
+			if (! OK)
+				toDel.add(i);
 		}
 		toDel.reverse();
 		for(int removeIndex : toDel.toNativeArray())
