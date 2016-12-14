@@ -34,8 +34,6 @@ import gnu.trove.TIntHashSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
-import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
-import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.matching.indriql.SynonymTerm;
 import org.terrier.matching.models.DLH13;
@@ -48,7 +46,6 @@ import org.terrier.querying.parser.QueryParser;
 import org.terrier.querying.parser.QueryParserException;
 import org.terrier.structures.Index;
 import org.terrier.structures.LexiconEntry;
-import org.terrier.structures.collections.MapEntry;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.tests.ApplicationSetupBasedTest;
@@ -324,7 +321,9 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		
 		assertTrue(rs.getScores()[0] > 0);
 		assertTrue(rs.getScores()[1] > 0);
-		assertTrue(rs.getScores()[2] > 0);
+		//assertTrue(rs.getScores()[2] > 0);
+		if (rs.getResultSize() > 2)
+			assertEquals(Double.NEGATIVE_INFINITY,rs.getScores()[2],0.0);
 		if (rs.getResultSize() > 3)
 			assertEquals(Double.NEGATIVE_INFINITY,rs.getScores()[3],0.0);
 		
