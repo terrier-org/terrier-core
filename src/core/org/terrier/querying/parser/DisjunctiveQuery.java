@@ -104,7 +104,7 @@ public class DisjunctiveQuery extends MultiTermQuery {
 			SingleTermQuery term = (SingleTermQuery)child;
 			singleTerms.add(new SingleQueryTerm(term.getTerm(), field));
 		}
-		QTPBuilder qtp = QTPBuilder.of(new SynonymTerm(singleTerms.toArray(new String[singleTerms.size()])));
+		QTPBuilder qtp = QTPBuilder.of(new SynonymTerm(singleTerms.toArray(new QueryTerm[singleTerms.size()])));
 		if (weight != null)
 		{
 			qtp.setWeight(weight * this.weight);
