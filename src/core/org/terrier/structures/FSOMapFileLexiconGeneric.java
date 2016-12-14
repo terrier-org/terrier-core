@@ -1,6 +1,7 @@
 package org.terrier.structures;
 
 import java.io.Closeable;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
@@ -9,6 +10,8 @@ import java.util.Map.Entry;
 import org.apache.hadoop.io.WritableComparable;
 import org.terrier.structures.collections.FSOrderedMapFile;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
+import org.terrier.utility.Files;
+import org.terrier.utility.io.RandomDataInput;
 import org.terrier.utility.io.RandomDataInputMemory;
 import org.terrier.utility.io.WrappedIOException;
 
@@ -18,6 +21,51 @@ public abstract class FSOMapFileLexiconGeneric<K1,K2 extends WritableComparable>
 	static final String ID_EXT = ".fsomapid";
 	static final String MAPFILE_EXT = FSOrderedMapFile.USUAL_EXTENSION;
 
+    static class OnDiskLookup implements Id2EntryIndexLookup, java.io.Closeable
+    {
+        final RandomDataInput lexIdFile;
+        protected static final long SIZE_OF_INT = 4;
+        public OnDiskLookup(String path, String prefix, String structureName) throws IOException
+        {
+            lexIdFile = Files.openFileRandom(
+            		constructFilename(structureName, path, prefix, ID_EXT));
+        }
+        
+        public int getIndex(int termid) throws IOException
+        {
+            lexIdFile.seek(SIZE_OF_INT * (long)termid);
+            return lexIdFile.readInt();
+        }
+        
+        public void close() throws IOException
+        {
+            lexIdFile.close();
+        }
+    }
+    
+    static class InMemoryLookup implements Id2EntryIndexLookup
+    {
+        protected final int[] id2index;
+        public InMemoryLookup(String path, String prefix, String structureName, int size) 
+            throws IOException
+        {
+        	String filename = constructFilename(structureName, path, prefix, ID_EXT);
+            size = (int)(Files.length(filename) / (long)4);
+        	DataInputStream lexIdFile = new DataInputStream(Files.openFileStream(filename));
+            id2index = new int[size];
+            for(int i=0;i<size;i++)
+            {
+                id2index[i] = lexIdFile.readInt();
+            }
+            lexIdFile.close();
+        }
+        
+        public int getIndex(int termid)
+        {
+            return id2index[termid];
+        }
+    }
+	
 	
 	 /** loads an appropriate FSOrderedMapFile<Text,LexiconEntry> implementation,
      * depending on the value of dataSource.
@@ -84,13 +132,27 @@ public abstract class FSOMapFileLexiconGeneric<K1,K2 extends WritableComparable>
     			_keyFactory, _valueFactory, 
     			dataFile));
     	this.keyFactory = _keyFactory;	
+    	if (termIdLookup.equals("aligned"))
+        {
+            setTermIdLookup(new IdIsIndex());
+        }
+        else if (termIdLookup.equals("file"))
+        {
+            setTermIdLookup(new OnDiskLookup(path, prefix, structureName));
+        }
+        else if (termIdLookup.equals("fileinmem"))
+        {
+            setTermIdLookup(new InMemoryLookup(path, prefix, structureName, this.map.size()));
+        }
+        else if (termIdLookup.equals("disabled"))
+        {
+        	setTermIdLookup(null);
+        }
+        else
+        {
+            throw new IOException("Unrecognised value ("+termIdLookup+") for termIdlookup for structure "+structureName);
+        }
 		
-	}
-
-	@Override
-	public Iterator<Entry<K1, LexiconEntry>> iterator() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	/** 

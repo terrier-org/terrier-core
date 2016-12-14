@@ -39,6 +39,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.terrier.indexing.tokenisation.EnglishTokeniser;
+import org.terrier.realtime.MemoryIndexer;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FieldDocumentIndex;
@@ -63,8 +64,6 @@ import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
 import org.terrier.structures.postings.bit.FieldIterablePosting;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
-import org.terrier.realtime.MemoryIndexer;
-import org.terrier.realtime.memory.MemoryInvertedIndex;
 
 //TODO: does not check block positions
 public class TestIndexers extends ApplicationSetupBasedTest {
@@ -228,6 +227,9 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 			assertEquals(1, fe.getFieldFrequencies()[0]);
 			assertEquals(1, fe.getFieldFrequencies()[1]);
 		}
+		//finally, lookups by termids work fine
+		assertEquals("cats", lexicon.getLexiconEntry(le.getTermId()).getKey());
+		
 		le = lexicon.getLexiconEntry("chicken");
 		assertNotNull(le);
 		assertEquals(3, le.getFrequency());
@@ -239,6 +241,8 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 			assertEquals(1, fe.getFieldFrequencies()[0]);
 			assertEquals(2, fe.getFieldFrequencies()[1]);
 		}
+		//finally, lookups by termids work fine
+		assertEquals("chicken", lexicon.getLexiconEntry(le.getTermId()).getKey());
 		
 		for (String t : new String[]{"dogs", "horses"})
 		{
@@ -253,6 +257,8 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 				assertEquals(0, fe.getFieldFrequencies()[0]);
 				assertEquals(1, fe.getFieldFrequencies()[1]);
 			}
+			//finally, lookups by termids work fine
+			assertEquals(t, lexicon.getLexiconEntry(le.getTermId()).getKey());
 		}
 		
 		/** INVERTED FILE */		
@@ -291,8 +297,7 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 		/**
 		 * Test {@link IterablePosting} entries from a {@link InvertedIndexInputStream}
 		 */
-		if (memoryIndexer) bpiis = (MemoryInvertedIndex.InvertedIterator) index.getIndexStructureInputStream("inverted");
-		else bpiis = (BitPostingIndexInputStream) index.getIndexStructureInputStream("inverted");
+		bpiis = (PostingIndexInputStream) index.getIndexStructureInputStream("inverted");
 		assertNotNull(bpiis);
 		// for each term
 		for (int t = 0; t < invIds.length; t++) {
@@ -344,7 +349,7 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 					String term = lexicon.getLexiconEntry(termid).getKey();
 					assertNotNull(term);
 					countFoundTerms++;
-					assertTrue(dirTfs[d].containsKey(term));
+					assertTrue("term " + term +" not expected in document " + d, dirTfs[d].containsKey(term));
 					assertEquals(dirTfs[d].get(term), ip.getFrequency());
 					assertEquals(doclens[d], ip.getDocumentLength());					
 					
