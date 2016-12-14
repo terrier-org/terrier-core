@@ -42,12 +42,12 @@ import java.util.PriorityQueue;
 public class ORIterablePosting extends IterablePostingImpl {
 
 	/** Factory method to create an appropriate ORIterablePosting from the specified IterablePostings.
-	 * Four types of ORIterablePosting maybe returned, based on the type of the specified IterablePosting
-	 * classes:
+	 * Four types of ORIterablePosting maybe returned, based on the lowest common denominator type 
+	 * of the specified IterablePosting classes:
 	 * <ul>
 	 * <li>BlockFieldORIterablePosting - if the all posting lists are both a BlockPosting and FieldPosting</li>
-	 * <li>BlockORIterablePosting - if the all posting lists are a BlockPosting but not a FieldPosting</li>
-	 * <li>FieldORIterablePosting - if the all posting lists are a FieldPosting but not a BlockPosing</li>
+	 * <li>BlockORIterablePosting - if the all posting lists are a BlockPosting but not all a FieldPosting</li>
+	 * <li>FieldORIterablePosting - if the all posting lists are a FieldPosting but not all a BlockPosing</li>
 	 * <li>ORIterablePosting - otherwise</li>
 	 * </ul>
 	 */
