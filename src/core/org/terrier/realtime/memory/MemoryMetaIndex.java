@@ -212,6 +212,7 @@ public class MemoryMetaIndex implements MetaIndex,Serializable {
 	 */
 	public void close() throws IOException {
 		metadata.clear();
+		if (key2meta!=null) key2meta.clear();
 	}
 
 	/**
