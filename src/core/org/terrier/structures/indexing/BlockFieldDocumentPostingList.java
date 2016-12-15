@@ -128,7 +128,8 @@ public class BlockFieldDocumentPostingList extends FieldDocumentPostingList {
 	}
 	
 	/** returns the postings suitable to be written into the block direct index */
-	public int[][] getPostings()
+	@Override
+	public int[][] getPostings(final TermCodes termCodes)
 	{
 		final int termCount = occurrences.size();
 		final int[] termids = new int[termCount];
@@ -144,7 +145,7 @@ public class BlockFieldDocumentPostingList extends FieldDocumentPostingList {
 			int i=0;
 			public boolean execute(final String a, final int b)
 			{
-				termids[i] = TermCodes.getCode(a);
+				termids[i] = termCodes.getCode(a);
 				tfs[i] = b;
 				for(int fi=0;fi<fieldCount;fi++)
 					fields[fi][i] = field_occurrences[fi].get(a);

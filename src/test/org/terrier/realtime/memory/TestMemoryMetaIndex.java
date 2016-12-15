@@ -27,9 +27,7 @@
 
 package org.terrier.realtime.memory;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +36,7 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.terrier.structures.indexing.MetaIndexBuilder;
 import org.terrier.utility.ApplicationSetup;
 
 /** Unit test for InMemoryMetaIndex. */
@@ -49,6 +48,7 @@ public class TestMemoryMetaIndex {
 	@Test
 	public void test_InMemoryMetaIndex() throws Exception {
 		MemoryMetaIndex metaindex = new MemoryMetaIndex();
+		assertTrue(metaindex instanceof MetaIndexBuilder);
 		assertNotNull(metaindex);
 	}
 
@@ -112,6 +112,16 @@ public class TestMemoryMetaIndex {
 		assertEquals(doc3.get("docno"), metaindex.getItem("docno", 2));
 		assertEquals(doc3.get("title"), metaindex.getItem("title", 2));
 		assertEquals(doc3.get("url"),   metaindex.getItem("url",   2));
+	}
+	
+	@Test public void testReverse() throws Exception
+	{
+		MemoryMetaIndex metaindex = new MemoryMetaIndex();
+		metaindex.writeDocumentEntry(doc1);
+		metaindex.writeDocumentEntry(doc2);
+		metaindex.writeDocumentEntry(doc3);
+		assertEquals(0, metaindex.getDocument("docno", "11"));
+		metaindex.close();
 	}
 
 	/*
@@ -228,6 +238,7 @@ public class TestMemoryMetaIndex {
 		keys = new String[] {"docno","title","url" };
 		ApplicationSetup.setProperty("indexer.meta.forward.keys","docno,title,url");
 		ApplicationSetup.setProperty("indexer.meta.forward.keylens","10,100,100");
+		ApplicationSetup.setProperty("indexer.meta.reverse.keys","docno");
 		metadata = new String[][] {
 			{"01","a","b"},{"02","c","d"},{"03","e","f"},
 			{"04","g","h"},{"05","i","j"},{"06","k","l"},

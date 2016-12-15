@@ -89,14 +89,15 @@ public class FieldLexiconMap extends LexiconMap {
 	  * The binary tree is traversed in order, by called the method
 	  * traverseAndStoreToStream.
 	  * @param lexiconStream The lexicon output stream to store to. */
-	public void storeToStream(LexiconOutputStream<String> lexiconStream) throws IOException
+	@Override
+	public void storeToStream(LexiconOutputStream<String> lexiconStream, TermCodes termCodes) throws IOException
 	{
 		final String[] terms = tfs.keys(new String[0]);
 		Arrays.sort(terms);
 		for (String t : terms)
 		{
 			final FieldLexiconEntry fle = new FieldLexiconEntry(getFieldFrequency(t));
-			fle.setTermId(TermCodes.getCode(t));
+			fle.setTermId(termCodes.getCode(t));
 			fle.setStatistics(nts.get(t), tfs.get(t));
 			final int[] TFf = new int[fieldCount];
 			for(int fi=0;fi< fieldCount;fi++)

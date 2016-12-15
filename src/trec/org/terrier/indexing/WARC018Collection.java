@@ -67,7 +67,7 @@ public class WARC018Collection extends MultiDocumentFileCollection implements Co
 	
     
     public WARC018Collection() {
-		super();
+    	this(ApplicationSetup.COLLECTION_SPEC);
 	}
 
 

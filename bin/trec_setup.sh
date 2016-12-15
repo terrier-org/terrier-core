@@ -80,11 +80,12 @@ then
 fi
 
 #setup CLASSPATH
+JAR=`ls $TERRIER_HOME/target/terrier-core-*-jar-with-dependencies.jar`
 if [ ! -n "$CLASSPATH" ]
 then
-	CLASSPATH=$TERRIER_HOME/target/terrier-core-4.1.jar:$TERRIER_HOME/etc/logback.xml
+	CLASSPATH=$JAR:$TERRIER_HOME/etc/logback.xml
 else
-	CLASSPATH=$CLASSPATH:$TERRIER_HOME/target/terrier-core-4.1.jar:$TERRIER_HOME/etc/logback.xml
+	CLASSPATH=$CLASSPATH:$JAR:$TERRIER_HOME/etc/logback.xml
 fi
 
 echo $CLASSPATH

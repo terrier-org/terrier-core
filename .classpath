@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="src/desktop"/>
 	<classpathentry kind="src" path="src/learning"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="src" path="src/trec"/>
+	<classpathentry excluding="org/terrier/indexing/AltTRECCollection.java|org/terrier/indexing/AltTRECCollection2.java|org/terrier/indexing/BasicDocument.java|org/terrier/indexing/PersistantDocument.java" kind="src" path="src/trec"/>
 	<classpathentry kind="src" path="src/webapps"/>
 	<classpathentry kind="src" path="src/websitesearch"/>
 	<classpathentry kind="src" path="target/generated-sources/antlr"/>

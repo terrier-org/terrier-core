@@ -69,6 +69,13 @@ public class MemoryDocumentIndexMap extends MemoryDocumentIndex {
 	public void addDocument(int docid, int length) {
 		docids2lengths.put(docid, length);
 	}
+	
+	@Override
+	public void addDocument(int length) {
+		int docid = docLengths.size();
+		super.addDocument(length);
+		docids2lengths.put(docid, length);
+	}
 
 	
 	/** {@inheritDoc} */

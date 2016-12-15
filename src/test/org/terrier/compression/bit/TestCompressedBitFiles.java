@@ -27,18 +27,13 @@ package org.terrier.compression.bit;
 
 import static org.junit.Assert.assertEquals;
 import gnu.trove.TByteArrayList;
-import gnu.trove.TIntArrayList;
 import gnu.trove.TLongArrayList;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.hadoop.io.IOUtils.NullOutputStream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,14 +41,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.terrier.structures.BitFilePosition;
-import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.FilePosition;
-import org.terrier.structures.bit.DirectInvertedDocidOnlyOuptutStream;
-import org.terrier.structures.postings.ArrayOfIdsIterablePosting;
-import org.terrier.structures.postings.IterablePosting;
-import org.terrier.structures.postings.Posting;
-import org.terrier.utility.Files;
 import org.terrier.utility.io.RandomDataInputMemory;
 
 
@@ -76,104 +64,6 @@ import org.terrier.utility.io.RandomDataInputMemory;
 /** Ensures that Bit implementations perform as expected */
 public class TestCompressedBitFiles  {
 
-
-	
-	/** Tests come specific cases */
-	public static class TestCompressedBitFiles_Specific2
-	{
-		int initial_bitoffset = 0;
-		ArrayList<int[]> IDS = new ArrayList<int[]>();
-		ArrayList<BitFilePosition> startOffsets = new ArrayList<BitFilePosition>();
-		byte[] bytes;
-		long byteOffset;
-		byte bitOffset;
-		
-		@Before public void writeOut() throws IOException {
-			TIntArrayList ids = new TIntArrayList();
-			BufferedReader br = Files.openFileReader("/users/craigm/src/tr3/linksList");
-			String line = null;
-			
-			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			NullOutputStream nos = new NullOutputStream();
-			BitOutputStream bo_null = new BitOutputStream(nos);
-			DirectInvertedDocidOnlyOuptutStream dios = new DirectInvertedDocidOnlyOuptutStream(bo_null);
-			BitOutputStream bo = new BitOutputStream(baos);
-			if (initial_bitoffset > 0)
-				bo.writeBinary(initial_bitoffset, 0);
-			//int docid = 0;
-			while((line = br.readLine())!= null)
-			{
-				String[] parts = line.split("\\s+");
-				for(String p : parts)
-					ids.add(Integer.parseInt(p));
-				int[] _tmp = ids.toNativeArray();
-				byteOffset = bo.getByteOffset();
-				bitOffset = bo.getBitOffset();
-				BitFilePosition bp = new FilePosition(byteOffset, bitOffset);
-				startOffsets.add(bp);
-				//System.err.println(_tmp.length + "@{"+byteOffset+","+bitOffset+"}");
-				
-				List<Posting> postingList = new ArrayList<Posting>();
-				IterablePosting ip = new ArrayOfIdsIterablePosting(_tmp);
-				while(ip.next() != IterablePosting.EOL)
-				{
-					postingList.add(ip.asWritablePosting());
-				}
-				BitIndexPointer diosPointer = dios.writePostings(postingList.iterator());
-				
-				IDS.add(_tmp);
-				ids.clear();
-				int previous = -1;
-				for(int i : _tmp)
-				{
-					bo.writeGamma(i - previous);
-					previous = i;
-				}
-				
-				assertEquals(byteOffset, diosPointer.getOffset());
-				assertEquals(bitOffset, diosPointer.getOffsetBits());
-				assertEquals(_tmp.length, diosPointer.getNumberOfEntries());
-				
-				//System.err.println("startoffset="+ bp.toString() + " dios_pointer="+ diosPointer.toString());
-				
-				//docid++;
-			}		
-			bo.close();
-			bytes = baos.toByteArray();
-		}
-		
-		@Test public void testBitInputStream() throws IOException
-		{
-			testBitIn(new BitInputStream(new ByteArrayInputStream(bytes)));
-		}
-		
-//		@Test public void testBitFileBuffered() throws IOException
-//		{
-//			testBitIn(new BitFileBuffered(new RandomDataInputMemory(bytes)).readReset(0l, (byte)0));
-//		}
-		
-		protected void testBitIn(BitIn bi) throws IOException
-		{
-			if (initial_bitoffset > 0)
-				bi.skipBits(initial_bitoffset);			
-			for(int i=0;i<IDS.size();i++)
-			{
-				int[] postings = IDS.get(i);
-				BitFilePosition pos = startOffsets.get(i);
-				assertEquals(pos.getOffset(), bi.getByteOffset());
-				assertEquals(pos.getOffsetBits(), bi.getBitOffset());
-				int id = -1;
-				for(int j=0;j<postings.length;j++)
-				{
-					int target = postings[j];
-					id = bi.readGamma() + id;
-					assertEquals("At index "+i,target, id);
-				}
-			}
-		}
-		
-	}
 	
 	public static class TestCompressedBitFiles_Specific1
 	{

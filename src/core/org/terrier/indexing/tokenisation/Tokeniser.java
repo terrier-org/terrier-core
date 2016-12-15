@@ -28,6 +28,7 @@ package org.terrier.indexing.tokenisation;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -128,5 +129,19 @@ public abstract class Tokeniser {
 				tokens.add(t);
 		}
 		return tokens.toArray(new String[tokens.size()]);	
-	}	
+	}
+	
+	/** Utility method which returns all of the tokens in a String.
+	 * @param input String of text to be tokenised
+	 * @return All of the tokens found in the stream of text.
+	 */
+	public String[] getTokens(String s)
+	{
+		try{
+			return getTokens(new StringReader(s));
+		} catch (Exception e) {
+			assert false;
+			return null;
+		}
+	}
 }

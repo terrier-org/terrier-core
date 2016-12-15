@@ -32,13 +32,13 @@ import gnu.trove.TObjectIntHashMap;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.terrier.structures.MetaIndex;
+import org.terrier.structures.indexing.MetaIndexBuilder;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 
@@ -53,17 +53,12 @@ import org.terrier.utility.ArrayUtils;
  * <li>indexer.meta.forward.keylens</tt> - max key lengths for keys to store (this is ignored unless metaindex.crop is set)</li>
  * <li>metaindex.crop</tt> - should the content to store be cropped down to the length specified in indexer.meta.forward.keylens?</li>
  * </ul>
- * @author Richard McCreadie, Stuart Mackie
+ * @author Richard McCreadie, Stuart Mackie, Craig Macdonald
  * @since 4.0
  */
-public class MemoryMetaIndex implements MetaIndex,Serializable {
+public class MemoryMetaIndex extends MetaIndexBuilder implements MetaIndex,Serializable {
 
 	private static final long serialVersionUID = 8260494137553522514L;
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(MemoryMetaIndex.class);
-
-	public static String[] reverse = {};
 
 	/*
 	 * Meta-data index structures.
@@ -71,75 +66,75 @@ public class MemoryMetaIndex implements MetaIndex,Serializable {
 	private List<String[]> metadata;
 	private TObjectIntHashMap<String> key2meta;
 	private int[] keylengths;
+	private boolean[] isReverse;
 
+	private Map<String,TObjectIntHashMap<String>> key2value2id;
 	/*
 	 * Keys and key lengths.
 	 */
-	public String[] keys = ArrayUtils
-			.parseCommaDelimitedString(ApplicationSetup.getProperty(
-					"indexer.meta.forward.keys", ""));
-	public String[] keylens = ArrayUtils
-			.parseCommaDelimitedString(ApplicationSetup.getProperty(
-					"indexer.meta.forward.keylens", ""));
-
+	private String[] keys ;
+	private String[] revkeys;
 	/*
 	 * Crop keys?
 	 */
-	private final static boolean crop = Boolean.parseBoolean(ApplicationSetup
-			.getProperty("metaindex.crop", "false"));
+	private final static boolean crop = Boolean.parseBoolean(ApplicationSetup.getProperty("metaindex.crop", "false"));
 
-	/**
-	 * Constructor.
-	 */
-	public MemoryMetaIndex(String[] metaKeys, int[] metaLengths) {
-		keys = metaKeys;
-		keylengths = metaLengths;
-		if (keys.length != keylengths.length) {
-			logger.error("Meta keys and keylens mismatch.");
-			System.exit(-1);
-		}
-		metadata = new ArrayList<String[]>();
-		key2meta = new TObjectIntHashMap<String>();
-		int i = 0;
-		for (String key : keys)
-			key2meta.put(key, i++);
+	public MemoryMetaIndex()
+	{
+		this(
+			ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("indexer.meta.forward.keys", "")),
+			ArrayUtils.parseCommaDelimitedInts(ApplicationSetup.getProperty("indexer.meta.forward.keylens", "")), 
+			ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("indexer.meta.reverse.keys", ""))
+			);
 	}
 	
-	/**
-	 * Constructor.
-	 */
-	public MemoryMetaIndex() {
-		if (keys.length != keylens.length) {
-			logger.error("Meta keys and keylens mismatch.");
-			System.exit(-1);
+	public MemoryMetaIndex(String[] metaKeys, int[] metaLengths) {
+		this(metaKeys, metaLengths, new String[0]);
+	}
+	
+	public MemoryMetaIndex(String[] metaKeys, int[] metaLengths, String[] revKeys) {
+		this.keys = metaKeys;
+		this.keylengths = metaLengths;
+		this.revkeys = revKeys;
+		if (keys.length != keylengths.length) {
+			throw new IllegalArgumentException("Meta keys and keylens mismatch.");
 		}
+		
 		metadata = new ArrayList<String[]>();
 		key2meta = new TObjectIntHashMap<String>();
-		keylengths = new int[keylens.length];
 		int i = 0;
 		for (String key : keys)
 			key2meta.put(key, i++);
-		i = 0;
-		for (String length : keylens)
-			keylengths[i++] = Integer.parseInt(length);
+		
+		key2value2id = new HashMap<String,TObjectIntHashMap<String>>(revKeys.length);
+		for (String revkey : this.revkeys)
+			key2value2id.put(revkey, new TObjectIntHashMap<String>());
+		isReverse = new boolean[keys.length];
+		for(i=0;i<keys.length;i++){
+			isReverse[i] = key2value2id.containsKey(keys[i]);
+		}
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String[] getKeys() {
 		return keys;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String getItem(String key, int docid) throws IOException {
 		return metadata.get(docid)[key2meta.get(key)];
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String[] getAllItems(int docid) throws IOException {
 		return metadata.get(docid);
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String[] getItems(String key, int[] docids) throws IOException {
 		String[] data = new String[docids.length];
 		int index = key2meta.get(key);
@@ -149,6 +144,7 @@ public class MemoryMetaIndex implements MetaIndex,Serializable {
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String[] getItems(String[] keys, int docid) throws IOException {
 		String[] data = new String[keys.length];
 		for (int i = 0; i < keys.length; i++)
@@ -157,6 +153,7 @@ public class MemoryMetaIndex implements MetaIndex,Serializable {
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String[][] getItems(String[] keys, int[] docids) throws IOException {
 		String[][] data = new String[docids.length][keys.length];
 		for (int i = 0; i < docids.length; i++)
@@ -167,7 +164,8 @@ public class MemoryMetaIndex implements MetaIndex,Serializable {
 	/**
 	 * Write meta-data for document.
 	 */
-	public void writeDocumentEntry(Map<String, String> data) throws Exception {
+	@Override
+	public void writeDocumentEntry(Map<String, String> data) {
 		if (data == null)
 			return;
 
@@ -180,7 +178,7 @@ public class MemoryMetaIndex implements MetaIndex,Serializable {
 				metaitem = "";
 			if (metaitem.length() > keylengths[i++])
 				if (!crop)
-					throw new Exception("Metaitem " + key + " keylength ("
+					throw new RuntimeException("Metaitem " + key + " keylength ("
 							+ metaitem.length() + ") exceeded limit ("
 							+ keylengths[i - 1] + ").");
 				else
@@ -198,21 +196,40 @@ public class MemoryMetaIndex implements MetaIndex,Serializable {
 	 * 
 	 * @param data
 	 */
+	@Override
 	public void writeDocumentEntry(String[] data) {
+		//forward metadata
 		metadata.add(data);
+		
+		//reverse metadata
+		if (revkeys.length == 0)
+			return;
+		for(int i=0;i<data.length;i++)
+		{
+			if (! isReverse[i])
+				continue;
+			int docid = metadata.size() -1;
+			key2value2id.get(this.keys[i]).put(data[i], docid+1);
+		}
 	}
 	
-	/** Not implemented. */
+	@Override
 	public int getDocument(String key, String value) throws IOException {
-		return -1;
+		TObjectIntHashMap<String> map = key2value2id.get(key);
+		if (map == null)
+			return -1;
+		return map.get(value) -1;
 	}
 
 	/**
-	 * Delete contents of metadata index (but keep keys).
+	 * Delete contents of metadata index (but keep the configured keys).
 	 */
+	@Override
 	public void close() throws IOException {
 		metadata.clear();
 		if (key2meta!=null) key2meta.clear();
+		for (TObjectIntHashMap<String> map : key2value2id.values())
+			map.clear();
 	}
 
 	/**
@@ -237,17 +254,12 @@ public class MemoryMetaIndex implements MetaIndex,Serializable {
 		}
 
 		public void remove() {
+			throw new UnsupportedOperationException("Not supported");
 		}
 	}
 	
 	public int[] getKeyLengths() {
-		int[] kl = new int[keylens.length];
-		int i = 0;
-		for (String k : keylens) {
-			kl[i] = Integer.parseInt(k);
-			i++;
-		}
-		return kl;
+		return this.keylengths;
 	}
 
 }

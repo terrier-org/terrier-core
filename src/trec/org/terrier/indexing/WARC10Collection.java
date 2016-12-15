@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.CharEncoding;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.StringTools;
 
 /**
@@ -43,7 +44,7 @@ import org.terrier.utility.StringTools;
 public class WARC10Collection extends WARC018Collection  {
 
 	public WARC10Collection() {
-		super();
+		this(ApplicationSetup.COLLECTION_SPEC);
 	}
 
 	public WARC10Collection(InputStream input) {

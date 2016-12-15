@@ -21,7 +21,6 @@
       <directory>.</directory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
-      	<exclude>src/**</exclude>
         <exclude>.git/**</exclude>
         <exclude>**/.gitignore</exclude>
         <exclude>**/.svn</exclude>

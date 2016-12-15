@@ -38,6 +38,7 @@ import org.terrier.fat.TestFatFeaturedScoringMatching;
 import org.terrier.fat.TestFatFullMatching;
 import org.terrier.fat.TestFatScoringMatching;
 import org.terrier.fat.TestLinearModelMatching;
+import org.terrier.indexing.TestCollectionFactory;
 import org.terrier.indexing.TestCollections;
 import org.terrier.indexing.TestCompressionConfig;
 import org.terrier.indexing.TestCrawlDate;
@@ -102,6 +103,7 @@ import org.terrier.structures.indexing.singlepass.hadoop.TestBitPostingIndexInpu
 import org.terrier.structures.indexing.singlepass.hadoop.TestPositingAwareSplit;
 import org.terrier.structures.indexing.singlepass.hadoop.TestSplitEmittedTerm;
 import org.terrier.structures.postings.TestFieldORIterablePosting;
+import org.terrier.structures.postings.TestFieldOnlyIterablePosting;
 import org.terrier.structures.postings.TestORIterablePosting;
 import org.terrier.structures.postings.TestPhraseIterablePosting;
 import org.terrier.structures.postings.TestProximityIterablePosting;
@@ -117,6 +119,7 @@ import org.terrier.utility.TestDistance;
 import org.terrier.utility.TestHeapSort;
 import org.terrier.utility.TestRounding;
 import org.terrier.utility.TestStaTools;
+import org.terrier.utility.TestStringTools;
 import org.terrier.utility.TestTagSet;
 import org.terrier.utility.TestTermCodes;
 import org.terrier.utility.TestUnitUtils;
@@ -169,6 +172,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	
 	//.indexing
 	TestCollections.class,
+	TestCollectionFactory.class,
 	TestCompressionConfig.class,
 	TestCrawlDate.class,
 	TestIndexers.class,
@@ -240,6 +244,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestPositingAwareSplit.class,
 	
 	//structures.postings
+	TestFieldOnlyIterablePosting.class,
 	TestORIterablePosting.class,
 	TestFieldORIterablePosting.class,
 	TestPhraseIterablePosting.class,
@@ -262,6 +267,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestRounding.class,
 	TestTagSet.class,
 	TestStaTools.class,
+	TestStringTools.class,
 	TestTermCodes.class,
 	TestUnitUtils.class,
 	TestVersion.class,

@@ -148,7 +148,7 @@ public class FieldDocumentPostingList extends DocumentPostingList {
 	}
 
 	@Override
-	public int[][] getPostings() {
+	public int[][] getPostings(final TermCodes termCodes) {
 		
 		final int termCount = occurrences.size();
 		final int[][] postings = new int[fieldCount + 2][termCount];
@@ -159,7 +159,7 @@ public class FieldDocumentPostingList extends DocumentPostingList {
 			int i=0;
 			public boolean execute(final String a, final int b)
 			{
-				postings[0][i] = TermCodes.getCode(a);
+				postings[0][i] = termCodes.getCode(a);
 				postings[1][i] = b;
 				for(int fi=0;fi< fieldCount;fi++)
 					postings[2+fi][i] = field_occurrences[fi].get(a);

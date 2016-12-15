@@ -144,6 +144,11 @@ public class BasicIndexer extends Indexer
 	 */
 	protected DocumentPostingList termsInDocument;
 	
+	/**
+	 * Mapping of terms 2 termids
+	 */
+	protected TermCodes termCodes = new TermCodes();
+	
 	/** 
 	 * The number of tokens found in the current document so far/
 	 */
@@ -206,8 +211,9 @@ public class BasicIndexer extends Indexer
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
 			? new LexiconBuilder(currentIndex, "lexicon", 
 					new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
-					FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"")
-			: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName());
+					FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"",
+					termCodes)
+			: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName(), termCodes);
 		
 		try{
 			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
@@ -359,7 +365,7 @@ public class BasicIndexer extends Indexer
 			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
 		}
 		/* reset the in-memory mapping of terms to term codes.*/
-		TermCodes.reset();
+		termCodes.reset();
 		/* and clear them out of memory */
 		System.gc();
 		/* record the fact that these data structures are complete */
@@ -385,7 +391,7 @@ public class BasicIndexer extends Indexer
 		/* add words to lexicontree */
 		lexiconBuilder.addDocumentTerms(_termsInDocument);
 		/* add doc postings to the direct index */
-		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2());
+		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2(termCodes));
 			//.addDocument(termsInDocument.getPostings());
 		/* add doc to documentindex */
 		DocumentIndexEntry die = _termsInDocument.getDocumentStatistics();

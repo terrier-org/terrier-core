@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
@@ -48,6 +48,7 @@ import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.TermCodes;
 /**
  * Builds temporary lexicons during indexing a collection and
  * merges them when the indexing of a collection has finished.
@@ -86,10 +87,13 @@ public class LexiconBuilder
 	/** The lexicontree to write the current term stream to */
 	protected LexiconMap TempLex;
 	
+	protected TermCodes termCodes;
+	
 	/** The directory to write the final lexicons to */
 	protected String indexPath = null;
 	/** The filename of the lexicons. */
 	protected String indexPrefix = null;
+	
 	
 	protected IndexOnDisk index = null;
 	
@@ -236,9 +240,9 @@ public class LexiconBuilder
 	 * @param i
 	 * @param _structureName
 	 */
-	public LexiconBuilder(IndexOnDisk i, String _structureName) {
+	public LexiconBuilder(IndexOnDisk i, String _structureName, TermCodes tc) {
 		this(i, _structureName, 
-				instantiate(LexiconMap.class), "org.terrier.structures.BasicLexiconEntry", "", "");
+				instantiate(LexiconMap.class), "org.terrier.structures.BasicLexiconEntry", "", "", tc);
 	}
 	/**
 	 * constructor
@@ -249,9 +253,9 @@ public class LexiconBuilder
 	 */
 	public LexiconBuilder(IndexOnDisk i, String _structureName, 
 			Class <? extends LexiconMap> _LexiconMapClass,
-			String _lexiconEntryClass)
+			String _lexiconEntryClass, TermCodes termCodes)
 	{
-		this(i, _structureName, instantiate(_LexiconMapClass), _lexiconEntryClass, "", "");
+		this(i, _structureName, instantiate(_LexiconMapClass), _lexiconEntryClass, "", "", termCodes);
 	}
 	
 	
@@ -264,9 +268,10 @@ public class LexiconBuilder
 	 */
 	public LexiconBuilder(IndexOnDisk i, String _structureName, 
 				LexiconMap lexiconMap,
-				String _lexiconEntryClass)
+				String _lexiconEntryClass, 
+				TermCodes termCodes)
 	{
-		this(i, _structureName, lexiconMap, _lexiconEntryClass, "", "");
+		this(i, _structureName, lexiconMap, _lexiconEntryClass, "", "", termCodes);
 	}
 				
 	
@@ -282,12 +287,16 @@ public class LexiconBuilder
 	@SuppressWarnings("unchecked")
 	public LexiconBuilder(IndexOnDisk i, String _structureName, 
 				LexiconMap lexiconMap,
-				String _lexiconEntryClass, String valueFactoryParamTypes, String valueFactoryParamValues)
+				String _lexiconEntryClass, 
+				String valueFactoryParamTypes, 
+				String valueFactoryParamValues,
+				TermCodes _termCodes)
 	{
 		this.index = i;
 		this.indexPath = index.getPath();
 		this.indexPrefix = index.getPrefix();
 		this.defaultStructureName = _structureName;
+		this.termCodes = _termCodes;
 		this.TempLex = lexiconMap;
 		//TemporaryLexiconDirectory = indexPath + ApplicationSetup.FILE_SEPARATOR + indexPrefix + "_";
 		//LexiconMapClass = lexiconMap;	
@@ -328,17 +337,9 @@ public class LexiconBuilder
 	protected void writeTemporaryLexicon()
 	{
 		try{
-			//TempLexDirCount = TempLexCount / TempLexPerDir;
-			//if (! Files.exists(TemporaryLexiconDirectory + TempLexDirCount)) {
-			//	String tmpDir = TemporaryLexiconDirectory + TempLexDirCount;
-			//	Files.mkdir(tmpDir);
-			//	Files.deleteOnExit(tmpDir);//it's fine to mark the temporary *directory* for deletion
-			//}
-			//String tmpLexName = TemporaryLexiconDirectory + TempLexDirCount + ApplicationSetup.FILE_SEPARATOR + TempLexCount;
-			//LexiconOutputStream<String> los = getLexOutputStream(TempLexDirCount+""+TempLexCount);
 			final String tmpLexName = this.defaultStructureName+"-tmp"+ TempLexCount;
 			LexiconOutputStream<String> los = getLexOutputStream(tmpLexName);
-			TempLex.storeToStream(los);
+			TempLex.storeToStream(los, termCodes);
 			los.close();
 			/* An alternative but deprecated method to store the temporary lexicons is: 
 			 * TempLex.storeToFile(tmpLexName); */

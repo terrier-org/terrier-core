@@ -137,14 +137,14 @@ public class DocumentPostingList implements Writable,Serializable{
     
     /** Used by getPostings() and getPostings2() to obtain the term id of the term.
      * This implementation uses the TermCodes class. */
-    protected int getTermId(String term)
-    {
-    	return TermCodes.getCode(term);
-    }
+//    protected int getTermId(String term)
+//    {
+//    	return TermCodes.getCode(term);
+//    }
 
 	/** Returns the postings suitable to be written into the direct index.
 	 * During this, TermIds are assigned. */
-	public int[][] getPostings()
+	public int[][] getPostings(final TermCodes termCodes)
 	{
 		final int termCount = occurrences.size();
 		final int[] termids = new int[termCount];
@@ -153,7 +153,7 @@ public class DocumentPostingList implements Writable,Serializable{
 			int i=0;
 			public boolean execute(final String a, final int b)
 			{
-				termids[i] = getTermId(a);
+				termids[i] = termCodes.getCode(a);
 				tfs[i++] = b;
 				return true;
 			}
@@ -164,7 +164,7 @@ public class DocumentPostingList implements Writable,Serializable{
 	
 	/** Returns a posting iterator suitable to be written into the direct index.
 	 * During this, TermIds are assigned, using getTermId() method. */
-	public IterablePosting getPostings2()
+	public IterablePosting getPostings2(final TermCodes termCodes)
 	{
 		//obtain and sort termids by id
 		
@@ -174,7 +174,7 @@ public class DocumentPostingList implements Writable,Serializable{
 		occurrences.forEachEntry( new TObjectIntProcedure<String>() { 
 			public boolean execute(final String a, final int b)
 			{
-				cache_termids.put(a, getTermId(a));
+				cache_termids.put(a, termCodes.getCode(a));
 				return true;
 			}
 		});

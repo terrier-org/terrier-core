@@ -28,11 +28,11 @@
  */
 package org.terrier.indexing;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,7 +72,7 @@ public abstract class MultiDocumentFileCollection implements Collection {
 	/** properties for the current document */
 	protected Map<String,String> DocProperties = null;
 	/** The list of files to process. */
-	protected ArrayList<String> FilesToProcess = new ArrayList<String>();
+	protected List<String> FilesToProcess;
 	/** The index in the FilesToProcess of the currently processed file.*/
 	protected int FileNumber = 0;
 	/** Encoding to be used to open all files. */
@@ -85,9 +85,9 @@ public abstract class MultiDocumentFileCollection implements Collection {
 	protected MultiDocumentFileCollection(){}
 	
 	/** construct a collection from the denoted collection.spec file */
-	MultiDocumentFileCollection(final String CollectionSpecFilename)
+	MultiDocumentFileCollection(List<String> _FilesToProcess)
 	{
-		readCollectionSpec(CollectionSpecFilename);
+		FilesToProcess = _FilesToProcess;
 		loadDocumentClass();
 		try{
 			openNextFile();
@@ -95,12 +95,20 @@ public abstract class MultiDocumentFileCollection implements Collection {
 			logger.error("Problem opening first file ", ioe);
 		}
 	}
+	
+	
+	/** construct a collection from the denoted collection.spec file */
+	MultiDocumentFileCollection(final String CollectionSpecFilename)
+	{
+		this(CollectionFactory.loadCollectionSpecFileList(CollectionSpecFilename));		
+	}
 
 	/**
     * A constructor that reads only the specified InputStream.*/
    MultiDocumentFileCollection(InputStream input)
    {
        is = input;
+       FilesToProcess = new ArrayList<String>();
        try{
     	   openNewFile();
        } catch(Exception e) {
@@ -244,26 +252,6 @@ public abstract class MultiDocumentFileCollection implements Collection {
 
 	/** Move the collection to the start of the next document. */
 	public abstract boolean nextDocument();
-	
-	/** read in the collection.spec */
-	protected void readCollectionSpec(String CollectionSpecFilename) {
-		//reads the collection specification file
-		try {
-			BufferedReader br2 = Files.openFileReader(CollectionSpecFilename);
-			String filename = null;
-			FilesToProcess = new ArrayList<String>();
-			while ((filename = br2.readLine()) != null) {
-				filename = filename.trim();
-				if (!filename.startsWith("#") && !filename.equals(""))
-					FilesToProcess.add(filename);
-			}
-			br2.close();
-			logger.info(this.getClass().getSimpleName() + " read collection specification");
-		} catch (IOException ioe) {
-			logger.error("Input output exception while loading the collection.spec file. "
-							+ "("+CollectionSpecFilename+")", ioe);
-		}
-	}
 
 	/** Resets the Collection iterator to the start of the collection. */
 	public void reset() {

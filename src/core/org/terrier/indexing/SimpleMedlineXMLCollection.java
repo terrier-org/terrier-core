@@ -89,7 +89,7 @@ public class SimpleMedlineXMLCollection extends SimpleXMLCollection
 		if (FilesToProcess.size() == 0&&br==null)
 			return false;
 		if (br == null) {
-			currentFilename = (String)FilesToProcess.removeFirst();
+			currentFilename = (String)FilesToProcess.remove(0);
 			try{
 				br = Files.openFileReader(currentFilename);
 				currentFileDocCounter=0;

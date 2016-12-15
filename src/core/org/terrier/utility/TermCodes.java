@@ -46,14 +46,14 @@ public class TermCodes {
 	 * The hashmap that stores the mapping 
 	 * from terms hash codes to code.
 	 */
-	private static final TObjectIntHashMap<String> map = new TObjectIntHashMap<String>(hashMapCapacity);
+	private final TObjectIntHashMap<String> map = new TObjectIntHashMap<String>(hashMapCapacity);
 	/** 
 	 * The counter that represents the new 
 	 * code for the next not already encountered term.
 	 */
-	private static int counter = 0;
+	private int counter = 0;
 	/** A buffer variable.*/
-	private static int code = 0;
+	private int code = 0;
 	/** 
 	 * The property that enables or disables 
 	 * garbage collection during reseting.
@@ -91,7 +91,7 @@ public class TermCodes {
 	 *        the code will be returned.
 	 * @return int the code for the given term
 	 */
-	public static final int getCode(final String term) {
+	public final int getCode(final String term) {
 		/* if we have encountered a new term, add it to the
 		 * hash map and return the new term code, otherwise
 		 * return the already assigned term code */
@@ -118,7 +118,7 @@ public class TermCodes {
 			value="DM_GC",
 			justification="Forcing GC is an essential part of releasing" +
 					"memory for further indexing")
-	public static void reset() {
+	public void reset() {
 		if (counter == 0)
 			return;
 		map.clear();
@@ -134,7 +134,7 @@ public class TermCodes {
 	  * know that this term and termcodes do NOT exist, then you can use
 	  * this method. <b>NB:</b> counter variable above probably needs to be
 	  * considered in this method. */
-	public static void setTermCode(final String term, final int termCode) {
+	public void setTermCode(final String term, final int termCode) {
 		map.put(term, termCode+1);
 	}
 }

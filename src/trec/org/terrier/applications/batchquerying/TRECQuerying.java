@@ -664,7 +664,7 @@ public class TRECQuerying {
 		preQueryingSearchRequestModification(queryId, srq);
 		ResultSet rs = resultsCache.checkCache(srq);
 		if (rs != null)
-			((Request)rs).setResultSet(rs);
+			((Request)srq).setResultSet(rs);
 		
 		
 		if (logger.isInfoEnabled())

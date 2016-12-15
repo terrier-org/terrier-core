@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-core</artifactId>
-	<version>4.1-snapshot</version>
+	<version>4.2-SNAPSHOT</version>
 	<name>Terrier Information Retrieval Platform</name>
 	<description>Terrier IR platform</description>
 	<url>http://terrier.org</url>
@@ -44,6 +44,12 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.0</version>
 		</dependency>
 
 		<dependency>
@@ -139,6 +145,13 @@
 			<artifactId>jetty-webapp</artifactId>
 			<version>9.2.9.v20150224</version>
 		</dependency>
+
+
+ 		<dependency>
+     			<groupId>org.eclipse.jetty</groupId>
+         		<artifactId>apache-jsp</artifactId>
+             		<version>9.2.9.v20150224</version>
+             	</dependency>
 
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>

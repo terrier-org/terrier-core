@@ -97,14 +97,14 @@ public class LexiconMap {
 	  * The binary tree is traversed in order, by called the method
 	  * traverseAndStoreToStream.
 	  * @param lexiconStream The lexicon output stream to store to. */
-	public void storeToStream(LexiconOutputStream<String> lexiconStream) throws IOException
+	public void storeToStream(LexiconOutputStream<String> lexiconStream, TermCodes termCodes) throws IOException
 	{
 		final String[] terms = tfs.keys(new String[0]);
 		Arrays.sort(terms);
 		BasicLexiconEntry le = new BasicLexiconEntry();
 		for (String t : terms)
 		{
-			le.setTermId(TermCodes.getCode(t));
+			le.setTermId(termCodes.getCode(t));
 			le.setStatistics(nts.get(t), tfs.get(t));
 			lexiconStream.writeNextEntry(t, le);
 		}

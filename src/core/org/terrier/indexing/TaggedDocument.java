@@ -47,6 +47,7 @@ import org.terrier.indexing.tokenisation.TokenStream;
 import org.terrier.indexing.tokenisation.Tokeniser;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
+import org.terrier.utility.StringTools;
 import org.terrier.utility.TagSet;
 
 /**
@@ -369,7 +370,7 @@ public class TaggedDocument implements Document {
 						if (! endOfTagName && Character.isWhitespace((char)ch)) {
 							endOfTagName = true;
 							tagName = tagNameSB.toString();
-							upperCaseTagName = tagName.toUpperCase();
+							upperCaseTagName = StringTools.toUpperCase(tagName);
 							//System.err.println("Found tag  " + tagName + (tag_open ? " open" : " close") );
 							tagNameSB.setLength(0);
 						}
@@ -378,7 +379,7 @@ public class TaggedDocument implements Document {
 					if (! endOfTagName)
 					{
 						tagName = tagNameSB.toString();
-						upperCaseTagName = tagName.toUpperCase();
+						upperCaseTagName = StringTools.toUpperCase(tagName);
 						//System.err.println("Found tag " + tagName+ (tag_open ? " open" : " close"));
 						tagNameSB.setLength(0);
 					}
@@ -407,49 +408,53 @@ public class TaggedDocument implements Document {
 				lastChar = ch;
 				s = sw.toString();
 				sw.setLength(0);
-				if (tag_open) {
-					//System.err.println("processing open " + tagName);
-					if ((_tags.isTagToProcess(tagName) || _tags.isTagToSkip(tagName)) && !tagName.equals("")) {
-						stk.push(upperCaseTagName);
-						if (_tags.isTagToProcess(tagName)) {
-							inTagToProcess = true;
-							inTagToSkip = false;
-						} else {
-							inTagToSkip = true;
-							inTagToProcess = false;
-							continue;
-						}
-					}
-					if (_fields.isTagToProcess(tagName) && !tagName.equals("")) {
-						htmlStk.add(upperCaseTagName);
-						inHtmlTagToProcess = true;
-					}
-				}
-				if (tag_close) {
-					//System.err.println("processing close " + tagName);
-					if ((_tags.isTagToProcess(tagName) || _tags.isTagToSkip(tagName)) && !tagName.equals("")) {
-						processEndOfTag(upperCaseTagName);
-						String stackTop = null;
-						if (!stk.isEmpty()) {
-							stackTop = stk.peek();
-							if (_tags.isTagToProcess(stackTop)) {
+				if (tagName != null && !tagName.equals(""))
+				{				
+					if (tag_open) {
+						//System.err.println("processing open " + tagName);
+						final boolean tagToProcess = _tags.isTagToProcess(tagName);
+						if (tagToProcess || _tags.isTagToSkip(tagName)) {
+							stk.push(upperCaseTagName);
+							if (tagToProcess) {
 								inTagToProcess = true;
 								inTagToSkip = false;
 							} else {
-								inTagToProcess = false;
 								inTagToSkip = true;
+								inTagToProcess = false;
 								continue;
 							}
-						} else {
-							inTagToProcess = false;
-							inTagToSkip = false;
+						}
+						if (_fields.isTagToProcess(tagName) && !tagName.equals("")) {
+							htmlStk.add(upperCaseTagName);
+							inHtmlTagToProcess = true;
 						}
 					}
-					if (_fields.isTagToProcess(tagName) && !tagName.equals("")) {
-						htmlStk.remove(upperCaseTagName);
+					if (tag_close) {
+						//System.err.println("processing close " + tagName);
+						final boolean tagToProcess = _tags.isTagToProcess(tagName);
+						if (tagToProcess || _tags.isTagToSkip(tagName)) {
+							processEndOfTag(upperCaseTagName);
+							String stackTop = null;
+							if (!stk.isEmpty()) {
+								stackTop = stk.peek();
+								if (_tags.isTagToProcess(stackTop)) {
+									inTagToProcess = true;
+									inTagToSkip = false;
+								} else {
+									inTagToProcess = false;
+									inTagToSkip = true;
+									continue;
+								}
+							} else {
+								inTagToProcess = false;
+								inTagToSkip = false;
+							}
+						}
+						if (_fields.isTagToProcess(tagName)) {
+							htmlStk.remove(upperCaseTagName);
+						}
 					}
 				}
-				
 			} catch (IOException ioe) {
 				logger.warn("Input/Output exception during reading tokens. Document "+ this.getProperty("docno"), ioe);
 				return null;

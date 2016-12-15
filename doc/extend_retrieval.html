@@ -59,9 +59,9 @@ frequency normalisation by removing the 2 between the brackets (i.e. <tt>DFRWeig
 <h2>Using Terrier Indices in your own code</h2>
 <ul><li><b>How many documents does term X occur in?</b></li><br>
 <pre>
-Index index = Index.createIndex();
+Index index;
 Lexicon&lt;String&gt; lex = index.getLexicon();
-LexiconEntry le = lex.getLexiconEntry("term");
+LexiconEntry le = lex.getLexiconEntry("X");
 if (le != null)
 	System.out.println("Term term occurs in "+ le.getDocumentFrequency() + " documents");
 else
@@ -72,7 +72,7 @@ else
 <pre>
 Index index = Index.createIndex();
 Lexicon&lt;String&gt; lex = index.getLexicon();
-LexiconEntry le = lex.getLexiconEntry("X");
+LexiconEntry le = lex.getLexiconEntry("Y");
 double p = le == null 
 	?  0.0d
 	: (double) le.getFrequency() / index.getCollectionStatistics().getNumberOfTokens();
@@ -82,11 +82,11 @@ double p = le == null
 <li><b>What terms occur in the 11th document?</b><br></li>
 <pre>
 Index index = Index.createIndex();
-DirectIndex di = index.getDirectIndex();
+PostingIndex&lt;?&gt; di = index.getDirectIndex();
 DocumentIndex doi = index.getDocumentIndex();
 Lexicon&lt;String&gt; lex = index.getLexicon();
 int docid = 10; //docids are 0-based
-IterablePosting postings = di.getPostings((BitIndexPointer)doi.getDocumentEntry(docid));
+IterablePosting postings = di.getPostings(doi.getDocumentEntry(docid));
 while (postings.next() != IterablePosting.EOL) {
 	Map.Entry&lt;String,LexiconEntry&gt; lee = lex.getLexiconEntry(postings.getId());
 	System.out.print(lee.getKey() + " with frequency " + postings.getFrequency());
@@ -96,11 +96,11 @@ while (postings.next() != IterablePosting.EOL) {
 <li><b>What documents does term Z occur in?</b><br></li>
 <pre>
 Index index = Index.createIndex();
-InvertedIndex inv = index.getInvertedIndex();
+PostingIndex&lt;?&gt; inv = index.getInvertedIndex();
 MetaIndex meta = index.getMetaIndex();
 Lexicon&lt;String&gt; lex = index.getLexicon();
 LexiconEntry le = lex.getLexiconEntry( "Z" );
-IterablePosting postings = inv.getPostings((BitIndexPointer) le);
+IterablePosting postings = inv.getPostings(le);
 while (postings.next() != IterablePosting.EOL) {
 	String docno = meta.getItem("docno", postings.getId());
 	System.out.println(docno + " with frequency " + postings.getFrequency());
@@ -112,7 +112,7 @@ Moreover, if you're not comfortable with using Java, you can dump the indices of
 <p></p>
 
 <h3>Example Querying Code</h3>
-<p aling="justify">Below, you can find a example sample of using the querying functionalities of Terrier.</p>
+<p align="justify">Below, you can find a example sample of using the querying functionalities of Terrier.</p>
 <pre>
 String query = "term1 term2";
 SearchRequest srq = queryingManager.newSearchRequest("queryID0", query);
