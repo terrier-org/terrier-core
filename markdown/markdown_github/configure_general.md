@@ -1,0 +1,69 @@
+<span>\[</span>[Previous: Terrier Components](basicComponents.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Configuring Indexing](configure_indexing.html)<span>\]</span>
+
+Configuring Terrier
+===================
+
+Configuring Terrier
+===================
+
+Configuring Overview
+--------------------
+
+Terrier is configured overall by a few files, all in the `etc/` directory. The most central files are `terrier.properties` and `terrier-log.xml`. In `terrier.properties`, you can specify any of the various properties that are defined in Terrier. The [Properties](properties.html) documentation page lists the most used properties that you need to configure Terrier, while the [javadoc](javadoc/) for any class lists the properties that directly affect the class. The default `terrier.properties` file is given below:
+
+
+    #default controls for query expansion
+    querying.postprocesses.order=QueryExpansion
+    querying.postprocesses.controls=qe:QueryExpansion
+
+    #default and allowed controls
+    querying.default.controls=
+    querying.allowed.controls=qe,start,end,qemodel
+
+    #document tags specification
+    #for processing the contents of
+    #the documents, ignoring DOCHDR
+    TrecDocTags.doctag=DOC
+    TrecDocTags.idtag=DOCNO
+    TrecDocTags.skip=DOCHDR
+
+    #query tags specification
+    TrecQueryTags.doctag=TOP
+    TrecQueryTags.idtag=NUM
+    TrecQueryTags.process=TOP,NUM,TITLE
+    TrecQueryTags.skip=DESC,NARR
+
+    #stop-words file
+    stopwords.filename=stopword-list.txt
+
+    #the processing stages a term goes through
+    termpipelines=Stopwords,PorterStemmer
+
+In the terrier.properties file, properties are specified in the format `name=value` (the default Java Properties format). Comments are lines starting with `#`.
+
+### Scripting Properties
+
+TrecTerrier supports specifying properties on the command line. This allows the easy over-riding of properties, even if they are specified in the `etc/terrier.properties` file. For example, to create an index without using a stemmer, you could use the command line:
+
+    [user@machine]$ bin/trec_terrier.sh -i -Dtermpipelines=Stopwords
+
+Aside: When looking for properties, Terrier also checks the [System properties provided by Java](http://download.oracle.com/javase/tutorial/essential/environment/sysprop.html). This means that you can set a property anywhere within Java code, or on the Java command line.
+
+As another example, you can use shell scripting (e.g. Bash) to run Terrier with many settings for the `expansion.terms` property of query expansion:
+
+    [user@machine]$ for((i=2;i<10;i++)); do 
+        bin/trec_terrier.sh -r -q -Dexpansion.terms=$i 
+    done
+
+### Configuring Logging
+
+Terrier uses [Log4j](http://logging.apache.org/log4j/1.2/) for logging. You can control the amount of logging information (the logging level) that Terrier outputs by altering the log4j config in `etc/terrier-log.xml`. For more information about configuring Log4j, see the [Log4j documentation](http://logging.apache.org/log4j/1.2/manual.html).
+
+<span>\[</span>[Previous: Terrier Components](basicComponents.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Configuring Indexing](configure_indexing.html)<span>\]</span>
+
+------------------------------------------------------------------------
+
+Webpage: <http://terrier.org>
+Contact: [](mailto:terrier@dcs.gla.ac.uk)
+[School of Computing Science](http://www.dcs.gla.ac.uk/)
+Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

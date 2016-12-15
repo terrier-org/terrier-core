@@ -1,0 +1,110 @@
+<p><span>[</span><a href="languages.html">Previous: Non English language support</a><span>]</span> <span>[</span><a href="index.html">Contents</a><span>]</span> <span>[</span><a href="todo.html">Next: Future Features &amp; Known Issues</a><span>]</span></p>
+<h1 id="divergence-from-randomness-dfr-framework">Divergence From Randomness (DFR) Framework</h1>
+<p>The Divergence from Randomness (DFR) paradigm is a generalisation of one of the very first models of Information Retrieval, Harter’s 2-Poisson indexing-model <span>[</span>. The 2-Poisson model is based on the hypothesis that the level of treatment of the informative words is witnessed by an <em>elite set</em> of documents, in which these words occur to a relatively greater extent than in the rest of the documents.</p>
+<p>On the other hand, there are words, which do not possess elite documents, and thus their frequency follows a random distribution, which is the <em>single</em> Poisson model. Harter’s model was first explored as a retrieval-model by Robertson, Van Rijsbergen and Porter <span>[</span>. Successively it was combined with standard probabilistic model by Robertson and Walker <span>[</span> and gave birth to the family of the BMs IR models (among them there is the well-known BM25 which is at the basis the Okapi system).</p>
+<p>DFR models are obtained by instantiating the three components of the framework: , and .</p>
+<p><a href=""></a></p>
+<h2 id="basic-randomness-models">Basic Randomness Models</h2>
+<p>The DFR models are based on this simple idea: “The more the divergence of the within-document term-frequency from its frequency within the collection, the more the information carried by the word <em>t</em> in the document <em>d</em>”. In other words the term-weight is inversely related to the probability of term-frequency within the document <em>d</em> obtained by a model <em>M</em> of randomness:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img1.png" alt="image" width="339" height="34" /> &amp; (1)</p>
+<p>where the subscript <em>M</em> stands for the type of model of randomness employed to compute the probability. In order to choose the appropriate model <em>M</em> of randomness, we can use different urn models. IR is thus seen as a probabilistic process, which uses random drawings from urn models, or equivalently random placement of coloured balls into urns. Instead of <em>urns</em> we have <em>documents</em>, and instead of different <em>colours</em> we have different <em>terms</em>, where each term occurs with some multiplicity in the urns as anyone of a number of related words or phrases which are called <em>tokens</em> of that term. There are many ways to choose <em>M</em>, each of these provides a <em>basic DFR model</em>. The basic models are derived in the following table.</p>
+<p>Basic DFR Models</p>
+<p>D</p>
+<p>Divergence approximation of the binomial</p>
+<p><a href="javadoc/org/terrier/matching/models/basicmodel/P.html">P</a></p>
+<p>Approximation of the binomial</p>
+<p><a href="javadoc/org/terrier/matching/models/basicmodel/B.html">B<sub>E</sub></a></p>
+<p>Bose-Einstein distribution</p>
+<p>G</p>
+<p>Geometric approximation of the Bose-Einstein</p>
+<p><a href="javadoc/org/terrier/matching/models/basicmodel/In.html">I(n)</a></p>
+<p>Inverse Document Frequency model</p>
+<p><a href="javadoc/org/terrier/matching/models/basicmodel/IF.html">I(F)</a></p>
+<p>Inverse Term Frequency model</p>
+<p><a href="javadoc/org/terrier/matching/models/basicmodel/In_exp.html">I(n<sub>e</sub>)</a></p>
+<p>Inverse Expected Document Frequency model</p>
+<p>If the model <em>M</em> is the binomial distribution, then the basic model is <em>P</em> and computes the value:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img2.png" alt="image" width="436" height="60" /> &amp; (2)</p>
+<p>where:</p>
+<ul>
+<li><p><em>TF</em> is the term-frequency of the term <em>t</em> in the Collection</p></li>
+<li><p><em>tf</em> is the term-frequency of the term <em>t</em> in the document <em>d</em></p></li>
+<li><p><em>N</em> is the number of documents in the Collection</p></li>
+<li><p><em>p</em> is 1/<em>N</em> and <em>q</em>=1-<em>p</em></p></li>
+</ul>
+<p>Similarly, if the model <em>M</em> is the geometric distribution, then the basic model is <em>G</em> and computes the value:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img11.png" alt="image" width="484" height="69" /> &amp; (3)</p>
+<p>where λ = <em>F</em>/<em>N</em>.</p>
+<p><a href=""></a></p>
+<h2 id="first-normalisation">First Normalisation</h2>
+<p>When a rare term does not occur in a document then it has almost zero probability of being informative for the document. On the contrary, if a rare term has many occurrences in a document then it has a very high probability (almost the certainty) to be informative for the topic described by the document. Similarly to Ponte and Croft’s <span>[</span> language model, we include a risk component in the DFR models. If the term-frequency in the document is high then the risk for the term of not being informative is minimal. In such a case Formula gives a high value, but a <em>minimal risk</em> has also the negative effect of providing a <em>small</em> information gain. Therefore, instead of using the full weight provided by the Formula , we <em>tune</em> or <em>smooth</em> the weight of Formula by considering only the portion of it which is the amount of information gained with the term:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img14.png" alt="image" width="381" height="34" /> &amp; (4)</p>
+<p>The more the term occurs in the elite set, the less term-frequency is due to randomness, and thus the smaller the probability <em>P<sub>risk</sub></em> is, that is:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img16.png" alt="image" width="277" height="34" /> &amp; (5)</p>
+<p>We use two models for computing the information-gain with a term within a document: the Laplace <em><a href="javadoc/org/terrier/matching/models/aftereffect/L.html">L</a></em> model and the ratio of two Bernoulli’s processes <em><a href="javadoc/org/terrier/matching/models/aftereffect/B.html">B</a></em>:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img19.png" alt="image" width="511" height="94" /> &amp; (6)</p>
+<p>where <em>df</em> is the number of documents containing the term.</p>
+<p><a href=""></a></p>
+<h2 id="term-frequency-normalisation">Term Frequency Normalisation</h2>
+<p>Before using Formula the document-length <em>dl</em> is normalised to a standard length <em>sl</em>. Consequently, the term-frequencies <em>tf</em> are also recomputed with respect to the standard document-length, that is:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img23.png" alt="image" width="184" height="58" /> &amp; (7)</p>
+<p>A more flexible formula, referred to as <em><a href="javadoc/org/terrier/matching/models/normalisation/Normalisation2.html">Normalisation2</a></em>, is given below:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img24.png" alt="image" width="204" height="58" /> &amp; (8)</p>
+<p><em>DFR Models are finally obtained from the generating Formula , using a basic DFR model (such as Formulae or ) in combination with a model of information-gain (such as Formula ) and normalising the term-frequency (such as in Formula or Formula ).</em></p>
+<p><a href=""></a></p>
+<h2 id="dfr-models-in-terrier">DFR Models in Terrier</h2>
+<p>Included with Terrier, are many of the DFR models, including:</p>
+<p><span>@ll@</span> Model &amp; DescriptionBB2 &amp; Bernoulli-Einstein model with Bernoulli after-effect and normalisation 2.IFB2 &amp; Inverse Term Frequency model with Bernoulli after-effect and normalisation 2.In_expB2 &amp; Inverse Expected Document Frequency model with Bernoulli after-effect and normalisation 2. The logarithms are base 2. This model can be used for classic ad-hoc tasks.In_expC2 &amp; Inverse Expected Document Frequency model with Bernoulli after-effect and normalisation 2. The logarithms are base e. This model can be used for classic ad-hoc tasks.InL2 &amp; Inverse Document Frequency model with Laplace after-effect and normalisation 2. This model can be used for tasks that require early precision.PL2 &amp; Poisson model with Laplace after-effect and normalisation 2. This model can be used for tasks that require early precision <span>[</span>,</p>
+<p>Recommended settings for various collection are provided in <a href="trec_examples.html#paramsettings">Example TREC Experiments</a>.</p>
+<p>Another provided <a href="javadoc/org/terrier/matching/models/DFR_BM25.html">weighting model</a> is a derivation of the BM25 formula from the Divergence From Randomness framework. Finally, Terrier also provides a <a href="javadoc/org/terrier/matching/models/DFRWeightingModel.html">generic DFR weighting model</a>, which allows any DFR model to be <a href="extend_retrieval.html">generated and evaluated</a>.</p>
+<p><a href=""></a></p>
+<h2 id="query-expansion">Query Expansion</h2>
+<p>The query expansion mechanism extracts the most informative terms from the top-returned documents as the expanded query terms. In this expansion process, terms in the top-returned documents are weighted using a particular DFR term weighting model. Currently, Terrier deploys the Bo1 (Bose-Einstein 1), Bo2 (Bose-Einstein 2) and KL (Kullback-Leibler) term weighting models. The DFR term weighting models follow a parameter-free approach in default.</p>
+<p>An alternative approach is Rocchio’s query expansion mechanism. A user can switch to the latter approach by setting <code>parameter.free.expansion</code> to <code>false</code> in the <code>terrier.properties</code> file. The default value of the parameter beta of Rocchio’s approach is <code>0.4</code>. To change this parameter, the user needs to specify the property rocchio_beta in the <code>terrier.properties</code> file.</p>
+<h2 id="fields">Fields</h2>
+<p>DFR can encapsulate the importance of term occurrences occurring in different fields in a variety of different ways:</p>
+<ol>
+<li><p>Per-field normalisation: The frequencies from the different fields in the documents are normalised with respect to the statistics of lengths typical for that field. This is as performed by the <a href="javadoc/org/terrier/matching/models/PL2F.html">PL2F</a> weighting model. Other per-field normalisation models can be generated using the generic <a href="javadoc/org/terrier/matching/models/PerFieldNormWeightingModel.html">PerFieldNormWeightingModel</a> model.</p></li>
+<li><p>Multinomial: The frequencies from the different fields are modelled in their divergence from the randomness expected by the term’s occurrences in that field. The <a href="javadoc/org/terrier/matching/models/ML2.html">ML2</a> and <a href="javadoc/org/terrier/matching/models/MDL2.html">MDL2</a> models implement this weighting.</p></li>
+</ol>
+<h2 id="proximity">Proximity</h2>
+<p>Proximity can be handled within DFR, by considering the number of occurrences of a pair of query terms within a window of pre-defined size. In particular, the <a href="javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html">DFRDependenceScoreModifier</a> DSM implements the pBiL and pBiL2 models, which measure the randomness compared to the document’s length, rather than the statistics of the pair in the corpus.</p>
+<p><a href=""></a></p>
+<h2 id="dfr-models-and-cross-entropy">DFR Models and Cross-Entropy</h2>
+<p>A different interpretation of the gain-risk generating Formula can be explained by the notion of cross-entropy. Shannon’s mathematical theory of communication in the 1940s <span>[</span> established that the minimal average code word length is about the value of the entropy of the probabilities of the source words. This result is known under the name of the <em>Noiseless Coding Theorem</em>. The term <em>noiseless</em> refers at the assumption of the theorem that there is no possibility of errors in transmitting words. Nevertheless, it may happen that different sources about the same information are available. In general each source produces a different coding. In such cases, we can make a comparison of the two sources of evidence using the cross-entropy. The cross entropy is minimised when the two pairs of observations return the same probability density function, and in such a case cross-entropy coincides with the Shannon’s entropy.</p>
+<p>We possess two tests of randomness: the first test is <em>P<sub>risk</sub></em> and is relative to the term distribution within its elite set, while the second <em>Prob<sub>M</sub></em> is relative to the document with respect the entire collection. The first distribution can be treated as a new source of the term distribution, while the coding of the term with the term distribution within the collection can be considered as the primary source. The definition of the cross-entropy relation of these two probabilities distribution is:</p>
+<p><a href=""></a></p>
+<p><span>@ll@</span> <img src="images/img26.png" alt="image" width="414" height="34" /> &amp; (9)</p>
+<p>Relation  is indeed Relation  of the DFR framework. DFR models can be equivalently defined as the divergence of two probabilities measuring the amount of randomness of two different sources of evidence.</p>
+<p>For more details about the Divergence from Randomness framework, you may refer to the PhD thesis of Gianni Amati, or to Amati and Van Rijsbergen’s paper <em>Probabilistic models of information retrieval based on measuring divergence from randomness</em>, TOIS 20(4):357-389, 2002.</p>
+<p><span>[</span> S.P. Harter. A probabilistic approach to automatic keyword indexing. PhD thesis, Graduate Library, The University of Chicago, Thesis No. T25146, 1974.<br />
+<span>[</span> J. Ponte and B. Croft. A Language Modeling Approach in Information Retrieval. In The 21st ACM SIGIR Conference on Research and Development in Information Retrieval (Melbourne, Australia, 1998), B. Croft, A.Moffat, and C.J. van Rijsbergen, Eds., pp.275-281.<br />
+<span>[</span> S.E. Robertson and S. Walker. Some simple approximations to the 2-Poisson Model for Probabilistic Weighted Retrieval. In Proceedings of the Seventeenth Annual International ACM-SIGIR Conference on Research and Development in Information Retrieval (Dublin, Ireland, June 1994), Springer-Verlag, pp. 232-241.<br />
+<span>[</span> S.E. Robertson, C.J. van Risjbergen and M. Porter. Probabilistic models of indexing and searching. In Information retrieval Research, S.E. Robertson, C.J. van Risjbergen and P. Williams, Eds. Butterworths, 1981, ch. 4, pp. 35-56.<br />
+<span>[</span> C. Shannon and W. Weaver. The Mathematical Theory of Communication. University of Illinois Press, Urbana, Illinois, 1949.<br />
+<span>[</span> B. He and I. Ounis. A study of parameter tuning for term frequency normalization, in Proceedings of the twelfth international conference on Information and knowledge management, New Orleans, LA, USA, 2003.<br />
+<span>[</span> B. He and I. Ounis. Term Frequency Normalisation Tuning for BM25 and DFR Model, in Proceedings of the 27th European Conference on Information Retrieval (ECIR’05), 2005.<br />
+<span>[</span> V. Plachouras and I. Ounis. Usefulness of Hyperlink Structure for Web Information Retrieval. In Proceedings of ACM SIGIR 2004.<br />
+<span>[</span> V. Plachouras, B. He and I. Ounis. University of Glasgow in TREC 2004: experiments in Web, Robust and Terabyte tracks with Terrier. In Proceedings of the 13th Text REtrieval Conference (TREC 2004), 2004.</p>
+<h2 id="footnotes">Footnotes</h2>
+<p><a href=""></a><sup>1</sup>: We actually use approximating formulae for the factorials.</p>
+<p><span>[</span><a href="languages.html">Previous: Non English language support</a><span>]</span> <span>[</span><a href="index.html">Contents</a><span>]</span> <span>[</span><a href="todo.html">Next: Future Features &amp; Known Issues</a><span>]</span></p>
+<hr />
+<p>Webpage: <a href="http://terrier.org" class="uri">http://terrier.org</a><br />
+Contact: <script type="text/javascript">
+<!--
+h='&#100;&#x63;&#x73;&#46;&#x67;&#108;&#x61;&#46;&#x61;&#x63;&#46;&#x75;&#x6b;';a='&#64;';n='&#116;&#x65;&#114;&#114;&#x69;&#x65;&#114;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+''+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#32;&#40;&#116;&#x65;&#114;&#114;&#x69;&#x65;&#114;&#32;&#x61;&#116;&#32;&#100;&#x63;&#x73;&#32;&#100;&#x6f;&#116;&#32;&#x67;&#108;&#x61;&#32;&#100;&#x6f;&#116;&#32;&#x61;&#x63;&#32;&#100;&#x6f;&#116;&#32;&#x75;&#x6b;&#x29;</noscript><br />
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br />
+Copyright (C) 2004-2015 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.<br />
+</p>

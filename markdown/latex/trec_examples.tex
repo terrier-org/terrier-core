@@ -1,0 +1,580 @@
+{[}\href{website_search.html}{Previous: Website Search Application}{]}
+{[}\href{index.html}{Contents}{]}
+{[}\href{hadoop_configuration.html}{Next: Terrier/Hadoop
+Configuration}{]}\\
+
+\section{Examples of using Terrier to index TREC collections: WT2G \&
+Blogs06}\label{examples-of-using-terrier-to-index-trec-collections-wt2g-blogs06}
+
+Terrier can index all known TREC test collections. We refer readers to
+the \href{http://ir.dcs.gla.ac.uk/wiki/Terrier}{Terrier wiki} for latest
+configuration for indexing various collections:
+
+\begin{itemize}
+\tightlist
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1\&2}{Disks1\&2}
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks4\&5}{Disks4\&5}
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/WT2G}{WT2G}
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/WT10G}{WT10G}
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV}{DOTGOV} -- see also
+  the \href{learning.html}{learning-to-rank} documentation page.
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV2}{DOTGOV2}
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/Blogs06}{Blogs06}
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/Blogs08}{Blogs08}
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/ClueWeb09-B}{ClueWeb09-B}
+\item
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/ClueWeb12}{ClueWeb12}
+\end{itemize}
+
+\subsection{TREC WT2G Collection}\label{trec-wt2g-collection}
+
+Here we give an example of using Terrier to index WT2G - a standard
+\href{http://trec.nist.gov}{TREC} test collection. We assume that the
+operating system is Linux, and that the collection, along with the
+topics and the relevance assessments, is stored in the directory
+\texttt{/local/collections/WT2G}. The following configurations are
+sufficient for batch retrieval, however if you want to build a web-based
+search interface for searching WT2G, see
+\href{terrier_http.html}{Web-based Terrier}.
+
+\begin{verbatim}
+#goto the terrier folder
+cd terrier
+
+#get terrier setup for using a trec collection
+bin/trec_setup.sh /local/collections/WT2G/
+
+#rebuild the collection.spec file correctly
+find /local/collections/WT2G/ -type f | sort |grep -v info > etc/collection.spec
+
+#use In_expB2 DFR model for querying
+echo trec.model=org.terrier.matching.models.In_expB2 >> etc/terrier.properties
+
+#use this file for the topics
+echo trec.topics=/local/collections2/WT2G/info/topics.401-450.gz >> etc/terrier.properties
+
+#use this file for query relevance assessments
+echo trec.qrels=/local/collections2/WT2G/info/qrels.trec8.small_web.gz >> etc/terrier.properties
+
+#index the collection
+bin/trec_terrier.sh -i
+
+#run the topics, with suggested c value 10.99 
+bin/trec_terrier.sh -r -c 10.99
+#run topics again with query expansion enabled
+bin/trec_terrier.sh -r -q -c 10.99
+
+#evaluate the results in var/results/
+bin/trec_terrier.sh -e
+
+#display the Mean Average Precision
+tail -1 var/results/*.eval
+#MAP should be 
+#In_expB2 Average Precision: 0.3160 
+\end{verbatim}
+
+\subsection{TREC Blogs06 Collection}\label{trec-blogs06-collection}
+
+This guide will provide a step-by-step example on how to use Terrier for
+indexing, retrieval and evaluation. We use TREC Blogs06 test collection,
+along with the corresponding topics and the qrels from TREC 2006 Blog
+track. We assume that these are stored in the directory
+\texttt{/local/collections/Blogs06/}
+
+\subsubsection{Indexing}\label{indexing}
+
+In the Terrier folder, use trec\_setup.sh to generate a collection.spec
+for indexing the collection:
+
+\begin{verbatim}
+[user@machine terrier]$ ./bin/trec_setup.sh /local/collections/Blogs06/
+[user@machine terrier]$ find /local/collections/Blogs06/ -type f  
+    | grep 'permalinks-' |sort > etc/collection.spec
+\end{verbatim}
+
+This will result in the creation of a \texttt{collection.spec} file, in
+the \texttt{etc} directory, containing a list of the files in the
+\texttt{/local/collections/Blog06/} directory. At this stage, you should
+check the \texttt{etc/collection.spec}, to ensure that it only contains
+files that should be indexed, and that they are sorted (ie
+\texttt{20051206/permalinks-000.gz} is the first file).
+
+The TREC Blogs06 collection differs from other TREC collections in that
+not all tags should be indexed. For this reason, you should configure
+the parse in TRECCollection not to process these tags. Set the following
+properties in your \texttt{etc/terrier.properties} file:
+
+\begin{verbatim}
+TrecDocTags.doctag=DOC
+TrecDocTags.idtag=DOCNO
+TrecDocTags.skip=DOCHDR,DATE_XML,FEEDNO,BLOGHPNO,BLOGHPURL,PERMALINK
+\end{verbatim}
+
+Finally, the length of the DOCNOs in the TREC Blogs06 collection are 31
+characters, longer than the default 20 characters in Terrier. To deal
+with this, update properties relating to the MetaIndex in
+terrier.properties:
+
+\begin{verbatim}
+indexer.meta.forward.keys=docno
+indexer.meta.forward.keylens=31
+indexer.meta.reverse.keys=docno
+\end{verbatim}
+
+Now you are ready to start indexing the collection.
+
+\begin{verbatim}
+[user@machine terrier]$ ./bin/trec_terrier.sh -i
+Setting TERRIER_HOME to /local/terrier
+INFO - TRECCollection read collection specification
+INFO - Processing /local/collections/Blogs06/20051206/permalinks-000.gz
+INFO - creating the data structures data_1
+INFO - Processing /local/collections/Blogs06/20051206/permalinks-001.gz
+INFO - Processing /local/collections/Blogs06/20051206/permalinks-002.gz
+<snip>
+\end{verbatim}
+
+If we did not plan to use Query Expansion initially, then the faster
+single-pass indexing could be enabled, using the -j option of
+TrecTerrier. If we decide to use query expansion later, we can use the
+\href{javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html}{Inverted2DirectIndexBuilder}
+to create the direct index
+(\href{javadoc/org/terrier/structures/indexing/singlepass/BlockInverted2DirectIndexBuilder.html}{BlockInverted2DirectIndexBuilder}
+for blocks).
+
+\begin{verbatim}
+[user@machine terrier]$ ./bin/trec_terrier.sh -i -j
+Setting TERRIER_HOME to /local/terrier
+INFO - TRECCollection read collection specification
+INFO - Processing /local/collections/Blogs06/20051206/permalinks-000.gz
+Starting building the inverted file...
+INFO - creating the data structures data_1
+INFO - Creating IF (no direct file)..
+INFO - Processing /local/collections/Blogs06/20051206/permalinks-001.gz
+INFO - Processing /local/collections/Blogs06/20051206/permalinks-002.gz
+<snip>
+[user@machine terrier]$ ./bin/anyclass.sh org.terrier.structures.indexing.singlepass.Inverted2DirectIndexBuilder
+INFO - Generating a direct index from an inverted index
+INFO - Iteration - 1 of 20 iterations
+INFO - Generating postings for documents with ids 0 to 120435
+INFO - Writing the postings to disk
+<snip>
+INFO - Finishing up: rewriting document index
+INFO - Finished generating a direct index from an inverted index
+\end{verbatim}
+
+Indexing will take a reasonable amount of time on a modern machine.
+Additionally, expect to double indexing time if block indexing is
+enabled. Using single-pass indexing is significantly faster, even if the
+direct file has to be built later.
+
+\subsubsection{Retrieval}\label{retrieval}
+
+Once the index is built, we can do retrieval using the index, following
+the steps described below.
+
+First, tell Terrier the location of the topics and relevance assessments
+(qrels).
+
+\begin{verbatim}
+[user@machine terrier]$ echo trec.topics=/local/collections/Blog06/06.topics.851-900 >> etc/terrier.properties
+[user@machine terrier]$ echo trec.qrels=/local/collections/Blog06/qrels.blog06 >> etc/terrier.properties
+\end{verbatim}
+
+Next, we should specify the retrieval weighting model that we want to
+use. In this case we will use the DFR model called PL2 for ranking
+documents (blog posts).
+
+\begin{verbatim}
+echo trec.model=org.terrier.matching.models.PL2 >> etc/terrier.properties
+\end{verbatim}
+
+Now we are ready to start retrieval. We use the \texttt{-c} to set the
+parameter of the weighting model to the value 1. Terrier will do
+retrieval by taking each query (called a topic) from the specified
+topics file, query the index using it, and save the results to a file in
+the \texttt{var/results} folder, named similar to
+\texttt{PL2c1.0\_0.res}. The file \texttt{PL2c1.0\_0.res.settings}
+contains a dump of the properties and other settings used to generated
+the run.
+
+\begin{verbatim}
+[user@machine terrier]$ ./bin/trec_terrier.sh -r -c 1
+Setting TERRIER_HOME to /local/terrier
+INFO - 900 : mcdonalds
+INFO - Processing query: 900
+<snip>
+INFO - Finished topics, executed 50 queries in 27 seconds, results written to 
+    terrier/var/results/PL2c1.0_0.res
+Time elapsed: 40.57 seconds.
+\end{verbatim}
+
+\subsubsection{Evaluation}\label{evaluation}
+
+We can now evaluate the retrieval performance of the generated run using
+the qrels specified earlier:
+
+\begin{verbatim}
+[user@machine terrier]$ ./bin/trec_terrier.sh -e
+Setting TERRIER_HOME to /local/terrier
+INFO - Evaluating result file: /local/terrier/var/results/PL2c1.0_0.res
+Average Precision: 0.2703
+Time elapsed: 3.177 seconds.
+\end{verbatim}
+
+Note that more evaluation measures are stored in the file
+\texttt{var/results/PL2c1.0\_0.eval}.
+
+\href{}{}
+
+\subsection{Common TREC Settings}\label{common-trec-settings}
+
+This page provides examples of settings for indexing and retrieval on
+TREC collections. For example, to index the disk1\&2 collection, the
+\texttt{etc/terrier.properties} should look like as follows:
+
+\begin{verbatim}
+
+#default controls for query expansion
+querying.postprocesses.order=QueryExpansion
+querying.postprocesses.controls=qe:QueryExpansion
+
+#default and allowed controls
+querying.default.controls=c:1.0,start:0,end:999
+querying.allowed.controls=c,scope,qe,start,end
+
+matching.retrieved_set_size=1000
+
+#document tags specification
+#for processing the contents of
+#the documents, ignoring DOCHDR
+TrecDocTags.doctag=DOC
+TrecDocTags.idtag=DOCNO
+TrecDocTags.skip=DOCHDR
+#the tags to be indexed
+TrecDocTags.process=TEXT,TITLE,HEAD,HL
+#do not store position information in the index. Set it to true otherwise.
+block.indexing=false
+
+#query tags specification
+TrecQueryTags.doctag=TOP
+TrecQueryTags.idtag=NUM
+TrecQueryTags.process=TOP,NUM,TITLE
+TrecQueryTags.skip=DOM,HEAD,SMRY,CON,FAC,DEF,DESC,NARR
+
+#stop-words file. default folder is ./share
+stopwords.filename=stopword-list.txt
+
+#the processing stages a term goes through
+#the following setting applies standard stopword removal and Porter's stemming algorithm.
+termpipelines=Stopwords,PorterStemmer
+\end{verbatim}
+
+The following table lists the indexed tags (corresponding to the
+property \texttt{TrecDocTags.process}) and the running time for a
+singlepass inverted index creation on 6 TREC collections. No indexed
+tags are specified for the WT2G, WT10G, DOTGOV and DOTGOV2 collections,
+which means the system indexes everything in these collections. The
+indexing was done on a CentOS 5 Linux machine with Intel Core2 2.4GHz
+CPU and 2GB RAM (a maximum of 1GB RAM is allocated to the Java virtual
+machine).
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+Collection
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+Indexed tags (\texttt{TrecDocTags.process})
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+Indexing time (seconds)
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+disk1\&2
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+TEXT,TITLE,HEAD,HL
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+766.85
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+disk4\&5
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+TEXT,H3,DOCTITLE,HEADLINE,TTL
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+692.115
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+WT2G
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+~
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+709.906
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+WT10G
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+~
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+3,556.09
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+DOTGOV
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+~
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+4,435.12
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+DOTGOV2
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+~
+\strut\end{minipage} &
+\begin{minipage}[t]{0.30\columnwidth}\raggedright\strut
+96,340.00
+\strut\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+The following table compares the indexing time using the classical
+two-phase indexing and single-pass indexing with and without storing the
+terms positions (blocks). The table shows that the single-pass indexing
+is markedly faster than the two-phase indexing, particular when block
+indexing is enabled.
+
+\begin{longtable}[]{@{}lllll@{}}
+\toprule
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+Collection
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+Two-phase
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+Single-pass
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+Two-phase + blocks
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+Single-pass + blocks
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+disk1\&2
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+13.5 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+8.65 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+32.6 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+12.1 min
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+disk4\&5
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+11.7 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+7.63 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+25.0 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+10.2 min
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+WT2G
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+9.95 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+7.52 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+23.6 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+10.8 min
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+WT10G
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+62.5 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+34.7 min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+2hour 18min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+53.1 min
+\strut\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+DOTGOV
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+71.0min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+47.1min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+2hour 45min
+\strut\end{minipage} &
+\begin{minipage}[t]{0.17\columnwidth}\raggedright\strut
+1hour 11min
+\strut\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\href{}{}
+
+The following table lists the retrieval performance achieved using three
+weighting models, namely the Okapi
+\href{javadoc/org/terrier/matching/models/BM25.html}{BM25}, DFR
+\href{javadoc/org/terrier/matching/models/PL2.html}{PL2} and the new
+parameter-free
+\href{javadoc/org/terrier/matching/models/DFRee.html}{DFRee} model on a
+variety of standard TREC test collections. We provide the best values
+for the b and c parameters of BM25 and PL2 respectively, by optimising
+MAP using a simulated annealing process. In contrast, DFRee performs
+robustly across all collections while it does not require any parameter
+tuning or training.
+
+\href{javadoc/org/terrier/matching/models/BM25.html}{BM25}
+
+\href{javadoc/org/terrier/matching/models/PL2.html}{PL2}
+
+\href{javadoc/org/terrier/matching/models/DFRee.html}{DFRee}
+
+Collection and tasks
+
+b value
+
+MAP
+
+c value
+
+MAP
+
+MAP
+
+disk1\&2, TREC1-3 adhoc tasks
+
+0.3277
+
+0.2324
+
+4.607
+
+0.2260
+
+0.2175
+
+disk4\&5, TREC 2004 Robust Track
+
+0.3444
+
+0.2502
+
+9.150
+
+0.2531
+
+0.2485
+
+WT2G, TREC8 small-web task
+
+0.2381
+
+0.3186
+
+26.04
+
+0.3252
+
+0.2829
+
+WT10G, TREC9-10 Web Tracks
+
+0.2505
+
+0.2104
+
+12.33
+
+0.2103
+
+0.2030
+
+DOTGOV, TREC11 Topic-distillation task
+
+0.7228
+
+0.1910
+
+1.280
+
+0.2030
+
+0.1945
+
+DOTGOV2, TREC2004-2006 Terabyte Track adhoc tasks
+
+0.39
+
+0.3046
+
+6.48
+
+0.3097
+
+0.2935
+
+Many of the above TREC collections can be obtained directly from either
+\href{http://trec.nist.gov}{TREC (NIST)}, or from the
+\href{http://ir.dcs.gla.ac.uk/test_collections/}{University of Glasgow}
+
+{[}\href{website_search.html}{Previous: Website Search Application}{]}
+{[}\href{index.html}{Contents}{]}
+{[}\href{hadoop_configuration.html}{Next: Terrier/Hadoop
+Configuration}{]}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+Webpage: \url{http://terrier.org}\\
+Contact:
+\href{mailto:terrier@dcs.gla.ac.uk}{\nolinkurl{terrier@dcs.gla.ac.uk}}\\
+\href{http://www.dcs.gla.ac.uk/}{School of Computing Science}\\
+Copyright (C) 2004-2015 \href{http://www.gla.ac.uk/}{University of
+Glasgow}. All Rights Reserved.

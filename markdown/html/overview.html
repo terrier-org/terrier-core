@@ -1,0 +1,63 @@
+<p><span>[</span><a href="index.html">Contents</a><span>]</span> <span>[</span><a href="whats_new.html">Next: What’s new</a><span>]</span><br />
+</p>
+<h1 id="terrier-features">Terrier Features</h1>
+<p>Below, you can find a succinct list of features offered by Terrier.</p>
+<h3 id="general">General</h3>
+<ul>
+<li><p>Indexing support for common desktop file formats, and for commonly used TREC research collections (e.g. TREC CDs 1-5, WT2G, WT10G, GOV, GOV2, Blogs06, Blog08, ClueWeb09, ClueWeb12).</p></li>
+<li><p>Many document weighting models, such as many parameter-free Divergence from Randomness weighting models, Okapi BM25 and language modelling.</p></li>
+<li><p><strong><em>NEW!</em></strong> Supervised (machine learned) ranking models are supported via learning to rank.</p></li>
+<li><p>Conventional query language supported, including phrases, and terms occurring in tags.</p></li>
+<li><p>Handling full-text indexing of large-scale document collections, in a centralised architecture to at least 50 million documents, and using the Hadoop MapReduce distributed indexing scheme for even larger collections.</p></li>
+<li><p><em><strong>NEW!</strong></em> Incremental indexing and retrieval capabilities to support real-time search</p></li>
+<li><p>Modular and open indexing and querying APIs, to allow easy extension for your own applications and research.</p></li>
+<li><p>Active Information Retrieval research fed into the Open Source platform.</p></li>
+<li><p>Open Source (Mozilla Public Licence).</p></li>
+<li><p>Written in cross-platform Java - works on Windows, Mac OS X, Linux and Unix.</p></li>
+<li><p>Large user-base over 10 years of public release.</p></li>
+</ul>
+<h3 id="indexing">Indexing</h3>
+<ul>
+<li><p>Out-of-the box indexing of tagged document collections, such as the TREC test collections.</p></li>
+<li><p>Out-of-the box indexing for documents of various formats, such as HTML, PDF, or Microsoft Word, Excel and PowerPoint files.</p></li>
+<li><p>Out-of-the box support for distributed indexing in a Hadoop MapReduce setting.</p></li>
+<li><p>Indexing of field information, such as the frequency of a term in a TITLE or H1 HTML tag.</p></li>
+<li><p>Indexing of position information on a word, or a block (e.g. a window of terms within a distance) level.</p></li>
+<li><p>Support for various encodings of documents (UTF), to facilitate multi-lingual retrieval.</p></li>
+<li><p>Support for changing the tokenisation being used.</p></li>
+<li><p><em><strong>NEW!</strong></em> Updatable indices to support real-time search</p></li>
+<li><p>Indexing support for query-biased summarisation.</p></li>
+<li><p>Support for fetching files to index by HTTP, allowing intranets to be easily searched.</p></li>
+<li><p><em><strong>NEW!</strong></em> Highly compressed index disk data structures with built-in pluggable compression algorithms.</p></li>
+<li><p>Highly compressed direct file for efficient query expansion.</p></li>
+<li><p>Alternative faster single-pass and MapReduce based indexing.</p></li>
+<li><p>Various stemming techniques supported, including the Snowball stemmer for European languages.</p></li>
+</ul>
+<h3 id="retrieval">Retrieval</h3>
+<ul>
+<li><p>Provides desktop, command-line and Web based querying interfaces.</p></li>
+<li><p>Provides standard querying facilities, as well as Query Expansion (pseudo-relevance feedback).</p></li>
+<li><p>Can be applied in interactive applications, such as the included <a href="terrier_desktop.html">Desktop Search</a>, or in a batch setting for research and experimentation.</p></li>
+<li><p>Provides many standard document weighting models, including up to 126 Divergence From Randomness (DFR) document ranking models, and other models such as Okapi BM25, language modelling and TF-IDF. Two new 2nd generation DFR weighting model, JsKLs and XSqrA_M, are also included, which provide robust performance on a range of test collections without the need for any parameter tuning or training.</p></li>
+<li><p>Advanced <a href="querylanguage.html">query language</a> that supports synonyms, +/- operators, phrase and proximity search, and fields.</p></li>
+<li><p><em><strong>NEW!</strong></em> Learning-to-rank support enables out-of-the-box supervised ranking models.</p></li>
+<li><p>Provides a number of parameter-free DFR term weighting models for automatic query expansion, in addition to Rocchio’s query expansion.</p></li>
+<li><p>Flexible processing of terms through a pipeline of components, such as stopword removers and stemmers.</p></li>
+</ul>
+<h3 id="experimentation">Experimentation</h3>
+<ul>
+<li><p>Handles all currently available TREC test collections - see <a href="trec_examples.html">TREC Experimentation Examples</a> for examples and known settings.</p></li>
+<li><p>Easily scriptable to evaluate many parameter settings, or many weighting models in batch form.</p></li>
+<li><p>Built-in <a href="evaluation.html">evaluation tools</a> for use with TREC ad-hoc and known-item search retrieval results, to produce various Precision and Recall measures.</p></li>
+</ul>
+<p><span>[</span><a href="index.html">Contents</a><span>]</span> <span>[</span><a href="whats_new.html">Next: What’s new</a><span>]</span></p>
+<hr />
+<p>Webpage: <a href="http://terrier.org" class="uri">http://terrier.org</a><br />
+Contact: <script type="text/javascript">
+<!--
+h='&#100;&#x63;&#x73;&#46;&#x67;&#108;&#x61;&#46;&#x61;&#x63;&#46;&#x75;&#x6b;';a='&#64;';n='&#116;&#x65;&#114;&#114;&#x69;&#x65;&#114;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+''+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#32;&#40;&#116;&#x65;&#114;&#114;&#x69;&#x65;&#114;&#32;&#x61;&#116;&#32;&#100;&#x63;&#x73;&#32;&#100;&#x6f;&#116;&#32;&#x67;&#108;&#x61;&#32;&#100;&#x6f;&#116;&#32;&#x61;&#x63;&#32;&#100;&#x6f;&#116;&#32;&#x75;&#x6b;&#x29;</noscript><br />
+<a href="http://www.dcs.gla.ac.uk/">School of Computing Science</a><br />
+Copyright (C) 2004-2015 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.</p>

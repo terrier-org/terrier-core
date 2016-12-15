@@ -1,0 +1,79 @@
+{[}\href{dfr_description.html}{Previous: DFR Description}{]}
+{[}\href{index.html}{Contents}{]} {[}\href{bibliography.html}{Next:
+Bibliography}{]}\\
+
+\section{Terrier Future Features and Known
+Issues}\label{terrier-future-features-and-known-issues}
+
+List of features and known issues that are marked for future Terrier
+versions:\\
+
+\subsection{Future Features}\label{future-features}
+
+\begin{itemize}
+\tightlist
+\item
+  Consider making Terrier available upon a Maven repository.
+\item
+  The addition of Terrier's own Exceptions for setup, indexing,
+  querying.
+\end{itemize}
+
+\subsection{Known Issues}\label{known-issues}
+
+\begin{itemize}
+\tightlist
+\item
+  Building with Java 8 causes javadoc weirdness (compiles to wrong
+  directory)
+\item
+  CompressionFactory/CompressionConfig is not supported by single-pass
+  or Hadoop indexing.
+\item
+  Query language should be refined: In particular, ambiguity warnings
+  when generating the parser with ANTLR should be removed, and a more
+  structured query language should be introduced.
+\item
+  The real-time index structures do not currently support block indexing
+\end{itemize}
+
+\subsection{Deprecations, Scheduled
+Refactorings}\label{deprecations-scheduled-refactorings}
+
+The following classes and interfaces are/may be deprecated in this
+version of Terrier and will likely be removed or refactored in a future
+release:
+
+\begin{itemize}
+\tightlist
+\item
+  BlockLexiconEntry \& BlockFieldLexiconEntry will be removed in a
+  future version of Terrier
+\item
+  \href{javadoc/org/terrier/utility/ApplicationSetup.html}{ApplicationSetup}
+  will be replaced with a new non-global configuration API.
+\item
+  Terrier currently uses Hadoop version 0.20. Future releases of Terrier
+  will upgrade to a later branch. Instructions to upgrade Terrier
+  yourself can be found
+  \href{http://ir.dcs.gla.ac.uk/wiki/Terrier/UpgradingHadoop}{here}
+\end{itemize}
+
+\textbf{Contributions}\\
+
+All community contributions to the Terrier framework are welcome. In
+addition, you can find more information about contributing on the
+\href{http://terrier.org/}{Terrier website}.
+
+{[}\href{dfr_description.html}{Previous: DFR Description}{]}
+{[}\href{index.html}{Contents}{]} {[}\href{bibliography.html}{Next:
+Bibliography}{]}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+Webpage: \url{http://terrier.org}\\
+Contact:
+\href{mailto:terrier@dcs.gla.ac.uk}{\nolinkurl{terrier@dcs.gla.ac.uk}}\\
+\href{http://www.dcs.gla.ac.uk/}{School of Computing Science}\\
+Copyright (C) 2004-2015 \href{http://www.gla.ac.uk/}{University of
+Glasgow}. All Rights Reserved.
