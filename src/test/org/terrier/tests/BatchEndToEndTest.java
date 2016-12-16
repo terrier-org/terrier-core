@@ -1,10 +1,10 @@
 /*
- * Terrier - Terabyte Retriever 
+ * Terrier - Terabyte Retriever
  * Webpage: http://terrier.org/
  * Contact: terrier{a.}dcs.gla.ac.uk
  * University of Glasgow - School of Computing Science
  * http://www.gla.ac.uk/
- * 
+ *
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -51,19 +51,19 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		{
 			return true;
 		}
-		
+
 		public void checkIndex(BatchEndToEndTest test, Index index) throws Exception
 		{}
-		
+
 		public void finishedIndexing(BatchEndToEndTest test) throws Exception
 		{}
-		
+
 		public String[] processRetrievalOptions(String[] retrievalOptions)
 		{
 			return retrievalOptions;
 		}
 	}
-	
+
 	protected List<String> indexingOptions = new ArrayList<String>();
 	protected List<String> retrievalTopicSets = new ArrayList<String>();
 	protected List<BatchEndToEndTestEventHooks> testHooks = new ArrayList<BatchEndToEndTestEventHooks>();
@@ -89,17 +89,17 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 			hook.finishedIndexing(this);
 		}
 	}
-	
+
 	protected void doIndexing(String... trec_terrier_args) throws Exception
 	{
 		String path = ApplicationSetup.TERRIER_INDEX_PATH;
 		String prefix = ApplicationSetup.TERRIER_INDEX_PREFIX;
 		TrecTerrier.main(joinSets(trec_terrier_args, indexingOptions));
-		
+
 		//check that application setup hasnt changed unexpectedly
 		assertEquals(path, ApplicationSetup.TERRIER_INDEX_PATH);
 		assertEquals(prefix, ApplicationSetup.TERRIER_INDEX_PREFIX);
-		
+
 		//check that indexing actually created an index
 		assertTrue("Index does not exist at ["+ApplicationSetup.TERRIER_INDEX_PATH+","+ApplicationSetup.TERRIER_INDEX_PREFIX+"]", Index.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
 		IndexOnDisk i = Index.createIndex();
@@ -115,7 +115,7 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 	}
 
 	protected abstract void addDirectStructure(IndexOnDisk index) throws Exception;
-	
+
 	protected int doRetrieval(String[] topicSet, String[] trecTerrierArgs) throws Exception
 	{
 		for(BatchEndToEndTestEventHooks hook : testHooks)
@@ -127,12 +127,12 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		int queryCount = 0;
 		final String[] allTopicFiles = joinSets(topicSet, retrievalTopicSets);
 		for(String topicFile : allTopicFiles)
-		{	
+		{
 			queryCount += countNumberOfTopics(topicFile);
 //			w.write(topicFile + "\n");
 		}
 //		w.close();
-//		
+//
 		String[] newArgs = new String[2+trecTerrierArgs.length];
 		newArgs[0] = "-r";
 		newArgs[1] = "-Dtrec.topics=" + ArrayUtils.join(allTopicFiles, ',');
@@ -142,7 +142,7 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		return queryCount;
 	}
 
-	
+
 	protected void doEvaluation(int expectedQueryCount, String qrels, float expectedMAP) throws Exception
 	{
 //		Writer w = Files.writeFileWriter(ApplicationSetup.TREC_QRELS);
@@ -162,14 +162,23 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 				String line = null;
 				while((line = br.readLine()) != null )
 				{
-					//System.out.println(line);
+					//using internal AdhocEvaluation
 					if (line.startsWith("Average Precision:"))
 					{
-						MAP = Float.parseFloat(line.split(":")[1].trim());	
-					} 
+						MAP = Float.parseFloat(line.split(":")[1].trim());
+					}
 					else if (line.startsWith("Number of queries  ="))
 					{
 						queryCount = Integer.parseInt(line.split("\\s+=\\s+")[1].trim());
+					}
+					//jtreceval
+					else if (line.startsWith("map"))
+					{
+						MAP = Float.parseFloat(line.split("\\s+", 3)[2].trim());
+					}
+					else if (line.startsWith("num_q"))
+					{
+						queryCount = Integer.parseInt(line.split("\\s+", 3)[2].trim());
 					}
 				}
 				br.close();
@@ -178,11 +187,11 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		}
 		assertEquals("Query count was "+ queryCount + " instead of "+ expectedQueryCount, expectedQueryCount, queryCount);
 		assertEquals("MAP was "+MAP + " instead of "+expectedMAP, expectedMAP, MAP, 0.0d);
-		
+
 		//System.err.println("Tidying results folder:");
 		//System.err.println("ls "+ ApplicationSetup.TREC_RESULTS);
 		//System.err.println(Arrays.deepToString(new File(ApplicationSetup.TREC_RESULTS).listFiles()));
-		
+
 		//delete all runs and evaluations
 		fs = new File(ApplicationSetup.TREC_RESULTS).listFiles();
 		assertNotNull(fs);
@@ -211,16 +220,16 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		doTrecTerrierIndexing(indexingArgs);
 		CheckClosedStreams.finished();
 		doTrecTerrierRunAndEvaluate(topics, retrievalArgs, qrels, expectedMAP);
-		 
+
 	}
-	
+
 	protected void doTrecTerrierIndexing(String... indexingArgs) throws Exception
 	{
 		makeCollectionSpec(new PrintWriter(Files.writeFileWriter(ApplicationSetup.TERRIER_ETC +  "/collection.spec")));
 		doIndexing(indexingArgs);
-		checkIndex(); 
+		checkIndex();
 	}
-	
+
 	protected void checkIndex() throws Exception
 	{
 		Index i = Index.createIndex();
@@ -236,9 +245,9 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		int queryCount = doRetrieval(topics, retrievalArgs);
 		doEvaluation(queryCount, qrels, expectedMAP);
 	}
-	
+
 	protected abstract void makeCollectionSpec(PrintWriter p) throws Exception;
-	
+
 //	@Override
 //	protected void tearDown() throws Exception {
 //		// TODO Auto-generated method stub
@@ -251,7 +260,7 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 //					f.delete();
 //			new File(ApplicationSetup.TERRIER_INDEX_PATH).delete();
 //		} catch (IOException ioe) {
-//			
+//
 //		}
 //		ApplicationSetup.clearAllProperties();
 //	}

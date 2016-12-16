@@ -48,7 +48,7 @@ import org.terrier.utility.Rounding;
  * such as precision at 10, precision at 10%, and so on....
  * @author Gianni Amati, Ben He
   */
-public class AdhocEvaluation extends Evaluation {
+public class AdhocEvaluation extends TerrierEvaluation {
 	protected static final Logger logger = LoggerFactory.getLogger(AdhocEvaluation.class);
 	
 	protected static final int[] PRECISION_RANKS = new int[]{1,2,3,4,5,10,15,20,30,50,100,200,500,1000};
