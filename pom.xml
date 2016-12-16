@@ -260,6 +260,10 @@
 		<resources>
 
 			<resource>
+                <directory>src/resources</directory>
+			</resource>
+
+			<resource>
 				<directory>share/templates</directory>
 				<includes>
 					<include>**/*.java</include>

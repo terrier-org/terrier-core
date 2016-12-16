@@ -67,7 +67,7 @@ public class Stopwords implements TermPipeline
 	 */
 	public Stopwords(final TermPipeline _next)
 	{
-		this(_next, ApplicationSetup.getProperty("stopwords.filename", "stopword-list.txt"));
+		this(_next, ApplicationSetup.getProperty("stopwords.filename", "resource:/stopword-list.txt"));
 	}
 
 	/** Makes a new stopword term pipeline object. The stopwords file(s)
