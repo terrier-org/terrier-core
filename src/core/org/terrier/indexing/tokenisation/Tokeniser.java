@@ -132,7 +132,7 @@ public abstract class Tokeniser {
 	}
 	
 	/** Utility method which returns all of the tokens in a String.
-	 * @param input String of text to be tokenised
+	 * @param s String of text to be tokenised
 	 * @return All of the tokens found in the stream of text.
 	 */
 	public String[] getTokens(String s)
