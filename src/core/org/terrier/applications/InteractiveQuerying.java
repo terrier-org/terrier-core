@@ -79,6 +79,8 @@ public class InteractiveQuerying {
 		Integer.parseInt(ApplicationSetup.getProperty("interactive.output.format.length", "1000"));
 	
 	protected String[] metaKeys = ApplicationSetup.getProperty("interactive.output.meta.keys", "docno").split("\\s*,\\s*");
+
+	protected boolean printDocid = Boolean.parseBoolean(ApplicationSetup.getProperty("interactive.output.docids", "false"));
 	
 	/** A default constructor initialises the index, and the Manager. */
 	public InteractiveQuerying() {
@@ -242,8 +244,11 @@ public class InteractiveQuerying {
 				sbuffer.append(docNames[metaKeyId][i]);
 				sbuffer.append(" ");
 			}
-			sbuffer.append(docids[i]);
-			sbuffer.append(" ");
+			if (printDocid)
+			{
+				sbuffer.append(docids[i]);
+				sbuffer.append(" ");
+			}
 			sbuffer.append(scores[i]);
 			sbuffer.append('\n');
 		}
