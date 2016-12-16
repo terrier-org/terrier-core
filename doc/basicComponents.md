@@ -50,14 +50,14 @@ Here we provide a listing and brief description of Terrier's components.
 
 ### Indexing
 
-**Name** | **Description
+|**Name** | **Description** ||
 --|--
-Collection** | This component encapsulates the most fundamental concept to indexing with Terrier - a Collection i.e. a set of documents. See [org.terrier.indexing.Collection](javadoc/org/terrier/indexing/Collection.html) for more details.
-**Document** | This component encapsulates the concept of a document. It is essentially an Iterator over terms in a document. See [org.terrier.indexing.Document](javadoc/org/terrier/indexing/Document.html) for more details.
-**Tokeniser** | Used by Document objects to break sequences of text (e.g. sentences) into a stream of words to index. See [org.terrier.indexing.tokenisation.Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) for more details.
-**TermPipeline** | Models the concept of a component in a pipeline of term processors. Classes that implement this interface could be stemming algorithms, stopwords removers, or acronym expansion just to mention few examples. See [org.terrier.terms.TermPipeline](javadoc/org/terrier/terms/TermPipeline.html) for more details.
-**Indexer** | The component responsible for managing the indexing process. It instantiates TermPipelines and Builders. See [org.terrier.structures.indexing.Indexer](javadoc/org/terrier/structures/indexing/Indexer.html) for more details.
-**Builders** & Builders are responsible for writing an index to disk. See [org.terrier.structures.indexing package](javadoc/org/terrier/structures/indexing/package-summary.html) for more details.
+|Collection** | This component encapsulates the most fundamental concept to indexing with Terrier - a Collection i.e. a set of documents. See [org.terrier.indexing.Collection](javadoc/org/terrier/indexing/Collection.html) for more details.|
+|**Document** | This component encapsulates the concept of a document. It is essentially an Iterator over terms in a document. See [org.terrier.indexing.Document](javadoc/org/terrier/indexing/Document.html) for more details.|
+|**Tokeniser** | Used by Document objects to break sequences of text (e.g. sentences) into a stream of words to index. See [org.terrier.indexing.tokenisation.Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) for more details.|
+|**TermPipeline** | Models the concept of a component in a pipeline of term processors. Classes that implement this interface could be stemming algorithms, stopwords removers, or acronym expansion just to mention few examples. See [org.terrier.terms.TermPipeline](javadoc/org/terrier/terms/TermPipeline.html) for more details.|
+|**Indexer** | The component responsible for managing the indexing process. It instantiates TermPipelines and Builders. See [org.terrier.structures.indexing.Indexer](javadoc/org/terrier/structures/indexing/Indexer.html) for more details.|
+|**Builders** | Builders are responsible for writing an index to disk. See [org.terrier.structures.indexing package](javadoc/org/terrier/structures/indexing/package-summary.html) for more details.|
 
 ### Data Structures
 
