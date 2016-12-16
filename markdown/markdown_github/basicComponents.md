@@ -51,6 +51,7 @@ Here we provide a listing and brief description of Terrier's components.
 ### Indexing
 
 **Name** | **Description
+--|--
 Collection** | This component encapsulates the most fundamental concept to indexing with Terrier - a Collection i.e. a set of documents. See [org.terrier.indexing.Collection](javadoc/org/terrier/indexing/Collection.html) for more details.
 **Document** | This component encapsulates the concept of a document. It is essentially an Iterator over terms in a document. See [org.terrier.indexing.Document](javadoc/org/terrier/indexing/Document.html) for more details.
 **Tokeniser** | Used by Document objects to break sequences of text (e.g. sentences) into a stream of words to index. See [org.terrier.indexing.tokenisation.Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) for more details.
@@ -61,6 +62,7 @@ Collection** | This component encapsulates the most fundamental concept to index
 ### Data Structures
 
 **Name** | **Description
+--|--
 BitFile** | A highly compressed I/O layer using gamma and unary encodings. See the org.terrier.compression packages for more details.
 **Direct Index** | The direct index stores the identifiers of terms that appear in each document and the corresponding frequencies. It is used for automatic query expansion, but can also be used for user profiling activities. See [org.terrier.structures.bit.DirectIndex](javadoc/org/terrier/structures/bit/DirectIndex.html) for more details.
 **Document Index** | The document index stores information about each document for example the document length and identifier, and a pointer to the corresponding entry in the direct index. See [org.terrier.structures.DocumentIndex](javadoc/org/terrier/structures/DocumentIndex.html) for more details.
