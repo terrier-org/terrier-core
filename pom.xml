@@ -8,10 +8,33 @@
 	<description>Terrier IR platform</description>
 	<url>http://terrier.org</url>
 
+	<organization>
+		<name>University of Glasgow</name>
+		<url>http://www.gla.ac.uk</url>
+	</organization>
+
+	<issueManagement>
+		<url>https://terrier.org/issues</url>
+		<system>jira</system>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>Mozilla Public License, Version 2.0</name>
+	    <url>http://www.mozilla.org/MPL/2.0/index.txt</url>
+		 </license>
+	</licenses>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<year>2015</year>
+		<year>2016</year>
 	</properties>
+
+	<scm>
+		<url>https://github.com/terrier-org/terrier-core</url>
+    <connection>scm:git:https://github.com/terrier-org/terrier-core.git</connection>
+		<developerConnection>scm:git:git@github.com:terrier-org/terrier-core.git</developerConnection>
+	</scm>
 
 	<repositories>
 		<repository>
@@ -388,9 +411,9 @@
 				</executions>
 			</plugin>
 
-			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
-				<executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
-				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/antlr/</source> 
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId>
+				<executions> <execution> <id>add-source</id> <phase>generate-sources</phase>
+				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/antlr/</source>
 				</sources> </configuration> </execution> </executions> </plugin> -->
 
 			<plugin>
@@ -513,6 +536,21 @@
 						<include>TerrierDefaultTestSuite.java</include>
 					</includes>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
