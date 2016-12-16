@@ -1,4 +1,3 @@
-<span>\[</span>[Previous: Web-based Terrier](terrier_http.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: TREC Experiment Examples](trec_examples.html)<span>\]</span>
 
 Real-time Indexing and Search of Websites
 =========================================
@@ -25,23 +24,21 @@ Using the Application
 
 When first loaded, the splash screen will ask for you to enter a website to index, as shown below:
 
-<img src="images/WebsiteSearch1.png" alt="image" style="width:100.0%" style="height:100.0%" />
+![Website Search Crawling](http://terrier.org/docs/v4.1/images/WebsiteSearch1.png "Website Search Crawling")
 
 When the ‘Crawl Website’ button is clicked, the given hostname will be added to a crawl frontier (list of pages to crawl). A Web crawler will first download the page for that URL, and if it exists adds it to a [MemoryIndex](javadoc/org/terrier/realtime/memory/MemoryIndex.html). Then any links on the page are added to the crawl frontier. The ‘crawl depth’ parameter specifies how many successive pages to follow the links from to find new documents. The crawler will restrict itself to crawling only pages from the originally named host, i.e. URL’s that contain the hostname you originally entered.
 
 Once crawling is underway, the main search interface will be loaded:
 
-<img src="images/WebsiteSearch2.png" alt="image" style="width:100.0%" style="height:100.0%" />
+
+![Website Search Retrieval](http://terrier.org/docs/v4.1/images/WebsiteSearch2.png "Website Search Retrieval")
 
 The top search bar facilitates retrieval over all documents crawled so far. The left sidebar provides statistics for the current index, allows new hosts to be added to the crawl frontier and for the current index to be saved as a classical Terrier on-disk index.
 
-<span>\[</span>[Previous: Web-based Terrier](terrier_http.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: TREC Experiment Examples](trec_examples.html)<span>\]</span>
-
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
 
- 
+ 
