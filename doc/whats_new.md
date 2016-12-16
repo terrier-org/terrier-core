@@ -11,17 +11,14 @@ Minor update with mostly bug fixes and minor improvements. Inclusion of new feat
 - [TR-378](http://terrier.org/issues/browse/TR-378) TaggedDocument. getNextTerm() :: if (tag_open) and if (tag_close) blocks could be more efficient
 - [TR-441](http://terrier.org/issues/browse/TR-441) index properties for blocks are not written for default compression config
 - [TR-444](http://terrier.org/issues/browse/TR-444) UpdatingCollectionStatistics doesn't check num.Tokens correctly
-- [TR-450](http://terrier.org/issues/browse/TR-450)
-Multithreaded indexer
-- [TR-451](http://terrier.org/issues/browse/TR-451)
-TermCodes should not be global
-- [TR-452](http://terrier.org/issues/browse/TR-452)
-CollectionFactory should allow Collections to be split
-- [TR-449](http://terrier.org/issues/browse/TR-449)
-Allow Tokeniser act directly on Strings
+- [TR-450](http://terrier.org/issues/browse/TR-450) Multithreaded indexer
+- [TR-451](http://terrier.org/issues/browse/TR-451) TermCodes should not be global
+- [TR-452](http://terrier.org/issues/browse/TR-452) CollectionFactory should allow Collections to be split
+- [TR-449](http://terrier.org/issues/browse/TR-449) Allow Tokeniser act directly on Strings
 
 ### Retrieval
 - [TR-389](http://terrier.org/issues/browse/TR-389) TrecQuerying Cache error (Agustin Marrone, Universidad Nacional de Luján)
+- [TR-183](http://terrier.org/issues/browse/TR-183) Correct Hiemstra_LM model implementation (Jens Kürsten and Thomas Wilhelm-Stein)
 
 ### Other
 - [TR-381](http://terrier.org/issues/browse/TR-381) Require Maven 3
