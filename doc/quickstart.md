@@ -8,31 +8,31 @@ If you are interested in using Terrier straightaway in order to index and retrie
 Terrier Requirements
 --------------------
 
-Terrier’s single requirement consists of an installed Java JRE 1.7.0 or higher. You can download the JRE, or the JDK (if you want to [develop with Terrier](terrier_develop.html), or run the [web-based interface](terrier_http.html)), from the [Java website](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+Terrier’s single requirement consists of an installed Java JRE 1.8.0 or higher. You can download the JRE, or the JDK (if you want to [develop with Terrier](terrier_develop.html), or run the [web-based interface](terrier_http.html)), from the [Java website](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
 Download Terrier
 ----------------
 
-Terrier version 4.1 can be downloaded from the following location: <span>\[</span>[Terrier Home](http://terrier.org/)<span>\]</span>. The site offers pre-compiled releases of the newest and previous Unix and Windows versions of Terrier.
+Terrier version 4.2 can be downloaded from the following location: <span>\[</span>[Terrier Home](http://terrier.org/)<span>\]</span>. The site offers pre-compiled releases of the newest and previous Unix and Windows versions of Terrier.
 
 Step by Step Unix Installation
 ------------------------------
 
 After having downloaded Terrier, copy the file to the directory where you want to install Terrier. Navigate to this directory and execute the following command to decompress the distribution:
 
-    tar -zxvf terrier-core-4.1-bin.tar.gz
+    tar -zxvf terrier-core-4.2-bin.tar.gz
 
 This will result in the creation of a terrier directory in your current directory. Next we will have to make sure that you have the correct Java version available on the system. Type:
 
     echo $JAVA_HOME
 
-If the environment variable $JAVA\_HOME is set, this command will output the path of your Java installation. (e.g. /usr/java/jre1.7.0). If this command shows that you have a correct Java version (1.7.0 or later) installed then your all done. If your system does not meet these requirements you can download a Java 1.7 from the [JRE 1.7 download website](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and set the environment variable by including the following line either in your /etc/profile or ~/.bashrc files:
+If the environment variable $JAVA\_HOME is set, this command will output the path of your Java installation. (e.g. /usr/java/jre1.8.0). If this command shows that you have a correct Java version (1.8.0 or later) installed then your all done. If your system does not meet these requirements you can download a Java 1.8 from the [JRE 1.8 download website](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and set the environment variable by including the following line either in your /etc/profile or ~/.bashrc files:
 
     export JAVA_HOME=<absolute-path-of-java-installation>
 
 e.g.
 
-    export JAVA_HOME=/usr/java/jre1.7.0
+    export JAVA_HOME=/usr/java/jre1.8.0
 
 Step by Step Windows Installation
 ---------------------------------
@@ -54,7 +54,7 @@ This allows you to to do interactive retrieval. This is a quick way to test Terr
 
 ### Desktop Terrier
 
-A sample Desktop search application. If you are interested in getting to know more about it you should take a look at its [tutorial](terrier_desktop.html).
+A sample Desktop search application, available [separately from Github](https://github.com/terrier-org/terrier-desktop).
 
 Tutorial: How to use the Batch (TREC) Terrier
 ---------------------------------------------
@@ -65,7 +65,7 @@ This guide will provide step-by-step instructions for using Terrier to index a T
 
 1. Go to the Terrier folder.
 
-    cd terrier-core-4.1
+    cd terrier-core-4.2
 
 2. Setup Terrier for using a TREC test collection by calling
 
@@ -89,7 +89,7 @@ where `PATTERN` is the regular expression used to identify the files that should
 
 With Terrier’s default settings, the resulting index will be created in the `var/index` folder within the Terrier installation folder.
 
-**Note:** If you do not need the direct index structure for e.g. for query expansion, then you can use `bin/trec_terrier.sh -i -j` for the faster single-pass indexing.
+**Note:** If you do not need the direct index structure for e.g. for query expansion, then you can use `bin/trec_terrier.sh -i -j` for the faster single-pass indexing.
 
 Once indexing completes, you can verify your index by obtaining its statistics, using the `--printstats` option of Terrier.
 
