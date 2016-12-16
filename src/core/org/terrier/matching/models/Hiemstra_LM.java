@@ -72,11 +72,7 @@ public class Hiemstra_LM extends WeightingModel {
 	 */
 	public final double score(double tf, double docLength) {
 
-		return 
-		  
-				WeightingModelLibrary.log(1 + (c * tf * numberOfTokens) 
-	/ ((1-c) * termFrequency * docLength ))
-	        ;	
+		return WeightingModelLibrary.log(1 + ( (c * tf * numberOfTokens) / ((1-c) * termFrequency * docLength)) ) * super.keyFrequency;	
 		
 	/*	Idf.log(((1 - c) * (tf / docLength)) 
 		/ (c * (termFrequency / numberOfTokens)) 

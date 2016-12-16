@@ -1,7 +1,40 @@
-<span>\[</span>[Previous: Overview](overview.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Installing and Running Terrier](quickstart.html)<span>\]</span>
-
-What’s New in Terrier
+What's New in Terrier
 =====================
+
+Terrier 4.2 - XX/12/2016
+------------------------
+Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency.
+
+### Indexing
+- [TR-377](http://terrier.org/issues/browse/TR-377) TagSet.isTagToProcess and isTagToSkip perform upper-casing even if hashmaps have no size
+- [TR-379](http://terrier.org/issues/browse/TR-379) Use a faster toLowerCase() during indexing of tags or English documents
+- [TR-378](http://terrier.org/issues/browse/TR-378) TaggedDocument. getNextTerm() :: if (tag_open) and if (tag_close) blocks could be more efficient
+- [TR-441](http://terrier.org/issues/browse/TR-441) index properties for blocks are not written for default compression config
+- [TR-444](http://terrier.org/issues/browse/TR-444) UpdatingCollectionStatistics doesn't check num.Tokens correctly
+- [TR-450](http://terrier.org/issues/browse/TR-450) Multithreaded indexer
+- [TR-451](http://terrier.org/issues/browse/TR-451) TermCodes should not be global
+- [TR-452](http://terrier.org/issues/browse/TR-452) CollectionFactory should allow Collections to be split
+- [TR-449](http://terrier.org/issues/browse/TR-449) Allow Tokeniser act directly on Strings
+
+### Retrieval
+- [TR-389](http://terrier.org/issues/browse/TR-389) TrecQuerying Cache error (Agustin Marrone, Universidad Nacional de Luján)
+- [TR-183](http://terrier.org/issues/browse/TR-183) Correct Hiemstra_LM model implementation (Jens Kürsten and Thomas Wilhelm-Stein)
+
+### Other
+- [TR-381](http://terrier.org/issues/browse/TR-381) Require Maven 3
+- [TR-383](http://terrier.org/issues/browse/TR-383 Default constructors dont work for WARC Collection implementations
+- [TR-384](http://terrier.org/issues/browse/TR-384) Hardcoded pathname in compression test (Nicola Tonellotto, CNR)
+- [TR-385](http://terrier.org/issues/browse/TR-385) Don't build tar/zip assemblies for default maven package goal
+- [TR-386](http://terrier.org/issues/browse/TR-386) java8 Maven puts javadoc in wrong location
+- [TR-453](http://terrier.org/issues/browse/TR-453) Port docs/ pages to markdown
+- [TR-454](http://terrier.org/issues/browse/TR-454) Move Desktop to own project
+
+### Acknowledgements
+
+The release of Terrier 4.1 was supported by the following projects and funding bodies
+
+-   [SUPER: Social sensors for security assessments and proactive emergencies management](http://super-fp7.eu) - EU FP7 Project, Grant Number 606853. Partial support for improvements in the Terrier 4.1 release.
+
 
 Terrier 4.1 - 04/12/2015
 ------------------------
@@ -24,7 +57,7 @@ Substantial update that includes a re-structuring of the Terrier build routines 
 
 -   [TR-351](http://terrier.org/issues/browse/TR-351): Default constructor of FieldLexiconEntry$Factory should never be used.
 
--   [TR-355](http://terrier.org/issues/browse/TR-355): Some older Terrier 3.x indices don’t upgrade correctly
+-   [TR-355](http://terrier.org/issues/browse/TR-355): Some older Terrier 3.x indices don't upgrade correctly
 
 -   [TR-356](http://terrier.org/issues/browse/TR-356): TRECCollection and WARC\*Collections should have a common base class
 
@@ -959,11 +992,7 @@ Terrier 1.0 Beta - 18/11/2004
 
 -   First public release of Terrier.
 
-<span>\[</span>[Previous: Overview](overview.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Installing and Running Terrier](quickstart.html)<span>\]</span>
 
-------------------------------------------------------------------------
-
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Webpage: <http://terrier.org>
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

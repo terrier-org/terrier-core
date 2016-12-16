@@ -1,5 +1,3 @@
-<span>\[</span>[Previous: Installing and Running Terrier](quickstart.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Configuring Terrier](configure_general.html)<span>\]</span>
-
 Terrier Components
 ==================
 
@@ -61,7 +59,7 @@ Here we provide a listing and brief description of Terrier's components.
 
 ### Data Structures
 
-**Name** | **Description
+**Name** | **Description**
 --|--
 BitFile** | A highly compressed I/O layer using gamma and unary encodings. See the org.terrier.compression packages for more details.
 **Direct Index** | The direct index stores the identifiers of terms that appear in each document and the corresponding frequencies. It is used for automatic query expansion, but can also be used for user profiling activities. See [org.terrier.structures.bit.DirectIndex](javadoc/org/terrier/structures/bit/DirectIndex.html) for more details.
@@ -95,15 +93,11 @@ See [org.terrier.querying.Manager](javadoc/org/terrier/querying/Manager.html) fo
 ### Applications
 
 **Name** | **Description**
+--|--
 **Trec Terrier** | An application that enables indexing and querying of TREC collections. See [org.terrier.applications.TrecTerrier](javadoc/org/terrier/applications/TrecTerrier.html) for more details.
 **Desktop Terrier** | An application that allows for indexing and retrieval of local user content. See [org.terrier.applications.desktop package](javadoc/org/terrier/applications/desktop/package-summary.html) for more details.
 **HTTP Terrier** | An application that allows for retrieval of documents from a browser. See src/webapps/results.jsp for more details, or the [relevant documentation](terrier_http.html).
 
-<span>\[</span>[Previous: Installing and Running Terrier](quickstart.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Configuring Terrier](configure_general.html)<span>\]</span>
-
-------------------------------------------------------------------------
-
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Webpage: <http://terrier.org>
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
