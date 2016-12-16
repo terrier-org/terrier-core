@@ -96,6 +96,7 @@ import org.terrier.structures.bit.TestBitPostingIndexInputStream;
 import org.terrier.structures.bit.TestPostingStructures;
 import org.terrier.structures.collections.TestFSArrayFile;
 import org.terrier.structures.collections.TestFSOrderedMapFile;
+import org.terrier.structures.indexing.TestIndexing;
 import org.terrier.structures.indexing.TestCompressingMetaIndexBuilderPartitioner;
 import org.terrier.structures.indexing.TestIndexingFatalErrors;
 import org.terrier.structures.indexing.singlepass.TestInverted2DirectIndexBuilder;
@@ -232,6 +233,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestFSArrayFile.class,
 	
 	//.structures.indexing
+	TestIndexing.class,
 	TestCompressingMetaIndexBuilderPartitioner.class,
 	TestIndexingFatalErrors.class,
 	
