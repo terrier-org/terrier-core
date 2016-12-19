@@ -1,16 +1,18 @@
 <span>\[</span>[Previous: Configuring Indexing](configure_indexing.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Learning to Rank with Terrier](learning.html)<span>\]</span>
 
-Configuring Retrieval in Terrier
-================================
+# Configuring Retrieval in Terrier
 
-Topics
-------
+## Topics
 
 After the end of the indexing process, we can proceed with retrieving from the document collection. At this stage, the configuration properties for applying stemming or not, removing stopwords or not, and the maximum length of terms, should be exactly the same properties as used for indexing the collection.
 
 Firstly, in the property `trec.topics`, we need to specify the files containing the queries to process.
 
-Moreover, before processing the queries, the tags of the topics files to be processed should be specified. We can do that by setting the properties `TrecQueryTags.process`, which denotes which tags to process, `TrecQueryTags.idtag`, which stands for the tag containing the query identifier, and `TrecQueryTags.skip`, which denotes which query tags to ignore.
+There are two formats for TREC topics files that are supported by Terrier. In the first, topics are marked up in XML-like (actually SGML) tags; the second is a plain text format with one topic per line, with the topic number as the first word.
+
+### SGML topic files
+
+Before processing SGML topic files, the tags of the topics files to be processed should be specified. We can do that by setting the properties `TrecQueryTags.process`, which denotes which tags to process, `TrecQueryTags.idtag`, which stands for the tag containing the query identifier, and `TrecQueryTags.skip`, which denotes which query tags to ignore.
 
 For example, suppose that the format of topics is the following:
 
@@ -37,8 +39,18 @@ If alternatively, we want to use the title, description and the narrative tags t
 
 The tags specified by TrecQueryTags are case-insensitive (note the difference from TrecDocTags). If you want them to be case-sensitive, then set `TrecQueryTags.casesensitive=false`.
 
-Weighting Models and Parameters
--------------------------------
+### Single-line topic files
+
+Single-line topic files have a simpler format, without the additional description and narrative information:
+
+  1 a few query terms
+  2 some different query terms
+
+Support for single-line topic files is provided by the SingleLineTRECQuery class. To use a topics file in this format, you must firstly set `trec.topics.parser=SingleLineTRECQuery`.
+
+
+
+## Weighting Models and Parameters
 
 Next, we need to specify which of the available weighting models we will use for assigning scores to the retrieved documents. We do this by specifying the name of the corresponding model class in the property `trec.model`. E.g. `trec.model=PL2`.
 
@@ -80,7 +92,7 @@ Terrier provides implementations of many weighting models (see [org.terrier.matc
 
 To process the queries, ensure the topics are specified in the `trec.topics` property, then type the following:
 
-    bin/trec_terrier.sh -r -c 1.0 
+    bin/trec_terrier.sh -r -c 1.0
 
 where the option `-r` specifies that we want to perform retrieval, and the option `-c 1.0` specifies the parameter value for the term frequency normalisation.
 
@@ -95,7 +107,7 @@ To process queries using a specific weighting model, we can *override* the `trec
 Field-Based Weighting Models
 ----------------------------
 
-Starting with version 3.0, Terrier has support for field-based weighting models. In particular, field-based models take into account not just the presence of a term in a field, but the actual frequency of the occurrence in that field. For instance, for a document where the query term occurs once in the body of the text, then there is only a small chance that the document is really related to that term. However, if the term occurs in the title of the document, then this chance is greatly increased. Terrier provides several field-based weighting models:
+Since version 3.0, Terrier has support for field-based weighting models. In particular, field-based models take into account not just the presence of a term in a field, but the actual frequency of the occurrence in that field. For instance, for a document where the query term occurs once in the body of the text, then there is only a small chance that the document is really related to that term. However, if the term occurs in the title of the document, then this chance is greatly increased. Terrier provides several field-based weighting models:
 
 -   [PL2F](javadoc/org/terrier/matching/models/PL2F.html): this is a per-field normalisation model, which is based on PL2 .
 
@@ -113,12 +125,12 @@ Different field-based models have different parameters, as controlled by various
 
     bin/trec_terrier.sh -r -Dtrec.model=PL2F -Dc.0=1.0 -Dc.1=2.3 -Dc.3=40 -Dw.0=4 -Dw.1=2 -Dw.3=25
 
-For improved efficiency of field-based weighting models, it is recommended that you manually alter the `data.properties` file of your index to change the DocumentIndex implementation in use, by updating it to read `index.document.class=org.terrier.structures.FSAFieldDocumentIndex`. []()
+For improved efficiency of field-based weighting models, it is recommended that you manually alter the `data.properties` file of your index to change the DocumentIndex implementation in use, by updating it to read `index.document.class=org.terrier.structures.FSAFieldDocumentIndex`.
 
 Proximity (Dependence) Models
 -----------------------------
 
-Starting with version 3.0, Terrier includes two dependence models. Such models highly weight documents where the query terms are in close proximity. To use a term dependence model, you have to index using blocks - see [Configuring Indexing](configure_indexing.html) for more details on how to configure block indexing.
+Since version 3.0, Terrier includes two dependence models. Such models highly weight documents where the query terms are in close proximity. To use a term dependence model, you have to index using blocks - see [Configuring Indexing](configure_indexing.html) for more details on how to configure block indexing.
 
 Two dependence models are included:
 
@@ -132,8 +144,6 @@ To enable the dependence models, use the `matching.dsms` property. E.g. :
 
 The dependence models have various parameters to set. For more information, see the classes themselves.
 
-[]()
-
 Document Prior Features
 -----------------------
 
@@ -145,8 +155,6 @@ The property `ssa.w` controls the weight of your feature. For more information o
 
     bin/trec_terrier.sh -r -Dmatching.dsms=DFRDependenceScoreModifier,SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
 
-[]()
-
 Query Expansion
 ---------------
 
@@ -156,13 +164,11 @@ In addition, there are two parameters that can be set for applying query expansi
 
 To retrieve from an indexed test collection, using query expansion, with the term frequency normalisation parameter equal to 1.0, we can type:
 
-    bin/trec_terrier.sh -r -q -c 1.0 
+    bin/trec_terrier.sh -r -q -c 1.0
 
 Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format “qrels” file. To use feedback documents in query expansion, change the [FeedbackSelector](javadoc/org/terrier/querying/FeedbackSelector.html), as follows:
 
     bin/trec_terrier.sh -r -q -Dqe.feedback.selector=RelevantOnlyFeedbackDocuments,RelevanceFeedbackSelector -Dqe.feedback.filename=/path/to/feedback/qrels
-
-[]()
 
 Learning to Rank
 ----------------
@@ -180,32 +186,29 @@ For example, if we have used the weighting scheme PL2 with c=1.28 and the counte
 
 For each query, Terrier returns a maximum number of 1000 documents by default. We can change the maximum number of returned documents per query by changing `matching.retrieved_set_size`. For example, if we want to retrieve 10000 documents for each given query, we need to set `matching.retrieved_set_size` to 10000. In addition, if the `end` control is set in the property `querying.default.controls`, then amend this to 9999 as well (from Terrier 3.5, this is removed from the default configuration). TRECQuerying can also limit this number, according to the `trec.output.format.length` property (default 1000) also.
 
-Some of the weighting models, e.g. BM25, assume low document frequencies of query terms. For these models, it is worth ignoring query terms with high document frequency during retrieval by setting `ignore.low.idf.terms` to true. Moreover, it is better to set `ignore.low.idf.terms` to false for high precision search tasks such as named-page finding.
+Some of the weighting models, e.g. BM25, assume low document frequencies of query terms. For these models, it is worth ignoring query terms with high document frequency during retrieval by setting `ignore.low.idf.terms` to true. Moreover, it is better to set `ignore.low.idf.terms` to false for high precision search tasks such as named-page finding. Since version 4.2, `ignore.low.idf.terms=false` is the default configuration, but may need to be set to true for some smaller test collections.
 
 Bibliography
 ------------
 
-1.  []()Probabilistic Models for Information Retrieval based on Divergence from Randomness. G. Amati. PhD Thesis, School of Computing Science, University of Glasgow, 2003.
+1.  Probabilistic Models for Information Retrieval based on Divergence from Randomness. G. Amati. PhD Thesis, School of Computing Science, University of Glasgow, 2003.
 
-2.  []()FUB, IASI-CNR and University of Tor Vergata at TREC 2007 Blog Track. G. Amati and E. Ambrosi and M. Bianchi and C. Gaibisso and G. Gambosi. Proceedings of the 16th Text REtrieval Conference (TREC-2007), 2008.
+2.  FUB, IASI-CNR and University of Tor Vergata at TREC 2007 Blog Track. G. Amati and E. Ambrosi and M. Bianchi and C. Gaibisso and G. Gambosi. Proceedings of the 16th Text REtrieval Conference (TREC-2007), 2008.
 
-3.  []()Bridging Language Modeling and Divergence From Randomness Approaches: A Log-logistic Model for IR. Stephane Clinchant and Eric Gaussier. In Proceedings of ICTIR 2009, London, UK.
+3.  Bridging Language Modeling and Divergence From Randomness Approaches: A Log-logistic Model for IR. Stephane Clinchant and Eric Gaussier. In Proceedings of ICTIR 2009, London, UK.
 
-4.  []()Information-Based Models for Ad Hoc Information Retrieval. S. Clinchant and E. Gaussier. In Proceedings of SIGIR 2010, Geneva, Switzerland.
+4.  Information-Based Models for Ad Hoc Information Retrieval. S. Clinchant and E. Gaussier. In Proceedings of SIGIR 2010, Geneva, Switzerland.
 
-5.  []()A Markov Random Field Model for Term Dependencies. D. Metzler and W.B. Croft. Proceedings of the 28th annual international ACM SIGIR conference on Research and development in information retrieval (SIGIR 2005), 472-479, Salvador, Brazil, 2005.
+5.  A Markov Random Field Model for Term Dependencies. D. Metzler and W.B. Croft. Proceedings of the 28th annual international ACM SIGIR conference on Research and development in information retrieval (SIGIR 2005), 472-479, Salvador, Brazil, 2005.
 
-6.  []()Incorporating Term Dependency in the DFR Framework. J. Peng, C. Macdonald, B. He, V. Plachouras and I. Ounis.
+6.  Incorporating Term Dependency in the DFR Framework. J. Peng, C. Macdonald, B. He, V. Plachouras and I. Ounis.
 
-7.  []()University of Glasgow at WebCLEF 2005: Experiments in per-field normalisation and language specific stemming. C. Macdonald, V. Plachouras, B. He, C. Lioma and I. Ounis. In Working notes of the CLEF 2005 Workshop, Vienna, Austria, 2005.
+7.  University of Glasgow at WebCLEF 2005: Experiments in per-field normalisation and language specific stemming. C. Macdonald, V. Plachouras, B. He, C. Lioma and I. Ounis. In Working notes of the CLEF 2005 Workshop, Vienna, Austria, 2005.
 
-8.  []()Multinomial Randomness Models for Retrieval with Document Fields. V. Plachouras and I. Ounis. Proceedings of the 29th European Conference on Information Retrieval (ECIR07). Rome, Italy, 2007.
-
-<span>\[</span>[Previous: Configuring Indexing](configure_indexing.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Previous: Learning to Rank with Terrier](learning.html)<span>\]</span>
+8.  Multinomial Randomness Models for Retrieval with Document Fields. V. Plachouras and I. Ounis. Proceedings of the 29th European Conference on Information Retrieval (ECIR07). Rome, Italy, 2007.
 
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Webpage: <http://terrier.org>
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
