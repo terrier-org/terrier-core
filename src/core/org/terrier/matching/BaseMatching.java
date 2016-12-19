@@ -242,7 +242,7 @@ public abstract class BaseMatching implements Matching
 		updateStartTime(System.currentTimeMillis());
 		
 		RETRIEVED_SET_SIZE   = Integer.parseInt(ApplicationSetup.getProperty("matching.retrieved_set_size", "1000"));
-		IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","true"));
+		IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","false"));
 		MATCH_EMPTY_QUERY    = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
 		
 		this.numberOfRetrievedDocuments = 0;

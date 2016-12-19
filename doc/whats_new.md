@@ -3,7 +3,7 @@ What's New in Terrier
 
 Terrier 4.2 - XX/12/2016
 ------------------------
-Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency.
+Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency. Terrier now required Java 1.8.
 
 ### Indexing
 - [TR-377](http://terrier.org/issues/browse/TR-377) TagSet.isTagToProcess and isTagToSkip perform upper-casing even if hashmaps have no size
@@ -19,19 +19,21 @@ Minor update with mostly bug fixes and minor improvements. Inclusion of new feat
 ### Retrieval
 - [TR-389](http://terrier.org/issues/browse/TR-389) TrecQuerying Cache error (Agustin Marrone, Universidad Nacional de Luján)
 - [TR-183](http://terrier.org/issues/browse/TR-183) Correct Hiemstra_LM model implementation (Jens Kürsten and Thomas Wilhelm-Stein)
+- [TR-458](http://terrier.org/issues/browse/TR-458) Change default setting of ignore.low.idf.terms
 
 ### Other
 - [TR-381](http://terrier.org/issues/browse/TR-381) Require Maven 3
-- [TR-383](http://terrier.org/issues/browse/TR-383 Default constructors dont work for WARC Collection implementations
+- [TR-383](http://terrier.org/issues/browse/TR-383) Default constructors dont work for WARC Collection implementations
 - [TR-384](http://terrier.org/issues/browse/TR-384) Hardcoded pathname in compression test (Nicola Tonellotto, CNR)
 - [TR-385](http://terrier.org/issues/browse/TR-385) Don't build tar/zip assemblies for default maven package goal
 - [TR-386](http://terrier.org/issues/browse/TR-386) java8 Maven puts javadoc in wrong location
 - [TR-453](http://terrier.org/issues/browse/TR-453) Port docs/ pages to markdown
 - [TR-454](http://terrier.org/issues/browse/TR-454) Move Desktop to own project
 
+
 ### Acknowledgements
 
-The release of Terrier 4.1 was supported by the following projects and funding bodies
+The release of Terrier 4.2 was supported by the following projects and funding bodies
 
 -   [SUPER: Social sensors for security assessments and proactive emergencies management](http://super-fp7.eu) - EU FP7 Project, Grant Number 606853. Partial support for improvements in the Terrier 4.1 release.
 
