@@ -1,5 +1,3 @@
-<span>\[</span>[Previous: Configuring Terrier](configure_general.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Configuring Retrieval](configure_retrieval.html)<span>\]</span>
-
 Configuring Indexing in Terrier
 ===============================
 
@@ -8,9 +6,7 @@ Indexing Overview
 
 The indexing process in Terrier is described [here](http://terrier.org/docs/current/basicComponents.html)
 
-Firstly, a [Collection](javadoc/org/terrier/indexing/TRECCollection.html) object extracts the raw content of each individual document (from a collection of documents) and hands it in to a [Document](javadoc/org/terrier/indexing/Document.html) object. The Document object then removes any unwanted content (e.g., from a particular document tag) and gives the resulting text to a [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) object. Finally, the tokeniser object converts the text into a stream of tokens that represent the content of the document
-
-.
+Firstly, a [Collection](javadoc/org/terrier/indexing/TRECCollection.html) object extracts the raw content of each individual document (from a collection of documents) and hands it in to a [Document](javadoc/org/terrier/indexing/Document.html) object. The Document object then removes any unwanted content (e.g., from a particular document tag) and gives the resulting text to a [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) object. Finally, the Tokeniser converts the text into a stream of tokens that represent the content of the document.
 
 By default, Terrier uses [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html), which parses corpora in TREC format. In particular, in TREC-formatted files, there are many documents delimited by `<DOC></DOC>` tags, as in the following example:
 
@@ -59,23 +55,19 @@ For now, we’ll stick to TRECCollection, which can be used for all TREC corpora
 
 Note that the specified tags are case-sensitive, but this can be relaxed by setting the `TrecDocTags.casesensitive` property to false. Furthermore, TRECCollection also supports the addition of the contents of tags to the meta index. This is useful if you wish to present these during retrieval (e.g. the URL of the document, or the date). To use this, the tags in the TREC collection file need to be in a fixed order, beginning with the `DOC` and `DOCNO` tags, followed by the tags to be added to the meta index and specified by the `TrecDocTags.propertytags` property. Any tags occurring after the property tags will be indexed as if they contain text (unless excluded by `TrecDocTags.skip`). The name of the entries in the meta index must be the same as the tag names. Moreover, as with any entries added to the meta index, these entries must be specified in the `indexer.meta.forward.keys` property and the maximum length of each tag must be given in the `indexer.meta.forward.keylens` property.
 
-[]()
+#### Fields
 
 Terrier has the ability to record the frequency with which terms occur in various fields of documents. The required fields are specified by the `FieldTags.process` property. For example, to note when a term occurs in the TITLE or H1 HTML tags of a document, set `FieldTags.process=TITLE,H1`. FieldTags are case-insensitive. There is a special field called ELSE, which contains all terms not in any other specified field.
 
-The indexer iterates through the documents of the collection and sends each term found through the [TermPipeline](javadoc/org/terrier/terms/TermPipeline.html). The TermPipeline transforms the terms, and can remove terms that should not be indexed. The TermPipeline chain in use is `termpipelines=Stopwords,PorterStemmer`, which removes terms from the document using the [Stopwords](javadoc/org/terrier/terms/Stopwords.html) object, and then applies Porter’s Stemming algorithm for English to the terms ([PorterStemmer](javadoc/org/terrier/terms/PorterStemmer.html)). If you want to use a different stemmer, this is the point at which it should be called.
+The indexer iterates through the documents of the collection and sends each term found through the [TermPipeline](javadoc/org/terrier/terms/TermPipeline.html). The TermPipeline transforms the terms, and can remove terms that should not be indexed. The TermPipeline chain in use is `termpipelines=Stopwords,PorterStemmer`, which removes terms from the document using the [Stopwords](javadoc/org/terrier/terms/Stopwords.html) object, and then applies Porter's Stemming algorithm for English to the terms ([PorterStemmer](javadoc/org/terrier/terms/PorterStemmer.html)). If you want to use a different stemmer, this is the point at which it should be called.
 
 The term pipeline can also be configured at indexing time to skip various tokens. Set a comma-delimited list of tokens to skip in the property `termpipelines.skip`. The same property works at retrieval time also.
 
-The indexers are more complicated. Each class can be configured by several properties. Many of these alter the memory usage of the classes.
+The indexers are more complicated. Each class can be configured by several properties.
 
 -   `indexing.max.tokens` - The maximum number of tokens the indexer will attempt to index in a document. If 0, then all tokens will be indexed (default).
 
 -   `ignore.empty.documents` - whether to assign document Ids to empty documents. Defaults to true.
-
--   `indexing.max.docs.per.builder` - Maximum number of documents in an index before a new index is created and merged later.
-
--   `indexing.builder.boundary.docnos` - Comma-delimited list of docnos of documents that force the index being created to be completed, and a new index to be commenced. An alternative to `indexing.max.docs.per.builder`.
 
 For the [BlockIndexer](javadoc/org/terrier/structures/indexing/classical/BlockIndexer.html):
 
@@ -99,31 +91,23 @@ Document metadata is recorded in a [MetaIndex](javadoc/org/terrier/structures/Me
 
 Note that for presenting results to a user, additional indexing configuration is required. See [Web-based Terrier](terrier_http.html) for more information.
 
+### Choice of Indexers
+
+Terrier supports three types of indexing: *classical two-pass*, *single-pass* and *MapReduce*. All three methods create an identical inverted index, that produces identical retrieval effectiveness. However, they differ on other characteristics, namely their support for query expansion, and the scalability and efficiency when indexing large corpora. The choice of indexing method is likely to be driven by your need for query expansion, and the scale of the data you are working with. In particular, only classical two-pass indexing directly creates a direct index, which is used for query expansion. However, classical two-pass indexing doesn't scale to large corpora (maximum practical is about 25 million documents). Single pass indexing is faster, but doesn't create a direct index. MapReduce indexing can be used when you have very large data (e.g. 50+ million documents), and already have an existing Hadoop cluster. If you do create an index that doesn't have a direct index, you can create one later using `--inverted2direct` option of TrecTerrier
+
 ### Classical two-pass indexing
 
-Terrier supports three types of indexing: “classical two-pass”, “single-pass” and “MapReduce”. All three methods create an identical inverted index, that produces identical retrieval effectiveness. However, they differ on other characteristics, namely their support for query expansion, and the scalability and efficiency when indexing large corpora. The choice of indexing method is likely to be driven by your need for query expansion, and the scale of the data you are working with. In particular, only classical twio-pass indexing directly creates a direct index, which is used for query expansion. However, classical two-pass indexing doesn’t scale to large corpora (maximum practical is about 25 million documents). Single pass indexing is faster, but doesn’t create a direct index. MapReduce indexing can be used when you have very large data (e.g. 50+ million documents), and already have an existing Hadoop cluster. If you do create an index that doesn’t have a direct index, you can create one later using
-
-    --inverted2direct
-
-flag when calling trec\_terrier.sh.
-
-This subsection describes the classical indexing implemented by BasicIndexer and BlockIndexer. For single-pass indexing, see the next subsection.
-
-The LexiconMap is flushed to disk every `bundle.size` documents. If memory during indexing is a concern, then reduce this property to less than its default 2500. However, more temporary lexicons will be created. The rate at which the temporary lexicons are merged is controlled by the `lexicon.builder.merge.lex.max` property, though we have found 16 to be a good compromise.
-
-Once all documents in the index have been created, the InvertedIndex is created by the [InvertedIndexBuilder](javadoc/org/terrier/structures/indexing/classical/InvertedIndexBuilder.html). As the entire DirectIndex cannot be inverted in memory, the InvertedIndexBuilder takes several iterations, selecting a few terms, scanning the direct index for them, and then writing out their postings to the inverted index. If it takes too many terms at once, Terrier can run out of memory. Reduce the property `invertedfile.processpointers` from its default 20,000,000 and rerun (default is only 2,000,000 for block indexing, which is more memory intensive). See the [InvertedIndexBuilder](javadoc/org/terrier/structures/indexing/classical/InvertedIndexBuilder.html) for more information about the inversion and term selection strategies.
+Classical indexing works by creating a direct index, and then inverting that data structure to create an inverted index. For details on the implementation of classical indexing, see the [indexing implementation](indexer_details.html) documentation.
 
 ### Single-pass indexing
 
-Single-pass indexing is implemented by the classes [BasicSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html) and [BlockSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html). Essentially, instead of building a direct file from the collection, term posting lists are held in memory, and written to disk as ‘run’ when memory is exhausted. These are then merged to form the lexicon and the inverted file. Note that no direct index is created - indeed, the single-pass indexing is much faster than classical two-pass indexing when the direct index is not required. If the direct index is required, then this can be built from the inverted index using the [Inverted2DirectIndexBuilder](javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html).
+Single-pass indexing is implemented by the classes [BasicSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html) and [BlockSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html). Essentially, instead of building a direct file from the collection, term posting lists are held in memory, and written to disk when memory is exhausted. The final step merged the temporary files to form the lexicon and the inverted file. Notably, single-pass indexing does not build a direct index. However, a direct index can be build later using the `--inverted2direct` command line argument to TrecTerrier.
 
-The single-pass indexer can be used by using the `-i -j` command line argument to TrecTerrier.
+For details on the implementation of single-pass indexing, see the [indexing implementation](indexer_details.html) documentation.
 
-The majority of the properties configuring the single-pass indexer are related to memory consumption, and how it decides that memory has been exhausted. Firstly, the indexer will commit a run to disk when free memory falls below the threshold set by `memory.reserved` (50MB). To ensure that this doesn’t happen too soon, 85% of the possible heap must be allocated (controlled by the property `memory.heap.usage`). This check occurs every 20 documents (`docs.checks`).
+### Threaded indexing
 
-Single-pass indexing is significantly quicker than two-pass indexing. However, there are some configuration points to be aware of. In particular, it makes much use of the memory to reduce disk IO. For Java 6, we recommend adding the ` -XX:-UseGCOverheadLimit` to the command line. Moreover, for very large indices, many files have to be opened during merging, possibly exhausting the maximum number of allowed open files. Refer to your operating system documentation to increase this limit.
-
-Notably, single-pass indexing does not build a direct index. However, a direct index can be build later using the `-id` command line argument to TrecTerrier.
+Starting from version 4.2, Terrier has *experimental* support for indexing using multiple threads. This can be enabled using `-P` option to TrecTerrier when specifying ``-i`. Both single-pass and classical indexing are supported by threaded indexing.  The number of threads used is equal to the number of CPU cores in the machine, minus one.
 
 ### MapReduce indexing
 
@@ -153,13 +137,10 @@ You can use the positional information when doing retrieval. For instance, you c
 
 ### What changes when I use block indexing?
 
-When you enable the property `block.indexing`, the indexer used is the BlockIndexer, not the BasicIndexer (if you’re using single-pass indexing, it is the BlockSinglePassIndexer, not the BasicSinglePassIndexer that is used). The created DirectIndex and InvertedIndex use a different format, which includes the blockids for each posting, and can be read by BlockDirectIndex and BlockInvertedIndex, respectively. During two-pass indexing, BlockLexicons are created to keep track of how many blocks are in use for a term. However, at the last stage of rewriting the lexicon at the end of inverted indexing, the BlockLexicon is rewritten as a normal Lexicon, as the block information can be guessed during retrieval.
-
-<span>\[</span>[Previous: Configuring Terrier](configure_general.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Configuring Retrieval](configure_retrieval.html)<span>\]</span>
+When you enable the property `block.indexing`, TrecTerrier will use the BlockIndexer, not the BasicIndexer (if you have specified single-pass indexing, it is the BlockSinglePassIndexer, not the BasicSinglePassIndexer that is used). The created index data structures will contain the positions for each posting, and can be read by, and when accessed through PostingIndex.getPostings() will implement BlockPosting in addition to IterablePosting.
 
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Webpage: <http://terrier.org>
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
