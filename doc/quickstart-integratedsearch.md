@@ -166,7 +166,7 @@ Once we have an index, new documents can be easily added using the `indexDocumen
 memIndex.indexDocument(document);
 ```
 
-### Full Indexing Example
+### Indexing Example
 
 ```java
 import java.io.File;
@@ -213,10 +213,149 @@ public class IndexingExample {
 
 Issuing Searches
 ----------------------------------------
+### Configuring Search Result Enhancement/Transformations
+Before you start setting up searches and running them, it is important to enable any enhancements or transformations that we want Terrier to apply to the search results that will be generated. There are a variety of enhancements/transformations that Terrier can apply out-of-the-box, such as re-ranking the results based on user-defined features or generating query-biased document snippets. 
+
+For this quickstart guide, we will cover enabling one very common type of search result enhancement, which is known as *decoration*. The goal of decoration is to copy metadata about each individual document into the search results returned, such as the 'docno' identifier that we configured earlier. Decorate (or more preciecly the `org.terrier.querying.SimpleDecorate` class) belongs to a group of functions in Terrier known as post filters. To enable decorate functionality, we need to update the Terrier configuration that is stored in the static ApplicationSetup class. In particular, there are two configuration parameters that need to be set: `querying.postfilters.controls` and `querying.postfilters.order`. Simply, these parameters specify the 'what' and 'when' any post filters should be applied. `querying.postfilters.controls` is a comma delimited list of `name:class` pairs, where `name` is a short identifier for a post filter and `class` is the full classname. Meanwhile. `querying.postfilters.order` is a comma delimited list of post filter class names, where the order of the class names defines the order in which they are executed. Hence, we can enable the `org.terrier.querying.SimpleDecorate` post filter class by setting the Terrier configuration as follows:
+
+```java
+ApplicationSetup.setProperty("querying.postfilters.controls", "decorate:org.terrier.querying.SimpleDecorate");
+ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying.SimpleDecorate");
+```
+In this case, we have specified that org.terrier.querying.SimpleDecorate is a post filter we want to have access to, we have given it the name i.e. 'decorate' and we have added it to the list of filters to run.  
+
+> **Troubleshooting Tips**:
+> *  ApplicationSetup.setProperty() must be called before the search Manager is initalized, i.e. before `new Manager(index)` is called
+> *  A post filter must appear in both `querying.postfilters.controls` and `querying.postfilters.order` before it will be used.
 
 
-Saving an Index and Loading it Later
-----------------------------------------
+### Using a Search Manager
+
+Within Terrier, searches are performed using a Manager class. This class performs the nuts and bolts of actually matching your query against the documents that were indexed. If you are running multiple queries, you need to only create a single manager and use it multiple times. There is only one Manager implementation in Terrier, which you can instantiate as follows:
+
+```java
+Manager queryingManager = new Manager(memIndex);
+```
+
+This creates a new querying manager with a default configuration and sets the index to be searched (to our 'memindex' in this case). The next step in the process is to create a SearchRequest, which contains both our query as well as some other information about how we want the search to be processed. The Manager can generate a SearchRequest for you with default settings as shown below:
+
+```java
+SearchRequest srq = queryingManager.newSearchRequestFromQuery("sample query");
+```
+
+In this case we have created a new SearchRequest for the query 'sample query'. The SearchRequest will have resaonable defaults for running a basic search. However, there is two configuration options that we need to manually set. First, we need to set which scoring function to use when ranking documents. This is done via the addMatchingModel() method as shown below:
+
+
+```java
+srq.addMatchingModel("Matching","BM25");
+```
+
+Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate':
+
+```java
+srq.setControl("decorate", "on");
+```
+
+In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Finally, we issue the search:
+
+```java
+queryingManager.runSearchRequest(srq);
+```
+
+Once finished, the results are stored in the SearchRequest as a ResultSet, which can be accessed via:
+
+```java
+ResultSet results = srq.getResultSet();
+```
+
+### Understanding the ResultSet
+
+The output of a search in Terrier is known as a ResultSet. The ResultSet contains five main pieces of information:
+* The ranking of documents returned for the query in the form of a list of document identifiers 'docids' (highest scoring first).
+* The scores for each of those documents.
+* The total number of matching documents (Exact Result Size).
+* The number of matching documents returned  (Result Size), which may be less than Exact Result Size if the result set was cropped. 
+* Metadata about each document returned (assuming that decoration was enabled). 
+
+
+### Indexing and Retrieval Example
+```java
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
+import org.terrier.indexing.Document;
+import org.terrier.indexing.TaggedDocument;
+import org.terrier.indexing.tokenisation.Tokeniser;
+import org.terrier.realtime.memory.MemoryIndex;
+import org.terrier.utility.ApplicationSetup;
+import org.terrier.matching.ResultSet;
+import org.terrier.querying.Manager;
+import org.terrier.querying.SearchRequest;
+
+public class IndexingAndRetrievalExample {
+
+	public static void main(String[] args) throws Exception {
+    
+        // Directory containing files to index
+    	String aDirectoryToIndex = "/my/directory/containing/files/";
+		
+        // Configure Terrier
+		ApplicationSetup.setProperty("indexer.meta.forward.keys", "docno");
+        ApplicationSetup.setProperty("indexer.meta.forward.keylens", "30");
+        
+        // Create a new Index
+		MemoryIndex memIndex = new MemoryIndex();
+		
+        // For each file
+		for (String filename : new File(aDirectoryToIndex).list() ) {
+			
+			String fullPath = aDirectoryToIndex+filename;
+			
+            // Convert it to a Terrier Document
+			Document document = new TaggedDocument(new FileReader(fullPath), new HashMap(), Tokeniser.getTokeniser());
+            
+            // Add a meaningful identifier
+			document.getAllProperties().put("docno", filename);
+
+			// index it
+			memIndex.indexDocument(document);
+		}
+        
+        // Enable the decorate enhancement 
+        ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying.SimpleDecorate");
+		ApplicationSetup.setProperty("querying.postfilters.controls", "decorate:org.terrier.querying.SimpleDecorate");
+		
+        // Create a new manager run queries
+		Manager queryingManager = new Manager(memIndex);
+        
+        // Create a search request
+		SearchRequest srq = queryingManager.newSearchRequestFromQuery("search for document");
+        
+        // Specify the model to use when searching
+		srq.addMatchingModel("Matching","BM25");
+        
+        // Turn on decoration for this search request
+		srq.setControl("decorate", "on");
+        
+        // Run the search
+		queryingManager.runSearchRequest(srq);
+		
+        // Get the result set
+		ResultSet results = srq.getResultSet();
+		
+        // Print the results
+		System.out.println(results.getExactResultSize()+" documents were scored");
+		System.out.println("The top "+results.getResultSize()+" of those documents were returned");
+		System.out.println("Document Ranking");
+		for (int i =0; i< results.getResultSize(); i++) {
+			int docid = results.getDocids()[i];
+			double score = results.getScores()[i];
+			System.out.println("   Rank "+i+": "+docid+" "+results.getMetaItem("docno", docid)+" "+score);
+		}
+    }
+}
+```
+
 
 ------------------------------------------------------------------------
 
