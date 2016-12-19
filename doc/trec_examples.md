@@ -51,7 +51,7 @@ Here we give an example of using Terrier to index WT2G - a standard [TREC](http:
     #index the collection
     bin/trec_terrier.sh -i
 
-    #run the topics, with suggested c value 10.99 
+    #run the topics, with suggested c value 10.99
     bin/trec_terrier.sh -r -c 10.99
     #run topics again with query expansion enabled
     bin/trec_terrier.sh -r -q -c 10.99
@@ -60,9 +60,9 @@ Here we give an example of using Terrier to index WT2G - a standard [TREC](http:
     bin/trec_terrier.sh -e
 
     #display the Mean Average Precision
-    tail -1 var/results/*.eval
-    #MAP should be 
-    #In_expB2 Average Precision: 0.3160 
+    grep ^map var/results/*.eval
+    #MAP should be
+    #In_expB2 Average Precision: 0.3160
 
 TREC Blogs06 Collection
 -----------------------
@@ -73,8 +73,8 @@ This guide will provide a step-by-step example on how to use Terrier for indexin
 
 In the Terrier folder, use trec\_setup.sh to generate a collection.spec for indexing the collection:
 
-    [user@machine terrier]$ ./bin/trec_setup.sh /local/collections/Blogs06/
-    [user@machine terrier]$ find /local/collections/Blogs06/ -type f  
+    $ ./bin/trec_setup.sh /local/collections/Blogs06/
+    $ find /local/collections/Blogs06/ -type f  
         | grep 'permalinks-' |sort > etc/collection.spec
 
 This will result in the creation of a `collection.spec` file, in the `etc` directory, containing a list of the files in the `/local/collections/Blog06/` directory. At this stage, you should check the `etc/collection.spec`, to ensure that it only contains files that should be indexed, and that they are sorted (ie `20051206/permalinks-000.gz` is the first file).
@@ -93,7 +93,7 @@ Finally, the length of the DOCNOs in the TREC Blogs06 collection are 31 characte
 
 Now you are ready to start indexing the collection.
 
-    [user@machine terrier]$ ./bin/trec_terrier.sh -i
+    $ ./bin/trec_terrier.sh -i
     Setting TERRIER_HOME to /local/terrier
     INFO - TRECCollection read collection specification
     INFO - Processing /local/collections/Blogs06/20051206/permalinks-000.gz
@@ -104,7 +104,7 @@ Now you are ready to start indexing the collection.
 
 If we did not plan to use Query Expansion initially, then the faster single-pass indexing could be enabled, using the -j option of TrecTerrier. If we decide to use query expansion later, we can use the [Inverted2DirectIndexBuilder](javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html) to create the direct index ([BlockInverted2DirectIndexBuilder](javadoc/org/terrier/structures/indexing/singlepass/BlockInverted2DirectIndexBuilder.html) for blocks).
 
-    [user@machine terrier]$ ./bin/trec_terrier.sh -i -j
+    $ ./bin/trec_terrier.sh -i -j
     Setting TERRIER_HOME to /local/terrier
     INFO - TRECCollection read collection specification
     INFO - Processing /local/collections/Blogs06/20051206/permalinks-000.gz
@@ -140,12 +140,12 @@ Next, we should specify the retrieval weighting model that we want to use. In th
 
 Now we are ready to start retrieval. We use the `-c` to set the parameter of the weighting model to the value 1. Terrier will do retrieval by taking each query (called a topic) from the specified topics file, query the index using it, and save the results to a file in the `var/results` folder, named similar to `PL2c1.0_0.res`. The file `PL2c1.0_0.res.settings` contains a dump of the properties and other settings used to generated the run.
 
-    [user@machine terrier]$ ./bin/trec_terrier.sh -r -c 1
+    $ ./bin/trec_terrier.sh -r -c 1
     Setting TERRIER_HOME to /local/terrier
     INFO - 900 : mcdonalds
     INFO - Processing query: 900
     <snip>
-    INFO - Finished topics, executed 50 queries in 27 seconds, results written to 
+    INFO - Finished topics, executed 50 queries in 27 seconds, results written to
         terrier/var/results/PL2c1.0_0.res
     Time elapsed: 40.57 seconds.
 
@@ -153,7 +153,7 @@ Now we are ready to start retrieval. We use the `-c` to set the parameter of the
 
 We can now evaluate the retrieval performance of the generated run using the qrels specified earlier:
 
-    [user@machine terrier]$ ./bin/trec_terrier.sh -e
+    $ ./bin/trec_terrier.sh -e
     Setting TERRIER_HOME to /local/terrier
     INFO - Evaluating result file: /local/terrier/var/results/PL2c1.0_0.res
     Average Precision: 0.2703
@@ -205,291 +205,46 @@ This page provides examples of settings for indexing and retrieval on TREC colle
 
 The following table lists the indexed tags (corresponding to the property `TrecDocTags.process`) and the running time for a singlepass inverted index creation on 6 TREC collections. No indexed tags are specified for the WT2G, WT10G, DOTGOV and DOTGOV2 collections, which means the system indexes everything in these collections. The indexing was done on a CentOS 5 Linux machine with Intel Core2 2.4GHz CPU and 2GB RAM (a maximum of 1GB RAM is allocated to the Java virtual machine).
 
-<span>@lll@</span>
+**NB**: These times are quite dated.
 
-\[t\]<span>0.30</span>Collection
-
-&
-
-\[t\]<span>0.30</span>Indexed tags (`TrecDocTags.process`)
-
-&
-
-\[t\]<span>0.30</span>Indexing time (seconds)
-
-\[t\]<span>0.30</span>disk1&2
-
-&
-
-\[t\]<span>0.30</span>TEXT,TITLE,HEAD,HL
-
-&
-
-\[t\]<span>0.30</span>766.85
-
-\[t\]<span>0.30</span>disk4&5
-
-&
-
-\[t\]<span>0.30</span>TEXT,H3,DOCTITLE,HEADLINE,TTL
-
-&
-
-\[t\]<span>0.30</span>692.115
-
-\[t\]<span>0.30</span>WT2G
-
-&
-
-\[t\]<span>0.30</span> 
-
-&
-
-\[t\]<span>0.30</span>709.906
-
-\[t\]<span>0.30</span>WT10G
-
-&
-
-\[t\]<span>0.30</span> 
-
-&
-
-\[t\]<span>0.30</span>3,556.09
-
-\[t\]<span>0.30</span>DOTGOV
-
-&
-
-\[t\]<span>0.30</span> 
-
-&
-
-\[t\]<span>0.30</span>4,435.12
-
-\[t\]<span>0.30</span>DOTGOV2
-
-&
-
-\[t\]<span>0.30</span> 
-
-&
-
-\[t\]<span>0.30</span>96,340.00
+|Collection|Indexed tags (`TrecDocTags.process`)|Indexing time (seconds)|
+|--|--|--|
+|disk1&2|TEXT,TITLE,HEAD,HL|766.85|
+|disk4&5|TEXT,H3,DOCTITLE,HEADLINE,TTL|92.115|
+|WT2G||709.906|
+|WT10G||3,556.09|
+|DOTGOV||4,435.12|
+|DOTGOV2||96,340.00|
 
 The following table compares the indexing time using the classical two-phase indexing and single-pass indexing with and without storing the terms positions (blocks). The table shows that the single-pass indexing is markedly faster than the two-phase indexing, particular when block indexing is enabled.
 
-<span>@lllll@</span>
+|Collection|Two-phase|Single-pass|Two-phase + blocks|Single-pass + blocks|
+|--|--|--|--|--|
+|disk1&2|13.5 min|8.65 min|32.6 min|12.1 min|
+|disk4&5|11.7 min|7.63 min|25.0 min|10.2 min|
+|WT2G|9.95 min|7.52 min|23.6 min|10.8 min|
+|WT10G|62.5 min|34.7 min|2hour 18min|53.1 min|
+|DOTGOV|71.0min|47.1min|2hour 45min|1hour 11min|
 
-\[t\]<span>0.17</span>Collection
-
-&
-
-\[t\]<span>0.17</span>Two-phase
-
-&
-
-\[t\]<span>0.17</span>Single-pass
-
-&
-
-\[t\]<span>0.17</span>Two-phase + blocks
-
-&
-
-\[t\]<span>0.17</span>Single-pass + blocks
-
-\[t\]<span>0.17</span>disk1&2
-
-&
-
-\[t\]<span>0.17</span>13.5 min
-
-&
-
-\[t\]<span>0.17</span>8.65 min
-
-&
-
-\[t\]<span>0.17</span>32.6 min
-
-&
-
-\[t\]<span>0.17</span>12.1 min
-
-\[t\]<span>0.17</span>disk4&5
-
-&
-
-\[t\]<span>0.17</span>11.7 min
-
-&
-
-\[t\]<span>0.17</span>7.63 min
-
-&
-
-\[t\]<span>0.17</span>25.0 min
-
-&
-
-\[t\]<span>0.17</span>10.2 min
-
-\[t\]<span>0.17</span>WT2G
-
-&
-
-\[t\]<span>0.17</span>9.95 min
-
-&
-
-\[t\]<span>0.17</span>7.52 min
-
-&
-
-\[t\]<span>0.17</span>23.6 min
-
-&
-
-\[t\]<span>0.17</span>10.8 min
-
-\[t\]<span>0.17</span>WT10G
-
-&
-
-\[t\]<span>0.17</span>62.5 min
-
-&
-
-\[t\]<span>0.17</span>34.7 min
-
-&
-
-\[t\]<span>0.17</span>2hour 18min
-
-&
-
-\[t\]<span>0.17</span>53.1 min
-
-\[t\]<span>0.17</span>DOTGOV
-
-&
-
-\[t\]<span>0.17</span>71.0min
-
-&
-
-\[t\]<span>0.17</span>47.1min
-
-&
-
-\[t\]<span>0.17</span>2hour 45min
-
-&
-
-\[t\]<span>0.17</span>1hour 11min
-
-[]()
 
 The following table lists the retrieval performance achieved using three weighting models, namely the Okapi [BM25](javadoc/org/terrier/matching/models/BM25.html), DFR [PL2](javadoc/org/terrier/matching/models/PL2.html) and the new parameter-free [DFRee](javadoc/org/terrier/matching/models/DFRee.html) model on a variety of standard TREC test collections. We provide the best values for the b and c parameters of BM25 and PL2 respectively, by optimising MAP using a simulated annealing process. In contrast, DFRee performs robustly across all collections while it does not require any parameter tuning or training.
 
-[BM25](javadoc/org/terrier/matching/models/BM25.html)
-
-[PL2](javadoc/org/terrier/matching/models/PL2.html)
-
-[DFRee](javadoc/org/terrier/matching/models/DFRee.html)
-
-Collection and tasks
-
-b value
-
-MAP
-
-c value
-
-MAP
-
-MAP
-
-disk1&2, TREC1-3 adhoc tasks
-
-0.3277
-
-0.2324
-
-4.607
-
-0.2260
-
-0.2175
-
-disk4&5, TREC 2004 Robust Track
-
-0.3444
-
-0.2502
-
-9.150
-
-0.2531
-
-0.2485
-
-WT2G, TREC8 small-web task
-
-0.2381
-
-0.3186
-
-26.04
-
-0.3252
-
-0.2829
-
-WT10G, TREC9-10 Web Tracks
-
-0.2505
-
-0.2104
-
-12.33
-
-0.2103
-
-0.2030
-
-DOTGOV, TREC11 Topic-distillation task
-
-0.7228
-
-0.1910
-
-1.280
-
-0.2030
-
-0.1945
-
-DOTGOV2, TREC2004-2006 Terabyte Track adhoc tasks
-
-0.39
-
-0.3046
-
-6.48
-
-0.3097
-
-0.2935
+| Collection and tasks | B25| BM25| PL2 | PL2 | DFRee |
+|--|--|--|--|--|--|
+| | b value| MAP| c value| MAP | MAP |
+|disk1&2, TREC1-3 adhoc tasks|0.3277|0.2324|4.607|0.2260|0.2175|
+|disk4&5, TREC 2004 Robust Track|0.3444|0.2502|9.150|0.2531|0.2485|
+|WT2G, TREC8 small-web task|0.2381|0.3186|26.04|0.3252|0.2829|
+|WT10G, TREC9-10 Web Tracks|0.2505|0.2104|12.33|0.2103|0.2030|
+|DOTGOV, TREC11 Topic-distillation task|0.7228|0.1910|1.280|0.2030|0.1945|
+|DOTGOV2, TREC2004-2006 Terabyte Track adhoc tasks|0.39|0.3046|6.48|0.3097|0.2935|
 
 Many of the above TREC collections can be obtained directly from either [TREC (NIST)](http://trec.nist.gov), or from the [University of Glasgow](http://ir.dcs.gla.ac.uk/test_collections/)
 
-<span>\[</span>[Previous: Website Search Application](website_search.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Terrier/Hadoop Configuration](hadoop_configuration.html)<span>\]</span>
 
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+
+> Webpage: <http://terrier.org>
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

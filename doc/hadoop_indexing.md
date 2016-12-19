@@ -3,6 +3,8 @@
 Configuring Hadoop Distributed Indexing in Terrier
 ==================================================
 
+**NB**: Terrier supports only Hadoop v0.22. We have issues with more modern versions. You can track progress on [TR-380](http://terrier.org/issues/browse/TR-380)
+
 Overview
 --------
 
@@ -23,7 +25,7 @@ Next, the location of your collection and your index are both important. You wil
 
 You should also ensure that your index is in on the shared filespace (again, the one named by `fs.default.name` in the Hadoop configuration), by setting the `terrier.index.path` property accordingly. For example you can set, `terrier.index.path=hdfs://master:9000/Indices/WT2G`. You **must** remember to give the appropriate file system prefix, in this case `hdfs://master:9000/`.
 
-Terrier’s MapReduce indexing can operate in two modes, which define the style of index or indices that are produced. In particular, in *term-partitioned* mode, one single index is created, but the inverted index is split across up to 26 files. In *document-partitioned* model, multiple Terrier indices are created, one by each reducer. This can be useful if the corpus is too large to be useful in one index. To use document partitioning, run [HadoopIndexing](javadoc/org/terrier/applications/HadoopIndexing.html) directly from the command line (instead of via TrecTerrier), and specify the `-p` argument. The advantage of *term-partitioning* is that Terrier can access the output as one single index, making retrieval simpler. However, note that the current upper limit on the number of files an inverted index can be split across is 31. To achieve this limit, we partition the inverted index with respect to each letter in the English alphabet – this naturally limits the parallelism of the reduce phase to 26 reduce tasks. We do note however, that should a higher level of parallelism be needed, then this might be achieved through careful modification of the [partitioner](javadoc/org/terrier/structures/indexing/singlepass/hadoop/SplitEmittedTerm.html).
+Terrier's MapReduce indexing can operate in two modes, which define the style of index or indices that are produced. In particular, in *term-partitioned* mode, one single index is created, but the inverted index is split across up to 26 files. In *document-partitioned* model, multiple Terrier indices are created, one by each reducer. This can be useful if the corpus is too large to be useful in one index. To use document partitioning, run [HadoopIndexing](javadoc/org/terrier/applications/HadoopIndexing.html) directly from the command line (instead of via TrecTerrier), and specify the `-p` argument. The advantage of *term-partitioning* is that Terrier can access the output as one single index, making retrieval simpler. However, note that the current upper limit on the number of files an inverted index can be split across is 31. To achieve this limit, we partition the inverted index with respect to each letter in the English alphabet – this naturally limits the parallelism of the reduce phase to 26 reduce tasks. We do note however, that should a higher level of parallelism be needed, then this might be achieved through careful modification of the [partitioner](javadoc/org/terrier/structures/indexing/singlepass/hadoop/SplitEmittedTerm.html).
 
 Running Indexing Job
 --------------------
@@ -60,7 +62,7 @@ Running the MapReduce indexer is straightforward, using the `-H` or `--hadoop` o
     INFO  JobClient -     HDFS bytes written=3020756
     INFO  JobClient -     Local bytes read=7937792
     INFO  JobClient -     Local bytes written=15875666
-    INFO  JobClient -   Job Counters 
+    INFO  JobClient -   Job Counters
     INFO  JobClient -     Launched reduce tasks=1
     INFO  JobClient -     Rack-local map tasks=2
     INFO  JobClient -     Launched map tasks=2
@@ -96,9 +98,6 @@ Bibliography
 
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
-
- 
+> Webpage: <http://terrier.org>
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
