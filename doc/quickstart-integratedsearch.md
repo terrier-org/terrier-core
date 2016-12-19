@@ -1,8 +1,8 @@
 
-Quickstart Guide: Integrating Search into your Application
+Quick start Guide: Integrating Search into your Application
 =========================================
 
-One of the common use-cases for Terrier is as a search component within a larger application. For example, you might want a custom search service within an email managment system, or use the search results produced for one or more queries as input to another system, such as a classifier. This page will describe a quick way to integrate Terrier into an existing Java application, programatically index documents and issue search requests.  
+One of the common use-cases for Terrier is as a search component within a larger application. For example, you might want a custom search service within an email management system, or use the search results produced for one or more queries as input to another system, such as a classifier. This page will describe a quick way to integrate Terrier into an existing Java application, programatically index documents and issue search requests.  
 
 ### 30 Second Overview
 
@@ -63,14 +63,14 @@ Apache Maven is a dependency management and automated build tool for Java-based 
 mvn --version
 ```
 
-Maven is widely used among Java developers and is the recommended way of integrating Terrier into your project, as it handles the import process for all of Terrier's depedancies automatically. You can also use other build tools such as Ivy and Gradle (however the use of these other build managers is not covered in the Terrier documentation).
+Maven is widely used among Java developers and is the recommended way of integrating Terrier into your project, as it handles the import process for all of Terrier's dependencies automatically. You can also use other build tools such as Ivy and Gradle (however the use of these other build managers is not covered in the Terrier documentation).
 
 Importing Terrier
 ----------------------------------------
 
-As mentioned above, to import Terrier into your application we recommend that you use the Maven dependancy manager. In effect, Maven is an alternative way to build your project that uses a special [pom.xml](https://maven.apache.org/guides/introduction/introduction-to-the-pom.html) file to control the importing of other pieces of software that your project depends on at compile-time. If you are unfamiliar with Maven, then try working through [this tutorial](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html). 
+As mentioned above, to import Terrier into your application we recommend that you use the Maven dependency manager. In effect, Maven is an alternative way to build your project that uses a special [pom.xml](https://maven.apache.org/guides/introduction/introduction-to-the-pom.html) file to control the importing of other pieces of software that your project depends on at compile-time. If you are unfamiliar with Maven, then try working through [this tutorial](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html). 
 
-If your project is not yet a Maven project, then we recommend that you convert it to one, following the steps in [the above tutorial](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html). If you are using an integrated development environemnt (IDE) such as [Eclipse](https://eclipse.org/ide/) or [IntelliJ](https://www.jetbrains.com/idea/), then they support plugins to help you use Maven from within the IDE, such as [M2Eclipse](http://www.eclipse.org/m2e/). 
+If your project is not yet a Maven project, then we recommend that you convert it to one, following the steps in [the above tutorial](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html). If you are using an integrated development environment (IDE) such as [Eclipse](https://eclipse.org/ide/) or [IntelliJ](https://www.jetbrains.com/idea/), then they support plugins to help you use Maven from within the IDE, such as [M2Eclipse](http://www.eclipse.org/m2e/). 
 
 Once you have your project setup with Maven, its time to add Terrier to your project. To do this, you will need to modify the Maven pom.xml file. In particular, you will need to copy/paste the following dependency definition into the `<dependencies>...</dependencies>` block of your pom.xml (if you do not have a dependencies block, you will need to add one).  
 
@@ -82,7 +82,7 @@ Once you have your project setup with Maven, its time to add Terrier to your pro
 </dependency>
 ```
 
-Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependancies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). At this point you should be ready to start coding!
+Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependencies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). At this point you should be ready to start coding!
 
 Making an Index
 ----------------------------------------
@@ -138,7 +138,7 @@ ApplicationSetup.setProperty("indexer.meta.forward.keylens", "30");
 In this case, we are specifying that each document will have a key called 'docno' that we want to store and that the maximum 'docno' length is 30 characters. Both `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` are comma-delimited lists, such that you can specify multiple keys to store. 
 
 > **Troubleshooting Tips**:
-> *  ApplicationSetup.setProperty() must be called before the index is initalized, i.e. before `new MemoryIndex()` is called
+> *  ApplicationSetup.setProperty() must be called before the index is initialized, i.e. before `new MemoryIndex()` is called
 > *  `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` must have the same number of entries
 
 Once we have configured Terrier, we also need to add the new identifiers to each document. Assuming we have already created a document called 'document', we can add an identifier as follows:
@@ -150,7 +150,7 @@ document.getAllProperties().put("docno", "This-is-test.html");
 ### Indexing the Documents
 Now that we know how to convert files or pieces of text into Terrier Documents, the next step it to create an index and add those documents to it. The index is a storage structure that contains the documents that are to be made available for search. Indices extend the Index class in Terrier. There are three categories of index currently supported in Terrier, namely: IndexOnDisk, IncrementalIndex and MemoryIndex. For this quickstart we will be focusing on the MemoryIndex. 
 
-MemoryIndex is a convenient index class to use when you have a reletively small number of documents that you need to search over, e.g. 10,000 to about 100,000 web pages. The memory index stores documents as a series of arrays in local memory (RAM).  
+MemoryIndex is a convenient index class to use when you have a relatively small number of documents that you need to search over, e.g. 10,000 to about 100,000 web pages. The memory index stores documents as a series of arrays in local memory (RAM).  
 
 A new memory index can be made using the default MemoryIndex constructor:
 
@@ -213,7 +213,7 @@ Issuing Searches
 ### Configuring Search Result Enhancement/Transformations
 Before you start setting up searches and running them, it is important to enable any enhancements or transformations that we want Terrier to apply to the search results that will be generated. There are a variety of enhancements/transformations that Terrier can apply out-of-the-box, such as re-ranking the results based on user-defined features or generating query-biased document snippets. 
 
-For this quickstart guide, we will cover enabling one very common type of search result enhancement, which is known as *decoration*. The goal of decoration is to copy metadata about each individual document into the search results returned, such as the 'docno' identifier that we configured earlier. Decorate (or more preciecly the `org.terrier.querying.SimpleDecorate` class) belongs to a group of functions in Terrier known as post filters. To enable decorate functionality, we need to update the Terrier configuration that is stored in the static ApplicationSetup class. In particular, there are two configuration parameters that need to be set: `querying.postfilters.controls` and `querying.postfilters.order`. Simply, these parameters specify the 'what' and 'when' any post filters should be applied. `querying.postfilters.controls` is a comma delimited list of `name:class` pairs, where `name` is a short identifier for a post filter and `class` is the full classname. Meanwhile. `querying.postfilters.order` is a comma delimited list of post filter class names, where the order of the class names defines the order in which they are executed. Hence, we can enable the `org.terrier.querying.SimpleDecorate` post filter class by setting the Terrier configuration as follows:
+For this quickstart guide, we will cover enabling one very common type of search result enhancement, which is known as *decoration*. The goal of decoration is to copy metadata about each individual document into the search results returned, such as the 'docno' identifier that we configured earlier. Decorate (or more precisely the `org.terrier.querying.SimpleDecorate` class) belongs to a group of functions in Terrier known as post filters. To enable decorate functionality, we need to update the Terrier configuration that is stored in the static ApplicationSetup class. In particular, there are two configuration parameters that need to be set: `querying.postfilters.controls` and `querying.postfilters.order`. Simply, these parameters specify the 'what' and 'when' any post filters should be applied. `querying.postfilters.controls` is a comma delimited list of `name:class` pairs, where `name` is a short identifier for a post filter and `class` is the full classname. Meanwhile. `querying.postfilters.order` is a comma delimited list of post filter class names, where the order of the class names defines the order in which they are executed. Hence, we can enable the `org.terrier.querying.SimpleDecorate` post filter class by setting the Terrier configuration as follows:
 
 ```java
 ApplicationSetup.setProperty("querying.postfilters.controls", "decorate:org.terrier.querying.SimpleDecorate");
@@ -222,7 +222,7 @@ ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying
 In this case, we have specified that org.terrier.querying.SimpleDecorate is a post filter we want to have access to, we have given it the name i.e. 'decorate' and we have added it to the list of filters to run.  
 
 > **Troubleshooting Tips**:
-> *  ApplicationSetup.setProperty() must be called before the search Manager is initalized, i.e. before `new Manager(index)` is called
+> *  ApplicationSetup.setProperty() must be called before the search Manager is initialized, i.e. before `new Manager(index)` is called.
 > *  A post filter must appear in both `querying.postfilters.controls` and `querying.postfilters.order` before it will be used.
 
 
@@ -240,20 +240,20 @@ This creates a new querying manager with a default configuration and sets the in
 SearchRequest srq = queryingManager.newSearchRequestFromQuery("sample query");
 ```
 
-In this case we have created a new SearchRequest for the query 'sample query'. The SearchRequest will have resaonable defaults for running a basic search. However, there is two configuration options that we need to manually set. First, we need to set which scoring function to use when ranking documents. This is done via the addMatchingModel() method as shown below:
+In this case we have created a new SearchRequest for the query 'sample query'. The SearchRequest will have reasonable defaults for running a basic search. However, there is two configuration options that we need to manually set. First, we need to set which scoring function to use when ranking documents. This is done via the addMatchingModel() method as shown below:
 
 
 ```java
 srq.addMatchingModel("Matching","BM25");
 ```
 
-Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate':
+In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate':
 
 ```java
 srq.setControl("decorate", "on");
 ```
 
-In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Finally, we issue the search:
+Finally, we issue the search:
 
 ```java
 queryingManager.runSearchRequest(srq);
