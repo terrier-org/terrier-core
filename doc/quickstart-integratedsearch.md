@@ -87,9 +87,128 @@ Once you have your project setup with Maven, its time to add Terrier to your pro
 
 Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependancies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). At this point you should be ready to start coding!
 
-Making a Basic Index
+Making an Index
 ----------------------------------------
 
+### Reading Documents
+The first step when creating an index is to convert each file or piece of text we want to search into a form that Terrier can understand. This is done by converting all files and/or pieces of text into Terrier Documents. A Terrier Document is comprised of three main components:
+* The raw text of the document, stored as a String
+* A Tokenizer that specifies how to break that string down into individual tokens (words)
+* Optionally a String->String map that contains metadata about the document, such as a unique identifier
+
+There are a variety of different Terrier Document implementations provided out-of-the-box. The reason for having different Document implementations is to make extracting (useful) text/metadata from different types of common document formats easier. FileDocument is the simplest Document implementation, it simply stores all text read from an input reader. In contrast, TaggedDocument is designed to perform text extraction from html/xml tagged documents and as such, only stores texts within tags named by the user. For instance, given the following text file (test.html):
+
+```html
+<html>
+   <head></head>
+   <body>
+      <p>This is a sample HTML document</p>
+   </body>
+</html>
+```
+
+We can convert this to a Terrier Document using the FileDocument class as follows:
+
+```java
+Document document = new FileDocument(new FileReader("test.html"), new HashMap(), Tokeniser.getTokeniser());
+```
+However, if we do so the stored text String will read:
+
+```java
+"<html><head></head><body><p>This is a sample HTML document</p></body></html>"
+```
+
+On the other hand, if we instead convert this to a Terrier Document using the TaggedDocument class the stored text string will read:
+```java
+"This is a sample HTML document"
+```
+since TaggedDocument (by default) only stores text contained within the tags, not the tags themselves. In practice, we recommend that you use a Document implementation that stores only the text that you are interested in searching for within each document, as this will often result in better search effectiveness, consume less memory and make searches faster. 
+
+### Giving Each Document A Meaningful Identifier
+
+When we add a document to a Terrier index, it is automatically assigned a numeric identifier (known as a 'docid'). However, in practice, we nearly always want to define a different identifier for each document that is more meaningful. For instance, when indexing a collection of webpages, we might want to refer to each page by its name or url. 
+
+To do this, we need to do two things:
+1. Configure Terrier such that it knows to store a named key
+2. Add the key to each document
+
+The Terrier configuration is stored in a static class called ApplicationSetup. We can add new configuration settings to Terrier using the `ApplicationSetup.setProperty(key, value)` method. Earlier, we noted that each Terrier Document optionally has a String->String map that contains metadata about that document. When a document is indexed, Terrier checks the keys in this map against a pre-defined list of keys to store. If it finds a match, it records the value of that key within the index itself. You can specify which keys to store via the `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` properties as shown below:
+
+```java
+ApplicationSetup.setProperty("indexer.meta.forward.keys", "docno");
+ApplicationSetup.setProperty("indexer.meta.forward.keylens", "30");
+```
+In this case, we are specifying that each document will have a key called 'docno' that we want to store and that the maximum 'docno' length is 30 characters. Both `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` are comma-delimited lists, such that you can specify multiple keys to store. 
+
+> **Troubleshooting Tips**:
+> *  ApplicationSetup.setProperty() must be called before the index is initalized, i.e. before `new MemoryIndex()` is called
+> *  `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` must have the same number of entries
+
+Once we have configured Terrier, we also need to add the new identifiers to each document. Assuming we have already created a document called 'document', we can add an identifier as follows:
+
+```java
+document.getAllProperties().put("docno", "This-is-test.html");
+```
+
+### Indexing the Documents
+Now that we know how to convert files or pieces of text into Terrier Documents, the next step it to create an index and add those documents to it. The index is a storage structure that contains the documents that are to be made available for search. Indices extend the Index class in Terrier. There are three categories of index currently supported in Terrier, namely: IndexOnDisk, IncrementalIndex and MemoryIndex. For this quickstart we will be focusing on the MemoryIndex. 
+
+MemoryIndex is a convenient index class to use when you have a reletively small number of documents that you need to search over, e.g. 10,000 to about 100,000 web pages. The memory index stores documents as a series of arrays in local memory (RAM).  
+
+A new memory index can be made using the default MemoryIndex constructor:
+
+```java 
+MemoryIndex memIndex = new MemoryIndex();
+```
+Once we have an index, new documents can be easily added using the `indexDocument()` method:
+
+```java
+memIndex.indexDocument(document);
+```
+
+### Full Indexing Example
+
+```java
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
+import org.terrier.indexing.Document;
+import org.terrier.indexing.TaggedDocument;
+import org.terrier.indexing.tokenisation.Tokeniser;
+import org.terrier.realtime.memory.MemoryIndex;
+import org.terrier.utility.ApplicationSetup;
+
+public class IndexingExample {
+
+	public static void main(String[] args) throws Exception {
+    
+        // Directory containing files to index
+    	String aDirectoryToIndex = "/my/directory/containing/files/";
+		
+        // Configure Terrier
+		ApplicationSetup.setProperty("indexer.meta.forward.keys", "docno");
+        ApplicationSetup.setProperty("indexer.meta.forward.keylens", "30");
+        
+        // Create a new Index
+		MemoryIndex memIndex = new MemoryIndex();
+		
+        // For each file
+		for (String filename : new File(aDirectoryToIndex).list() ) {
+			
+			String fullPath = aDirectoryToIndex+filename;
+			
+            // Convert it to a Terrier Document
+			Document document = new TaggedDocument(new FileReader(fullPath), new HashMap(), Tokeniser.getTokeniser());
+            
+            // Add a meaningful identifier
+			document.getAllProperties().put("docno", filename);
+
+			// index it
+			memIndex.indexDocument(document);
+		}
+    }
+}
+```
 
 
 Issuing Searches
