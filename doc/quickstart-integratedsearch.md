@@ -28,16 +28,13 @@ To search our index, we need to use a querying Manager, which does the work of s
 
 ```java
 Manager queryingManager = new Manager(memIndex);
-SearchRequest srq = queryingManager.newSearchRequest("query1", "my terrier query");
+SearchRequest srq = queryingManager.newSearchRequestFromQuery("my terrier query");
 srq.addMatchingModel("Matching","BM25");
 ```
-Finally, we issue the search, which is comprised of four stages.
+Finally, we issue the search:
 
 ```java
-queryingManager.runPreProcessing(srq);
-queryingManager.runMatching(srq);
-queryingManager.runPostProcessing(srq);
-queryingManager.runPostFilters(srq);
+queryingManager.runSearchRequest(srq);
 ```
 
 Once the search is finished, the results are stored in the SearchRequest as a ResultSet.
