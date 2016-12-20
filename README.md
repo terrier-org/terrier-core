@@ -3,7 +3,7 @@ Terrier IR Platform - Terabyte Retriever v4.2
 
 [Terrier](http://terrier.org) is a highly flexible, efficient, and effective open source search engine, readily deployable on large-scale collections of documents. Terrier implements state-of-the-art indexing and retrieval functionalities, and provides an ideal platform for the rapid development and evaluation of large-scale retrieval applications.
 
-Terrier is open source, and is a comprehensive, flexible and transparent platform for research and experimentation in text retrieval. [Research can easily be carried out](http://terrier.org/docs/current/bibliography.html) on standard [TREC](http://trec.nist.gov/) and [CLEF](http://www.clef-initiative.eu/) test collections.
+Terrier is open source, and is a comprehensive, flexible and transparent platform for research and experimentation in text retrieval. [Research can easily be carried out](http://terrier.org/doc/current/bibliography.html) on standard [TREC](http://trec.nist.gov/) and [CLEF](http://www.clef-initiative.eu/) test collections.
 
 Terrier is written in Java, and is developed at the School of Computing Science, [University of Glasgow](http://www.gla.ac.uk/).
 
@@ -20,7 +20,7 @@ The source and binary forms of Terrier are subject to the following
 citation license: 
 
 By downloading Terrier, you agree to cite at least
-one of [these three papers](docs/bibliography.html) describing Terrier in any kind of material 
+one of [these three papers](doc/bibliography.html) describing Terrier in any kind of material 
 you produce where Terrier was used to conduct search or 
 experimentation, whether be it a research paper, dissertation, 
 article, poster, presentation, or documentation. For more information
