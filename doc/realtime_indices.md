@@ -1,4 +1,3 @@
-<span>\[</span>[Previous: Evaluation](evaluation.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Desktop Search in Terrier](terrier_desktop.html)<span>\]</span>
 
 Real-time Indexing with Terrier
 ===============================
@@ -73,21 +72,15 @@ Below we give some examples for using the real-time Terrier index structures.
     // define a matching model, in this case use the classical BM25 retrieval model
     srq.addMatchingModel("Matching","BM25");
 
-    // run the four stages of a Terrier search
-    queryingManager.runPreProcessing(srq);
-    queryingManager.runMatching(srq);
-    queryingManager.runPostProcessing(srq);
-    queryingManager.runPostFilters(srq);
+    // run a Terrier search
+    queryingManager.runSearchRequest(srq);
 
     ResultSet results = srq.getResultSet();
 
-<span>\[</span>[Previous: Evaluation](evaluation.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Desktop Search in Terrier](terrier_desktop.html)<span>\]</span>
 
-------------------------------------------------------------------------
-
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+------------------------
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
 
  

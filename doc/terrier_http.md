@@ -1,4 +1,3 @@
-<span>\[</span>[Previous: Desktop Search](terrier_desktop.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Website Search Application](website_search.html)<span>\]</span>
 
 Using Terrier for Web-based Search
 ==================================
@@ -257,13 +256,11 @@ The two initial interfaces provided with Terrier can be easily extended to add m
 
 `bin/http_terrier.sh` invokes [SimpleJettyHTTPServer](javadoc/org/terrier/utility/SimpleJettyHTTPServer.html), which starts a [Jetty](http://www.eclipse.org/jetty/) server on the port specified on the command line. The second command line argument is the path to a webapps folder. `share/images` is also mounted as `/images` directory.
 
-<span>\[</span>[Previous: Desktop Search](terrier_desktop.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Website Search Application](website_search.html)<span>\]</span>
 
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
-
+------------------------
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
  
