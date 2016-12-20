@@ -10,14 +10,14 @@ DFR models are obtained by instantiating the three components of the framework: 
 Basic Randomness Models
 -----------------------
 
-The DFR models are based on this simple idea: “The more the divergence of the within-document term-frequency from its frequency within the collection, the more the information carried by the word *t* in the document *d*”. In other words the term-weight is inversely related to the probability of term-frequency within the document *d* obtained by a model *M* of randomness:
+The DFR models are based on this simple idea: *"The more the divergence of the within-document term-frequency from its frequency within the collection, the more the information carried by the word *t* in the document *d*"*. In other words the term-weight is inversely related to the probability of term-frequency within the document *d* obtained by a model *M* of randomness:
 
 ![Equation 1](http://terrier.org/docs/v4.1/images/img1.png "Equation 1")
 
 where the subscript *M* stands for the type of model of randomness employed to compute the probability. In order to choose the appropriate model *M* of randomness, we can use different urn models. IR is thus seen as a probabilistic process, which uses random drawings from urn models, or equivalently random placement of coloured balls into urns. Instead of *urns* we have *documents*, and instead of different *colours* we have different *terms*, where each term occurs with some multiplicity in the urns as anyone of a number of related words or phrases which are called *tokens* of that term. There are many ways to choose *M*, each of these provides a *basic DFR model*. The basic models are derived in the following table.
 
 | Model | Description |
-|---|---|
+|---|------------------------------------------|
 | D | Divergence approximation of the binomial |
 | [P](javadoc/org/terrier/matching/models/basicmodel/P.html) | Approximation of the binomial |
 | [B<sub>E</sub>](javadoc/org/terrier/matching/models/basicmodel/B.html) | Bose-Einstein distribution |
@@ -84,7 +84,7 @@ DFR Models in Terrier
 Included with Terrier, are many of the DFR models, including:
 
 | Model | Description |
-|---|---|
+|---|-----------------------------------------------------------------------------|
 | BB2 | Bernoulli-Einstein model with Bernoulli after-effect and normalisation 2. |
 | IFB2 | Inverse Term Frequency model with Bernoulli after-effect and normalisation 2.
 | In\_expB2 | Inverse Expected Document Frequency model with Bernoulli after-effect and normalisation 2. The logarithms are base 2. This model can be used for classic ad-hoc tasks. |
@@ -102,7 +102,7 @@ Query Expansion
 
 The query expansion mechanism extracts the most informative terms from the top-returned documents as the expanded query terms. In this expansion process, terms in the top-returned documents are weighted using a particular DFR term weighting model. Currently, Terrier deploys the Bo1 (Bose-Einstein 1), Bo2 (Bose-Einstein 2) and KL (Kullback-Leibler) term weighting models. The DFR term weighting models follow a parameter-free approach in default.
 
-An alternative approach is Rocchio’s query expansion mechanism. A user can switch to the latter approach by setting `parameter.free.expansion` to `false` in the `terrier.properties` file. The default value of the parameter beta of Rocchio’s approach is `0.4`. To change this parameter, the user needs to specify the property rocchio\_beta in the `terrier.properties` file.
+An alternative approach is Rocchio's query expansion mechanism. A user can switch to the latter approach by setting `parameter.free.expansion` to `false` in the `terrier.properties` file. The default value of the parameter beta of Rocchio's approach is `0.4`. To change this parameter, the user needs to specify the property rocchio\_beta in the `terrier.properties` file.
 
 Fields
 ------
