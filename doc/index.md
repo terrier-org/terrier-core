@@ -10,7 +10,7 @@ Quickstart Guides
 >This quickstart guide is designed for information retrieval students and researchers looking to use Terrier to experiment with or learn about some aspect of a search engine. The main learning outcomes are: how to download and install a local copy of the Terrier platform; how to produce an on-disk index from a collection of documents; and how to issue single queries as well as batches of queries over that index from the command line.   
 
 > ### [Integrating Terrier as a Search Engine into your Java Application](quickstart-integratedsearchdisk.md)
-> This quickstart guide is for software developers that want to use Terrier as a search engine within their own application. The guide covers how to import Terrier as an application dependancy using Maven, how to create an index, how to index files within your java program, and how to issue queries to the index. A [variant of the quickstart](quickstart-integratedsearchdisk.md) shows the same using exclusively in-memory data structures.
+> This quickstart guide is for software developers that want to use Terrier as a search engine within their own application. The guide covers how to import Terrier as an application dependancy using Maven, how to create an index, how to index files within your java program, and how to issue queries to the index. A [variant of the quickstart](quickstart-integratedsearch.md) shows the same using exclusively in-memory data structures.
 
 
 Table of Contents
