@@ -28,6 +28,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<year>2016</year>
+		<gpg.skip>true</gpg.skip>
 	</properties>
 
 	<scm>
@@ -541,7 +542,6 @@
 					</includes>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
@@ -556,7 +556,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			
 		</plugins>
 	</build>
 
