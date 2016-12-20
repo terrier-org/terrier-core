@@ -30,8 +30,8 @@ citation licence.
 
 ### Getting Started
 
-In order to start [experimenting with Terrier](http://www.terrier.org/docs/current/quickstart_experiments.md) or 
-[developing new applications with Terrier](http://www.terrier.org/docs/current/quickstart-integratedsearch.md), we recommend starting from the [quickstart documentation](http://www.terrier.org/docs/current/docs/index.html). 
+In order to start [experimenting with Terrier](http://terrier.org/docs/current/quickstart_experiments.md) or 
+[developing new applications with Terrier](http://terrier.org/docs/current/quickstart-integratedsearch.md), we recommend starting from the [quickstart documentation](http://terrier.org/docs/current/docs/index.html). 
 
 ### Other Resources
 * The full documentation of Terrier can also be found on the offical [website](http://terrier.org/). 
