@@ -61,7 +61,7 @@ Batch Retrieval
 
 When experimenting with topics in files other than English, use the same `tokeniser` setting used during indexing. Moreover, you should also use the property `trec.encoding` to ensure that the correct encoding is used when reading the topic files.
 
-
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+-------------------------
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

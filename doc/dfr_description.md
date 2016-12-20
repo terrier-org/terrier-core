@@ -92,9 +92,9 @@ Included with Terrier, are many of the DFR models, including:
 | InL2 | Inverse Document Frequency model with Laplace after-effect and normalisation 2. This model can be used for tasks that require early precision. |
 | PL2 | Poisson model with Laplace after-effect and normalisation 2. This model can be used for tasks that require early precision [7,8] |
 
-Recommended settings for various collection are provided in [Example TREC Experiments](trec_examples.html#paramsettings).
+Recommended settings for various collection are provided in [Example TREC Experiments](trec_examples.md#paramsettings).
 
-Another provided [weighting model](javadoc/org/terrier/matching/models/DFR_BM25.html) is a derivation of the BM25 formula from the Divergence From Randomness framework. Finally, Terrier also provides a [generic DFR weighting model](javadoc/org/terrier/matching/models/DFRWeightingModel.html), which allows any DFR model to be [generated and evaluated](extend_retrieval.html).
+Another provided [weighting model](javadoc/org/terrier/matching/models/DFR_BM25.html) is a derivation of the BM25 formula from the Divergence From Randomness framework. Finally, Terrier also provides a [generic DFR weighting model](javadoc/org/terrier/matching/models/DFRWeightingModel.html), which allows any DFR model to be [generated and evaluated](extend_retrieval.md).
 
 
 Query Expansion

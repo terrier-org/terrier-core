@@ -37,7 +37,7 @@ It is very easy to implement your own weighting models in Terrier. Simply write 
 
 **Generic Divergence From Randomness (DFR) Weighting Models**
 
-The [DFRWeightingModel](javadoc/org/terrier/matching/models/DFRWeightingModel.html) class provides an interface for freely combining different components of the DFR framework. It breaks a DFR weighting model into three components: the basic model for randomness, the first normalisation by the after effect, and term frequency normalisation. Details of these three components can be found from [a description of the DFR framework](dfr_description.html). The DFRWeightingModel class provides an alternate and more flexible way of using the DFR weighting models in Terrier. For example, to use the [PL2](javadoc/org/terrier/matching/models/PL2.html) model, the name of the model `PL2` should be given in `etc/trec.models`, or set using the property `trec.model`. Alternatively, using the DFRWeightingModel class, we can replace `PL2` with `DFRWeightingModel(P, L, 2)`, where the three components of PL2 are specified in the brackets, separated by commas. If we do not want to use one of the three components, for example the first normalisation L, we can leave the space for this component blank (i.e. `DFRWeightingModel(P, , 2)`). We can also discard term frequency normalisation by removing the 2 between the brackets (i.e. `DFRWeightingModel(P, , )`). However, a basic randomness model must always be given.
+The [DFRWeightingModel](javadoc/org/terrier/matching/models/DFRWeightingModel.html) class provides an interface for freely combining different components of the DFR framework. It breaks a DFR weighting model into three components: the basic model for randomness, the first normalisation by the after effect, and term frequency normalisation. Details of these three components can be found from [a description of the DFR framework](dfr_description.md). The DFRWeightingModel class provides an alternate and more flexible way of using the DFR weighting models in Terrier. For example, to use the [PL2](javadoc/org/terrier/matching/models/PL2.html) model, the name of the model `PL2` should be given in `etc/trec.models`, or set using the property `trec.model`. Alternatively, using the DFRWeightingModel class, we can replace `PL2` with `DFRWeightingModel(P, L, 2)`, where the three components of PL2 are specified in the brackets, separated by commas. If we do not want to use one of the three components, for example the first normalisation L, we can leave the space for this component blank (i.e. `DFRWeightingModel(P, , 2)`). We can also discard term frequency normalisation by removing the 2 between the brackets (i.e. `DFRWeightingModel(P, , )`). However, a basic randomness model must always be given.
 
 The basic randomness models, the first normalisation methods, and the term frequency normalisation methods are included in packages [org.terrier.matching.models.basicmodel](javadoc/org/terrier/matching/models/basicmodel/package-summary.html), [org.terrier.matching.models.aftereffect](javadoc/org/terrier/matching/models/aftereffect/package-summary.html) and [org.terrier.matching.models.normalisation](javadoc/org/terrier/matching/models/normalisation/package-summary.html), respectively. Many implementations of each are provided, allowing a vast number of DFR weighting models to be generated.
 
@@ -84,6 +84,7 @@ double p = le == null
 ```
 
 **What terms occur in the 11th document?**
+```java
 Index index = Index.createIndex();
 PostingIndex<Pointer> di = index.getDirectIndex();
 DocumentIndex doi = index.getDocumentIndex();
@@ -94,7 +95,7 @@ while (postings.next() != IterablePosting.EOL) {
 	Map.Entry<String,LexiconEntry> lee = lex.getLexiconEntry(postings.getId());
 	System.out.print(lee.getKey() + " with frequency " + postings.getFrequency());
 }
-
+```
 
 **What documents does term Z occur in, and at what position?**
 
@@ -128,6 +129,6 @@ Below, you can find a example sample of using the querying functionalities of Te
 
 ------------------------------------------------------------------------
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

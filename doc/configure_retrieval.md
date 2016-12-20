@@ -1,4 +1,4 @@
-<span>\[</span>[Previous: Configuring Indexing](configure_indexing.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Learning to Rank with Terrier](learning.html)<span>\]</span>
+
 
 # Configuring Retrieval in Terrier
 
@@ -54,7 +54,7 @@ Support for single-line topic files is provided by the SingleLineTRECQuery class
 
 Next, we need to specify which of the available weighting models we will use for assigning scores to the retrieved documents. We do this by specifying the name of the corresponding model class in the property `trec.model`. E.g. `trec.model=PL2`.
 
-Terrier provides implementations of many weighting models (see [org.terrier.matching.models](javadoc/org/terrier/matching/models/package-summary.html) for the full list). In particular, some of the notable weighting models implemented include many from the [Divergence from Randomness (DFR) framework](dfr_description.html), among others:
+Terrier provides implementations of many weighting models (see [org.terrier.matching.models](javadoc/org/terrier/matching/models/package-summary.html) for the full list). In particular, some of the notable weighting models implemented include many from the [Divergence from Randomness (DFR) framework](dfr_description.md), among others:
 
 -   [BB2](javadoc/org/terrier/matching/models/BB2.html) (DFR): Bose-Einstein model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation .
 
@@ -88,13 +88,13 @@ Terrier provides implementations of many weighting models (see [org.terrier.matc
 
 -   [TF\_IDF](javadoc/org/terrier/matching/models/TF_IDF.html): The tf\*idf weighting function, where tf is given by Robertson’s tf and idf is given by the standard Sparck Jones’ idf.
 
--   [DFRWeightingModel](javadoc/org/terrier/matching/models/DFRWeightingModel.html): This class provides an alternative way of specifying an arbitrary DFR weighting model, by mixing the used components . For usage, see [Extending Retrieval](extend_retrieval.html) and background material in [Description of DFR](dfr_description.html).
+-   [DFRWeightingModel](javadoc/org/terrier/matching/models/DFRWeightingModel.html): This class provides an alternative way of specifying an arbitrary DFR weighting model, by mixing the used components . For usage, see [Extending Retrieval](extend_retrieval.md) and background material in [Description of DFR](dfr_description.md).
 
 To process the queries, ensure the topics are specified in the `trec.topics` property, then type the following:
 
     bin/trec_terrier.sh -r -c 1.0
 
-where the option `-r` specifies that we want to perform retrieval, and the option `-c 1.0` specifies the parameter value for the term frequency normalisation.
+where the option `-r` specifies that we want to perform retrieval, and the option `-c 1.0` specifies the parameter value for the term frequency normalisation.
 
 To process queries using a specific weighting model, we can *override* the `trec.model` property on the command line:
 
@@ -119,7 +119,7 @@ Since version 3.0, Terrier has support for field-based weighting models. In part
 
 -   Arbitrary per-field normalisation weighting models can be generated using [PerFieldNormWeightingModel](javadoc/org/terrier/matching/models/PerFieldNormWeightingModel.html) in a similar manner to DFRWeightingModel.
 
-To use a field-based model, you have to index using fields. See [Configuring Indexing](configure_indexing.html) for more details on how to configure fields during indexing.
+To use a field-based model, you have to index using fields. See [Configuring Indexing](configure_indexing.md) for more details on how to configure fields during indexing.
 
 Different field-based models have different parameters, as controlled by various properties. These generally include weights for each field, namely `w.0`, `w.1`, etc. Per-field normalisation models, such as BM25F and PL2F also require the normalisation parameters for each field, namely `c.0`, `c.1`, and so on. To run with a field-based model:
 
@@ -130,7 +130,7 @@ For improved efficiency of field-based weighting models, it is recommended that 
 Proximity (Dependence) Models
 -----------------------------
 
-Since version 3.0, Terrier includes two dependence models. Such models highly weight documents where the query terms are in close proximity. To use a term dependence model, you have to index using blocks - see [Configuring Indexing](configure_indexing.html) for more details on how to configure block indexing.
+Since version 3.0, Terrier includes two dependence models. Such models highly weight documents where the query terms are in close proximity. To use a term dependence model, you have to index using blocks - see [Configuring Indexing](configure_indexing.md) for more details on how to configure block indexing.
 
 Two dependence models are included:
 
@@ -158,7 +158,7 @@ The property `ssa.w` controls the weight of your feature. For more information o
 Query Expansion
 ---------------
 
-Terrier also offers a query expansion functionality. For a brief description of the query expansion module, you may view the [query expansion section of the DFR Framework description](dfr_description.html#queryexpansion). The term weighting model used for expanding the queries with the most informative terms of the top-ranked documents is specified by the property `trec.qe.model`, the default value is [Bo1](javadoc/org/terrier/matching/models/queryexpansion/Bo1.html), which refers to the class implemnting the term weighting model to be used for query expansion. Terrier has other query expansion models, including [Bo2](javadoc/org/terrier/matching/models/queryexpansion/Bo2.html) and [KL](javadoc/org/terrier/matching/models/queryexpansion/KL.html) - see [org.terrier.matching.models.queryexpansion](javadoc/org/terrier/matching/models/queryexpansion/package-summary.html) for the full list.
+Terrier also offers a query expansion functionality. For a brief description of the query expansion module, you may view the [query expansion section of the DFR Framework description](dfr_description.md#queryexpansion). The term weighting model used for expanding the queries with the most informative terms of the top-ranked documents is specified by the property `trec.qe.model`, the default value is [Bo1](javadoc/org/terrier/matching/models/queryexpansion/Bo1.html), which refers to the class implemnting the term weighting model to be used for query expansion. Terrier has other query expansion models, including [Bo2](javadoc/org/terrier/matching/models/queryexpansion/Bo2.html) and [KL](javadoc/org/terrier/matching/models/queryexpansion/KL.html) - see [org.terrier.matching.models.queryexpansion](javadoc/org/terrier/matching/models/queryexpansion/package-summary.html) for the full list.
 
 In addition, there are two parameters that can be set for applying query expansion. The first one is the number of terms to expand a query with, specified by the property `expansion.terms` - default value `10`. Moreover, the number of top-ranked documents from which these terms are extracted is specified by the property `expansion.documents`, the default value of which is 3.
 
@@ -173,7 +173,7 @@ Relevance feedback is also supported by Terrier, assuming that the relevant docu
 Learning to Rank
 ----------------
 
-Since version 4.0, Terrier has offered learning to rank functionality, based on the so-called Fat framework. This allows multiple features (which can be query-dependent or query-independent) to be calculated during the Matching process, and then combined using a machine learned ranking model. In particular, any weighting model in Terrier can be used as an additional query-dependent feature. For more information on these new, advanced functionalities in Terrier - including a worked example using a TREC Web track corpus - see [Learning to Rank with Terrier](learning.html).
+Since version 4.0, Terrier has offered learning to rank functionality, based on the so-called Fat framework. This allows multiple features (which can be query-dependent or query-independent) to be calculated during the Matching process, and then combined using a machine learned ranking model. In particular, any weighting model in Terrier can be used as an additional query-dependent feature. For more information on these new, advanced functionalities in Terrier - including a worked example using a TREC Web track corpus - see [Learning to Rank with Terrier](learning.md).
 
 Other Configurables
 -------------------
@@ -209,6 +209,6 @@ Bibliography
 
 ------------------------------------------------------------------------
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

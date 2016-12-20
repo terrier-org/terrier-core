@@ -2,14 +2,14 @@
 Real-time Indexing and Search of Websites
 =========================================
 
-In Terrier 4.0, a new website search application was added to facilitate easy indexing and search of websites. This application combines the crawling functionality of [Crawler4J](http://code.google.com/p/crawler4j/), the Terrier’s [updatable Memory index structures](realtime_indices.html) and a [Web-based Terrier front-end](terrier_http.html) to demonstrate real-time indexing and retrieval of content from the Web. In particular, this application allows websites to be added dynamically to a frontier of pages to be crawled. Pages from the added websites will be downloaded in the background and indexed automatically. The browser-based search interface provides a basic search facility over the index produced.
+In Terrier 4.0, a new website search application was added to facilitate easy indexing and search of websites. This application combines the crawling functionality of [Crawler4J](http://code.google.com/p/crawler4j/), the Terrier’s [updatable Memory index structures](realtime_indices.md) and a [Web-based Terrier front-end](terrier_http.md) to demonstrate real-time indexing and retrieval of content from the Web. In particular, this application allows websites to be added dynamically to a frontier of pages to be crawled. Pages from the added websites will be downloaded in the background and indexed automatically. The browser-based search interface provides a basic search facility over the index produced.
 
 Launching the Website Search Application
 ----------------------------------------
 
 The website search application is comprised of two main components. First, the [org.terrier.services.websitesearch](javadoc/org/terrier/services/websitesearch/package-summary.html) package contains a service class named [WebsiteSearch](javadoc/org/terrier/services/websitesearch/WebsiteSearch.html) that provides methods to crawl new websites, index documents from those websites, search over the index produced and write the index to disk. Second, a JSP (java servlet page) search interface is stored in *src/webapps/websitesearch/* that provides search controls and rendering capability for the search results. The website search application is launched via the JSP search interface, which calls the java WebsiteSearch service internally top access all needed functionality.
 
-Since the interface is represented as a java servlet page, it can be loaded into a Jetty webserver using [http\_terrier.sh](terrier_http.html) by specifying the website search interface as follows:
+Since the interface is represented as a java servlet page, it can be loaded into a Jetty webserver using [http\_terrier.sh](terrier_http.md) by specifying the website search interface as follows:
 
     bin/http_terrier.sh 8080 src/webapps/websitesearch/
 

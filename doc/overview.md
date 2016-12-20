@@ -1,4 +1,4 @@
-<span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: What’s new](whats_new.html)<span>\]</span>
+
 
 Terrier Features
 ================
@@ -65,11 +65,11 @@ Below, you can find a succinct list of features offered by Terrier.
 
 -   Provides standard querying facilities, as well as Query Expansion (pseudo-relevance feedback).
 
--   Can be applied in interactive applications, such as the included [Desktop Search](terrier_desktop.html), or in a batch setting for research and experimentation.
+-   Can be applied in interactive applications, such as the included [Desktop Search](terrier_desktop.md), or in a batch setting for research and experimentation.
 
 -   Provides many standard document weighting models, including up to 126 Divergence From Randomness (DFR) document ranking models, and other models such as Okapi BM25, language modelling and TF-IDF. Two new 2nd generation DFR weighting model, JsKLs and XSqrA\_M, are also included, which provide robust performance on a range of test collections without the need for any parameter tuning or training.
 
--   Advanced [query language](querylanguage.html) that supports synonyms, +/- operators, phrase and proximity search, and fields.
+-   Advanced [query language](querylanguage.md) that supports synonyms, +/- operators, phrase and proximity search, and fields.
 
 -   ***NEW!*** Learning-to-rank support enables out-of-the-box supervised ranking models.
 
@@ -79,17 +79,16 @@ Below, you can find a succinct list of features offered by Terrier.
 
 ### Experimentation
 
--   Handles all currently available TREC test collections - see [TREC Experimentation Examples](trec_examples.html) for examples and known settings.
+-   Handles all currently available TREC test collections - see [TREC Experimentation Examples](trec_examples.md) for examples and known settings.
 
 -   Easily scriptable to evaluate many parameter settings, or many weighting models in batch form.
 
--   Built-in [evaluation tools](evaluation.html) for use with TREC ad-hoc and known-item search retrieval results, to produce various Precision and Recall measures.
+-   Built-in [evaluation tools](evaluation.md) for use with TREC ad-hoc and known-item search retrieval results, to produce various Precision and Recall measures.
 
-<span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: What’s new](whats_new.html)<span>\]</span>
+
 
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

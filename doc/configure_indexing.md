@@ -4,7 +4,7 @@ Configuring Indexing in Terrier
 Indexing Overview
 -----------------
 
-The indexing process in Terrier is described [here](http://terrier.org/docs/current/basicComponents.html)
+The indexing process in Terrier is described [here](http://terrier.org/docs/current/basicComponents.md)
 
 Firstly, a [Collection](javadoc/org/terrier/indexing/TRECCollection.html) object extracts the raw content of each individual document (from a collection of documents) and hands it in to a [Document](javadoc/org/terrier/indexing/Document.html) object. The Document object then removes any unwanted content (e.g., from a particular document tag) and gives the resulting text to a [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) object. Finally, the Tokeniser converts the text into a stream of tokens that represent the content of the document.
 
@@ -89,7 +89,7 @@ Document metadata is recorded in a [MetaIndex](javadoc/org/terrier/structures/Me
 
 -   `indexer.meta.reverse.keys` - Comma-delimited list of document attributes that *uniquely* denote a document. These mean that given a document attribute value, a single document can be identified.
 
-Note that for presenting results to a user, additional indexing configuration is required. See [Web-based Terrier](terrier_http.html) for more information.
+Note that for presenting results to a user, additional indexing configuration is required. See [Web-based Terrier](terrier_http.md) for more information.
 
 ### Choice of Indexers
 
@@ -97,13 +97,13 @@ Terrier supports three types of indexing: *classical two-pass*, *single-pass* an
 
 ### Classical two-pass indexing
 
-Classical indexing works by creating a direct index, and then inverting that data structure to create an inverted index. For details on the implementation of classical indexing, see the [indexing implementation](indexer_details.html) documentation.
+Classical indexing works by creating a direct index, and then inverting that data structure to create an inverted index. For details on the implementation of classical indexing, see the [indexing implementation](indexer_details.md) documentation.
 
 ### Single-pass indexing
 
 Single-pass indexing is implemented by the classes [BasicSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html) and [BlockSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html). Essentially, instead of building a direct file from the collection, term posting lists are held in memory, and written to disk when memory is exhausted. The final step merged the temporary files to form the lexicon and the inverted file. Notably, single-pass indexing does not build a direct index. However, a direct index can be build later using the `--inverted2direct` command line argument to TrecTerrier.
 
-For details on the implementation of single-pass indexing, see the [indexing implementation](indexer_details.html) documentation.
+For details on the implementation of single-pass indexing, see the [indexing implementation](indexer_details.md) documentation.
 
 ### Threaded indexing
 
@@ -111,16 +111,16 @@ Starting from version 4.2, Terrier has *experimental* support for indexing using
 
 ### MapReduce indexing
 
-For large-scale collections, Terrier provides a MapReduce based indexing system. For more details, please see [Hadoop MapReduce Indexing with Terrier](hadoop_indexing.html).
+For large-scale collections, Terrier provides a MapReduce based indexing system. For more details, please see [Hadoop MapReduce Indexing with Terrier](hadoop_indexing.md).
 
 ### Real-time indexing
 
-Terrier also supports the real-time indexing of document collections using MemoryIndex and IncrementalIndex structures, allowing for new documents to be added to the index at later points in time. For more details, please see [Real-time Index Structures](realtime_indices.html).
+Terrier also supports the real-time indexing of document collections using MemoryIndex and IncrementalIndex structures, allowing for new documents to be added to the index at later points in time. For more details, please see [Real-time Index Structures](realtime_indices.md).
 
 Compression
 -----------
 
-By default, Terrier uses Elias-Gamma and Elias-Unary algorithms for ensuring a highly compressed direct and inverted indices, however starting with version 4.0 Terrier now has support for a variety of state-of-the-art compression schemes including PForDelta. For more information about configuring the compression used for indexing, see the [documentation on compression](compression.html).
+By default, Terrier uses Elias-Gamma and Elias-Unary algorithms for ensuring a highly compressed direct and inverted indices, however starting with version 4.0 Terrier now has support for a variety of state-of-the-art compression schemes including PForDelta. For more information about configuring the compression used for indexing, see the [documentation on compression](compression.md).
 
 More about Block Indexing
 -------------------------
@@ -133,7 +133,7 @@ A block is a unit of text in a document. When you index using blocks, you tell T
 
 You can enable block indexing by setting the property `block.indexing` to `true` in your terrier.properties file. This ensures that the Indexer used for indexing is the BlockIndexer, not the BasicIndexer (or BlockSinglePassIndexer instead of BasicSinglePassIndexer). When loading an index, Terrier will detect that the index has block information saved and use the appropriate classes for reading the index files.
 
-You can use the positional information when doing retrieval. For instance, you can search for documents matching a phrase, e.g. `Terabyte retriever`, or where the words occur near each other, e.g. `indexing blocks~20`.
+You can use the positional information when doing retrieval. For instance, you can search for documents matching a phrase, e.g. `Terabyte retriever`, or where the words occur near each other, e.g. `indexing blocks~20`.
 
 ### What changes when I use block indexing?
 
@@ -141,6 +141,6 @@ When you enable the property `block.indexing`, TrecTerrier will use the BlockInd
 
 ------------------------------------------------------------------------
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

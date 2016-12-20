@@ -48,7 +48,7 @@ Here we provide a listing and brief description of Terrier's components.
 
 ### Indexing
 
-|**Name** | **Description** ||
+|**Name** | **Description** |
 |--|--|
 |**Collection** | This component encapsulates the most fundamental concept to indexing with Terrier - a Collection i.e. a set of documents. See [org.terrier.indexing.Collection](javadoc/org/terrier/indexing/Collection.html) for more details.|
 |**Document** | This component encapsulates the concept of a document. It is essentially an Iterator over terms in a document. See [org.terrier.indexing.Document](javadoc/org/terrier/indexing/Document.html) for more details.|
@@ -98,6 +98,7 @@ See [org.terrier.querying.Manager](javadoc/org/terrier/querying/Manager.html) fo
 **Desktop Terrier** | An application that allows for indexing and retrieval of local user content. See [org.terrier.applications.desktop package](javadoc/org/terrier/applications/desktop/package-summary.html) for more details.
 **HTTP Terrier** | An application that allows for retrieval of documents from a browser. See src/webapps/results.jsp for more details, or the [relevant documentation](terrier_http.html).
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+----------------------------------
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

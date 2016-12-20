@@ -4,7 +4,7 @@ Configuring Terrier
 Configuring Overview
 --------------------
 
-Terrier is configured overall by a few files, all in the `etc/` directory. The most central files are `terrier.properties` and `terrier-log.xml`. In `terrier.properties`, you can specify any of the various properties that are defined in Terrier. The [Properties](properties.html) documentation page lists the most used properties that you need to configure Terrier, while the [javadoc](javadoc/) for any class lists the properties that directly affect the class. The default `terrier.properties` file is given below:
+Terrier is configured overall by a few files, all in the `etc/` directory. The most central files are `terrier.properties` and `terrier-log.xml`. In `terrier.properties`, you can specify any of the various properties that are defined in Terrier. The [Properties](properties.md) documentation page lists the most used properties that you need to configure Terrier, while the [javadoc](javadoc/) for any class lists the properties that directly affect the class. The default `terrier.properties` file is given below:
 
     #default controls for query expansion
     querying.postprocesses.order=QueryExpansion
@@ -61,6 +61,6 @@ Terrier uses [Log4j](http://logging.apache.org/log4j/1.2/) for logging. You can 
 ------------------------------------------------------------------------
 
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

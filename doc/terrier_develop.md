@@ -1,16 +1,16 @@
 Developing Applications with Terrier
 ====================================
 
-Terrier provides APIs for [indexing](extend_indexing.html) documents, and [querying](extend_retrieval.html) the generated indices. If you are developing applications using Terrier or extending it for your own research, then you may find the following information useful.
+Terrier provides APIs for [indexing](extend_indexing.md) documents, and [querying](extend_retrieval.md) the generated indices. If you are developing applications using Terrier or extending it for your own research, then you may find the following information useful.
 
 Extending Terrier
 -----------------
 
-Terrier has a very flexible and modular architecture, with many classes, some with various alternatives. It is very easy to change many parts of the indexing and retrieval process. Essential to any in-depth extension of Terrier is to examine the very many [properties](properties.html) that can be configured in Terrier. For instance, if you write a new Matching class, you can use this in a TREC-like setting by setting the property `trec.matching`, while if you write a new document weighting model you should set the property `trec.model` to use it. For more information about extending the retrieval functionalities of Terrier, see [Extending Retrieval](extend_retrieval.html), and [Extending Indexing](extend_indexing.html) for more information about the indexing process Terrier uses.
+Terrier has a very flexible and modular architecture, with many classes, some with various alternatives. It is very easy to change many parts of the indexing and retrieval process. Essential to any in-depth extension of Terrier is to examine the very many properties that can be configured in Terrier. For instance, if you write a new Matching class, you can use this in a TREC-like setting by setting the property `trec.matching`, while if you write a new document weighting model you should set the property `trec.model` to use it. For more information about extending the retrieval functionalities of Terrier, see [Extending Retrieval](extend_retrieval.md), and [Extending Indexing](extend_indexing.md) for more information about the indexing process Terrier uses.
 
 ### FileSystem Abstraction Layer
 
-All File IO in Terrier (excluding the Desktop application and Terrier configuration) is performed using the [Files](javadoc/org/terrier/utility/Files.html) class. This affords various opportunities for allowing Terrier to run in various environments. In Terrier, a FileSystem abstraction layer was integrated into the Files class, such that other [FileSystem](javadoc/org/terrier/utility/io/FileSystem.html) implementations could be plugged in. By default, Terrier ships with two implementation, namely [LocalFileSystem](javadoc/org/terrier/utility/io/LocalFileSystem.html) for reading the local file system using the Java API, and [HTTPFileSystem](javadoc/org/terrier/utility/io/HTTPFileSystem.html) for reading files accessible by HTTP or HTTPS protocols. A filename is searched for a prefixing scheme (eg “file://”), similar to a URI or URL. If a scheme is detected, then Terrier will search through its known file system implementations for a file system supporting the found scheme. file:// is the default scheme if no scheme can be found in the filename; if the filename starts http://, then the file will be fetched by HTTP. This abstraction layer has also supported Hadoop Distributed Filesystem for prefixes with hdfs:// - for more information, see [Configuring Terrier for Hadoop](hadoop_configuration.html).
+All File IO in Terrier (excluding the Desktop application and Terrier configuration) is performed using the [Files](javadoc/org/terrier/utility/Files.html) class. This affords various opportunities for allowing Terrier to run in various environments. In Terrier, a FileSystem abstraction layer was integrated into the Files class, such that other [FileSystem](javadoc/org/terrier/utility/io/FileSystem.html) implementations could be plugged in. By default, Terrier ships with two implementation, namely [LocalFileSystem](javadoc/org/terrier/utility/io/LocalFileSystem.html) for reading the local file system using the Java API, and [HTTPFileSystem](javadoc/org/terrier/utility/io/HTTPFileSystem.html) for reading files accessible by HTTP or HTTPS protocols. A filename is searched for a prefixing scheme (eg “file://”), similar to a URI or URL. If a scheme is detected, then Terrier will search through its known file system implementations for a file system supporting the found scheme. file:// is the default scheme if no scheme can be found in the filename; if the filename starts http://, then the file will be fetched by HTTP. This abstraction layer has also supported Hadoop Distributed Filesystem for prefixes with hdfs:// - for more information, see [Configuring Terrier for Hadoop](hadoop_configuration.md).
 
 The Files layer can also transform paths to filenames on the fly. For example, if a certain HTTP namespace is accessible as a local file system, the Files layer can be informed using `Files.addPathTransformation()`. If you have a slow network file system, consider using the in-built caching layer in Files.
 
@@ -29,11 +29,11 @@ Terrier now uses [Maven](https://maven.apache.org) for dependencies, compiling t
 
 The following Maven goals can be used for recompiling Terrier:
 
--   `mvn compile` - compile
+-   `mvn compile` - compile
 
--   `mvn package` - make the jar and jar-with-dependencies
+-   `mvn package` - make the jar and jar-with-dependencies
 
--   `mvn package -DskipTests` - as above, but skipping the JUnit tests
+-   `mvn package -DskipTests` - as above, but skipping the JUnit tests
 
 Testing Terrier
 ---------------
@@ -51,6 +51,6 @@ Since Terrier 4.0, Terrier has an end-to-end test based on the TREC WT2G corpus.
 ------------------------------------------------------------------------
 
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

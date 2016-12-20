@@ -1,4 +1,4 @@
-Quickstart using Terrier for Experiments
+Quickstart Guide: Using Terrier for Experiments
 ==============================
 
 If you are interested in using Terrier straightaway in order to index and retrieve from standard test collections, then you may follow the steps described below. We provide step-by-step instructions for the installation of Terrier on Linux and Windows operating systems and guide you through your first indexing and retrieval steps on a test collection.
@@ -6,7 +6,7 @@ If you are interested in using Terrier straightaway in order to index and retrie
 Terrier Requirements
 --------------------
 
-Terrier’s single requirement consists of an installed Java JRE 1.8.0 or higher. You can download the JRE, or the JDK (if you want to [develop with Terrier](terrier_develop.html), or run the [web-based interface](terrier_http.html)), from the [Java website](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+Terrier’s single requirement consists of an installed Java JRE 1.8.0 or higher. You can download the JRE, or the JDK (if you want to [develop with Terrier](terrier_develop.md), or run the [web-based interface](terrier_http.md)), from the [Java website](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
 Download Terrier
 ----------------
@@ -178,7 +178,7 @@ You can also configure more options on the command line, e.g.:
 
     $bin/trec_terrier.sh -r -Dtrec.model=BM25 -c 0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
 
-So what are these? The `-r` parameter instructs Terrier to perform retrieval, while `-Dtrec.model=BM25`  tells Terrier to use the BM25 weighting model.  `-c` tells Terrier the parameter for the weighting model. BM25 is a classical Okapi model firstly defined by Stephen Robertson, while InL2 is a Divergence From Randomness weighting model (to learn more, see [the description of the DFR framework](dfr_description.html)).
+So what are these? The `-r` parameter instructs Terrier to perform retrieval, while `-Dtrec.model=BM25`  tells Terrier to use the BM25 weighting model.  `-c` tells Terrier the parameter for the weighting model. BM25 is a classical Okapi model firstly defined by Stephen Robertson, while InL2 is a Divergence From Randomness weighting model (to learn more, see [the description of the DFR framework](dfr_description.md)).
 
 3. Now we will evaluate the obtained results by using the `-e` option of trec\_terrier:
 
@@ -192,7 +192,7 @@ Terrier will look at the `var/results` directory, evaluate each .res file and sa
 
     ./bin/trec_terrier.sh -r -q
 
-See [the guide for configuring retrieval](configure_retrieval.html) for more information about QE. Note that your index must have a direct index structure to support QE, which is not built by default with single-pass indexing (see [Configuring Indexing](configure_indexing.html) for more information). Afterwards we can run the evaluation again by using trec\_terrier.sh with the `-e` parameter.
+See [the guide for configuring retrieval](configure_retrieval.md) for more information about QE. Note that your index must have a direct index structure to support QE, which is not built by default with single-pass indexing (see [Configuring Indexing](configure_indexing.md) for more information). Afterwards we can run the evaluation again by using trec\_terrier.sh with the `-e` parameter.
 
     ./bin/trec_terrier.sh -e -Dtrec.qrels=share/vaswani_npl/qrels
 
@@ -208,11 +208,11 @@ You can interact with your index using a Web-based querying interface. Firstly, 
 
     $bin/http_terrier.sh
 
-You can then enter queries and view results at <http://localhost:8080> (If your running Terrier on another machine, replace localhost with the hostname of the remote machine). Terrier can provide more information in the search results -- for more information on configuring the Web interface, please see [Using Web-based results](terrier_http.html).
+You can then enter queries and view results at <http://localhost:8080> (If your running Terrier on another machine, replace localhost with the hostname of the remote machine). Terrier can provide more information in the search results -- for more information on configuring the Web interface, please see [Using Web-based results](terrier_http.md).
 
 
 ------------------------------------------------------------------------
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

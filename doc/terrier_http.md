@@ -4,7 +4,8 @@ Using Terrier for Web-based Search
 
 Terrier supports dynamic search functionality in a Web browser environment. In particular, Terrier provides a customisable Web-based interface to facilitate retrieval of documents for a query and the summarisation of those documents in the form of snippets or abstracts, for display, in a similar way to major Web search engines. This page explains how to configure Terrier to enable a Web-based search interface like the one shown below:
 
-![image](images/WT2GWebInterface.png)
+
+![Website Search Crawling](http://terrier.org/docs/v4.1/images/WT2GWebInterface.png "Website Search Crawling")
 
 Requirements
 ------------
@@ -189,7 +190,7 @@ If you wish to use another webapps folder, or start the interface on a port othe
 
 The results for the same example query using the wt2g interface are shown below.
 
-![image](images/WT2GWebInterface.png)
+![WT2G Web Interface](http://terrier.org/docs/v4.1/images/WT2GWebInterface.png "WT2G Web Interface")
 
 ### Extending the Query Language
 
@@ -257,10 +258,10 @@ The two initial interfaces provided with Terrier can be easily extended to add m
 `bin/http_terrier.sh` invokes [SimpleJettyHTTPServer](javadoc/org/terrier/utility/SimpleJettyHTTPServer.html), which starts a [Jetty](http://www.eclipse.org/jetty/) server on the port specified on the command line. The second command line argument is the path to a webapps folder. `share/images` is also mounted as `/images` directory.
 
 
-------------------------------------------------------------------------
+
 
 ------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
- 
+ 
