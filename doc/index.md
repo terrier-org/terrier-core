@@ -41,9 +41,9 @@ Contains information about how to download, install and start running Terrier, a
 >[Running Batch IR Experiments with Terrier](quickstart_experiments.md)
 >A quickstart guide is designed for information retrieval students and researchers.
 
->[Integrating Terrier as a Search Engine into your Java Application with a persistent index](quickstart-integratedsearchdisk.md)
->[Integrating Terrier as a Search Engine into your Java Application, with a memory index](quickstart-integratedsearch.md)
->A quickstart guide is for software developers.
+>[Integrating Terrier as a Search Engine into your Java Application with a persistent index](quickstart-integratedsearchdisk.md)  
+>[Integrating Terrier as a Search Engine into your Java Application, with a memory index](quickstart-integratedsearch.md)  
+>Quickstart guides for software developers.
 
 ### Common Configuration Options
 
