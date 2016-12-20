@@ -73,7 +73,7 @@ Below, you can find a succinct list of features offered by Terrier.
 
 -   ***NEW!*** Learning-to-rank support enables out-of-the-box supervised ranking models.
 
--   Provides a number of parameter-free DFR term weighting models for automatic query expansion, in addition to Rocchio’s query expansion.
+-   Provides a number of parameter-free DFR term weighting models for automatic query expansion, in addition to Rocchio's query expansion.
 
 -   Flexible processing of terms through a pipeline of components, such as stopword removers and stemmers.
 
@@ -83,7 +83,7 @@ Below, you can find a succinct list of features offered by Terrier.
 
 -   Easily scriptable to evaluate many parameter settings, or many weighting models in batch form.
 
--   Built-in [evaluation tools](evaluation.md) for use with TREC ad-hoc and known-item search retrieval results, to produce various Precision and Recall measures.
+-   Built-in version of NIST's trec_eval software for evaluating precision and recall measures, see [evaluation tools](evaluation.md).
 
 
 
