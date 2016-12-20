@@ -71,16 +71,16 @@ Contains information about how to download, install and start running Terrier, a
 >[Terrier/Hadoop Configuration](hadoop_configuration.md)  
 >A guide to how to configure Terrier to use a Hadoop cluster
 
-### Built-In Applications
-
->[Desktop Search](terrier_desktop.md)  
->A guide to the included Desktop Search application of Terrier.
+### Search Applications
 
 >[Web-based Terrier](terrier_http.md)  
 >A guide to using the Web-based application of Terrier.
 
 >[Website Search Application](website_search.md)  
 >A guide to using the website search application, which illustrates real-time crawling, indexing and retrieval functionalities in Terrier.
+
+>[Desktop Search](terrier_desktop.md)  
+>A guide to the included Desktop Search application of Terrier.
 
 ### Experiment Support
 
