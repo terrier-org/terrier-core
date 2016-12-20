@@ -1,16 +1,16 @@
 Documentation for Terrier v4.2
 =============================
 
-Welcome to the documentation for the Terrier IR platform v4.2. If you are a new user, we recommend that you begin with a quickstart guide from those listed below. The quickstart guides will introduce you to core concepts when using Terrier within different scenarios. If you are looking to find out about a particular function or component of Terrier, scroll down this page to the main Table of Contents. 
+Welcome to the documentation for the Terrier IR platform v4.2. If you are a new user, we recommend that you begin with a quickstart guide from those listed below. The quickstart guides will introduce you to core concepts when using Terrier within different scenarios. If you are looking to find out about a particular function or component of Terrier, scroll down this page to the main Table of Contents.
 
 Quickstart Guides
 -----------------------
 
-> ### [Running Batch IR Experiments with Terrier](quickstart_experiments.md ) 
+> ### [Running Batch IR Experiments with Terrier](quickstart_experiments.md)
 >This quickstart guide is designed for information retrieval students and researchers looking to use Terrier to experiment with or learn about some aspect of a search engine. The main learning outcomes are: how to download and install a local copy of the Terrier platform; how to produce an on-disk index from a collection of documents; and how to issue single queries as well as batches of queries over that index from the command line.   
 
-> ### [Integrating Terrier as a Search Engine into your Java Application](quickstart-integratedsearch.md )
-> This quickstart guide is for software developers that want to use Terrier as a search engine within their own application. The guide covers how to import Terrier as an application dependancy using Maven, how to create an index in memory, how to index files or other pieces of text on-the-fly within your java program, and how to issue queries to the index. 
+> ### [Integrating Terrier as a Search Engine into your Java Application](quickstart-integratedsearchdisk.md)
+> This quickstart guide is for software developers that want to use Terrier as a search engine within their own application. The guide covers how to import Terrier as an application dependancy using Maven, how to create an index, how to index files within your java program, and how to issue queries to the index. A [variant of the quickstart](quickstart-integratedsearchdisk.md) shows the same using exclusively in-memory data structures.
 
 
 Table of Contents
@@ -36,8 +36,15 @@ Contains information about how to download, install and start running Terrier, a
 >[Future Features & Known Issues](todo.md)  
 >Upcoming features in future releases.
 
-### Common Configuration Options
+### Quickstart Guides
 
+>[Running Batch IR Experiments with Terrier](quickstart_experiments.md)
+
+>[Integrating Terrier as a Search Engine into your Java Application](quickstart-integratedsearchdisk.md)
+
+>[Integrating Terrier as a Search Engine into your Java Application](quickstart-integratedsearch.md)
+
+### Common Configuration Options
 
 >[Configuring Terrier](configure_general.md)  
 >A brief introduction to the configuration of Terrier
@@ -77,7 +84,7 @@ Contains information about how to download, install and start running Terrier, a
 >A guide to using the website search application, which illustrates real-time crawling, indexing and retrieval functionalities in Terrier.
 
 >[Desktop Search](terrier_desktop.md)  
->A guide to the included Desktop Search application of Terrier.
+>A summary of the Desktop Search application of Terrier available from Github.
 
 ### Experiment Support
 
@@ -122,6 +129,4 @@ Contains information about how to download, install and start running Terrier, a
 
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
-
- 
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

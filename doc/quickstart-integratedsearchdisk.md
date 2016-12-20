@@ -1,5 +1,5 @@
 
-Quickstart Guide: Integrating Search into your Application
+Quick start Guide: Integrating Search into your Application
 =========================================
 
 One of the common use-cases for Terrier is as a search component within a larger application. For example, you might want a custom search service within an email management system, or use the search results produced for one or more queries as input to another system, such as a classifier. This page will describe a quick way to integrate Terrier into an existing Java application, programatically index documents and issue search requests.  
@@ -13,26 +13,30 @@ String text = "It is easy to index documents in Terrier";
 Document document = new FileDocument(new StringReader(text), new HashMap(), Tokeniser.getTokeniser());
 ```
 
-An Index is the storage structure that saves (indexes) each document. MemoryIndex is a simple type of index structure to get started with. It simply stores each document in your local machine's memory.
+Documents are typically accessed through Collection objects. Collections are effectively iterators over Documents. An Index is the storage structure that records (indexes) each document such that it is available for search. IndexOnDisk is an index implementation that uses disk-based data structures. An IndexOnDisk can be created using an Indexer from one or more Collections.
 
 ```java
-MemoryIndex memIndex = new MemoryIndex();
+Collection coll;
+Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
+indexer.index(new Collection[]{ coll });
 ```
-MemoryIndex belongs to a class of updatable indices, which means that it implements an indexDocument() method, allowing us to add new documents to the index via a single line of code.
+
+Once the indexer has completed, the IndexOnDisk is available to be opened for reading.
 
 ```java
-memIndex.indexDocument(document);
+Index index = IndexOnDisk.createIndex("/path/to/an/index", "data");
+System.out.println("We have indexed " + index.getCollectionStatistics().getNumberOfDocuments() + " documents");
 ```
+
 
 To search our index, we need to use a querying Manager, which does the work of scoring each document for your query. Your query is stored in a SearchRequest object that the Manager can generate for you. We also need to specify which scoring function to use when ranking documents via the addMatchingModel() method (in this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25)).
 
 ```java
-Manager queryingManager = new Manager(memIndex);
+Manager queryingManager = new Manager(index);
 SearchRequest srq = queryingManager.newSearchRequestFromQuery("my terrier query");
 srq.addMatchingModel("Matching","BM25");
 ```
 Finally, we issue the search:
-
 ```java
 queryingManager.runSearchRequest(srq);
 ```
@@ -47,7 +51,7 @@ ResultSet results = srq.getResultSet();
 Prerequisites
 ----------------------------------------
 * Java (developer version) 1.8 or later
-* Apache Maven v3 (automated build and dependency manager)
+* Apache Maven (automated build and dependency manager)
 
 ### Java
 If you don't have Java 1.8 or later, download the current Java Development Kit (JDK) [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). To check if you have a compatible version of Java installed, use the following command:
@@ -98,64 +102,39 @@ There are a variety of different Terrier Document implementations provided out-o
 </html>
 ```
 
-We can convert this to a Terrier Document using the FileDocument class as follows:
+Say we had a directory of HTML documents to index, location at `/path/to/corpus`, this could be achieved using:
 
 ```java
-Document document = new FileDocument(Files.openFileReader("test.html"), new HashMap(), Tokeniser.getTokeniser());
-```
-However, if we do so the stored text String will read:
-
-```java
-"<html><head></head><body><p>This is a sample HTML document</p></body></html>"
+Collection coll = new SimpleFileCollection(Arrays.asList("/path/to/corpus"), true);
+Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
+indexer.index(new Collection[]{ coll });
 ```
 
-On the other hand, if we instead convert this to a Terrier Document using the TaggedDocument class the stored text string will read:
-```java
-"This is a sample HTML document"
-```
-since TaggedDocument (by default) only stores text contained within the tags, not the tags themselves. In practice, we recommend that you use a Document implementation that stores only the text that you are interested in searching for within each document, as this will often result in better search effectiveness, consume less memory and make searches faster.
+Here we are using a BasicIndexer. There are other indexers, and each has some configurables. Further information about indexers can be found in the [configuration indexing documentation](configuring_indexing.md).
+
 
 ### Giving Each Document A Meaningful Identifier
 
 When we add a document to a Terrier index, it is automatically assigned a numeric (integer) identifier (known as a *docid*). However, in practice, we nearly always want to define a different identifier for each document that is more meaningful. For instance, when indexing a collection of webpages, we might want to refer to each page by its URL. By default, Terrier usually assumes there is a *docno* which serves as each document's unique identifier.
 
-To do this, we need to do two things:
-1. Configure Terrier such that it knows to store a named key
-2. Add the key to each document
+To do this, we need to do to configure Terrier such that it knows to store a named key
 
 The Terrier configuration is stored in a static class called ApplicationSetup. We can add new configuration settings to Terrier using the `ApplicationSetup.setProperty(key, value)` method. Earlier, we noted that each Terrier Document optionally has a String->String map that contains metadata about that document. When a document is indexed, Terrier checks the keys in this map against a pre-defined list of keys to store. If it finds a match, it records the value of that key within the index itself. You can specify which keys to store via the `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` properties as shown below:
 
 ```java
-ApplicationSetup.setProperty("indexer.meta.forward.keys", "docno");
-ApplicationSetup.setProperty("indexer.meta.forward.keylens", "30");
+ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
+ApplicationSetup.setProperty("indexer.meta.forward.keylens", "200");
 ```
-In this case, we are specifying that each document will have a key called 'docno' that we want to store and that the maximum 'docno' length is 30 characters. Both `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` are comma-delimited lists, such that you can specify multiple keys to store.
+In this case, we are specifying that each document will have a key called 'filename' that we want to store and that the maximum 'filename' length is 200 characters. Both `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` are comma-delimited lists, such that you can specify multiple keys to store.
 
 > **Troubleshooting Tips**:
-> *  ApplicationSetup.setProperty() must be called before the index is initialized, i.e. before `new MemoryIndex()` is called
+> *  ApplicationSetup.setProperty() must be called before the index is initialized, i.e. before `new BasicIndexer()` is called
 > *  `indexer.meta.forward.keys` and `indexer.meta.forward.keylens` must have the same number of entries
 
-Once we have configured Terrier, we also need to add the new identifiers to each document. Assuming we have already created a document called 'document', we can add an identifier as follows:
-
-```java
-document.getAllProperties().put("docno", "This-is-test.html");
-```
 
 ### Indexing the Documents
-Now that we know how to convert files or pieces of text into Terrier Documents, the next step it to create an index and add those documents to it. The index is a storage structure that contains the documents that are to be made available for search. Indices extend the Index class in Terrier. There are three categories of index currently supported in Terrier, namely: IndexOnDisk, IncrementalIndex and MemoryIndex. For this quickstart we will be focusing on the MemoryIndex.
 
-MemoryIndex is a convenient index class to use when you have a relatively small number of documents that you need to search over, e.g. 10,000 to about 100,000 web pages. The memory index stores documents as a series of arrays in local memory (RAM).  
-
-A new memory index can be made using the default MemoryIndex constructor:
-
-```java
-MemoryIndex memIndex = new MemoryIndex();
-```
-Once we have an index, new documents can be easily added using the `indexDocument()` method:
-
-```java
-memIndex.indexDocument(document);
-```
+Now that we know how to convert files into a Collection of Documents, the next step it to create an index and add those documents to it. The index is a storage structure that contains the documents that are to be made available for search. Indices extend the Index class in Terrier. There are three categories of index currently supported in Terrier, namely: IndexOnDisk, IncrementalIndex and MemoryIndex. For this quickstart we will be focusing on the IndexOnDisk.
 
 ### Indexing Example
 
@@ -163,44 +142,42 @@ memIndex.indexDocument(document);
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
-import org.terrier.indexing.Document;
-import org.terrier.indexing.TaggedDocument;
-import org.terrier.indexing.tokenisation.Tokeniser;
-import org.terrier.realtime.memory.MemoryIndex;
+import org.terrier.indexing.Collection;
+import org.terrier.indexing.SimpleFileCollection;
+import org.terrier.structures.indexing.classical.BasicIndexer;
 import org.terrier.utility.ApplicationSetup;
 
 public class IndexingExample {
 
 	public static void main(String[] args) throws Exception {
 
-    // Directory containing files to index
-    String aDirectoryToIndex = "/my/directory/containing/files/";
+        // Directory containing files to index
+    		String aDirectoryToIndex = "/my/directory/containing/files/";
 
-    // Configure Terrier
-		ApplicationSetup.setProperty("indexer.meta.forward.keys", "docno");
-    ApplicationSetup.setProperty("indexer.meta.forward.keylens", "30");
+        // Configure Terrier
+				ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
+        ApplicationSetup.setProperty("indexer.meta.forward.keylens", "200");
 
-    // Create a new Index
-		MemoryIndex memIndex = new MemoryIndex();
-
-    // For each file
-		for (String filename : new File(aDirectoryToIndex).list() ) {
-
-			String fullPath = aDirectoryToIndex+filename;
-
-      // Convert it to a Terrier Document
-			Document document = new TaggedDocument(Files.openFileReader(fullPath), new HashMap(), Tokeniser.getTokeniser());
-
-      // Add a meaningful identifier
-			document.getAllProperties().put("docno", filename);
-
-			// index it
-			memIndex.indexDocument(document);
-		}
-  }
+				Indexer indexer = new BasicIndexer("/path/to/my/index", "data");
+				Collection coll = new SimpleFileCollection(Arrays.asList(aDirectoryToIndex), true);
+				indexer.index(new Collection[]{coll});
+				indexer.close();
+    }
 }
 ```
 
+### More on configuring Terrier
+
+Terrier's properties can be configured using a `terrier.properties` file, usually located in the `etc/` folder. You can place Terrier configuration properties within this file instead of setting ApplicationSetup within Java. For instance, `terrier.properties` may contain:
+
+	indexer.meta.forward.keys=filename
+	indexer.meta.forward.keylens=200
+
+When running Terrier, Terrier expects to be informed of the location of the `terrier.home` and `terrier.etc` directories, so that it can find its terrier.properties file:
+
+	java -cp /path/to/terrier/target/terrier-4.2-jar-with-dependencies.jar -Dterrier.home=/path/to/terrier -Dterrier.etc=/path/to/terrier/etc
+
+If you are running an application that depends on Terrier, you may wish to set these properties, either from the command line or System.setProperty().
 
 Issuing Searches
 ----------------------------------------
@@ -225,7 +202,7 @@ In this case, we have specified that org.terrier.querying.SimpleDecorate is a po
 Within Terrier, searches are performed using a Manager class. This class performs the nuts and bolts of actually matching your query against the documents that were indexed. If you are running multiple queries, you need to only create a single manager and use it multiple times. There is only one Manager implementation in Terrier, which you can instantiate as follows:
 
 ```java
-Manager queryingManager = new Manager(memIndex);
+Manager queryingManager = new Manager(index);
 ```
 
 This creates a new querying manager with a default configuration and sets the index to be searched (to our 'memindex' in this case). The next step in the process is to create a SearchRequest, which contains both our query as well as some other information about how we want the search to be processed. The Manager can generate a SearchRequest for you with default settings as shown below:
@@ -274,78 +251,63 @@ The output of a search in Terrier is known as a ResultSet. The ResultSet contain
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
-import org.terrier.indexing.Document;
-import org.terrier.indexing.TaggedDocument;
-import org.terrier.indexing.tokenisation.Tokeniser;
+import org.terrier.indexing.Collection;
+import org.terrier.indexing.SimpleFileCollection;
 import org.terrier.matching.ResultSet;
 import org.terrier.querying.Manager;
 import org.terrier.querying.SearchRequest;
-import org.terrier.realtime.memory.MemoryIndex;
-import org.terrier.utility.ApplicationSetup;
-import org.terrier.utility.Files;
-
+import org.terrier.structures.indexing.classical.BasicIndexer;
 
 public class IndexingAndRetrievalExample {
 
 	public static void main(String[] args) throws Exception {
 
-        // Directory containing files to index
-    		String aDirectoryToIndex = "/my/directory/containing/files/";
+		// Directory containing files to index
+		String aDirectoryToIndex = "/my/directory/containing/files/";
 
-        // Configure Terrier
-				ApplicationSetup.setProperty("indexer.meta.forward.keys", "docno");
-        ApplicationSetup.setProperty("indexer.meta.forward.keylens", "30");
+		// Configure Terrier
+		ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
+		ApplicationSetup.setProperty("indexer.meta.forward.keylens", "200");
 
-        // Create a new Index
-				MemoryIndex memIndex = new MemoryIndex();
+		Indexer indexer = new BasicIndexer("/path/to/my/index", "data");
+		Collection coll = new SimpleFileCollection(Arrays.asList(aDirectoryToIndex), true);
+		indexer.index(new Collection[]{coll});
+		indexer.close();
 
-        // For each file
-				for (String filename : new File(aDirectoryToIndex).list() ) {
+		Index index = Index.createIndex("/path/to/my/index", "data");
 
-						String fullPath = aDirectoryToIndex+filename;
+    // Enable the decorate enhancement
+    ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying.SimpleDecorate");
+		ApplicationSetup.setProperty("querying.postfilters.controls", "decorate:org.terrier.querying.SimpleDecorate");
 
-            // Convert it to a Terrier Document
-						Document document = new TaggedDocument(Files.openFileReader(fullPath), new HashMap(), Tokeniser.getTokeniser());
+    // Create a new manager run queries
+		Manager queryingManager = new Manager(index);
 
-            // Add a meaningful identifier
-						document.getAllProperties().put("docno", filename);
+    // Create a search request
+		SearchRequest srq = queryingManager.newSearchRequestFromQuery("search for document");
 
-						// index it
-						memIndex.indexDocument(document);
-				}
+    // Specify the model to use when searching
+		srq.addMatchingModel("Matching","BM25");
 
-      	// Enable the decorate enhancement
-    		ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying.SimpleDecorate");
-				ApplicationSetup.setProperty("querying.postfilters.controls", "decorate:org.terrier.querying.SimpleDecorate");
+    // Turn on decoration for this search request
+		srq.setControl("decorate", "on");
 
-        // Create a new manager run queries
-				Manager queryingManager = new Manager(memIndex);
+    // Run the search
+		queryingManager.runSearchRequest(srq);
 
-        // Create a search request
-				SearchRequest srq = queryingManager.newSearchRequestFromQuery("search for document");
+    // Get the result set
+		ResultSet results = srq.getResultSet();
 
-        // Specify the model to use when searching
-				srq.addMatchingModel("Matching","BM25");
-
-        // Turn on decoration for this search request
-				srq.setControl("decorate", "on");
-
-        // Run the search
-				queryingManager.runSearchRequest(srq);
-
-        // Get the result set
-				ResultSet results = srq.getResultSet();
-
-        // Print the results
-				System.out.println(results.getExactResultSize()+" documents were scored");
-				System.out.println("The top "+results.getResultSize()+" of those documents were returned");
-				System.out.println("Document Ranking");
-				for (int i =0; i< results.getResultSize(); i++) {
-					int docid = results.getDocids()[i];
-					double score = results.getScores()[i];
-					System.out.println("   Rank "+i+": "+docid+" "+results.getMetaItem("docno", docid)+" "+score);
-				}
-    }
+    // Print the results
+		System.out.println(results.getExactResultSize()+" documents were scored");
+		System.out.println("The top "+results.getResultSize()+" of those documents were returned");
+		System.out.println("Document Ranking");
+		for (int i =0; i< results.getResultSize(); i++) {
+			int docid = results.getDocids()[i];
+			double score = results.getScores()[i];
+			System.out.println("   Rank "+i+": "+docid+" "+results.getMetaItem("filename", docid)+" "+score);
+		}
+  }
 }
 ```
 
