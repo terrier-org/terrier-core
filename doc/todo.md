@@ -30,7 +30,7 @@ The following classes and interfaces are/may be deprecated in this version of Te
 
 -   BlockLexiconEntry & BlockFieldLexiconEntry will be removed in a future version of Terrier
 
--   [ApplicationSetup](javadoc/org/terrier/utility/ApplicationSetup.html) will be replaced with a new non-global configuration API.
+-   [ApplicationSetup](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/ApplicationSetup.html) will be replaced with a new non-global configuration API.
 
 -   Terrier currently uses Hadoop version 0.20. Future releases of Terrier will upgrade to a later branch. Instructions to upgrade Terrier yourself can be found [here](http://ir.dcs.gla.ac.uk/wiki/Terrier/UpgradingHadoop)
 

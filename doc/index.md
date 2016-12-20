@@ -103,7 +103,7 @@ Contains information about how to download, install and start running Terrier, a
 
 ### Other Resources
 
->[Terrier API Javadoc](javadoc/index.html)  
+>[Terrier API Javadoc](http://www.terrier.org/docs/current/javadoc/index.html)  
 >API documentation of each class in Terrier.
 
 >[Description of DFR](dfr_description.md)  

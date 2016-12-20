@@ -14,21 +14,21 @@ Firstly, the Web-based interface has slightly higher requirements than Terrier �
 Indexing for a Web-based interface
 ----------------------------------
 
-As noted above, to use the Web-based interface, document snippets/abstracts/meta-data need to be stored such that they can be returned with each document retrieved. Normally, this will take the form of one or more document abstracts, e.g. the first paragraph or so of each document. The Terrier [Document](javadoc/org/terrier/indexing/Document.html) classes are responsible for generating document abstracts. Since version 3.5, the following Terrier classes implementing the [Document](javadoc/org/terrier/indexing/Document.html) interface support some form of abstract generation:
+As noted above, to use the Web-based interface, document snippets/abstracts/meta-data need to be stored such that they can be returned with each document retrieved. Normally, this will take the form of one or more document abstracts, e.g. the first paragraph or so of each document. The Terrier [Document](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/Document.html) classes are responsible for generating document abstracts. Since version 3.5, the following Terrier classes implementing the [Document](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/Document.html) interface support some form of abstract generation:
 
--   [FileDocument](javadoc/org/terrier/indexing/FileDocument.html): First `N` characters of the document.
+-   [FileDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/FileDocument.html): First `N` characters of the document.
 
--   [POIDocument](javadoc/org/terrier/indexing/POIDocument.html) (for Microsoft Office documents, extends [FileDocument](javadoc/org/terrier/indexing/FileDocument.html)): First `N` characters of the document.
+-   [POIDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/POIDocument.html) (for Microsoft Office documents, extends [FileDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/FileDocument.html)): First `N` characters of the document.
 
--   [PDFDocument](javadoc/org/terrier/indexing/PDFDocument.html) (extends [FileDocument](javadoc/org/terrier/indexing/FileDocument.html)): First `N` characters of the document.
+-   [PDFDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/PDFDocument.html) (extends [FileDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/FileDocument.html)): First `N` characters of the document.
 
--   [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html): First `N` characters from the content of each specified tag within the document.
+-   [TaggedDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TaggedDocument.html): First `N` characters from the content of each specified tag within the document.
 
--   [TRECDocument](javadoc/org/terrier/indexing/TRECDocument.html) (extends [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html)): First `N` characters from the content of each specified tag within the document.
+-   [TRECDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECDocument.html) (extends [TaggedDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TaggedDocument.html)): First `N` characters from the content of each specified tag within the document.
 
-To configure Terrier’s indexing process to store one or more document abstracts, the appropriate properties specified in either [FileDocument](javadoc/org/terrier/indexing/FileDocument.html) or [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html) must be set. Which document class to use is determined by the Collection to be indexed. For example, [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) and [WARC018Collection](javadoc/org/terrier/indexing/WARC018Collection.html) use the TaggedDocument class by default.
+To configure Terrier’s indexing process to store one or more document abstracts, the appropriate properties specified in either [FileDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/FileDocument.html) or [TaggedDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TaggedDocument.html) must be set. Which document class to use is determined by the Collection to be indexed. For example, [TRECCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECCollection.html) and [WARC018Collection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/WARC018Collection.html) use the TaggedDocument class by default.
 
-During indexing, Terrier stores each abstract generated as document properties in the [MetaIndex](javadoc/org/terrier/structures/MetaIndex.html). Note that this can cause the MetaIndex to become quite large! To configure this, the abstract names should be added to `indexer.meta.forward.keys` and the abstract lengths should be added to `indexer.meta.forward.keylens`.
+During indexing, Terrier stores each abstract generated as document properties in the [MetaIndex](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/MetaIndex.html). Note that this can cause the MetaIndex to become quite large! To configure this, the abstract names should be added to `indexer.meta.forward.keys` and the abstract lengths should be added to `indexer.meta.forward.keylens`.
 
 An example where we save two abstracts using a TREC Collection is shown below:
 
@@ -69,9 +69,9 @@ In this example, we store the first 256 characters of the title tag in one abstr
 
 ### TRECCollection, TRECWebCollection and Meta-Data
 
-Beyond generating an abstract of each document, it is often useful to store other meta-data about each document, e.g. the URL of the document or the timestamp when the page was created, which we might also wish to display. Importantly, this data may be held in the header of the document or in special tags, which would otherwise be ignored by the document parser. As such, this meta-data cannot be collected by the document class. Instead, for collections of Web documents that have such meta-data, the related collection class is responsible for storing this meta-data. Currently [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) and [TRECWebCollection](javadoc/org/terrier/indexing/TRECWebCollection.html) can save additional meta-data about each document as follows:
+Beyond generating an abstract of each document, it is often useful to store other meta-data about each document, e.g. the URL of the document or the timestamp when the page was created, which we might also wish to display. Importantly, this data may be held in the header of the document or in special tags, which would otherwise be ignored by the document parser. As such, this meta-data cannot be collected by the document class. Instead, for collections of Web documents that have such meta-data, the related collection class is responsible for storing this meta-data. Currently [TRECCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECCollection.html) and [TRECWebCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECWebCollection.html) can save additional meta-data about each document as follows:
 
-[TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) provides a simple way to directly add the content of specified document tags to the MetaIndex. In particular, by setting `(tagset).propertytags` – a comma separated list of tags – will add those tags to the MetaIndex if they exist. Note that tags are assumed to be IN ORDER after the docno, and that property tags are not subsequently indexed. For example, given the following TRECDocument:
+[TRECCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECCollection.html) provides a simple way to directly add the content of specified document tags to the MetaIndex. In particular, by setting `(tagset).propertytags` – a comma separated list of tags – will add those tags to the MetaIndex if they exist. Note that tags are assumed to be IN ORDER after the docno, and that property tags are not subsequently indexed. For example, given the following TRECDocument:
 
     <DOC>
     <DOCNO>Example-0001</DOCNO>
@@ -81,7 +81,7 @@ Beyond generating an abstract of each document, it is often useful to store othe
 
 Setting the property `TRECDocTags.propertytags=URL` will add the contents of the URL tag to the MetaIndex with the name ‘URL’.
 
-[TRECWebCollection](javadoc/org/terrier/indexing/TRECWebCollection.html) was designed to parse out additional meta-data from the header of each document in a TRECCollection. For example, the header of a TREC WT2G document is as follows:
+[TRECWebCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECWebCollection.html) was designed to parse out additional meta-data from the header of each document in a TRECCollection. For example, the header of a TREC WT2G document is as follows:
 
     <DOC>
     <DOCNO>WT01-B01-1</DOCNO>
@@ -159,7 +159,7 @@ Below is an example of a the top search result returned using the ‘simple’ i
 
 ![image](images/SimpleWebInterface.png)
 
-This interface is a [JSP](http://en.wikipedia.org/wiki/JavaServer_Pages) file stored at `src/webapps/simple/results.jsp`. When it is called, it opens the Terrier index specified in the terrier.properties file (if not already open), initialises a manager and retrieves the results for the specified query as a standard terrier ResultSet just like the normal Java application. Of importance is that Terrier must be instructed to decorate the ResultSet with all of the meta-data that we stored previously such that results.jsp can display it. This is done as a Terrier [PostFilter](javadoc/org/terrier/querying/PostFilter.html), in particular using either the [SimpleDecorate](javadoc/org/terrier/querying/SimpleDecorate.html) or [Decorate](javadoc/org/terrier/querying/Decorate.html) classes. SimpleDecorate adds all meta index entries for each document retrieved into the ResultSet. Decorate is more advanced, providing query text highlighting and query-biased summarisation. Below we provide an example where we decorate the Result set using the more advanced Decorate class in the terrier.properties file:
+This interface is a [JSP](http://en.wikipedia.org/wiki/JavaServer_Pages) file stored at `src/webapps/simple/results.jsp`. When it is called, it opens the Terrier index specified in the terrier.properties file (if not already open), initialises a manager and retrieves the results for the specified query as a standard terrier ResultSet just like the normal Java application. Of importance is that Terrier must be instructed to decorate the ResultSet with all of the meta-data that we stored previously such that results.jsp can display it. This is done as a Terrier [PostFilter](http://www.terrier.org/docs/current/javadoc/org/terrier/querying/PostFilter.html), in particular using either the [SimpleDecorate](http://www.terrier.org/docs/current/javadoc/org/terrier/querying/SimpleDecorate.html) or [Decorate](http://www.terrier.org/docs/current/javadoc/org/terrier/querying/Decorate.html) classes. SimpleDecorate adds all meta index entries for each document retrieved into the ResultSet. Decorate is more advanced, providing query text highlighting and query-biased summarisation. Below we provide an example where we decorate the Result set using the more advanced Decorate class in the terrier.properties file:
 
     # We are using org.terrier.querying.Decorate which we are going to name decorate (IMPORTANT: results.jsp
     # expects it to be called 'decorate')
@@ -193,7 +193,7 @@ The results for the same example query using the wt2g interface are shown below.
 
 ### Extending the Query Language
 
-Terrier provides several [PostFilters](javadoc/org/terrier/querying/PostFilter.html) that are useful for interactive operation. For example, the [SiteFilter](javadoc/org/terrier/querying/SiteFilter.html) is an implementation of the `site:` control from standard Web search engines, and ensures that returned results have a hostname matching the desired expression. The hostname is obtained from the `url` metadata from the MetaIndex. For example, adding `site:com` to the query will ensure that all results have URLs from the .com domain. For TREC or similar collections, the [Scope](javadoc/org/terrier/querying/Scope.html) filter permits a starting prefix on the docno document metadata from the MetaIndex.
+Terrier provides several [PostFilters](http://www.terrier.org/docs/current/javadoc/org/terrier/querying/PostFilter.html) that are useful for interactive operation. For example, the [SiteFilter](http://www.terrier.org/docs/current/javadoc/org/terrier/querying/SiteFilter.html) is an implementation of the `site:` control from standard Web search engines, and ensures that returned results have a hostname matching the desired expression. The hostname is obtained from the `url` metadata from the MetaIndex. For example, adding `site:com` to the query will ensure that all results have URLs from the .com domain. For TREC or similar collections, the [Scope](http://www.terrier.org/docs/current/javadoc/org/terrier/querying/Scope.html) filter permits a starting prefix on the docno document metadata from the MetaIndex.
 
 ### Extending Results.jsp
 
@@ -254,7 +254,7 @@ The two initial interfaces provided with Terrier can be easily extended to add m
 
 ### Further Details
 
-`bin/http_terrier.sh` invokes [SimpleJettyHTTPServer](javadoc/org/terrier/utility/SimpleJettyHTTPServer.html), which starts a [Jetty](http://www.eclipse.org/jetty/) server on the port specified on the command line. The second command line argument is the path to a webapps folder. `share/images` is also mounted as `/images` directory.
+`bin/http_terrier.sh` invokes [SimpleJettyHTTPServer](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/SimpleJettyHTTPServer.html), which starts a [Jetty](http://www.eclipse.org/jetty/) server on the port specified on the command line. The second command line argument is the path to a webapps folder. `share/images` is also mounted as `/images` directory.
 
 
 ------------------------------------------------------------------------
