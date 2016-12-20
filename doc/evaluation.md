@@ -1,7 +1,7 @@
 Evaluation
 ==========
 
-Terrier uses [jtreceval](https://github.com/terrierteam/jtreceval) to provide the evaluation of standard retrieval runs. jtreceval contains (trec_eval)[https://github.com/usnistgov/trec_eval] compiled to run under various standard platforms (e.g. Windows/Linux/Mac x86). For unsupported platforms, Terrier also includes a legacy Java evaluation package for evaluating results of TREC adhoc and named-page finding tasks.
+Terrier uses [jtreceval](https://github.com/terrierteam/jtreceval) to provide the evaluation of standard retrieval runs. jtreceval contains [trec_eval](https://github.com/usnistgov/trec_eval) compiled to run under various standard platforms (e.g. Windows/Linux/Mac x86). For unsupported platforms, Terrier also includes a legacy Java evaluation package for evaluating results of TREC adhoc and named-page finding tasks.
 
 Before running an evaluation, we need to specify the relevance assessments file in the property `trec.qrels`. To evaluate all .res result files in folder `var/results`, we can type the following:
 
@@ -59,6 +59,6 @@ The resulting output saved in the corresponding .eval file will contain further 
 ------------------------------------------------------------------------
 
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

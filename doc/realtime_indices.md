@@ -36,11 +36,11 @@ Usage
 
 Below we give some examples for using the real-time Terrier index structures.
 
--   We provide a Website search demo that illustrates a use of MemoryIndex to search over webpages as they are crawled. For more information about this demo see [Real-time Indexing and Search of Websites](website_search.html).
+-   We provide a Website search demo that illustrates a use of MemoryIndex to search over webpages as they are crawled. For more information about this demo see [Real-time Indexing and Search of Websites](website_search.md).
 
 -   Any custom Java application can make use of an updatable index using MemoryIndex or IncrementalIndex, a code sample that illustrates indexing of a document and then search for that document is provided below:
 
-<!-- -->
+```java
 
     // define an example document and query
     String docContent = "Real-time indexing and retrieval is easy to use in Terrier";
@@ -76,11 +76,11 @@ Below we give some examples for using the real-time Terrier index structures.
     queryingManager.runSearchRequest(srq);
 
     ResultSet results = srq.getResultSet();
-
+```
 
 ------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
 
- 
+ 

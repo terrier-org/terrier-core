@@ -4,7 +4,7 @@ Configuring Terrier for Hadoop
 Overview
 --------
 
-From version 2.2 onwards, Terrier has supported the Hadoop MapReduce framework. Currently, Terrier provides [single-pass distributed indexing under MapReduce](hadoop_indexing.html), however, Terrier has been designed to be compatible with other Hadoop driven functionality. In this document, we describe how to integrate your Hadoop and Terrier setups. Hadoop is useful because it allows extremely large-scale operations, using MapReduce technology, built on a distributed file system. More information can be found about deploying Hadoop using a cluster of nodes in the [Hadoop Core documentation](http://hadoop.apache.org/core/docs/current/).
+From version 2.2 onwards, Terrier has supported the Hadoop MapReduce framework. Currently, Terrier provides [single-pass distributed indexing under MapReduce](hadoop_indexing.md), however, Terrier has been designed to be compatible with other Hadoop driven functionality. In this document, we describe how to integrate your Hadoop and Terrier setups. Hadoop is useful because it allows extremely large-scale operations, using MapReduce technology, built on a distributed file system. More information can be found about deploying Hadoop using a cluster of nodes in the [Hadoop Core documentation](http://hadoop.apache.org/core/docs/current/).
 
 **NB**: Terrier supports only Hadoop v0.22. We have issues with more modern versions. You can track progress on [TR-380](http://terrier.org/issues/browse/TR-380)
 
@@ -41,7 +41,7 @@ For more information on using HOD, see our [HadoopPlugin documentation](javadoc/
 Indexing with Hadoop MapReduce
 ------------------------------
 
-We provide a [guide for configuring single-pass indexing with MapReduce under Hadoop](hadoop_indexing.html).
+We provide a [guide for configuring single-pass indexing with MapReduce under Hadoop](hadoop_indexing.md).
 
 Developing MapReduce jobs with Terrier
 --------------------------------------
@@ -50,6 +50,6 @@ Importantly, it should be possible to modify Terrier to perform other informatio
 
 ------------------------------------------------------------------------
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 

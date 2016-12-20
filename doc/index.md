@@ -51,9 +51,6 @@ Contains information about how to download, install and start running Terrier, a
 >[Configuring Real-time Index Structures](realtime_indices.md)  
 >An introduction to the real-time index structures in Terrier.
 
->[List of properties in Terrier](properties.md)  
->Extensive list of properties that Terrier supports and what they configure.
-
 ### Advanced Functionality
 
 >[Learning to Rank with Terrier](learning.md)  
@@ -115,7 +112,7 @@ Contains information about how to download, install and start running Terrier, a
 >[Terrier Wiki](http://ir.dcs.gla.ac.uk/wiki/Terrier)  
 >Hints and tips, and configurations for various well-known corpora.
 
->[Bibliography](bibliography.html)  
+>[Bibliography](bibliography.md)  
 >If you use Terrier in your research, please cite us!
 
 >[Contacts](contacts.md)  

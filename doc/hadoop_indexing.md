@@ -1,4 +1,4 @@
-<span>\[</span>[Previous: Terrier/Hadoop Configuration](hadoop_configuration.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Properties in Terrier](properties.html)<span>\]</span>
+
 
 Configuring Hadoop Distributed Indexing in Terrier
 ==================================================
@@ -13,7 +13,7 @@ Due to the ever increasing size of test collections, particularly for those craw
 Configuration
 -------------
 
-To index using the MapReduce indexer, you need to have Terrier setup to use your Hadoop cluster. More information can be found in the [Configuring Terrier for Hadoop](hadoop_configuration.html) documentation. For indexing using MapReduce, your indexing Collection must have a InputStream constructor ([TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html), [TRECWebCollection](javadoc/org/terrier/indexing/TRECWebCollection.html), [WARC09Collection](javadoc/org/terrier/indexing/WARC09Collection.html) and [WARC018Collection](javadoc/org/terrier/indexing/WARC018Collection.html) are all supported). Choose your collection using the property `trec.collection.class` as per normal.
+To index using the MapReduce indexer, you need to have Terrier setup to use your Hadoop cluster. More information can be found in the [Configuring Terrier for Hadoop](hadoop_configuration.md) documentation. For indexing using MapReduce, your indexing Collection must have a InputStream constructor ([TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html), [TRECWebCollection](javadoc/org/terrier/indexing/TRECWebCollection.html), [WARC09Collection](javadoc/org/terrier/indexing/WARC09Collection.html) and [WARC018Collection](javadoc/org/terrier/indexing/WARC018Collection.html) are all supported). Choose your collection using the property `trec.collection.class` as per normal.
 
 Next, the location of your collection and your index are both important. You will get most benefit from Hadoop if your collection is stored on one of the supported distributed file systems (e.g. HDFS). Hadoop requires that the files of the collection that you are indexing are stored in the shared file system (the one named by `fs.default.name` in the Hadoop configuration). For example:
 
@@ -94,10 +94,8 @@ Bibliography
 
 3.  On Single-Pass Indexing with MapReduce. Richard McCreadie, Craig Macdonald and Iadh Ounis. In Proceedings of SIGIR 2009. DOI [10.1145/1571941.1572106](http://doi.acm.org/10.1145/1571941.1572106)
 
-[Previous: Terrier/Hadoop Configuration](hadoop_configuration.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Properties in Terrier](properties.html)<span>\]</span>
-
 ------------------------------------------------------------------------
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 

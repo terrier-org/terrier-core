@@ -42,7 +42,7 @@ The release of Terrier 4.2 was supported by the following projects and funding b
 Terrier 4.1 - 04/12/2015
 ------------------------
 
-Substantial update that includes a re-structuring of the Terrier build routines and dependencies to [support compilation using Maven](terrier_develop.html#compiling), along with a number of other minor improvements and bug fixes.
+Substantial update that includes a re-structuring of the Terrier build routines and dependencies to [support compilation using Maven](terrier_develop.md#compiling), along with a number of other minor improvements and bug fixes.
 
 ### Indexing
 
@@ -149,13 +149,13 @@ Terrier 4.0 - 18/06/2014
 
 Major update adding significant new features:
 
--   [Real-time index structures](realtime_indices.html) facilitate incremental indexing of new documents as over time.
+-   [Real-time index structures](realtime_indices.md) facilitate incremental indexing of new documents as over time.
 
--   [Pluggable state-of-the-art index compression](compression.html) reduces the size of Terrier’s index structures.
+-   [Pluggable state-of-the-art index compression](compression.md) reduces the size of Terrier’s index structures.
 
--   [Learning-to-rank](learning.html) support enables out-of-the-box supervised ranking models.
+-   [Learning-to-rank](learning.md) support enables out-of-the-box supervised ranking models.
 
--   [A website Search application](website_search.html) is now provided, illustrating real-time crawling, indexing and retrieval within Terrier.
+-   [A website Search application](website_search.md) is now provided, illustrating real-time crawling, indexing and retrieval within Terrier.
 
 Additionally various bugs fixes and other small improvements are also included. Some code may need to have imports adjusted, and indices will need to be upgraded.
 
@@ -439,7 +439,7 @@ Significant update: Added Document-at-a-time (DAAT) retrieval for large indices;
 
 -   [TR-144](http://terrier.org/issues/browse/TR-144): CollectionRecordReader.next should not be recursive
 
--   [TR-146](http://terrier.org/issues/browse/TR-146), [TR-148](http://terrier.org/issues/browse/TR-148): Tokenisation should be done separately from Document parsing (the tokeniser can be set using the property `tokeniser` - see [Non English language support in Terrier](languages.html) for more information on changing the tokenisation used by Terrier); Refactor Document implementations (e.g. [TRECDocument](javadoc/org/terrier/indexing/TRECDocument.html) and [HTMLDocument](javadoc/org/terrier/indexing/HTMLDocument.html) are now deprecated in favour of the new [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html))
+-   [TR-146](http://terrier.org/issues/browse/TR-146), [TR-148](http://terrier.org/issues/browse/TR-148): Tokenisation should be done separately from Document parsing (the tokeniser can be set using the property `tokeniser` - see [Non English language support in Terrier](languages.md) for more information on changing the tokenisation used by Terrier); Refactor Document implementations (e.g. [TRECDocument](javadoc/org/terrier/indexing/TRECDocument.html) and [HTMLDocument](javadoc/org/terrier/indexing/HTMLDocument.html) are now deprecated in favour of the new [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html))
 
 -   [TR-147](http://terrier.org/issues/browse/TR-147): Allow various Collection implementations to use different Document implementations
 
@@ -562,13 +562,13 @@ Major update: Support for indexing WARC collections; improved index structure la
 
 -   [TR-87](http://terrier.org/issues/browse/TR-87): PorterStemmer doesn’t match expected output by Porter himself.
 
--   [TR-81](http://terrier.org/issues/browse/TR-81): Implements proximity term dependence models. For more information, see [Configuring Retrieval](configure_retrieval.html#proximity).
+-   [TR-81](http://terrier.org/issues/browse/TR-81): Implements proximity term dependence models. For more information, see [Configuring Retrieval](configure_retrieval.md#proximity).
 
 -   [TR-19](http://terrier.org/issues/browse/TR-19): Support relevance feedback as well as pseudo-relevance feedback.
 
--   [TR-68](http://terrier.org/issues/browse/TR-68), [TR-73](http://terrier.org/issues/browse/TR-73), [TR-74](http://terrier.org/issues/browse/TR-73), [TR-94](http://terrier.org/issues/browse/TR-94): Implement field-based weighting models. For more information, see [Configuring Retrieval](configure_retrieval.html#fields).
+-   [TR-68](http://terrier.org/issues/browse/TR-68), [TR-73](http://terrier.org/issues/browse/TR-73), [TR-74](http://terrier.org/issues/browse/TR-73), [TR-94](http://terrier.org/issues/browse/TR-94): Implement field-based weighting models. For more information, see [Configuring Retrieval](configure_retrieval.md#fields).
 
--   [TR-99](http://terrier.org/issues/browse/TR-99): Provide way to integrate static doc prior easily. For more information, see [Configuring Retrieval](configure_retrieval.html#priors).
+-   [TR-99](http://terrier.org/issues/browse/TR-99): Provide way to integrate static doc prior easily. For more information, see [Configuring Retrieval](configure_retrieval.md#priors).
 
 -   [TR-90](http://terrier.org/issues/browse/TR-90): MatchingQueryTerms does not retain query term order.
 
@@ -620,7 +620,7 @@ Major update: Support for indexing WARC collections; improved index structure la
 
 -   [TR-62](http://terrier.org/issues/browse/TR-62): Files layer can transparently cache files.
 
--   [TR-2](http://terrier.org/issues/browse/TR-2), [TR-65](http://terrier.org/issues/browse/TR-): Replace Terrier’s Makefile with Ant build.xml. Makefile, compile.sh, compile.bat have now been removed. See [Developing with Terrier](terrier_develop.html) to see how to compile Terrier.
+-   [TR-2](http://terrier.org/issues/browse/TR-2), [TR-65](http://terrier.org/issues/browse/TR-): Replace Terrier’s Makefile with Ant build.xml. Makefile, compile.sh, compile.bat have now been removed. See [Developing with Terrier](terrier_develop.md) to see how to compile Terrier.
 
 -   [TR-63](http://terrier.org/issues/browse/TR-63),[TR-101](http://terrier.org/issues/browse/TR-101): Documentation updates.
 
@@ -650,13 +650,13 @@ Substantial update, consisting of new support for [Hadoop](http://hadoop.apache.
 
 ### Indexing
 
--   Added new [Hadoop MapReduce indexing system](hadoop_indexing.html), and corresponding support for [Hadoop MapReduce](hadoop_configuration.html) jobs.
+-   Added new [Hadoop MapReduce indexing system](hadoop_indexing.md), and corresponding support for [Hadoop MapReduce](hadoop_configuration.md) jobs.
 
 -   Refactoring of various indexing (in particular single pass indexing) to support MapReduce indexing.
 
--   Block indexing can now use marker tokens to designate block boundaries. See [Configuring Indexing](configure_indexing.html) for more details.
+-   Block indexing can now use marker tokens to designate block boundaries. See [Configuring Indexing](configure_indexing.md) for more details.
 
--   Indexing supports named tokens which should not be passed through the term pipeline. See [Configuring Indexing](configure_indexing.html) and [SkipTermPipeline](javadoc/org/terrier/terms/SkipTermPipeline.html) for more details.
+-   Indexing supports named tokens which should not be passed through the term pipeline. See [Configuring Indexing](configure_indexing.md) and [SkipTermPipeline](javadoc/org/terrier/terms/SkipTermPipeline.html) for more details.
 
 -   TRECCollection and TRECUTFCollection now index CDATA sections, to support indexing of [CDIP1](http://www.ir.iit.edu/projects/CDIP.html) collection, as used by the [TREC Legal track](http://trec-legal.umiacs.umd.edu/).
 
@@ -701,7 +701,7 @@ Minor update, containing mostly bug fixes, and a FileSystem abstraction layer.
 
 ### Indexing
 
--   BUG: `trec_terrier -i -d` then `trec_terrier -i -v` doesn’t work.
+-   BUG: `trec_terrier -i -d` then `trec_terrier -i -v` doesn’t work.
 
 -   BUG: Indexing on Windows doesn’t work as the index properties output streams aren’t closed.
 
@@ -739,7 +739,7 @@ Minor update, containing mostly bug fixes, and a FileSystem abstraction layer.
 
 ### Testing
 
--   Test the `trec_terrier -i -d` then `trec_terrier -i -v` indexing strategy.
+-   Test the `trec_terrier -i -d` then `trec_terrier -i -v` indexing strategy.
 
 ### Other
 
@@ -747,11 +747,11 @@ Minor update, containing mostly bug fixes, and a FileSystem abstraction layer.
 
 -   Adding missing environment options to trec\_terrier.bat and anyclass.bat.
 
--   Fix the documentation concerning specifying TREC topic file tags in [Configuring Retrieval](configure_retrieval.html).
+-   Fix the documentation concerning specifying TREC topic file tags in [Configuring Retrieval](configure_retrieval.md).
 
 -   Add API to TRECQrelsInMemory for getting docnos of pooled documents with graded/non-graded relevance assessments.
 
--   Add the FileSystem abstraction layer, which allows various types of files to be accessed through a uniform API. For example, indexing an HTTP Web page is as straightforward as indexing a local document. The FileSystem abstraction layer is described in detail in [Developing Terrier](terrier_develop.html).
+-   Add the FileSystem abstraction layer, which allows various types of files to be accessed through a uniform API. For example, indexing an HTTP Web page is as straightforward as indexing a local document. The FileSystem abstraction layer is described in detail in [Developing Terrier](terrier_develop.md).
 
 -   Removed deprecated code in CollectionStatistics.
 
@@ -766,7 +766,7 @@ Major update, integrating a new (alternative) single-pass indexing architecture,
 
 ### Indexing
 
--   New single-pass indexing, contributed by [Roi Blanco](http://www.dc.fi.udc.es/~roi/) ([University of A Coruña](http://www.udc.es/principal/en/)). This indexing method is faster, can build larger indices, and is more robust to memory usage during indexing. To use single-pass indexing, add the `-j` option to TrecTerrier: `bin/trec_terrier.sh -i -j`. For more information on single-pass indexing, see [Configuring Indexing](configure_indexing.html), or [TREC Example](trec_examples.html) for examples of its use.
+-   New single-pass indexing, contributed by [Roi Blanco](http://www.dc.fi.udc.es/~roi/) ([University of A Coruña](http://www.udc.es/principal/en/)). This indexing method is faster, can build larger indices, and is more robust to memory usage during indexing. To use single-pass indexing, add the `-j` option to TrecTerrier: `bin/trec_terrier.sh -i -j`. For more information on single-pass indexing, see [Configuring Indexing](configure_indexing.md), or [TREC Example](trec_examples.md) for examples of its use.
 
 -   New index on disk format: `prefix.log` has been replaced by `prefix.properties`, which records much more metadata about an index, including the Terrier version used to create it, the classes (and their constructor parameters) to read the Index, and the statistics of the index. The compressed data structures (DirectIndex and InvertedIndex) have also changed (the endian-ness of the index format changed, for efficiency reasons). However, Terrier 2.0 can read all Terrier 1.x indices, so *indices do **not** have to be upgraded or recreated.*
 
@@ -776,7 +776,7 @@ Major update, integrating a new (alternative) single-pass indexing architecture,
 
 -   The new [DFRee](javadoc/org/terrier/matching/models/DFRee.html) DFR weighting model is included, which provides robust performance on a range of test collections.
 
--   Query parsing is now performed by the [Manager.newSearchRequest(String,String)](javadoc/org/terrier/querying/Manager.html#newSearchRequest(java.lang.String,%20java.lang.String)). Direct access to the query parser is now not recommended, as the query parsing is likely to evolve in future versions of Terrier. See [Extending Retrieval](extending_retrieval.html) for the recommended querying code for applications.
+-   Query parsing is now performed by the [Manager.newSearchRequest(String,String)](javadoc/org/terrier/querying/Manager.html#newSearchRequest(java.lang.String,%20java.lang.String)). Direct access to the query parser is now not recommended, as the query parsing is likely to evolve in future versions of Terrier. See [Extending Retrieval](extending_retrieval.md) for the recommended querying code for applications.
 
 ### Desktop
 
@@ -796,7 +796,7 @@ Major update, integrating a new (alternative) single-pass indexing architecture,
 
 ### Other
 
--   Documentation: We provide indexing times and recommended parameters settings with corresponding MAP performances in [Example TREC Experiments](trec_examples.html).
+-   Documentation: We provide indexing times and recommended parameters settings with corresponding MAP performances in [Example TREC Experiments](trec_examples.md).
 
 -   Deprecation: Methods which do not return a LexiconEntry have been deprecated in the Lexicon.
 
@@ -845,7 +845,7 @@ Minor update. Mostly bug fixes. Some minor code enhancements, plus the inclusion
 
 ### Other
 
--   Tokenisation: Added Snowball stemmers. For more information, see documentation on [Non English language support](languages.html).
+-   Tokenisation: Added Snowball stemmers. For more information, see documentation on [Non English language support](languages.md).
 
 -   Java: Various Java Generics changed.
 
@@ -864,7 +864,7 @@ Major update. Many changes to the source code, including more robust indexing an
 
 Indexing architecture has been updated for Terrier 1.1.0, however indices created with 1.1.0 are completely compatible with those created with 1.0.x, and vice-versa.
 
--   Separated `string.byte.length property` into two properties: `max.term.length` and `docno.byte.length`.
+-   Separated `string.byte.length property` into two properties: `max.term.length` and `docno.byte.length`.
 
 -   Allow UTF characters in indexing, and use a compatible method for saving these in the Lexicon. This enables Terrier to be used for non-English languages. Set `string.use_utf` to true when indexing, and use [TRECUTFCollection](javadoc/org/terrier/indexing/TRECUTFCollection.html) to parse the collection.
 
@@ -896,7 +896,7 @@ Indexing architecture has been updated for Terrier 1.1.0, however indices create
 
 -   Use a [LexiconEntry](javadoc/org/terrier/structures/LexiconEntry.html), to support easier thread-safety with the [Lexicon](javadoc/org/terrier/structures/Lexicon.html).
 
--   Added generic [DFRWeightingModel](javadoc/org/terrier/matching/models/DFRWeightingModel.html), which can generate many DFR document weighting models. More information in [Extending Retrieval](extend_retrieval.html).
+-   Added generic [DFRWeightingModel](javadoc/org/terrier/matching/models/DFRWeightingModel.html), which can generate many DFR document weighting models. More information in [Extending Retrieval](extend_retrieval.md).
 
 ### Other
 
@@ -995,7 +995,7 @@ Terrier 1.0 Beta - 18/11/2004
 
 -   First public release of Terrier.
 
-
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+---------
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

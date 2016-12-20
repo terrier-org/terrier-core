@@ -1,4 +1,4 @@
-<span>\[</span>[Previous: DFR Description](dfr_description.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Bibliography](bibliography.html)<span>\]</span>
+
 
 Terrier Future Features and Known Issues
 ========================================
@@ -37,11 +37,9 @@ The following classes and interfaces are/may be deprecated in this version of Te
 **Contributions**
 All community contributions to the Terrier framework are welcome. In addition, you can find more information about contributing on the [Terrier website](http://terrier.org/).
 
-<span>\[</span>[Previous: DFR Description](dfr_description.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Bibliography](bibliography.html)<span>\]</span>
 
-------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+------------------------
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 

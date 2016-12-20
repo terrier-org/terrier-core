@@ -1,5 +1,5 @@
 
-Quick start Guide: Integrating Search into your Application
+Quickstart Guide: Integrating Search into your Application
 =========================================
 
 One of the common use-cases for Terrier is as a search component within a larger application. For example, you might want a custom search service within an email management system, or use the search results produced for one or more queries as input to another system, such as a classifier. This page will describe a quick way to integrate Terrier into an existing Java application, programatically index documents and issue search requests.  
@@ -47,7 +47,7 @@ ResultSet results = srq.getResultSet();
 Prerequisites
 ----------------------------------------
 * Java (developer version) 1.8 or later
-* Apache Maven (automated build and dependency manager)
+* Apache Maven v3 (automated build and dependency manager)
 
 ### Java
 If you don’t have Java 1.8 or later, download the current Java Development Kit (JDK) [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). To check if you have a compatible version of Java installed, use the following command:

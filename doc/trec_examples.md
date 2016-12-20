@@ -1,4 +1,4 @@
-<span>\[</span>[Previous: Website Search Application](website_search.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Terrier/Hadoop Configuration](hadoop_configuration.html)<span>\]</span>
+
 
 Examples of using Terrier to index TREC collections: WT2G & Blogs06
 ===================================================================
@@ -13,7 +13,7 @@ Terrier can index all known TREC test collections. We refer readers to the [Terr
 
 -   [WT10G](http://ir.dcs.gla.ac.uk/wiki/Terrier/WT10G)
 
--   [DOTGOV](http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV) – see also the [learning-to-rank](learning.html) documentation page.
+-   [DOTGOV](http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV) – see also the [learning-to-rank](learning.md) documentation page.
 
 -   [DOTGOV2](http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV2)
 
@@ -28,8 +28,9 @@ Terrier can index all known TREC test collections. We refer readers to the [Terr
 TREC WT2G Collection
 --------------------
 
-Here we give an example of using Terrier to index WT2G - a standard [TREC](http://trec.nist.gov) test collection. We assume that the operating system is Linux, and that the collection, along with the topics and the relevance assessments, is stored in the directory `/local/collections/WT2G`. The following configurations are sufficient for batch retrieval, however if you want to build a web-based search interface for searching WT2G, see [Web-based Terrier](terrier_http.html).
+Here we give an example of using Terrier to index WT2G - a standard [TREC](http://trec.nist.gov) test collection. We assume that the operating system is Linux, and that the collection, along with the topics and the relevance assessments, is stored in the directory `/local/collections/WT2G`. The following configurations are sufficient for batch retrieval, however if you want to build a web-based search interface for searching WT2G, see [Web-based Terrier](terrier_http.md).
 
+```shell
     #goto the terrier folder
     cd terrier
 
@@ -63,6 +64,7 @@ Here we give an example of using Terrier to index WT2G - a standard [TREC](http:
     grep ^map var/results/*.eval
     #MAP should be
     #In_expB2 Average Precision: 0.3160
+```
 
 TREC Blogs06 Collection
 -----------------------
@@ -74,8 +76,7 @@ This guide will provide a step-by-step example on how to use Terrier for indexin
 In the Terrier folder, use trec\_setup.sh to generate a collection.spec for indexing the collection:
 
     $ ./bin/trec_setup.sh /local/collections/Blogs06/
-    $ find /local/collections/Blogs06/ -type f  
-        | grep 'permalinks-' |sort > etc/collection.spec
+    $ find /local/collections/Blogs06/ -type f  | grep 'permalinks-' | sort > etc/collection.spec
 
 This will result in the creation of a `collection.spec` file, in the `etc` directory, containing a list of the files in the `/local/collections/Blog06/` directory. At this stage, you should check the `etc/collection.spec`, to ensure that it only contains files that should be indexed, and that they are sorted (ie `20051206/permalinks-000.gz` is the first file).
 
@@ -245,6 +246,6 @@ Many of the above TREC collections can be obtained directly from either [TREC (N
 ------------------------------------------------------------------------
 
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

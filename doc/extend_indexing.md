@@ -3,18 +3,18 @@ Extending Indexing in Terrier
 
 Unless your data is in files (1 file per document, or in XML or TREC files), you will probably need to create your own collection decoder. Examples of such scenarios could be extracting documents to be indexed from a database. This is done by implementing the [Collection](javadoc/org/terrier/indexing/Collection.html) interface, and setting this to be used with the `trec.collection.class` property.
 
-A Collection implementation returns a [Document](javadoc/org/terrier/indexing/Document.html) object for every document in the corpus. Simple textual contents can be handled by [FileDocument](javadoc/org/terrier/indexing/FileDocument.html), while HTML documents can be handled by [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html). Otherwise, if your documents are of a non-standard format, you’ll need to implement your own Document. The purpose of a Document object is to parse a document's format (e.g. Microsoft Word, HTML), and extract the text that should be indexed – optionally, you can designate the fields that contain the text to be extracted and, if [configured](configure_indexing.html#fields), the indexer will note the fields where each term occurs in a document.
+A Collection implementation returns a [Document](javadoc/org/terrier/indexing/Document.html) object for every document in the corpus. Simple textual contents can be handled by [FileDocument](javadoc/org/terrier/indexing/FileDocument.html), while HTML documents can be handled by [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html). Otherwise, if your documents are of a non-standard format, you’ll need to implement your own Document. The purpose of a Document object is to parse a document's format (e.g. Microsoft Word, HTML), and extract the text that should be indexed – optionally, you can designate the fields that contain the text to be extracted and, if [configured](configure_indexing.md#fields), the indexer will note the fields where each term occurs in a document.
 
 The Document typically provides the extracted text as input to a tokeniser, which identifies multiple tokens, and return them as stream, in their order of occurrence. For languages where tokens are naturally delimited by whitespace characters, Terrier provides [English](javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html) and [UTF](javadoc/org/terrier/indexing/tokenisation/UTFTokeniser.html) tokenisers. If your particular corpus has more complicated tokenisation than just whitespace, you can implement the [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) interface to suit your needs.
 
 Indexers
 --------
 
-As discussed in [Configuring Indexing](configure_indexing.html), Terrier has three different indexing implementations. In the following, we describe how the classical two-pass and single-pass indexing are implemented. Details are on the [Hadoop MapReduce indexing are described elsewhere](hadoop_indexing.html).
+As discussed in [Configuring Indexing](configure_indexing.md), Terrier has three different indexing implementations. In the following, we describe how the classical two-pass and single-pass indexing are implemented. Details are on the [Hadoop MapReduce indexing are described elsewhere](hadoop_indexing.md).
 
 ### Classical two-pass indexing
 
-There are two variants of two-pass indexing: the BlockIndexer provides the same functionality as BasicIndexer, but uses a larger DirectIndex and InvertedIndex for storing the positions that each word occurs at in each document. This allows querying to use term positions information - for example Phrasal search (`""``) and proximity search (`""~10`). For more details about the querying process, you may refer to [querying with Terrier](extend_retrieval.html) and the description of the [query language](querylanguage.html).
+There are two variants of two-pass indexing: the BlockIndexer provides the same functionality as BasicIndexer, but uses a larger DirectIndex and InvertedIndex for storing the positions that each word occurs at in each document. This allows querying to use term positions information - for example Phrasal search (`""``) and proximity search (`""~10`). For more details about the querying process, you may refer to [querying with Terrier](extend_retrieval.md) and the description of the [query language](querylanguage.md).
 
 The indexer iterates through the documents of the collection, using a [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) to identify terms to index. Each term found is sent through the [TermPipeline](javadoc/org/terrier/terms/TermPipeline.html). The TermPipeline transforms the terms, and can remove terms that should not be indexed. The TermPipeline chain in use is `termpipelines=Stopwords,PorterStemmer`, which removes terms from the document using the [Stopwords](javadoc/org/terrier/terms/Stopwords.html) object, and then applies Porter’s Stemming algorithm for English to the terms ([PorterStemmer](javadoc/org/terrier/terms/PorterStemmer.html)). If you wanted to use a different stemmer, this is the point at which it should be implemented.
 
@@ -76,6 +76,6 @@ Many of Terrier's index structures can be accessed from Hadoop MapReduce. In par
 ------------------------------------------------------------------------
 
 
-> Webpage: <http://terrier.org>
-> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
 > Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
