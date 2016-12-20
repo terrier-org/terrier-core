@@ -65,11 +65,15 @@ This guide will provide step-by-step instructions for using Terrier to index a T
 
 1. Go to the Terrier folder.
 
+```shell
     cd terrier-core-4.2
+```
 
 2. Setup Terrier for using a TREC test collection by calling
 
-    ./bin/trec_setup.sh <absolute-path-to-collection-files>
+```shell
+  bin/trec_setup.sh <absolute-path-to-collection-files>
+```
 
 In our example we are using a collection called VASWANI_NPL located at `share/vaswani_npl/`. It follows a traditional TREC test collection, with a corpus file, topics, and relevance assessments (qrels), and using the same format.
 
@@ -83,7 +87,9 @@ In our example we are using a collection called VASWANI_NPL located at `share/va
 
 To setup for this corpus, run:
 
-    ./bin/trec_setup.sh share/vaswani_npl/corpus/
+```shell
+bin/trec_setup.sh share/vaswani_npl/corpus/
+```
 
 This will result in the creation of a `collection.spec` file in the `etc` directory. This file contains a list of the document files contained in the specified corpus directory.
 
@@ -91,23 +97,23 @@ This will result in the creation of a `collection.spec` file in the `etc` direct
 
 4. Now we are ready to begin the indexing of the collection. This is achieved using the `trec_terrier.sh` script, adding the `-i` option, as follows:
 
-
-      $bin/trec_terrier.sh -i
-      16:00:03.028 [main] INFO  o.terrier.indexing.CollectionFactory - Finished reading collection specification
-      16:00:03.046 [main] INFO  o.t.i.MultiDocumentFileCollection - TRECCollection 100% processing share/vaswani_npl/corpus//doc-text.trec
-      16:00:03.116 [main] INFO  o.t.structures.indexing.Indexer - creating the data structures data_1
-      16:00:04.885 [main] INFO  o.t.structures.indexing.Indexer - Collection #0 took 1 seconds to index (11429 documents)
-      16:00:04.918 [main] INFO  o.t.s.indexing.LexiconBuilder - 6 lexicons to merge
-      16:00:05.045 [main] INFO  o.t.s.indexing.LexiconBuilder - Optimising structure lexicon
-      16:00:05.047 [main] INFO  o.t.structures.FSOMapFileLexicon - Optimising lexicon with 7756 entries
-      16:00:05.761 [main] INFO  o.t.structures.indexing.Indexer - Started building the inverted index...
-      16:00:05.761 [main] INFO  o.t.structures.indexing.Indexer - Started building the inverted index...
-      16:00:05.766 [main] INFO  o.t.s.i.c.InvertedIndexBuilder - Iteration 1 of 1 iterations
-      16:00:06.929 [main] INFO  o.t.s.indexing.LexiconBuilder - Optimising structure lexicon
-      16:00:06.930 [main] INFO  o.t.structures.FSOMapFileLexicon - Optimising lexicon with 7756 entries
-      16:00:06.954 [main] INFO  o.t.structures.indexing.Indexer - Finished building the inverted index...
-      16:00:06.954 [main] INFO  o.t.structures.indexing.Indexer - Time elapsed for inverted file: 1
-
+```
+$bin/trec_terrier.sh -i
+16:00:03.028 [main] INFO  o.terrier.indexing.CollectionFactory - Finished reading collection specification
+16:00:03.046 [main] INFO  o.t.i.MultiDocumentFileCollection - TRECCollection 0% processing share/vaswani_npl/corpus//doc-text.trec
+16:00:03.116 [main] INFO  o.t.structures.indexing.Indexer - creating the data structures data_1
+16:00:04.885 [main] INFO  o.t.structures.indexing.Indexer - Collection #0 took 1 seconds to index (11429 documents)
+16:00:04.918 [main] INFO  o.t.s.indexing.LexiconBuilder - 6 lexicons to merge
+16:00:05.045 [main] INFO  o.t.s.indexing.LexiconBuilder - Optimising structure lexicon
+16:00:05.047 [main] INFO  o.t.structures.FSOMapFileLexicon - Optimising lexicon with 7756 entries
+16:00:05.761 [main] INFO  o.t.structures.indexing.Indexer - Started building the inverted index...
+16:00:05.761 [main] INFO  o.t.structures.indexing.Indexer - Started building the inverted index...
+16:00:05.766 [main] INFO  o.t.s.i.c.InvertedIndexBuilder - Iteration 1 of 1 iterations
+16:00:06.929 [main] INFO  o.t.s.indexing.LexiconBuilder - Optimising structure lexicon
+16:00:06.930 [main] INFO  o.t.structures.FSOMapFileLexicon - Optimising lexicon with 7756 entries
+16:00:06.954 [main] INFO  o.t.structures.indexing.Indexer - Finished building the inverted index...
+16:00:06.954 [main] INFO  o.t.structures.indexing.Indexer - Time elapsed for inverted file: 1
+```
 
 With Terrier's default settings, the resulting index will be created in the `var/index` folder within the Terrier installation folder.
 
@@ -190,11 +196,15 @@ Terrier will look at the `var/results` directory, evaluate each .res file and sa
 
 4. We can change the retrieval approach usrd by Terrier to perform retrieval. For instance, query expansion (QE) can enabled by using the `-q` parameter in addition to `-r`.
 
-    ./bin/trec_terrier.sh -r -q
+```shell
+bin/trec_terrier.sh -r -q
+```
 
 See [the guide for configuring retrieval](configure_retrieval.md) for more information about QE. Note that your index must have a direct index structure to support QE, which is not built by default with single-pass indexing (see [Configuring Indexing](configure_indexing.md) for more information). Afterwards we can run the evaluation again by using trec\_terrier.sh with the `-e` parameter.
 
-    ./bin/trec_terrier.sh -e -Dtrec.qrels=share/vaswani_npl/qrels
+```shell
+bin/trec_terrier.sh -e -Dtrec.qrels=share/vaswani_npl/qrels
+```
 
 5. Now we can look at all the Mean Average Precision (MAP) values of the runs by inspecting the `.eval` files in `var/results`:
 
