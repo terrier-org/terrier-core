@@ -21,7 +21,7 @@ Table of Contents
 > [Overview](overview.md)  
 > An overview of what the Terrier platform is, and what it can be used for.
 
->[What’s New](whats_new.md)  
+>[What's New](whats_new.md)  
 >What has changed in the Terrier platform in the recent releases.
 
 >[Installing and Running Terrier](quickstart.md)  
@@ -40,9 +40,9 @@ Contains information about how to download, install and start running Terrier, a
 
 >[Running Batch IR Experiments with Terrier](quickstart_experiments.md)
 
->[Integrating Terrier as a Search Engine into your Java Application](quickstart-integratedsearchdisk.md)
+>[Integrating Terrier as a Search Engine into your Java Application with a persistent index](quickstart-integratedsearchdisk.md)
 
->[Integrating Terrier as a Search Engine into your Java Application](quickstart-integratedsearch.md)
+>[Integrating Terrier as a Search Engine into your Java Application, with a memory index](quickstart-integratedsearch.md)
 
 ### Common Configuration Options
 
