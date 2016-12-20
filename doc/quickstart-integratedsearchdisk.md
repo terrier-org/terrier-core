@@ -110,7 +110,7 @@ Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
 indexer.index(new Collection[]{ coll });
 ```
 
-Here we are using a BasicIndexer. There are other indexers, and each has some configurables. Further information about indexers can be found in the [configuration indexing documentation](configuring_indexing.md).
+Here we are using a BasicIndexer. There are other indexers, and each has some configurables. Further information about indexers can be found in the [configuration of indexing documentation](configure_indexing.md).
 
 
 ### Giving Each Document A Meaningful Identifier
