@@ -190,7 +190,7 @@ So what are these? The `-r` parameter instructs Terrier to perform retrieval, wh
 
 ```
     $bin/trec_terrier.sh -e -Dtrec.qrels=share/vaswani_npl/qrels
-    16:27:28.527 [main] INFO  o.t.evaluation.TrecEvalEvaluation - Evaluating result file: /users/tr.craigm/projects/tr42/4.2_branch/Terrier/var/results/InL2c1.0_0.res
+    16:27:28.527 [main] INFO  o.t.evaluation.TrecEvalEvaluation - Evaluating result file: var/results/InL2c1.0_0.res
     Average Precision: 0.2948
 ```
 
