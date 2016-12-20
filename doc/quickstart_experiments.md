@@ -188,9 +188,11 @@ So what are these? The `-r` parameter instructs Terrier to perform retrieval, wh
 
 3. Now we will evaluate the obtained results by using the `-e` option of trec\_terrier:
 
+```
     $bin/trec_terrier.sh -e -Dtrec.qrels=share/vaswani_npl/qrels
     16:27:28.527 [main] INFO  o.t.evaluation.TrecEvalEvaluation - Evaluating result file: /users/tr.craigm/projects/tr42/4.2_branch/Terrier/var/results/InL2c1.0_0.res
     Average Precision: 0.2948
+```
 
 Terrier will look at the `var/results` directory, evaluate each .res file and save the output in a .eval file named the same as the corresponding .res file.
 
