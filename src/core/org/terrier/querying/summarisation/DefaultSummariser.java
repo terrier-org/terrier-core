@@ -101,7 +101,7 @@ public class DefaultSummariser extends Summariser {
             }
 
         }
-        
+
         int lastIndexOfSpace = -1;
         String sentence="";
         String secondSentence="";

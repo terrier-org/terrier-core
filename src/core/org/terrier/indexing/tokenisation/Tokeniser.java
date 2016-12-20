@@ -129,4 +129,18 @@ public abstract class Tokeniser {
 		}
 		return tokens.toArray(new String[tokens.size()]);	
 	}	
+	
+	/** Utility method which returns all of the tokens in a String.
+	 * @param s String of text to be tokenised
+	 * @return All of the tokens found in the stream of text.
+	 */
+	public String[] getTokens(String s)
+	{
+		try{
+			return getTokens(new StringReader(s));
+		} catch (Exception e) {
+			assert false;
+			return null;
+		}
+	}
 }

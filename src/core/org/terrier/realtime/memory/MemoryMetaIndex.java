@@ -227,6 +227,7 @@ public class MemoryMetaIndex extends MetaIndexBuilder implements MetaIndex,Seria
 	@Override
 	public void close() throws IOException {
 		metadata.clear();
+		if (key2meta!=null) key2meta.clear();
 		for (TObjectIntHashMap<String> map : key2value2id.values())
 			map.clear();
 	}

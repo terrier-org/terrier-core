@@ -214,6 +214,7 @@ public class MemoryMetaIndexMap extends MemoryMetaIndex implements MetaIndexMap 
 	 */
 	public void close() throws IOException {
 		metadata.clear();
+		if (key2meta!=null)  key2meta.clear();
 	}
 
 	/**

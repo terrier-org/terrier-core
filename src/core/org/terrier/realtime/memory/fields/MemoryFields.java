@@ -54,6 +54,7 @@ public abstract class MemoryFields extends MemoryIndex {
             fieldTokens[i] = 0;
         stats = new MemoryCollectionStatistics(0, 0, 0, 0, fieldTokens);
         load_pipeline();
+        pipeline = pipeline_first;
     }
 
     /** {@inheritDoc} */

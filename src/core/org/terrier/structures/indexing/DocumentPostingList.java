@@ -33,6 +33,7 @@ import gnu.trove.TObjectIntProcedure;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -54,7 +55,10 @@ import org.terrier.utility.TermCodes;
   * <ul><li><tt>indexing.avg.unique.terms.per.doc</tt> - number of unique terms per doc on average, used to tune the initial 
   * size of the hashmaps used in this class.</li></ul>
   */
-public class DocumentPostingList implements Writable{
+public class DocumentPostingList implements Writable,Serializable{
+
+	private static final long serialVersionUID = 1L;
+
 	/** number of unique terms per doc on average, used to tune the initial size of the hashmaps used in this class. */
 	protected static final int AVG_DOCUMENT_UNIQUE_TERMS =
 		Integer.parseInt(ApplicationSetup.getProperty("indexing.avg.unique.terms.per.doc", "120"));
