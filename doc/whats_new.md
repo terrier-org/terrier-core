@@ -20,6 +20,7 @@ Minor update with mostly bug fixes and minor improvements. Inclusion of new feat
 - [TR-389](http://terrier.org/issues/browse/TR-389) TrecQuerying Cache error (Agustin Marrone, Universidad Nacional de Luján)
 - [TR-183](http://terrier.org/issues/browse/TR-183) Correct Hiemstra_LM model implementation (Jens Kürsten and Thomas Wilhelm-Stein)
 - [TR-458](http://terrier.org/issues/browse/TR-458) Change default setting of ignore.low.idf.terms
+- [TR-460](http://terrier.org/issues/browse/TR-460) Add refactoring of DependenceScoreModifier DSM, to allow more easier features to be created
 
 ### Other
 - [TR-381](http://terrier.org/issues/browse/TR-381) Require Maven 3
