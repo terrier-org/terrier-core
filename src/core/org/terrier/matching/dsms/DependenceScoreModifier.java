@@ -218,7 +218,8 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 		}
 	}
 
-	
+
+    /** Calculates dependence scores for all documents, putting the scores into the ResultSet rs */
 	protected void doDependency(Index index, final EntryStatistics es[], final IterablePosting ips[], ResultSet rs, final double[] phraseTermWeights, boolean SD) throws IOException 
 	{
 				
@@ -303,68 +304,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 			altered++;
 			// ok, all postings which have okToUse set to true, can be used in
 			// prox calculation
-			if (SD) {
-				TERM: for (i = 0; i < numPhraseTerms - 1; i++) {
-					if (!okToUse[i] || !okToUse[i + 1])
-						continue TERM;
-					double combinedPhraseQTWWeight;
-					switch (phraseQTWfnid) {
-					case 1:
-						combinedPhraseQTWWeight = 0.5 * phraseTermWeights[i]
-						                                                  + 0.5 * phraseTermWeights[i + 1];
-						break;
-					case 2:
-						combinedPhraseQTWWeight = phraseTermWeights[i]
-						                                            * phraseTermWeights[i + 1];
-						break;
-					case 3:
-						combinedPhraseQTWWeight = Math.min(
-								phraseTermWeights[i], phraseTermWeights[i + 1]);
-						break;
-					case 4:
-						combinedPhraseQTWWeight = Math.max(
-								phraseTermWeights[i], phraseTermWeights[i + 1]);
-						break;
-					default:
-						combinedPhraseQTWWeight = 1.0d;
-					}
-					double s = scoreFDSD(SD, i, ips[i], i+1, ips[i + 1],
-							avgDocLen);
-					scores[k] += combinedPhraseQTWWeight * w_o * s;
-				}
-			} else {
-				for (i = 0; i < numPhraseTerms - 1; i++) {
-					INNERTERM: for (int j = i + 1; j < numPhraseTerms; j++) {
-						if (!okToUse[i] || !okToUse[j])
-							continue INNERTERM;
-						double combinedPhraseQTWWeight;
-						switch (phraseQTWfnid) {
-						case 1:
-							combinedPhraseQTWWeight = 0.5
-							* phraseTermWeights[i] + 0.5
-							* phraseTermWeights[j];
-							break;
-						case 2:
-							combinedPhraseQTWWeight = phraseTermWeights[i]
-							                                            * phraseTermWeights[j];
-							break;
-						case 3:
-							combinedPhraseQTWWeight = Math.min(
-									phraseTermWeights[i], phraseTermWeights[j]);
-							break;
-						case 4:
-							combinedPhraseQTWWeight = Math.max(
-									phraseTermWeights[i], phraseTermWeights[j]);
-							break;
-						default:
-							combinedPhraseQTWWeight = 1.0d;
-						}
-	
-						double s = scoreFDSD(SD, i, ips[i], j, ips[j], avgDocLen);
-						scores[k] += w_u * combinedPhraseQTWWeight * s;
-					}
-				}
-			}
+            scores[k] += calculateDependence(ips, okToUse, phraseTermWeights, SD);
 		}
 	
 		for (IterablePosting ip : ips) {
@@ -374,6 +314,82 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 		System.err.println(this.getClass().getSimpleName() + " altered scores for " + altered + " documents");
 	
 	}
+    
+    /** calculates the dependende score for one document, using the iterable postings available.
+      * @param ips all of the Iterablepostings
+      * @param okToUse the IterablePostings that are set on the current document
+      * @param phraseTermWeights weights on each of the query terms
+      * @param SD is sequential dependence to be used
+      * @return score of this dependence score modifier for the current document
+      */
+    protected double calculateDependence(IterablePosting[] ips, boolean[] okToUse, double[] phraseTermWeights, boolean SD) {
+        final int numPhraseTerms = phraseTerms.length;
+        int i;
+        double finalScore = 0.0d;
+        if (SD) {
+            TERM: for (i = 0; i < numPhraseTerms - 1; i++) {
+                if (!okToUse[i] || !okToUse[i + 1])
+                    continue TERM;
+                double combinedPhraseQTWWeight;
+                switch (phraseQTWfnid) {
+                    case 1:
+                        combinedPhraseQTWWeight = 0.5 * phraseTermWeights[i]
+                        + 0.5 * phraseTermWeights[i + 1];
+                        break;
+                    case 2:
+                        combinedPhraseQTWWeight = phraseTermWeights[i]
+                        * phraseTermWeights[i + 1];
+                        break;
+                    case 3:
+                        combinedPhraseQTWWeight = Math.min(
+                                                           phraseTermWeights[i], phraseTermWeights[i + 1]);
+                        break;
+                    case 4:
+                        combinedPhraseQTWWeight = Math.max(
+                                                           phraseTermWeights[i], phraseTermWeights[i + 1]);
+                        break;
+                    default:
+                        combinedPhraseQTWWeight = 1.0d;
+                }
+                double s = scoreFDSD(SD, i, ips[i], i+1, ips[i + 1],
+                                     avgDocLen);
+                finalScore += combinedPhraseQTWWeight * w_o * s;
+            }
+        } else {
+            for (i = 0; i < numPhraseTerms - 1; i++) {
+                INNERTERM: for (int j = i + 1; j < numPhraseTerms; j++) {
+                    if (!okToUse[i] || !okToUse[j])
+                        continue INNERTERM;
+                    double combinedPhraseQTWWeight;
+                    switch (phraseQTWfnid) {
+                        case 1:
+                            combinedPhraseQTWWeight = 0.5
+                            * phraseTermWeights[i] + 0.5
+                            * phraseTermWeights[j];
+                            break;
+                        case 2:
+                            combinedPhraseQTWWeight = phraseTermWeights[i]
+                            * phraseTermWeights[j];
+                            break;
+                        case 3:
+                            combinedPhraseQTWWeight = Math.min(
+                                                               phraseTermWeights[i], phraseTermWeights[j]);
+                            break;
+                        case 4:
+                            combinedPhraseQTWWeight = Math.max(
+                                                               phraseTermWeights[i], phraseTermWeights[j]);
+                            break;
+                        default:
+                            combinedPhraseQTWWeight = 1.0d;
+                    }
+                    
+                    double s = scoreFDSD(SD, i, ips[i], j, ips[j], avgDocLen);
+                    finalScore += w_u * combinedPhraseQTWWeight * s;
+                }
+            }
+        }
+        return finalScore;
+    }
 
 	protected static int countTrue(final boolean[] in) {
 		int count = 0;
