@@ -1,14 +1,12 @@
-<span>\[</span>[Previous: Extending Indexing](extend_indexing.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Pluggable Compression](compression.html)<span>\]</span>
-
 Extending Retrieval in Terrier
 ==============================
 
 Altering the retrieval process
 ------------------------------
 
-It is very easy to alter the retrieval process in Terrier, as there are many “hooks” at which external classes can be involved. Firstly, you are free when writing your own application to render the results from Terrier in your own way. Results in Terrier come in the form of a [ResultSet](javadoc/org/terrier/matching/ResultSet.html).
+It is very easy to alter the retrieval process in Terrier, as there are many *hooks* at which external classes can be involved. Firstly, you are free when writing your own application to render the results from Terrier in your own way. Results in Terrier come in the form of a [ResultSet](javadoc/org/terrier/matching/ResultSet.html).
 
-An application’s interface with Terrier is through the [Manager](javadoc/org/terrier/querying/Manager.html) class. The manager firstly pre-processes the query, by applying it to the configured [TermPipeline](javadoc/org/terrier/terms/TermPipeline.html). Then it calls the [Matching]() class, which is responsible for matching documents to the query, and scoring the documents using a [WeightingModel](javadoc/org/terrier/matching/models/WeightingModel.html). Internally, Matching implementations use the [PostingListManager](javadoc/org/terrier/matching/PostingListManager.html) to open an [IterablePosting](javadoc/org/terrier/structures/postings/IterablePosting.html) for each query term. The overall score of a document to the entire query can be modified by using a [DocumentScoreModifier](javadoc/org/terrier/matching/dsms/DocumentScoreModifier.html), which can be set by the `matching.dsms` property.
+An application's interface with Terrier is through the [Manager](javadoc/org/terrier/querying/Manager.html) class. The manager firstly pre-processes the query, by applying it to the configured [TermPipeline](javadoc/org/terrier/terms/TermPipeline.html). Then it calls the [Matching](javadoc/org/terrier/matching/Matching.html) class, which is responsible for matching documents to the query, and scoring the documents using a [WeightingModel](javadoc/org/terrier/matching/models/WeightingModel.html). Internally, Matching implementations use the [PostingListManager](javadoc/org/terrier/matching/PostingListManager.html) to open an [IterablePosting](javadoc/org/terrier/structures/postings/IterablePosting.html) for each query term. The overall score of a document to the entire query can be modified by using a [DocumentScoreModifier](javadoc/org/terrier/matching/dsms/DocumentScoreModifier.html), which can be set by the `matching.dsms` property.
 
 Once the [ResultSet](javadoc/org/terrier/matching/ResultSet.html) has been returned to the [Manager](javadoc/org/terrier/querying/Manager.html), there are two further phases, namely [PostProcessing](javadoc/org/terrier/querying/PostProcess.html) and [PostFiltering](javadoc/org/terrier/querying/PostFilter.html). In PostProcessing, the ResultSet can be altered in any way - for example, [QueryExpansion](javadoc/org/terrier/querying/QueryExpansion.html) expands the query, and then calls Matching again to generate an improved ranking of documents. PostFiltering is simpler, allowing documents to be either included or excluded - this is ideal for interactive applications where users want to restrict the domain of the documents being retrieved.
 
@@ -28,7 +26,7 @@ Altering query expansion
 
 -   To change the exact formula used to score occurrences, implement [QueryExpansionModel](javadoc/org/terrier/matching/models/queryexpansion/QueryExpansionModel.html).
 
--   Currently, terms are weighted from the entire feedback set as one large “bag of words”. To change this, extend [ExpansionTerms](javadoc/org/terrier/querying/ExpansionTerms.html).
+-   Currently, terms are weighted from the entire feedback set as one a *bag of words* over the feedback set. To change this, extend [ExpansionTerms](javadoc/org/terrier/querying/ExpansionTerms.html).
 
 -   To change the way feedback documents are selected, implement [FeedbackSelector](javadoc/org/terrier/querying/FeedbackSelector.html).
 
@@ -48,45 +46,88 @@ Matching strategies
 
 Terrier implements three main alternatives for matching documents for a given query, each of which implements the [Matching](javadoc/org/terrier/matching/Matching.html) interface:
 
--   Term-At-A-Time (TAAT) (as per [taat.Full](javadoc/org/terrier/matching/taat/Full.html)) - exhaustive Matching strategy that scores all postings for a single query term, before moving onto the next query term. taat.Full is the default Matching strategy for Terrier.
+-   Document-At-A-Time (DAAT) (as per [daat.Full](javadoc/org/terrier/matching/daat/Full.html)) - exhaustive Matching strategy that scores all matching query terms for a document before moving onto the next documemt. Using daat.Full is advantageous for retrieving from large indices, and is the default matching strategy in Terrier.
 
--   Document-At-A-Time (DAAT) (as per [daat.Full](javadoc/org/terrier/matching/daat/Full.html)) - exhaustive Matching strategy that scores all matching query terms for a document before moving onto the next documemt. Using daat.Full is advantageous for retrieving from large indices.
+-   Term-At-A-Time (TAAT) (as per [taat.Full](javadoc/org/terrier/matching/taat/Full.html)) - exhaustive Matching strategy that scores all postings for a single query term, before moving onto the next query term. for large indices, taat.Full consumes excessive memory with large partial result sets.
 
 -   [TRECResultsMatching](javadoc/org/terrier/matching/TRECResultsMatching.html) - retrieves results from a TREC result file rather than the current index, based on the query id. Such a result file must be compatible with [trec\_eval](http://trec.nist.gov/trec_eval). TRECResultsMatching can introduce a repeatable efficiency gain for batch experiments.
 
 If you have a more complex document weighting strategy that cannot be handled as a [WeightingModel](javadoc/org/terrier/matching/models/WeightingModel.html) or [DocumentScoreModifier](javadoc/org/terrier/matching/dsms/DocumentScoreModifier.html), you may wish to implement your own Matching strategy. In particular, [BaseMatching](javadoc/org/terrier/matching/BaseMatching.html) is a useful base class. Moreover, the [PostingListManager](javadoc/org/terrier/matching/PostingListManager.html) should be used for opening the [IterablePosting](javadoc/org/terrier/structures/postings/IterablePosting.html) posting stream for each query term.
 
+
+Learning to Rank
+----------------
+Terrier support the application of learning-to-rank techniques within Terrier's ranking process. This is described separately in the [learning-to-rank documentation](learning.md).
+
 Using Terrier Indices in your own code
 --------------------------------------
 
--   **How many documents does term X occur in?**
+**How many documents does term X occur in?**
+```java
+Index index = Index.createIndex();
+Lexicon<String> lex = index.getLexicon();
+LexiconEntry le = lex.getLexiconEntry("term");
+if (le != null)
+	System.out.println("Term term occurs in "+ le.getDocumentFrequency() + " documents");
+else
+	System.out.println("Term term does not occur");
+```
 
--   **What is the probability of term Y occurring in the collection?**
+**What is the probability of term Y occurring in the collection?**
+```java
+Index index = Index.createIndex();
+Lexicon<String> lex = index.getLexicon();
+LexiconEntry le = lex.getLexiconEntry("X");
+double p = le == null
+	?  0.0d
+	: (double) le.getFrequency() / index.getCollectionStatistics().getNumberOfTokens();
+```
 
--   **What terms occur in the 11th document?**
+**What terms occur in the 11th document?**
+Index index = Index.createIndex();
+PostingIndex<Pointer> di = index.getDirectIndex();
+DocumentIndex doi = index.getDocumentIndex();
+Lexicon<String> lex = index.getLexicon();
+int docid = 10; //docids are 0-based
+IterablePosting postings = di.getPostings(doi.getDocumentEntry(docid));
+while (postings.next() != IterablePosting.EOL) {
+	Map.Entry<String,LexiconEntry> lee = lex.getLexiconEntry(postings.getId());
+	System.out.print(lee.getKey() + " with frequency " + postings.getFrequency());
+}
 
--   **What documents does term Z occur in?**
 
-Moreover, if you’re not comfortable with using Java, you can dump the indices of a collection using the –print\* options of TrecTerrier. See the javadoc of [TrecTerrier](javadoc/org/terrier/applications/TrecTerrier.html) for more information.
+**What documents does term Z occur in, and at what position?**
+
+We assume that the index contains positional information.
+
+```java
+Index index = Index.createIndex();
+PostingIndex<Pointer> inv = index.getInvertedIndex();
+MetaIndex meta = index.getMetaIndex();
+Lexicon<String> lex = index.getLexicon();
+LexiconEntry le = lex.getLexiconEntry( "Z" );
+IterablePosting postings = inv.getPostings((BitIndexPointer) le);
+while (postings.next() != IterablePosting.EOL) {
+	String docno = meta.getItem("docno", postings.getId());
+  int[] positions = ((BlockPosting)postings).getPositions();
+	System.out.println(docno + " with frequency " + postings.getFrequency() + " and positions " + Arrays.toString(positions));
+}
+```
+
+Moreover, if you're not comfortable with using Java, you can dump the indices of a collection using the –print\* options of TrecTerrier. See the javadoc of [TrecTerrier](javadoc/org/terrier/applications/TrecTerrier.html) for more information.
 
 ### Example Querying Code
 
 Below, you can find a example sample of using the querying functionalities of Terrier.
 
     String query = "term1 term2";
-    SearchRequest srq = queryingManager.newSearchRequest("queryID0", query);
+    SearchRequest srq = queryingManager.newSearchRequestFromQuery(query);
     srq.addMatchingModel("Matching", "PL2");
-    queryingManager.runPreProcessing(srq);
-    queryingManager.runMatching(srq);
-    queryingManager.runPostProcessing(srq);
-    queryingManager.runPostFilters(srq);
+    queryingManager.runSearchRequest(srq);
     ResultSet rs = srq.getResultSet();
-
-<span>\[</span>[Previous: Extending Indexing](extend_indexing.html)<span>\]</span> <span>\[</span>[Contents](index.html)<span>\]</span> <span>\[</span>[Next: Pluggable Compression](compression.html)<span>\]</span>
 
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Webpage: <http://terrier.org>
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
