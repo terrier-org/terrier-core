@@ -102,7 +102,7 @@ Now you are ready to start indexing the collection.
     INFO - Processing /local/collections/Blogs06/20051206/permalinks-002.gz
     <snip>
 
-If we did not plan to use Query Expansion initially, then the faster single-pass indexing could be enabled, using the -j option of TrecTerrier. If we decide to use query expansion later, we can use the [Inverted2DirectIndexBuilder](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html) to create the direct index ([BlockInverted2DirectIndexBuilder](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/singlepass/BlockInverted2DirectIndexBuilder.html) for blocks).
+If we did not plan to use Query Expansion initially, then the faster single-pass indexing could be enabled, using the -j option of TrecTerrier. If we decide to use query expansion later, we can use the [Inverted2DirectIndexBuilder](javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html) to create the direct index ([BlockInverted2DirectIndexBuilder](javadoc/org/terrier/structures/indexing/singlepass/BlockInverted2DirectIndexBuilder.html) for blocks).
 
     $ ./bin/trec_terrier.sh -i -j
     Setting TERRIER_HOME to /local/terrier
@@ -227,7 +227,7 @@ The following table compares the indexing time using the classical two-phase ind
 |DOTGOV|71.0min|47.1min|2hour 45min|1hour 11min|
 
 
-The following table lists the retrieval performance achieved using three weighting models, namely the Okapi [BM25](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/BM25.html), DFR [PL2](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/PL2.html) and the new parameter-free [DFRee](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/DFRee.html) model on a variety of standard TREC test collections. We provide the best values for the b and c parameters of BM25 and PL2 respectively, by optimising MAP using a simulated annealing process. In contrast, DFRee performs robustly across all collections while it does not require any parameter tuning or training.
+The following table lists the retrieval performance achieved using three weighting models, namely the Okapi [BM25](javadoc/org/terrier/matching/models/BM25.html), DFR [PL2](javadoc/org/terrier/matching/models/PL2.html) and the new parameter-free [DFRee](javadoc/org/terrier/matching/models/DFRee.html) model on a variety of standard TREC test collections. We provide the best values for the b and c parameters of BM25 and PL2 respectively, by optimising MAP using a simulated annealing process. In contrast, DFRee performs robustly across all collections while it does not require any parameter tuning or training.
 
 | Collection and tasks | B25| BM25| PL2 | PL2 | DFRee |
 |--|--|--|--|--|--|

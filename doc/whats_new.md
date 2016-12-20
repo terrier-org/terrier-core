@@ -431,7 +431,7 @@ Significant update: Added Document-at-a-time (DAAT) retrieval for large indices;
 
 -   [TR-137](http://terrier.org/issues/browse/TR-137): TRECCollection cannot add properties from the document tags to the meta index at indexing time
 
--   [TR-150](http://terrier.org/issues/browse/TR-150): TRECCollection parse DOCHDR tags, including URLs should they exist (see [TRECWebCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECWebCollection.html))
+-   [TR-150](http://terrier.org/issues/browse/TR-150): TRECCollection parse DOCHDR tags, including URLs should they exist (see [TRECWebCollection](javadoc/org/terrier/indexing/TRECWebCollection.html))
 
 -   [TR-138](http://terrier.org/issues/browse/TR-138): IndexUtil.copyStructure fails when source and destination indices are same
 
@@ -439,7 +439,7 @@ Significant update: Added Document-at-a-time (DAAT) retrieval for large indices;
 
 -   [TR-144](http://terrier.org/issues/browse/TR-144): CollectionRecordReader.next should not be recursive
 
--   [TR-146](http://terrier.org/issues/browse/TR-146), [TR-148](http://terrier.org/issues/browse/TR-148): Tokenisation should be done separately from Document parsing (the tokeniser can be set using the property `tokeniser` - see [Non English language support in Terrier](languages.html) for more information on changing the tokenisation used by Terrier); Refactor Document implementations (e.g. [TRECDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECDocument.html) and [HTMLDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/HTMLDocument.html) are now deprecated in favour of the new [TaggedDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TaggedDocument.html))
+-   [TR-146](http://terrier.org/issues/browse/TR-146), [TR-148](http://terrier.org/issues/browse/TR-148): Tokenisation should be done separately from Document parsing (the tokeniser can be set using the property `tokeniser` - see [Non English language support in Terrier](languages.html) for more information on changing the tokenisation used by Terrier); Refactor Document implementations (e.g. [TRECDocument](javadoc/org/terrier/indexing/TRECDocument.html) and [HTMLDocument](javadoc/org/terrier/indexing/HTMLDocument.html) are now deprecated in favour of the new [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html))
 
 -   [TR-147](http://terrier.org/issues/browse/TR-147): Allow various Collection implementations to use different Document implementations
 
@@ -449,11 +449,11 @@ Significant update: Added Document-at-a-time (DAAT) retrieval for large indices;
 
 -   [TR-16](http://terrier.org/issues/browse/TR-16),[TR-166](http://terrier.org/issues/browse/TR-166): Extending query language and Matching to support synonyms
 
--   [TR-157](http://terrier.org/issues/browse/TR-157): Remove TRECQuerying scripting files: `trec.models`, `qemodels`, `trec.topics.list` and `trec.qrels` - use properties in [TRECQuerying](http://www.terrier.org/docs/current/javadoc/org/terrier/applications/TRECQuerying.html) instead.
+-   [TR-157](http://terrier.org/issues/browse/TR-157): Remove TRECQuerying scripting files: `trec.models`, `qemodels`, `trec.topics.list` and `trec.qrels` - use properties in [TRECQuerying](javadoc/org/terrier/applications/TRECQuerying.html) instead.
 
--   [TR-156](http://terrier.org/issues/browse/TR-156): Deploy a DAAT matching strategy - see [org.terrier.matching.daat](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/daat/package-summary.html) (partially contributed by Nicola Tonellotto, CNR)
+-   [TR-156](http://terrier.org/issues/browse/TR-156): Deploy a DAAT matching strategy - see [org.terrier.matching.daat](javadoc/org/terrier/matching/daat/package-summary.html) (partially contributed by Nicola Tonellotto, CNR)
 
--   [TR-113](http://terrier.org/issues/browse/TR-113): The [LGD](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/LGD.html) Loglogistic weighting model (contributed by Gianni Amati, FUB)
+-   [TR-113](http://terrier.org/issues/browse/TR-113): The [LGD](javadoc/org/terrier/matching/models/LGD.html) Loglogistic weighting model (contributed by Gianni Amati, FUB)
 
 -   [TR-105](http://terrier.org/issues/browse/TR-105): Index should check version number as it can’t open older indices
 
@@ -475,7 +475,7 @@ Significant update: Added Document-at-a-time (DAAT) retrieval for large indices;
 
 -   [TR-139](http://terrier.org/issues/browse/TR-139): Manager should balk at null Index in constructor
 
--   [TR-141](http://terrier.org/issues/browse/TR-141): GammaFunction is not good enough for proximity - this fixes the retrieval effectiveness of [DFRDependenceScoreModifier](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html)
+-   [TR-141](http://terrier.org/issues/browse/TR-141): GammaFunction is not good enough for proximity - this fixes the retrieval effectiveness of [DFRDependenceScoreModifier](javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html)
 
 -   [TR-142](http://terrier.org/issues/browse/TR-142): Matching implementations should not overwrite the EntryStatistics stored in the MatchingQueryTerms object
 
@@ -483,9 +483,9 @@ Significant update: Added Document-at-a-time (DAAT) retrieval for large indices;
 
 -   [TR-145](http://terrier.org/issues/browse/TR-145): ResultSet implementations don’t retain exactResultSize() in child ResultSets
 
--   [TR-149](http://terrier.org/issues/browse/TR-149): Added first Divergence from Independence model, [DFI0](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/DFI0.html) (contributed by B.T. Dincer, Mugla University)
+-   [TR-149](http://terrier.org/issues/browse/TR-149): Added first Divergence from Independence model, [DFI0](javadoc/org/terrier/matching/models/DFI0.html) (contributed by B.T. Dincer, Mugla University)
 
--   [TR-153](http://terrier.org/issues/browse/TR-153),[TR-154](http://terrier.org/issues/browse/TR-154),[TR-155](http://terrier.org/issues/browse/TR-155): Provide a Matching implementation that reads results from TREC run files (see [TRECResultsMatching](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/TRECResultsMatching.html))
+-   [TR-153](http://terrier.org/issues/browse/TR-153),[TR-154](http://terrier.org/issues/browse/TR-154),[TR-155](http://terrier.org/issues/browse/TR-155): Provide a Matching implementation that reads results from TREC run files (see [TRECResultsMatching](javadoc/org/terrier/matching/TRECResultsMatching.html))
 
 -   [TR-160](http://terrier.org/issues/browse/TR-160): Inv2DirectMultiReduce needs improvement to allow direct split across multiple files
 
@@ -499,7 +499,7 @@ Significant update: Added Document-at-a-time (DAAT) retrieval for large indices;
 
 -   [TR-167](http://terrier.org/issues/browse/TR-167): Large document metadata are stored incorrectly by MetaIndex
 
--   Two new 2nd generation Divergence from Randomness models: [JsKLs](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/Js_KLs.html) and [XSqrA\_M](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/XSqrA_M.html) (contributed by Gianni Amati, Fondazione Ugo Bordoni)
+-   Two new 2nd generation Divergence from Randomness models: [JsKLs](javadoc/org/terrier/matching/models/Js_KLs.html) and [XSqrA\_M](javadoc/org/terrier/matching/models/XSqrA_M.html) (contributed by Gianni Amati, Fondazione Ugo Bordoni)
 
 ### Testing
 
@@ -556,7 +556,7 @@ Major update: Support for indexing WARC collections; improved index structure la
 
 ### Retrieval
 
--   [TR-20](http://terrier.org/issues/browse/TR-20), [TR-42](http://terrier.org/issues/browse/TR-42), [TR-64](http://terrier.org/issues/browse/TR-64): Access the posting list for one term as a stream - see [Posting](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/postings/Posting.html) and [IterablePosting](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/postings/IterablePosting.html).
+-   [TR-20](http://terrier.org/issues/browse/TR-20), [TR-42](http://terrier.org/issues/browse/TR-42), [TR-64](http://terrier.org/issues/browse/TR-64): Access the posting list for one term as a stream - see [Posting](javadoc/org/terrier/structures/postings/Posting.html) and [IterablePosting](javadoc/org/terrier/structures/postings/IterablePosting.html).
 
 -   [TR-86](http://terrier.org/issues/browse/TR-86): Matching should be an interface.
 
@@ -631,7 +631,7 @@ Terrier 2.2.1 - 29/01/2009
 
 Minor update - fixes some small bugs in 2.2 relating to MapReduce mode indexing, clarifies some documentation, and includes a missing source file.
 
--   Added missing source file for [SkipTermPipeline](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/SkipTermPipeline.html).
+-   Added missing source file for [SkipTermPipeline](javadoc/org/terrier/terms/SkipTermPipeline.html).
 
 -   Clarified java documentation for single-pass indexing memory control.
 
@@ -656,7 +656,7 @@ Substantial update, consisting of new support for [Hadoop](http://hadoop.apache.
 
 -   Block indexing can now use marker tokens to designate block boundaries. See [Configuring Indexing](configure_indexing.html) for more details.
 
--   Indexing supports named tokens which should not be passed through the term pipeline. See [Configuring Indexing](configure_indexing.html) and [SkipTermPipeline](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/SkipTermPipeline.html) for more details.
+-   Indexing supports named tokens which should not be passed through the term pipeline. See [Configuring Indexing](configure_indexing.html) and [SkipTermPipeline](javadoc/org/terrier/terms/SkipTermPipeline.html) for more details.
 
 -   TRECCollection and TRECUTFCollection now index CDATA sections, to support indexing of [CDIP1](http://www.ir.iit.edu/projects/CDIP.html) collection, as used by the [TREC Legal track](http://trec-legal.umiacs.umd.edu/).
 
@@ -684,7 +684,7 @@ Substantial update, consisting of new support for [Hadoop](http://hadoop.apache.
 
 ### Other
 
--   Added [HadoopPlugin](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/io/HadoopPlugin.html), allowing the HDFS filesystem paths (e.g. `hdfs://namenode:9000/path/to/file`) to be accessed directly from Terrier. Hadoop MapReduce jobs can also be created, using Hadoop on Demand if so-configured.
+-   Added [HadoopPlugin](javadoc/org/terrier/utility/io/HadoopPlugin.html), allowing the HDFS filesystem paths (e.g. `hdfs://namenode:9000/path/to/file`) to be accessed directly from Terrier. Hadoop MapReduce jobs can also be created, using Hadoop on Demand if so-configured.
 
 -   Filesystem layer can now support deleteOnExit() semantics for filesystems.
 
@@ -717,13 +717,13 @@ Minor update, containing mostly bug fixes, and a FileSystem abstraction layer.
 
 -   Add useful error message when DOCNO is longer than `docno.byte.length`
 
--   Retrofit all indexing file IO to [Files](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/Files.html) class.
+-   Retrofit all indexing file IO to [Files](javadoc/org/terrier/utility/Files.html) class.
 
 ### Retrieval
 
--   Retrofit all retrieval file IO to [Files](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/Files.html) class.
+-   Retrofit all retrieval file IO to [Files](javadoc/org/terrier/utility/Files.html) class.
 
--   Added a new [TREC topics tokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECFullUTFTokenizer.html) for non-English topics. This is automatically used by [TRECQuery](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/TRECQuery.html) if `string.use_utf` is set.
+-   Added a new [TREC topics tokeniser](javadoc/org/terrier/indexing/TRECFullUTFTokenizer.html) for non-English topics. This is automatically used by [TRECQuery](javadoc/org/terrier/structures/TRECQuery.html) if `string.use_utf` is set.
 
 -   Allow case-sensitive and case-insensitive TrecQueryTag specifications. Default is case-insensitive, change using `TrecQueryTags.casesensitive` property.
 
@@ -774,9 +774,9 @@ Major update, integrating a new (alternative) single-pass indexing architecture,
 
 ### Retrieval
 
--   The new [DFRee](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/DFRee.html) DFR weighting model is included, which provides robust performance on a range of test collections.
+-   The new [DFRee](javadoc/org/terrier/matching/models/DFRee.html) DFR weighting model is included, which provides robust performance on a range of test collections.
 
--   Query parsing is now performed by the [Manager.newSearchRequest(String,String)](http://www.terrier.org/docs/current/javadoc/org/terrier/querying/Manager.html#newSearchRequest(java.lang.String,%20java.lang.String)). Direct access to the query parser is now not recommended, as the query parsing is likely to evolve in future versions of Terrier. See [Extending Retrieval](extending_retrieval.html) for the recommended querying code for applications.
+-   Query parsing is now performed by the [Manager.newSearchRequest(String,String)](javadoc/org/terrier/querying/Manager.html#newSearchRequest(java.lang.String,%20java.lang.String)). Direct access to the query parser is now not recommended, as the query parsing is likely to evolve in future versions of Terrier. See [Extending Retrieval](extending_retrieval.html) for the recommended querying code for applications.
 
 ### Desktop
 
@@ -835,7 +835,7 @@ Minor update. Mostly bug fixes. Some minor code enhancements, plus the inclusion
 
 -   Create a .settings file for each TREC results file, so that it is easy to determine the setting for a run.
 
--   Added an alternative batch query parser, known as [SingleLineTRECQuery](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/SingleLineTRECQuery.html), mostly to support the test harness.
+-   Added an alternative batch query parser, known as [SingleLineTRECQuery](javadoc/org/terrier/structures/SingleLineTRECQuery.html), mostly to support the test harness.
 
 ### Desktop
 
@@ -866,25 +866,25 @@ Indexing architecture has been updated for Terrier 1.1.0, however indices create
 
 -   Separated `string.byte.length property` into two properties: `max.term.length` and `docno.byte.length`.
 
--   Allow UTF characters in indexing, and use a compatible method for saving these in the Lexicon. This enables Terrier to be used for non-English languages. Set `string.use_utf` to true when indexing, and use [TRECUTFCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECUTFCollection.html) to parse the collection.
+-   Allow UTF characters in indexing, and use a compatible method for saving these in the Lexicon. This enables Terrier to be used for non-English languages. Set `string.use_utf` to true when indexing, and use [TRECUTFCollection](javadoc/org/terrier/indexing/TRECUTFCollection.html) to parse the collection.
 
--   Merge multiple temporary lexicons at once in [LexiconBuilder](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/LexiconBuilder.html)s. 16 seems to be a good default setting.
+-   Merge multiple temporary lexicons at once in [LexiconBuilder](javadoc/org/terrier/structures/indexing/LexiconBuilder.html)s. 16 seems to be a good default setting.
 
--   Don’t use tree structures for indexing, they are slower and larger (20% indexing speed improvement). New classes [DocumentPostingList](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/DocumentPostingList.html) and [LexiconMap](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/LexiconMap.html).
+-   Don’t use tree structures for indexing, they are slower and larger (20% indexing speed improvement). New classes [DocumentPostingList](javadoc/org/terrier/structures/indexing/DocumentPostingList.html) and [LexiconMap](javadoc/org/terrier/structures/indexing/LexiconMap.html).
 
 -   Writing structures (direct and inverted) flush normally, to reduce memory consumption.
 
 -   Add lexicon hashing to reduce size of binary search.
 
--   [LookAheadStream](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/LookAheadStream.html) and [LookAheadReader](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/LookAheadReader.html) are now case-sensitive, as the [String.toUpperCase()](http://java.sun.com/j2se/1.5.0/docs/api/java/lang/String.html#toUpperCase()) affects indexing speed.
+-   [LookAheadStream](javadoc/org/terrier/utility/LookAheadStream.html) and [LookAheadReader](javadoc/org/terrier/utility/LookAheadReader.html) are now case-sensitive, as the [String.toUpperCase()](http://java.sun.com/j2se/1.5.0/docs/api/java/lang/String.html#toUpperCase()) affects indexing speed.
 
--   When the current indexing hits a threshold, finish it, then start a new index. Merge indices at completion. See [Indexer](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/Indexer.html).
+-   When the current indexing hits a threshold, finish it, then start a new index. Merge indices at completion. See [Indexer](javadoc/org/terrier/indexing/Indexer.html).
 
--   Added code for merging indices - see [StructureMerger](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/merging/StructureMerger.html) and [BlockStructureMerger](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/merging/StructureMerger.html).
+-   Added code for merging indices - see [StructureMerger](javadoc/org/terrier/structures/merging/StructureMerger.html) and [BlockStructureMerger](javadoc/org/terrier/structures/merging/StructureMerger.html).
 
--   Added a [CollectionFactory](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/CollectionFactory.html), to allow [Collection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/Collection.html)s to wrap other Collections.
+-   Added a [CollectionFactory](javadoc/org/terrier/indexing/CollectionFactory.html), to allow [Collection](javadoc/org/terrier/indexing/Collection.html)s to wrap other Collections.
 
--   [TRECCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECCollection.html) no longer throws exception when used for re-indexing and docPointers.col exists (contributed by Dolf Trieschnigg, Univ of Twente).
+-   [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) no longer throws exception when used for re-indexing and docPointers.col exists (contributed by Dolf Trieschnigg, Univ of Twente).
 
 ### Retrieval
 
@@ -892,11 +892,11 @@ Indexing architecture has been updated for Terrier 1.1.0, however indices create
 
 -   Added Hiemstra LM and Lemur TF\_IDF weighting models.
 
--   BUG: [Lexicon](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/Lexicon.html) would match prefixes of terms when the desired term does not exist in the Lexicon.
+-   BUG: [Lexicon](javadoc/org/terrier/structures/Lexicon.html) would match prefixes of terms when the desired term does not exist in the Lexicon.
 
--   Use a [LexiconEntry](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/LexiconEntry.html), to support easier thread-safety with the [Lexicon](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/Lexicon.html).
+-   Use a [LexiconEntry](javadoc/org/terrier/structures/LexiconEntry.html), to support easier thread-safety with the [Lexicon](javadoc/org/terrier/structures/Lexicon.html).
 
--   Added generic [DFRWeightingModel](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/DFRWeightingModel.html), which can generate many DFR document weighting models. More information in [Extending Retrieval](extend_retrieval.html).
+-   Added generic [DFRWeightingModel](javadoc/org/terrier/matching/models/DFRWeightingModel.html), which can generate many DFR document weighting models. More information in [Extending Retrieval](extend_retrieval.html).
 
 ### Other
 

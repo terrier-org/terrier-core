@@ -6,9 +6,9 @@ Indexing Overview
 
 The indexing process in Terrier is described [here](http://terrier.org/docs/current/basicComponents.html)
 
-Firstly, a [Collection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECCollection.html) object extracts the raw content of each individual document (from a collection of documents) and hands it in to a [Document](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/Document.html) object. The Document object then removes any unwanted content (e.g., from a particular document tag) and gives the resulting text to a [Tokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) object. Finally, the Tokeniser converts the text into a stream of tokens that represent the content of the document.
+Firstly, a [Collection](javadoc/org/terrier/indexing/TRECCollection.html) object extracts the raw content of each individual document (from a collection of documents) and hands it in to a [Document](javadoc/org/terrier/indexing/Document.html) object. The Document object then removes any unwanted content (e.g., from a particular document tag) and gives the resulting text to a [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) object. Finally, the Tokeniser converts the text into a stream of tokens that represent the content of the document.
 
-By default, Terrier uses [TRECCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECCollection.html), which parses corpora in TREC format. In particular, in TREC-formatted files, there are many documents delimited by `<DOC></DOC>` tags, as in the following example:
+By default, Terrier uses [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html), which parses corpora in TREC format. In particular, in TREC-formatted files, there are many documents delimited by `<DOC></DOC>` tags, as in the following example:
 
     <DOC>
     <DOCNO> doc1 </DOCNO>
@@ -19,29 +19,29 @@ By default, Terrier uses [TRECCollection](http://www.terrier.org/docs/current/ja
 
 For corpora in other formats, you will need to change the Collection object being used, by setting the property `trec.collection.class`. Here are some options:
 
--   [TRECCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECCollection.html) - Parses TREC formatted corpora, delimited by the `<DOC></DOC>` tags.
+-   [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) - Parses TREC formatted corpora, delimited by the `<DOC></DOC>` tags.
 
--   [TRECWebCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TRECWebCollection.html) - As TRECCollection, but additionally parses DOCHDR tags, which contain the URL of each document. TREC Web and Blog corpora such as WT2G, WT10G, .GOV, .GOV2, Blogs06 and Blogs08 are supported.
+-   [TRECWebCollection](javadoc/org/terrier/indexing/TRECWebCollection.html) - As TRECCollection, but additionally parses DOCHDR tags, which contain the URL of each document. TREC Web and Blog corpora such as WT2G, WT10G, .GOV, .GOV2, Blogs06 and Blogs08 are supported.
 
--   [WARC09Collection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/WARC09Collection.html) - Parses corpora in WARC version 0.9 format, such as UK-2006.
+-   [WARC09Collection](javadoc/org/terrier/indexing/WARC09Collection.html) - Parses corpora in WARC version 0.9 format, such as UK-2006.
 
--   [WARC018Collection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/WARC018Collection.html) - Parses corpora in WARC version 0.18 format, such as ClueWeb09.
+-   [WARC018Collection](javadoc/org/terrier/indexing/WARC018Collection.html) - Parses corpora in WARC version 0.18 format, such as ClueWeb09.
 
--   [SimpleFileCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/SimpleFileCollection.html) - Parses HTML, Microsoft Word/Excel/Powerpoint, PDF, text documents, etc., one document per file. For a guide on how to use this class, see the [collection of files guide](http://ir.dcs.gla.ac.uk/wiki/Terrier/CollectionOfFiles) on the Terrier wiki.
+-   [SimpleFileCollection](javadoc/org/terrier/indexing/SimpleFileCollection.html) - Parses HTML, Microsoft Word/Excel/Powerpoint, PDF, text documents, etc., one document per file. For a guide on how to use this class, see the [collection of files guide](http://ir.dcs.gla.ac.uk/wiki/Terrier/CollectionOfFiles) on the Terrier wiki.
 
--   [SimpleXMLCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/SimpleXMLCollection.html) - Like TRECCollection, but where the input is valid XML.
+-   [SimpleXMLCollection](javadoc/org/terrier/indexing/SimpleXMLCollection.html) - Like TRECCollection, but where the input is valid XML.
 
--   [SimpleMedlineXMLCollection](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/SimpleMedlineXMLCollection.html) - Special version of SimpleXMLCollection for modern Medline documents.
+-   [SimpleMedlineXMLCollection](javadoc/org/terrier/indexing/SimpleMedlineXMLCollection.html) - Special version of SimpleXMLCollection for modern Medline documents.
 
-Except for the special-purpose collections (SimpleFileCollection, SimpleXMLCollection, and SimpleMedlineXMLCollection), all other Collection implementations allow for different [Document](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/Document.html) implementations to be used, by specifying the `trec.document.class` property. By default, these collections use [TaggedDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TaggedDocument.html). The available Document implementations are:
+Except for the special-purpose collections (SimpleFileCollection, SimpleXMLCollection, and SimpleMedlineXMLCollection), all other Collection implementations allow for different [Document](javadoc/org/terrier/indexing/Document.html) implementations to be used, by specifying the `trec.document.class` property. By default, these collections use [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html). The available Document implementations are:
 
--   [TaggedDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TaggedDocument.html) - Models a tagged document (e.g., an HTML or TREC document). Note that from Terrier 4.0, this class replaced HTMLDocument and TRECDocument.
+-   [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html) - Models a tagged document (e.g., an HTML or TREC document). Note that from Terrier 4.0, this class replaced HTMLDocument and TRECDocument.
 
--   [FileDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/FileDocument.html) - Models a document which corresponds to a single, plain-text file.
+-   [FileDocument](javadoc/org/terrier/indexing/FileDocument.html) - Models a document which corresponds to a single, plain-text file.
 
--   [PDFDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/PDFDocument.html), [MSExcelDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/MSExcelDocument.html), and [MSWordDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/MSWordDocument.html) - Model PDF, MS Excel (.xls), MS Powerpoint (.ppt), and MS Word (.doc) documents, respectively.
+-   [PDFDocument](javadoc/org/terrier/indexing/PDFDocument.html), [MSExcelDocument](javadoc/org/terrier/indexing/MSExcelDocument.html), and [MSWordDocument](javadoc/org/terrier/indexing/MSWordDocument.html) - Model PDF, MS Excel (.xls), MS Powerpoint (.ppt), and MS Word (.doc) documents, respectively.
 
-Finally, all Document implementations can specify their own [Tokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) implementation. By default, Terrier uses the [EnglishTokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html). When [indexing non-English corpora](languages.html), a different Tokeniser implementation can be specified by the `tokeniser` property.
+Finally, all Document implementations can specify their own [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) implementation. By default, Terrier uses the [EnglishTokeniser](javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html). When [indexing non-English corpora](languages.html), a different Tokeniser implementation can be specified by the `tokeniser` property.
 
 ### Basic indexing setup
 
@@ -59,7 +59,7 @@ Note that the specified tags are case-sensitive, but this can be relaxed by sett
 
 Terrier has the ability to record the frequency with which terms occur in various fields of documents. The required fields are specified by the `FieldTags.process` property. For example, to note when a term occurs in the TITLE or H1 HTML tags of a document, set `FieldTags.process=TITLE,H1`. FieldTags are case-insensitive. There is a special field called ELSE, which contains all terms not in any other specified field.
 
-The indexer iterates through the documents of the collection and sends each term found through the [TermPipeline](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/TermPipeline.html). The TermPipeline transforms the terms, and can remove terms that should not be indexed. The TermPipeline chain in use is `termpipelines=Stopwords,PorterStemmer`, which removes terms from the document using the [Stopwords](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/Stopwords.html) object, and then applies Porter's Stemming algorithm for English to the terms ([PorterStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/PorterStemmer.html)). If you want to use a different stemmer, this is the point at which it should be called.
+The indexer iterates through the documents of the collection and sends each term found through the [TermPipeline](javadoc/org/terrier/terms/TermPipeline.html). The TermPipeline transforms the terms, and can remove terms that should not be indexed. The TermPipeline chain in use is `termpipelines=Stopwords,PorterStemmer`, which removes terms from the document using the [Stopwords](javadoc/org/terrier/terms/Stopwords.html) object, and then applies Porter's Stemming algorithm for English to the terms ([PorterStemmer](javadoc/org/terrier/terms/PorterStemmer.html)). If you want to use a different stemmer, this is the point at which it should be called.
 
 The term pipeline can also be configured at indexing time to skip various tokens. Set a comma-delimited list of tokens to skip in the property `termpipelines.skip`. The same property works at retrieval time also.
 
@@ -69,7 +69,7 @@ The indexers are more complicated. Each class can be configured by several prope
 
 -   `ignore.empty.documents` - whether to assign document Ids to empty documents. Defaults to true.
 
-For the [BlockIndexer](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/classical/BlockIndexer.html):
+For the [BlockIndexer](javadoc/org/terrier/structures/indexing/classical/BlockIndexer.html):
 
 -   `block.indexing` - Whether block indexing should be enabled. Defaults to false.
 
@@ -77,11 +77,11 @@ For the [BlockIndexer](http://www.terrier.org/docs/current/javadoc/org/terrier/s
 
 -   `blocks.max` - Maximum number of blocks in a document. After this number of blocks, all subsequent terms will be in the same block. Defaults to 100,000.
 
-Once terms have been processed through the TermPipeline, they are aggregated by the [DocumentPostingList](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/DocumentPostingList.html) and the [LexiconMap](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/LexiconMap.html). These have a few properties:
+Once terms have been processed through the TermPipeline, they are aggregated by the [DocumentPostingList](javadoc/org/terrier/structures/indexing/DocumentPostingList.html) and the [LexiconMap](javadoc/org/terrier/structures/indexing/LexiconMap.html). These have a few properties:
 
 -   `max.term.length` - Maximum length of one term, in characters.
 
-Document metadata is recorded in a [MetaIndex](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/MetaIndex.html) structure. For instance, such metadata could include the DOCNO and URL of each document, which the system can use to represent the document during retrieval. The MetaIndex can be configured to take note of various document attributes during indexing. The available attributes depend on those provided by the [Document](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/Document.html) implementation. MetaIndex can be configured using the following properties:
+Document metadata is recorded in a [MetaIndex](javadoc/org/terrier/structures/MetaIndex.html) structure. For instance, such metadata could include the DOCNO and URL of each document, which the system can use to represent the document during retrieval. The MetaIndex can be configured to take note of various document attributes during indexing. The available attributes depend on those provided by the [Document](javadoc/org/terrier/indexing/Document.html) implementation. MetaIndex can be configured using the following properties:
 
 -   `indexer.meta.forward.keys` - Comma-delimited list of document attributes to store in the MetaIndex. e.g. `indexer.meta.forward.keys=docno` or `indexer.meta.forward.keys=url,title`. If this property is set the following property needs also to be set.
 
@@ -101,7 +101,7 @@ Classical indexing works by creating a direct index, and then inverting that dat
 
 ### Single-pass indexing
 
-Single-pass indexing is implemented by the classes [BasicSinglePassIndexer](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html) and [BlockSinglePassIndexer](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html). Essentially, instead of building a direct file from the collection, term posting lists are held in memory, and written to disk when memory is exhausted. The final step merged the temporary files to form the lexicon and the inverted file. Notably, single-pass indexing does not build a direct index. However, a direct index can be build later using the `--inverted2direct` command line argument to TrecTerrier.
+Single-pass indexing is implemented by the classes [BasicSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html) and [BlockSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html). Essentially, instead of building a direct file from the collection, term posting lists are held in memory, and written to disk when memory is exhausted. The final step merged the temporary files to form the lexicon and the inverted file. Notably, single-pass indexing does not build a direct index. However, a direct index can be build later using the `--inverted2direct` command line argument to TrecTerrier.
 
 For details on the implementation of single-pass indexing, see the [indexing implementation](indexer_details.html) documentation.
 

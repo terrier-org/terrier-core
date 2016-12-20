@@ -50,7 +50,7 @@ This allows you to easily index, retrieve, and evaluate results on TREC collecti
 
 ### Interactive Terrier
 
-This allows you to to do interactive retrieval. This is a quick way to test Terrier. Given that you have installed Terrier on Windows, you can start Interactive Terrier by executing the `interactive_terrier.bat` file in Terrier’s `bin` directory. On a Unix system or Mac, you can run interactive Terrier by executing the `interactive_terrier.sh` file. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](http://www.terrier.org/docs/current/javadoc/org/terrier/applications/InteractiveQuerying.html) class.
+This allows you to to do interactive retrieval. This is a quick way to test Terrier. Given that you have installed Terrier on Windows, you can start Interactive Terrier by executing the `interactive_terrier.bat` file in Terrier’s `bin` directory. On a Unix system or Mac, you can run interactive Terrier by executing the `interactive_terrier.sh` file. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](javadoc/org/terrier/applications/InteractiveQuerying.html) class.
 
 ### Desktop Terrier
 

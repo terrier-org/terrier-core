@@ -19,12 +19,12 @@ where the subscript *M* stands for the type of model of randomness employed to c
 | Model | Description |
 |---|---|
 | D | Divergence approximation of the binomial |
-| [P](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/basicmodel/P.html) | Approximation of the binomial |
-| [B<sub>E</sub>](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/basicmodel/B.html) | Bose-Einstein distribution |
+| [P](javadoc/org/terrier/matching/models/basicmodel/P.html) | Approximation of the binomial |
+| [B<sub>E</sub>](javadoc/org/terrier/matching/models/basicmodel/B.html) | Bose-Einstein distribution |
 | G | Geometric approximation of the Bose-Einstein |
-| [I(n)](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/basicmodel/In.html) | Inverse Document Frequency model |
-| [I(F)](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/basicmodel/IF.html) | Inverse Term Frequency model |
-| [I(n<sub>e</sub>)](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/basicmodel/In_exp.html) | Inverse Expected Document Frequency model |
+| [I(n)](javadoc/org/terrier/matching/models/basicmodel/In.html) | Inverse Document Frequency model |
+| [I(F)](javadoc/org/terrier/matching/models/basicmodel/IF.html) | Inverse Term Frequency model |
+| [I(n<sub>e</sub>)](javadoc/org/terrier/matching/models/basicmodel/In_exp.html) | Inverse Expected Document Frequency model |
 
 If the model *M* is the binomial distribution, then the basic model is *P* and computes the value:
 
@@ -58,7 +58,7 @@ The more the term occurs in the elite set, the less term-frequency is due to ran
 
 ![Equation 5](http://terrier.org/docs/v4.1/images/img16.png "Equation 5")
 
-We use two models for computing the information-gain with a term within a document: the Laplace *[L](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/aftereffect/L.html)* model and the ratio of two Bernoulli’s processes *[B](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/aftereffect/B.html)*:
+We use two models for computing the information-gain with a term within a document: the Laplace *[L](javadoc/org/terrier/matching/models/aftereffect/L.html)* model and the ratio of two Bernoulli’s processes *[B](javadoc/org/terrier/matching/models/aftereffect/B.html)*:
 
 ![Equation 6](http://terrier.org/docs/v4.1/images/img19.png "Equation 6")
 
@@ -71,7 +71,7 @@ Before using Formula the document-length *dl* is normalised to a standard length
 
 ![Equation 7](http://terrier.org/docs/v4.1/images/img23.png "Equation 7")
 
-A more flexible formula, referred to as *[Normalisation2](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/normalisation/Normalisation2.html)*, is given below:
+A more flexible formula, referred to as *[Normalisation2](javadoc/org/terrier/matching/models/normalisation/Normalisation2.html)*, is given below:
 
 ![Equation 8](http://terrier.org/docs/v4.1/images/img24.png "Equation 8")
 
@@ -94,7 +94,7 @@ Included with Terrier, are many of the DFR models, including:
 
 Recommended settings for various collection are provided in [Example TREC Experiments](trec_examples.html#paramsettings).
 
-Another provided [weighting model](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/DFR_BM25.html) is a derivation of the BM25 formula from the Divergence From Randomness framework. Finally, Terrier also provides a [generic DFR weighting model](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/DFRWeightingModel.html), which allows any DFR model to be [generated and evaluated](extend_retrieval.html).
+Another provided [weighting model](javadoc/org/terrier/matching/models/DFR_BM25.html) is a derivation of the BM25 formula from the Divergence From Randomness framework. Finally, Terrier also provides a [generic DFR weighting model](javadoc/org/terrier/matching/models/DFRWeightingModel.html), which allows any DFR model to be [generated and evaluated](extend_retrieval.html).
 
 
 Query Expansion
@@ -109,14 +109,14 @@ Fields
 
 DFR can encapsulate the importance of term occurrences occurring in different fields in a variety of different ways:
 
-1.  Per-field normalisation: The frequencies from the different fields in the documents are normalised with respect to the statistics of lengths typical for that field. This is as performed by the [PL2F](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/PL2F.html) weighting model. Other per-field normalisation models can be generated using the generic [PerFieldNormWeightingModel](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/PerFieldNormWeightingModel.html) model.
+1.  Per-field normalisation: The frequencies from the different fields in the documents are normalised with respect to the statistics of lengths typical for that field. This is as performed by the [PL2F](javadoc/org/terrier/matching/models/PL2F.html) weighting model. Other per-field normalisation models can be generated using the generic [PerFieldNormWeightingModel](javadoc/org/terrier/matching/models/PerFieldNormWeightingModel.html) model.
 
-2.  Multinomial: The frequencies from the different fields are modelled in their divergence from the randomness expected by the term’s occurrences in that field. The [ML2](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/ML2.html) and [MDL2](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/models/MDL2.html) models implement this weighting.
+2.  Multinomial: The frequencies from the different fields are modelled in their divergence from the randomness expected by the term’s occurrences in that field. The [ML2](javadoc/org/terrier/matching/models/ML2.html) and [MDL2](javadoc/org/terrier/matching/models/MDL2.html) models implement this weighting.
 
 Proximity
 ---------
 
-Proximity can be handled within DFR, by considering the number of occurrences of a pair of query terms within a window of pre-defined size. In particular, the [DFRDependenceScoreModifier](http://www.terrier.org/docs/current/javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html) DSM implements the pBiL and pBiL2 models, which measure the randomness compared to the document’s length, rather than the statistics of the pair in the corpus.
+Proximity can be handled within DFR, by considering the number of occurrences of a pair of query terms within a window of pre-defined size. In particular, the [DFRDependenceScoreModifier](javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html) DSM implements the pBiL and pBiL2 models, which measure the randomness compared to the document’s length, rather than the statistics of the pair in the corpus.
 
 
 DFR Models and Cross-Entropy

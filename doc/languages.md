@@ -4,7 +4,7 @@ Non English language support in Terrier
 Indexing
 --------
 
-Terrier internally represents all terms as UTF. All provided Document classes use [Tokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) classes to tokenise text into terms during indexing. Likewise, during retrieval, [TRECQuery](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/TRECQuery.html) uses the same tokeniser to parse queries (note that, different from TRECQuery, [SingleLineTRECQuery](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/SingleLineTRECQuery.html) does not perform any tokenisation by default). To change the tokeniser being used for indexing and retrieval, set the `tokeniser` property to the name of the tokeniser you wish to use (NB: British English spelling). The default Tokeniser is [EnglishTokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html).
+Terrier internally represents all terms as UTF. All provided Document classes use [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) classes to tokenise text into terms during indexing. Likewise, during retrieval, [TRECQuery](javadoc/org/terrier/structures/TRECQuery.html) uses the same tokeniser to parse queries (note that, different from TRECQuery, [SingleLineTRECQuery](javadoc/org/terrier/structures/SingleLineTRECQuery.html) does not perform any tokenisation by default). To change the tokeniser being used for indexing and retrieval, set the `tokeniser` property to the name of the tokeniser you wish to use (NB: British English spelling). The default Tokeniser is [EnglishTokeniser](javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html).
 
 File Encodings
 --------------
@@ -14,47 +14,47 @@ While Terrier uses UTF internally to represent terms, the Collection and Documen
 Tokenisers
 ----------
 
-Tokenisers are designed to identify the terms from a stream of text. It is expected that no markup will be present in the text passed to the tokenisers (for indexing, the removal of markup is handled by [Document](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/Document.html) implementations - e.g. HTML tags are parsed by [TaggedDocument](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/TaggedDocument.html)). The choice of tokeniser to use depends on the language being dealt with. Terrier ships with three different tokenisers for use when indexing text or parsing queries. The choice of tokeniser is specified by the tokeniser property, e.g. `tokeniser=EnglishTokeniser`.
+Tokenisers are designed to identify the terms from a stream of text. It is expected that no markup will be present in the text passed to the tokenisers (for indexing, the removal of markup is handled by [Document](javadoc/org/terrier/indexing/Document.html) implementations - e.g. HTML tags are parsed by [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html)). The choice of tokeniser to use depends on the language being dealt with. Terrier ships with three different tokenisers for use when indexing text or parsing queries. The choice of tokeniser is specified by the tokeniser property, e.g. `tokeniser=EnglishTokeniser`.
 
--   [EnglishTokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html) - assumes that all valid characters in terms are A-Z, a-z and 0-9. Obviously this assumption is incorrect when indexing documents in languages other than English.
+-   [EnglishTokeniser](javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html) - assumes that all valid characters in terms are A-Z, a-z and 0-9. Obviously this assumption is incorrect when indexing documents in languages other than English.
 
--   [UTFTokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/tokenisation/UTFTokeniser.html) - uses Java’s Character class to determine what valid characters in indexing terms are. In particular, a term can only contain characters matching one of Character.isLetterOrDigit(), Character.getType() returns Character.NON\_SPACING\_MARK or Character.getType() returns Character.COMBINING\_SPACING\_MARK.
+-   [UTFTokeniser](javadoc/org/terrier/indexing/tokenisation/UTFTokeniser.html) - uses Java’s Character class to determine what valid characters in indexing terms are. In particular, a term can only contain characters matching one of Character.isLetterOrDigit(), Character.getType() returns Character.NON\_SPACING\_MARK or Character.getType() returns Character.COMBINING\_SPACING\_MARK.
 
--   [IdentityTokeniser](http://www.terrier.org/docs/current/javadoc/org/terrier/indexing/tokenisation/IdentityTokeniser.html) - a simple tokeniser that returns the input text as is, and is used internally by [SingleLineTRECQuery](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/SingleLineTRECQuery.html).
+-   [IdentityTokeniser](javadoc/org/terrier/indexing/tokenisation/IdentityTokeniser.html) - a simple tokeniser that returns the input text as is, and is used internally by [SingleLineTRECQuery](javadoc/org/terrier/structures/SingleLineTRECQuery.html).
 
 ### Stemmers
 
 Terrier includes all stemmers from the [Snowball](http://snowball.tartarus.org/) stemmer project, namely:
 
--   [DanishSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/DanishSnowballStemmer.html)
+-   [DanishSnowballStemmer](javadoc/org/terrier/terms/DanishSnowballStemmer.html)
 
--   [DutchSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/DutchSnowballStemmer.html)
+-   [DutchSnowballStemmer](javadoc/org/terrier/terms/DutchSnowballStemmer.html)
 
--   [EnglishSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/EnglishSnowballStemmer.html)
+-   [EnglishSnowballStemmer](javadoc/org/terrier/terms/EnglishSnowballStemmer.html)
 
--   [FinnishSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/FinnishSnowballStemmer.html)
+-   [FinnishSnowballStemmer](javadoc/org/terrier/terms/FinnishSnowballStemmer.html)
 
--   [FrenchSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/FrenchSnowballStemmer.html)
+-   [FrenchSnowballStemmer](javadoc/org/terrier/terms/FrenchSnowballStemmer.html)
 
--   [GermanSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/GermanSnowballStemmer.html)
+-   [GermanSnowballStemmer](javadoc/org/terrier/terms/GermanSnowballStemmer.html)
 
--   [HungarianSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/HungarianSnowballStemmer.html)
+-   [HungarianSnowballStemmer](javadoc/org/terrier/terms/HungarianSnowballStemmer.html)
 
--   [ItalianSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/ItalianSnowballStemmer.html)
+-   [ItalianSnowballStemmer](javadoc/org/terrier/terms/ItalianSnowballStemmer.html)
 
--   [NorwegianSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/NorwegianSnowballStemmer.html)
+-   [NorwegianSnowballStemmer](javadoc/org/terrier/terms/NorwegianSnowballStemmer.html)
 
--   [PortugueseSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/PortugueseSnowballStemmer.html)
+-   [PortugueseSnowballStemmer](javadoc/org/terrier/terms/PortugueseSnowballStemmer.html)
 
--   [RomanianSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/RomanianSnowballStemmer.html)
+-   [RomanianSnowballStemmer](javadoc/org/terrier/terms/RomanianSnowballStemmer.html)
 
--   [RussianSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/RussianSnowballStemmer.html)
+-   [RussianSnowballStemmer](javadoc/org/terrier/terms/RussianSnowballStemmer.html)
 
--   [SpanishSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/SpanishSnowballStemmer.html)
+-   [SpanishSnowballStemmer](javadoc/org/terrier/terms/SpanishSnowballStemmer.html)
 
--   [SwedishSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/SwedishSnowballStemmer.html)
+-   [SwedishSnowballStemmer](javadoc/org/terrier/terms/SwedishSnowballStemmer.html)
 
--   [TurkishSnowballStemmer](http://www.terrier.org/docs/current/javadoc/org/terrier/terms/TurkishSnowballStemmer.html)
+-   [TurkishSnowballStemmer](javadoc/org/terrier/terms/TurkishSnowballStemmer.html)
 
 Batch Retrieval
 ---------------

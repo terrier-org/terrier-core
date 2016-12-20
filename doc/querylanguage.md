@@ -16,7 +16,7 @@ Terrier offers a flexible and powerful query language for searching with phrases
 
 Combinations of the different constructs are possible as well. For example, the query `term1 term2 -term1 term2` would retrieve all the documents that contain at least one of the terms term1 and term2, but not the documents where the phrase “term1 term2” appears.
 
-Note that in some configurations, the Terrier query language may not be available by default. In particular, if batch processing queries from a file using a class that extends [TRECQuery](http://www.terrier.org/docs/current/javadoc/org/terrier/applications/batchquerying/TRECQuery.html), then the queries are pre-processed by a tokeniser that may remove the query language characters (e.g. brackets and colons). To use the Terrier query language in this case, you should use [SingleLineTRECQuery](http://www.terrier.org/docs/current/javadoc/org/terrier/applications/batchquerying/SingleLineTRECQuery.html) and set `SingleLineTRECQuery.tokenise` to false in the `terrier.properties` file.
+Note that in some configurations, the Terrier query language may not be available by default. In particular, if batch processing queries from a file using a class that extends [TRECQuery](javadoc/org/terrier/applications/batchquerying/TRECQuery.html), then the queries are pre-processed by a tokeniser that may remove the query language characters (e.g. brackets and colons). To use the Terrier query language in this case, you should use [SingleLineTRECQuery](javadoc/org/terrier/applications/batchquerying/SingleLineTRECQuery.html) and set `SingleLineTRECQuery.tokenise` to false in the `terrier.properties` file.
 
 > Webpage: <http://terrier.org>
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)

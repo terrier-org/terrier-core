@@ -28,7 +28,7 @@ Using Hadoop On Demand (HOD)
 
 If you don’t have a dedicated Hadoop cluster yet, don't worry. Hadoop provides a utility called Hadoop On Demand (HOD), which can use a [Torque](http://www.adaptivecomputing.com/products/open-source/torque/) PBS cluster to create a Hadoop cluster. Terrier fully supports accessing Hadoop clusters created by HOD, and can even call HOD to create the cluster when its needed for a job. If your cluster is based on [Sun Grid Engine](http://gridengine.sunsource.net/), this supports Hadoop.
 
-If you are using HOD, then Terrier can be configured to automatically access it. Firstly, ensure HOD is working correctly, as described in the HOD [user](http://hadoop.apache.org/docs/r0.19.0/hod_user_guide.html) and [admin](http://hadoop.apache.org/docs/r0.19.0/hod_admin_guide.html) guides. When Terrier wants to submit a MapReduce job, it will use the [HadoopPlugin](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/io/HadoopPlugin.html) to request a MapReduce cluster from HOD. To configure this use the following properties:
+If you are using HOD, then Terrier can be configured to automatically access it. Firstly, ensure HOD is working correctly, as described in the HOD [user](http://hadoop.apache.org/docs/r0.19.0/hod_user_guide.html) and [admin](http://hadoop.apache.org/docs/r0.19.0/hod_admin_guide.html) guides. When Terrier wants to submit a MapReduce job, it will use the [HadoopPlugin](javadoc/org/terrier/utility/io/HadoopPlugin.html) to request a MapReduce cluster from HOD. To configure this use the following properties:
 
 -   `plugin.hadoop.hod` - set the full path to the local HOD executable. If this is not set, then HOD will not be used.
 
@@ -36,7 +36,7 @@ If you are using HOD, then Terrier can be configured to automatically access it.
 
 -   `plugin.hadoop.hod.params` - any additional options you want to set on the HOD command line.
 
-For more information on using HOD, see our [HadoopPlugin documentation](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/io/HadoopPlugin.html).
+For more information on using HOD, see our [HadoopPlugin documentation](javadoc/org/terrier/utility/io/HadoopPlugin.html).
 
 Indexing with Hadoop MapReduce
 ------------------------------
@@ -46,7 +46,7 @@ We provide a [guide for configuring single-pass indexing with MapReduce under Ha
 Developing MapReduce jobs with Terrier
 --------------------------------------
 
-Importantly, it should be possible to modify Terrier to perform other information retrieval tasks using MapReduce. Terrier requires some careful configuration to use in the MapReduce setting. The included, [HadoopPlugin](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/io/HadoopPlugin.html) and [HadoopUtility](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/io/HadoopUtility.html) should be used to link Terrier to Hadoop. In particular, HadoopPlugin/HadoopUtility ensure that Terrier’s share/ folder and the terrier.properties file are copied to a shared space that all job tasks can access. In the configure() method of the map and reduce tasks, you must call `HadoopUtility.loadTerrierJob(jobConf)`. For more information, see [HadoopPlugin](http://www.terrier.org/docs/current/javadoc/org/terrier/utility/io/HadoopPlugin.html). Furthermore, we suggest that you browse the MapReduce indexing source code, both for the map and reduce functions stored in the [Hadoop\_BasicSinglePassIndexer](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/singlepass/hadoop/Hadoop_BasicSinglePassIndexer.html) and as well as the [input format](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/singlepass/hadoop/MultiFileCollectionInputFormat.html) and [partitioner](http://www.terrier.org/docs/current/javadoc/org/terrier/structures/indexing/singlepass/hadoop/SplitEmittedTerm.html).
+Importantly, it should be possible to modify Terrier to perform other information retrieval tasks using MapReduce. Terrier requires some careful configuration to use in the MapReduce setting. The included, [HadoopPlugin](javadoc/org/terrier/utility/io/HadoopPlugin.html) and [HadoopUtility](javadoc/org/terrier/utility/io/HadoopUtility.html) should be used to link Terrier to Hadoop. In particular, HadoopPlugin/HadoopUtility ensure that Terrier’s share/ folder and the terrier.properties file are copied to a shared space that all job tasks can access. In the configure() method of the map and reduce tasks, you must call `HadoopUtility.loadTerrierJob(jobConf)`. For more information, see [HadoopPlugin](javadoc/org/terrier/utility/io/HadoopPlugin.html). Furthermore, we suggest that you browse the MapReduce indexing source code, both for the map and reduce functions stored in the [Hadoop\_BasicSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/hadoop/Hadoop_BasicSinglePassIndexer.html) and as well as the [input format](javadoc/org/terrier/structures/indexing/singlepass/hadoop/MultiFileCollectionInputFormat.html) and [partitioner](javadoc/org/terrier/structures/indexing/singlepass/hadoop/SplitEmittedTerm.html).
 
 ------------------------------------------------------------------------
 
