@@ -1,158 +1,130 @@
-Documentation for Terrier 4.1
+Documentation for Terrier v4.2
 =============================
 
-<span>\[</span>[Terrier Documentation](index.html)<span>\]</span> <span>\[</span>[Next: Overview](overview.html)<span>\]</span>
+Welcome to the documentation for the Terrier IR platform v4.2. If you are a new user, we recommend that you begin with a quickstart guide from those listed below. The quickstart guides will introduce you to core concepts when using Terrier within different scenarios. If you are looking to find out about a particular function or component of Terrier, scroll down this page to the main Table of Contents. 
 
-Introduction to Terrier
+Quickstart Guides
 -----------------------
 
-[Overview](overview.html)
+> ### [Running Batch IR Experiments with Terrier](quickstart_experiments.md ) 
+>This quickstart guide is designed for information retrieval students and researchers looking to use Terrier to experiment with or learn about some aspect of a search engine. The main learning outcomes are: how to download and install a local copy of the Terrier platform; how to produce an on-disk index from a collection of documents; and how to issue single queries as well as batches of queries over that index from the command line.   
 
-An overview of what the Terrier platform is, and what it can be used for.
+> ### [Integrating Terrier as a Search Engine into your Java Application](quickstart-integratedsearch.md )
+> This quickstart guide is for software developers that want to use Terrier as a search engine within their own application. The guide covers how to import Terrier as an application dependancy using Maven, how to create an index in memory, how to index files or other pieces of text on-the-fly within your java program, and how to issue queries to the index. 
 
-[What’s New](whats_new.html)
 
-What has changed in the Terrier platform in the recent releases.
-
- 
-
-Getting Started with Terrier
+Table of Contents
 ----------------------------
 
-[Installing and Running Terrier](quickstart.html)
+### Platform Information
 
-Quickstart: Contains information about how to download, install and start running Terrier, and an overview of the applications provided with Terrier.
+> [Overview](overview.md)  
+> An overview of what the Terrier platform is, and what it can be used for.
 
-[Terrier Components](basicComponents.html)
+>[What’s New](whats_new.md)  
+>What has changed in the Terrier platform in the recent releases.
 
-An overview of the main components of Terrier.
+>[Installing and Running Terrier](quickstart.md)  
+Contains information about how to download, install and start running Terrier, and an overview of the applications provided with Terrier.
 
- 
+>[Terrier Components](basicComponents.md)  
+>An overview of the main components of Terrier.
 
-Using Terrier
--------------
+>[Query Language](querylanguage.md)  
+>A description of the query language that Terrier supports.
 
-[Configuring Terrier](configure_general.html)
+>[Future Features & Known Issues](todo.md)  
+>Upcoming features in future releases.
 
-A brief introduction to the configuration of Terrier
+### Common Configuration Options
 
-[Configuring Indexing](configure_indexing.html)
 
-A guide of indexing, and how it can be configured to your needs.
+>[Configuring Terrier](configure_general.md)  
+>A brief introduction to the configuration of Terrier
 
-[Configuring Retrieval](configure_retrieval.html)
+>[Configuring Indexing](configure_indexing.md)  
+>A guide of indexing, and how it can be configured to your needs.
 
-A guide of the retrieval functionalities, covering frequently-used retrieval methodologies, such as TF-IDF, Okapi’s BM25, language models (Hiemstra and Ponte & Croft) and weighting models from the probabilistic Divergence From Randomness (DFR), as well as query expansion (pseudo-relevance feedback).
+>[Configuring Retrieval](configure_retrieval.md)  
+>A guide of the retrieval functionalities, covering frequently-used retrieval methodologies, such as TF-IDF, Okapi’s BM25, language models (Hiemstra and Ponte & Croft) and weighting models from the probabilistic Divergence From Randomness (DFR), as well as query expansion (pseudo-relevance feedback).
 
-[Learning to Rank with Terrier](learning.html)
+>[Configuring Real-time Index Structures](realtime_indices.md)  
+>An introduction to the real-time index structures in Terrier.
 
-A guide to using multiple retrieval features with learning to rank techniques to enhance search effectiveness.
+>[List of properties in Terrier](properties.md)  
+>Extensive list of properties that Terrier supports and what they configure.
 
-[Terrier’s Query Language](querylanguage.html)
+### Advanced Functionality
 
-A description of the query language that Terrier supports.
+>[Learning to Rank with Terrier](learning.md)  
+>A guide to using multiple retrieval features with learning to rank techniques to enhance search effectiveness.
 
-[Evaluation of Experiments](evaluation.html)
+>[Pluggable Compression](compression.md)  
+>A guide to configuring byte-level compression schemes to reduce the size of Terrier’s index structures.
 
-Shows how the results of experiments can be evaluated using the in-built evaluation package in Terrier.
+>[Non English language support](languages.md)  
+>Description of support functionalities in Terrier for indexing and retrieving from documents written in languages other than English.
 
-[Real-time Index Structures](realtime_indices.html)
+>[Hadoop MapReduce Indexing with Terrier](hadoop_indexing.md)  
+>A guide to using the Hadoop MapReduce indexer in Terrier.
 
-An introduction to the real-time index structures in Terrier.
+>[Terrier/Hadoop Configuration](hadoop_configuration.md)  
+>A guide to how to configure Terrier to use a Hadoop cluster
 
-[Desktop Search](terrier_desktop.html)
+### Built-In Applications
 
-A guide to the included Desktop Search application of Terrier.
+>[Desktop Search](terrier_desktop.md)  
+>A guide to the included Desktop Search application of Terrier.
 
-[Web-based Terrier](terrier_http.html)
+>[Web-based Terrier](terrier_http.md)  
+>A guide to using the Web-based application of Terrier.
 
-A guide to using the Web-based application of Terrier.
+>[Website Search Application](website_search.md)  
+>A guide to using the website search application, which illustrates real-time crawling, indexing and retrieval functionalities in Terrier.
 
-[Website Search Application](website_search.html)
+### Experiment Support
 
-A guide to using the website search application, which illustrates real-time crawling, indexing and retrieval functionalities in Terrier.
+>[TREC Experiment Examples](trec_examples.md)  
+>An example of how to create an index and produce a TREC run on the WT2G and Blogs06 collections.
 
-[TREC Experiment Examples](trec_examples.html)
+>[Evaluation of Experiments](evaluation.md)  
+>Shows how the results of experiments can be evaluated using the in-built evaluation package in Terrier.
 
-An example of how to create an index and produce a TREC run on the WT2G and Blogs06 collections.
+### Extending Terrier
 
-[Terrier/Hadoop Configuration](hadoop_configuration.html)
+>[Developing with Terrier](terrier_develop.md)  
+>Introduction to developing applications using Terrier.
 
-A guide to how to configure Terrier to use a Hadoop cluster
+>[Extending Indexing](extend_indexing.md)  
+>In depth guide about indexing, and the roles of each class in the indexing process.
 
-[Hadoop MapReduce Indexing with Terrier](hadoop_indexing.html)
+>[Extending Retrieval](extend_retrieval.md)  
+>In depth guide about retrieval, and how various retrieval functionalities can be integrated into Terrier, as well as, how you can use Terrier to obtain various statistics about the terms and the collection.
 
-A guide to using the Hadoop MapReduce indexer in Terrier.
+### Other Resources
 
-[List of properties in Terrier](properties.html)
+>[Terrier API Javadoc](javadoc/index.html)  
+>API documentation of each class in Terrier.
 
-Extensive list of properties that Terrier supports and what they configure.
+>[Description of DFR](dfr_description.md)  
+>Description of the Divergence From Randomness framework that Terrier implements.
 
- 
+>[Terrier Forum](http://terrier.org/forum/)  
+>The Terrier discussion forum is for developers and users of the Terrier platform to discuss the software, ask questions, post patches and share tips.
 
-Extending Terrier & Other Advanced Topics
------------------------------------------
+>[Terrier Wiki](http://ir.dcs.gla.ac.uk/wiki/Terrier)  
+>Hints and tips, and configurations for various well-known corpora.
 
-[Developing with Terrier](terrier_develop.html)
+>[Bibliography](bibliography.html)  
+>If you use Terrier in your research, please cite us!
 
-Introduction to developing applications using Terrier.
-
-[Extending Indexing](extend_indexing.html)
-
-In depth guide about indexing, and the roles of each class in the indexing process.
-
-[Extending Retrieval](extend_retrieval.html)
-
-In depth guide about retrieval, and how various retrieval functionalities can be integrated into Terrier, as well as, how you can use Terrier to obtain various statistics about the terms and the collection.
-
-[Pluggable Compression](compression.html)
-
-A guide to configuring byte-level compression schemes to reduce the size of Terrier’s index structures.
-
-[Non English language support](languages.html)
-
-Description of support functionalities in Terrier for indexing and retrieving from documents written in languages other than English.
-
-[Description of DFR](dfr_description.html)
-
-Description of the Divergence From Randomness framework that Terrier implements.
-
-[Terrier API Javadoc](javadoc/index.html)
-
-API documentation of each class in Terrier.
-
-[Future Features & Known Issues](todo.html)
-
-Upcoming features in future releases.
-
- 
-
-Other Information
------------------
-
-[Terrier Forum](http://terrier.org/forum/)
-
-The Terrier discussion forum is for developers and users of the Terrier platform to discuss the software, ask questions, post patches and share tips.
-
-[Terrier Wiki](http://ir.dcs.gla.ac.uk/wiki/Terrier)
-
-Hints and tips, and configurations for various well-known corpora.
-
-[Bibliography](bibliography.html)
-
-If you use Terrier in your research, please cite us!
-
-[Contacts](contacts.html)
-
-Terrier Contacts
-
-<span>\[</span>[Terrier Documentation](index.html)<span>\]</span> <span>\[</span>[Next: Overview](overview.html)<span>\]</span>
+>[Contacts](contacts.md)  
+>Terrier Contacts
 
 ------------------------------------------------------------------------
 
-Webpage: <http://terrier.org>
-Contact: [](mailto:terrier@dcs.gla.ac.uk)
-[School of Computing Science](http://www.dcs.gla.ac.uk/)
-Copyright (C) 2004-2015 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Webpage: <http://terrier.org>  
+> Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
+> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
 
- 
+ 
