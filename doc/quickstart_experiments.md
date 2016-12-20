@@ -168,7 +168,7 @@ c.  The corresponding relevance assessments file (or qrels) for the topics - spe
 
 1. Let's do a retrieval run. The `-r` option tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line (all other configurration remains using Terrier’s default settings):
 
-
+```
     $bin/trec_terrier.sh -r -Dtrec.topics=share/vaswani_npl/query-text.trec
     ...
     16:14:43.440 [main] INFO  o.t.matching.PostingListManager - Query 93 with 10 terms has 10 posting lists
@@ -176,7 +176,7 @@ c.  The corresponding relevance assessments file (or qrels) for the topics - spe
     16:14:43.461 [main] INFO  o.t.a.batchquerying.TRECQuerying - Settings of Terrier written to var/results/InL2c1_0.res.settings
     16:14:43.461 [main] INFO  o.t.a.batchquerying.TRECQuerying - Finished topics, executed 93 queries in 0.866 seconds, results written tovar/results/InL2c1_0.res
     Time elapsed: 0.987 seconds.
-
+```
 
 If all goes well this will result in a `.res` file in the `var/results` directory called `InL2c1_0.res`. We call each `.res` a run.
 
