@@ -111,7 +111,7 @@ public class Manager
 		= "org.terrier.matching.models.";
 
 	/** A generaic query id for when no query id is given **/
-	public static final String GENERICQUERYID = "GenericQuery";
+	private static final String GENERICQUERYID = "GenericQuery";
 	
 	/* ------------------------------------------------*/
 	/* ------------Instantiation caches --------------*/
