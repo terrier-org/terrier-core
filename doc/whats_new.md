@@ -30,6 +30,7 @@ Minor update with mostly bug fixes and minor improvements. Inclusion of new feat
 - [TR-386](http://terrier.org/issues/browse/TR-386) java8 Maven puts javadoc in wrong location
 - [TR-453](http://terrier.org/issues/browse/TR-453) Port docs/ pages to markdown
 - [TR-454](http://terrier.org/issues/browse/TR-454) Move Desktop to own project
+- [TR-455](http://terrier.org/issues/browse/TR-455) Add missing information from pom.xml file to ensure can be distribution on MavenCentral
 - [TR-457](http://terrier.org/issues/browse/TR-457) Use stopword list as a resource (including resource file system)
 - [TR-463](http://terrier.org/issues/browse/TR-463) Generate jforests.properties and sample features.list automatically within trec_setup.sh
 
