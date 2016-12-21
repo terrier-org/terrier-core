@@ -1,7 +1,7 @@
 What's New in Terrier
 =====================
 
-Terrier 4.2 - XX/12/2016
+Terrier 4.2 - 22/12/2016
 ------------------------
 Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency. Terrier now required Java 1.8.
 
@@ -30,6 +30,7 @@ Minor update with mostly bug fixes and minor improvements. Inclusion of new feat
 - [TR-386](http://terrier.org/issues/browse/TR-386) java8 Maven puts javadoc in wrong location
 - [TR-453](http://terrier.org/issues/browse/TR-453) Port docs/ pages to markdown
 - [TR-454](http://terrier.org/issues/browse/TR-454) Move Desktop to own project
+- [TR-455](http://terrier.org/issues/browse/TR-455) Add missing information from pom.xml file to ensure can be distribution on MavenCentral
 - [TR-457](http://terrier.org/issues/browse/TR-457) Use stopword list as a resource (including resource file system)
 - [TR-463](http://terrier.org/issues/browse/TR-463) Generate jforests.properties and sample features.list automatically within trec_setup.sh
 
@@ -999,4 +1000,4 @@ Terrier 1.0 Beta - 18/11/2004
 ---------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
