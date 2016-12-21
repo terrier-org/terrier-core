@@ -1,10 +1,10 @@
 /*
- * Terrier - Terabyte Retriever 
- * Webpage: http://terrier.org 
+ * Terrier - Terabyte Retriever
+ * Webpage: http://terrier.org
  * Contact: terrier{a.}dcs.gla.ac.uk
  * University of Glasgow - School of Computing Science
  * http://www.ac.gla.uk
- * 
+ *
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -32,11 +32,11 @@ import java.io.*;
  * @author Vassilis Plachouras
  */
 public class TRECSetup {
-	
+
 	/**
 	 * Starts the application. It takes arguments. The first is
 	 * the directory in which the file README is (it is assumed that
-	 * the program java is executed from this directory) and the 
+	 * the program java is executed from this directory) and the
 	 * second is a directory that contains the files to be indexed.
 	 * @param args an array of command-line arguments
 	 */
@@ -60,11 +60,11 @@ public class TRECSetup {
 		//remove any trailing file separators from the given paths
 		if (installDirectory.endsWith(File.separator))
 			installDirectory = installDirectory.substring(0, installDirectory.length()-1);
-		
+
 		//if (collectionDirectory.endsWith(File.separator))
 		//	collectionDirectory = collectionDirectory.substring(0, collectionDirectory.length()-1);
-		
-		
+
+
 		if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
 			StringBuilder tmpInstallDirectory = new StringBuilder();
 			for (int i=0; i<installDirectory.length(); i++) {
@@ -76,9 +76,9 @@ public class TRECSetup {
 			}
 			installDirectory = tmpInstallDirectory.toString();
 		}
-	
+
 		String ETC_Dir = System.getProperty("terrier.etc", installDirectory + File.separator + "etc" ) + File.separator;
-		try {	
+		try {
 			//creating an collection specification file
 			//with only a comment line
 			PrintWriter adCollection = new PrintWriter(new FileWriter( ETC_Dir + "collection.spec"));
@@ -86,7 +86,33 @@ public class TRECSetup {
 			adCollection.println("#add the files to index");
 			adCollection.close();
 
-	
+			//create a useful properties file for jforests
+			PrintWriter jforests = new PrintWriter(new FileWriter(  ETC_Dir + "jforests.properties"));
+		  System.out.println("Creating jforests.properties file.");
+			jforests.println("#this is a default jforests configuration file for LambdaMART");
+			jforests.println("#following the defaults suggested at https://github.com/yasserg/jforests");
+			jforests.println("trees.num-leaves=7");
+	    jforests.println("trees.min-instance-percentage-per-leaf=0.25");
+	    jforests.println("boosting.learning-rate=0.05");
+	    jforests.println("boosting.sub-sampling=0.3");
+	    jforests.println("trees.feature-sampling=0.3");
+	    jforests.println("boosting.num-trees=2000");
+	    jforests.println("learning.algorithm=LambdaMART-RegressionTree");
+	    jforests.println("learning.evaluation-metric=NDCG");
+	    jforests.println("params.print-intermediate-valid-measurements=true");
+			jforests.close();
+
+			PrintWriter featureList = new PrintWriter(new FileWriter(ETC_Dir + "features.list"));
+		  System.out.println("Creating features.list file.");
+			featureList.println("#this is a sample feature list for learning-to-rank. Remove comments to add features");
+			featureList.println("#BM25 calculated only on the entire document");
+			featureList.println("#WMODEL:BM25");
+			featureList.println("#BM25 calculated only on the first field");
+			featureList.println("#WMODEL:SingleFieldModel(BM25,0)");
+			featureList.println("#Applying a DSM as a feature, in this case DFR proximity. NB proximity.dependency.type would need to be set for this feature");
+			featureList.println("#DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier");
+			featureList.close();
+
 			//creating a terrier-log.xml file
 			PrintWriter terrierlog = new PrintWriter(new FileWriter(ETC_Dir+ "logback.xml"));
 			System.out.println("Creating logging configuration (logback.xml) file in "+ETC_Dir);
@@ -106,10 +132,10 @@ public class TRECSetup {
 			terrierlog.println("  </root>");
 			terrierlog.println("</configuration>");
 			terrierlog.close();
-			
+
 			//creating the terrier.properties file
 			PrintWriter propertiesWriter = new PrintWriter(new FileWriter(ETC_Dir+ "terrier.properties"));
-			System.out.println("Creating terrier.properties file.");		
+			System.out.println("Creating terrier.properties file.");
 			propertiesWriter.println("#default controls for query expansion");
 			propertiesWriter.println("querying.postprocesses.order=QueryExpansion");
 			propertiesWriter.println("querying.postprocesses.controls=qe:QueryExpansion");
@@ -144,13 +170,13 @@ public class TRECSetup {
 			propertiesWriter.println("#the processing stages a term goes through");
 			propertiesWriter.println("termpipelines=Stopwords,PorterStemmer");
 			propertiesWriter.println();
-			
+
 			propertiesWriter.close();
 		} catch(IOException ioe) {
 			System.err.println("Exception while creating the default configuration files for Terrier: "+ioe);
 			System.err.println("Exiting ...");
-			ioe.printStackTrace();	
+			ioe.printStackTrace();
 		}
-			
+
 	}
 }
