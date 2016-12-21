@@ -1,7 +1,7 @@
 What's New in Terrier
 =====================
 
-Terrier 4.2 - XX/12/2016
+Terrier 4.2 - 22/12/2016
 ------------------------
 Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency. Terrier now required Java 1.8.
 
@@ -999,4 +999,4 @@ Terrier 1.0 Beta - 18/11/2004
 ---------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

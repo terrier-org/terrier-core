@@ -101,4 +101,4 @@ See [org.terrier.querying.Manager](javadoc/org/terrier/querying/Manager.html) fo
 ----------------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
