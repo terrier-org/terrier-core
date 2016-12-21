@@ -102,8 +102,6 @@ To process queries using a specific weighting model, we can *override* the `trec
 
 -D tells TrecTerrier that we wish to override a property.
 
-[]()
-
 Field-Based Weighting Models
 ----------------------------
 
@@ -134,9 +132,9 @@ Since version 3.0, Terrier includes two dependence models. Such models highly we
 
 Two dependence models are included:
 
--   [DFRDependenceScoreModifier](javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html) - this implements a Divergence from Randomness based dependence model .
+-   [DFRDependenceScoreModifier](javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html) - this implements a Divergence from Randomness based dependence model.
 
--   [MRFDependenceScoreModifier](javadoc/org/terrier/matching/dsms/MRFDependenceScoreModifier.html) - this implements the Markov Random Field dependence model .
+-   [MRFDependenceScoreModifier](javadoc/org/terrier/matching/dsms/MRFDependenceScoreModifier.html) - this implements the Markov Random Field dependence model.
 
 To enable the dependence models, use the `matching.dsms` property. E.g. :
 
@@ -166,7 +164,7 @@ To retrieve from an indexed test collection, using query expansion, with the ter
 
     bin/trec_terrier.sh -r -q -c 1.0
 
-Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format “qrels” file. To use feedback documents in query expansion, change the [FeedbackSelector](javadoc/org/terrier/querying/FeedbackSelector.html), as follows:
+Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format qrels file. To use feedback documents in query expansion, change the [FeedbackSelector](javadoc/org/terrier/querying/FeedbackSelector.html), as follows:
 
     bin/trec_terrier.sh -r -q -Dqe.feedback.selector=RelevantOnlyFeedbackDocuments,RelevanceFeedbackSelector -Dqe.feedback.filename=/path/to/feedback/qrels
 
