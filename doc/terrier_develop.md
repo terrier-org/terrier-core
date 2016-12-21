@@ -20,12 +20,48 @@ Finally, the Files layer supports transparent compression for reading or writing
 
 **NB**: We intend to replace the FileSystem Abstraction Layer with Java's nio FileSystem in a future release.
 
+
+Using your own classes in Terrier
+---------------------------------
+
+If you are adding your own functionality to Terrier, you should have no need to compile Terrier unless you have altered the Terrier source code and wish to check or use your changes. Many configurable properties take class names, so using your own class is as simple as ensuring it is available on the classpath, and giving the class name as a property.
+
+For your new functionality, make a new project with a compile-time dependency on Terrier. For instance, the Maven pom.xml file for your project should contain the following dependency block:
+
+```xml
+<dependency>
+  <groupId>org.terrier</groupId>
+  <artifactId>terrier-core</artifactId>
+  <version>4.2</version>
+  <scope>provided</scope>
+</dependency>
+```
+
+Once you have compiled your project into a jar file, you have two options:
+
+1. Add the generated jar to Terrier's classpath manually, by altering the CLASSPATH environment variable:
+
+```shell
+CLASSPATH=/path/to/my/project.jar bin/trec_terrier.sh -Dtrec.model=my.project.MyWeightingModel
+```
+
+2. Using Maven to add that dependency in Terrier, which is slightly more complex. Firstly, you should `mvn install` your project to your local repository. Secondly, you add dependency on your project to Terrier; Thirdly, you repackage Terrier so that the jar-with-dependencies includes your project, using `mvn package`.
+
+```xml
+<dependency>
+  <groupId>my.group</groupId>
+  <artifactId>my.project</artifactId>
+  <version>0.1-SNAPSHOT</version>
+</dependency>
+```
+
+
 Compiling Terrier
 -----------------
 
-The main Terrier distribution comes pre-compiled as Java, and can be run on any Java 1.8 JDK. You should have no need to compile Terrier unless you have altered the Terrier source code and wish to check or use your changes.
+The main Terrier distribution comes pre-compiled as Java, and can be run on any Java 1.8 JDK. As mentioned above, you should have no need to compile Terrier unless you need to change its own source.
 
-Terrier now uses [Maven](https://maven.apache.org) for dependencies, compiling testing and packaging. Terrier's layout does not yet follow the Maven standard layout, with various source folders located under src/. Finally, the Maven environment is configured to build with Eclipse also, although a few plugins are disabled.
+Terrier uses [Maven](https://maven.apache.org) for dependencies, compiling testing and packaging. Terrier's layout does not yet follow the Maven standard layout, with various source folders located under `src/`. Finally, the Maven environment is configured to build with Eclipse also, although a few plugins are disabled.
 
 The following Maven goals can be used for recompiling Terrier:
 
@@ -40,7 +76,7 @@ Testing Terrier
 
 Terrier now has many JUnit test classes, located into the `src/test` folder. In particular, JUnit tests are now provided for a great many of the classes in Terrier, including (but not limited to) indexers, tokenisation, retrieval, query parsing, compression, and evaluation.
 
-In addition, there are JUnit-based end-to-end tests that ensure that the expected results are obtained from a small (22 document) corpus consisting of Shakespeare’s play, the Merchant of Venice. The end-to-end tests test all indexers, as well as retrieval functionality behaves as expected. The corpus, test topics and relevance assesments are located in `share/tests/shakespeare`. Running the unit and Shakespeare end-to-end tests takes about 5 minutes, and can be performed from the command line using the Ant `test` target.
+In addition, there are JUnit-based end-to-end tests that ensure that the expected results are obtained from a small (22 document) corpus consisting of Shakespeare’s play, the Merchant of Venice. The end-to-end tests test all indexers, as well as retrieval functionality behaves as expected. The corpus, test topics and relevance assessments are located in `share/tests/shakespeare`. Running the unit and Shakespeare end-to-end tests takes about 5 minutes, and can be performed from the command line using the Maven `test` target.
 
 Since Terrier 4.0, Terrier has an end-to-end test based on the TREC WT2G corpus. This is good method test to ensure that a change on Terrier has not negatively impacted on retrieval performance. Note that while indexing the WT2G corpus only takes a few minutes, the end-to-end test suite runs different indexing varieties, so you should allow about about an hour for this test to run. To run this test, you need to specify the location of the WT2G corpus, topics and relevance assessments (qrels):
 

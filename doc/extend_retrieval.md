@@ -121,11 +121,13 @@ Moreover, if you're not comfortable with using Java, you can dump the indices of
 
 Below, you can find a example sample of using the querying functionalities of Terrier.
 
+```java
     String query = "term1 term2";
     SearchRequest srq = queryingManager.newSearchRequestFromQuery(query);
     srq.addMatchingModel("Matching", "PL2");
     queryingManager.runSearchRequest(srq);
     ResultSet rs = srq.getResultSet();
+```
 
 ------------------------------------------------------------------------
 
