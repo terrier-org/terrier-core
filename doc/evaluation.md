@@ -56,6 +56,17 @@ The above displayed evaluation measures are averaged over a batch of queries. We
 
 The resulting output saved in the corresponding .eval file will contain further results, with the middle column indicating the query id.
 
+
+### Using trec_eval directly
+
+Terrier ships with [treceval](https://github.com/terrierteam/jtreceval), which contains trec\_eval binaries that work on Linux x86, Mac OS X x86_64 and Windows x86. You can therefore use easily trec_eval directly from the command line, by invoking the `trec_eval.sh` script:
+
+```shell
+
+bin/trec_eval.sh qrels var/results/PL2c1.0_0.res
+
+```
+
 ------------------------------------------------------------------------
 
 
