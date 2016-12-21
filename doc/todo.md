@@ -1,5 +1,3 @@
-
-
 Terrier Future Features and Known Issues
 ========================================
 
@@ -8,18 +6,14 @@ List of features and known issues that are marked for future Terrier versions:
 Future Features
 ---------------
 
--   Consider making Terrier available upon a Maven repository.
-
--   The addition of Terrier’s own Exceptions for setup, indexing, querying.
+-   The addition of Terrier's own Exceptions for setup, indexing, querying.
 
 Known Issues
 ------------
 
--   Building with Java 8 causes javadoc weirdness (compiles to wrong directory)
-
 -   CompressionFactory/CompressionConfig is not supported by single-pass or Hadoop indexing.
 
--   Query language should be refined: In particular, ambiguity warnings when generating the parser with ANTLR should be removed, and a more structured query language should be introduced.
+-   Query language should be refined: In particular, ambiguity warnings when generating the parser with ANTLR should be removed, and a more structured query language should be introduced. We plan to use a subset of the Indril query language internally from version 5.0.
 
 -   The real-time index structures do not currently support block indexing
 
