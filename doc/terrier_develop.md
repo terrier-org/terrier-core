@@ -84,6 +84,11 @@ Since Terrier 4.0, Terrier has an end-to-end test based on the TREC WT2G corpus.
 
 
 
+Contributing to Terrier
+-----------------------
+
+Terrier is available on [Github](https://github.com/terrier-org/terrier-core/). If you would like to contribute to Terrier, please open an issue on the [Terrier JIRA Issue Tracker](http://terrier.org/issues/), and make a pull request on Github.
+
 ------------------------------------------------------------------------
 
 
