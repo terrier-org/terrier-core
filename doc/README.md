@@ -1,1 +1,1 @@
-See (index.md)[index.md] for the documentation
+See [index.md](index.md) for the documentation
