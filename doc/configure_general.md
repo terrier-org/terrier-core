@@ -56,7 +56,7 @@ As another example, you can use shell scripting (e.g. Bash) to run Terrier with 
 
 ### Configuring Logging
 
-Terrier uses [Log4j](http://logging.apache.org/log4j/1.2/) for logging. You can control the amount of logging information (the logging level) that Terrier outputs by altering the log4j config in `etc/terrier-log.xml`. For more information about configuring Log4j, see the [Log4j documentation](http://logging.apache.org/log4j/1.2/manual.html).
+Terrier uses [Logback](http://logback.qos.ch/) for logging. You can control the amount of logging information (the logging level) that Terrier outputs by altering the Logback config in `etc/logback.xml`. For more information about configuring Logback, see the [Logback documentation](http://logback.qos.ch/documentation.html).
 
 ------------------------------------------------------------------------
 
