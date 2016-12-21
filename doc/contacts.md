@@ -1,7 +1,7 @@
 Terrier Contacts
 ================
 
-If you have any questions about using or extending Terrier, please use the Terrier [discussion forum](http://terrier.org/forum/). Otherwise, you can email [the development team](mailto:terrier@dcs.gla.ac.uk).
+If you have any questions about using or extending Terrier, please use the Terrier [discussion forum](http://terrier.org/forum/). 
 
 ------------------------------------------------------------------------
 
