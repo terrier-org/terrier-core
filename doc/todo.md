@@ -22,7 +22,9 @@ Deprecations, Scheduled Refactorings
 
 The following classes and interfaces are/may be deprecated in this version of Terrier and will likely be removed or refactored in a future release:
 
--   BlockLexiconEntry & BlockFieldLexiconEntry will be removed in a future version of Terrier
+-   structures.BlockLexiconEntry & structures.BlockFieldLexiconEntry will be removed in a future version of Terrier.
+
+-   structures.bit.DirectIndex and structures.bit.InvertedIndex will be removed in a future version of Terrier.
 
 -   [ApplicationSetup](javadoc/org/terrier/utility/ApplicationSetup.html) will be replaced with a new non-global configuration API.
 
