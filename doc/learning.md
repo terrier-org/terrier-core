@@ -50,10 +50,12 @@ Fat Classes
 
     The names of features can be specified on a property, or read from a file, `etc/features.list`. E.g.
 
-        WMODEL:BM25
-        WMODEL:PL2
-        QI:StaticFeature(OIS,/home/terrier4/var/results/data.inlinks.oos.gz)
-        DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier
+```
+WMODEL:BM25
+WMODEL:PL2
+QI:StaticFeature(OIS,/home/terrier4/var/results/data.inlinks.oos.gz)
+DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier
+```
 
 -   `WritableOutputFormat` and `FatResultsMatching`: these classes permit FatResultSets to be written to file and read back in again, for the purposes of faster experimentation.
 
