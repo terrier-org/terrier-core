@@ -7,6 +7,8 @@ Terrier is open source, and is a comprehensive, flexible and transparent platfor
 
 Terrier is written in Java, and is developed at the School of Computing Science, [University of Glasgow](http://www.gla.ac.uk/).
 
+The latest version of Terrier can be found at https://github.com/terrier-org/terrier-core/
+
 ### Open Source Licence
 
 Terrier is subject to the terms detailed in the Mozilla Public License
@@ -41,4 +43,4 @@ In order to start [experimenting with Terrier](http://terrier.org/docs/current/q
 ------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2017 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
+> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
