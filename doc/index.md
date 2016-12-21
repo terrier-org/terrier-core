@@ -101,7 +101,10 @@ Contains information about how to download, install and start running Terrier, a
 >Introduction to developing applications using Terrier.
 
 >[Extending Indexing](extend_indexing.md)  
->In depth guide about indexing, and the roles of each class in the indexing process.
+>In depth guide about extending indexing
+
+>[Indexer Details](indexer_details.md)
+>More information about the roles of various classes in the indexing process.
 
 >[Extending Retrieval](extend_retrieval.md)  
 >In depth guide about retrieval, and how various retrieval functionalities can be integrated into Terrier, as well as, how you can use Terrier to obtain various statistics about the terms and the collection.
