@@ -27,12 +27,13 @@ As noted above, to use the Web-based interface, document snippets/abstracts/meta
 
 -   [TRECDocument](javadoc/org/terrier/indexing/TRECDocument.html) (extends [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html)): First `N` characters from the content of each specified tag within the document.
 
-To configure Terrier’s indexing process to store one or more document abstracts, the appropriate properties specified in either [FileDocument](javadoc/org/terrier/indexing/FileDocument.html) or [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html) must be set. Which document class to use is determined by the Collection to be indexed. For example, [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) and [WARC018Collection](javadoc/org/terrier/indexing/WARC018Collection.html) use the TaggedDocument class by default.
+To configure Terrier's indexing process to store one or more document abstracts, the appropriate properties specified in either [FileDocument](javadoc/org/terrier/indexing/FileDocument.html) or [TaggedDocument](javadoc/org/terrier/indexing/TaggedDocument.html) must be set. Which document class to use is determined by the Collection to be indexed. For example, [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) and [WARC018Collection](javadoc/org/terrier/indexing/WARC018Collection.html) use the TaggedDocument class by default.
 
 During indexing, Terrier stores each abstract generated as document properties in the [MetaIndex](javadoc/org/terrier/structures/MetaIndex.html). Note that this can cause the MetaIndex to become quite large! To configure this, the abstract names should be added to `indexer.meta.forward.keys` and the abstract lengths should be added to `indexer.meta.forward.keylens`.
 
 An example where we save two abstracts using a TREC Collection is shown below:
 
+```
     #For TREC collections
     trec.collection.class=TRECCollection
     #For ClueWeb09 collection
@@ -65,25 +66,29 @@ An example where we save two abstracts using a TREC Collection is shown below:
     indexer.meta.forward.keylens=26,256,2048
     # We will not be doing reverse lookups using the abstracts and so they are not listed here.
     indexer.meta.reverse.keys=docno
+```
 
-In this example, we store the first 256 characters of the title tag in one abstract called ‘title’ and a further 2048 characters from the rest of the document in a second abstract called ‘body’. The Document class used in this case is TaggedDocument.
+In this example, we store the first 256 characters of the title tag in one abstract called *title* and a further 2048 characters from the rest of the document in a second abstract called *body*. The Document class used in this case is TaggedDocument.
 
 ### TRECCollection, TRECWebCollection and Meta-Data
 
 Beyond generating an abstract of each document, it is often useful to store other meta-data about each document, e.g. the URL of the document or the timestamp when the page was created, which we might also wish to display. Importantly, this data may be held in the header of the document or in special tags, which would otherwise be ignored by the document parser. As such, this meta-data cannot be collected by the document class. Instead, for collections of Web documents that have such meta-data, the related collection class is responsible for storing this meta-data. Currently [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) and [TRECWebCollection](javadoc/org/terrier/indexing/TRECWebCollection.html) can save additional meta-data about each document as follows:
 
-[TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) provides a simple way to directly add the content of specified document tags to the MetaIndex. In particular, by setting `(tagset).propertytags` – a comma separated list of tags – will add those tags to the MetaIndex if they exist. Note that tags are assumed to be IN ORDER after the docno, and that property tags are not subsequently indexed. For example, given the following TRECDocument:
+[TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) provides a simple way to directly add the content of specified document tags to the MetaIndex. In particular, by setting `(tagset).propertytags` -- a comma separated list of tags -- will add those tags to the MetaIndex if they exist. Note that tags are assumed to be IN ORDER after the docno, and that property tags are not subsequently indexed. For example, given the following TRECDocument:
 
+```
     <DOC>
     <DOCNO>Example-0001</DOCNO>
     <URL>http://terrier.org</URL>
     <CONTENT>The Terrier Project</CONTENT>
     </DOC>
+```
 
-Setting the property `TRECDocTags.propertytags=URL` will add the contents of the URL tag to the MetaIndex with the name ‘URL’.
+Setting the property `TRECDocTags.propertytags=URL` will add the contents of the URL tag to the MetaIndex with the name URL.
 
 [TRECWebCollection](javadoc/org/terrier/indexing/TRECWebCollection.html) was designed to parse out additional meta-data from the header of each document in a TRECCollection. For example, the header of a TREC WT2G document is as follows:
 
+```
     <DOC>
     <DOCNO>WT01-B01-1</DOCNO>
     <DOCOLDNO>IA073-000475-B029-48</DOCOLDNO>
@@ -96,6 +101,7 @@ Setting the property `TRECDocTags.propertytags=URL` will add the contents of the
     Content-length: 2236
     Last-modified: Fri, 18 Oct 1996 17:33:56 GMT
     </DOCHDR>
+```
 
 In particular, the TRECWebCollection class parses out the following document meta-data where available:
 
@@ -115,6 +121,7 @@ Note that when using these collection classes, the Terrier indexing process need
 
 Below are the indexing properties to set when indexing the TREC WT2G corpus such that the interface example shown earlier can be generated. Note that these properties should be used *in addition to* the standard [indexing](configure_indexing.html) and [retrieval](configure_retrieval.html) properties.
 
+```
     # WT2G is a TRECCollection and we want to get the crawldate and urls from the header
     # hence we use TRECWebCollection. No additional properties are needed as TRECWebCollection
     # extracts the data by default
@@ -144,24 +151,26 @@ Below are the indexing properties to set when indexing the TREC WT2G corpus such
     indexer.meta.forward.keylens=32,256,2048,200,35
     # We will not be doing reverse lookups using the abstracts and so they are not listed here.
     indexer.meta.reverse.keys=docno
+```
 
 Using the Web-based interface
 -----------------------------
 
-Once you have an index with the necessary abstract entries and/or meta-data, you can start a Web-based interface, and begin searching with it. We provide two basic interfaces for illustration, ‘simple’ and ‘wt2g’. These are stored in: `src/webapps/`. By default, the ‘simple’ interface can be launched using the following command:
+Once you have an index with the necessary abstract entries and/or meta-data, you can start a Web-based interface, and begin searching with it. We provide two basic interfaces for illustration, *simple* and *wt2g*. These are stored in: `src/webapps/`. By default, the *simple* interface can be launched using the following command:
 
-    bin/http_terrier.sh
+```shell
+bin/http_terrier.sh
+```
 
-This will start a local HTTP server hosting the src/webapps/simple folder at :
+This will start a local HTTP server hosting the src/webapps/simple folder at [http://localhost:8080/](http://localhost:8080/).
 
-    http://localhost:8080/
-
-Below is an example of a the top search result returned using the ‘simple’ interface for the query ‘Estonia economy’ when searching the WT2G collection using BM25. The simple interface lists all stored meta entries for each of the retrieved documents, including the docno, title and url.
+Below is an example of a the top search result returned using the *simple* interface for the query *Estonia economy* when searching the WT2G collection using BM25. The simple interface lists all stored meta entries for each of the retrieved documents, including the docno, title and url.
 
 ![image](images/SimpleWebInterface.png)
 
 This interface is a [JSP](http://en.wikipedia.org/wiki/JavaServer_Pages) file stored at `src/webapps/simple/results.jsp`. When it is called, it opens the Terrier index specified in the terrier.properties file (if not already open), initialises a manager and retrieves the results for the specified query as a standard terrier ResultSet just like the normal Java application. Of importance is that Terrier must be instructed to decorate the ResultSet with all of the meta-data that we stored previously such that results.jsp can display it. This is done as a Terrier [PostFilter](javadoc/org/terrier/querying/PostFilter.html), in particular using either the [SimpleDecorate](javadoc/org/terrier/querying/SimpleDecorate.html) or [Decorate](javadoc/org/terrier/querying/Decorate.html) classes. SimpleDecorate adds all meta index entries for each document retrieved into the ResultSet. Decorate is more advanced, providing query text highlighting and query-biased summarisation. Below we provide an example where we decorate the Result set using the more advanced Decorate class in the terrier.properties file:
 
+```
     # We are using org.terrier.querying.Decorate which we are going to name decorate (IMPORTANT: results.jsp
     # expects it to be called 'decorate')
     querying.postfilters.controls=decorate:org.terrier.querying.Decorate
@@ -179,6 +188,7 @@ This interface is a [JSP](http://en.wikipedia.org/wiki/JavaServer_Pages) file st
     querying.default.controls=decorate:on,summaries:body,emphasis:title;body
     # We need to also state that decorate is an allowed control
     querying.allowed.controls=c,scope,decorate,start,end
+```
 
 ### Customising look & feel
 
@@ -200,6 +210,7 @@ Terrier provides several [PostFilters](javadoc/org/terrier/querying/PostFilter.h
 
 The two initial interfaces provided with Terrier can be easily extended to add more control when searching or to add new functionality. Below we provide a commented extract from results.jsp that covers the retrieval component of the interface.
 
+```java
     // Get the index if already stored in terrier.jsp.index or load a new one
     Index index = (Index)application.getAttribute("terrier.jsp.index");
     if (index == null)
@@ -252,6 +263,7 @@ The two initial interfaces provided with Terrier can be easily extended to add m
     queryingManager.runPostFilters(srq);
     // Get our decorated result set
     ResultSet rs = srq.getResultSet();
+```
 
 ### Further Details
 

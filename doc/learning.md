@@ -50,10 +50,12 @@ Fat Classes
 
     The names of features can be specified on a property, or read from a file, `etc/features.list`. E.g.
 
-        WMODEL:BM25
-        WMODEL:PL2
-        QI:StaticFeature(OIS,/home/terrier4/var/results/data.inlinks.oos.gz)
-        DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier
+```
+WMODEL:BM25
+WMODEL:PL2
+QI:StaticFeature(OIS,/home/terrier4/var/results/data.inlinks.oos.gz)
+DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier
+```
 
 -   `WritableOutputFormat` and `FatResultsMatching`: these classes permit FatResultSets to be written to file and read back in again, for the purposes of faster experimentation.
 
@@ -106,7 +108,7 @@ Next, we need to create an index, with fields and blocks enabled. For brevity, w
     Time elapsed: 3990.343 seconds.
 ```
 
-Next, we wish to configure retrieval. We will use the Fat framework to retrieve 1000 documents using the DPH weighting model, and then calculate several additional query dependent and query independent features. Lets edit the file `etc/features.list`, to set the list of features we will use:
+Next, we wish to configure retrieval. We will use the Fat framework to retrieve 1000 documents using the DPH weighting model, and then calculate several additional query dependent and query independent features. Lets edit the file `etc/features.list`, to set the list of features we will use (lines starting with `#` are comments):
 
 ```
 #BM25 calculated on each field.
