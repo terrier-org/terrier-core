@@ -106,7 +106,7 @@ Next, we need to create an index, with fields and blocks enabled. For brevity, w
     Time elapsed: 3990.343 seconds.
 ```
 
-Next, we wish to configure retrieval. We will use the Fat framework to retrieve 1000 documents using the DPH weighting model, and then calculate several additional query dependent and query independent features. Lets edit the file `etc/features.list`, to set the list of features we will use:
+Next, we wish to configure retrieval. We will use the Fat framework to retrieve 1000 documents using the DPH weighting model, and then calculate several additional query dependent and query independent features. Lets edit the file `etc/features.list`, to set the list of features we will use (lines starting with `#` are comments):
 
 ```
 #BM25 calculated on each field.
