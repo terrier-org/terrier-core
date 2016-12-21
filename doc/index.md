@@ -24,9 +24,6 @@ Table of Contents
 >[What's New](whats_new.md)  
 >What has changed in the Terrier platform in the recent releases.
 
->[Installing and Running Terrier](quickstart.md)  
-Contains information about how to download, install and start running Terrier, and an overview of the applications provided with Terrier.
-
 >[Terrier Components](basicComponents.md)  
 >An overview of the main components of Terrier.
 

@@ -59,14 +59,14 @@ Here we provide a listing and brief description of Terrier's components.
 
 ### Data Structures
 
-**Name** | **Description**
---|--
-BitFile** | A highly compressed I/O layer using gamma and unary encodings. See the org.terrier.compression packages for more details.
-**Direct Index** | The direct index stores the identifiers of terms that appear in each document and the corresponding frequencies. It is used for automatic query expansion, but can also be used for user profiling activities. See [org.terrier.structures.bit.DirectIndex](javadoc/org/terrier/structures/bit/DirectIndex.html) for more details.
-**Document Index** | The document index stores information about each document for example the document length and identifier, and a pointer to the corresponding entry in the direct index. See [org.terrier.structures.DocumentIndex](javadoc/org/terrier/structures/DocumentIndex.html) for more details.
-**Inverted Index** | The inverted index stores the posting lists, i.e. the identifiers of the documents and their corresponding term frequencies. Moreover it is capable of storing the position of terms within a document. See [org.terrier.structures.bit.InvertedIndex](javadoc/org/terrier/structures/bit/InvertedIndex.html) for more details.
-**Lexicon** | The lexicon stores the collection vocabulary and the corresponding document and term frequencies. See [org.terrier.structures.Lexicon](javadoc/org/terrier/structures/Lexicon.html) for more details.
-**Meta Index** | The Meta Index stores additional (meta) information about each document, for example its unique textual identifier (docno) or URL. See [org.terrier.structures.MetaIndex](javadoc/org/terrier/structures/MetaIndex.html) for more details.
+|**Name** | **Description**
+|--|--|
+|**BitFile** | A highly compressed I/O layer using gamma and unary encodings. See the org.terrier.compression packages for more details.|
+|**Direct Index** | The direct index stores the identifiers of terms that appear in each document and the corresponding frequencies. It is used for automatic query expansion, but can also be used for user profiling activities. See [org.terrier.structures.bit.DirectIndex](javadoc/org/terrier/structures/bit/DirectIndex.html) for more details.|
+|**Document Index** | The document index stores information about each document for example the document length and identifier, and a pointer to the corresponding entry in the direct index. See [org.terrier.structures.DocumentIndex](javadoc/org/terrier/structures/DocumentIndex.html) for more details.|
+|**Inverted Index** | The inverted index stores the posting lists, i.e. the identifiers of the documents and their corresponding term frequencies. Moreover it is capable of storing the position of terms within a document. See [org.terrier.structures.bit.InvertedIndex](javadoc/org/terrier/structures/bit/InvertedIndex.html) for more details.|
+|**Lexicon** | The lexicon stores the collection vocabulary and the corresponding document and term frequencies. See [org.terrier.structures.Lexicon](javadoc/org/terrier/structures/Lexicon.html) for more details.
+|**Meta Index** | The Meta Index stores additional (meta) information about each document, for example its unique textual identifier (docno) or URL. See [org.terrier.structures.MetaIndex](javadoc/org/terrier/structures/MetaIndex.html) for more details.|
 
 ### Retrieval
 
@@ -95,7 +95,7 @@ See [org.terrier.querying.Manager](javadoc/org/terrier/querying/Manager.html) fo
 **Name** | **Description**
 --|--
 **Trec Terrier** | An application that enables indexing and querying of TREC collections. See [org.terrier.applications.TrecTerrier](javadoc/org/terrier/applications/TrecTerrier.html) for more details.
-**Desktop Terrier** | An application that allows for indexing and retrieval of local user content. See [org.terrier.applications.desktop package](javadoc/org/terrier/applications/desktop/package-summary.html) for more details.
+**Desktop Terrier** | An application that allows for indexing and retrieval of local user content. See https://github.com/terrier-org/terrier-desktop for more details.
 **HTTP Terrier** | An application that allows for retrieval of documents from a browser. See src/webapps/results.jsp for more details, or the [relevant documentation](terrier_http.html).
 
 ----------------------------------
