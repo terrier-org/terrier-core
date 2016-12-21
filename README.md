@@ -13,7 +13,7 @@ The latest version of Terrier can be found at https://github.com/terrier-org/ter
 
 Terrier is subject to the terms detailed in the Mozilla Public License
 Version 1.1. The Mozilla Public License can be found in the file
-[LICENSE.txt](LICENCE.txt) or at the URL http://www.mozilla.org/MPL/MPL-1.1.html.
+[LICENSE.txt](LICENSE.txt) or at the URL http://www.mozilla.org/MPL/MPL-1.1.html.
 By using this software, you have agreed to the licence.
 
 ### Citation Licence
