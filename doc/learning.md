@@ -231,7 +231,7 @@ In the following, we give typical configurations for using the learning/fat comp
 ### From inverted index -> LETOR file with many features
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=/path/to/list.features -Dtrec.querying.outputformat=org.terrier.learning.Normalised2LETOROutputFormat
+    bin/trec_terrier.sh -r -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=/path/to/list.features -Dtrec.querying.outputformat=Normalised2LETOROutputFormat
 ```
 
 ### From inverted index -> Fat result file -> LETOR file with many features
@@ -239,9 +239,9 @@ In the following, we give typical configurations for using the learning/fat comp
 You can save intermediate FatResultSets, to that can go back and compute different sets of features without retrieval from the inverted index.
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.matching=org.terrier.matching.daat.FatFull -Dtrec.querying.outputformat=org.terrier.applications.WritableOutputFormat
+    bin/trec_terrier.sh -r -Dtrec.matching=org.terrier.matching.daat.FatFull -Dtrec.querying.outputformat=WritableOutputFormat
 
-    bin/trec_terrier.sh -r -Dtrec.matching=FatFeaturedScoringMatching,FatResultsMatching -Dfat.results.matching.file=bla.fat.res.gz  -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=/path/to/list.features -Dtrec.querying.outputformat=org.terrier.learning.Normalised2LETOROutputFormat
+    bin/trec_terrier.sh -r -Dtrec.matching=FatFeaturedScoringMatching,FatResultsMatching -Dfat.results.matching.file=bla.fat.res.gz  -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=/path/to/list.features -Dtrec.querying.outputformat=Normalised2LETOROutputFormat
 ```
 
 ### From inverted index -> Final Ranking having applied learned model to documents
