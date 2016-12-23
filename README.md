@@ -11,23 +11,19 @@ The latest version of Terrier can be found at https://github.com/terrier-org/ter
 
 ### Open Source Licence
 
-Terrier is subject to the terms detailed in the Mozilla Public License
-Version 1.1. The Mozilla Public License can be found in the file
-[LICENSE.txt](LICENSE.txt) or at the URL http://www.mozilla.org/MPL/MPL-1.1.html.
-By using this software, you have agreed to the licence.
+Terrier is subject to the terms detailed in the Mozilla Public License Version 1.1. The Mozilla Public License can be found in the file
+[LICENSE.txt](LICENSE.txt) or at the URL http://www.mozilla.org/MPL/MPL-1.1.html. By using this software, you have agreed to the licence.
 
 ### Citation Licence
 
-The source and binary forms of Terrier are subject to the following
-citation license: 
+The source and binary forms of Terrier are subject to the following citation license: 
 
-By downloading Terrier, you agree to cite at least one of [these three papers](docs/bibliography.md) describing Terrier in any kind of material you produce where Terrier was used to conduct search or experimentation, whether be it a research paper, dissertation, article, poster, presentation, or documentation. For more information on publications concerning Terrier, see the Terrier Bibliography [here](doc/bibliography.md). By using this software, you have agreed to the
+By downloading Terrier, you agree to cite at least one of [these four papers](http://terrier.org/docs/current/bibliography.html) describing Terrier in any kind of material you produce where Terrier was used to conduct search or experimentation, whether be it a research paper, dissertation, article, poster, presentation, or documentation. For more information on publications concerning Terrier, see the Terrier Bibliography [here](http://terrier.org/docs/current/bibliography.html). By using this software, you have agreed to the
 citation licence.
 
 ### Getting Started
 
-In order to start [experimenting with Terrier](http://terrier.org/docs/current/quickstart_experiments.html) or 
-[developing new applications with Terrier](http://terrier.org/docs/current/quickstart-integratedsearch.html), we recommend starting from the [quickstart documentation](http://terrier.org/docs/current/docs/index.html). 
+In order to start [experimenting with Terrier](http://terrier.org/docs/current/quickstart_experiments.html) or [developing new applications with Terrier](http://terrier.org/docs/current/quickstart-integratedsearch.html), we recommend starting from the [quickstart documentation](http://terrier.org/docs/current/docs/index.html). 
 
 ### Other Resources
 * The full documentation of Terrier can also be found on the offical [website](http://terrier.org/). 
