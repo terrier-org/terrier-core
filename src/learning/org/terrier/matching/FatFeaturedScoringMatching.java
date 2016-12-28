@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.terrier.learning.FeaturedQueryResultSet;
 import org.terrier.learning.FeaturedResultSet;
 import org.terrier.matching.dsms.DocumentScoreModifier;
+import org.terrier.matching.indriql.UnorderedWindowTerm;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.matching.models.WeightingModelFactory;
 import org.terrier.sorting.MultiSort;
@@ -175,11 +176,19 @@ public class FatFeaturedScoringMatching implements Matching {
 				_childrenQiModels.add(wm);
 				_childrenQiNames.add(featureNames[i]);
 			}			
-			else//assume WMODEL:
+			else//assume WMODEL: WMODELp: WMODELt:
 			{
-				final String wModelName = featureNames[i].replaceFirst("WMODEL:", "");
+				FatScoringMatching.ScoreTerm filter = null;
+				final String[] parts = featureNames[i].split(":", 2);
+				final String catchName = parts[0];
+				final String wModelName = parts[1];
+				if (catchName.equals("WMODELp"))
+					filter = new FilterTermProximity();
+				if (catchName.equals("WMODELt"))
+					filter = new FilterNot( new FilterTermProximity() );
+				
 				WeightingModel wm = WeightingModelFactory.newInstance(wModelName);
-				FatScoringMatching fsm = new FatScoringMatching(null, parent, wm);
+				FatScoringMatching fsm = new FatScoringMatching(null, parent, wm, filter);
 				fsm.sort = false;
 				_childrenWmodels.add(fsm);
 				_childrenWmodelNames.add(featureNames[i]);
@@ -194,6 +203,27 @@ public class FatFeaturedScoringMatching implements Matching {
 		
 		wModels = _childrenWmodels.toArray(new FatScoringMatching[0]);
 		wModelNames = _childrenWmodelNames.toArray(new String[0]);
+		
+	}
+	
+	static class FilterNot implements FatScoringMatching.ScoreTerm
+	{
+		FatScoringMatching.ScoreTerm parent;
+		FilterNot(FatScoringMatching.ScoreTerm _parent) {this.parent = _parent; }
+		@Override
+		public boolean score(String queryTerm) {
+			return ! parent.score(queryTerm);
+		}		
+	}
+	
+	static class FilterTermProximity implements FatScoringMatching.ScoreTerm
+	{
+		@Override
+		public boolean score(String queryTerm) {
+			if (queryTerm.startsWith(UnorderedWindowTerm.STRING_PREFIX) || queryTerm.matches("^#\\d+.*%"))
+				return true;
+			return false;
+		}
 		
 	}
 	

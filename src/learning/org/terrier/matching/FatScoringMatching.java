@@ -61,11 +61,23 @@ public class FatScoringMatching implements Matching {
 	/** Contains the document score modifiers to be applied for a query. */
 	protected List<DocumentScoreModifier> documentModifiers = new ArrayList<DocumentScoreModifier>();
 
-	protected static final boolean SCORE_ONLY_FROM_MQT = Boolean.parseBoolean(ApplicationSetup.getProperty("fat.scoring.only.mqt", "true"));
+	protected static final boolean SCORE_ONLY_FROM_MQT = Boolean.parseBoolean(ApplicationSetup.getProperty("fat.scoring.only.mqt", "false"));
 	
 	Index index;
 	WeightingModel wm;
 	public boolean sort = true;
+	
+	ScoreTerm filterTerm = null;
+	
+	public static interface ScoreTerm {
+		boolean score(String queryTerm);
+	}
+	
+	public FatScoringMatching(Index _index, Matching _parent, WeightingModel _wm, ScoreTerm _filter)
+	{
+		this(_index, _parent, _wm);
+		this.filterTerm = _filter;
+	}
 	
 	public FatScoringMatching(Index _index, Matching _parent, WeightingModel _wm)
 	{
@@ -155,6 +167,7 @@ public class FatScoringMatching implements Matching {
 		final EntryStatistics[] entryStats = fInputRS.getEntryStatistics();
 		final CollectionStatistics collStats = fInputRS.getCollectionStatistics();
 		final double[] keyFreqs = fInputRS.getKeyFrequencies();
+		final boolean[] okToScore = new boolean[numTerms];
 		
 		WeightingModel[] wms = new WeightingModel[numTerms];
 		//initialise the weighting models
@@ -163,6 +176,16 @@ public class FatScoringMatching implements Matching {
 			this.wm.setParameter(Double.parseDouble(c));
 		for(int ti=0;ti<numTerms;ti++)
 		{
+			//check if this term has been suppressed by the filter
+			okToScore[ti] = true;
+			if (filterTerm != null)
+				okToScore[ti] = filterTerm.score(fInputRS.getQueryTerms()[ti]);
+			if (! okToScore[ti])
+			{
+				System.err.println("Term: "+fInputRS.getQueryTerms()[ti]+" Not scored for wm " + wm.getInfo());
+				continue;
+			}
+			
 			if (wm != null)
 				wms[ti] = (WeightingModel) wm.clone();
 			else
@@ -184,7 +207,7 @@ public class FatScoringMatching implements Matching {
 				continue;
 			for(int ti=0;ti<numTerms;ti++)
 			{
-				if (postings[di][ti] != null)
+				if (postings[di][ti] != null && okToScore[ti]) //check if scoring
 				{
 					assert postings[di][ti].getId() == docids[di] : "At position "+di+" in resultset, Posting id " + docids[di] + " for term "+ti+" was expected, found id " +postings[di][ti].getId()+ " with contents " + postings[di][ti].toString() ;
 					assert postings[di][ti].getFrequency() > 0;
