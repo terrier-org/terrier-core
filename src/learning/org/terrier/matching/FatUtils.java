@@ -51,6 +51,7 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.FieldEntryStatistics;
+import org.terrier.structures.SimpleNgramEntryStatistics;
 import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.Lexicon;
@@ -301,16 +302,29 @@ public class FatUtils {
 				blocks[j] = in.readBoolean();
 				postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
 				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
+				keyFrequencies[j] = in.readDouble();
 				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
 					" es="+statisticsClass.getSimpleName() +
 					" es.isAssignableFrom(FieldEntryStatistics.class)="+statisticsClass.isAssignableFrom(FieldEntryStatistics.class) + 
 					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass));
-				final EntryStatistics le = fields[j] || /* HACK */ FieldEntryStatistics.class.isAssignableFrom(statisticsClass)
+				EntryStatistics le = fields[j] || /* HACK */ FieldEntryStatistics.class.isAssignableFrom(statisticsClass)
 					? statisticsClass.getConstructor(Integer.TYPE).newInstance(fieldCount)
 					: statisticsClass.newInstance();
-				entryStats[j] = le;
-				keyFrequencies[j] = in.readDouble();
 				((Writable)le).readFields(in);
+				if (queryTerms[j].contains("#uw") || queryTerms[j].contains("#1"))
+				{
+					if (queryTerms[j].contains("#uw8")){
+						le = new SimpleNgramEntryStatistics(le);
+						((SimpleNgramEntryStatistics)le).setWindowSize(8);
+					}else if (queryTerms[j].contains("#uw4")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(8);
+                    }else if (queryTerms[j].contains("#1")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(2);
+                    }
+				}
+				entryStats[j] = le;
 			}
 			
 			frs.setEntryStatistics(entryStats);
