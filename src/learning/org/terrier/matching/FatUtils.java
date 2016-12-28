@@ -301,8 +301,11 @@ public class FatUtils {
 				blocks[j] = in.readBoolean();
 				postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
 				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
-				
-				final EntryStatistics le = fields[j] || /* HACK */ statisticsClass.isAssignableFrom(FieldEntryStatistics.class) 
+				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
+					" es="+statisticsClass.getSimpleName() +
+					" es.isAssignableFrom(FieldEntryStatistics.class)="+statisticsClass.isAssignableFrom(FieldEntryStatistics.class) + 
+					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass));
+				final EntryStatistics le = fields[j] || /* HACK */ FieldEntryStatistics.class.isAssignableFrom(statisticsClass)
 					? statisticsClass.getConstructor(Integer.TYPE).newInstance(fieldCount)
 					: statisticsClass.newInstance();
 				entryStats[j] = le;
