@@ -186,9 +186,9 @@ public class FatFeaturedScoringMatching implements Matching {
 					filter = new FilterTermProximity();
 				if (catchName.equals("WMODELt"))
 					filter = new FilterNot( new FilterTermProximity() );
-				if (catchName.equals("WMODELuw"))
+				if (catchName.equals("WMODELpuw"))
 					filter = new FilterTermUW();
-				if (catchName.equals("WMODEL#1"))
+				if (catchName.equals("WMODELp1"))
 					filter = new FilterTermow1();
 				
 				WeightingModel wm = WeightingModelFactory.newInstance(wModelName);
@@ -224,7 +224,7 @@ public class FatFeaturedScoringMatching implements Matching {
 	{
 		@Override
 		public boolean score(String queryTerm) {
-			if (queryTerm.startsWith(UnorderedWindowTerm.STRING_PREFIX) || queryTerm.matches("^#\\d+.*%"))
+			if (queryTerm.contains(UnorderedWindowTerm.STRING_PREFIX) || queryTerm.matches("^.*#\\d+.*$"))
 				return true;
 			return false;
 		}		
@@ -234,7 +234,7 @@ public class FatFeaturedScoringMatching implements Matching {
 	{
 		@Override
 		public boolean score(String queryTerm) {
-			if (queryTerm.startsWith(UnorderedWindowTerm.STRING_PREFIX))
+			if (queryTerm.contains(UnorderedWindowTerm.STRING_PREFIX))
 				return true;
 			return false;
 		}		
@@ -244,7 +244,7 @@ public class FatFeaturedScoringMatching implements Matching {
 	{
 		@Override
 		public boolean score(String queryTerm) {
-			if (queryTerm.matches("^#\\d+.*%"))
+			if (queryTerm.matches("^.*#\\d+.*$"))
 				return true;
 			return false;
 		}		
