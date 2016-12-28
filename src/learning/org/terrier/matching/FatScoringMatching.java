@@ -60,6 +60,8 @@ public class FatScoringMatching implements Matching {
 	Matching parent;
 	/** Contains the document score modifiers to be applied for a query. */
 	protected List<DocumentScoreModifier> documentModifiers = new ArrayList<DocumentScoreModifier>();
+
+	protected static final boolean SCORE_ONLY_FROM_MQT = Boolean.parseBoolean(ApplicationSetup.getProperty("fat.scoring.only.mqt", "true"));
 	
 	Index index;
 	WeightingModel wm;
@@ -137,7 +139,18 @@ public class FatScoringMatching implements Matching {
 		final FatResultSet fInputRS = (FatResultSet)inputRS;
 		
 		final int numDocs = docids.length;
-		final int numTerms = fInputRS.getQueryTerms().length;
+
+		System.err.println("mqt has " +  queryTerms.size() + " terms while fatresultset has " + fInputRS.getQueryTerms().length);
+		System.err.println("Using " + (SCORE_ONLY_FROM_MQT ? "former" : "latter") + " for scoring");
+		//we rely on the MQT to define the query terms to score
+		//in doing so, we assume that the query termis in mqt 
+		//are a subset of those in the FatResultSet
+		assert (!SCORE_ONLY_FROM_MQT) || queryTerms.size() <= fInputRS.getQueryTerms().length;
+		assert (!SCORE_ONLY_FROM_MQT) || queryTerms.get(0).toString().equals(fInputRS.getQueryTerms()[0]);
+		final int numTerms = SCORE_ONLY_FROM_MQT
+			? queryTerms.size()
+			: fInputRS.getQueryTerms().length;
+
 		final WritablePosting[][] postings = fInputRS.getPostings();
 		final EntryStatistics[] entryStats = fInputRS.getEntryStatistics();
 		final CollectionStatistics collStats = fInputRS.getCollectionStatistics();
