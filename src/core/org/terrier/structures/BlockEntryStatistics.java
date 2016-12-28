@@ -28,6 +28,7 @@ package org.terrier.structures;
  * Interface describing the statistics for a block entry. It is just
  * an Entry with a block count.
  */
+@Deprecated
 public interface BlockEntryStatistics extends EntryStatistics {
 	/** The number of blocks that this term has. 
 	 * Needed by the BlockInvertedIndexBuilder. */

@@ -186,6 +186,10 @@ public class FatFeaturedScoringMatching implements Matching {
 					filter = new FilterTermProximity();
 				if (catchName.equals("WMODELt"))
 					filter = new FilterNot( new FilterTermProximity() );
+				if (catchName.equals("WMODELuw"))
+					filter = new FilterTermUW();
+				if (catchName.equals("WMODEL#1"))
+					filter = new FilterTermow1();
 				
 				WeightingModel wm = WeightingModelFactory.newInstance(wModelName);
 				FatScoringMatching fsm = new FatScoringMatching(null, parent, wm, filter);
@@ -223,8 +227,27 @@ public class FatFeaturedScoringMatching implements Matching {
 			if (queryTerm.startsWith(UnorderedWindowTerm.STRING_PREFIX) || queryTerm.matches("^#\\d+.*%"))
 				return true;
 			return false;
-		}
-		
+		}		
+	}
+	
+	static class FilterTermUW implements FatScoringMatching.ScoreTerm
+	{
+		@Override
+		public boolean score(String queryTerm) {
+			if (queryTerm.startsWith(UnorderedWindowTerm.STRING_PREFIX))
+				return true;
+			return false;
+		}		
+	}
+	
+	static class FilterTermow1 implements FatScoringMatching.ScoreTerm
+	{
+		@Override
+		public boolean score(String queryTerm) {
+			if (queryTerm.matches("^#\\d+.*%"))
+				return true;
+			return false;
+		}		
 	}
 	
 	@Override

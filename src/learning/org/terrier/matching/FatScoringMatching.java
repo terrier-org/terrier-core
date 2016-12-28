@@ -182,7 +182,7 @@ public class FatScoringMatching implements Matching {
 				okToScore[ti] = filterTerm.score(fInputRS.getQueryTerms()[ti]);
 			if (! okToScore[ti])
 			{
-				System.err.println("Term: "+fInputRS.getQueryTerms()[ti]+" Not scored for wm " + wm.getInfo());
+				System.err.println("Term: "+fInputRS.getQueryTerms()[ti]+" not scored for wm " + wm.getInfo());
 				continue;
 			}
 			

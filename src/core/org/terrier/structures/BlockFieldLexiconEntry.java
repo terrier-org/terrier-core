@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 
 /** A LexiconEntry with field support */
+@Deprecated
 public class BlockFieldLexiconEntry extends BasicLexiconEntry implements
 		FieldEntryStatistics, BlockEntryStatistics {
 	private static final long serialVersionUID = 1L;

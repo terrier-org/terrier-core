@@ -2,6 +2,8 @@ package org.terrier.matching.models.dependence;
 
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.statistics.GammaFunction;
+import org.terrier.structures.EntryStatistics;
+import org.terrier.structures.NgramEntryStatistics;
 
 public class pBiL extends WeightingModel {
 
@@ -12,6 +14,9 @@ public class pBiL extends WeightingModel {
 	boolean norm2 = false;
 	int ngramLength;
 	
+	public pBiL() {}
+	
+	
 	public pBiL(int _ngramLength) {
 		this.ngramLength = _ngramLength;
 	}
@@ -20,6 +25,13 @@ public class pBiL extends WeightingModel {
 	public String getInfo() {
 		return this.getClass().getSimpleName();
 	}
+
+	@Override
+	public void setEntryStatistics(EntryStatistics _es) {
+		super.setEntryStatistics(_es);
+		ngramLength = ((NgramEntryStatistics)_es).getWindowSize();
+	}
+
 
 	@Override
 	public double score(double matchingNGrams, double docLength) {

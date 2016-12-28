@@ -3,6 +3,8 @@ package org.terrier.matching.models.dependence;
 import static org.terrier.matching.models.WeightingModelLibrary.log;
 
 import org.terrier.matching.models.WeightingModel;
+import org.terrier.structures.EntryStatistics;
+import org.terrier.structures.NgramEntryStatistics;
 
 public class MRF extends WeightingModel {
 
@@ -10,6 +12,8 @@ public class MRF extends WeightingModel {
 	int ngramLength;
 	double defaultDf;
 	double defaultCf;
+	
+	public MRF(){}
 
 	public MRF(int _ngramLength) {
 		this.ngramLength = _ngramLength;
@@ -26,6 +30,12 @@ public class MRF extends WeightingModel {
 	@Override
 	public String getInfo() {
 		return this.getClass().getSimpleName() + "_mu" + this.c;
+	}
+	
+	@Override
+	public void setEntryStatistics(EntryStatistics _es) {
+		super.setEntryStatistics(_es);
+		ngramLength = ((NgramEntryStatistics)_es).getWindowSize();
 	}
 
 	@Override
