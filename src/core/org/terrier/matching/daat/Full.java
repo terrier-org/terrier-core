@@ -152,7 +152,7 @@ public class Full extends BaseMatching
 	        		//System.err.println("Now have " + candidateResultList.size() + " retrieved docs");
 	        		threshold = candidateResultList.peek().getScore();
             	} else {
-            		System.err.println("Document " + currentDocId + " was discarded as it didnt match required bit pattern, required " + requiredBitPattern + " was " + currentCandidate.getOccurrence());
+            		//System.err.println("Document " + currentDocId + " was discarded as it didnt match required bit pattern, required " + requiredBitPattern + " was " + currentCandidate.getOccurrence());
             	}
         	}
             currentDocId = selectMinimumDocId(postingHeap);

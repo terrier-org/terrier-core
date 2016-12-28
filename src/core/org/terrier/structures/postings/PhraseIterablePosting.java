@@ -70,7 +70,9 @@ public class PhraseIterablePosting extends ANDIterablePosting implements BlockPo
 	
 	@Override
 	public WritablePosting asWritablePosting() {
-		return new BlockPostingImpl(currentId, frequency, positions.toNativeArray());
+		return positions != null 
+			? new BlockPostingImpl(currentId, frequency, positions.toNativeArray())
+			: new BasicPostingImpl(currentId, frequency);
 	}
 	
 	@Override
