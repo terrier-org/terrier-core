@@ -46,9 +46,11 @@ import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.daat.FatCandidateResultSet;
+import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.EntryStatistics;
+import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.Lexicon;
@@ -299,7 +301,8 @@ public class FatUtils {
 				blocks[j] = in.readBoolean();
 				postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
 				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
-				final EntryStatistics le = fields[j]
+				
+				final EntryStatistics le = fields[j] || /* HACK */ statisticsClass.isAssignableFrom(FieldEntryStatistics.class) 
 					? statisticsClass.getConstructor(Integer.TYPE).newInstance(fieldCount)
 					: statisticsClass.newInstance();
 				entryStats[j] = le;
@@ -414,10 +417,18 @@ public class FatUtils {
 			out.writeBoolean(fields[i]);
 			out.writeBoolean(blocks[i]);
 			
+			//HACK: MultiQueryTerm causes problems as it can return a FieldEntryStatistics where none is possible.
+			if (! fields[i])
+			{
+				entryStats[i] = new BasicLexiconEntry(entryStats[i].getTermId(), entryStats[i].getDocumentFrequency(), entryStats[i].getFrequency());
+			}
 			
 			//write out the classes			
 			out.writeUTF(firstPostingForTerm.getClass().getName());
 			out.writeUTF(entryStats[i].getClass().getName());
+			
+			//if we don't have a FieldPosting list, we should not have a FieldEntryStatistics 
+			assert (! (fields[i]) && ! (entryStats[i] instanceof FieldEntryStatistics));
 			
 			out.writeDouble(keyFrequency[i]);
 			((Writable)entryStats[i]).write(out);
