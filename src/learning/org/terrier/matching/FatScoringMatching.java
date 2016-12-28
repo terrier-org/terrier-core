@@ -227,7 +227,7 @@ public class FatScoringMatching implements Matching {
 			if (score > 0.0d)
 				gt0++;
 		}
-		logger.info("Rescoring found " + gt0 + " docs with +ve score using " + wms[0].getInfo());
+		logger.info("Rescoring found " + gt0 + " docs with +ve score using " + wm.getInfo());
 		//make a new resultset
 		ResultSet outputRS = new QueryResultSet(docids, scores, occurs);
 		if (fInputRS.hasMetaItems("docno"))
