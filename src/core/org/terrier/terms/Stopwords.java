@@ -17,7 +17,7 @@
  *
  * The Original Code is StopWords.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -67,7 +67,7 @@ public class Stopwords implements TermPipeline
 	 */
 	public Stopwords(final TermPipeline _next)
 	{
-		this(_next, ApplicationSetup.getProperty("stopwords.filename", "stopword-list.txt"));
+		this(_next, ApplicationSetup.getProperty("stopwords.filename", "resource:/stopword-list.txt"));
 	}
 
 	/** Makes a new stopword term pipeline object. The stopwords file(s)

@@ -17,7 +17,7 @@
  *
  * The Original Code is Manager.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -66,10 +66,7 @@ import org.terrier.utility.ApplicationSetup;
   * <pre>
   * Manager m = new Manager(index);
   * SearchRequest srq = m.newSearchRequest("Q1", "term1 title:term2");
-  * m.runPreProcessing(srq);
-  * m.runMatching(srq);
-  * m.runPostProcess(srq);
-  * m.runPostFilters(srq);
+  * m.runSearchRequest(srq);
   * </pre>
   * <p>
   * <b>Properties</b><ul>
@@ -283,6 +280,9 @@ public class Manager
 		
 	}
 
+	/** A generaic query id for when no query id is given **/
+	private static final String GENERICQUERYID = "GenericQuery";
+	
 	/* ------------------------------------------------*/
 	/* ------------Instantiation caches --------------*/
 	/** Cache loaded Matching models per Index in this map */
@@ -433,6 +433,15 @@ public class Manager
 		}
 		q.setOriginalQuery(query);
 		return q;
+	}
+	
+	/** Ask for new SearchRequest object to be made given a query to be parsed
+	  * @since 4.2
+	  * @param query The actual user query
+	  * @return The fully init'd search request for use in the manager */
+	public SearchRequest newSearchRequestFromQuery(String query)
+	{
+		return newSearchRequest(GENERICQUERYID, query);
 	}
 	
 
@@ -800,6 +809,20 @@ public class Manager
 		}
 	}
 	
+	
+	
+	/**
+	 * This runs a given SearchRequest through the four retrieval stages and adds the ResultSet to the
+	 * SearchRequest object. 
+	 * @param srq - the SearchRequest to be processed
+	 */
+	public void runSearchRequest(SearchRequest srq)
+	 {
+	  this.runPreProcessing(srq);
+	  this.runMatching(srq);
+	  this.runPostProcessing(srq);
+	  this.runPostFilters(srq);
+	 }
 	
 	/*-------------------------------- helper methods -----------------------------------*/
 	//helper methods. These get the appropriate modules named Name of the appropate type

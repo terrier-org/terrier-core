@@ -18,7 +18,7 @@
  *
  * The Original Code is BlockSinglePassIndexer.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -295,5 +295,12 @@ public class BlockSinglePassIndexer extends BasicSinglePassIndexer{
 		blockId = 0;
 		numOfTokensInBlock = 0;
 	}
-	
+
+	public void performMultiWayMerge() throws IOException {
+		super.performMultiWayMerge();
+		String structureName = "inverted";
+		currentIndex.setIndexProperty("index."+structureName+".blocks", String.valueOf(this.BLOCK_SIZE));
+		currentIndex.setIndexProperty("index."+structureName+".blocks.max", String.valueOf(this.MAX_BLOCKS));
+		currentIndex.flush();
+	}	
 }

@@ -17,7 +17,7 @@
  *
  * The Original Code is PostingListManager.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -57,7 +57,7 @@ import org.terrier.utility.ArrayUtils;
  * interface, and be named explicitly in the <tt>matching.postinglist.manager.plugins</tt> property.
  * <p><b>Properties:</b>
  * <ul>
- * <li> <tt>ignore.low.idf.terms</tt> - should terms with low IDF (i.e. very frequent) be ignored? Defaults to true, i.e. ignored</li>
+ * <li> <tt>ignore.low.idf.terms</tt> - should terms with low IDF (i.e. very frequent) be ignored? Defaults to false, i.e. ignored</li>
  * <li> <tt>matching.postinglist.manager.plugins</tt> - Comma delimited list of PostingListManagerPlugin classes to load.</li>
  * </ul>
  * <p><b>Example Usage</b></p>
@@ -86,8 +86,8 @@ public class PostingListManager implements Closeable
 {
 	protected static final Logger logger = LoggerFactory.getLogger(PostingListManager.class);
 	/** A property that enables to ignore the terms with a low IDF. Controlled by <tt>ignore.low.idf.terms</tt>
-	 * property, defualts to true. */
-	protected static boolean IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","true"));
+	 * property, defualts to false. */
+	protected static boolean IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","false"));
 	
 	
 	/** Interface for plugins to further alter the posting lists managed by the PostingListManager */

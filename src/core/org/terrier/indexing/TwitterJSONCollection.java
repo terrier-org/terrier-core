@@ -17,7 +17,7 @@
  *
  * The Original Code is TwitterJSONDocument.java
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -28,9 +28,12 @@ package org.terrier.indexing;
 import gnu.trove.TLongHashSet;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.utility.ApplicationSetup;
@@ -102,7 +105,8 @@ public class TwitterJSONCollection implements Collection {
 	}
 	
 	protected void loadJSON(String file) throws IOException {
-		currentTweetStream = Files.openFileReader(file, "UTF-8");
+		if (file.endsWith("bz2")) currentTweetStream = new BufferedReader(new InputStreamReader(new BZip2CompressorInputStream(new FileInputStream(file)),"UTF-8"));
+		else currentTweetStream = Files.openFileReader(file, "UTF-8");
 		JSONStream = new JsonStreamParser(currentTweetStream);
 	}
 	
@@ -199,7 +203,9 @@ public class TwitterJSONCollection implements Collection {
 		boolean nextOK = false;
 		try {
 			nextOK = JSONStream.hasNext();
-		} catch (Exception e1) {}
+		} catch (Exception e1) {
+			logger.warn("Exception when checking if JSONStream has another document", e1);
+		}
 		
 		if (nextOK) {
 			currentDocument = new TwitterJSONDocument(readTweet());

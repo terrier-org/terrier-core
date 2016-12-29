@@ -17,7 +17,7 @@
  *
  * The Original Code is Hiemstra_LM.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s): Jie Peng <pj{a.}dcs.gla.ac.uk>
@@ -72,11 +72,7 @@ public class Hiemstra_LM extends WeightingModel {
 	 */
 	public final double score(double tf, double docLength) {
 
-		return 
-		  
-				WeightingModelLibrary.log(1 + (c * tf * numberOfTokens) 
-	/ ((1-c) * termFrequency * docLength ))
-	        ;	
+		return WeightingModelLibrary.log(1 + ( (c * tf * numberOfTokens) / ((1-c) * termFrequency * docLength)) ) * super.keyFrequency;	
 		
 	/*	Idf.log(((1 - c) * (tf / docLength)) 
 		/ (c * (termFrequency / numberOfTokens)) 

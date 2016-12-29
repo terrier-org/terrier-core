@@ -17,7 +17,7 @@
  *
  * The Original Code is BaseMatching.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -236,7 +236,7 @@ public abstract class BaseMatching implements Matching
 		updateStartTime(System.currentTimeMillis());
 		
 		RETRIEVED_SET_SIZE   = Integer.parseInt(ApplicationSetup.getProperty("matching.retrieved_set_size", "1000"));
-		IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","true"));
+		IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","false"));
 		MATCH_EMPTY_QUERY    = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
 		
 		this.numberOfRetrievedDocuments = 0;

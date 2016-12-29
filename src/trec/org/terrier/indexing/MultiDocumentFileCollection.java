@@ -17,7 +17,7 @@
  *
  * The Original Code is MultiDocumentFileCollection.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -196,7 +196,7 @@ public abstract class MultiDocumentFileCollection implements Collection {
 				else
 				{//filename seems ok, open it
 					is = Files.openFileStream(filename); //throws an IOException, throw upwards
-					logger.info(this.getClass().getSimpleName() + " "+( (100*FileNumber)/FilesToProcess.size())+"% processing "+filename);
+					logger.info(this.getClass().getSimpleName() + " "+( (100*(FileNumber-1))/FilesToProcess.size())+"% processing "+filename);
 					//no need to loop again
 					tryFile = false;
 					//return success

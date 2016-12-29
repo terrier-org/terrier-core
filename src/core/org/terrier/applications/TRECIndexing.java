@@ -17,7 +17,7 @@
  *
  * The Original Code is TRECIndexing.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -27,14 +27,10 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> 
  */
 package org.terrier.applications;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionFactory;
 import org.terrier.structures.Index;
 import org.terrier.structures.indexing.Indexer;
-import org.terrier.structures.indexing.singlepass.BasicSinglePassIndexer;
-import org.terrier.structures.indexing.singlepass.BlockSinglePassIndexer;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.TagSet;
 /**
@@ -47,54 +43,15 @@ import org.terrier.utility.TagSet;
  * </ul>
  * @author Gianni Amati, Vassilis Plachouras, Ben He, Craig Macdonald
  */
-public class TRECIndexing {
-	/** The logger used */
-	private static Logger logger = LoggerFactory.getLogger(TRECIndexing.class);
-	/** The collection to index. */
-	Collection collectionTREC;
-	
-	String path; String prefix;
-	
+public class TRECIndexing extends BatchIndexing {
 	/** The indexer object.*/
-	Indexer indexer;
-	/**
-	 * A constructor that initialised the data structures
-	 * to use for indexing. 
-	 * @param _path Absolute path to where the index should be created
-	 * @param _prefix Prefix of the index files, usually "data"
-	 */
-	public TRECIndexing(String _path, String _prefix)
-	{
-		path = _path; prefix = _prefix;
-		//load the appropriate collection
-		final String collectionName = ApplicationSetup.getProperty("trec.collection.class", "TRECCollection");
-		collectionTREC = CollectionFactory.loadCollection(collectionName);
-		if (collectionTREC == null)
-		{
-			logger.error("Collection class named "+ collectionName + " not found, aborting");
-		}
-
-		//load the appropriate indexer
-		String indexerName = ApplicationSetup.getProperty(
-			"trec.indexer.class",
-			ApplicationSetup.BLOCK_INDEXING
-				? "BlockIndexer"
-				: "BasicIndexer");
-		if (indexerName.indexOf('.') == -1)
-			indexerName = "org.terrier.structures.indexing.classical."+indexerName;
-		else if (indexerName.startsWith("uk.ac.gla.terrier"))
-			indexerName = indexerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
-		try{
-			indexer = (Indexer) Class.forName(indexerName)
-				.getConstructor(String.class, String.class)
-				.newInstance(path, prefix);
-		} catch (ClassNotFoundException e) {
-			logger.error("Indexer class named "+ indexerName + " not found", e);
-		} catch (InstantiationException ie) {
-			logger.error("Error while instantiating Indexer class named "+ indexerName + " : " + ie.getCause(), ie);
-		} catch (Exception e){
-			logger.error("Indexer class named "+ indexerName + "problem", e);
-		}
+	//Indexer indexer;
+	/** The collection to index. */
+	protected Collection collectionTREC;
+	
+	
+	public TRECIndexing(String _path, String _prefix) {
+		this(_path, _prefix, ApplicationSetup.COLLECTION_SPEC);
 	}
 	
 	/**
@@ -105,7 +62,25 @@ public class TRECIndexing {
 	 */
 	public TRECIndexing(String _path, String _prefix, String collectionSpec)
 	{
-		path = _path; prefix = _prefix;
+		super(_path, _prefix);
+		collectionTREC = loadCollection(collectionSpec);
+		//indexer = loadIndexer(path, prefix);
+	}
+	
+	/**
+	 * A constructor that initialised the data structures
+	 * to use for indexing. 
+	 * @param _path Absolute path to where the index should be created
+	 * @param _prefix Prefix of the index files, usually "data"
+	 */
+	public TRECIndexing(String _path, String _prefix, Collection c)
+	{
+		super(_path, _prefix);
+		collectionTREC = c;
+		//indexer = loadIndexer(path, prefix);
+	}
+
+	protected Collection loadCollection(String collectionSpec) {
 		//load the appropriate collection
 		final String collectionName = ApplicationSetup.getProperty("trec.collection.class", "TRECCollection");
 		
@@ -118,13 +93,15 @@ public class TRECIndexing {
 			ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
 				ApplicationSetup.TERRIER_INDEX_PATH)
 		};
-		collectionTREC = CollectionFactory.loadCollection(collectionName, constructerClasses, constructorValues);
-		System.err.println(collectionTREC.getClass().getName());
-		if (collectionTREC == null)
+		Collection rtr = CollectionFactory.loadCollection(collectionName, constructerClasses, constructorValues);
+		if (rtr == null)
 		{
 			logger.error("Collection class named "+ collectionName + " not found, aborting");
 		}
+		return rtr;
+	}
 
+	protected Indexer loadIndexer(String pa, String pr) {
 		//load the appropriate indexer
 		String indexerName = ApplicationSetup.getProperty(
 			"trec.indexer.class",
@@ -135,10 +112,11 @@ public class TRECIndexing {
 			indexerName = "org.terrier.structures.indexing.classical."+indexerName;
 		else if (indexerName.startsWith("uk.ac.gla.terrier"))
 			indexerName = indexerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
+		Indexer _indexer = null;
 		try{
-			indexer = (Indexer) Class.forName(indexerName)
+			_indexer = (Indexer) Class.forName(indexerName)
 				.getConstructor(String.class, String.class)
-				.newInstance(path, prefix);
+				.newInstance(pa, pr);
 		} catch (ClassNotFoundException e) {
 			logger.error("Indexer class named "+ indexerName + " not found", e);
 		} catch (InstantiationException ie) {
@@ -146,6 +124,7 @@ public class TRECIndexing {
 		} catch (Exception e){
 			logger.error("Indexer class named "+ indexerName + "problem", e);
 		}
+		return _indexer;
 	}
 
 	/**
@@ -165,115 +144,14 @@ public class TRECIndexing {
 	 * and builds separate data structures, which are 
 	 * later merged.
 	 */
+	@Override
 	public void index() {
 		if (Index.existsIndex(path, prefix))
 		{
 			logger.error("Cannot index while an index exists at "+path + ","+ prefix);
 			return;
-		}
-		indexer.index(new Collection[] {collectionTREC});
-		try{
-			collectionTREC.close();
-		} catch (Exception e) {
-			logger.warn("problem closing collection", e);
-		}
-	}
-	
-	/**
-	 * Building the inverted file.
-	 */
-	public void createInvertedFile() {
-		if (Index.existsIndex(path, prefix))
-		{
-			Index i = Index.createIndex();
-			if (i == null) {}
-			else if (i.hasIndexStructure("inverted"))
-			{
-				logger.error("Cannot create an inverted structure while an index with a inverted structure exists at "+path + ","+ prefix);
-				return;
-			}
-			else if (! i.hasIndexStructure("direct"))
-			{
-				logger.error("Cannot create an inverted structure without a direct structure in the index at "+path + ","+ prefix);
-				return;
-			}
-		}
-		else
-		{
-			logger.error("Cannot create an inverted structure without an index at "+path + ","+ prefix);
-			return;
-		}
-		if(logger.isInfoEnabled())
-			logger.info("Started building the inverted index...");
-		long beginTimestamp = System.currentTimeMillis();
-		indexer.createInvertedIndex();
-		long endTimestamp = System.currentTimeMillis();
-		if(logger.isInfoEnabled()){
-			logger.info("Finished building the inverted index...");
-			double seconds = (endTimestamp - beginTimestamp) / 1000.0d;
-			logger.info("Time elapsed for inverted file: " + seconds);
-		}
-	}
-	
-	/**
-	 * Builds the direct file and lexicon. This method goes through the 
-	 * input files specified in the <tt>collections.spec</tt> file 
-	 * and processes them in groups of n documents, where n is specified 
-	 * by the property <tt>bundle.size</tt>. Then, it merges the 
-	 * temporary lexicon files. If it necessary, it calls for the 
-	 * optimisation of the identifiers assigned to terms.
-	 */
-	public void createDirectFile() {
-		if (Index.existsIndex(path, prefix))
-		{
-			Index i = Index.createIndex();
-			if (i == null) {}
-			else if (i.hasIndexStructure("direct"))
-			{	
-				logger.error("Cannot create a direct structure while an index with a direct structure exists at "+path + ","+ prefix);
-				return;
-			}
-		}	
-		long startTime = System.currentTimeMillis();
-		indexer.createDirectIndex(new Collection[] {collectionTREC});
-		long endTime = System.currentTimeMillis();
-		if(logger.isInfoEnabled())	
-			logger.info("Direct index built in "+((endTime-startTime)/1000.0D) 
-						 + " seconds.");
-		try{
-			collectionTREC.close();
-		} catch (Exception e) {
-			logger.warn("problem closing collection", e);
-		}
-	}
-	
-	/**
-	 * Builds the inverted file from scratch, single pass method
-	 */
-	public void createSinglePass(){
-		if (Index.existsIndex(path, prefix))
-		{
-			Index i = Index.createIndex(path, prefix);
-			if (i.hasIndexStructure("inverted"))
-			{
-				logger.error("Cannot create an inverted structure while an index with a inverted structure exists at "+path + ","+ prefix);
-				return;
-			}
-		}
-		System.err.println("Starting building the inverted file "
-			+ (ApplicationSetup.BLOCK_INDEXING ? "(with blocks)" : "") 
-			+ "...");
-		final long beginTimestamp = System.currentTimeMillis();
-		BasicSinglePassIndexer _indexer;
-		if (ApplicationSetup.BLOCK_INDEXING)
-			_indexer = new BlockSinglePassIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
-		else
-			_indexer = new BasicSinglePassIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
-		_indexer.index(new Collection[] {collectionTREC});
-		long endTimestamp = System.currentTimeMillis();
-		System.err.println("Finished building the inverted index...");
-		double seconds = (endTimestamp - beginTimestamp) / 1000.0d;
-		System.err.println("Time elapsed for inverted file: " + seconds);
+		}		
+		loadIndexer(path, prefix).index(new Collection[] {collectionTREC});
 		try{
 			collectionTREC.close();
 		} catch (Exception e) {
@@ -288,8 +166,7 @@ public class TRECIndexing {
 	public static void main(String[] args)
 	{
 		long startTime = System.currentTimeMillis();
-		TRECIndexing t = new TRECIndexing();
-		
+		TRECIndexing t = new TRECIndexing();		
 		t.index();
 		long endTime = System.currentTimeMillis();
 		if(logger.isInfoEnabled())

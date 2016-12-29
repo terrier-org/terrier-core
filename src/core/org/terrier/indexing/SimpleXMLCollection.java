@@ -17,7 +17,7 @@
  *
  * The Original Code is SimpleXMLCollection.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -53,8 +53,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.google.common.collect.Lists;
 
 /** Initial implementation of a class that generates a Collection with Documents from a 
   * series of XML files.<p>
@@ -350,7 +348,7 @@ public class SimpleXMLCollection implements Collection
 	 */
 	public SimpleXMLCollection(List<String> filesToProcess)
 	{
-		FilesToProcess = Lists.newArrayList();
+		FilesToProcess = new ArrayList<>();
 		FilesToProcess.addAll(filesToProcess);
 		initialiseTags();
 		initialiseParser();

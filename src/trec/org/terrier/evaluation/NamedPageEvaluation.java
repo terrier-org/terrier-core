@@ -17,7 +17,7 @@
  *
  * The Original Code is NamedPageEvaluation.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -44,7 +44,7 @@ import org.terrier.utility.Rounding;
  * documents that are among the top 50 documents.
  * @author Vassilis Plachouras
   */
-public class NamedPageEvaluation extends Evaluation {
+public class NamedPageEvaluation extends TerrierEvaluation {
 	/** The average reciprocal rank.*/
 	protected double arr;
 	/** total number of queries.*/

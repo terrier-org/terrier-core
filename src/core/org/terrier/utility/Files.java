@@ -17,7 +17,7 @@
  *
  * The Original Code is Files.java
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -55,6 +55,7 @@ import org.apache.hadoop.io.compress.BZip2Codec;
 import org.terrier.utility.io.FileSystem;
 import org.terrier.utility.io.HTTPFileSystem;
 import org.terrier.utility.io.LocalFileSystem;
+import org.terrier.utility.io.ResourceFileSystem;
 import org.terrier.utility.io.RandomDataInput;
 import org.terrier.utility.io.RandomDataOutput;
 import org.terrier.utility.io.WrappedIOException;
@@ -168,6 +169,7 @@ public class Files
 	static{ 
 		addFileSystemCapability(new LocalFileSystem());
 		addFileSystemCapability(new HTTPFileSystem());
+		addFileSystemCapability(new ResourceFileSystem());
 		intialise_transformations();
 		initialise_mappings();
 		initialise_static_cache();		

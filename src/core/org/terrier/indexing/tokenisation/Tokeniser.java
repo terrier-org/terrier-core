@@ -17,7 +17,7 @@
  *
  * The Original Code is UTFTokeniser.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -131,10 +131,10 @@ public abstract class Tokeniser implements Serializable {
 				tokens.add(t);
 		}
 		return tokens.toArray(new String[tokens.size()]);	
-	}
+	}	
 	
 	/** Utility method which returns all of the tokens in a String.
-	 * @param input String of text to be tokenised
+	 * @param s String of text to be tokenised
 	 * @return All of the tokens found in the stream of text.
 	 */
 	public String[] getTokens(String s)

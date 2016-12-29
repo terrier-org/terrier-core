@@ -17,7 +17,7 @@
  *
  * The Original is in 'WARC10Collection.java'
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.regex.Matcher;
+import java.util.List;
 
 import org.apache.commons.lang.CharEncoding;
 import org.terrier.utility.ApplicationSetup;
@@ -54,6 +55,17 @@ public class WARC10Collection extends WARC018Collection  {
 	public WARC10Collection(String CollectionSpecFilename) {
 		super(CollectionSpecFilename);
 	}
+
+	
+    public WARC10Collection(List<String> files, String TagSet, String BlacklistSpecFilename, String ignored) {
+        super(files);
+    }
+
+
+    public WARC10Collection(String CollectionSpecFilename, String TagSet, String BlacklistSpecFilename,
+         String ignored) {
+        super(CollectionSpecFilename);
+    }
 	
 	protected void processRedirect(String source, String target) {
 		

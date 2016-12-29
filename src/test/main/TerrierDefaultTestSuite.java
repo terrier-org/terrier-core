@@ -19,7 +19,7 @@ package main;
  *
  * The Original Code is TerrierDefaultTestSuite.java
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -94,6 +94,7 @@ import org.terrier.structures.bit.TestBitPostingIndexInputStream;
 import org.terrier.structures.bit.TestPostingStructures;
 import org.terrier.structures.collections.TestFSArrayFile;
 import org.terrier.structures.collections.TestFSOrderedMapFile;
+import org.terrier.structures.indexing.TestIndexing;
 import org.terrier.structures.indexing.TestCompressingMetaIndexBuilderPartitioner;
 import org.terrier.structures.indexing.TestIndexingFatalErrors;
 import org.terrier.structures.indexing.singlepass.TestInverted2DirectIndexBuilder;
@@ -228,6 +229,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestFSArrayFile.class,
 	
 	//.structures.indexing
+	TestIndexing.class,
 	TestCompressingMetaIndexBuilderPartitioner.class,
 	TestIndexingFatalErrors.class,
 	

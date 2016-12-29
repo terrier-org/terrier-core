@@ -17,7 +17,7 @@
  *
  * The Original Code is SkipTermPipeline.java.
  *
- * The Original Code is Copyright (C) 2008-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2008-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):

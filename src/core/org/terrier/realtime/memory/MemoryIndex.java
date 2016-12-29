@@ -17,7 +17,7 @@
  *
  * The Original Code is MemoryIndex.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -92,6 +92,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	protected MemoryMetaIndex metadata;
 	protected MemoryDocumentIndex document;
 	protected MemoryCollectionStatistics stats;
+	protected MemoryDirectIndex direct;
 	
     // Blocks and fields.
     public final static boolean      blocks    = (ApplicationSetup.getProperty("block.indexing", "").equals("")) ? false : true;
@@ -99,6 +100,9 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
     public final static String[]     fieldtags = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("FieldTags.process", ""));
     public TObjectIntHashMap<String> fieldIDs;
 	
+    // Direct
+    public final static boolean      enableDirect    = (ApplicationSetup.getProperty("direct.indexing", "").equals("")) ? false : true;
+    
     /** A lock that stops multiple indexing operations from happening at once **/
     protected Object indexingLock = new Object();
     
@@ -141,6 +145,8 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] { 0 });
 		load_pipeline(); // For term processing (stemming, stop-words).
 
+		if (enableDirect) direct = new MemoryDirectIndex(document);
+		
 		logger.info("***REALTIME*** MemoryIndex (NEW)");
 	}
 
@@ -156,6 +162,8 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 			return getDocumentIndex();
 		if (structureName.equalsIgnoreCase("collectionstatistics"))
 			return getCollectionStatistics();
+		if (structureName.equalsIgnoreCase("direct") && enableDirect)
+			return direct;
 		else
 			return null;
 	}
@@ -187,6 +195,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 
 	/** Not implemented. */
 	public PostingIndex<?> getDirectIndex() {
+		if (enableDirect) return direct;
 		return null;
 	}
 
@@ -200,6 +209,8 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 			return metadata.iterator();
 		if (structureName.equalsIgnoreCase("document"))
 			return document.iterator();
+		if (structureName.equalsIgnoreCase("direct") && enableDirect)
+			return direct.iterator();
 		else
 			return null;
 	}
@@ -243,6 +254,88 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		// Add the document's length to the document index.
 		document.addDocument(docContents.getDocumentLength());
 
+		int docid = stats.getNumberOfDocuments();
+		
+		// For each term in the document:
+		for (String term : docContents.termSet()) {
+
+			int tf = docContents.getFrequency(term);
+			
+			// Add/update term in lexicon.
+			int termid = lexicon.term(term, new MemoryLexiconEntry(1,
+					tf));
+
+			// Add document posting to inverted file.
+			inverted.add(termid, stats.getNumberOfDocuments(),
+					tf);
+			
+			if (enableDirect) {
+				direct.add(docid, termid, tf);
+			}
+		}
+
+		// Update collection statistics.
+		stats.update(1, docContents.getDocumentLength(),
+				docContents.termSet().length);
+		stats.updateUniqueTerms(lexicon.numberOfEntries());
+
+		logger.debug("***REALTIME*** MemoryIndex indexDocument ("
+				+ stats.getNumberOfDocuments() + ")");
+		
+		}
+	}
+	
+	
+	/**
+	 * Index an unsearchable document. This performs a partial index document operation.
+	 * Term statistics and global statistics will be updated. But the inverted index will
+	 * not be. In effect, this adds a document to the index, but in such a way that it will
+	 * never be retrieved for any query.
+	 * 
+	 * This is useful when you want to maintain collection statistics for a collection over
+	 * time, but do not need search functionality. 
+	 */
+	public void indexUnDocument(Document doc) throws Exception {
+
+		synchronized(indexingLock) {
+			// Don't index null documents.
+			if (doc == null)
+				return;
+	
+			// Process terms through term pipeline.
+			docPostings = new DocumentPostingList();
+			while (!doc.endOfDocument())
+				pipeline_first.processTerm(doc.getNextTerm());
+	
+			indexUnDocument(doc.getAllProperties(), docPostings);
+		}
+	}
+	
+	
+	/**
+	 * Index an unsearchable document. This performs a partial index document operation.
+	 * Term statistics and global statistics will be updated. But the inverted index will
+	 * not be. In effect, this adds a document to the index, but in such a way that it will
+	 * never be retrieved for any query.
+	 * 
+	 * This is useful when you want to maintain collection statistics for a collection over
+	 * time, but do not need search functionality. 
+	 */
+	public void indexUnDocument(Map<String, String> docProperties,
+			DocumentPostingList docContents) throws Exception {
+
+		synchronized(indexingLock) {
+		
+		// Don't index null documents.
+		if (docContents == null || docProperties == null)
+			return;
+
+		// Write the document's properties to the meta index.
+		//metadata.writeDocumentEntry(docProperties);	
+
+		// Add the document's length to the document index.
+		document.addDocument(docContents.getDocumentLength());
+
 		// For each term in the document:
 		for (String term : docContents.termSet()) {
 
@@ -251,8 +344,8 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 					docContents.getFrequency(term)));
 
 			// Add document posting to inverted file.
-			inverted.add(termid, stats.getNumberOfDocuments(),
-					docContents.getFrequency(term));
+			//inverted.add(termid, stats.getNumberOfDocuments(),
+			//		docContents.getFrequency(term));
 		}
 
 		// Update collection statistics.
@@ -620,6 +713,14 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 
 	/** Not implemented. */
 	public void close() throws IOException {
+		if (lexicon!=null) lexicon.close();
+		if (inverted!=null) inverted.close();
+		if (metadata!=null) metadata.close();
+		//if (document!=null) document.
+		//if (stats!=null) stats.
+		if (direct!=null)  direct.close();
+		
+		
 	}
 
 	/** Not implemented. */

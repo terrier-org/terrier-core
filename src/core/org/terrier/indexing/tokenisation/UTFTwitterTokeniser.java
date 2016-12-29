@@ -17,7 +17,7 @@
  *
  * The Original Code is UTFTwitterTokeniser.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -57,6 +57,8 @@ public class UTFTwitterTokeniser extends Tokeniser {
 	static final boolean LOWERCASE = Boolean.parseBoolean(ApplicationSetup.getProperty("lowercase", "true"));
 	static final int MAX_TERM_LENGTH = ApplicationSetup.MAX_TERM_LENGTH;
 	
+	static final boolean ignoreDigitOnlyTerms = Boolean.parseBoolean(ApplicationSetup.getProperty("ignoreDigitOnlyTerms", "true"));
+	
 	static class UTFTokenStream extends TokenStream
 	{
 		int ch;
@@ -92,7 +94,7 @@ public class UTFTwitterTokeniser extends Tokeniser {
 					}
 					StringBuilder sw = new StringBuilder(MAX_TERM_LENGTH);
 					//now accept all alphanumeric charaters
-					while (ch != -1 && (Character.isLetterOrDigit((char)ch) || Character.getType((char)ch) == Character.NON_SPACING_MARK || Character.getType((char)ch) == Character.COMBINING_SPACING_MARK || ch=='/' || ch=='@'))
+					while (ch != -1 && (Character.isLetterOrDigit((char)ch) || Character.getType((char)ch) == Character.NON_SPACING_MARK || Character.getType((char)ch) == Character.COMBINING_SPACING_MARK || ch=='/' || ch=='@' || ch=='#'))
 					{
 						/* add character to word so far */
 						sw.append((char)ch);
@@ -151,7 +153,7 @@ public class UTFTwitterTokeniser extends Tokeniser {
 			/* if it contains more than 4 consequtive same letters,
 			   or more than 4 digits, then discard the term. */
 			if (counter > maxNumOfSameConseqLettersPerTerm
-				|| counterdigit > maxNumOfDigitsPerTerm)
+				|| (counterdigit > maxNumOfDigitsPerTerm && ignoreDigitOnlyTerms))
 				return "";
 		}
 		return LOWERCASE ? s.toLowerCase() : s;

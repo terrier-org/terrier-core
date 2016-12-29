@@ -17,7 +17,7 @@
  *
  * The Original Code is MemoryDocumentIndexMap.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -67,6 +67,13 @@ public class MemoryDocumentIndexMap extends MemoryDocumentIndex {
 	 * Add document length to document index.
 	 */
 	public void addDocument(int docid, int length) {
+		docids2lengths.put(docid, length);
+	}
+	
+	@Override
+	public void addDocument(int length) {
+		int docid = docLengths.size();
+		super.addDocument(length);
 		docids2lengths.put(docid, length);
 	}
 

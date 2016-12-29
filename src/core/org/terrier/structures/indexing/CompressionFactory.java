@@ -17,7 +17,7 @@
  *
  * The Original Code is CompressionFactory.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -73,9 +73,13 @@ public class CompressionFactory {
 	 */
 	static public abstract class CompressionConfiguration
 	{	
+		/** number of fields */
 		protected int fieldCount;
+		/** name of fields */
 		protected String[] fieldNames;
+		/** is there blocks: 0 (no), 1 (yes: 1 block per token), more than 1 (blocks are for more than one token) */
 		protected int hasBlocks;
+		/** maximum number of blocks */
 		protected int maxBlocks;
 		protected String structureName;
 		
@@ -117,6 +121,8 @@ public class CompressionFactory {
 						this.getPostingIteratorClass().getName() );
 			index.setIndexProperty("index."+this.structureName+".fields.count", String.valueOf(this.fieldCount));
 			index.setIndexProperty("index."+this.structureName+".fields.names", ArrayUtils.join(this.fieldNames, ","));
+			index.setIndexProperty("index."+this.structureName+".blocks", String.valueOf(this.hasBlocks));
+			index.setIndexProperty("index."+this.structureName+".blocks.max", String.valueOf(this.maxBlocks));
 		}
 	}
 	

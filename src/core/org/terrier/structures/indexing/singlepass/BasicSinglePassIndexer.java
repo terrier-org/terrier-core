@@ -18,7 +18,7 @@
  *
  * The Original Code is BasicSinglePassIndexer.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -316,9 +316,9 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		final long consumed = mp.getMemoryConsumption();
 		boolean doFlush = false;
 		final boolean memCheck = memoryCheck.checkMemory();
-		String msg = null; 
+		String msg = null;
 		logger.debug(msg="Run "+currentFile+" maxAllowedMemory="+maxMemory + " consumed="+consumed + " maxDocsPerFlush="+maxDocsPerFlush
-				+" numberOfDocsSinceFlush="+numberOfDocsSinceFlush + " memcheck="+ memCheck);
+			+" numberOfDocsSinceFlush="+numberOfDocsSinceFlush + " memcheck="+ memCheck);
 		if (memCheck)
 		{
 			doFlush = true;

@@ -17,7 +17,7 @@
  *
  * The Original Code is TRECQuerying.java.
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -664,7 +664,7 @@ public class TRECQuerying {
 		preQueryingSearchRequestModification(queryId, srq);
 		ResultSet rs = resultsCache.checkCache(srq);
 		if (rs != null)
-			((Request)srq).setResultSet(rs);
+			((Request)rs).setResultSet(rs);
 		
 		
 		if (logger.isInfoEnabled())

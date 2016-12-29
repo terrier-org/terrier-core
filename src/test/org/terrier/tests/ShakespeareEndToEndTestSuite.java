@@ -17,7 +17,7 @@
  *
  * The Original Code is ShakespeareEndToEndTestSuite.java
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -51,6 +51,11 @@ import org.junit.runners.Suite.SuiteClasses;
 	MergingShakespeareEndToEndTests.BlockMerging.class,
 	MergingShakespeareEndToEndTests.BasicSinglePassMerging.class,
 	MergingShakespeareEndToEndTests.BlockSinglePassMerging.class,
+	
+	MultiThreadedShakespeareEndToEndTest.BasicThreads.class,
+	MultiThreadedShakespeareEndToEndTest.BlockThreads.class,
+	MultiThreadedShakespeareEndToEndTest.BasicSinglePassThreads.class,
+	MultiThreadedShakespeareEndToEndTest.BlockSinglePassThreads.class,
 	
 	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTest.class,
 	HadoopShakespeareEndToEndTest.BlockHadoopShakespeareEndToEndTest.class,

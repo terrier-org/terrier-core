@@ -17,7 +17,7 @@
  *
  * The Original Code is TwitterJSONDocument.java
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -252,6 +252,7 @@ public class TwitterJSONDocument implements Document{
 	    JsonObject juser = json.getAsJsonObject("user");
 	    if (juser!=null) { 
 	    if (juser.get("screen_name")!=null) if (!juser.get("screen_name").isJsonNull()) addProperty("user.screen_name", juser.get("screen_name").getAsString()); 
+	    if (juser.get("verified")!=null) if (!juser.get("verified").isJsonNull()) addProperty("user.verified", String.valueOf(juser.get("verified").getAsBoolean())); 
 	    if (juser.get("created_at")!=null) if (!juser.get("created_at").isJsonNull()) addProperty("user.created_at", juser.get("created_at").getAsString()); 
 	    if (juser.get("protected")!=null) if (!juser.get("protected").isJsonNull()) addProperty("user.protected", String.valueOf(juser.get("protected").getAsBoolean()));
 	    if (juser.get("lang")!=null) if (!juser.get("lang").isJsonNull()) addProperty("user.lang", juser.get("lang").getAsString());

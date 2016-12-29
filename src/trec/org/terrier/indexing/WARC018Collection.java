@@ -17,7 +17,7 @@
  *
  * The Original Code is WARC018Collection.java
  *
- * The Original Code is Copyright (C) 2004-2015 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.terrier.indexing.tokenisation.Tokeniser;
@@ -79,6 +80,19 @@ public class WARC018Collection extends MultiDocumentFileCollection implements Co
 	public WARC018Collection(String CollectionSpecFilename) {
 		super(CollectionSpecFilename);
 	}
+	
+	public WARC018Collection(List<String> files) {
+		super(files);
+	}
+
+	public WARC018Collection(List<String> files, String TagSet, String BlacklistSpecFilename, String ignored) {
+		super(files);
+	}
+
+	public WARC018Collection(String CollectionSpecFilename, String TagSet, String BlacklistSpecFilename,
+         String ignored) {
+        super(CollectionSpecFilename);
+    }
 
 
 	/** Move the collection to the start of the next document. */
