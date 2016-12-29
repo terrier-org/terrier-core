@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.dsms.DocumentScoreModifier;
@@ -67,13 +69,9 @@ public class FatScoringMatching implements Matching {
 	WeightingModel wm;
 	public boolean sort = true;
 	
-	ScoreTerm filterTerm = null;
+	Predicate<String> filterTerm = null;
 	
-	public static interface ScoreTerm {
-		boolean score(String queryTerm);
-	}
-	
-	public FatScoringMatching(Index _index, Matching _parent, WeightingModel _wm, ScoreTerm _filter)
+	public FatScoringMatching(Index _index, Matching _parent, WeightingModel _wm, Predicate<String> _filter)
 	{
 		this(_index, _parent, _wm);
 		this.filterTerm = _filter;
@@ -179,7 +177,7 @@ public class FatScoringMatching implements Matching {
 			//check if this term has been suppressed by the filter
 			okToScore[ti] = true;
 			if (filterTerm != null)
-				okToScore[ti] = filterTerm.score(fInputRS.getQueryTerms()[ti]);
+				okToScore[ti] = filterTerm.test(fInputRS.getQueryTerms()[ti]);
 			if (! okToScore[ti])
 			{
 				System.err.println("Term: "+fInputRS.getQueryTerms()[ti]+" not scored for wm " + wm.getInfo());

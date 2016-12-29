@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,18 +179,18 @@ public class FatFeaturedScoringMatching implements Matching {
 			}			
 			else//assume WMODEL: WMODELp: WMODELt:
 			{
-				FatScoringMatching.ScoreTerm filter = null;
+				Predicate<String> filter = null;
 				final String[] parts = featureNames[i].split(":", 2);
 				final String catchName = parts[0];
 				final String wModelName = parts[1];
 				if (catchName.equals("WMODELp"))
-					filter = new FilterTermProximity();
+					filter = filterProx;
 				if (catchName.equals("WMODELt"))
-					filter = new FilterNot( new FilterTermProximity() );
+					filter = filterTerm;
 				if (catchName.equals("WMODELpuw"))
-					filter = new FilterTermUW();
+					filter = filterUW;
 				if (catchName.equals("WMODELp1"))
-					filter = new FilterTermow1();
+					filter = filterOW;
 				
 				WeightingModel wm = WeightingModelFactory.newInstance(wModelName);
 				FatScoringMatching fsm = new FatScoringMatching(null, parent, wm, filter);
@@ -210,45 +211,29 @@ public class FatFeaturedScoringMatching implements Matching {
 		
 	}
 	
-	static class FilterNot implements FatScoringMatching.ScoreTerm
-	{
-		FatScoringMatching.ScoreTerm parent;
-		FilterNot(FatScoringMatching.ScoreTerm _parent) {this.parent = _parent; }
-		@Override
-		public boolean score(String queryTerm) {
-			return ! parent.score(queryTerm);
-		}		
-	}
-	
-	static class FilterTermProximity implements FatScoringMatching.ScoreTerm
+	static final Predicate<String> filterUW = new Predicate<String>()
 	{
 		@Override
-		public boolean score(String queryTerm) {
-			if (queryTerm.contains(UnorderedWindowTerm.STRING_PREFIX) || queryTerm.matches("^.*#\\d+.*$"))
-				return true;
-			return false;
-		}		
-	}
-	
-	static class FilterTermUW implements FatScoringMatching.ScoreTerm
-	{
-		@Override
-		public boolean score(String queryTerm) {
+		public boolean test(String queryTerm) {
 			if (queryTerm.contains(UnorderedWindowTerm.STRING_PREFIX))
 				return true;
 			return false;
-		}		
-	}
+		}
+	};
 	
-	static class FilterTermow1 implements FatScoringMatching.ScoreTerm
+	static final Predicate<String> filterOW = new Predicate<String>()
 	{
 		@Override
-		public boolean score(String queryTerm) {
+		public boolean test(String queryTerm) {
 			if (queryTerm.matches("^.*#\\d+.*$"))
 				return true;
 			return false;
-		}		
-	}
+		}
+	};
+	
+	static final Predicate<String> filterProx = filterUW.or(filterOW);
+	static final Predicate<String> filterTerm = filterProx.negate();
+	
 	
 	@Override
 	public String getInfo() {
