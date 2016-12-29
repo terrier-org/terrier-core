@@ -40,6 +40,10 @@ public interface EntryStatistics extends Serializable
 	/** The id of the term */
 	int getTermId();
 	
+	int getMaxFrequencyInDocuments();
+	void setMaxFrequencyInDocuments(int max);
+	
+	
 	/** Increment the statistics of this object by that of another */
 	void add(EntryStatistics e);
 	/** Decrement the statistics of this object by that of another */

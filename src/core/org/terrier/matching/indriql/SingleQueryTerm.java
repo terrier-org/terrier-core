@@ -1,6 +1,7 @@
 package org.terrier.matching.indriql;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -80,6 +81,17 @@ public class SingleQueryTerm extends QueryTerm {
 				throw new IOException("Unknown field " + field);
 			postingList = new FieldOnlyIterablePosting(postingList, fieldId);
 			//TODO do we correct field stats
+		}
+		
+		//slight hack: we will adjust the max tf if we have additional knowledge of it.
+		if (t.getMaxFrequencyInDocuments() == Integer.MAX_VALUE && index.hasIndexStructure("maxtf"))
+		{
+			@SuppressWarnings("unchecked")
+			List<Integer> maxTFStructure = (List<Integer>) index.getIndexStructure("maxtf");
+			if (maxTFStructure != null)
+			{
+				t.setMaxFrequencyInDocuments(maxTFStructure.get(t.getTermId()));
+			}
 		}
 		return Pair.of((EntryStatistics) t, postingList);
 	}

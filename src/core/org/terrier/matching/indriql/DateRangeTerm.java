@@ -74,7 +74,7 @@ public class DateRangeTerm extends QueryTerm {
 			logger.warn("No alternatives matched in "+this.toString());
 			return null;
 		}
-		entryStats = MultiQueryTerm.mergeStatistics(_le.toArray(new LexiconEntry[_le.size()]));
+		entryStats = MultiQueryTerm.addStatistics(_le.toArray(new LexiconEntry[_le.size()]));
 		return Pair.of(entryStats, (IterablePosting) ORIterablePosting.mergePostings(_joinedPostings.toArray(new IterablePosting[_joinedPostings.size()])));
 	}
 

@@ -45,6 +45,7 @@ import org.terrier.structures.Pointer;
 @SuppressWarnings("serial")
 public class MultiLexiconEntry extends LexiconEntry {
 
+	int maxtf = Integer.MAX_VALUE;
 	private LexiconEntry[] children;
 
 	/**
@@ -128,6 +129,22 @@ public class MultiLexiconEntry extends LexiconEntry {
 
 	/** Not implemented. */
 	public void setStatistics(int n_t, int TF) {
+	}
+
+	@Override
+	public int getMaxFrequencyInDocuments() {
+		if (this.maxtf != Integer.MAX_VALUE)
+			return this.maxtf;
+		int max = Integer.MIN_VALUE;
+		for(LexiconEntry c : children)
+			if (c.getMaxFrequencyInDocuments() > max)
+				max = c.getMaxFrequencyInDocuments();
+		return max;
+	}
+
+	@Override
+	public void setMaxFrequencyInDocuments(int max) {
+		this.maxtf = max;
 	}
 
 }

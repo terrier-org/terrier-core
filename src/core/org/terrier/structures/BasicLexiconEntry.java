@@ -66,6 +66,8 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 
 	}
 	
+	public int maxtf = Integer.MAX_VALUE;
+	
 	/** the termid of this entry */
 	public int termId;
 	/** the number of document that this entry occurs in */
@@ -138,6 +140,8 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 	{
 		this.n_t += le.getDocumentFrequency();
 		this.TF  += le.getFrequency();
+		if (le.getMaxFrequencyInDocuments() > maxtf)
+			maxtf = le.getMaxFrequencyInDocuments();
 	}
 
 	/** alter this lexicon entry to subtract another lexicon entry */
@@ -210,6 +214,16 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 	{
 		termId = newTermId;
 	}
+	
+	@Override
+	public int getMaxFrequencyInDocuments() {
+		return maxtf;
+	}
+
+	@Override
+	public void setMaxFrequencyInDocuments(int max) {
+		this.maxtf = max;
+	}
 	/** 
 	 * {@inheritDoc} 
 	 */
@@ -276,4 +290,6 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 		startOffset = ((BitIndexPointer)p).getOffset();
 		startBitOffset = ((BitIndexPointer)p).getOffsetBits();
 	}
+
+	
 }

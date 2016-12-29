@@ -51,6 +51,7 @@ public class MemoryLexiconEntry extends LexiconEntry implements MemoryPointer,Se
 	 */
 	private int termid;
 	private int df, tf;
+	private int maxtf = Integer.MAX_VALUE;
 
 	/**
 	 * Constructor.
@@ -84,6 +85,14 @@ public class MemoryLexiconEntry extends LexiconEntry implements MemoryPointer,Se
 		this.df = df;
 		this.tf = tf;
 	}
+	
+	public MemoryLexiconEntry(int termid, int df, int tf, int maxtf) {
+		this.termid = termid;
+		this.df = df;
+		this.tf = tf;
+		this.maxtf = maxtf;
+	}
+
 
 	/** {@inheritDoc} */
 	public int getTermId() {
@@ -115,6 +124,8 @@ public class MemoryLexiconEntry extends LexiconEntry implements MemoryPointer,Se
 	public void add(EntryStatistics es) {
 		df += es.getDocumentFrequency();
 		tf += es.getFrequency();
+		if (es.getMaxFrequencyInDocuments() > maxtf)
+			maxtf = es.getMaxFrequencyInDocuments();
 	}
 
 	/** {@inheritDoc} */
@@ -147,6 +158,16 @@ public class MemoryLexiconEntry extends LexiconEntry implements MemoryPointer,Se
 	/** {@inheritDoc} */
 	public String pointerToString() {
 		return String.valueOf(termid);
+	}
+	
+	@Override
+	public int getMaxFrequencyInDocuments() {
+		return maxtf;
+	}
+
+	@Override
+	public void setMaxFrequencyInDocuments(int max) {
+		this.maxtf = max;
 	}
 
 	/** Not implemented. */

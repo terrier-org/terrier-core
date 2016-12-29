@@ -10,11 +10,13 @@ public class SimpleNgramEntryStatistics implements NgramEntryStatistics, Writabl
 	
 	private static final long serialVersionUID = 1L;
 	
+	int maxtf;
 	int ws;
 	int nt;
 	
 	public SimpleNgramEntryStatistics(EntryStatistics e){
 		nt = e.getDocumentFrequency();
+		maxtf = e.getMaxFrequencyInDocuments();
 	}
 	
 	public SimpleNgramEntryStatistics(){}
@@ -72,6 +74,16 @@ public class SimpleNgramEntryStatistics implements NgramEntryStatistics, Writabl
 	public void write(DataOutput out) throws IOException {
 		out.writeInt(ws);
 		out.writeInt(nt);
+	}
+
+	@Override
+	public int getMaxFrequencyInDocuments() {
+		return maxtf;
+	}
+	
+	@Override
+	public void setMaxFrequencyInDocuments(int max) {
+		maxtf = max;
 	}
 
 }

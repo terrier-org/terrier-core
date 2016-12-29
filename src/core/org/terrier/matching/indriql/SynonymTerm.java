@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.ORIterablePosting;
@@ -32,7 +33,22 @@ public class SynonymTerm extends MultiQueryTerm {
 		return STRING_PREFIX + "("+ArrayUtils.join(terms, ' ')+")";
 	}
 
-	
+	/** Adjust the statistics for the #syn operator:
+	 * 1. The total number of occurrences F is the sum of the constituent frequencies (handled by super).
+	 * 2. The in-document maxTF is the maximum of the constituent maxTFs */
+	@Override
+	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats) {
+		EntryStatistics rtr = super.mergeStatistics(entryStats);
+		int minTF = Integer.MIN_VALUE;
+		for(EntryStatistics e : entryStats)
+		{
+			if (e.getMaxFrequencyInDocuments() > minTF)
+				minTF = e.getMaxFrequencyInDocuments();
+		}
+		rtr.setMaxFrequencyInDocuments(minTF);
+		return rtr;
+	}
+
 
 	protected IterablePosting createFinalPostingIterator(
 			List<IterablePosting> postings,

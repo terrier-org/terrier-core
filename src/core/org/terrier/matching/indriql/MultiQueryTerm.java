@@ -46,8 +46,8 @@ public abstract class MultiQueryTerm extends QueryTerm {
 		 return rtr;
 	}
 	
-	/** Knows how to merge several EntryStatistics for a single effective term */
-	public static EntryStatistics mergeStatistics(EntryStatistics[] entryStats)
+	/** merges several EntryStatistics for a single effective term simply by adding */
+	public static EntryStatistics addStatistics(EntryStatistics[] entryStats)
 	{
 		if (entryStats == null)
 			return null;
@@ -55,6 +55,11 @@ public abstract class MultiQueryTerm extends QueryTerm {
 		for(int i=1;i<entryStats.length;i++)
 			rtr.add(entryStats[i]);
 		return rtr;
+	}
+	
+	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats)
+	{
+		return addStatistics(entryStats);
 	}
 	
 	protected abstract IterablePosting createFinalPostingIterator(

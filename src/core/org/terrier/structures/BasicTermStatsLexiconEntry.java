@@ -36,6 +36,7 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	protected int n_t;
 	protected int TF;
 	protected int termId;
+	protected int maxtf = Integer.MAX_VALUE;
 	/**
 	 * Constructs an instance of the BasicTermStatsLexiconEntry.
 	 */
@@ -64,6 +65,17 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	public void setDocumentFrequency(int _n_t) {
 		n_t = _n_t;
 	}
+	
+	@Override
+	public int getMaxFrequencyInDocuments() {
+		return maxtf;
+	}
+
+	@Override
+	public void setMaxFrequencyInDocuments(int max) {
+		this.maxtf = max;
+	}
+	
 	/** 
 	 * {@inheritDoc} 
 	 */
@@ -154,6 +166,8 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	public void add(EntryStatistics le) {
 		TF += le.getFrequency();
 		n_t += le.getDocumentFrequency();
+		if (le.getMaxFrequencyInDocuments() > maxtf)
+			maxtf = le.getMaxFrequencyInDocuments();
 	}
 	/** 
 	 * {@inheritDoc} 
