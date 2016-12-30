@@ -38,6 +38,9 @@ public class pBiL extends WeightingModel {
 		
 		if (matchingNGrams == 0)
 			return 0.0d;
+		if (matchingNGrams == docLength)
+			matchingNGrams = docLength - 0.1d;
+		
 		final double numberOfNGrams = (docLength > 0 && docLength < ngramLength) ? 1
 				: docLength - ngramLength + 1.0d;
 		
