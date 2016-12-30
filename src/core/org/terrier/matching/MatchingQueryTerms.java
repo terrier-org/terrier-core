@@ -354,9 +354,9 @@ implements Serializable,Cloneable
 	}
 	
 	/**
-	 * Sets a term score modifier for the given query term.
-	 * @param term String the term for which to add a term score modifier.
-	 * @param tsm TermScoreModifier the term score modifier to apply for the given term.
+	 * Sets a term's statistics for the given query term.
+	 * @param term String the term for which to override the statitics
+	 * @param e EntryStatistics the term score modifier to apply for the given term.
 	 */
 	public void setTermProperty(String term, EntryStatistics e) {
 		setTermProperty(new SingleQueryTerm(term), e);

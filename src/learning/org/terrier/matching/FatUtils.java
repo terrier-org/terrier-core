@@ -300,7 +300,9 @@ public class FatUtils {
 				queryTerms[j] = in.readUTF();
 				fields[j] = in.readBoolean();
 				blocks[j] = in.readBoolean();
-				postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
+				boolean anyPostings = in.readBoolean();
+				if (anyPostings)
+					postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
 				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
 				keyFrequencies[j] = in.readDouble();
 				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
@@ -439,13 +441,16 @@ public class FatUtils {
 			{
 				entryStats[i] = new BasicLexiconEntry(entryStats[i].getTermId(), entryStats[i].getDocumentFrequency(), entryStats[i].getFrequency());
 			}
-			
-			//write out the classes			
-			out.writeUTF(firstPostingForTerm.getClass().getName());
+		
+			out.writeBoolean(firstPostingForTerm != null);
+			if (firstPostingForTerm != null)
+			{
+				//write out the classes			
+				out.writeUTF(firstPostingForTerm.getClass().getName());
+				//if we don't have a FieldPosting list, we should not have a FieldEntryStatistics 
+				assert (! (fields[i]) && ! (entryStats[i] instanceof FieldEntryStatistics));
+			}
 			out.writeUTF(entryStats[i].getClass().getName());
-			
-			//if we don't have a FieldPosting list, we should not have a FieldEntryStatistics 
-			assert (! (fields[i]) && ! (entryStats[i] instanceof FieldEntryStatistics));
 			
 			out.writeDouble(keyFrequency[i]);
 			((Writable)entryStats[i]).write(out);
