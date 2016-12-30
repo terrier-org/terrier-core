@@ -31,6 +31,7 @@ import gnu.trove.TIntArrayList;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.Pointer;
@@ -46,6 +47,26 @@ public class PhraseIterablePosting extends ANDIterablePosting implements BlockPo
 	BlockPosting[] bs;
 	int smallestIndex = -1;
 	final TIntArrayList positions;
+	
+	public PhraseIterablePosting(IterablePosting[] _ips, EntryStatistics[] _p, boolean recordPositions) throws IOException
+	{
+		super(_ips, _p);
+		bs = new BlockPosting[termCount];
+		int i=0;
+		for(IterablePosting ip : ips)
+		{
+			bs[i] = (BlockPosting)ip;
+			i++;
+		}
+		if (recordPositions)
+		{
+			positions = new TIntArrayList();
+		}
+		else
+		{
+			positions = null;
+		}
+	}
 	
 	public PhraseIterablePosting(IterablePosting[] _ips, Pointer[] _p, boolean recordPositions) throws IOException
 	{

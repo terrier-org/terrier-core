@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.terrier.structures.EntryStatistics;
-import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.SimpleNgramEntryStatistics;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.PhraseIterablePosting;
@@ -39,11 +38,11 @@ public class PhraseTerm extends ANDQueryTerm {
 
 	@Override
 	protected IterablePosting createFinalPostingIterator(
-			List<IterablePosting> postings, List<LexiconEntry> pointers)
+			List<IterablePosting> postings, List<EntryStatistics> pointers)
 			throws IOException {
 		return new PhraseIterablePosting(
 				postings.toArray(new IterablePosting[postings.size()]), 
-				pointers.toArray(new LexiconEntry[pointers.size()]), false);
+				pointers.toArray(new EntryStatistics[pointers.size()]), false);
 	}
 
 }

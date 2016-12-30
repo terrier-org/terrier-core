@@ -29,6 +29,7 @@ package org.terrier.structures.postings;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.Pointer;
@@ -45,6 +46,12 @@ import org.terrier.structures.postings.IterablePosting;
 public class ProximityIterablePosting extends ANDIterablePosting {
 
 	protected int window;
+	
+	public ProximityIterablePosting(IterablePosting[] _ips, EntryStatistics[] _es, int window)
+			throws IOException {
+		super(_ips, _es);
+		this.window = window;
+	}
 
 	public ProximityIterablePosting(IterablePosting[] _ips, Pointer[] _p, int window)
 			throws IOException {

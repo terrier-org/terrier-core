@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.terrier.structures.EntryStatistics;
-import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.postings.ANDIterablePosting;
 import org.terrier.structures.postings.IterablePosting;
@@ -27,7 +26,7 @@ public class ANDQueryTerm extends MultiQueryTerm {
 
 	@Override
 	protected IterablePosting createFinalPostingIterator(
-			List<IterablePosting> postings, List<LexiconEntry> pointers)
+			List<IterablePosting> postings, List<EntryStatistics> pointers)
 			throws IOException {
 		return new ANDIterablePosting(
 				postings.toArray(new IterablePosting[0]), 

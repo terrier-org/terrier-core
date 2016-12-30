@@ -29,6 +29,7 @@ package org.terrier.structures.postings;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Pointer;
 
 /**
@@ -43,6 +44,43 @@ public class ANDIterablePosting extends IterablePostingImpl {
 	protected IterablePosting[] ips;
 	protected final int termCount;
 	protected int frequency = 0;
+	
+	public ANDIterablePosting(IterablePosting[] _ips, EntryStatistics[] _p) throws IOException {
+		termCount = _ips.length;
+		class PL implements Comparable<PL>
+		{
+			IterablePosting ip;
+			EntryStatistics p;
+			@Override
+			public int compareTo(PL other) 
+			{	
+				return other.p.getDocumentFrequency() - this.p.getDocumentFrequency();
+			}
+		}			
+		assert _ips.length == _p.length;
+		
+		final PL[] lists = new PL[termCount];
+		for(int i=0;i<termCount;i++)
+		{
+			lists[i] = new PL();
+			assert _ips[i] != null;
+			lists[i].ip = _ips[i];
+			assert _p[i] != null;
+			lists[i].p = _p[i];
+		}
+		
+		Arrays.sort(lists);			
+		
+		ips = new IterablePosting[termCount];
+		int i=0;
+		for(PL list : lists)
+		{
+			ips[i] = list.ip;
+			if (i != 0)
+				ips[i].next();
+			i++;
+		}
+	}
 
 	public ANDIterablePosting(IterablePosting[] _ips, Pointer[] _p) throws IOException {
 		termCount = _ips.length;

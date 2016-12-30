@@ -15,7 +15,6 @@ import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
-import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
@@ -64,12 +63,12 @@ public abstract class MultiQueryTerm extends QueryTerm {
 	
 	protected abstract IterablePosting createFinalPostingIterator(
 			List<IterablePosting> postings,
-			List<LexiconEntry> pointers) throws IOException;
+			List<EntryStatistics> pointers) throws IOException;
 	
 	@Override
 	Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException
 	{
-		List<LexiconEntry> _le = new ArrayList<LexiconEntry>(terms.length);
+		List<EntryStatistics> _le = new ArrayList<EntryStatistics>(terms.length);
 		List<IterablePosting> _joinedPostings = new ArrayList<IterablePosting>(terms.length);
 		for(QueryTerm ts : terms) {
 			Pair<EntryStatistics,IterablePosting> pair = ts.getPostingIterator(index);
@@ -79,7 +78,7 @@ public abstract class MultiQueryTerm extends QueryTerm {
 			} else if (IGNORE_LOW_IDF_TERMS && index.getCollectionStatistics().getNumberOfDocuments() < pair.getKey().getFrequency()) {
 				logger.warn("query term " + ts + " has low idf - ignored from scoring.");
 			} else {
-				_le.add((LexiconEntry) pair.getLeft());
+				_le.add(pair.getLeft());
 				_joinedPostings.add(pair.getRight());
 			}			
 		}
@@ -90,7 +89,7 @@ public abstract class MultiQueryTerm extends QueryTerm {
 			logger.warn("No alternatives matched in " + Arrays.toString(terms));
 			return null;
 		}
-		EntryStatistics entryStats = mergeStatistics(_le.toArray(new LexiconEntry[_le.size()]));
+		EntryStatistics entryStats = mergeStatistics(_le.toArray(new EntryStatistics[_le.size()]));
 		
 		IterablePosting ip = createFinalPostingIterator(_joinedPostings, _le);
 		return Pair.of(entryStats, ip);
