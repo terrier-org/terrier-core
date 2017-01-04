@@ -146,6 +146,10 @@ public class FatUtils {
 				frs.setDocids(docids);
 				frs.setPostings(postings);
 				frs.setOccurrences(occurrences);
+		
+				frs.setEntryStatistics(new EntryStatistics[0]);
+            	frs.setKeyFrequencies(new double[0]);
+            	frs.setQueryTerms(new String[0]);
 				
 				System.err.println("No found terms for this query");
 				return;
@@ -258,6 +262,7 @@ public class FatUtils {
 		int resultSize = -1;
 		int j = -1;
 		int termCount = -1;
+		int lastDocid = -1;
 		
 		try{
 			CollectionStatistics collStats = new CollectionStatistics();
@@ -280,6 +285,10 @@ public class FatUtils {
 				frs.setDocids(docids);
 				frs.setPostings(postings);
 				frs.setOccurrences(occurrences);
+
+				frs.setEntryStatistics(new EntryStatistics[0]);
+                frs.setKeyFrequencies(new double[0]);
+                frs.setQueryTerms(new String[0]);
 				
 				System.err.println("No found terms for this query");
 				return;
@@ -306,16 +315,19 @@ public class FatUtils {
 				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
 				keyFrequencies[j] = in.readDouble();
 				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
-					" es="+statisticsClass.getSimpleName() +
+					" es="+statisticsClass.getSimpleName() /*+
 					" es.isAssignableFrom(FieldEntryStatistics.class)="+statisticsClass.isAssignableFrom(FieldEntryStatistics.class) + 
-					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass));
+					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass)*/);
 				EntryStatistics le = fields[j] || /* HACK */ FieldEntryStatistics.class.isAssignableFrom(statisticsClass)
 					? statisticsClass.getConstructor(Integer.TYPE).newInstance(fieldCount)
 					: statisticsClass.newInstance();
 				((Writable)le).readFields(in);
 				if (queryTerms[j].contains("#uw") || queryTerms[j].contains("#1"))
 				{
-					if (queryTerms[j].contains("#uw8")){
+					if (queryTerms[j].contains("#uw12")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(12);
+                    }else if (queryTerms[j].contains("#uw8")){
 						le = new SimpleNgramEntryStatistics(le);
 						((SimpleNgramEntryStatistics)le).setWindowSize(8);
 					}else if (queryTerms[j].contains("#uw4")){
@@ -346,7 +358,7 @@ public class FatUtils {
 			for (i = 0; i < resultSize; i++)
 			{
 				//read: docid, scores, occurrences
-				docids[i] = in.readInt();
+				lastDocid = docids[i] = in.readInt();
 				scores[i] = in.readDouble();
 				occurrences[i] = in.readShort();
 				final int docLen = in.readInt();
@@ -377,7 +389,7 @@ public class FatUtils {
 					WritablePosting p = postingClass[j].newInstance();
 					p.readFields(in);
 					//check that the posting we read is assigned to the docid
-					assert docids[i] == p.getId();
+					assert docids[i] == p.getId() : "rank "+i+" of "+resultSize+", term "+j+" of "+termCount+" expected docid="+docids[i]+" found "+p.getId();
 					
 					p.setDocumentLength(docLen);
 					if (fields[j])
@@ -389,10 +401,10 @@ public class FatUtils {
 			frs.setDocids(docids);
 			frs.setPostings(postings);
 			frs.setOccurrences(occurrences);
-		} catch (IOException ioe ) {
-			throw ioe;
+		} catch (IOException ioe) {
+			throw new WrappedIOException("IOException (reset to start perhaps?), was reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount + " docid="+lastDocid, ioe);
 		} catch (Exception e) {
-			throw new WrappedIOException("Problem reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount, e);
+			throw new WrappedIOException("Problem reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount + " docid="+lastDocid, e);
 		}
 		
 	}
@@ -436,11 +448,11 @@ public class FatUtils {
 			out.writeBoolean(fields[i]);
 			out.writeBoolean(blocks[i]);
 			
-			//HACK: MultiQueryTerm causes problems as it can return a FieldEntryStatistics where none is possible.
-			if (! fields[i])
-			{
-				entryStats[i] = new BasicLexiconEntry(entryStats[i].getTermId(), entryStats[i].getDocumentFrequency(), entryStats[i].getFrequency());
-			}
+			//HACK: MultiQueryTerm USED TO cause problems as it can return a FieldEntryStatistics where none is possible.???
+			//if (! fields[i])
+			//{
+			//	entryStats[i] = new BasicLexiconEntry(entryStats[i].getTermId(), entryStats[i].getDocumentFrequency(), entryStats[i].getFrequency());
+			//}
 		
 			out.writeBoolean(firstPostingForTerm != null);
 			if (firstPostingForTerm != null)
