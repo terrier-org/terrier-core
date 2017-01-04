@@ -27,8 +27,11 @@
 package org.terrier.fat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
@@ -40,8 +43,14 @@ import org.terrier.matching.Matching;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.daat.FatFull;
+import org.terrier.matching.indriql.PhraseTerm;
+import org.terrier.matching.indriql.UnorderedWindowTerm;
+import org.terrier.matching.models.DPH;
 import org.terrier.matching.models.TF_IDF;
+import org.terrier.matching.models.Tf;
+import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.structures.Index;
+import org.terrier.structures.NgramEntryStatistics;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
 
@@ -100,5 +109,93 @@ public class TestFatFeaturedScoringMatching extends ApplicationSetupBasedTest {
 			//single term query can have no proximity, however, feature MUST be defined
 			assertEquals(0.0d, prox[0], 0.0d);
 		}
+	}
+	
+	@Test public void singleDocumentMultipleTermsWithProx() throws Exception
+	{
+		ApplicationSetup.setProperty("termpipelines", "");
+		ApplicationSetup.setProperty("ignore.low.idf.terms", "false");
+		ApplicationSetup.setProperty("proximity.dependency.type","SD");
+		Index index = IndexTestUtils.makeIndexBlocks(
+				new String[]{"doc1"}, 
+				new String[]{"the lazy dog jumped over the quick fox"});
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		mqt.setTermProperty("lazy", 1.0d);
+		mqt.setTermProperty("fox", 1.0d);		
+		mqt.add(QTPBuilder.of(new PhraseTerm(new String[]{"lazy", "dog"})).setWeight(0.1).setWeightingModels(Arrays.asList(new Tf())).build());
+		mqt.add(QTPBuilder.of(new UnorderedWindowTerm(new String[]{"lazy", "dog"}, 8)).setWeight(0.1).setWeightingModels(Arrays.asList(new Tf())).build());
+		mqt.setDefaultTermWeightingModel(new Tf());
+		Matching m = new FatFull(index);
+		
+		ResultSet r1 = m.match("query1", mqt);
+		FatResultSet fr1 = (FatResultSet)r1;
+
+		for (FatResultSet frInput : new FatResultSet[]{fr1, FatUtils.recreate(fr1)})
+		{
+			System.err.println("Processing frInput="+frInput);
+			
+			assertEquals(4, frInput.getEntryStatistics().length);
+			assertFalse(frInput.getEntryStatistics()[0] instanceof NgramEntryStatistics);
+			assertFalse(frInput.getEntryStatistics()[1] instanceof NgramEntryStatistics);
+			assertTrue(frInput.getEntryStatistics()[2] instanceof NgramEntryStatistics);
+			assertTrue(frInput.getEntryStatistics()[3] instanceof NgramEntryStatistics);
+			
+			
+			assertEquals(1, frInput.getResultSize());
+			assertEquals(0, frInput.getDocids()[0]);
+			System.out.println(frInput.getScores()[0]);
+			assertTrue(frInput.getScores()[0] > 0);
+			assertEquals(0, frInput.getPostings()[0][0].getId());
+			assertEquals(1, frInput.getPostings()[0][0].getFrequency());
+			assertEquals(8, frInput.getPostings()[0][0].getDocumentLength());
+			
+			assertEquals(1, frInput.getCollectionStatistics().getNumberOfDocuments());
+			assertEquals(8, frInput.getCollectionStatistics().getNumberOfTokens());
+			
+			FatFeaturedScoringMatching ffsm = new FatFeaturedScoringMatching(null, null, 
+					new String[]{
+					"WMODELt:Tf", 
+					"WMODELp:org.terrier.matching.models.dependence.pBiL", 
+					"DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier%proximity.ngram.length=2 proximity.plm.split.synonyms=false",
+					"DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier%proximity.ngram.length=8 proximity.plm.split.synonyms=false"}
+			);
+			ResultSet r2 = ffsm.doMatch("test", mqt, fr1);
+			
+			assertEquals(1, r2.getResultSize());
+			assertEquals(0, r2.getDocids()[0]);
+			assertEquals(r1.getScores()[0], r2.getScores()[0], 0.0d);
+			
+			FeaturedResultSet featRes = (FeaturedResultSet)r2;
+			final double[] tfs = featRes.getFeatureScores("WMODELt:Tf");
+			assertEquals(1, tfs.length);
+			assertEquals(2, tfs[0], 0.0d);
+			
+			final double[] dls = featRes.getFeatureScores("WMODELp:org.terrier.matching.models.dependence.pBiL");
+			assertEquals(1, dls.length);
+			assertTrue(dls[0] > 0);
+			
+			final double[] proxSmall = featRes.getFeatureScores("DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier%proximity.ngram.length=2 proximity.plm.split.synonyms=false");
+			assertNotNull(proxSmall);
+			assertTrue(proxSmall[0] == 0);
+			
+			final double[] proxLarge = featRes.getFeatureScores("DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier%proximity.ngram.length=8 proximity.plm.split.synonyms=false");
+			assertNotNull(proxLarge);
+			assertTrue(proxLarge[0] > 0);
+			
+		}
+	}
+	
+	@Test public void testFilters()
+	{
+		assertTrue(FatFeaturedScoringMatching.filterTerm.test("term1"));
+		assertFalse(FatFeaturedScoringMatching.filterTerm.test("#1(term1 term2)"));
+		assertFalse(FatFeaturedScoringMatching.filterTerm.test("#uw8(term1 term2)"));
+		
+		assertFalse(FatFeaturedScoringMatching.filterProx.test("term1"));
+		assertTrue(FatFeaturedScoringMatching.filterProx.test("#1(term1 term2)"));
+		assertTrue(FatFeaturedScoringMatching.filterProx.test("#uw8(term1 term2)"));
+		
+		
+		
 	}
 }
