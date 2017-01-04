@@ -211,7 +211,7 @@ public class FatFeaturedScoringMatching implements Matching {
 		
 	}
 	
-	static final Predicate<String> filterUW = new Predicate<String>()
+	public static final Predicate<String> filterUW = new Predicate<String>()
 	{
 		@Override
 		public boolean test(String queryTerm) {
@@ -221,7 +221,7 @@ public class FatFeaturedScoringMatching implements Matching {
 		}
 	};
 	
-	static final Predicate<String> filterOW = new Predicate<String>()
+	public static final Predicate<String> filterOW = new Predicate<String>()
 	{
 		@Override
 		public boolean test(String queryTerm) {
@@ -231,8 +231,8 @@ public class FatFeaturedScoringMatching implements Matching {
 		}
 	};
 	
-	static final Predicate<String> filterProx = filterUW.or(filterOW);
-	static final Predicate<String> filterTerm = filterProx.negate();
+	public static final Predicate<String> filterProx = filterUW.or(filterOW);
+	public static final Predicate<String> filterTerm = filterProx.negate();
 	
 	
 	@Override
