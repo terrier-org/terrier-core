@@ -28,8 +28,12 @@
 package org.terrier.matching.dsms;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.PostingListManager;
 import org.terrier.matching.ResultSet;
 import org.terrier.sorting.MultiSort;
@@ -138,15 +142,17 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 	 * @return true if any scores have been altered
 	 */
 	public boolean modifyScores(Index index, MatchingQueryTerms terms, ResultSet set) {
+		System.err.println(super.toString() + " ngramlength="+ this.ngramLength);
 		try {
 			if (phraseQTWfnid < 1 || phraseQTWfnid > 4) {
 				System.err
 				.println("ERROR: Wrong function id specified for ProximityScoreModifierTREC2009");
 			}
 	
+			MatchingQueryTerms termsFiltered = terms.stream().filter(x -> ! x.getKey().toString().matches("^#(\\d|uw\\d|ow\\d).*")).collect(Collectors.toCollection(MatchingQueryTerms::new));
 			boolean splitSynonyms = Boolean.parseBoolean(ApplicationSetup.getProperty(
 				"proximity.plm.split.synonyms", "true"));
-			PostingListManager plm = new PostingListManager(index, index.getCollectionStatistics(), terms, splitSynonyms);
+			PostingListManager plm = new PostingListManager(index, index.getCollectionStatistics(), termsFiltered, splitSynonyms);
 			plm.prepare(false);
 			phraseTerms = new String[plm.getNumTerms()];
 			EntryStatistics[] es = new EntryStatistics[plm.getNumTerms()];
@@ -439,9 +445,10 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 		final int[] blocks2 = ((BlockPosting) ip2).getPositions();
 		int docLength = ip1.getDocumentLength();
 			
-		final int matchingNGrams = SD 
+		final int matchingNGrams = SD
 			? Distance.noTimesSameOrder(blocks1, blocks2, ngramLength, docLength) 
 			: Distance.noTimes(blocks1, blocks2, ngramLength, docLength);
+		System.err.println(this.getClass().getSimpleName() + " matchingNGrams="+matchingNGrams);
 		final double s = scoreFDSD(matchingNGrams, docLength);
 		if (Double.isNaN(s))
 		{

@@ -38,11 +38,13 @@ public class pBiL extends WeightingModel {
 		
 		if (matchingNGrams == 0)
 			return 0.0d;
-		if (matchingNGrams == docLength)
-			matchingNGrams = docLength - 0.1d;
+		
 		
 		final double numberOfNGrams = (docLength > 0 && docLength < ngramLength) ? 1
 				: docLength - ngramLength + 1.0d;
+		
+		if (matchingNGrams == numberOfNGrams)
+			matchingNGrams = numberOfNGrams - 0.1d;
 		
 		double score = 0.0d;
 		
@@ -52,7 +54,9 @@ public class pBiL extends WeightingModel {
 				* Math.log(1.0d + super.c * averageDocumentLength / numberOfNGrams)
 				* REC_LOG_2 : matchingNGrams;
 		
-		final double background = norm2 ? averageDocumentLength : numberOfNGrams;
+		double background = norm2 ? averageDocumentLength : numberOfNGrams;
+		if (background == 1d)
+			background++;
 		final double p = 1.0D / background;
 		final double q = 1.0d - p;
 		//System.err.println("background="+background + " p="+p + " q="+q);

@@ -88,14 +88,19 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 	}
 
 	@Override
-	protected double scoreFDSD(int matchingNGrams, int docLength)
+	protected double scoreFDSD(int _matchingNGrams, int docLength)
 	{
-		if (matchingNGrams == 0)
+		if (_matchingNGrams == 0)
 			return 0.0d;
+		
+		double matchingNGrams = _matchingNGrams;
 		final double numberOfNGrams = (docLength > 0 && docLength < ngramLength) ? 1
 				: docLength - ngramLength + 1.0d;
 		
 		double score = 0.0d;
+		
+		if (matchingNGrams == numberOfNGrams)
+			matchingNGrams = numberOfNGrams - 0.1d;
 		
 		// apply Norm2 to pf?
 		//System.err.println("C="+ ngramC + " windows="+ numberOfNGrams + " avgDocLen="+ avgDocLen + " gf="+gf.getClass().getSimpleName());
@@ -103,7 +108,9 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 				* Math.log(1.0d + ngramC * avgDocLen / numberOfNGrams)
 				* REC_LOG_2 : matchingNGrams;
 		//System.err.println("matchingNGramsNormalised="+matchingNGramsNormalised);
-		final double background = norm2 ? avgDocLen : numberOfNGrams;
+		double background = norm2 ? avgDocLen : numberOfNGrams;
+		if (background == 1d)
+			background++;
 		final double p = 1.0D / background;
 		final double q = 1.0d - p;
 		//System.err.println("background="+background + " p="+p + " q="+q);
@@ -114,6 +121,7 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 			- matchingNGramsNormalised * Math.log(p) * REC_LOG_2
 			- (background - matchingNGramsNormalised) * Math.log(q) * REC_LOG_2;
 		score = score / (1.0d + matchingNGramsNormalised);
+		System.err.println(this.getClass().getSimpleName() + " score="+ score);
 		return score;
 	}
 	/**

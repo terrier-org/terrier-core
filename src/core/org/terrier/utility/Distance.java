@@ -254,6 +254,10 @@ public class Distance{
 	
 	public static final int noTimesSameOrder(final int[] term0Positions, final int[] term1Positions, final int windowSize, final int documentLengthInTokens)
 	{
+		//hack for following example:
+		//noTimesSameOrder({1}, {7}, 8, 8) should be 1;
+		if (term0Positions.length == 1 && term1Positions.length == 1 && term1Positions[0] > term0Positions[0] && term1Positions[0] - term0Positions[0] < windowSize)
+			return 1;
 		return noTimesSameOrder(term0Positions, 0, term0Positions.length, term1Positions, 0, term1Positions.length, windowSize, documentLengthInTokens);
 	}
 	
