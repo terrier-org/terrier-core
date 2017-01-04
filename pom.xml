@@ -72,6 +72,12 @@
 			<groupId>uk.ac.gla.dcs.terrierteam</groupId>
 			<artifactId>jtreceval</artifactId>
 			<version>0.0.1</version>
+</dependency>
+
+ <dependency>
+ <version>5.0-SNAPSHOT</version>
+    <groupId>uk.ac.gla.dcs.terrierteam</groupId>
+    <artifactId>src_external</artifactId>
 		</dependency>
 
 		<dependency>
@@ -368,7 +374,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-compiler-plugin</artifactId>
-										<versionRange>2.3.2</versionRange>
+										<versionRange>3.1</versionRange>
 										<goals>
 											<goal>testCompile</goal>
 											<goal>compile</goal>
@@ -493,7 +499,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.1</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<fork>true</fork>
@@ -514,7 +520,34 @@
 				</configuration>
 			</plugin>
 
-		  <plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<outputDirectory>${basedir}/doc/</outputDirectory>
+					<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
+					<destDir>javadoc</destDir>
+					<failOnError>false</failOnError>
+					<author>true</author>
+					<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
+					<doctitle>${project.Name} ${project.version} API</doctitle>
+					<use>true</use>
+					<version>true</version>
+					<windowtitle>${project.Name} ${project.version} API</windowtitle>
+					<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/desktop:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/</sourcepath>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
