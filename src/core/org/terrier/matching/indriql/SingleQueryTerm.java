@@ -113,6 +113,7 @@ public class SingleQueryTerm extends QueryTerm {
 		
 		if (t == null) {
 			logger.debug("Term Not Found: " + queryTerm);
+			return null;
 		} else if (IGNORE_LOW_IDF_TERMS && collectionStatistics.getNumberOfDocuments() < t.getFrequency()) {
 			logger.warn("query term " + queryTerm + " has low idf - ignored from scoring.");
 			//previousTerm = false;
