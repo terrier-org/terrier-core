@@ -27,6 +27,7 @@
 package org.terrier.matching;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -235,6 +236,11 @@ implements Serializable,Cloneable
 	 */
 	protected Query query; 
 
+	public MatchingQueryTerms(Collection<MatchingTerm> coll)
+	{
+		super(coll);
+	}
+	
 	/** Generate a MatchingQueryTerms object. Query id will be null. */
 	public MatchingQueryTerms()
 	{}
