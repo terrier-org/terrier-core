@@ -44,6 +44,7 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Index;
 import org.terrier.structures.Lexicon;
+import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
@@ -174,29 +175,40 @@ public class PostingListManager implements Closeable
 	public PostingListManager(Index _index, CollectionStatistics _cs, MatchingQueryTerms mqt, boolean splitSynonyms) throws IOException
 	{
 		this(_index, _cs);
-		//TODO implement support for Fat indices
-		assert splitSynonyms;
 		
 		int termIndex = -1;
 		for(Map.Entry<QueryTerm, MatchingQueryTerms.QueryTermProperties> entry : mqt)
 		{
 			termIndex++;
 			QueryTerm term = entry.getKey();
-			MatchingEntry me = term.getMatcher(
+			if (splitSynonyms)
+			{
+				MatchingEntry me = term.getMatcher(
 					entry.getValue(), 
 					index, 
 					lexicon, 
 					invertedIndex, 
 					collectionStatistics);
-			if (me == null)
-				continue;
-			termStrings.add(term.toString());
-			termKeyFreqs.add(me.getKeyFreq());
-			termPostings.add(me.getPostingIterator());
-			termStatistics.add(me.getEntryStats());
-			termModels.add(me.getWmodels());
-			if (me.getRequired())
-				requiredBitMask |= 1 << termIndex;
+				if (me == null)
+					continue;
+				termStrings.add(term.toString());
+				termKeyFreqs.add(me.getKeyFreq());
+				termPostings.add(me.getPostingIterator());
+				termStatistics.add(me.getEntryStats());
+				termModels.add(me.getWmodels());
+				if (me.getRequired())
+					requiredBitMask |= 1 << termIndex;
+			} else {
+				//this provides support for Fat indices	
+				LexiconEntry le = _index.getLexicon().getLexiconEntry(entry.getKey().toString());
+				if (le == null)
+					continue;
+				termPostings.add(_index.getInvertedIndex().getPostings(le));
+				termStatistics.add(entry.getValue().stats != null ? entry.getValue().stats : le);	
+				termKeyFreqs.add(entry.getValue().weight);
+				termStrings.add(term.toString());
+				termModels.add(entry.getValue().termModels.toArray(new WeightingModel[0]));
+			}
 		}
 		
 		logger.info("Query " + mqt.getQueryId() + " with "+ mqt.size() +" terms has " + termPostings.size() + " posting lists");
