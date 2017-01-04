@@ -151,7 +151,7 @@ public class FatScoringMatching implements Matching {
 		final int numDocs = docids.length;
 
 		System.err.println("mqt has " +  queryTerms.size() + " terms while fatresultset has " + fInputRS.getQueryTerms().length);
-		System.err.println("Using " + (SCORE_ONLY_FROM_MQT ? "former" : "latter") + " for scoring");
+		System.err.println(filterTerm == null ? "Using all of " : "Filtering from " + (SCORE_ONLY_FROM_MQT ? "former" : "latter") + " for scoring");
 		//we rely on the MQT to define the query terms to score
 		//in doing so, we assume that the query termis in mqt 
 		//are a subset of those in the FatResultSet
@@ -183,6 +183,8 @@ public class FatScoringMatching implements Matching {
 				System.err.println("Term: "+fInputRS.getQueryTerms()[ti]+" not scored for wm " + wm.getInfo());
 				continue;
 			}
+			if (DEBUG)
+				System.err.println("Term: " + fInputRS.getQueryTerms()[ti] + " qtw="+keyFreqs[ti] + " es="+entryStats[ti] + " scored for wm " + wm.getInfo());
 			
 			if (wm != null)
 				wms[ti] = (WeightingModel) wm.clone();
@@ -192,8 +194,7 @@ public class FatScoringMatching implements Matching {
 			wms[ti].setCollectionStatistics(collStats);
 			wms[ti].setKeyFrequency(keyFreqs[ti]);
 			wms[ti].prepare();
-			if (DEBUG)
-				System.err.println("Term: " + fInputRS.getQueryTerms()[ti] + " qtw="+keyFreqs[ti] + " es="+entryStats[ti]);
+			
 		}
 		//rescore the documents
 		int gt0 = 0;
