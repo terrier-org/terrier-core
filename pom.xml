@@ -74,12 +74,6 @@
 			<version>0.0.1</version>
 </dependency>
 
- <dependency>
- <version>5.0-SNAPSHOT</version>
-    <groupId>uk.ac.gla.dcs.terrierteam</groupId>
-    <artifactId>src_external</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>com.github.yasserg</groupId>
 			<artifactId>jforests</artifactId>
