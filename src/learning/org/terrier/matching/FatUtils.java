@@ -529,8 +529,9 @@ public class FatUtils {
 		{
 			boolean anyPostings = firstPosting(postings, i) != null;
 			if (anyPostings)
-			{				
-				((LexiconEntry) entryStats[i]).setTermId(i);
+			{	
+				if (entryStats[i] instanceof LexiconEntry)
+					((LexiconEntry) entryStats[i]).setTermId(i);
 				statsMap.put(queryTerms[i], entryStats[i]);
 				//System.err.println("set: "+ queryTerms[i]  + entryStats[i] + " => " + i);
 			}
