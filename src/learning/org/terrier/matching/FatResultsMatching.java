@@ -93,10 +93,10 @@ public class FatResultsMatching implements Matching {
                 fatResultSet.readFields(dis);
                 if (queryNumber.equals(qid))
                 {
-                	logger.info("Found fat resultset for " + qid + " with " + fatResultSet.getResultSize() + " results");
+                	logger.info("Found fat resultset for " + qid + " with " + fatResultSet.getResultSize() + " results and " + fatResultSet.getQueryTerms().length + " terms");
                 	if (maxResults == 0 || fatResultSet.getResultSize() < maxResults)
                 		return fatResultSet;
-                	logger.info("Cropping fat results to " + maxResults + " results");
+                	logger.info("Cropping fat results to " + maxResults + " results and " + fatResultSet.getQueryTerms().length + " terms");
                 	return fatResultSet.getResultSet(0, maxResults);
                 }
         	}catch (EOFException eof) {
