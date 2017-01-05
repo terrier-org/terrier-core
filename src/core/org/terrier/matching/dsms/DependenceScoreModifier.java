@@ -28,12 +28,9 @@
 package org.terrier.matching.dsms;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.terrier.matching.MatchingQueryTerms;
-import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.PostingListManager;
 import org.terrier.matching.ResultSet;
 import org.terrier.sorting.MultiSort;
@@ -149,7 +146,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 				.println("ERROR: Wrong function id specified for ProximityScoreModifierTREC2009");
 			}
 	
-			MatchingQueryTerms termsFiltered = terms.stream().filter(x -> ! x.getKey().toString().matches("^#(\\d|uw\\d|ow\\d).*")).collect(Collectors.toCollection(MatchingQueryTerms::new));
+			MatchingQueryTerms termsFiltered = terms.stream().filter(x -> ! x.getKey().toString().matches("^.*#(\\d|uw\\d|ow\\d).*")).collect(Collectors.toCollection(MatchingQueryTerms::new));
 			boolean splitSynonyms = Boolean.parseBoolean(ApplicationSetup.getProperty(
 				"proximity.plm.split.synonyms", "true"));
 			PostingListManager plm = new PostingListManager(index, index.getCollectionStatistics(), termsFiltered, splitSynonyms);
