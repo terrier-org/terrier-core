@@ -445,7 +445,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 		final int matchingNGrams = SD
 			? Distance.noTimesSameOrder(blocks1, blocks2, ngramLength, docLength) 
 			: Distance.noTimes(blocks1, blocks2, ngramLength, docLength);
-		System.err.println(this.getClass().getSimpleName() + " matchingNGrams="+matchingNGrams);
+		//System.err.println(this.getClass().getSimpleName() + " matchingNGrams="+matchingNGrams);
 		final double s = scoreFDSD(matchingNGrams, docLength);
 		if (Double.isNaN(s))
 		{
