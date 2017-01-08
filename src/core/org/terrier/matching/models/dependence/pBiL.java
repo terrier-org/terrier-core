@@ -67,7 +67,7 @@ public class pBiL extends WeightingModel {
 			- matchingNGramsNormalised * Math.log(p) * REC_LOG_2
 			- (background - matchingNGramsNormalised) * Math.log(q) * REC_LOG_2;
 		score = score / (1.0d + matchingNGramsNormalised);
-		return score;
+		return score * this.keyFrequency;
 	}
 
 }
