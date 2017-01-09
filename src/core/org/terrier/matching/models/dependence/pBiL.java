@@ -43,23 +43,23 @@ public class pBiL extends WeightingModel {
 		final double numberOfNGrams = (docLength > 0 && docLength < ngramLength) ? 1
 				: docLength - ngramLength + 1.0d;
 		
-		if (matchingNGrams == numberOfNGrams)
+		if (matchingNGrams >= numberOfNGrams)
 			matchingNGrams = numberOfNGrams - 0.1d;
 		
 		double score = 0.0d;
 		
 		// apply Norm2 to pf?
-		//System.err.println("C="+ ngramC + " windows="+ numberOfNGrams + " avgDocLen="+ avgDocLen + " gf="+gf.getClass().getSimpleName());
-		final double matchingNGramsNormalised = norm2 ? ((double)matchingNGrams)
-				* Math.log(1.0d + super.c * averageDocumentLength / numberOfNGrams)
-				* REC_LOG_2 : matchingNGrams;
+		System.err.println("C="+ super.c + " windows="+ numberOfNGrams + " avgDocLen="+ super.averageDocumentLength + " gf="+gf.getClass().getSimpleName());
+		final double matchingNGramsNormalised = norm2 
+				? ((double)matchingNGrams) * Math.log(1.0d + super.c * averageDocumentLength / numberOfNGrams) * REC_LOG_2
+				: matchingNGrams;
 		
 		double background = norm2 ? averageDocumentLength : numberOfNGrams;
 		if (background == 1d)
 			background++;
 		final double p = 1.0D / background;
 		final double q = 1.0d - p;
-		//System.err.println("background="+background + " p="+p + " q="+q);
+		System.err.println("background="+background + " p="+p + " q="+q);
 		score = 
 			- gf.compute_log(background + 1.0d) * REC_LOG_2
 			+ gf.compute_log(matchingNGramsNormalised + 1.0d) * REC_LOG_2

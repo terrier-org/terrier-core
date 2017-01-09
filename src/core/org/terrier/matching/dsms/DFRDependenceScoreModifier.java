@@ -99,7 +99,7 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 		
 		double score = 0.0d;
 		
-		if (matchingNGrams == numberOfNGrams)
+		if (matchingNGrams >= numberOfNGrams)
 			matchingNGrams = numberOfNGrams - 0.1d;
 		
 		// apply Norm2 to pf?
