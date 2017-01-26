@@ -24,9 +24,15 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original author)
  */
 package org.terrier.querying.parser;
+
+import org.terrier.matching.MatchingQueryTerms;
+
 /** MultiTermQuery where it is denoted by ( ) notation */
 public class ExplicitMultiTermQuery extends MultiTermQuery {
 	private static final long serialVersionUID = 1L;
+	
+	Double weight = null;
+	
 	/** 
 	 * Constructs an instance of the ExplicitMultiTermQuery.
 	 */
@@ -34,6 +40,25 @@ public class ExplicitMultiTermQuery extends MultiTermQuery {
 	{
 		prefix = "(";
 		suffix = ")";
+	}
+	
+	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double parentWeight) {
+		Double newWeight = this.weight;
+		if (parentWeight != null)
+		{
+			newWeight = parentWeight * parentWeight;
+		}
+		
+		super.obtainQueryTerms(terms, field, required, newWeight);
+	}
+	
+	/**
+	 * Sets the weight of the query term.
+	 * @param w double the weight of the query term.
+	 */
+	public void setWeight(double w) {
+		weight = w;
+		suffix = ")^"+Double.toString(w);
 	}
 	
 }
