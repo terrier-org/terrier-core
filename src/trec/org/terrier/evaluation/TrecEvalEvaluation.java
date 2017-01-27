@@ -62,7 +62,7 @@ public class TrecEvalEvaluation implements Evaluation {
 
 	@Override
 	public void writeEvaluationResultOfEachQuery(String evaluationResultFilename) {
-		String[] args = new String[]{"-p", qrels, resFile};
+		String[] args = new String[]{"-q", qrels, resFile};
 		output = new trec_eval().runAndGetOutput(args);
 		writeEvaluationResult(evaluationResultFilename);
 	}

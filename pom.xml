@@ -71,8 +71,8 @@
 		<dependency>
 			<groupId>uk.ac.gla.dcs.terrierteam</groupId>
 			<artifactId>jtreceval</artifactId>
-			<version>0.0.1</version>
-</dependency>
+			<version>0.0.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.github.yasserg</groupId>
