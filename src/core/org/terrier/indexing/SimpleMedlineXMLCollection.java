@@ -69,6 +69,12 @@ public class SimpleMedlineXMLCollection extends SimpleXMLCollection
 	{
 		super();
 	}
+
+	/** Constructor required by TRECIndexing */	
+	public SimpleMedlineXMLCollection(String CollectionSpecFilename, String ignored1, String BlacklistSpecFilename, String ignored2) {
+		this(CollectionSpecFilename, BlacklistSpecFilename);
+	}
+
 	/**
 	 * An alternative constructor.
 	 * @param CollectionSpecFilename The name of the file containing the location of XML files in the collection.

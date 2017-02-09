@@ -363,6 +363,12 @@ public class SimpleXMLCollection implements Collection
 				ApplicationSetup.getProperty("xml.blacklist.docids", ""), 
 					ApplicationSetup.TERRIER_ETC));
 	}
+
+	/** Add constructor required by TRECIndexing */
+	public SimpleXMLCollection(String CollectionSpecFilename, String ignored1, String BlacklistSpecFilename, String ignored2) {
+		this(CollectionSpecFilename, BlacklistSpecFilename);
+	}
+
 	/** 
 	 * Construct a SimpleXMLCollection
 	 * @param CollectionSpecFilename
