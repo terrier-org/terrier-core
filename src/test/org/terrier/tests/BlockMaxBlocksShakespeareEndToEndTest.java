@@ -59,9 +59,9 @@ public class BlockMaxBlocksShakespeareEndToEndTest extends
 				{
 					int tf = bp.getFrequency();
 					int[] blocks = bp.getPositions();
-					assertTrue("blocks.length="+blocks.length  + " tf="+tf, 
+					assertTrue(/*"blocks.length="+blocks.length  + " tf="+tf,*/
 							blocks.length <= tf);
-					assertTrue("blocks.length="+blocks.length + " tf="+tf + ", blocks longer than max "+ maxBlocks, 
+					assertTrue(/*"blocks.length="+blocks.length + " tf="+tf + ", blocks longer than max "+ maxBlocks, */
 								blocks.length <= maxBlocks);				
 				}
 			}

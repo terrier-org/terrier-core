@@ -105,7 +105,9 @@ public class HadoopShakespeareEndToEndTest
 						doclen += ip.getFrequency();
 						pointers++; docpointers++;
 						if (numberOfTerms > 0)
-							assertTrue("Got too big a termid ("+ip.getId()+") from direct index input stream, numTerms=" + numberOfTerms, ip.getId() < maxTermId);
+							assertTrue(
+								/*"Got too big a termid ("+ip.getId()+") from direct index input stream, numTerms=" + numberOfTerms,*/
+								ip.getId() < maxTermId);
 					}
 					if (documentPointers.length > 0)
 						assertEquals("Number of pointers for docid " + docid + " is incorrect", documentPointers[docid], docpointers);

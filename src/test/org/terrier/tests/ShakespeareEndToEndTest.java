@@ -244,8 +244,8 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 			final int expected = iiis.getNumberOfCurrentPostings();
 			while(ip.next() != IterablePosting.EOL)
 			{
-				//System.err.println("Got id " + ip.getId());
-				assertTrue("Got too big a docid ("+ip.getId()+") from inverted index input stream for term at index " + ithTerm, ip.getId() < numDocs);
+				//String reason is concatenated out, for speed
+				assertTrue(/*"Got too big a docid ("+ip.getId()+") from inverted index input stream for term at index "+ ithTerm,*/ ip.getId() < numDocs);
 				assertEquals(documentLengths[ip.getId()], ip.getDocumentLength());
 				count++;
 				calculatedDocLengths.adjustOrPutValue(ip.getId(), ip.getFrequency(), ip.getFrequency());

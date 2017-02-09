@@ -574,6 +574,12 @@
 					<includes>
 						<include>TerrierDefaultTestSuite.java</include>
 					</includes>
+					 <systemProperties>
+      						<property>
+						<name>logback.configurationFile</name>
+						<value>src/resources/test-logback.xml</value>
+						</property>
+					</systemProperties>
 				</configuration>
 			</plugin>
 		</plugins>
