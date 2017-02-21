@@ -185,7 +185,7 @@ Lets a have a look at what was output into `tr.letor`:
     0 qid:NP1 1:0.6440567566141826 2:0.0 3:0.85986678612829 4:0.0 5:0.22902810555674746 6:0.21370705023195802 7:0.3992684087689166 #docid = 921940 docno = G34-15-0261249
 ```
 
-The header reports the name of the features. "score"”" means the model used to generate the sample, i.e. the first pass retrieval, in our case DPH. After the header, for each retrieved document for each query, there is a single line in the output. The label obtained from the qrels file is the first entry on each row.
+The header reports the name of the features. "score" means the model used to generate the sample, i.e. the first pass retrieval, in our case DPH. After the header, for each retrieved document for each query, there is a single line in the output. The label obtained from the qrels file is the first entry on each row.
 
 We repeat the retrieval step for the validation queries, this time from the 2003 TREC task:
 
