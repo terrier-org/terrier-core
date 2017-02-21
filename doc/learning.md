@@ -62,7 +62,7 @@ DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier
 Example Using .GOV corpus - Named Page Retrieval
 ------------------------------------------------
 
-In the following, we give an example of effective retrieval using learning to rank, using the topics and qrels from the named page tasks of the TREC 2002-2004 Web tracks. Other possible invocations of the Fat framework are . Firstly, we setup the Terrier environment. We use simple variables in the form of a Unix Bash shell script, but this could be easily ported to a Windows environment.
+In the following, we give an example of effective retrieval using learning to rank, using the topics and qrels from the named page tasks of the TREC 2002-2004 Web tracks. Other possible invocations of the Fat framework are listed at the bottom of the page. Firstly, we setup the Terrier environment. We use simple variables in the form of a Unix Bash shell script, but this could be easily ported to a Windows environment.
 
     #available from http://ir.dcs.gla.ac.uk/test_collections/access_to_data.html
     CORPUS=/extra/Collections/TREC/GOV/
