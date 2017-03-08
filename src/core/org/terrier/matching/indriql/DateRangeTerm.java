@@ -48,7 +48,7 @@ public class DateRangeTerm extends QueryTerm {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	Pair<EntryStatistics, IterablePosting> getPostingIterator(Index index)
+	public Pair<EntryStatistics, IterablePosting> getPostingIterator(Index index)
 			throws IOException {
 		Lexicon<Date> lexDate = (Lexicon<Date>) index.getIndexStructure("datelexicon");
 		PostingIndex<Pointer> invDate = (PostingIndex<Pointer>) index.getIndexStructure("dateinverted");

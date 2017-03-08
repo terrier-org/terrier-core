@@ -62,7 +62,7 @@ public class SingleQueryTerm extends QueryTerm {
 		return rtr;
 	}
 	
-	Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException
+	public Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException
 	{
 		Lexicon<String> lexicon = index.getLexicon();
 		LexiconEntry t = lexicon.getLexiconEntry(queryTerm);

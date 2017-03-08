@@ -23,6 +23,7 @@ public abstract class QueryTerm implements Serializable, Cloneable {
 	@Override
 	public abstract String toString();
 	
+	/** get an entry for matching for this query op. calls getPostingIterator() internally */
 	public abstract MatchingEntry getMatcher(MatchingQueryTerms.QueryTermProperties qtp, Index index, Lexicon<String> lex, PostingIndex<Pointer> inv, CollectionStatistics collStats) throws IOException;
 
 	@Override
@@ -49,7 +50,8 @@ public abstract class QueryTerm implements Serializable, Cloneable {
 		}
 	}
 	
-	abstract Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException;
+	/** get posting iterator for this query op. */
+	public abstract Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException;
 	
 	public static QueryTerm parse(String stringRep) {
 		if (! stringRep.startsWith("#"))

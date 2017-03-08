@@ -66,7 +66,7 @@ public abstract class MultiQueryTerm extends QueryTerm {
 			List<EntryStatistics> pointers) throws IOException;
 	
 	@Override
-	Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException
+	public Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException
 	{
 		List<EntryStatistics> _le = new ArrayList<EntryStatistics>(terms.length);
 		List<IterablePosting> _joinedPostings = new ArrayList<IterablePosting>(terms.length);
