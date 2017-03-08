@@ -614,12 +614,13 @@ implements Serializable,Cloneable
 //		return new WeightingModel[]{defaultWeightingModel.clone()};
 //	}
 
-	/** Set the default weighting model to be used for all terms */
+	/** Set the default weighting model to be used for terms that do NOT have an explicit WeightingModel set. */
 	public void setDefaultTermWeightingModel(WeightingModel weightingModel) {
 		defaultWeightingModel = weightingModel;
 		for(Map.Entry<QueryTerm, QueryTermProperties> e : this)
 		{
-			e.getValue().termModels.add(weightingModel.clone());
+			if (e.getValue().termModels.size() == 0)
+				e.getValue().termModels.add(weightingModel.clone());
 		}
 	}
 
