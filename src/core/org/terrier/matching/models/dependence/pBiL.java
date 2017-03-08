@@ -49,7 +49,7 @@ public class pBiL extends WeightingModel {
 		double score = 0.0d;
 		
 		// apply Norm2 to pf?
-		System.err.println("C="+ super.c + " windows="+ numberOfNGrams + " avgDocLen="+ super.averageDocumentLength + " gf="+gf.getClass().getSimpleName());
+		//System.err.println("C="+ super.c + " windows="+ numberOfNGrams + " avgDocLen="+ super.averageDocumentLength + " gf="+gf.getClass().getSimpleName());
 		final double matchingNGramsNormalised = norm2 
 				? ((double)matchingNGrams) * Math.log(1.0d + super.c * averageDocumentLength / numberOfNGrams) * REC_LOG_2
 				: matchingNGrams;
@@ -59,7 +59,7 @@ public class pBiL extends WeightingModel {
 			background++;
 		final double p = 1.0D / background;
 		final double q = 1.0d - p;
-		System.err.println("background="+background + " p="+p + " q="+q);
+		//System.err.println("background="+background + " p="+p + " q="+q);
 		score = 
 			- gf.compute_log(background + 1.0d) * REC_LOG_2
 			+ gf.compute_log(matchingNGramsNormalised + 1.0d) * REC_LOG_2
@@ -67,6 +67,11 @@ public class pBiL extends WeightingModel {
 			- matchingNGramsNormalised * Math.log(p) * REC_LOG_2
 			- (background - matchingNGramsNormalised) * Math.log(q) * REC_LOG_2;
 		score = score / (1.0d + matchingNGramsNormalised);
+		assert !( Double.isInfinite(score) || Double.isNaN(score)) : "Score was "+score+", with:"
+			+" matchingNGrams="+matchingNGrams
+			+" docLength="+docLength
+			+" background="+background
+			+" matchingNGramsNormalised="+matchingNGramsNormalised;
 		return score * this.keyFrequency;
 	}
 
