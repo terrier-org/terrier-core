@@ -101,7 +101,9 @@ public class Full extends BaseMatching
 		// The posting list iterator array (one per term) and initialization
 		for (int i = 0; i < plm.size(); i++) {
 			long docid = plm.getPosting(i).getId();
-			assert(docid != IterablePosting.EOL);
+			//some ephemeral posting lists may not match any documents; skip these.
+			if (docid == IterablePosting.EOL)
+				continue;
 			postingHeap.enqueue((docid << 32) + i);
 		}
         boolean targetResultSetSizeReached = false;
@@ -174,6 +176,7 @@ public class Full extends BaseMatching
 	}
 
 	protected CandidateResult makeCandidateResult(int currentDocId) {
+		assert currentDocId != IterablePosting.EOL;
 		return new CandidateResult(currentDocId);
 	}
 	

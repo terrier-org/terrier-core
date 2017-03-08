@@ -102,7 +102,7 @@ public class TestIntegerCoding {
 			
 			IterablePosting ip1 = new BasicIterablePosting(bitIn, p.getNumberOfEntries(), null);
 			BitIndexPointer bip = icpw.writePostings(ip1);
-			System.err.println(bip.toString());
+			//System.err.println(bip.toString());
 		}
 		icpw.close();
 		
@@ -168,7 +168,7 @@ public class TestIntegerCoding {
 			
 			IterablePosting ip1 = new BlockIterablePosting(bitIn, p.getNumberOfEntries(), null);
 			BitIndexPointer bip = icpw.writePostings(ip1);
-			System.err.println(bip.toString());
+			//System.err.println(bip.toString());
 		}
 		icpw.close();
 		
@@ -232,7 +232,7 @@ public class TestIntegerCoding {
 			
 			IterablePosting ip1 = new FieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 2);
 			BitIndexPointer bip = icpw.writePostings(ip1);
-			System.err.println(bip.toString());
+			//System.err.println(bip.toString());
 		}
 		icpw.close();
 		
@@ -306,7 +306,7 @@ public class TestIntegerCoding {
 			
 			IterablePosting ip1 = new BlockFieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 2);
 			BitIndexPointer bip = icpw.writePostings(ip1);
-			System.err.println(bip.toString());
+			//System.err.println(bip.toString());
 		}
 		icpw.close();
 		
@@ -381,7 +381,7 @@ public class TestIntegerCoding {
 			
 			IterablePosting ip1 = new BlockFieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 2);
 			BitIndexPointer bip = icpw.writePostings(ip1);
-			System.err.println(bip.toString());
+			//System.err.println(bip.toString());
 		}
 		icpw.close();
 		
@@ -458,7 +458,7 @@ public class TestIntegerCoding {
 			
 			IterablePosting ip1 = new BlockFieldIterablePosting(bitIn, p.getNumberOfEntries(), null, 2);
 			BitIndexPointer bip = icpw.writePostings(ip1);
-			System.err.println(bip.toString());
+			//System.err.println(bip.toString());
 		}
 		icpw.close();
 		

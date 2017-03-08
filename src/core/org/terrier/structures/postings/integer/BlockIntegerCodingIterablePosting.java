@@ -178,7 +178,6 @@ public class BlockIntegerCodingIterablePosting extends
 		
 		numberOfEntries -= pos - currentPosting;
 		currentPosting = pos;
-		System.err.println(toString());
 	}
 
 	
