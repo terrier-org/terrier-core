@@ -121,7 +121,7 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 			- matchingNGramsNormalised * Math.log(p) * REC_LOG_2
 			- (background - matchingNGramsNormalised) * Math.log(q) * REC_LOG_2;
 		score = score / (1.0d + matchingNGramsNormalised);
-		System.err.println(this.getClass().getSimpleName() + " score="+ score);
+		//System.err.println(this.getClass().getSimpleName() + " score="+ score);
 		return score;
 	}
 	/**
