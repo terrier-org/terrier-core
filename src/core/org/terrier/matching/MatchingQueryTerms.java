@@ -450,7 +450,7 @@ implements Serializable,Cloneable
 		double[] tws = new double[this.size()];
 		int i=0;
 		for(Map.Entry<QueryTerm, QueryTermProperties> e : this)
-			tws[i] = e.getValue().weight;
+			tws[i++] = e.getValue().weight;
 		return tws;
 	}
 	

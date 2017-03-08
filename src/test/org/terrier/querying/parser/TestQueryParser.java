@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.terrier.matching.MatchingQueryTerms;
 
 public class TestQueryParser {
 
@@ -211,6 +212,30 @@ public class TestQueryParser {
 		assertEquals("a b^2.0", q.toString());
 	}
 	
+	
+	@Test public void testTwoTermWeightExplicitMultiTerm() throws Exception
+	{
+		Query q = QueryParser.parseQuery("(a b)^2");
+		List<Query> terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		assertEquals(2, terms.size());
+		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
+		assertEquals("(a b)^2.0", q.toString());
+		
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(2, mqt.getTerms().length);
+		assertEquals("a", mqt.getTerms()[0]);
+		assertEquals("b", mqt.getTerms()[1]);
+		assertEquals(2d, mqt.getTermWeights()[0], 0);
+		assertEquals(2d, mqt.getTermWeights()[1], 0);
+		
+	}
+	
+	
+	
+	
 	@Test public void testTwoTermQueryRequirement() throws Exception
 	{
 		Query q = QueryParser.parseQuery("a -b");
@@ -267,6 +292,26 @@ public class TestQueryParser {
 		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
 		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
 		assertEquals("FIELD:(a b)", q.toString());
+	}
+	
+	@Test public void testTwoTermQueryFieldGroupWithWeights() throws Exception
+	{
+		Query q = QueryParser.parseQuery("FIELD:(a b)^2");
+		List<Query> terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		assertEquals(2, terms.size());
+		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
+		assertEquals("FIELD:(a b)^2.0", q.toString());
+		
+
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(mqt, null, null, null);
+		assertEquals(2, mqt.getTerms().length);
+		assertEquals("a.FIELD", mqt.getTerms()[0]);
+		assertEquals("b.FIELD", mqt.getTerms()[1]);
+		assertEquals(2d, mqt.getTermWeights()[0], 0);
+		assertEquals(2d, mqt.getTermWeights()[1], 0);
 	}
 	
 	@Test public void testTwoTermQueryFieldPhrase() throws Exception
