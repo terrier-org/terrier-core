@@ -1,6 +1,13 @@
 What's New in Terrier
 =====================
 
+
+Unreleased
+------------------------
+
+### Retrieval
+- [TR-472](http://terrier.org/issues/browse/TR-472) Request not passed to the WeightingModel (Aldo Lipani, Vienna University of Technology)
+
 Terrier 4.2 - 22/12/2016
 ------------------------
 Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency. Terrier now required Java 1.8.
