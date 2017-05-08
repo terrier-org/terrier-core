@@ -172,6 +172,8 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		doc2term2freqs.put(0, termsInDoc0);		
 	}
 	
+	protected boolean checkTermIds = true;
+	
 	
 	@SuppressWarnings({ "unchecked", "resource" })
 	public void checkMetaIndex(Index index, String[] docnos) throws Exception {
@@ -292,11 +294,14 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 			assertNotNull("Didnt find lexicon entry for term " + foundTerm, le);
 			assertEquals("Dcoument frequency incorrect for term " + foundTerm, CHECK_TERMS_DFS[i], le.getDocumentFrequency());
 			
-			//check lookup by termid 
-			Map.Entry<String, LexiconEntry> lee2 = lex.getLexiconEntry(le.getTermId());
-			assertNotNull(lee2);
-			assertEquals(foundTerm, lee2.getKey());
-			assertEquals(CHECK_TERMS_DFS[i], lee2.getValue().getDocumentFrequency());
+			if (checkTermIds)
+			{
+				//check lookup by termid 
+				Map.Entry<String, LexiconEntry> lee2 = lex.getLexiconEntry(le.getTermId());
+				assertNotNull(lee2);
+				assertEquals(foundTerm, lee2.getKey());
+				assertEquals(CHECK_TERMS_DFS[i], lee2.getValue().getDocumentFrequency());
+			}
 			
 			//make a note of this term for the stream checking
 			checkFreqs.put(foundTerm, CHECK_TERMS_DFS[i]);
@@ -305,6 +310,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		//check as stream
 		TIntHashSet termIds = new TIntHashSet();
 		Iterator<Map.Entry<String, LexiconEntry>> lexIn = (Iterator<Entry<String, LexiconEntry>>) index.getIndexStructureInputStream("lexicon");
+		assertNotNull(lexIn);
 		int count = 0;
 		while(lexIn.hasNext())
 		{
