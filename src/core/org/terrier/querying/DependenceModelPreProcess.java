@@ -21,8 +21,11 @@ public class DependenceModelPreProcess implements Process {
 	
 	Double param = null;
 	
+	protected void initialise(SearchRequest q) {}
+	
 	@Override
 	public void process(Manager manager, SearchRequest q) {
+		initialise(q);
 		String modelName = q.getControl(CONTROL_MODEL);
 		if (modelName == null || modelName.length() == 0)
 			modelName = DEFAULT_DEPENDENCE_WEIGHTING_MODEL;
@@ -60,6 +63,13 @@ public class DependenceModelPreProcess implements Process {
 		if (queryTerms.size() < 2)
 			return;
 		
+		List<MatchingTerm> newEntries = SD(modelName, queryTerms);
+		
+		//finally add the new entries
+		mqt.addAll(newEntries);
+	}
+
+	protected List<MatchingTerm> SD(String modelName, List<String> queryTerms) {
 		List<MatchingTerm> newEntries = new ArrayList<>();
 		
 		//#1
@@ -85,9 +95,7 @@ public class DependenceModelPreProcess implements Process {
 		qtp.setWeight(0.1d);
 		qtp.addWeightingModel(getModel(modelName,12));
 		newEntries.add(qtp.build());
-		
-		//finally add the new entries
-		mqt.addAll(newEntries);
+		return newEntries;
 	}
 
 	

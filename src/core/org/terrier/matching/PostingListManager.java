@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.terrier.matching.indriql.MatchingEntry;
 import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.models.WeightingModel;
+import org.terrier.querying.Request;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Index;
@@ -48,10 +49,11 @@ import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
+import org.terrier.structures.postings.Posting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 
-/** The PostingListManager is reponsible for opening the appropriate posting lists {@link IterablePosting} given
+/** The PostingListManager is responsible for opening the appropriate posting lists {@link IterablePosting} given
  * the MatchingQueryTerms object. Moreover, it knows how each Posting should be scored.
  * <p>
  * Plugins are also supported by PostingListManager. Each plugin class should implement the PostingListManagerPlugin
@@ -85,6 +87,111 @@ import org.terrier.utility.ArrayUtils;
  */
 public class PostingListManager implements Closeable
 {
+	static class WeightingModelMultiProxy extends WeightingModel {
+
+		static WeightingModel getModel(WeightingModel[] _parents)
+		{
+			if (_parents.length == 1)
+				return _parents[0];
+			return new WeightingModelMultiProxy(_parents);
+		}
+		
+		static WeightingModel getModel(List<WeightingModel> _parents)
+		{
+			if (_parents.size() == 1)
+				return _parents.get(0);
+			return new WeightingModelMultiProxy(_parents.toArray(new WeightingModel[_parents.size()]));
+		}
+		
+		private static final long serialVersionUID = 1L;
+		WeightingModel[] parents;
+		
+		WeightingModelMultiProxy(WeightingModel[] _parents)
+		{
+			this.parents = _parents;
+		}
+		
+		@Override
+		public String getInfo() {
+			StringBuilder s = new StringBuilder();
+			for(WeightingModel w : parents)
+			{
+				s.append(w.getInfo());
+				s.append(",");
+			}
+			s.setLength(s.length() -1);
+			return s.toString();
+		}		
+
+		@Override
+		public void prepare() {
+			for(WeightingModel w : parents)
+			{
+				w.prepare();
+			}
+		}
+
+		@Override
+		public void setCollectionStatistics(CollectionStatistics _cs) {
+			for(WeightingModel w : parents)
+			{
+				w.setCollectionStatistics(_cs);
+			}
+		}
+
+		@Override
+		public void setEntryStatistics(EntryStatistics _es) {
+			for(WeightingModel w : parents)
+			{
+				w.setEntryStatistics(_es);
+			}
+		}
+
+		@Override
+		public void setRequest(Request _rq) {
+			for(WeightingModel w : parents)
+			{
+				w.setRequest(_rq);
+			}
+		}
+
+		@Override
+		public void setParameter(double _c) {
+			for(WeightingModel w : parents)
+			{
+				w.setParameter(_c);
+			}
+		}
+
+		@Override
+		public void setKeyFrequency(double keyFreq) {
+			for(WeightingModel w : parents)
+			{
+				w.setKeyFrequency(keyFreq);
+			}
+		}
+
+		@Override
+		public double score(Posting p) {
+			double score = 0;
+			for(WeightingModel w : parents)
+			{
+				score += w.score(p);
+			}
+			return score;
+		}
+
+		@Override
+		public double score(double tf, double docLength) {
+			double score = 0;
+			for(WeightingModel w : parents)
+			{
+				score += w.score(tf, docLength);
+			}
+			return score;
+		}
+	}
+	
 	protected static final Logger logger = LoggerFactory.getLogger(PostingListManager.class);
 	/** A property that enables to ignore the terms with a low IDF. Controlled by <tt>ignore.low.idf.terms</tt>
 	 * property, defualts to false. */
@@ -120,13 +227,13 @@ public class PostingListManager implements Closeable
 	/** posting lists for each term */
 	protected final List<IterablePosting> termPostings = new ArrayList<IterablePosting>();
 	/** weighting models for each term */
-	protected final List<WeightingModel[]> termModels = new ArrayList<WeightingModel[]>();
+	protected final List<WeightingModel> termModels = new ArrayList<WeightingModel>();
 	/** EntryStatistics for each term */
 	protected final List<EntryStatistics> termStatistics = new ArrayList<EntryStatistics>();
 	/** String form for each term */
 	protected final List<String> termStrings = new ArrayList<String>();
 	
-	/** String form for each term */
+	/** key (query) frequencies for each term */
 	protected final TDoubleArrayList termKeyFreqs = new TDoubleArrayList();
 	
 	/** number of terms */
@@ -139,8 +246,8 @@ public class PostingListManager implements Closeable
 	protected PostingIndex<Pointer> invertedIndex;
 	/** statistics of the collection */
 	protected CollectionStatistics collectionStatistics;
-	
-	long requiredBitMask = 0;
+	/** which terms are positively required to match in retrieved documents */
+	protected long requiredBitMask = 0;
 
 	
 	/** Create a posting list manager for the given index and statistics */
@@ -195,7 +302,7 @@ public class PostingListManager implements Closeable
 				termKeyFreqs.add(me.getKeyFreq());
 				termPostings.add(me.getPostingIterator());
 				termStatistics.add(me.getEntryStats());
-				termModels.add(me.getWmodels());
+				termModels.add(WeightingModelMultiProxy.getModel(me.getWmodels()));
 				if (me.getRequired())
 					requiredBitMask |= 1 << termIndex;
 			} else {
@@ -207,7 +314,7 @@ public class PostingListManager implements Closeable
 				termStatistics.add(entry.getValue().stats != null ? entry.getValue().stats : le);	
 				termKeyFreqs.add(entry.getValue().weight);
 				termStrings.add(term.toString());
-				termModels.add(entry.getValue().termModels.toArray(new WeightingModel[0]));
+				termModels.add(WeightingModelMultiProxy.getModel(new WeightingModel[0]));
 			}
 		}
 		
@@ -286,17 +393,13 @@ public class PostingListManager implements Closeable
 	 */
 	public double score(int i)
 	{
-		if (i >= 0)
-			if (i < numTerms)
-			{				
-				double score = 0.0d;
-				for (WeightingModel w : termModels.get(i))
-					score += w.score(termPostings.get(i));
-				//System.err.println("For term " + i + " scoring " + termPostings.get(i).getId() + "; got score " + score);
-				return score;
-			}
+		assert i>=0 && i < numTerms: "Looking for posting list " + i + " out of " + (numTerms) + " posting lists.";
 
-		throw new IllegalArgumentException("Looking for posting list " + i + " out of " + (numTerms) + " posting lists.");
+		double score = 0.0d;
+		score = termModels.get(i).score(termPostings.get(i));
+		//System.err.println("For term " + i + " scoring " 
+		//	+ termPostings.get(i).getId() + "; got score " + score);
+		return score;
 	}
 	
 	
