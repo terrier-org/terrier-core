@@ -132,19 +132,19 @@ public abstract class FSOMapFileLexiconGeneric<K1,K2 extends WritableComparable>
     			_keyFactory, _valueFactory, 
     			dataFile));
     	this.keyFactory = _keyFactory;	
-    	if (termIdLookup.equals("aligned"))
+    	if ("aligned".equals(termIdLookup))
         {
             setTermIdLookup(new IdIsIndex());
         }
-        else if (termIdLookup.equals("file"))
+        else if ("file".equals(termIdLookup))
         {
             setTermIdLookup(new OnDiskLookup(path, prefix, structureName));
         }
-        else if (termIdLookup.equals("fileinmem"))
+        else if ("fileinmem".equals(termIdLookup))
         {
             setTermIdLookup(new InMemoryLookup(path, prefix, structureName, this.map.size()));
         }
-        else if (termIdLookup.equals("disabled"))
+        else if ("disabled".equals(termIdLookup))
         {
         	setTermIdLookup(null);
         }
