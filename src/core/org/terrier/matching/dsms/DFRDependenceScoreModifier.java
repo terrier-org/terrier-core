@@ -83,7 +83,7 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 	public boolean modifyScores(Index index, MatchingQueryTerms terms,
 			ResultSet set) {
 		ngramC = Double.parseDouble(ApplicationSetup.getProperty("proximity.norm2.c", "1.0d"));
-		System.err.println("ngramC=" + ngramC);
+		//System.err.println("ngramC=" + ngramC);
 		return super.modifyScores(index, terms, set);
 	}
 
@@ -121,7 +121,7 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 			- matchingNGramsNormalised * Math.log(p) * REC_LOG_2
 			- (background - matchingNGramsNormalised) * Math.log(q) * REC_LOG_2;
 		score = score / (1.0d + matchingNGramsNormalised);
-		System.err.println(this.getClass().getSimpleName() + " score="+ score);
+		//System.err.println(this.getClass().getSimpleName() + " score="+ score);
 		return score;
 	}
 	/**
