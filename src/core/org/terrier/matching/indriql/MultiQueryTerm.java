@@ -112,7 +112,7 @@ public abstract class MultiQueryTerm extends QueryTerm {
 		if (entryStats == null)
 			entryStats = pair.getKey();
 		if (logger.isDebugEnabled())
-			logger.debug(this.getClass().getSimpleName() + " term " + Arrays.toString(terms) + " stats" + entryStats.toString());
+			logger.debug(this.getClass().getSimpleName() + " term " + Arrays.toString(terms) + " stats " + entryStats.toString());
 		for (WeightingModel w : wmodels)
 		{
 			w.setEntryStatistics(entryStats);
