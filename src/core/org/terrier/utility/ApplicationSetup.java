@@ -393,6 +393,28 @@ public class ApplicationSetup {
 		loadCommonProperties();
 	}
 	
+	public static void bootstrapInitialisation(Properties properties) {
+		TERRIER_HOME = properties.getProperty("terrier.home", new File(".").getAbsolutePath());
+		System.err.println("TERRIER_HOME="+TERRIER_HOME);
+		System.err.println("terrier.etc="+properties.getProperty("terrier.etc"));
+		appProperties.clear();
+		String terrier_home = properties.getProperty("terrier.home", "");
+		String terrier_etc = properties.getProperty("terrier.etc", terrier_home +FILE_SEPARATOR+"etc");
+		String propertiesFile = properties.getProperty("terrier.setup", terrier_etc + FILE_SEPARATOR+"terrier.properties");
+		try{
+			if (new File(propertiesFile).exists())
+			{
+				appProperties.load(new FileInputStream(propertiesFile));
+			}
+		} catch (Exception e) {
+			System.err.println("Could not load a properties file at " + propertiesFile + " even though it did exist");
+		}
+		appProperties.putAll(properties);
+		loadCommonProperties();
+		System.err.println("TERRIER_HOME="+TERRIER_HOME);
+		System.err.println("TERRIER_ETC="+TERRIER_ETC);
+	}
+	
 	/** Loads the ApplicationSetup variables, e.g. ApplicationSetup.TERRIER_HOME */
 	public static void loadCommonProperties()
 	{
