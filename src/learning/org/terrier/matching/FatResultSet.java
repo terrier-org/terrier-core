@@ -51,6 +51,10 @@ public interface FatResultSet extends ResultSet, Writable {
 	public double[] getKeyFrequencies();
 	void setKeyFrequencies(double[] ks);
 	
+	/** Return the tags of each of the query terms in the query */	
+	public String[] getTags();
+	void setTags(String[] ks);
+	
 	/** Return the EntryStatistics of each of the query terms in the query */
 	public EntryStatistics[] getEntryStatistics();	
 	void setEntryStatistics(EntryStatistics[] es);

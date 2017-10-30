@@ -81,7 +81,7 @@ import org.terrier.utility.io.WrappedIOException;
  */
 public class FatUtils {
 
-	private static final byte VERSION = 3;
+	private static final byte VERSION = 4;
 	private static final boolean DEBUG = false;
 	
 	static Logger logger = LoggerFactory.getLogger(FatUtils.class);
@@ -106,6 +106,7 @@ public class FatUtils {
 			switch (version) {
 				case 2: readFieldsV2(frs, in); break;
 				case 3: readFieldsV3(frs, in); break;
+				case 4: readFieldsV4(frs, in); break;
 				default: throw new IOException("Version mismatch, version " + version +" is not supported");
 			}			
 		}catch (EOFException eofe) {
@@ -409,7 +410,172 @@ public class FatUtils {
 		
 	}
 	
+	protected static void readFieldsV4(FatResultSet frs, DataInput in)
+			throws IOException 
+	{
+		int i =-1;
+		int resultSize = -1;
+		int j = -1;
+		int termCount = -1;
+		int lastDocid = -1;
+		
+		try{
+			CollectionStatistics collStats = new CollectionStatistics();
+			collStats.readFields(in);
+			frs.setCollectionStatistics(collStats);
+			
+			final int fieldCount = collStats.getNumberOfFields();
+						
+			
+			//read number of query terms
+			termCount = in.readInt();
+			if (termCount == 0)
+			{
+				frs.setResultSize(0);
+				final int[] docids 		= new int[0];
+				final double[] scores 		= new double[0];
+				final short[] occurrences = new short[0];
+				final String[] tags = new String[0];
+				final WritablePosting[][] postings = new WritablePosting[0][];				
+				frs.setScores(scores);
+				frs.setDocids(docids);
+				frs.setPostings(postings);
+				frs.setOccurrences(occurrences);
+
+				frs.setEntryStatistics(new EntryStatistics[0]);
+                frs.setKeyFrequencies(new double[0]);
+                frs.setQueryTerms(new String[0]);
+				
+				System.err.println("No found terms for this query");
+				return;
+			}
+			
+			
+			@SuppressWarnings("unchecked")
+			Class<? extends WritablePosting> postingClass[] = new Class[termCount];			
+			
+			//read terms and entry statistics
+			final EntryStatistics[] entryStats = new EntryStatistics[termCount];
+			final String[] queryTerms = new String[termCount];
+			final String[] tags = new String[termCount];
+			final double[] keyFrequencies = new double[termCount];
+			final boolean[] fields = new boolean[termCount];
+			final boolean[] blocks = new boolean[termCount];
+			for(j=0;j<termCount;j++)
+			{
+				queryTerms[j] = in.readUTF();
+				if (in.readBoolean())
+					tags[i] = in.readUTF();
+				fields[j] = in.readBoolean();
+				blocks[j] = in.readBoolean();
+				boolean anyPostings = in.readBoolean();
+				if (anyPostings)
+					postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
+				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
+				keyFrequencies[j] = in.readDouble();
+				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
+					" es="+statisticsClass.getSimpleName() /*+
+					" es.isAssignableFrom(FieldEntryStatistics.class)="+statisticsClass.isAssignableFrom(FieldEntryStatistics.class) + 
+					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass)*/);
+				EntryStatistics le = fields[j] || /* HACK */ FieldEntryStatistics.class.isAssignableFrom(statisticsClass)
+					? statisticsClass.getConstructor(Integer.TYPE).newInstance(fieldCount)
+					: statisticsClass.newInstance();
+				((Writable)le).readFields(in);
+				if (queryTerms[j].contains("#uw") || queryTerms[j].contains("#1"))
+				{
+					if (queryTerms[j].contains("#uw12")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(12);
+                    }else if (queryTerms[j].contains("#uw8")){
+						le = new SimpleNgramEntryStatistics(le);
+						((SimpleNgramEntryStatistics)le).setWindowSize(8);
+					}else if (queryTerms[j].contains("#uw4")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(8);
+                    }else if (queryTerms[j].contains("#1")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(2);
+                    }
+				}
+				entryStats[j] = le;
+			}
+			
+			frs.setEntryStatistics(entryStats);
+			frs.setKeyFrequencies(keyFrequencies);
+			frs.setQueryTerms(queryTerms);
+			
+			
+			//read the number of documents
+			resultSize = in.readInt();
+			//size the arrays
+			final int[] docids 		= new int[resultSize];
+			final double[] scores 		= new double[resultSize];
+			final short[] occurrences = new short[resultSize];
+			final WritablePosting[][] postings = new WritablePosting[resultSize][];
+			
+			//for each document
+			for (i = 0; i < resultSize; i++)
+			{
+				//read: docid, scores, occurrences
+				lastDocid = docids[i] = in.readInt();
+				scores[i] = in.readDouble();
+				occurrences[i] = in.readShort();
+				final int docLen = in.readInt();
+				final int[] fieldLens;
+				if (fieldCount > 0)
+				{
+					fieldLens = new int[fieldCount];
+					for(int fi=0;fi<fieldCount;fi++)
+						fieldLens[fi] = in.readInt();
+					//System.err.println("docid="+docids[i] + " lf=" + org.terrier.utility.ArrayUtils.join(fieldLens, ","));
+				}
+				else
+				{
+					fieldLens = null;
+				}
+				
+				postings[i] = new WritablePosting[termCount];
+				
+				//boolean anyPostings = false;
+				
+				//for each term
+				for (j = 0; j < termCount; j++) {
+					//read the id of the posting, and use Posting.read(in);
+					boolean hasPosting = in.readBoolean();
+					if (! hasPosting)
+						continue;
+					//anyPostings = true;
+					WritablePosting p = postingClass[j].newInstance();
+					p.readFields(in);
+					//check that the posting we read is assigned to the docid
+					assert docids[i] == p.getId() : "rank "+i+" of "+resultSize+", term "+j+" of "+termCount+" expected docid="+docids[i]+" found "+p.getId();
+					
+					p.setDocumentLength(docLen);
+					if (fields[j])
+						((FieldPosting)p).setFieldLengths(fieldLens);
+					postings[i][j] = p;
+				}
+			}
+			frs.setScores(scores);
+			frs.setDocids(docids);
+			frs.setPostings(postings);
+			frs.setOccurrences(occurrences);
+			frs.setTags(tags);
+		} catch (IOException ioe) {
+			throw new WrappedIOException("IOException (reset to start perhaps?), was reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount + " docid="+lastDocid, ioe);
+		} catch (Exception e) {
+			throw new WrappedIOException("Problem reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount + " docid="+lastDocid, e);
+		}
+		
+	}
+	
+	
 	public static void write(FatResultSet frs, DataOutput out) throws IOException
+	{
+		writeV4(frs,out);
+	}
+	
+	public static void writeV3(FatResultSet frs, DataOutput out) throws IOException
 	{
 		if (DEBUG)
 			out = new DebuggingDataOutput(out);
@@ -442,6 +608,109 @@ public class FatUtils {
 		//write out the entry statistics
 		for (int i = 0; i < queryTermCount; i++){
 			out.writeUTF(queryTerms[i]);
+			WritablePosting firstPostingForTerm = firstPosting(postings, i);
+			fields[i] = firstPostingForTerm instanceof FieldPosting;
+			blocks[i] = firstPostingForTerm instanceof BlockPosting;
+			out.writeBoolean(fields[i]);
+			out.writeBoolean(blocks[i]);
+			
+			//HACK: MultiQueryTerm USED TO cause problems as it can return a FieldEntryStatistics where none is possible.???
+			//if (! fields[i])
+			//{
+			//	entryStats[i] = new BasicLexiconEntry(entryStats[i].getTermId(), entryStats[i].getDocumentFrequency(), entryStats[i].getFrequency());
+			//}
+		
+			out.writeBoolean(firstPostingForTerm != null);
+			if (firstPostingForTerm != null)
+			{
+				//write out the classes			
+				out.writeUTF(firstPostingForTerm.getClass().getName());
+				//if we don't have a FieldPosting list, we should not have a FieldEntryStatistics 
+				assert (! (fields[i]) && ! (entryStats[i] instanceof FieldEntryStatistics));
+			}
+			out.writeUTF(entryStats[i].getClass().getName());
+			
+			out.writeDouble(keyFrequency[i]);
+			((Writable)entryStats[i]).write(out);
+		}
+		
+		//write out the number of documents
+		out.writeInt(docids.length);
+		int i = 0;
+		//for each document
+		long notNullPostings = 0;
+		for (i = 0; i < docids.length; i ++) {
+			//write out the docid to out 
+			out.writeInt(docids[i]);
+			//write out the score
+			out.writeDouble(scores[i]);
+			//write out the occurrences
+			out.writeShort(occurrences[i]);
+			
+			//write out the document length, and possible field lengths			
+			WritablePosting firstPosting = firstPosting(postings[i]);
+			assert firstPosting != null : "Docid " + docids[i] + " with score " + scores[i] + " has no matching postings";
+			out.writeInt(firstPosting.getDocumentLength());			
+			if (fieldCount > 0)
+			{
+				final int[] fieldLengths = ((FieldPosting)firstPosting).getFieldLengths();
+				assert fieldLengths.length == fieldCount;
+				for(int fi=0;fi<fieldCount;fi++)
+					out.writeInt(fieldLengths[fi]);
+			}
+			
+			//for each posting that is not null
+			assert postings[i].length == queryTermCount;
+			for (WritablePosting p : postings[i]) {
+				//write the id of the posting, and use Posting.write(out)
+				out.writeBoolean(p != null);
+				if (p != null)
+				{
+					notNullPostings++;
+					p.write(out);
+				}
+			}
+		}
+		logger.info(docids.length +" documents, "+queryTermCount+" terms, mean postings per document: " + ((double)notNullPostings/(double)docids.length) );
+	}
+	
+	public static void writeV4(FatResultSet frs, DataOutput out) throws IOException
+	{
+		if (DEBUG)
+			out = new DebuggingDataOutput(out);
+		out.writeByte(VERSION);
+		
+		final CollectionStatistics collStats = frs.getCollectionStatistics();
+		final EntryStatistics[] entryStats = frs.getEntryStatistics();
+		final String[] queryTerms = frs.getQueryTerms();
+		final String[] tags = frs.getTags();
+		final double[] keyFrequency = frs.getKeyFrequencies();
+		final WritablePosting[][] postings = frs.getPostings();
+		final int[] docids = frs.getDocids();
+		final double[] scores = frs.getScores();
+		final short[] occurrences = frs.getOccurrences();
+		
+		
+		collStats.write(out);
+		final int fieldCount = collStats.getNumberOfFields();		
+		final int queryTermCount = queryTerms.length;
+		final boolean fields[] = new boolean[queryTermCount];
+		final boolean blocks[] = new boolean[queryTermCount];
+		
+		
+		//write out the number of query terms
+		out.writeInt(queryTermCount);
+		if(queryTermCount == 0)
+			return;
+		
+		
+		//write out query terms
+		//write out the entry statistics
+		for (int i = 0; i < queryTermCount; i++){
+			out.writeUTF(queryTerms[i]);
+			out.writeBoolean(tags[i] != null);
+			if (tags[i] != null)
+				out.writeUTF(tags[i]);
 			WritablePosting firstPostingForTerm = firstPosting(postings, i);
 			fields[i] = firstPostingForTerm instanceof FieldPosting;
 			blocks[i] = firstPostingForTerm instanceof BlockPosting;

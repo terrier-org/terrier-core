@@ -113,7 +113,7 @@ public class DateRangeTerm extends QueryTerm {
 		boolean required = false;
 		if (qtp.required != null && qtp.required)
 			required = true;
-		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required);
+		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required, qtp.tag);
 	}
 
 }

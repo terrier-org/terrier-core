@@ -233,6 +233,10 @@ public class PostingListManager implements Closeable
 	/** String form for each term */
 	protected final List<String> termStrings = new ArrayList<String>();
 	
+	/** String form for each term */
+	protected final List<String> termTags = new ArrayList<String>();
+	
+	
 	/** key (query) frequencies for each term */
 	protected final TDoubleArrayList termKeyFreqs = new TDoubleArrayList();
 	
@@ -303,6 +307,7 @@ public class PostingListManager implements Closeable
 				termPostings.add(me.getPostingIterator());
 				termStatistics.add(me.getEntryStats());
 				termModels.add(WeightingModelMultiProxy.getModel(me.getWmodels()));
+				termTags.add(me.getTag());
 				if (me.getRequired())
 					requiredBitMask |= 1 << termIndex;
 			} else {
@@ -314,6 +319,7 @@ public class PostingListManager implements Closeable
 				termStatistics.add(entry.getValue().stats != null ? entry.getValue().stats : le);	
 				termKeyFreqs.add(entry.getValue().weight);
 				termStrings.add(term.toString());
+				termTags.add(entry.getValue().tag);
 				termModels.add(WeightingModelMultiProxy.getModel(new WeightingModel[0]));
 			}
 		}
@@ -418,6 +424,10 @@ public class PostingListManager implements Closeable
 
 	public String getTerm(int i) {
 		return termStrings.get(i);
+	}
+	
+	public String getTag(int i) {
+		return termTags.get(i);
 	}
 	
 	public double getKeyFrequency(int i) {

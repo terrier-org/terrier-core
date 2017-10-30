@@ -18,6 +18,7 @@ public class DependenceModelPreProcess implements Process {
 	static final String DEFAULT_DEPENDENCE_WEIGHTING_MODEL = pBiL.class.getName();
 	public static final String CONTROL_MODEL = "dependencemodel";
 	public static final String CONTROL_MODEL_PARAM = "dependencemodelparam";
+	public static final String DEPENDENCE_TAG = "sdm";
 	
 	Double param = null;
 	
@@ -78,6 +79,7 @@ public class DependenceModelPreProcess implements Process {
 			QTPBuilder qtp = QTPBuilder.of(new PhraseTerm(new String[]{queryTerms.get(i), queryTerms.get(i+1)}));
 			qtp.setWeight(0.1d);
 			qtp.addWeightingModel(getModel(modelName,2));
+			qtp.setTag(DEPENDENCE_TAG);
 			newEntries.add(qtp.build());
 		}
 		
@@ -87,6 +89,7 @@ public class DependenceModelPreProcess implements Process {
 			QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowTerm(new String[]{queryTerms.get(i), queryTerms.get(i+1)}, 8));
 			qtp.setWeight(0.1d);
 			qtp.addWeightingModel(getModel(modelName,8));
+			qtp.setTag(DEPENDENCE_TAG);
 			newEntries.add(qtp.build());
 		}
 		
@@ -94,6 +97,7 @@ public class DependenceModelPreProcess implements Process {
 		QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowTerm(queryTerms.toArray(new String[queryTerms.size()]), 12));
 		qtp.setWeight(0.1d);
 		qtp.addWeightingModel(getModel(modelName,12));
+		qtp.setTag(DEPENDENCE_TAG);
 		newEntries.add(qtp.build());
 		return newEntries;
 	}
