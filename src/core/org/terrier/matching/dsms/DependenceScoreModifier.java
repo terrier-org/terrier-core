@@ -147,6 +147,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 			}
 	
 			MatchingQueryTerms termsFiltered = terms.stream().filter(x -> ! x.getKey().toString().matches("^.*#(\\d|uw\\d|ow\\d).*")).collect(Collectors.toCollection(MatchingQueryTerms::new));
+			termsFiltered.setQueryId(terms.getQueryId());
 			boolean splitSynonyms = Boolean.parseBoolean(ApplicationSetup.getProperty(
 				"proximity.plm.split.synonyms", "true"));
 			PostingListManager plm = new PostingListManager(index, index.getCollectionStatistics(), termsFiltered, splitSynonyms);
