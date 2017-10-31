@@ -42,20 +42,24 @@ import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.ResultSet;
+import org.terrier.matching.indriql.IndriQLParser;
+import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.models.InL2;
 import org.terrier.matching.models.queryexpansion.Bo1;
 import org.terrier.querying.Manager;
 import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
+import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.structures.Index;
 import org.terrier.structures.cache.NullQueryResultCache;
 import org.terrier.structures.cache.QueryResultCache;
+import org.terrier.structures.outputformat.NullOutputFormat;
 import org.terrier.structures.outputformat.OutputFormat;
 import org.terrier.structures.outputformat.RawOutputFormat;
-import org.terrier.structures.outputformat.TRECDocnoOutputFormat;
 import org.terrier.structures.outputformat.TRECDocidOutputFormat;
-import org.terrier.structures.outputformat.NullOutputFormat;
+import org.terrier.structures.outputformat.TRECDocnoOutputFormat;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
@@ -113,6 +117,8 @@ import org.terrier.utility.Files;
  * your topics come in a very different format to those of TREC. </li>
  * 
  * <li><tt>trec.topics</tt> - the name of the topic file. Multiple topics files can be used, if separated by comma. </li>
+ * 
+ * <li><tt>trec.topics.indriql</tt> - if the topics should be parsed using the indriql parser. Defaults to false. </li>
  * 
  * <li><tt>trec.model</tt> the name of the weighting model to be used during retrieval. Default InL2 </li>
  *<li><tt>trec.qe.model</tt> the name of the query expansino model to be used during query expansion. Default Bo1. </li>
@@ -177,6 +183,8 @@ public class TRECQuerying {
 
 	/** the boolean indicates whether to expand queries */
 	protected boolean queryexpansion = false;
+	
+	protected boolean indriQL = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.indriql", "false")); 
 	
 	/** The file to store the output to. */
 	protected PrintWriter resultFile;
@@ -639,7 +647,28 @@ public class TRECQuerying {
 
 		if (logger.isInfoEnabled())
 			logger.info(queryId + " : " + query);
-		SearchRequest srq = queryingManager.newSearchRequest(queryId, query);
+		SearchRequest srq = null;
+		if (indriQL)
+		{
+			srq = queryingManager.newSearchRequest(queryId);
+			try{
+				QueryTerm[] ts = new IndriQLParser(query).parseAll();
+				Request rq = (Request)srq;
+				MatchingQueryTerms mqt = new MatchingQueryTerms(queryId, rq);
+				for(QueryTerm t : ts)
+				{
+					mqt.add( QTPBuilder.of(t).setWeight(1d).build() );
+				}
+				rq.setMatchingQueryTerms(mqt);
+				srq.setControl("parsecontrols", "off");
+				srq.setControl("parseql", "off");
+			}catch (Exception e) {
+				
+			}			
+		} else {
+			srq = queryingManager.newSearchRequest(queryId, query);
+		}
+				
 		initSearchRequestModification(queryId, srq);
 		String c = null;
 		if (c_set) {

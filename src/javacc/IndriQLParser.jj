@@ -1,0 +1,204 @@
+options {
+	STATIC = false;
+	LOOKAHEAD = 1;
+	FORCE_LA_CHECK = true;
+	DEBUG_PARSER=false;
+}
+
+PARSER_BEGIN(IndriQLParser)
+
+package org.terrier.matching.indriql;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.io.StringReader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class IndriQLParser
+{
+    private final static boolean DEBUG = false;
+    
+    public IndriQLParser(String r) {
+    	this(new StringReader(r));
+    }
+	   
+    public static void main(String args[])
+    {
+        try
+        {
+	        if (args.length == 1 && args[0].equals("-"))
+	        {
+	        	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	        	String line = null;
+	        	while((line = br.readLine())!= null) {
+	        		IndriQLParser parser = new IndriQLParser(line.trim());
+	        		System.out.println(Arrays.toString(parser.parseAll()));
+	        	}
+	        }
+	        else
+	        {
+	            String query = args[0];
+	            IndriQLParser parser = new IndriQLParser(query);
+	            System.out.println(parser.parse());
+	        }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+}
+
+PARSER_END(IndriQLParser) 
+
+/** Skip these characters, they are considered "white space" **/
+SKIP :                              
+{
+      " "
+    | "\t"
+    | "\r"
+    | "\n"
+
+}
+
+< WithinIndri > SKIP : {
+	" "
+}
+
+/** Reserved tokens for UQL */
+TOKEN :
+{
+	  <HASH : "#"> : WithinIndri
+	  | <WORD : (["A"-"Z","a"-"z","0"-"9"])+ > 
+	  | <PERIOD : ".">
+	  | <CLOSE_PAREN: ")"> : DEFAULT
+}
+
+<WithinIndri> TOKEN : {
+   <BAND: "band">
+   |  <UW:  "uw">
+   |  <OW:  "ow">
+   |  <SYN: "syn">
+   |  <OPEN_PAREN: "("> : DEFAULT
+   | <INT : (["0"-"9"])+ >
+}
+
+QueryTerm[] parseAll() : 
+{
+	List<QueryTerm> rtrList = new ArrayList<QueryTerm>();
+	QueryTerm newWord = null;
+}
+{
+	(newWord = parse() { rtrList.add(newWord); })+
+	{
+		return rtrList.toArray(new QueryTerm[rtrList.size()]);
+	}
+}
+
+
+QueryTerm parse() :
+{
+	QueryTerm rtr = null;
+}
+{
+	(
+	<HASH>
+	(	
+	  rtr = syn()
+	| rtr = band()
+	| rtr = uw() 
+	| rtr = ow()
+	| rtr = ow_implicit()
+	)
+	| rtr = word()
+	)
+	{
+		return rtr;
+	}
+}
+
+
+QueryTerm syn(): {
+  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  QueryTerm newWord = null;
+}
+{ 
+  <SYN>  <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+ <CLOSE_PAREN>
+  {
+    return new SynonymTerm(words.toArray(new QueryTerm[words.size()]));
+  }
+}
+
+QueryTerm band() : {
+  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  QueryTerm newWord = null;
+}
+{ 
+  <BAND>  <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+ <CLOSE_PAREN>
+  {
+    return new ANDQueryTerm(words.toArray(new QueryTerm[words.size()]));
+  }
+}
+
+QueryTerm uw(): {
+  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  QueryTerm newWord = null;
+  Token dist;
+}
+{ 
+  <UW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+ <CLOSE_PAREN>
+  {
+    return new UnorderedWindowTerm(words.toArray(new QueryTerm[words.size()]), Integer.parseInt(dist.image));
+  }
+}
+
+QueryTerm ow(): {
+  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  QueryTerm newWord = null;
+  Token dist;
+}
+{ 
+  <OW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+ <CLOSE_PAREN>
+  {
+    int iDist = Integer.parseInt(dist.image);
+  	if (iDist != 1)
+  	{
+  		throw new ParseException("Ordered windows > 1 not yet supported");
+  	}
+    return new PhraseTerm(words.toArray(new QueryTerm[words.size()]));
+  }
+}
+
+
+QueryTerm ow_implicit(): {
+  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  QueryTerm newWord = null;
+  Token dist;
+}
+{ 
+  dist=<INT> <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+  <CLOSE_PAREN>
+  {
+  	int iDist = Integer.parseInt(dist.image);
+  	if (iDist != 1)
+  	{
+  		throw new ParseException("Ordered windows > 1 not yet supported");
+  	}
+    return new PhraseTerm(words.toArray(new QueryTerm[words.size()]));
+  }
+}
+
+QueryTerm word() : {
+	Token word;
+	Token field = null;
+}
+{
+	word = <WORD> (<PERIOD> field = <WORD>)?
+	{
+		String fieldName = null;
+		if (field != null)
+			fieldName = field.image;
+		return new SingleQueryTerm(word.image, fieldName);
+	}
+}
