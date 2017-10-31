@@ -18,7 +18,7 @@ public class TrecEvalEvaluation implements Evaluation {
 	protected static final Logger logger = LoggerFactory.getLogger(TrecEvalEvaluation.class);
 
 	String qrels;
-	String[][] output;
+	protected String[][] output;
 	String resFile;
 
 	public TrecEvalEvaluation(String[] qrels) {
