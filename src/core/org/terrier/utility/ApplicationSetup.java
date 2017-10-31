@@ -318,6 +318,7 @@ public class ApplicationSetup {
 		String propertiesFile = null;
 		String terrier_home = null;
 		String terrier_etc = null;
+		boolean commonPropertiesLoaded = false;
 		try {
 			if (useContext)
 			{
@@ -364,7 +365,7 @@ public class ApplicationSetup {
 			clearAllProperties();
 			TERRIER_HOME = getProperty("terrier.home", terrier_home);
 			FileInputStream in = new FileInputStream(propertiesFile);
-			configure(new BufferedInputStream(in));
+			commonPropertiesLoaded = configure(new BufferedInputStream(in));
 			in.close();
 		} catch (java.io.FileNotFoundException fnfe) {
 			System.out.println("WARNING: The file terrier.properties was not found at location "+propertiesFile);
@@ -390,7 +391,8 @@ public class ApplicationSetup {
 			System.err.println("is specified in the file terrier.properties,");
 			System.err.println("or as a system property in the command line.");
 		}
-		loadCommonProperties();
+		if (!commonPropertiesLoaded)
+			loadCommonProperties();
 	}
 	
 	public static void bootstrapInitialisation(Properties properties) {
@@ -472,10 +474,11 @@ public class ApplicationSetup {
 	}
 	
 	/** Loads the common Terrier properties from the specified InputStream */
-	public static void configure(InputStream propertiesStream) throws IOException
+	public static boolean configure(InputStream propertiesStream) throws IOException
 	{
 		appProperties.load(propertiesStream);
 		loadCommonProperties();
+		return true;
 	}
 	
 	/** 
