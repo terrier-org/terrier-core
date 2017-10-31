@@ -99,7 +99,7 @@ $JAVA_HOME/bin/java -Xmx$TERRIER_HEAP_MEM $JAVA_OPTIONS $TERRIER_OPTIONS \
 	 -Dterrier.home=$TERRIER_HOME \
      -Dterrier.setup=$TERRIER_ETC/terrier.properties \
      -Dlogback.configurationFile=$TERRIER_ETC/logback.xml \
-     -cp $CLASSPATH $@
+     -cp $CLASSPATH org.terrier.applications.AnyclassLauncher $@
 
 if [ "$TERRIER_LIB_TMP" == "1" ];
 then
