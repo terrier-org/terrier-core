@@ -138,7 +138,7 @@ public class SingleQueryTerm extends QueryTerm {
 			required = true;
 		
 		return new MatchingEntry(postingList, 
-				entryStats, qtp.weight, wmodels, required);
+				entryStats, qtp.weight, wmodels, required, qtp.tag);
 	}
 
 	public String getField() {

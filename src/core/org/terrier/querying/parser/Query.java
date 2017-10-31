@@ -81,6 +81,12 @@ public abstract class Query implements Serializable, Cloneable{
 			return this;
 		}
 		
+		public QTPBuilder setTag(String tag)
+		{
+			qtp.tag= tag;
+			return this;
+		}
+		
 //		public QTPBuilder setField(String field)
 //		{
 //			qtp.field = field;

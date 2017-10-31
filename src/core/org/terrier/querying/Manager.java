@@ -511,6 +511,7 @@ public class Manager
 		{
 			
 			Process p = iter.next();
+			assert(p != null);
 			if (hasAnnotation(p.getClass(), ManagerRequisite.MQT) && ! mqtObtained)
 				throw new IllegalStateException("Process " + p.getInfo() + " required matchingqueryterms, but mqt not yet set for query " + rq.getQueryID());
 			logger.info("running preprocess " + p.getInfo());

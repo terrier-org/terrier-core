@@ -85,15 +85,17 @@ public class FatFull extends Full {
 		String[] queryTerms = new String[terms];
 		EntryStatistics[] entryStats = new EntryStatistics[terms];
 		double[] keyFreqs = new double[terms];
+		String[] tags = new String[terms];
 		
 		for (int i=0; i<terms; i++) {			
 			queryTerms[i] = plm.getTerm(i);
 			entryStats[i] = plm.getStatistics(i).getWritableEntryStatistics();
 			keyFreqs[i] = plm.getKeyFrequency(i);
-			logger.info("term " + queryTerms[i] + " ks="+keyFreqs[i] + " es=" + entryStats[i]);
+			tags[i] = plm.getTag(i);
+			logger.info("term " + queryTerms[i] + " ks="+keyFreqs[i] + " es=" + entryStats[i] + " tag="+tags[i]);
 		}
 		
-		return new FatCandidateResultSet(candidateResultList, super.collectionStatistics, queryTerms, entryStats, keyFreqs);
+		return new FatCandidateResultSet(candidateResultList, super.collectionStatistics, queryTerms, entryStats, keyFreqs, tags);
 	}
 
 	@Override

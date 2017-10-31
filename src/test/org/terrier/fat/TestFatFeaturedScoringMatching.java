@@ -33,6 +33,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.learning.FeaturedResultSet;
@@ -45,7 +46,6 @@ import org.terrier.matching.ResultSet;
 import org.terrier.matching.daat.FatFull;
 import org.terrier.matching.indriql.PhraseTerm;
 import org.terrier.matching.indriql.UnorderedWindowTerm;
-import org.terrier.matching.models.DPH;
 import org.terrier.matching.models.TF_IDF;
 import org.terrier.matching.models.Tf;
 import org.terrier.querying.parser.Query.QTPBuilder;
@@ -157,7 +157,8 @@ public class TestFatFeaturedScoringMatching extends ApplicationSetupBasedTest {
 					"WMODELt:Tf", 
 					"WMODELp:org.terrier.matching.models.dependence.pBiL", 
 					"DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier%proximity.ngram.length=2 proximity.plm.split.synonyms=false",
-					"DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier%proximity.ngram.length=8 proximity.plm.split.synonyms=false"}
+					"DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier%proximity.ngram.length=8 proximity.plm.split.synonyms=false",
+					"WMODEL$sdm:org.terrier.matching.models.dependence.pBiL"}
 			);
 			ResultSet r2 = ffsm.doMatch("test", mqt, fr1);
 			
@@ -182,18 +183,23 @@ public class TestFatFeaturedScoringMatching extends ApplicationSetupBasedTest {
 			assertNotNull(proxLarge);
 			assertTrue(proxLarge[0] > 0);
 			
+			final double[] proxNew = featRes.getFeatureScores("WMODEL$sdm:org.terrier.matching.models.dependence.pBiL");
+			assertNotNull(proxLarge);
+			assertTrue(proxNew[0] > 0);
+			
 		}
 	}
 	
 	@Test public void testFilters()
 	{
-		assertTrue(FatFeaturedScoringMatching.filterTerm.test("term1"));
-		assertFalse(FatFeaturedScoringMatching.filterTerm.test("#1(term1 term2)"));
-		assertFalse(FatFeaturedScoringMatching.filterTerm.test("#uw8(term1 term2)"));
+		String NS = null;
+		assertTrue(FatFeaturedScoringMatching.filterTerm.test(Pair.of("term1", NS)));
+		assertFalse(FatFeaturedScoringMatching.filterTerm.test(Pair.of("#1(term1 term2)", NS)));
+		assertFalse(FatFeaturedScoringMatching.filterTerm.test(Pair.of("#uw8(term1 term2)", NS)));
 		
-		assertFalse(FatFeaturedScoringMatching.filterProx.test("term1"));
-		assertTrue(FatFeaturedScoringMatching.filterProx.test("#1(term1 term2)"));
-		assertTrue(FatFeaturedScoringMatching.filterProx.test("#uw8(term1 term2)"));
+		assertFalse(FatFeaturedScoringMatching.filterProx.test(Pair.of("term1", NS)));
+		assertTrue(FatFeaturedScoringMatching.filterProx.test(Pair.of("#1(term1 term2)", NS)));
+		assertTrue(FatFeaturedScoringMatching.filterProx.test(Pair.of("#uw8(term1 term2)", NS)));
 		
 		
 		

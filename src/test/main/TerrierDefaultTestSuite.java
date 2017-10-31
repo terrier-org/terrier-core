@@ -68,6 +68,8 @@ import org.terrier.matching.TestMatching.TestTAATFullMatching;
 import org.terrier.matching.TestMatchingQueryTerms;
 import org.terrier.matching.TestResultSets;
 import org.terrier.matching.TestTRECResultsMatching;
+import org.terrier.matching.indriql.TestIndriQLParser;
+import org.terrier.matching.indriql.TestTRECQueryingIndriql;
 import org.terrier.matching.models.TestWeightingModelFactory;
 import org.terrier.querying.TestDecorate;
 import org.terrier.querying.TestManager;
@@ -94,8 +96,8 @@ import org.terrier.structures.bit.TestBitPostingIndexInputStream;
 import org.terrier.structures.bit.TestPostingStructures;
 import org.terrier.structures.collections.TestFSArrayFile;
 import org.terrier.structures.collections.TestFSOrderedMapFile;
-import org.terrier.structures.indexing.TestIndexing;
 import org.terrier.structures.indexing.TestCompressingMetaIndexBuilderPartitioner;
+import org.terrier.structures.indexing.TestIndexing;
 import org.terrier.structures.indexing.TestIndexingFatalErrors;
 import org.terrier.structures.indexing.singlepass.TestInverted2DirectIndexBuilder;
 import org.terrier.structures.indexing.singlepass.hadoop.TestBitPostingIndexInputFormat;
@@ -116,6 +118,7 @@ import org.terrier.utility.TestArrayUtils;
 import org.terrier.utility.TestCollectionStatistics;
 import org.terrier.utility.TestDistance;
 import org.terrier.utility.TestHeapSort;
+import org.terrier.utility.TestIvyResolution;
 import org.terrier.utility.TestRounding;
 import org.terrier.utility.TestStaTools;
 import org.terrier.utility.TestStringTools;
@@ -196,6 +199,10 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestTRECResultsMatching.class,
 	TestResultSets.class,
 	
+	//matching.indriql
+	TestTRECQueryingIndriql.class,
+	TestIndriQLParser.class,
+	
 	//matching.models
 	TestWeightingModelFactory.class,
 	
@@ -262,6 +269,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestCollectionStatistics.class,
 	TestDistance.class,
 	TestHeapSort.class,
+	TestIvyResolution.class,
 	TestRounding.class,
 	TestTagSet.class,
 	TestStaTools.class,

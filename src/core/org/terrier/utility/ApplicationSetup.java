@@ -318,6 +318,7 @@ public class ApplicationSetup {
 		String propertiesFile = null;
 		String terrier_home = null;
 		String terrier_etc = null;
+		boolean commonPropertiesLoaded = false;
 		try {
 			if (useContext)
 			{
@@ -364,7 +365,7 @@ public class ApplicationSetup {
 			clearAllProperties();
 			TERRIER_HOME = getProperty("terrier.home", terrier_home);
 			FileInputStream in = new FileInputStream(propertiesFile);
-			configure(new BufferedInputStream(in));
+			commonPropertiesLoaded = configure(new BufferedInputStream(in));
 			in.close();
 		} catch (java.io.FileNotFoundException fnfe) {
 			System.out.println("WARNING: The file terrier.properties was not found at location "+propertiesFile);
@@ -390,7 +391,30 @@ public class ApplicationSetup {
 			System.err.println("is specified in the file terrier.properties,");
 			System.err.println("or as a system property in the command line.");
 		}
+		if (!commonPropertiesLoaded)
+			loadCommonProperties();
+	}
+	
+	public static void bootstrapInitialisation(Properties properties) {
+		TERRIER_HOME = properties.getProperty("terrier.home", new File(".").getAbsolutePath());
+		System.err.println("TERRIER_HOME="+TERRIER_HOME);
+		System.err.println("terrier.etc="+properties.getProperty("terrier.etc"));
+		appProperties.clear();
+		String terrier_home = properties.getProperty("terrier.home", "");
+		String terrier_etc = properties.getProperty("terrier.etc", terrier_home +FILE_SEPARATOR+"etc");
+		String propertiesFile = properties.getProperty("terrier.setup", terrier_etc + FILE_SEPARATOR+"terrier.properties");
+		try{
+			if (new File(propertiesFile).exists())
+			{
+				appProperties.load(new FileInputStream(propertiesFile));
+			}
+		} catch (Exception e) {
+			System.err.println("Could not load a properties file at " + propertiesFile + " even though it did exist");
+		}
+		appProperties.putAll(properties);
 		loadCommonProperties();
+		System.err.println("TERRIER_HOME="+TERRIER_HOME);
+		System.err.println("TERRIER_ETC="+TERRIER_ETC);
 	}
 	
 	/** Loads the ApplicationSetup variables, e.g. ApplicationSetup.TERRIER_HOME */
@@ -450,10 +474,11 @@ public class ApplicationSetup {
 	}
 	
 	/** Loads the common Terrier properties from the specified InputStream */
-	public static void configure(InputStream propertiesStream) throws IOException
+	public static boolean configure(InputStream propertiesStream) throws IOException
 	{
 		appProperties.load(propertiesStream);
 		loadCommonProperties();
+		return true;
 	}
 	
 	/** 
@@ -533,7 +558,7 @@ public class ApplicationSetup {
 	protected static void setupPlugins()
 	{
 		loadedPlugins  = new LinkedList<TerrierApplicationPlugin>();
-		final String[] pluginNames = getProperty("terrier.plugins", "").split("\\s*,\\s*");
+		final String[] pluginNames = getProperty("terrier.plugins", IvyResolver.class.getName()).split("\\s*,\\s*");
 		for (String pluginName : pluginNames)
 		{
 			if (pluginName.length() == 0)

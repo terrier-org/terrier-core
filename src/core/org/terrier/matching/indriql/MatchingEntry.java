@@ -12,15 +12,17 @@ public class MatchingEntry {
 	double keyFreq;
 	WeightingModel[] wmodels;
 	boolean required;
+	String tag;
 	
 	public MatchingEntry(IterablePosting postingIterator,
-			EntryStatistics entryStats, double keyFreq, WeightingModel[] wmodels, boolean required) {
+			EntryStatistics entryStats, double keyFreq, WeightingModel[] wmodels, boolean required, String tag) {
 		super();
 		this.postingIterator = postingIterator;
 		this.entryStats = entryStats;
 		this.keyFreq = keyFreq;
 		this.wmodels = wmodels;
 		this.required = required;
+		this.tag = tag;
 	}
 
 	public IterablePosting getPostingIterator() {
@@ -41,6 +43,10 @@ public class MatchingEntry {
 	
 	public boolean getRequired() {
 		return required;
+	}
+	
+	public String getTag() {
+		return tag;
 	}
 	
 }

@@ -50,6 +50,7 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 	String[] queryTerms;
 	double[] keyFrequency;
 	EntryStatistics[] entryStats;
+	String[] tags;
 	
 	public FatQueryResultSet(
 			int numberOfDocuments,
@@ -213,5 +214,15 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 	@Override
 	public void setScores(double[] ss) {
 		scores = ss;
+	}
+	
+	@Override
+	public String[] getTags() {
+		return tags;
+	}
+
+	@Override
+	public void setTags(String[] ks) {
+		this.tags = ks;
 	}
 }

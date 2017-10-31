@@ -57,6 +57,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 	protected WritablePosting[][] postings;
 	String[] queryTerms;
 	double[] keyFrequency;
+	String[] tags;
 	EntryStatistics[] entryStats;
 
 
@@ -64,13 +65,14 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 		super();
 	}	
 	
-	public FatCandidateResultSet(Queue<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency) {
+	public FatCandidateResultSet(Queue<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, String[] tags) {
 		super(q);
 		postings = new WritablePosting[q.size()][];
 		this.queryTerms = queryTerms;
 		this.entryStats = entryStats;
 		this.keyFrequency = keyFrequency;
 		this.collStats = cs;
+		this.tags = tags;
 		int i=0;
 		for (CandidateResult cc: q)
 		{
@@ -210,6 +212,16 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 	@Override
 	public void setScores(double[] ss) {
 		scores = ss;
+	}
+
+	@Override
+	public String[] getTags() {
+		return tags;
+	}
+
+	@Override
+	public void setTags(String[] ks) {
+		this.tags = ks;
 	}
 	
 	

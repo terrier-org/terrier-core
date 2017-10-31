@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.learning.FeaturedQueryResultSet;
@@ -67,7 +68,7 @@ import org.terrier.utility.Files;
  * 
  * <b>Properties</b>:
  * <ul>
- * <li><tt>fat.featured.scoring.matching.features</tt> - a comma delimited list of features OR the word <tt>FILE</tt> 
+ * <li><tt>fat.featured.scoring.matching.features</tt> - a semicolon delimited list of features OR the word <tt>FILE</tt> 
  * to load the feature list from a file.</li>
  * <li><tt>fat.featured.scoring.matching.features.file</tt> - a filename containing a newline delimited list of feature.</li>
  * </ul>
@@ -93,8 +94,8 @@ public class FatFeaturedScoringMatching implements Matching {
 	static String[] getModelNames() throws Exception
 	{
 		String[] modelNames = 
-			ArrayUtils.parseCommaDelimitedString(
-					ApplicationSetup.getProperty("fat.featured.scoring.matching.features", ""));
+			ArrayUtils.parseDelimitedString(
+					ApplicationSetup.getProperty("fat.featured.scoring.matching.features", ""), ";");
 		if (modelNames.length == 1 && modelNames[0].equals("FILE"))
 		{
 			String filename = ApplicationSetup.getProperty("fat.featured.scoring.matching.features.file", null);
@@ -179,10 +180,15 @@ public class FatFeaturedScoringMatching implements Matching {
 			}			
 			else//assume WMODEL: WMODELp: WMODELt:
 			{
-				Predicate<String> filter = null;
+				Predicate<Pair<String,String>> filter = null;
 				final String[] parts = featureNames[i].split(":", 2);
 				final String catchName = parts[0];
 				final String wModelName = parts[1];
+				if (catchName.startsWith("WMODEL$"))	
+				{
+					String requiredTag = catchName.split("\\$",2)[1];
+					filter = getTagPredictate(requiredTag);
+				}
 				if (catchName.equals("WMODELp"))
 					filter = filterProx;
 				if (catchName.equals("WMODELt"))
@@ -211,28 +217,41 @@ public class FatFeaturedScoringMatching implements Matching {
 		
 	}
 	
-	public static final Predicate<String> filterUW = new Predicate<String>()
+	public static final Predicate<Pair<String,String>> getTagPredictate(final String matches)
+	{
+		return new Predicate<Pair<String,String>>()
+		{
+			@Override
+			public boolean test(Pair<String,String> queryTerm) {
+				if (queryTerm.getRight() != null && matches.equals(queryTerm.getRight()))
+					return true;
+				return false;
+			}
+		};
+	}
+	
+	public static final Predicate<Pair<String,String>> filterUW = new Predicate<Pair<String,String>>()
 	{
 		@Override
-		public boolean test(String queryTerm) {
-			if (queryTerm.contains(UnorderedWindowTerm.STRING_PREFIX))
+		public boolean test(Pair<String,String> queryTerm) {
+			if (queryTerm.getLeft().contains(UnorderedWindowTerm.STRING_PREFIX))
 				return true;
 			return false;
 		}
 	};
 	
-	public static final Predicate<String> filterOW = new Predicate<String>()
+	public static final Predicate<Pair<String,String>> filterOW = new Predicate<Pair<String,String>>()
 	{
 		@Override
-		public boolean test(String queryTerm) {
-			if (queryTerm.matches("^.*#\\d+.*$"))
+		public boolean test(Pair<String,String> queryTerm) {
+			if (queryTerm.getLeft().matches("^.*#\\d+.*$"))
 				return true;
 			return false;
 		}
 	};
 	
-	public static final Predicate<String> filterProx = filterUW.or(filterOW);
-	public static final Predicate<String> filterTerm = filterProx.negate();
+	public static final Predicate<Pair<String,String>> filterProx = filterUW.or(filterOW);
+	public static final Predicate<Pair<String,String>> filterTerm = filterProx.negate();
 	
 	
 	@Override

@@ -83,7 +83,7 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 	public boolean modifyScores(Index index, MatchingQueryTerms terms,
 			ResultSet set) {
 		ngramC = Double.parseDouble(ApplicationSetup.getProperty("proximity.norm2.c", "1.0d"));
-		System.err.println("ngramC=" + ngramC);
+		//System.err.println("ngramC=" + ngramC);
 		return super.modifyScores(index, terms, set);
 	}
 

@@ -68,8 +68,8 @@ FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\target\terrier-core-*-jar-with-
 :dorun
 
 REM ------------------------
-REM -- Run TRECTerrier
+REM -- Run AnyclassLauncher
 REM ------------------------
-java -Xmx512M -Dlogback.configurationFile="%TERRIER_ETC%\logback.xml" -Dterrier.home="%TERRIER_HOME%" -Dterrier.etc="%TERRIER_ETC%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% %LOGGING_OPTIONS% %JAVA_OPTIONS% %TERRIER_OPTIONS% %*
+java -Xmx512M -Dlogback.configurationFile="%TERRIER_ETC%\logback.xml" -Dterrier.home="%TERRIER_HOME%" -Dterrier.etc="%TERRIER_ETC%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% %LOGGING_OPTIONS% %JAVA_OPTIONS% %TERRIER_OPTIONS% org.terrier.applications.AnyclassLauncher %*
 
 if "Windows_NT"=="%OS%" endlocal
