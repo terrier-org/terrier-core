@@ -144,7 +144,7 @@ public class Manager
 			}
 			try 
 			{		
-				rtr = (K) Class.forName(Name).newInstance();
+				rtr = (K) ApplicationSetup.getClass(Name).newInstance();
 			}
 			catch(Exception e)
 			{
@@ -877,7 +877,8 @@ public class Manager
 					//load the class
 					if (ModelNames[i].equals("org.terrier.matching.Matching"))
 						ModelNames[i] = "org.terrier.matching.daat.Full";
-					Class<? extends Matching> formatter = Class.forName(ModelNames[i], false, this.getClass().getClassLoader()).asSubclass(Matching.class);
+						//TODO why init was disabled:  Class.forName(ModelNames[i], false, this.getClass().getClassLoader())
+					Class<? extends Matching> formatter = ApplicationSetup.getClass(ModelNames[i]).asSubclass(Matching.class);
 					//get the correct constructor - an Index class in this case
 					
 					Class<?>[] params;

@@ -307,6 +307,8 @@ public class ApplicationSetup {
 	 */
 	private static Context envCtx = null;
 	
+	static ClassLoader clzLoader = null;
+	
 	static {
 		bootstrapInitialisation();
 	}
@@ -393,6 +395,11 @@ public class ApplicationSetup {
 		}
 		if (!commonPropertiesLoaded)
 			loadCommonProperties();
+	}
+	
+	public static Class<?> getClass(String name) throws Exception {
+		System.err.println(clzLoader);
+		return Class.forName(name, true, clzLoader);
 	}
 	
 	public static void bootstrapInitialisation(Properties properties) {
@@ -573,6 +580,10 @@ public class ApplicationSetup {
 				logger.warn("Problem loading plugin named "+ pluginName, e);
 			}
 		}
+		if (clzLoader == null)
+			clzLoader = Thread.currentThread().getContextClassLoader();
+		if (clzLoader == null)
+			clzLoader = ApplicationSetup.class.getClassLoader();
 	}
 
 	/** Return a loaded plugin by name. Returns null if a plugin
