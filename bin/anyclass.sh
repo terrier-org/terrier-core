@@ -93,13 +93,36 @@ fi
 #JAVA_OPTIONS=
 #echo $CLASSPATH
 
+numargs=$#
+JVMARGS=()
+POSTARGS=()
+CLASS=""
+for ((i=1 ; i <= numargs ; i++))
+do
+  arg=${*:i:1}
+  #echo "'$arg'"
+  if [[ ("$arg" == -*) || ($CLASS != "") ]];
+  then
+    #echo "$arg is arg"
+    if [[ "$CLASS" == "" ]];
+    then
+      JVMARGS+=($arg)
+    else
+      POSTARGS+=($arg)
+    fi
+  else
+    #echo "$arg is class"
+    CLASS=$arg
+  fi
+done
+
 
 $JAVA_HOME/bin/java -Xmx$TERRIER_HEAP_MEM $JAVA_OPTIONS $TERRIER_OPTIONS \
 	 -Dterrier.etc=$TERRIER_ETC \
 	 -Dterrier.home=$TERRIER_HOME \
      -Dterrier.setup=$TERRIER_ETC/terrier.properties \
      -Dlogback.configurationFile=$TERRIER_ETC/logback.xml \
-     -cp $CLASSPATH org.terrier.applications.AnyclassLauncher $@
+     -cp $CLASSPATH ${JVMARGS[@]} org.terrier.applications.AnyclassLauncher $CLASS ${POSTARGS[@]}
 
 if [ "$TERRIER_LIB_TMP" == "1" ];
 then

@@ -15,6 +15,7 @@ public class AnyclassLauncher {
 		String x = ApplicationSetup.TERRIER_VERSION;
 		Class<?> clz = Class.forName(args[0], true, Thread.currentThread().getContextClassLoader());
 		Method thisMethod = clz.getDeclaredMethod("main",String[].class);
+		assert clz.getClassLoader().equals(Thread.currentThread().getContextClassLoader());
 		try{
 		thisMethod.invoke(null, (Object) Arrays.copyOfRange(args, 1, args.length));
 		} catch (InvocationTargetException ite) {
