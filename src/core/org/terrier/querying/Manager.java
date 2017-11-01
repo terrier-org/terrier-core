@@ -738,7 +738,7 @@ public class Manager
 			if (Start != 0 && length != ResultsSize)
 				rq.setResultSet( results.getResultSet(Start, length) );
 			if (logger.isDebugEnabled()) { 
-				logger.debug("No filters, just Crop: "+Start+", length"+length);
+				logger.debug("No filters, just Crop: "+Start+", length "+length);
 				logger.debug("Resultset is now "+results.getScores().length + " long");
 			}
 			return;
