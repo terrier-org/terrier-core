@@ -402,6 +402,11 @@ public class ApplicationSetup {
 		return Class.forName(name, true, clzLoader);
 	}
 	
+	public static Class<?> getClass(String name, boolean load) throws Exception {
+		System.err.println(clzLoader);
+		return Class.forName(name, load, clzLoader);
+	}
+	
 	public static void bootstrapInitialisation(Properties properties) {
 		TERRIER_HOME = properties.getProperty("terrier.home", new File(".").getAbsolutePath());
 		System.err.println("TERRIER_HOME="+TERRIER_HOME);

@@ -114,7 +114,7 @@ public class TRECIndexing extends BatchIndexing {
 			indexerName = indexerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 		Indexer _indexer = null;
 		try{
-			_indexer = (Indexer) Class.forName(indexerName)
+			_indexer = ApplicationSetup.getClass(indexerName).asSubclass(Indexer.class)
 				.getConstructor(String.class, String.class)
 				.newInstance(pa, pr);
 		} catch (ClassNotFoundException e) {

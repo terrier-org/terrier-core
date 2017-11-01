@@ -90,7 +90,7 @@ public abstract class GammaFunction implements Serializable {
 	{
 		String className = ApplicationSetup.getProperty("gamma.function", WikipediaLanczosGammaFunction.class.getName());
 		try{
-			Class<? extends GammaFunction> clz = Class.forName(className).asSubclass(GammaFunction.class);
+			Class<? extends GammaFunction> clz = ApplicationSetup.getClass(className).asSubclass(GammaFunction.class);
 			return DEBUG ? new DebugGammaFunction(clz.newInstance()) : clz.newInstance();
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);

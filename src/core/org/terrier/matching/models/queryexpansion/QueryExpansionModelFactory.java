@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.utility.ApplicationSetup;
 
 /**
  * A factory method for handling the initialisation of expansion models.
@@ -72,12 +73,13 @@ public class QueryExpansionModelFactory {
 					String params = name.substring(name.indexOf("(")+1, name.indexOf(")"));
 					String[] parameters = params.split("\\s*,\\s*");
 					
-					model = (QueryExpansionModel) Class.forName(name.substring(0,name.indexOf("(")))
+					model = ApplicationSetup.getClass(name.substring(0,name.indexOf("(")))
+							.asSubclass(QueryExpansionModel.class)
 							.getConstructor(new Class[]{String[].class})
 							.newInstance(new Object[]{parameters});
 				}
 				else{						
-					model = (QueryExpansionModel) Class.forName(name).newInstance();
+					model = ApplicationSetup.getClass(name).asSubclass(QueryExpansionModel.class).newInstance();
 				}
 				
 			} catch(InvocationTargetException e) {

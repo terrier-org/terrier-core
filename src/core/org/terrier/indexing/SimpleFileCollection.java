@@ -186,7 +186,7 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 					else if (mapping[1].startsWith("uk.ac.gla.terrier"))
 						mapping[1] = mapping[1].replaceAll("uk.ac.gla.terrier", "org.terrier");
 					try{
-						Class<? extends Document> d = Class.forName(mapping[1], false, this.getClass().getClassLoader()).asSubclass(Document.class);
+						Class<? extends Document> d = ApplicationSetup.getClass(mapping[1], false).asSubclass(Document.class);
 						extension_DocumentClass.put(mapping[0].toLowerCase(), d);
 					}catch (Exception e){
 						/*warning, just ignore */
@@ -204,7 +204,7 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
   				defaultMapping = defaultMapping.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
   			try{
-  				Class<? extends Document> d =  Class.forName(defaultMapping, false, this.getClass().getClassLoader()).asSubclass(Document.class);
+  				Class<? extends Document> d =  ApplicationSetup.getClass(defaultMapping, false).asSubclass(Document.class);
   				extension_DocumentClass.put("|DEFAULT|", d);
   			}catch (Exception e){
   				logger.warn("Missing default class " + defaultMapping, e);

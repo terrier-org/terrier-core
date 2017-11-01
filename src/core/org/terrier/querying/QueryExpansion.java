@@ -190,7 +190,7 @@ public class QueryExpansion implements PostProcess {
 				expanderName = expanderName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			try{
-				Class<? extends ExpansionTerms> clz = Class.forName(expanderName).asSubclass(ExpansionTerms.class);
+				Class<? extends ExpansionTerms> clz = ApplicationSetup.getClass(expanderName).asSubclass(ExpansionTerms.class);
 				if (expanderNames.length -1 == i)
 				{
 					next = clz
@@ -227,7 +227,7 @@ public class QueryExpansion implements PostProcess {
 			
 			FeedbackSelector next = null;
 			try{
-				Class<? extends FeedbackSelector> nextClass = Class.forName(name).asSubclass(FeedbackSelector.class);
+				Class<? extends FeedbackSelector> nextClass = ApplicationSetup.getClass(name).asSubclass(FeedbackSelector.class);
 				if (names.length -1 == i)
 				{
 					next = nextClass.newInstance();
@@ -346,7 +346,7 @@ public class QueryExpansion implements PostProcess {
 		{
 			try
 			{
-				rtr = (QueryExpansionModel) Class.forName(Name).newInstance();
+				rtr = (QueryExpansionModel) ApplicationSetup.getClass(Name).newInstance();
 			}
 			catch(Exception e)
 			{

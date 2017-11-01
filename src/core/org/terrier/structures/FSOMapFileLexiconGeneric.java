@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.apache.hadoop.io.WritableComparable;
 import org.terrier.structures.collections.FSOrderedMapFile;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 import org.terrier.utility.io.RandomDataInput;
 import org.terrier.utility.io.RandomDataInputMemory;
@@ -106,7 +107,7 @@ public abstract class FSOMapFileLexiconGeneric<K1,K2 extends WritableComparable>
     		if (dataSource.startsWith("uk.ac.gla.terrier"))
     			dataSource = dataSource.replaceAll("uk.ac.gla.terrier", "org.terrier");				
 			
-    		Class<?> mapClass = Class.forName(dataSource).asSubclass(FSOrderedMapFile.class);
+    		Class<?> mapClass = ApplicationSetup.getClass(dataSource).asSubclass(FSOrderedMapFile.class);
 			rtr = (FSOrderedMapFile<K, LexiconEntry>) mapClass
 				.getConstructor(String.class, Boolean.TYPE, FixedSizeWriteableFactory.class, FixedSizeWriteableFactory.class)
 				.newInstance(filename, false, keyFactory, valueFactory);

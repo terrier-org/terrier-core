@@ -37,6 +37,7 @@ import me.lemire.integercompression.SkippableIntegerCODEC;
 
 import org.terrier.compression.integer.ByteIn;
 import org.terrier.compression.integer.ByteOut;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 
 /**
@@ -122,7 +123,7 @@ public class LemireCodec extends IntegerCodec {
 		if (! integerCodecClassName.contains("."))
 			integerCodecClassName = SkippableIntegerCODEC.class.getPackage().getName() +"." + integerCodecClassName;
 		
-		Class<? extends SkippableIntegerCODEC> integerCodecClass = Class.forName(integerCodecClassName).asSubclass(SkippableIntegerCODEC.class);
+		Class<? extends SkippableIntegerCODEC> integerCodecClass = ApplicationSetup.getClass(integerCodecClassName).asSubclass(SkippableIntegerCODEC.class);
 		
 		if (!Composition.class.isAssignableFrom(integerCodecClass)) {
 		
@@ -134,7 +135,7 @@ public class LemireCodec extends IntegerCodec {
 			assert primaryCodecClassName != null;	
 			if (! primaryCodecClassName.contains("."))
 				primaryCodecClassName = SkippableIntegerCODEC.class.getPackage().getName() +"." + primaryCodecClassName;
-			Class<? extends SkippableIntegerCODEC> primaryCodecClass = Class.forName(primaryCodecClassName).asSubclass(SkippableIntegerCODEC.class);
+			Class<? extends SkippableIntegerCODEC> primaryCodecClass = ApplicationSetup.getClass(primaryCodecClassName).asSubclass(SkippableIntegerCODEC.class);
 			// 2. get secondary codec
 			String secondaryCodecClassName = params[2];
 			assert secondaryCodecClassName != null;
@@ -142,7 +143,7 @@ public class LemireCodec extends IntegerCodec {
 				secondaryCodecClassName = SkippableIntegerCODEC.class.getPackage().getName() +"." + secondaryCodecClassName;
 			
 			
-			Class<? extends SkippableIntegerCODEC> secondaryCodecClass = Class.forName(secondaryCodecClassName).asSubclass(SkippableIntegerCODEC.class);
+			Class<? extends SkippableIntegerCODEC> secondaryCodecClass = ApplicationSetup.getClass(secondaryCodecClassName).asSubclass(SkippableIntegerCODEC.class);
 		
 			integerCodec = (SkippableComposition) integerCodecClass.getConstructor(
 					SkippableIntegerCODEC.class, SkippableIntegerCODEC.class).newInstance(

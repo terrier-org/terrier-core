@@ -310,7 +310,7 @@ public class TRECQuerying {
 						+ className;
 			else if (className.startsWith("uk.ac.gla.terrier"))
 				className = className.replaceAll("uk.ac.gla.terrier", "org.terrier");
-			rtr = Class.forName(className).asSubclass(QueryResultCache.class).newInstance();
+			rtr = ApplicationSetup.getClass(className).asSubclass(QueryResultCache.class).newInstance();
 		} catch (Exception e) {
 			logger.error("", e);
 		}
@@ -327,7 +327,7 @@ public class TRECQuerying {
 				className = OutputFormat.class.getPackage().getName() +'.' + className;
 			else if (className.startsWith("uk.ac.gla.terrier"))
 				className = className.replaceAll("uk.ac.gla.terrier", "org.terrier");
-			rtr = Class.forName(className).asSubclass(OutputFormat.class)
+			rtr = ApplicationSetup.getClass(className).asSubclass(OutputFormat.class)
 					.getConstructor(Index.class).newInstance(this.index);
 		} catch (Exception e) {
 			logger.error("", e);
@@ -347,7 +347,7 @@ public class TRECQuerying {
 				managerName = "org.terrier.querying." + managerName;
 			else if (managerName.startsWith("uk.ac.gla.terrier"))
 				managerName = managerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
-			queryingManager = (Manager) (Class.forName(managerName)
+			queryingManager = (Manager) (ApplicationSetup.getClass(managerName)
 					.getConstructor(new Class[] { Index.class })
 					.newInstance(new Object[] { index }));
 		} catch (Exception e) {
@@ -753,7 +753,7 @@ public class TRECQuerying {
 		String[] topicsFiles = null;
 		QuerySource rtr = null;
 		try {
-			Class<? extends QuerySource> queryingClass = Class.forName(
+			Class<? extends QuerySource> queryingClass = ApplicationSetup.getClass(
 					topicsParser.indexOf('.') > 0 ? topicsParser
 							: "org.terrier.structures." + topicsParser)
 					.asSubclass(QuerySource.class);

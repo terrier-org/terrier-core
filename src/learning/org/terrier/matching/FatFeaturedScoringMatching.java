@@ -167,7 +167,7 @@ public class FatFeaturedScoringMatching implements Matching {
 						ApplicationSetup.setProperty(part2[0], part2[1]);
 					}
 				}
-				final DocumentScoreModifier dsm = Class.forName(dsmName).asSubclass(DocumentScoreModifier.class).newInstance();				
+				final DocumentScoreModifier dsm = ApplicationSetup.getClass(dsmName).asSubclass(DocumentScoreModifier.class).newInstance();				
 				_childrenDsms.add(dsm);
 				_childrenDsmNames.add(featureNames[i]);
 			}

@@ -101,7 +101,7 @@ public abstract class Tokeniser implements Serializable {
 			tokeniserClassName = "org.terrier.indexing.tokenisation." + tokeniserClassName;
 		Tokeniser rtr;
 		try{
-			rtr = Class.forName(tokeniserClassName).asSubclass(Tokeniser.class).newInstance();
+			rtr = ApplicationSetup.getClass(tokeniserClassName).asSubclass(Tokeniser.class).newInstance();
 		}catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

@@ -31,6 +31,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import org.apache.hadoop.mapred.InputSplit;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.io.WrappedIOException;
 
 /** An InputSplit, i.e. a subset of the input data. Notably, this implementation
@@ -105,7 +106,7 @@ public class PositionAwareSplit<T extends InputSplit> implements InputSplit{
 	public void readFields(DataInput in) throws IOException {
 		try {
 			final String className = in.readUTF();
-			Class<?> c = Class.forName(className, false, this.getClass().getClassLoader());
+			Class<?> c = ApplicationSetup.getClass(className);//TODO, this used to use this class's classloader
 			split = (T)c.newInstance();
 			split.readFields(in);
 			splitnum = in.readInt();

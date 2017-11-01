@@ -64,7 +64,7 @@ implements TermPipeline, TermPipelineAccessor
 					className = NAMESPACE_PIPELINE + className;
 				else if (className.startsWith("uk.ac.gla.terrier"))
 					className = className.replaceAll("uk.ac.gla.terrier", "org.terrier");
-				Class<? extends TermPipeline> pipeClass = Class.forName(className, false, this.getClass().getClassLoader()).asSubclass(TermPipeline.class);
+				Class<? extends TermPipeline> pipeClass = ApplicationSetup.getClass(className, false).asSubclass(TermPipeline.class);
 				tmp = (TermPipeline) (pipeClass.getConstructor(
 						constructor_array_termpipeline)
 						.newInstance(new Object[] {next}));

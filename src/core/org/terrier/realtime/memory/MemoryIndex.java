@@ -60,10 +60,10 @@ import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
 import org.terrier.structures.indexing.CompressionFactory;
+import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.indexing.DocumentPostingList;
 import org.terrier.structures.indexing.LexiconBuilder;
-import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.seralization.FixedSizeTextFactory;
 import org.terrier.terms.SkipTermPipeline;
@@ -765,10 +765,8 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 				else if (className.startsWith("uk.ac.gla.terrier"))
 					className = className.replaceAll("uk.ac.gla.terrier",
 							"org.terrier");
-				@SuppressWarnings("rawtypes")
-				Class pipeClass = Class.forName(className, false, this
-						.getClass().getClassLoader());
-				tmp = (TermPipeline) (pipeClass
+				Class<? extends TermPipeline> pipeClass = ApplicationSetup.getClass(className).asSubclass(TermPipeline.class);
+				tmp = (pipeClass
 						.getConstructor(new Class[] { TermPipeline.class })
 						.newInstance(new Object[] { next }));
 				next = tmp;

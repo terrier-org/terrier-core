@@ -93,7 +93,7 @@ public class CollectionFactory
 		Collection rtr = null;
 		final String firstCollectionName = normaliseCollectionName(collNames[collCount-1]);
 		try{
-			Class<? extends Collection> collectionClass = Class.forName(firstCollectionName).asSubclass(Collection.class);
+			Class<? extends Collection> collectionClass = ApplicationSetup.getClass(firstCollectionName).asSubclass(Collection.class);
 			rtr = collectionClass.getConstructor(contructorTypes).newInstance(constructorValues); //collectionClass.newInstance();
 		} catch (ClassNotFoundException e) {
 			logger.error("ERROR: First Collection class named "+ firstCollectionName + " not found", e);
@@ -111,7 +111,7 @@ public class CollectionFactory
 		try{
 			for(;i>=0;i--)
 			{
-				Collection newColl = Class.forName(normaliseCollectionName(collNames[i]))
+				Collection newColl = ApplicationSetup.getClass(normaliseCollectionName(collNames[i]))
 					.asSubclass(Collection.class)
 					.getConstructor(new Class[]{Collection.class})
          	       .newInstance(new Object[]{rtr});	

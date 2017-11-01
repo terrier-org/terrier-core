@@ -100,7 +100,7 @@ public class IntegerCodecCompressionConfiguration extends
 			className = GammaCodec.class.getPackage().toString().replaceFirst("package ", "") +'.' + className;
 		}
 		
-		Class<? extends IntegerCodec> c = Class.forName(className).asSubclass(IntegerCodec.class);
+		Class<? extends IntegerCodec> c = ApplicationSetup.getClass(className).asSubclass(IntegerCodec.class);
 		IntegerCodec factory = null;
 		if (params != null)
 		{

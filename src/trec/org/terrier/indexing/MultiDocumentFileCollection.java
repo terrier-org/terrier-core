@@ -122,7 +122,7 @@ public abstract class MultiDocumentFileCollection implements Collection {
 	 */
 	protected void loadDocumentClass() {
 		try{
-			documentClass = Class.forName(ApplicationSetup.getProperty("trec.document.class", TaggedDocument.class.getName())).asSubclass(Document.class);
+			documentClass = ApplicationSetup.getClass(ApplicationSetup.getProperty("trec.document.class", TaggedDocument.class.getName())).asSubclass(Document.class);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

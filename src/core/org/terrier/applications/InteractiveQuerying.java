@@ -98,9 +98,9 @@ public class InteractiveQuerying {
 			managerName = "org.terrier.querying."+managerName;
 		else if (managerName.startsWith("uk.ac.gla.terrier"))
 			managerName = managerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
-		queryingManager = (Manager) (Class.forName(managerName)
+		queryingManager = ApplicationSetup.getClass(managerName).asSubclass(Manager.class)
 			.getConstructor(new Class[]{Index.class})
-			.newInstance(new Object[]{index}));
+			.newInstance(new Object[]{index});
 		} catch (Exception e) {
 			logger.error("Problem loading Manager ("+managerName+"): ",e);	
 		}

@@ -71,7 +71,7 @@ public class ML2 extends WeightingModel {
 	 */
 	public ML2(String[] parameters) throws Exception
 	{
-		this.normClass = Class.forName(parameters[0]).asSubclass(Normalisation.class);
+		this.normClass = ApplicationSetup.getClass(parameters[0]).asSubclass(Normalisation.class);
 	}
 	
 	public ML2() 

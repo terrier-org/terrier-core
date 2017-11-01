@@ -87,8 +87,8 @@ public class PerFieldNormWeightingModel extends WeightingModel {
 	public PerFieldNormWeightingModel(String[] parameters) throws Exception
 	{
 		this.params = parameters;
-		this.basicModel = Class.forName(parameters[0]).asSubclass(BasicModel.class).newInstance();
-		this.normClass = Class.forName(parameters[1]).asSubclass(Normalisation.class);
+		this.basicModel = ApplicationSetup.getClass(parameters[0]).asSubclass(BasicModel.class).newInstance();
+		this.normClass = ApplicationSetup.getClass(parameters[1]).asSubclass(Normalisation.class);
 	}
 	
 	@Override

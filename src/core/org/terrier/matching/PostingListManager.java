@@ -215,7 +215,7 @@ public class PostingListManager implements Closeable
 			if (! pluginClass.contains("."))
 				pluginClass = "org.terrier.matching." + pluginClass;
 			try {
-				PostingListManagerPlugin p = Class.forName(pluginClass).asSubclass(PostingListManagerPlugin.class).newInstance();
+				PostingListManagerPlugin p = ApplicationSetup.getClass(pluginClass).asSubclass(PostingListManagerPlugin.class).newInstance();
 				_plugins.add(p);
 			} catch (Exception e) {
 				logger.warn("Problem loading PostingListManagerPlugin called "+ pluginClass, e);

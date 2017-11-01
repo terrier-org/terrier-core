@@ -163,7 +163,7 @@ public class TRECResultsMatching implements Matching {
                     continue;
 				if (modifierName.indexOf('.') == -1)
 					modifierName = DSMNS + modifierName;
-				dsms.add((DocumentScoreModifier) Class.forName(modifierName).newInstance());
+				dsms.add(ApplicationSetup.getClass(modifierName).asSubclass(DocumentScoreModifier.class).newInstance());
 			}
 		} catch(Exception e) {
 			logger.error("Exception while initialising default modifiers. Please check the name of the modifiers in the configuration file.", e);

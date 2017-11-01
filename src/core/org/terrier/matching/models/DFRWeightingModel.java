@@ -32,6 +32,7 @@ import org.terrier.matching.models.basicmodel.BasicModel;
 import org.terrier.matching.models.normalisation.Normalisation;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
+import org.terrier.utility.ApplicationSetup;
 
 /**
  * This class implements a modular Divergence from Randomness weighting model. 
@@ -127,7 +128,7 @@ public class DFRWeightingModel extends WeightingModel {
 			else if (basicModelName.startsWith("uk.ac.gla.terrier"))
 				basicModelName = basicModelName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
-			this.basicModel = (BasicModel)Class.forName(basicModelName.trim()).newInstance();
+			this.basicModel = ApplicationSetup.getClass(basicModelName.trim()).asSubclass(BasicModel.class).newInstance();
 			/*if(logger.isInfoEnabled()){
 			logger.info("basicModelName: " + basicModelName);
 			}*/
@@ -151,7 +152,7 @@ public class DFRWeightingModel extends WeightingModel {
 				afterEffectName = basicModelName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			if (ENABLE_AFTEREFFECT)
-				this.afterEffect = (AfterEffect)Class.forName(afterEffectName.trim()).newInstance();
+				this.afterEffect = ApplicationSetup.getClass(afterEffectName.trim()).asSubclass(AfterEffect.class).newInstance();
 			// ------------------------------------------------------
 
 
@@ -172,7 +173,7 @@ public class DFRWeightingModel extends WeightingModel {
 			else if (normalisationName.startsWith("uk.ac.gla.terrier"))
 				normalisationName = normalisationName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
-			this.normalisation = (Normalisation)Class.forName(normalisationName.trim()).newInstance();
+			this.normalisation = ApplicationSetup.getClass(normalisationName.trim()).asSubclass(Normalisation.class).newInstance();
 			// ------------------------------------------------------
 
 		}

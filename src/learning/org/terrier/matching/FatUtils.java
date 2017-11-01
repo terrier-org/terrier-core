@@ -46,12 +46,10 @@ import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.daat.FatCandidateResultSet;
-import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.FieldEntryStatistics;
-import org.terrier.structures.SimpleNgramEntryStatistics;
 import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.Lexicon;
@@ -59,6 +57,7 @@ import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
+import org.terrier.structures.SimpleNgramEntryStatistics;
 import org.terrier.structures.collections.MapEntry;
 import org.terrier.structures.postings.BasicPostingImpl;
 import org.terrier.structures.postings.BlockFieldPostingImpl;
@@ -69,6 +68,7 @@ import org.terrier.structures.postings.FieldPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.IterablePostingImpl;
 import org.terrier.structures.postings.WritablePosting;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
 import org.terrier.utility.io.DebuggingDataInput;
@@ -163,8 +163,8 @@ public class FatUtils {
 			if (statsClassName.equals("org.terrier.structures.FieldIndex$FieldIndexLexiconEntry"))
 				statsClassName = FieldLexiconEntry.class.getName();
 	
-			Class<? extends EntryStatistics> statisticsClass = Class.forName(statsClassName).asSubclass(EntryStatistics.class);
-			Class<? extends WritablePosting> postingClass = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
+			Class<? extends EntryStatistics> statisticsClass = ApplicationSetup.getClass(statsClassName).asSubclass(EntryStatistics.class);
+			Class<? extends WritablePosting> postingClass = ApplicationSetup.getClass(in.readUTF()).asSubclass(WritablePosting.class);
 			
 			
 			//read terms and entry statistics
@@ -312,8 +312,8 @@ public class FatUtils {
 				blocks[j] = in.readBoolean();
 				boolean anyPostings = in.readBoolean();
 				if (anyPostings)
-					postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
-				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
+					postingClass[j] = ApplicationSetup.getClass(in.readUTF()).asSubclass(WritablePosting.class);
+				Class<? extends EntryStatistics> statisticsClass = ApplicationSetup.getClass(in.readUTF()).asSubclass(EntryStatistics.class);
 				keyFrequencies[j] = in.readDouble();
 				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
 					" es="+statisticsClass.getSimpleName() /*+
@@ -470,8 +470,8 @@ public class FatUtils {
 				blocks[j] = in.readBoolean();
 				boolean anyPostings = in.readBoolean();
 				if (anyPostings)
-					postingClass[j] = Class.forName(in.readUTF()).asSubclass(WritablePosting.class);
-				Class<? extends EntryStatistics> statisticsClass = Class.forName(in.readUTF()).asSubclass(EntryStatistics.class);
+					postingClass[j] = ApplicationSetup.getClass(in.readUTF()).asSubclass(WritablePosting.class);
+				Class<? extends EntryStatistics> statisticsClass = ApplicationSetup.getClass(in.readUTF()).asSubclass(EntryStatistics.class);
 				keyFrequencies[j] = in.readDouble();
 				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
 					" es="+statisticsClass.getSimpleName() /*+

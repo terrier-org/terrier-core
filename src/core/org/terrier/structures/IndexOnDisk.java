@@ -274,8 +274,7 @@ public class IndexOnDisk extends Index {
 			// obtain the class definition for the index structure
 			Class<?> indexStructureClass = null;
 			try {
-				indexStructureClass = Class.forName(structureClassName, false,
-						this.getClass().getClassLoader());
+				indexStructureClass = ApplicationSetup.getClass(structureClassName, false);
 			} catch (ClassNotFoundException cnfe) {
 				logger.error("ClassNotFoundException: This index ("
 						+ this.toString()
@@ -298,7 +297,7 @@ public class IndexOnDisk extends Index {
 				for (String t : types) {
 					if (t.startsWith("uk.ac.gla.terrier"))
 						t = t.replaceAll("uk.ac.gla.terrier", "org.terrier");
-					paramTypes.add(Class.forName(t));
+					paramTypes.add(ApplicationSetup.getClass(t));
 				}
 				Class<?>[] param_types = paramTypes.toArray(EMPTY_CLASS_ARRAY);
 
@@ -324,7 +323,7 @@ public class IndexOnDisk extends Index {
 						// System.err.println("loading class called "+p);
 						if (p.startsWith("uk.ac.gla.terrier"))
 							p = p.replaceAll("uk.ac.gla.terrier", "org.terrier");
-						objs[i] = Class.forName(p);
+						objs[i] = ApplicationSetup.getClass(p);
 					} else if (p.endsWith("-inputstream"))// no caching for
 															// input streams
 						objs[i] = loadIndexStructure(p);

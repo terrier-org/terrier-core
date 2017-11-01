@@ -292,7 +292,7 @@ public abstract class Indexer
 					className = PIPELINE_NAMESPACE + className;
 				else if (className.startsWith("uk.ac.gla.terrier"))
 					className = className.replaceAll("uk.ac.gla.terrier", "org.terrier");
-				Class<? extends TermPipeline> pipeClass = Class.forName(className, false, this.getClass().getClassLoader()).asSubclass(TermPipeline.class);
+				Class<? extends TermPipeline> pipeClass = ApplicationSetup.getClass(className).asSubclass(TermPipeline.class);//TODO: This used to use this class' classloader
 				tmp = pipeClass.getConstructor(new Class[]{TermPipeline.class}).newInstance(new Object[] {next});
 				next = tmp;
 			}catch (Exception e){

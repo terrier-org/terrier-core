@@ -213,7 +213,7 @@ public class CompressionFactory {
 		CompressionConfiguration rtr = null;
 		
 		try{
-			rtr = Class.forName(compressionConfiguration)
+			rtr = ApplicationSetup.getClass(compressionConfiguration)
 					.asSubclass(CompressionConfiguration.class)
 					.getConstructor(String.class, String[].class,  Integer.TYPE, Integer.TYPE).newInstance(structureName, fieldNames, blocks ? 1 : 0, ApplicationSetup.MAX_BLOCKS);
 		} catch (Exception e) {
@@ -231,7 +231,7 @@ public class CompressionFactory {
 		CompressionConfiguration rtr = null;
 		
 		try{
-			rtr = Class.forName(compressionConfiguration)
+			rtr = ApplicationSetup.getClass(compressionConfiguration)
 					.asSubclass(CompressionConfiguration.class)
 					.getConstructor(String.class, String[].class, Integer.TYPE, Integer.TYPE).newInstance(structureName, fieldNames, hasBlocks, maxBlocks);
 		} catch (Exception e) {

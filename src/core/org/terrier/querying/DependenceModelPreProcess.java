@@ -11,6 +11,7 @@ import org.terrier.matching.indriql.UnorderedWindowTerm;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.matching.models.dependence.pBiL;
 import org.terrier.querying.parser.Query.QTPBuilder;
+import org.terrier.utility.ApplicationSetup;
 
 @ProcessPhaseRequisites(ManagerRequisite.MQT)
 public class DependenceModelPreProcess implements Process {
@@ -41,7 +42,7 @@ public class DependenceModelPreProcess implements Process {
 			name = "org.terrier.matching.models.dependence." + name;
 		WeightingModel rtr = null;
 		try{
-			rtr = Class.forName(name).asSubclass(WeightingModel.class).getConstructor(Integer.TYPE).newInstance(ngramLength);
+			rtr = ApplicationSetup.getClass(name).asSubclass(WeightingModel.class).getConstructor(Integer.TYPE).newInstance(ngramLength);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

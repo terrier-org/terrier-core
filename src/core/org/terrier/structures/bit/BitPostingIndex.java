@@ -40,6 +40,7 @@ import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.io.WrappedIOException;
 /** Class for various bit compressed index implementations, including parents to current DirectIndex and InvertedIndex implementations. 
  * <b>Index properties</b>:
@@ -151,7 +152,7 @@ public class BitPostingIndex implements PostingIndex<BitIndexPointer>
 				if (_dataSource.startsWith("uk.ac.gla.terrier"))
 					_dataSource = _dataSource.replaceAll("uk.ac.gla.terrier", "org.terrier");				
 				try{
-					this.file[i] = Class.forName(_dataSource).asSubclass(BitInSeekable.class).getConstructor(String.class).newInstance(dataFilename);
+					this.file[i] = ApplicationSetup.getClass(_dataSource).asSubclass(BitInSeekable.class).getConstructor(String.class).newInstance(dataFilename);
 				} catch (Exception e) {
 					throw new WrappedIOException(e);
 				}
