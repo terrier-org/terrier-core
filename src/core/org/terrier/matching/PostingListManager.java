@@ -309,7 +309,14 @@ public class PostingListManager implements Closeable
 				termModels.add(WeightingModelMultiProxy.getModel(me.getWmodels()));
 				termTags.add(me.getTag());
 				if (me.getRequired())
+				{
 					requiredBitMask |= 1 << termIndex;
+					if (termIndex >= 64)
+					{
+						logger.warn("A requirement was found for the "+termIndex+"-th query term (" 
+							+ term.toString() + "), which was past the maximum supported 64");
+					}
+				}
 			} else {
 				//this provides support for Fat indices	
 				LexiconEntry le = _index.getLexicon().getLexiconEntry(entry.getKey().toString());
