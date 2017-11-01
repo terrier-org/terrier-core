@@ -54,10 +54,17 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 	protected static Logger logger = LoggerFactory.getLogger(ThreadedBatchIndexing.class);
 	
 	final boolean singlePass;
+	int maxThreads = -1;
 	
 	public ThreadedBatchIndexing(String _path, String _prefix, boolean _singlePass) {
 		super(_path, _prefix);
 		singlePass = _singlePass;
+	}
+	
+	public ThreadedBatchIndexing(String _path, String _prefix, boolean _singlePass, int threads) {
+		super(_path, _prefix);
+		singlePass = _singlePass;
+		this.maxThreads = threads;
 	}
 	
 	protected static Collection loadCollection(List<String> files) {
@@ -79,6 +86,12 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 			logger.error("Collection class named "+ collectionName + " not found, aborting");
 		}
 		return rtr;
+	}
+	
+	/** Define maximum number of threads in use. -1 for no limit. */
+	public void setMaxThreads(int threads)
+	{
+		this.maxThreads = threads;
 	}
 
 	@Override
@@ -145,7 +158,12 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					return thisPrefix;
 				}	
 			};
-			String tmpPrefix = partitioned.parallelStream().map(indexer).reduce(merger).get();
+			
+			ForkJoinPool forkPool = this.maxThreads == -1 
+					? ForkJoinPool.commonPool()
+					: new ForkJoinPool(this.maxThreads);
+			String tmpPrefix = forkPool.submit(() -> partitioned.parallelStream().map(indexer).reduce(merger).get()).get();
+			
 			IndexUtil.renameIndex(path, tmpPrefix, path, prefix);
 			logger.info("Parallel indexing completed after " 
 				+ (System.currentTimeMillis() - starttime)/1000 + " seconds, using " 

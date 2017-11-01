@@ -165,7 +165,8 @@ public class TrecTerrier {
 
 	protected boolean docids = false;
 
-
+	protected int threads = -1;
+	
 	private static boolean use_jtrec_eval = true;
 	/**
 	 * Prints the version information about Terrier
@@ -275,6 +276,17 @@ public class TrecTerrier {
 				inverted2direct = true;
 			else if (args[pos].equals("-P") || args[pos].equals("--parallel"))
 				parallel = true;
+			else if (args[pos].equals("--threads"))
+			{
+				if (args.length > pos+1)
+				{
+					threads = Integer.parseInt(args[++pos]);
+				}
+				else
+				{
+					System.err.println("--threads must have an integer value specified");
+				}
+			}
 			else if (args[pos].equals("-q") || args[pos].equals("--queryexpand"))
 				queryexpand = true;
 			else if (args[pos].equals("--printdocid"))
@@ -377,12 +389,13 @@ public class TrecTerrier {
 					batch = new ThreadedBatchIndexing(
 							ApplicationSetup.TERRIER_INDEX_PATH,
 							ApplicationSetup.TERRIER_INDEX_PREFIX,
-							singlePass);
+							singlePass, threads);
 				else if(singlePass)
 					batch = new TRECIndexingSinglePass(
 							ApplicationSetup.TERRIER_INDEX_PATH,
 							ApplicationSetup.TERRIER_INDEX_PREFIX);
-				else //if singlepass not specified, use the classical indexer
+				else
+					//if singlepass not specified, use the classical indexer
 					batch = new TRECIndexing(
 							ApplicationSetup.TERRIER_INDEX_PATH,
 							ApplicationSetup.TERRIER_INDEX_PREFIX);
