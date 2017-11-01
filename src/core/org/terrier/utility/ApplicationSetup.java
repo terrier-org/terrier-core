@@ -397,13 +397,13 @@ public class ApplicationSetup {
 			loadCommonProperties();
 	}
 	
-	public static Class<?> getClass(String name) throws Exception {
-		System.err.println(clzLoader);
+	public static Class<?> getClass(String name) throws ClassNotFoundException {
+		//System.err.println(clzLoader);
 		return Class.forName(name, true, clzLoader);
 	}
 	
-	public static Class<?> getClass(String name, boolean load) throws Exception {
-		System.err.println(clzLoader);
+	public static Class<?> getClass(String name, boolean load) throws ClassNotFoundException {
+		//System.err.println(clzLoader);
 		return Class.forName(name, load, clzLoader);
 	}
 	
