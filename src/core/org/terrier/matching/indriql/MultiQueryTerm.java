@@ -72,12 +72,13 @@ public abstract class MultiQueryTerm extends QueryTerm {
 		List<IterablePosting> _joinedPostings = new ArrayList<IterablePosting>(terms.length);
 		for(QueryTerm ts : terms) {
 			Pair<EntryStatistics,IterablePosting> pair = ts.getPostingIterator(index);
-			if (pair == null)
+			if (pair == null || pair.getLeft() == null)
 			{
 				logger.debug("Component term Not Found: " + ts);
 			} else if (IGNORE_LOW_IDF_TERMS && index.getCollectionStatistics().getNumberOfDocuments() < pair.getKey().getFrequency()) {
 				logger.warn("query term " + ts + " has low idf - ignored from scoring.");
 			} else {
+				//assert pair.getLeft() != null : "query term " + ts + " has null entrystatistics?";
 				_le.add(pair.getLeft());
 				_joinedPostings.add(pair.getRight());
 			}			
@@ -108,6 +109,8 @@ public abstract class MultiQueryTerm extends QueryTerm {
 		EntryStatistics entryStats = qtp.stats;
 		
 		Pair<EntryStatistics,IterablePosting> pair = this.getPostingIterator(index);
+		if (pair == null)
+			return null;
 		
 		if (entryStats == null)
 			entryStats = pair.getKey();
