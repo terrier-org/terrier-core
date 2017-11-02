@@ -44,6 +44,7 @@ public class ArrayOfFieldIterablePosting
 		super(_ids, _freqs, _lens);
 		tff = _tff;
 		assert tff.length == ids.length;
+		fieldCount = tff[0].length;
 		lf = _lf;
 	}
 	
@@ -62,7 +63,8 @@ public class ArrayOfFieldIterablePosting
 		else
 		{
 			//document is outer
-			assert tff.length == ids.length;			
+			assert tff.length == ids.length;
+			fieldCount = tff[0].length;
 		}
 	}
 
@@ -80,7 +82,14 @@ public class ArrayOfFieldIterablePosting
 
 	@Override
 	public int[] getFieldLengths() {
-		return lf[indice];
+		if (! invert)
+			return lf[indice];
+		int[] rtr = new int[fieldCount];
+		for(int i=0;i<fieldCount;i++)
+		{
+			rtr[i] = lf[i][indice];
+		}
+		return rtr;		
 	}
 
 	@Override
