@@ -46,7 +46,7 @@ public interface IterablePosting extends Posting, Closeable {
 	/** Move this iterator to the posting with specified id, or next posting after that.
 	 * This is usually implemented internally by next(), but more
 	 * efficient implementations can override this behaviour.
-	 * @param targetId id of the posting to find in this postingn list.
+	 * @param targetId id of the posting to find in this posting list.
 	 * @return id of the posting found, or EOL if end of posting list.
 	 */
 	int next(int targetId) throws IOException;
