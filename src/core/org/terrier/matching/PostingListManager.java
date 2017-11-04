@@ -331,9 +331,6 @@ public class PostingListManager implements Closeable
 			}
 		}
 		
-		logger.info("Query " + mqt.getQueryId() + " with "+ mqt.size() +" terms has " + termPostings.size() + " posting lists");
-		assert termPostings.size() == termStatistics.size();
-		
 		for(PostingListManagerPlugin p : plugins)
 		{
 			p.processQuery(mqt, index, this);
@@ -407,7 +404,7 @@ public class PostingListManager implements Closeable
 	public double score(int i)
 	{
 		assert i>=0 && i < numTerms: "Looking for posting list " + i + " out of " + (numTerms) + " posting lists.";
-
+		assert termPostings.get(i).getId() != IterablePosting.EOL : "Term " + i + ", posting list at EOL";
 		double score = 0.0d;
 		score = termModels.get(i).score(termPostings.get(i));
 		//System.err.println("For term " + i + " scoring " 
