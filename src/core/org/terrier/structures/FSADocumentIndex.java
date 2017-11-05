@@ -69,7 +69,7 @@ public class FSADocumentIndex extends FSArrayFile<DocumentIndexEntry> implements
 	
 	protected void initialise(IndexOnDisk index, String structureName) throws IOException
 	{
-		logger.debug("Loading document lengths for " + structureName + " structure into memory. NB: The following stacktrace IS NOT AN Exception", new Exception());
+		logger.debug("Loading document lengths for " + structureName + " structure into memory. NB: The following stacktrace IS NOT AN Exception", new Exception("THIS IS **NOT** AN EXCEPTION"));
 		docLengths = new int[this.size()];
 		int i=0;
 		Iterator<DocumentIndexEntry> iter = new FSADocumentIndexIterator(index, structureName);
