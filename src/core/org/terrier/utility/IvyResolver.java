@@ -43,6 +43,9 @@ import org.terrier.utility.ApplicationSetup.TerrierApplicationPlugin;
  */
 public class IvyResolver implements TerrierApplicationPlugin {
 	
+	volatile static String initCoords = null;
+	final static Object lock = new Object();
+	
 	public static class MutableURLClassLoader extends URLClassLoader {
 	    public MutableURLClassLoader(ClassLoader parent, URL... urls) {
 	        super(urls, parent);
@@ -103,7 +106,16 @@ public class IvyResolver implements TerrierApplicationPlugin {
 	
 	@Override
 	public void initialise() throws Exception {
-		this.initialise(ApplicationSetup.getProperty("terrier.ivy.coords", null));
+		String requestedCoords = ApplicationSetup.getProperty("terrier.ivy.coords", null);
+		if (requestedCoords == null)
+			return;
+		//prevent more than one thread initing concurrently
+		synchronized (lock) {
+			if (initCoords != null && initCoords.equals(requestedCoords))
+				return;
+			this.initialise(requestedCoords);
+			initCoords = requestedCoords;
+		}	
 	}
 	
 	public void initialise(String coordinates) throws Exception {
