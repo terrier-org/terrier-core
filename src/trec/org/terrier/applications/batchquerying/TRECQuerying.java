@@ -813,7 +813,7 @@ public class TRECQuerying {
 			processQueryAndWrite(qid, query, c, c_set);
 			long processingEnd = System.currentTimeMillis();
 			if (logger.isInfoEnabled())
-				logger.info("Time to process query: "
+				logger.info("Time to process query "+qid+": "
 					+ ((processingEnd - processingStart) / 1000.0D));
 			doneSomeTopics = true;
 		}
