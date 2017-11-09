@@ -85,5 +85,9 @@ public class SimpleNgramEntryStatistics implements NgramEntryStatistics, Writabl
 	public void setMaxFrequencyInDocuments(int max) {
 		maxtf = max;
 	}
+	
+	public String toString() {
+		return "Nt=" + this.getDocumentFrequency() + " ws=" + this.getWindowSize();
+	}
 
 }
