@@ -284,50 +284,6 @@ public class TRECQuery implements QuerySource {
 		this.index = 0;
 	}
 	
-	
-//	/** 
-//	 * @deprecated As of Terrier 3.5
-//	 * Extracts and stores all the queries from 
-//	 * the topic files, specified in the file
-//	 * with default name <tt>trec.topics.list</tt>. 
-//	 */
-//	protected void extractQuery() {
-//		try {
-//			//open the query file
-//			BufferedReader addressQueryFile = Files.openFileReader(ApplicationSetup.TREC_TOPICS_LIST);
-//			ArrayList<String> parsedTopicFiles = new ArrayList<String>(1);
-//			String queryFilename;
-//			Vector<String> vecStringQueries = new Vector<String>();
-//			Vector<String> vecStringQueryIDs = new Vector<String>();
-//			int fileCount = 0;
-//			while ((queryFilename = addressQueryFile.readLine()) != null) {
-//				if (queryFilename.startsWith("#") || queryFilename.equals(""))
-//					continue;	
-//				logger.info("Extracting queries from "+queryFilename);
-//				fileCount++;
-//				boolean rtr = extractQuery(queryFilename, vecStringQueries, vecStringQueryIDs);
-//				if (rtr)
-//					parsedTopicFiles.add(queryFilename);
-//			}
-//			if (fileCount ==0)
-//			{
-//				logger.error("No topic files found in "+ApplicationSetup.TREC_TOPICS_LIST  +"  - please check");
-//			}
-//			if (fileCount > 0 && parsedTopicFiles.size() == 0)
-//			{
-//				logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
-//					+ " Check you have the correct topic files specified, and that TrecQueryTags properties are correct.");
-//			}
-//			this.queries = (String[]) vecStringQueries.toArray(new String[0]);
-//			this.query_ids = (String[]) vecStringQueryIDs.toArray(new String[0]);
-//			this.topicFiles = (String[]) parsedTopicFiles.toArray(new String[0]);
-//			//logger.info("found files ="+ this.topicFiles.length);
-//			addressQueryFile.close();
-//		} catch (IOException ioe) {
-//			logger.error("Input/Output exception while performing the matching.", ioe);
-//		}
-//	}
-	
 	/** 
 	 * Returns the index of the last obtained query.
 	 * @return int the index of the last obtained query. 
