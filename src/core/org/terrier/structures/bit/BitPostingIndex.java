@@ -54,7 +54,7 @@ import org.terrier.utility.io.WrappedIOException;
 public class BitPostingIndex implements PostingIndex<BitIndexPointer>
 {
 
-	protected BitInSeekable[] file;
+	BitInSeekable[] file;
 	protected Class<? extends IterablePosting> postingImplementation;
 	protected Constructor<? extends IterablePosting> postingConstructor;
 	protected DocumentIndex doi;

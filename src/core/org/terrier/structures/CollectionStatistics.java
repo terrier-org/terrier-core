@@ -44,6 +44,7 @@ import org.apache.hadoop.io.Writable;
  *
  * @author Gianni Amati, Vassilis Plachouras, Craig Macdonald
  */
+@ConcurrentReadable
 public class CollectionStatistics implements Serializable,Writable {
 	private static final long serialVersionUID = 1L;
 	/** Number of fields used to index */

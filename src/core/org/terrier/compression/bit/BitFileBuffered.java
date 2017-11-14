@@ -46,7 +46,7 @@ public class BitFileBuffered implements BitInSeekable {
 	/** The logger used */
 	protected static final Logger logger = LoggerFactory.getLogger(BitFileBuffered.class);
 	/** The underlying file */
-	protected RandomDataInput file;
+	RandomDataInput file;
 	/** how much of this file we will buffer */
 	protected final int buffer_size;
 	/** how big the file is, so we know when to stop reading */
