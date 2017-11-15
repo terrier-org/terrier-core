@@ -465,7 +465,7 @@ public class FatUtils {
 			{
 				queryTerms[j] = in.readUTF();
 				if (in.readBoolean())
-					tags[i] = in.readUTF();
+					tags[j] = in.readUTF();
 				fields[j] = in.readBoolean();
 				blocks[j] = in.readBoolean();
 				boolean anyPostings = in.readBoolean();
