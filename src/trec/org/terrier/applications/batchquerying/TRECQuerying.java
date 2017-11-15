@@ -187,7 +187,7 @@ public class TRECQuerying {
 	protected boolean indriQL = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.indriql", "false")); 
 	
 	/** The file to store the output to. */
-	protected PrintWriter resultFile;
+	protected volatile PrintWriter resultFile;
 	protected OutputStream resultFileRaw;
 
 	/** The filename of the last file results were output to. */
@@ -601,14 +601,16 @@ public class TRECQuerying {
 		}
 		SearchRequest srq = processQuery(queryId, query, cParameter, c_set);
 
-		if (resultFile == null) {
-			method = ApplicationSetup.getProperty("trec.runtag", queryingManager.getInfo(srq));
-			if (queryexpansion)
-				method = method +
-				"_d_"+ApplicationSetup.getProperty("expansion.documents", "3")+
-				"_t_"+ApplicationSetup.getProperty("expansion.terms", "10");
-			resultFile = getResultFile(method);
-		}
+		synchronized (this) {
+			if (resultFile == null) {
+				method = ApplicationSetup.getProperty("trec.runtag", queryingManager.getInfo(srq));
+				if (queryexpansion)
+					method = method +
+					"_d_"+ApplicationSetup.getProperty("expansion.documents", "3")+
+					"_t_"+ApplicationSetup.getProperty("expansion.terms", "10");
+				resultFile = getResultFile(method);
+			}
+		}		
 		final long t = System.currentTimeMillis();
 		try {
 			logger.debug("Trying to print results to "+printer.getClass().getSimpleName());
