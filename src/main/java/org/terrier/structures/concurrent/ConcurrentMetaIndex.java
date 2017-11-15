@@ -21,31 +21,31 @@ class ConcurrentMetaIndex implements MetaIndex {
 
 	public String getItem(String Key, int docid) throws IOException {
 		synchronized (parent) {
-			return getItem(Key, docid);
+			return parent.getItem(Key, docid);
 		}
 	}
 
 	public String[] getAllItems(int docid) throws IOException {
 		synchronized (parent) {
-			return getAllItems(docid);
+			return parent.getAllItems(docid);
 		}
 	}
 
 	public String[] getItems(String Key, int[] docids) throws IOException {
 		synchronized (parent) {
-			return getItems(Key, docids);
+			return parent.getItems(Key, docids);
 		}
 	}
 
 	public String[] getItems(String[] keys, int docid) throws IOException {
 		synchronized (parent) {
-			return getItems(keys, docid);
+			return parent.getItems(keys, docid);
 		}
 	}
 
 	public String[][] getItems(String[] Key, int[] docids) throws IOException {
 		synchronized (parent) {
-			return getItems(Key, docids);
+			return parent.getItems(Key, docids);
 		}
 	}
 
