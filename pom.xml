@@ -74,6 +74,12 @@
        <artifactId>ivy</artifactId>
        <version>${ivy.version}</version>
      </dependency>
+     
+     <dependency> <!--  oro needed by ivy, but no longer provided by hadoop -->
+		<groupId>oro</groupId>
+		<artifactId>oro</artifactId>
+		<version>2.0.8</version>
+	</dependency>
 
 		<dependency>
 			<groupId>uk.ac.gla.dcs.terrierteam</groupId>
@@ -148,30 +154,11 @@
 			<version>1.7.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
 		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId>
-			<version>0.20.2</version> <!-- Should be 0.20.2+228 -->
-
-			<exclusions>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>jetty</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>jetty-util</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>jsp-api-2.1</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>servlet-api-2.5</artifactId>
-				</exclusion>
-			</exclusions>
-
+		    <groupId>org.apache.hadoop</groupId>
+		    <artifactId>hadoop-client</artifactId>
+		    <version>2.8.2</version>
 		</dependency>
 
 		<dependency>
