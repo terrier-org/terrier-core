@@ -9,6 +9,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.terrier.matching.Matching;
+import org.terrier.querying.Manager;
+import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 import org.terrier.structures.concurrent.ConcurrentIndexUtils;
@@ -47,6 +50,35 @@ public class ParallelTRECQuerying extends TRECQuerying {
 		if (! (super.printer instanceof NullOutputFormat))
 			super.printer = new SynchronizedOutputFormat(super.printer);
 	}
+	
+	static class ThreadSafeManager extends Manager
+	{
+
+		public ThreadSafeManager() {
+			super();
+			Cache_Matching = Collections.synchronizedMap(Cache_Matching);
+		}
+
+		public ThreadSafeManager(Index _index) {
+			super(_index);
+			Cache_Matching = Collections.synchronizedMap(Cache_Matching);
+		}
+		
+		@Override
+		protected Matching getMatchingModel(Request rq) {
+			synchronized (this) {
+				Cache_Matching.clear();
+				return super.getMatchingModel(rq);
+			}			
+		}
+		
+	}
+	
+
+	@Override
+	protected void createManager() {		
+		this.queryingManager = new ThreadSafeManager(index);
+	}
 
 	final void _processQueryAndWrite(final String queryId, final String query,
 			final double cParameter, final boolean c_set) 
@@ -84,6 +116,13 @@ public class ParallelTRECQuerying extends TRECQuerying {
 	//CompletionService<Object> completionService = null;//= new ExecutorCompletionService<Object>(pool);
 	
 	@Override
+	public PrintWriter getResultFile(String predefinedName) {
+		synchronized (this) {
+			return super.getResultFile(predefinedName);
+		}		
+	}
+
+	@Override
 	public String processQueries(double c, boolean c_set) {
 		//completionService = new ExecutorCompletionService<Object>(pool);
 		return super.processQueries(c, c_set);		
@@ -102,9 +141,6 @@ public class ParallelTRECQuerying extends TRECQuerying {
 				throws IOException {
 			parent.printResults(pw, q, method, iteration, numberOfResults);
 		}
-		
-		
-		
 	}
 	
 	public static void main(String[] args)
