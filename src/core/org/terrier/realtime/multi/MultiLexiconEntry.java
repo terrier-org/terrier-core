@@ -137,7 +137,7 @@ public class MultiLexiconEntry extends LexiconEntry {
 			return this.maxtf;
 		int max = Integer.MIN_VALUE;
 		for(LexiconEntry c : children)
-			if (c.getMaxFrequencyInDocuments() > max)
+			if (c != null && c.getMaxFrequencyInDocuments() > max)
 				max = c.getMaxFrequencyInDocuments();
 		return max;
 	}
