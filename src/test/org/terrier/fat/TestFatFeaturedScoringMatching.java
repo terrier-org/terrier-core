@@ -122,8 +122,16 @@ public class TestFatFeaturedScoringMatching extends ApplicationSetupBasedTest {
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
 		mqt.setTermProperty("lazy", 1.0d);
 		mqt.setTermProperty("fox", 1.0d);		
-		mqt.add(QTPBuilder.of(new PhraseTerm(new String[]{"lazy", "dog"})).setWeight(0.1).setWeightingModels(Arrays.asList(new Tf())).build());
-		mqt.add(QTPBuilder.of(new UnorderedWindowTerm(new String[]{"lazy", "dog"}, 8)).setWeight(0.1).setWeightingModels(Arrays.asList(new Tf())).build());
+		mqt.add(QTPBuilder
+				.of(new PhraseTerm(new String[]{"lazy", "dog"}))
+				.setWeight(0.1).setTag("sdm")
+				.setWeightingModels(Arrays.asList(new Tf()))
+				.build());
+		mqt.add(QTPBuilder
+				.of(new UnorderedWindowTerm(new String[]{"lazy", "dog"}, 8))
+				.setWeight(0.1).setTag("sdm")
+				.setWeightingModels(Arrays.asList(new Tf()))
+				.build());
 		mqt.setDefaultTermWeightingModel(new Tf());
 		Matching m = new FatFull(index);
 		
@@ -184,7 +192,7 @@ public class TestFatFeaturedScoringMatching extends ApplicationSetupBasedTest {
 			assertTrue(proxLarge[0] > 0);
 			
 			final double[] proxNew = featRes.getFeatureScores("WMODEL$sdm:org.terrier.matching.models.dependence.pBiL");
-			assertNotNull(proxLarge);
+			assertNotNull(proxNew);
 			assertTrue(proxNew[0] > 0);
 			
 		}
