@@ -88,6 +88,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 		this.entryStats = entryStats;
 		this.keyFrequency = keyFrequency;
 		this.collStats = cs;
+		this.tags = new String[queryTerms.length];
 		int i=0;
 		for (CandidateResult cc: q)
 		{
