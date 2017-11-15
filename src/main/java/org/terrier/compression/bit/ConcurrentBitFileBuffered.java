@@ -64,9 +64,10 @@ public class ConcurrentBitFileBuffered extends BitFileBuffered {
 					parentFile.seek(startByteOffset);
 					inBuffer = new byte[size];
 					parentFile.readFully(inBuffer);
-					readByteOffset = 0;
-					byteRead = inBuffer[readByteOffset];
-				}				
+					
+				}
+				readByteOffset = 0;
+				byteRead = inBuffer[readByteOffset];
 			}catch(IOException ioe){
 				logger.error("Input/Output exception while reading from a random access file. Stack trace follows", ioe);
 			}
