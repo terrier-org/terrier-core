@@ -57,10 +57,10 @@ import org.junit.runners.Suite.SuiteClasses;
 	MultiThreadedShakespeareEndToEndTest.BasicSinglePassThreads.class,
 	MultiThreadedShakespeareEndToEndTest.BlockSinglePassThreads.class,
 	
-	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTest.class,
-	HadoopShakespeareEndToEndTest.BlockHadoopShakespeareEndToEndTest.class,
-	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTestLowMem.class,
-	HadoopShakespeareEndToEndTest.BlockHadoopShakespeareEndToEndTestLowMem.class,
+//	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTest.class,
+//	HadoopShakespeareEndToEndTest.BlockHadoopShakespeareEndToEndTest.class,
+//	HadoopShakespeareEndToEndTest.BasicHadoopShakespeareEndToEndTestLowMem.class,
+//	HadoopShakespeareEndToEndTest.BlockHadoopShakespeareEndToEndTestLowMem.class,
 	
 	OnDiskShakespeareEndToEndTest.class,
 	BlockOnDiskShakespeareEndToEndTest.class

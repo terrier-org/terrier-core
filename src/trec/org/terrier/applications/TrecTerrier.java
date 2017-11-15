@@ -25,6 +25,7 @@ package org.terrier.applications;
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk> (original author)
  */
 import java.io.File;
+import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,6 @@ import org.terrier.structures.IndexUtil;
 import org.terrier.structures.LexiconUtil;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.indexing.singlepass.Inverted2DirectIndexBuilder;
-import org.terrier.structures.indexing.singlepass.hadoop.Inv2DirectMultiReduce;
 import org.terrier.structures.outputformat.TRECDocidOutputFormat;
 import org.terrier.utility.ApplicationSetup;
 /**
@@ -369,18 +369,26 @@ public class TrecTerrier {
 		if (indexing) {
 			if (hadoop)
 			{
+				String[] args = null;
+				String classname = null;
 				if (inverted2direct) {
-					String[] builderCommand = {"1", "--finish"};
-					Inv2DirectMultiReduce.main(builderCommand);
+					args = new String[]{"1", "--finish"};
+					classname = "org.terrier.structures.indexing.singlepass.hadoop.Inv2DirectMultiReduce";
 				}
-
+				else
+				{
+					args = new String[0];
+					classname = "org.terrier.applications.HadoopIndexing";
+				}
 				try{
-					HadoopIndexing.main(new String[]{});
+					Class<?> clz = ApplicationSetup.getClass(classname);
+					Method thisMethod = clz.getDeclaredMethod("main",String[].class);
+					thisMethod.invoke(null, (Object) args);
 				} catch (Exception e) {
-					System.err.println(e);
+					System.err.println("Hadoop indexing no longer part of terrier-core");
 					e.printStackTrace();
-					return;
 				}
+				return;
 			}
 			else
 			{

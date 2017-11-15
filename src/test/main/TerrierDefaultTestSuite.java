@@ -100,9 +100,6 @@ import org.terrier.structures.indexing.TestCompressingMetaIndexBuilderPartitione
 import org.terrier.structures.indexing.TestIndexing;
 import org.terrier.structures.indexing.TestIndexingFatalErrors;
 import org.terrier.structures.indexing.singlepass.TestInverted2DirectIndexBuilder;
-import org.terrier.structures.indexing.singlepass.hadoop.TestBitPostingIndexInputFormat;
-import org.terrier.structures.indexing.singlepass.hadoop.TestPositingAwareSplit;
-import org.terrier.structures.indexing.singlepass.hadoop.TestSplitEmittedTerm;
 import org.terrier.structures.postings.TestFieldORIterablePosting;
 import org.terrier.structures.postings.TestFieldOnlyIterablePosting;
 import org.terrier.structures.postings.TestORIterablePosting;
@@ -244,10 +241,10 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestInverted2DirectIndexBuilder.class,
 	
 	//.structures.indexing.sp.hadoop
-	TestBitPostingIndexInputFormat.class,
-	TestSplitEmittedTerm.class,
-	TestPositingAwareSplit.class,
-	
+//	TestBitPostingIndexInputFormat.class,
+//	TestSplitEmittedTerm.class,
+//	TestPositingAwareSplit.class,
+//	
 	//structures.postings
 	TestFieldOnlyIterablePosting.class,
 	TestORIterablePosting.class,
