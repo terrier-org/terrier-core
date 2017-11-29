@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -276,10 +277,19 @@ public class IvyResolver implements TerrierApplicationPlugin {
 			Artifact[] artifacts,
 			File cacheDirectory)
 	{
-		return Arrays.asList(artifacts).stream().map( artifactInfo -> {
+		System.out.println(Arrays.toString(artifacts));
+		return Arrays.asList(artifacts).stream().flatMap( artifactInfo -> {
+			System.out.println("\t" +artifactInfo.toString() + " attr " + artifactInfo.getAttributes()
+					+ " eattr " + artifactInfo.getExtraAttributes());
 			ModuleRevisionId artifact = artifactInfo.getModuleRevisionId();
-			return cacheDirectory.getAbsolutePath() + File.separator +
-				artifact.getOrganisation() + "_" + artifact.getName() + "-" + artifact.getRevision() + ".jar";
+			String classifier = artifactInfo.getAttribute("classifier");
+			List<String> rtr = new ArrayList<>();
+			rtr.add(cacheDirectory.getAbsolutePath() + File.separator +
+					artifact.getOrganisation() + "_" + artifact.getName() + "-" + artifact.getRevision() + ".jar");
+			if (classifier != null)
+				rtr.add( cacheDirectory.getAbsolutePath() + File.separator +
+					artifact.getOrganisation() + "_" + artifact.getName() + "-" + artifact.getRevision()  + "-" + classifier + ".jar");
+			return rtr.stream();
 		}).collect(Collectors.toList());
 	}
 	
@@ -290,6 +300,7 @@ public class IvyResolver implements TerrierApplicationPlugin {
 	{
 		artifacts.stream().forEach(mvn -> {
 			ModuleRevisionId ri = ModuleRevisionId.newInstance(mvn.groupId, mvn.artifactId, mvn.version);
+			//ModuleRevisionId ri = ModuleRevisionId.newInstance(
 			DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ri, false, false);
 			dd.addDependencyConfiguration(ivyConfName, ivyConfName + "(runtime)");
 			// scalastyle:off println

@@ -570,7 +570,7 @@ public class ApplicationSetup {
 	protected static void setupPlugins()
 	{
 		loadedPlugins  = new LinkedList<TerrierApplicationPlugin>();
-		final String[] pluginNames = getProperty("terrier.plugins", IvyResolver.class.getName()).split("\\s*,\\s*");
+		final String[] pluginNames = getProperty("terrier.plugins", AetherResolver.class.getName()).split("\\s*,\\s*");
 		for (String pluginName : pluginNames)
 		{
 			if (pluginName.length() == 0)

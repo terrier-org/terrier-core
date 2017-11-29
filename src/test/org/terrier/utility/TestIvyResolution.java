@@ -11,9 +11,18 @@ public class TestIvyResolution extends ApplicationSetupBasedTest {
 
 	@Test public void testImportSingleDirect() throws Exception
 	{
-		new IvyResolver().initialise("com.harium.database:sqlite:1.0.5");
+		new AetherResolver().initialise("com.harium.database:sqlite:1.0.5");
 		assertNotNull(Thread.currentThread().getContextClassLoader().loadClass("com.harium.database.sqlite.module.SQLiteDatabaseModule"));
 		//Class.forName("com.harium.database.sqlite.module.SQLiteDatabaseModule");
+	}
+	
+	@Test public void testImportSingleIndirectWithClassifier() throws Exception
+	{
+		new AetherResolver().initialise("org.nd4j:nd4j-native-platform:0.8.0,org.nd4j:nd4j-native:0.8.0");
+		Class<?> clz = Thread.currentThread().getContextClassLoader().loadClass("org.nd4j.linalg.factory.Nd4j");
+		assertNotNull(clz);
+		Object instance = clz.newInstance();
+		assertNotNull(instance);
 	}
 	
 	@Test public void testImportSingleViaTerrierProperties() throws Exception
@@ -29,7 +38,7 @@ public class TestIvyResolution extends ApplicationSetupBasedTest {
 	@Override
 	protected void addGlobalTerrierProperties(Properties p) throws Exception {
 		super.addGlobalTerrierProperties(p);
-		p.setProperty("terrier.ivy.coords", "org.xerial:sqlite-jdbc:3.20.1");
+		p.setProperty("terrier.mvn.coords", "org.xerial:sqlite-jdbc:3.20.1");
 	}
 
 }
