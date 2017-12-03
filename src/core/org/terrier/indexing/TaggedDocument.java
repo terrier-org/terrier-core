@@ -233,6 +233,15 @@ public class TaggedDocument implements Document {
 		this.tokeniser = _tokeniser;
 		this.currentTokenStream = Tokeniser.EMPTY_STREAM;
 		
+		for(int i=0;i<abstractCount;i++)
+		{
+			abstracts[i] = new StringBuilder(abstractlengths[i]);
+			if (! abstractTagsCaseSensitive)
+				 abstracttags[i] = abstracttags[i].toUpperCase();
+			if (abstracttags[i].toUpperCase().equals("ELSE"))
+				elseAbstractSpecialTag = i;
+		}
+		
 		if (abstracttags.length>0) {
 			considerAbstracts=true;
 			abstractName2Index = new TObjectIntHashMap<String>();
@@ -460,9 +469,8 @@ public class TaggedDocument implements Document {
 				return null;
 			}
 		}
-		if (ch == -1) {
-			processEndOfDocument();			
-		}
+		
+		String rtr = null;
 		boolean hasWhitelist = _tags.hasWhitelist();
 		if (!btag && 
 				(!hasWhitelist || (hasWhitelist && inTagToProcess )) && 
@@ -470,19 +478,18 @@ public class TaggedDocument implements Document {
 		{
 			if (!stk.empty() && _exact.isTagToProcess(stk.peek()))
 				return lowercase ? s.toLowerCase() : s;
-			//}
 			if (considerAbstracts) {
 				if (abstractTagsCaseSensitive) saveToAbstract(s,tagName);
 				else saveToAbstract(s,upperCaseTagName);
 			}
 			currentTokenStream = tokeniser.tokenise(new StringReader(s));
 			if (currentTokenStream.hasNext())
-				return currentTokenStream.next();
-//			if (lowercase)
-//				return check(s.toLowerCase());
-//			return(check(s));
+				rtr = currentTokenStream.next();
 		}
-		return null;
+		if (ch == -1) {
+			processEndOfDocument();			
+		}
+		return rtr;
 	}
 	
 	protected void processEndOfDocument()
@@ -511,9 +518,8 @@ public class TaggedDocument implements Document {
 	 * @param tag - the tag that this text came from
 	 */
 	protected void saveToAbstract(String text, String tag) {
-		if (tag == null) return;
 		
-		if (abstractName2Index.containsKey(tag)) {
+		if (tag != null && abstractName2Index.containsKey(tag)) {
 			int i = abstractName2Index.get(tag);
 			final int maxAbstractLength = abstractlengths[i];
 			final int currentAbstractLength = abstracts[i].length();
