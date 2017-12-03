@@ -27,11 +27,7 @@
 package org.terrier.indexing;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 
@@ -40,7 +36,6 @@ import org.terrier.indexing.tokenisation.EnglishTokeniser;
 import org.terrier.indexing.tokenisation.Tokeniser;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
-import org.terrier.utility.Files;
 
 public class TestTaggedDocument extends BaseTestDocument {
 
@@ -140,51 +135,66 @@ public class TestTaggedDocument extends BaseTestDocument {
 		testDocument(makeDocument("<reda ><body>hello</body></reda>", ENGLISH_TOKENISER), "hello" );
 	}
 	
-	
-	public void testAbstractCreation() {
+	@Test public void testAbstractCreationTitleCropped() {
 		
-		ApplicationSetup.setProperty("TrecDocTags.process", "TITLE,TEXT");
+		//ApplicationSetup.setProperty("TrecDocTags.process", "TITLE,TEXT");
 		ApplicationSetup.setProperty("TaggedDocument.abstracts", "TITLE");
 		ApplicationSetup.setProperty("TaggedDocument.abstracts.tags", "TITLE");
 		ApplicationSetup.setProperty("TaggedDocument.abstracts.lengths", "11");
-		try {
-			String dataFilename = writeTemporaryFile("test.trec", new String[]{
-					"<DOC>",
-					"<DOCNO>doc1</DOCNO>",
-					"<TITLE>No 'title' LIKE THIS title</TITLE>",
-					"<TEXT>test</TEXT>",
-					"</DOC>",
-					"<DOC>",
-					"<DOCNO>doc2</DOCNO>",
-					"<TITLE>NOT</TITLE>",
-					"<TEXT>test this here now</TEXT>",
-					"</DOC>"
-					
-				});
-			Collection c = new TRECCollection(Files.openFileStream(dataFilename));
-			Document d;
-			assertTrue(c.nextDocument());
-			d = c.getDocument();
-			assertNotNull(d);
-			assertEquals("doc1", d.getProperty("docno"));
-			assertEquals("No 'title'", d.getProperty("TITLE"));
-			//if (d.getProperty("SUPERAWSOMEHEADER").compareTo("no 'header'")==0) assertTrue(false);
-			
-			assertTrue(c.nextDocument());
-			d = c.getDocument();
-			assertNotNull(d);
-			assertEquals("doc2", d.getProperty("docno"));
-			assertEquals("NOT", d.getProperty("TITLE"));
-			assertFalse(c.nextDocument());
-			c.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			assertTrue(false);
-		} catch (Exception e) {
-			e.printStackTrace();
-			assertTrue(false);
-		}
 		
+		Document d = makeDocument(
+				"<TITLE>No 'title' LIKE THIS title</TITLE>\n"+
+				"<TEXT>test</TEXT>\n", 
+				ENGLISH_TOKENISER);
+		while(! d.endOfDocument()) d.getNextTerm();
+		assertEquals("No 'title'", d.getProperty("TITLE"));
+	}
+	
+	@Test public void testAbstractCreationTitle() {	
+		
+		ApplicationSetup.setProperty("TaggedDocument.abstracts", "TITLE");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.tags", "TITLE");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.lengths", "11");
+		
+		Document d = makeDocument(
+					"<TITLE>NOT</TITLE>\n"+
+					"<TEXT>test this here now</TEXT>\n", ENGLISH_TOKENISER);
+		while(! d.endOfDocument()) d.getNextTerm();
+		assertEquals("NOT", d.getProperty("TITLE"));
+	}
+	
+	@Test public void testAbstractCreation_roottag() {
+		
+		ApplicationSetup.setProperty("TrecDocTags.process", "");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts", "body");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.tags", "ELSE");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.lengths", "11");
+		
+		Document d;
+		
+		d = makeDocument(
+				"<TEXT>test</TEXT>\n", 
+				ENGLISH_TOKENISER);
+		while(! d.endOfDocument()) d.getNextTerm();
+		assertEquals("test", d.getProperty("body"));
+		
+	}
+	
+	
+	@Test public void testAbstractCreation_noroottag() {
+		
+		ApplicationSetup.setProperty("TrecDocTags.process", "");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts", "body");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.tags", "ELSE");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.lengths", "11");
+		
+		Document d;
+		
+		d = makeDocument(
+				"test\n", 
+				ENGLISH_TOKENISER);
+		while(! d.endOfDocument()) d.getNextTerm();
+		assertEquals("test", d.getProperty("body"));
 		
 		
 	}
