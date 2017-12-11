@@ -1,7 +1,6 @@
 package org.terrier.utility;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -21,15 +20,18 @@ import com.jcabi.aether.Aether;
 
 
 
-/** Resolves Maven dependencies specified in <tt>terrier.ivy.coords</tt> 
+/** Resolves Maven dependencies specified in <tt>terrier.mvn.coords</tt> 
  * and adds to classpath.
  * <p><b>Properties</b>
- * <ul><li><tt>terrier.ivy.coords</tt> - SBT-like expression of dependency. 
+ * <ul><li><tt>terrier.mvn.coords</tt> - SBT-like expression of dependency. 
  * 	E.g. <tt>com.harium.database:sqlite:1.0.5</tt></li>
  * <ul>
  * @since 5.0
  */
 public class AetherResolver implements TerrierApplicationPlugin {
+
+	//TODO consider using the aether client directly, rather than the jcabi wrapper, which imports other classes.
+	//see https://github.com/liferay/liferay-blade-cli/blob/28556e7e8560dd27d4a5153cb93196ca059ac081/com.liferay.blade.cli/src/com/liferay/blade/cli/aether/AetherClient.java
 	
 	volatile static String initCoords = null;
 	final static Object lock = new Object();
@@ -75,8 +77,10 @@ public class AetherResolver implements TerrierApplicationPlugin {
 		}
 	}
 
-	PrintStream printStream = System.err;
-	
+	private static final String USER_HOME = System.getProperty("user.home");
+
+	private static final File USER_MAVEN_CONFIGURATION_HOME = new File(
+		USER_HOME, ".m2");
 	
 	@Override
 	public void initialise() throws Exception {
@@ -97,7 +101,8 @@ public class AetherResolver implements TerrierApplicationPlugin {
 	}
 	
 	public void initialise(String coordinates) throws Exception {
-		File local = new File("/tmp/local-repository");
+		//File local = new File("/tmp/local-repository");
+		File local = new File(USER_MAVEN_CONFIGURATION_HOME, "repository");
 		Collection<RemoteRepository> remotes = Arrays.asList(
 			      new RemoteRepository(
 			        "maven-central",
