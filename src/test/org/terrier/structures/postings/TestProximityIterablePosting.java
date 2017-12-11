@@ -191,14 +191,14 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertEquals(IterablePosting.EOL, ip.next());
 		
 		//one dist  match
-				ip = ProximityIterablePosting.createProximityPostingList(
-						new String[]{"flip", "coin"}, 
-						index.getLexicon(), 
-						(PostingIndex<Pointer>) index.getInvertedIndex(),
-						0);
-				assertNotNull(ip);
-				assertEquals(4, ip.next());
-				assertEquals(IterablePosting.EOL, ip.next());
+		ip = ProximityIterablePosting.createProximityPostingList(
+				new String[]{"flip", "coin"}, 
+				index.getLexicon(), 
+				(PostingIndex<Pointer>) index.getInvertedIndex(),
+				0);
+		assertNotNull(ip);
+		assertEquals(4, ip.next());
+		assertEquals(IterablePosting.EOL, ip.next());
 		
 	}
 	
