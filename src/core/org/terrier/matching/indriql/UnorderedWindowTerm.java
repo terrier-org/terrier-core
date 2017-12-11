@@ -27,6 +27,11 @@ public class UnorderedWindowTerm extends ANDQueryTerm {
 		this.distance = dist;
 	}
 	
+	public int getDistance()
+	{
+		return this.distance;
+	}
+	
 	
 	@Override
 	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats) {
@@ -45,6 +50,7 @@ public class UnorderedWindowTerm extends ANDQueryTerm {
 	protected IterablePosting createFinalPostingIterator(
 			List<IterablePosting> postings, List<EntryStatistics> pointers)
 			throws IOException {
+		assert postings.size() <= distance;
 		return new ProximityIterablePosting(
 				postings.toArray(new IterablePosting[postings.size()]),
 				pointers.toArray(new EntryStatistics[pointers.size()]), 

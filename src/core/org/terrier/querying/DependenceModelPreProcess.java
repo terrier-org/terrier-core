@@ -95,7 +95,10 @@ public class DependenceModelPreProcess implements Process {
 		}
 		
 		//#uw12
-		QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowTerm(queryTerms.toArray(new String[queryTerms.size()]), 12));
+		List<String> allTerms = queryTerms;
+		if (allTerms.size() > 12)
+			allTerms = allTerms.subList(0, 11);
+		QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowTerm(allTerms.toArray(new String[allTerms.size()]), 12));
 		qtp.setWeight(0.1d);
 		qtp.addWeightingModel(getModel(modelName,12));
 		qtp.setTag(DEPENDENCE_TAG);
