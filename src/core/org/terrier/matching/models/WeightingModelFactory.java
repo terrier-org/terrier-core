@@ -69,7 +69,8 @@ public class WeightingModelFactory {
 	public static WeightingModel newInstance(String name, Index index) {
 		final Logger logger = LoggerFactory.getLogger(WeightingModelFactory.class);
 		WeightingModel model = null;
-		
+		if (name == null || name.length() == 0)
+			throw new IllegalArgumentException("Weighting model must be defined and non-empty");
 		name = name.replaceFirst("^([^\\.]+(\\(|$))", NAMESPACE + "$1");
 		name = name.replaceAll("uk.ac.gla.terrier", "org.terrier");
 		
