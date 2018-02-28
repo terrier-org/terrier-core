@@ -1,8 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
-<head>
-<title>org.terrier.applications package</title>
-<!--
+/*
 Terrier - Terabyte Retriever 
 Webpage: http://ir.dcs.gla.ac.uk/terrier 
 Contact: terrier{a.}dcs.gla.ac.uk
@@ -20,11 +16,9 @@ implied. See the License for the specific language governing rights and
 limitations under the License.
 
 Copyright (C) 2004-2014 the University of Glasgow. All Rights Reserved.
--->
-</head>
-<body bgcolor="white">
-<p>Provides application-level code that use the Terrier platform to 
+*/
+package org.terrier.applications;
+/** Provides application-level code that use the Terrier platform to 
 perform indexing and retrieval from either standard test collections, 
-interactive querying of a indexed collection, or desktop search.</p>
-</body>
-</html>
+interactive querying of a indexed collection.
+*/
