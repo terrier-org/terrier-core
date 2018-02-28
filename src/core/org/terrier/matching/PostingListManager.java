@@ -28,6 +28,7 @@
 package org.terrier.matching;
 
 import gnu.trove.TDoubleArrayList;
+import gnu.trove.TIntArrayList;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -237,6 +238,9 @@ public class PostingListManager implements Closeable
 	protected final List<String> termTags = new ArrayList<String>();
 	
 	
+	protected final TIntArrayList matchOnTerms = new TIntArrayList();
+	protected final TIntArrayList nonMatchOnTerms = new TIntArrayList();
+	
 	/** key (query) frequencies for each term */
 	protected final TDoubleArrayList termKeyFreqs = new TDoubleArrayList();
 	
@@ -288,6 +292,7 @@ public class PostingListManager implements Closeable
 		this(_index, _cs);
 		
 		int termIndex = -1;
+		
 		for(Map.Entry<QueryTerm, MatchingQueryTerms.QueryTermProperties> entry : mqt)
 		{
 			termIndex++;
@@ -317,6 +322,14 @@ public class PostingListManager implements Closeable
 							+ term.toString() + "), which was past the maximum supported 64");
 					}
 				}
+				if (mqt.matchOnTags.size() == 0 || mqt.matchOnTags.contains( me.getTag() ) )
+				{
+					matchOnTerms.add(termIndex);
+				}
+				else
+				{
+					nonMatchOnTerms.add(termIndex);
+				}
 			} else {
 				//this provides support for Fat indices	
 				LexiconEntry le = _index.getLexicon().getLexiconEntry(entry.getKey().toString());
@@ -326,8 +339,16 @@ public class PostingListManager implements Closeable
 				termStatistics.add(entry.getValue().stats != null ? entry.getValue().stats : le);	
 				termKeyFreqs.add(entry.getValue().weight);
 				termStrings.add(term.toString());
-				termTags.add(entry.getValue().tag);
+				termTags.add(entry.getValue().getTag());
 				termModels.add(WeightingModelMultiProxy.getModel(new WeightingModel[0]));
+				if (mqt.matchOnTags.size() == 0 || mqt.matchOnTags.contains( entry.getValue().getTag() ))
+				{
+					matchOnTerms.add(termIndex);
+				}
+				else
+				{
+					nonMatchOnTerms.add(termIndex);
+				}
 			}
 		}
 		
@@ -393,6 +414,18 @@ public class PostingListManager implements Closeable
 	public int getNumTerms()
 	{
 		return numTerms;
+	}
+	
+	/** Returns the indices of the terms that are considered (i.e. scored) during matching */
+	public int[] getMatchingTerms()
+	{
+		return matchOnTerms.toNativeArray();
+	}
+	
+	/** Returns the indices of the terms that must be called through assignScore() but not actually used to match documents. */
+	public int[] getNonMatchingTerms()
+	{
+		return nonMatchOnTerms.toNativeArray();
 	}
 	
 	
