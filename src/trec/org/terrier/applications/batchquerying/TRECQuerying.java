@@ -309,8 +309,6 @@ public class TRECQuerying {
 			if (!className.contains("."))
 				className = "org.terrier.applications.TRECQuerying$"
 						+ className;
-			else if (className.startsWith("uk.ac.gla.terrier"))
-				className = className.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			rtr = ApplicationSetup.getClass(className).asSubclass(QueryResultCache.class).newInstance();
 		} catch (Exception e) {
 			logger.error("", e);
@@ -326,8 +324,6 @@ public class TRECQuerying {
 			logger.debug("Trying to load "+className);
 			if (!className.contains("."))
 				className = OutputFormat.class.getPackage().getName() +'.' + className;
-			else if (className.startsWith("uk.ac.gla.terrier"))
-				className = className.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			rtr = ApplicationSetup.getClass(className).asSubclass(OutputFormat.class)
 					.getConstructor(Index.class).newInstance(this.index);
 		} catch (Exception e) {
@@ -346,8 +342,6 @@ public class TRECQuerying {
 		try {
 			if (managerName.indexOf('.') == -1)
 				managerName = "org.terrier.querying." + managerName;
-			else if (managerName.startsWith("uk.ac.gla.terrier"))
-				managerName = managerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			queryingManager = (Manager) (ApplicationSetup.getClass(managerName)
 					.getConstructor(new Class[] { Index.class })
 					.newInstance(new Object[] { index }));

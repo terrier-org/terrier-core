@@ -125,8 +125,6 @@ public class DFRWeightingModel extends WeightingModel {
 			// initialise the basic model
 			if (basicModelName.indexOf('.') < 0)
 				basicModelName = this.BASICMODEL_PREFIX.concat(basicModelName);
-			else if (basicModelName.startsWith("uk.ac.gla.terrier"))
-				basicModelName = basicModelName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			this.basicModel = ApplicationSetup.getClass(basicModelName.trim()).asSubclass(BasicModel.class).newInstance();
 			/*if(logger.isInfoEnabled()){
@@ -148,8 +146,6 @@ public class DFRWeightingModel extends WeightingModel {
 			// initialise the after effect component
 			if (afterEffectName.indexOf('.') < 0)
 				afterEffectName = this.AFTEREFFECT_PREFIX.concat(afterEffectName);
-			else if (afterEffectName.startsWith("uk.ac.gla.terrier"))
-				afterEffectName = basicModelName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			if (ENABLE_AFTEREFFECT)
 				this.afterEffect = ApplicationSetup.getClass(afterEffectName.trim()).asSubclass(AfterEffect.class).newInstance();
@@ -170,8 +166,6 @@ public class DFRWeightingModel extends WeightingModel {
 			}
 			if (normalisationName.indexOf('.') < 0)
 				normalisationName = this.NORMALISATION_PREFIX.concat(normalisationName);
-			else if (normalisationName.startsWith("uk.ac.gla.terrier"))
-				normalisationName = normalisationName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			this.normalisation = ApplicationSetup.getClass(normalisationName.trim()).asSubclass(Normalisation.class).newInstance();
 			// ------------------------------------------------------

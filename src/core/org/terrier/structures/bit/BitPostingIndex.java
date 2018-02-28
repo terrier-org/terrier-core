@@ -149,8 +149,6 @@ public class BitPostingIndex implements PostingIndex<BitIndexPointer>
 			}
 			else
 			{
-				if (_dataSource.startsWith("uk.ac.gla.terrier"))
-					_dataSource = _dataSource.replaceAll("uk.ac.gla.terrier", "org.terrier");				
 				try{
 					this.file[i] = ApplicationSetup.getClass(_dataSource).asSubclass(BitInSeekable.class).getConstructor(String.class).newInstance(dataFilename);
 				} catch (Exception e) {

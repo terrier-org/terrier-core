@@ -114,7 +114,7 @@ public class CollectionFactory
 				Collection newColl = ApplicationSetup.getClass(normaliseCollectionName(collNames[i]))
 					.asSubclass(Collection.class)
 					.getConstructor(new Class[]{Collection.class})
-         	       .newInstance(new Object[]{rtr});	
+					.newInstance(new Object[]{rtr});	
 				rtr = newColl;
 			}
         } catch (Exception e) {
@@ -136,9 +136,7 @@ public class CollectionFactory
 	protected static String normaliseCollectionName(String collectionName)
 	{
 		if (collectionName.indexOf('.') == -1)
-            collectionName = "org.terrier.indexing."+collectionName;
-		else if (collectionName.startsWith("uk.ac.gla.terrier"))
-			collectionName = collectionName.replaceAll("uk.ac.gla.terrier", "org.terrier");
+			collectionName = "org.terrier.indexing."+collectionName;
 		return collectionName;
 	}
 	

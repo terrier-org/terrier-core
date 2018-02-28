@@ -130,8 +130,6 @@ public class Manager implements IManager
 			K rtr = null;
 			if (Name.indexOf(".") < 0 )
 				Name = def_namespace +'.' +Name;
-			else if (Name.startsWith("uk.ac.gla.terrier"))
-				Name = Name.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			//check for already loaded post filters
 			if (caching)
@@ -337,8 +335,6 @@ public class Manager implements IManager
 			{
 				if (ModelNames[i].indexOf(".") < 0 )
 					ModelNames[i]  = NAMESPACE_MATCHING + ModelNames[i];
-				else if (ModelNames[i].startsWith("uk.ac.gla.terrier"))
-					ModelNames[i] = ModelNames[i].replaceAll("uk.ac.gla.terrier", "org.terrier");
 				entireSequence.append(ModelNames[i]);
 				entireSequence.append(",");
 			}

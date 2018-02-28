@@ -110,8 +110,6 @@ public class TRECIndexing extends BatchIndexing {
 				: "BasicIndexer");
 		if (indexerName.indexOf('.') == -1)
 			indexerName = "org.terrier.structures.indexing.classical."+indexerName;
-		else if (indexerName.startsWith("uk.ac.gla.terrier"))
-			indexerName = indexerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 		Indexer _indexer = null;
 		try{
 			_indexer = ApplicationSetup.getClass(indexerName).asSubclass(Indexer.class)

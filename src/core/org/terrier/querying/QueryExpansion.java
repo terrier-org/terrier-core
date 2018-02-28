@@ -186,8 +186,6 @@ public class QueryExpansion implements Process {
 			ExpansionTerms next = null;
 			if (! expanderName.contains("."))
 				expanderName = "org.terrier.querying."+expanderName;
-			else if (expanderName.startsWith("uk.ac.gla.terrier"))
-				expanderName = expanderName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			try{
 				Class<? extends ExpansionTerms> clz = ApplicationSetup.getClass(expanderName).asSubclass(ExpansionTerms.class);
@@ -222,8 +220,6 @@ public class QueryExpansion implements Process {
 			String name = names[i];
 			if (! name.contains("."))
 				name = "org.terrier.querying."+name;
-			else if (name.startsWith("uk.ac.gla.terrier"))
-				name = name.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			FeedbackSelector next = null;
 			try{

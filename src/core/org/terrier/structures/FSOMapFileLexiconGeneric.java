@@ -104,9 +104,6 @@ public abstract class FSOMapFileLexiconGeneric<K1,K2 extends WritableComparable>
     	FSOrderedMapFile<K,LexiconEntry>rtr = null;
     	
     	try {
-    		if (dataSource.startsWith("uk.ac.gla.terrier"))
-    			dataSource = dataSource.replaceAll("uk.ac.gla.terrier", "org.terrier");				
-			
     		Class<?> mapClass = ApplicationSetup.getClass(dataSource).asSubclass(FSOrderedMapFile.class);
 			rtr = (FSOrderedMapFile<K, LexiconEntry>) mapClass
 				.getConstructor(String.class, Boolean.TYPE, FixedSizeWriteableFactory.class, FixedSizeWriteableFactory.class)

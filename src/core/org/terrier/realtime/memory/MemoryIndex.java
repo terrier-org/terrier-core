@@ -762,9 +762,6 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 					continue;
 				if (className.indexOf(".") < 0)
 					className = PIPELINE_NAMESPACE + className;
-				else if (className.startsWith("uk.ac.gla.terrier"))
-					className = className.replaceAll("uk.ac.gla.terrier",
-							"org.terrier");
 				Class<? extends TermPipeline> pipeClass = ApplicationSetup.getClass(className).asSubclass(TermPipeline.class);
 				tmp = (pipeClass
 						.getConstructor(new Class[] { TermPipeline.class })

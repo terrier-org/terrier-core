@@ -48,14 +48,6 @@ public class TestWeightingModelFactory {
 		assertTrue(pl2 instanceof PL2);
 	}
 	
-	@Test public void testGetBasicModelsWrongNamespace()
-	{
-		WeightingModel bm25 = WeightingModelFactory.newInstance("uk.ac.gla.terrier.matching.models.BM25");
-		assertTrue(bm25 instanceof BM25);
-		WeightingModel pl2 = WeightingModelFactory.newInstance("uk.ac.gla.terrier.matching.models.PL2");
-		assertTrue(pl2 instanceof PL2);
-	}
-	
 	@Test public void testGetAdvancedModels()
 	{
 		WeightingModel m = WeightingModelFactory.newInstance("DFRWeightingModel(P,L,2)");

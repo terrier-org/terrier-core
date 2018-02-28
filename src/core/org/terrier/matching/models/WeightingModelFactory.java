@@ -72,7 +72,6 @@ public class WeightingModelFactory {
 		if (name == null || name.length() == 0)
 			throw new IllegalArgumentException("Weighting model must be defined and non-empty");
 		name = name.replaceFirst("^([^\\.]+(\\(|$))", NAMESPACE + "$1");
-		name = name.replaceAll("uk.ac.gla.terrier", "org.terrier");
 		
 		// check for an already instantiated model
 		if (!cache.containsKey(index)) {
