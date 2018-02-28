@@ -355,10 +355,7 @@ public class SimultaneousIndexingRetrievalTest extends ApplicationSetupBasedTest
 			srq.addMatchingModel("Matching","DirichletLM");
 			srq.setOriginalQuery(sb.toString());
 			
-			queryingManager.runPreProcessing(srq);
-			queryingManager.runMatching(srq);
-			queryingManager.runPostProcessing(srq);
-			queryingManager.runPostFilters(srq);
+			queryingManager.runSearchRequest(srq);
 			return srq.getResultSet();
 		}
 

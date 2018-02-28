@@ -72,10 +72,7 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 		Manager m = new Manager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox");
 		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		ResultSet rs = srq.getResultSet();
 		assertEquals(1, rs.getResultSize());
 		SimpleDecorate decorate = new SimpleDecorate();
@@ -90,10 +87,7 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 		Manager m = new Manager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox");
 		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		ResultSet rs = srq.getResultSet();
 		assertEquals(1, rs.getResultSize());
 		SimpleDecorate decorate = new SimpleDecorate();
@@ -111,10 +105,7 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 		Manager m = new Manager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox foxes");
 		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		ResultSet rs = srq.getResultSet();
 		assertEquals(2, rs.getResultSize());
 		SimpleDecorate decorate = new SimpleDecorate();

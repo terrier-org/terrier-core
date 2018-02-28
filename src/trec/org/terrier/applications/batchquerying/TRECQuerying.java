@@ -37,21 +37,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.indriql.IndriQLParser;
-import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.models.InL2;
 import org.terrier.matching.models.queryexpansion.Bo1;
+import org.terrier.querying.IManager;
 import org.terrier.querying.Manager;
 import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
-import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.structures.Index;
 import org.terrier.structures.cache.NullQueryResultCache;
 import org.terrier.structures.cache.QueryResultCache;
@@ -400,7 +401,7 @@ public class TRECQuerying {
 	 * 
 	 * @return The querying manager.
 	 */
-	public Manager getManager() {
+	public IManager getManager() {
 		return queryingManager;
 	}
 
@@ -649,26 +650,13 @@ public class TRECQuerying {
 
 		if (logger.isInfoEnabled())
 			logger.info(queryId + " : " + query);
-		SearchRequest srq = null;
+		SearchRequest srq = queryingManager.newSearchRequest(queryId, query);
 		if (indriQL)
 		{
-			srq = queryingManager.newSearchRequest(queryId);
-			try{
-				QueryTerm[] ts = new IndriQLParser(query).parseAll();
-				Request rq = (Request)srq;
-				MatchingQueryTerms mqt = new MatchingQueryTerms(queryId, rq);
-				for(QueryTerm t : ts)
-				{
-					mqt.add( QTPBuilder.of(t).setWeight(1d).build() );
-				}
-				rq.setMatchingQueryTerms(mqt);
-				srq.setControl("parsecontrols", "off");
-				srq.setControl("parseql", "off");
-			}catch (Exception e) {
-				
-			}			
-		} else {
-			srq = queryingManager.newSearchRequest(queryId, query);
+			srq.setControl("parsecontrols", "off");
+			srq.setControl("parseql", "off");
+			srq.setControl("terrierql", "off");
+			srq.setControl("indriql", "on");
 		}
 				
 		initSearchRequestModification(queryId, srq);
@@ -701,10 +689,7 @@ public class TRECQuerying {
 		if (logger.isInfoEnabled())
 			logger.info("Processing query: " + queryId + ": '" + query + "'");
 		matchingCount++;
-		queryingManager.runPreProcessing(srq);
-		queryingManager.runMatching(srq);
-		queryingManager.runPostProcessing(srq);
-		queryingManager.runPostFilters(srq);
+		queryingManager.runSearchRequest(srq);
 		resultsCache.add(srq);
 		return srq;
 	}

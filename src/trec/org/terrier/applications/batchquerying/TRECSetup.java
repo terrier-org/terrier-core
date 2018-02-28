@@ -24,7 +24,10 @@
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk> (original author)
  */
 package org.terrier.applications.batchquerying;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 /**
  * This method is for setting the correct file and directory names
  * in the files etc/collection.spec, etc/terrier.properties, etc.
@@ -138,19 +141,17 @@ public class TRECSetup {
 			System.out.println("Creating terrier.properties file.");		
 			
 			propertiesWriter.println("#default controls for manager");
-			propertiesWriter.println("querying.preprocesses.order=TerrierQLToControls,TerrierQLToMatchingQueryTerms,ApplyTermPipeline");
-			propertiesWriter.println("querying.preprocesses.controls=parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,applypipeline:ApplyTermPipeline");
 			
-			propertiesWriter.println("#default controls for query expansion");
-			propertiesWriter.println("querying.postprocesses.order=QueryExpansion");
-			propertiesWriter.println("querying.postprocesses.controls=qe:QueryExpansion");
+			propertiesWriter.println("querying.processes=terrierql:TerrierQLParser,parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,"
+					+"indriql:IndriQLParser,applypipeline:ApplyTermPipeline,localmatching:Manager$ApplyLocalMatching,"
+					+"qe:QueryExpansion,filters:Manager$PostFilterProcess");
+			
 			propertiesWriter.println("#default controls for the web-based interface. SimpleDecorate");
 			propertiesWriter.println("#is the simplest metadata decorator. For more control, see Decorate.");
-			propertiesWriter.println("querying.postfilters.order=SimpleDecorate,SiteFilter,Scope");
-			propertiesWriter.println("querying.postfilters.controls=decorate:SimpleDecorate,site:SiteFilter,scope:Scope");
+			propertiesWriter.println("querying.postfilters=decorate:SimpleDecorate,site:SiteFilter,scope:Scope");
 			propertiesWriter.println();
 			propertiesWriter.println("#default and allowed controls");
-			propertiesWriter.println("querying.default.controls=parsecontrols:on,parseql:on,applypipeline:on");
+			propertiesWriter.println("querying.default.controls=parsecontrols:on,parseql:on,applypipeline:on,terrierql:on,localmatching:on,filters:on");
 			propertiesWriter.println("querying.allowed.controls=scope,qe,qemodel,start,end,site,scope");
 			propertiesWriter.println();
 			propertiesWriter.println("#document tags specification");

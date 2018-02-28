@@ -102,10 +102,7 @@ public class WebsiteSearch {
 		srq.addMatchingModel("Matching","DirichletLM");
 		srq.setOriginalQuery(sb.toString());
 		srq.setControl("decorate", "on");
-		queryingManager.runPreProcessing(srq);
-		queryingManager.runMatching(srq);
-		queryingManager.runPostProcessing(srq);
-		queryingManager.runPostFilters(srq);
+		queryingManager.runSearchRequest(srq);
 		System.err.println("Returned "+srq.getResultSet().getDocids().length+" documents");
 		return srq;
 	}

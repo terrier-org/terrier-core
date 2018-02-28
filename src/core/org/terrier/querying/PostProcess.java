@@ -25,19 +25,6 @@
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk>
  */
 package org.terrier.querying;
-/** PostProccess are designed to complement PostFilters. While PostProcesses
-  * operate on the entire resultset at once, with PostFilters, each PostFilter
-  * is called for each result in the resultset. PostProcesses can operate on the entire
-  * resultset.
-  * <B>Properties</B>
-  * <ul>
-  * <li><tt>querying.postprocesses.controls</tt> : A comma separated list of control to PostProcess
-  * class mappings. Mappings are separated by ":". eg <tt>querying.postprocess.controls=qe:QueryExpansion</tt></li>
-  * <li><tt>querying.postprocesses.order</tt> : The order postproceses should be run in</li></ul>
-  * '''NB:''' Initialisation and running of post processes is carried out by the Manager.
-  * @author Craig Macdonald
-    */
-public interface PostProcess extends Process
-{
-	
-}
+/** This class will be removed in a future version of Terrier */
+@Deprecated
+public interface PostProcess extends Process {}

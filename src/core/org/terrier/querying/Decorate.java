@@ -74,7 +74,7 @@ import org.terrier.utility.StringTools.ESCAPE;
  * @author Craig Macdonald, Vassilis Plachouras, Ben He
  * @since 3.0
  */
-public class Decorate implements PostProcess, PostFilter {
+public class Decorate implements Process, PostFilter {
 
 	/** delimiters for breaking down the values of controls further */
 	protected static final String[] CONTROL_VALUE_DELIMS = new String[]{";", ","};

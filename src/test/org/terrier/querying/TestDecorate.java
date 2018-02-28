@@ -63,10 +63,7 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 	{
 		SearchRequest srq = m.newSearchRequest("test", query);
 		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		return srq;
 	}
 	

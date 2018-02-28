@@ -143,10 +143,7 @@ public class InteractiveQuerying {
 		srq.setControl("c", Double.toString(cParameter));
 		srq.addMatchingModel(mModel, wModel);
 		matchingCount++;
-		queryingManager.runPreProcessing(srq);
-		queryingManager.runMatching(srq);
-		queryingManager.runPostProcessing(srq);
-		queryingManager.runPostFilters(srq);
+		queryingManager.runSearchRequest(srq);
 		try{
 			printResults(resultFile, srq);
 		} catch (IOException ioe) {

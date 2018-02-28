@@ -466,8 +466,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		SearchRequest search = matching.newSearchRequest("test", "dog +window");
 		search.addMatchingModel("Matching", "DPH");
 		search.setOriginalQuery("dog +window");
-		matching.runPreProcessing(search);
-		matching.runMatching(search);
+		matching.runSearchRequest(search);
 		rs = search.getResultSet();
 		assertNotNull(rs);
 		assertEquals(1, rs.getResultSize());
@@ -496,8 +495,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		SearchRequest search = matching.newSearchRequest("test", "dog -window");
 		search.addMatchingModel("Matching", "DPH");
 		search.setOriginalQuery("dog -window");
-		matching.runPreProcessing(search);
-		matching.runMatching(search);
+		matching.runSearchRequest(search);
 		rs = search.getResultSet();
 		assertNotNull(rs);
 		assertEquals(1, rs.getResultSize());
@@ -524,37 +522,25 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		//1, are documents retrieved: single term, one document
 		srq = m.newSearchRequest("test1", "dog");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		assertEquals(2, srq.getResultSet().getResultSize());
 		
 		//2, are documents retrieved: two terms, best match
 		srq = m.newSearchRequest("test1", "brown window");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		assertEquals(2, srq.getResultSet().getResultSize());
 	
 		//3, are documents retrieved: two terms, one of which is positive requirement
 		srq = m.newSearchRequest("test1", "dog +window");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		assertEquals(1, srq.getResultSet().getResultSize());
 	
 		//4, are documents retrieved: two terms, one of which is negative requirement
 		srq = m.newSearchRequest("test1", "dog -fox");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		/*System.err.println(srq.getResultSet().getResultSize());
 		for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
 			System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
@@ -564,10 +550,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		//5, are documents retrieved: two terms, both of which are positive requirements
 		srq = m.newSearchRequest("test1", "+dog +fox");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		assertEquals(1, srq.getResultSet().getResultSize());	
 
 	}
@@ -588,10 +571,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		//4, are documents retrieved: two terms, one of which is negative requirement
 		srq = m.newSearchRequest("test1", "dog -title:Animal");
 		srq.addMatchingModel(this.getMatchingClass().getName(), "PL2");
-		m.runPreProcessing(srq);
-		m.runMatching(srq);
-		m.runPostProcessing(srq);
-		m.runPostFilters(srq);
+		m.runSearchRequest(srq);
 		//System.err.println(srq.getResultSet().getResultSize());
 		/*for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
 			System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);

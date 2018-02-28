@@ -135,10 +135,7 @@ public class TestUtils {
 		SearchRequest srq = mgr.newSearchRequest(query, query);
 		assertNotNull(srq);
 		srq.addMatchingModel("Matching","TF_IDF");
-		mgr.runPreProcessing(srq);
-		mgr.runMatching(srq);
-		mgr.runPostProcessing(srq);
-		mgr.runPostFilters(srq);
+		mgr.runSearchRequest(srq);
 		ResultSet result = srq.getResultSet();
 		assertNotNull(result);
 		return result;

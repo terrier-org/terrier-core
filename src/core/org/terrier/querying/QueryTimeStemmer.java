@@ -38,6 +38,7 @@ import org.terrier.terms.PorterStemmer;
 import org.terrier.terms.Stemmer;
 import org.terrier.utility.ApplicationSetup;
 
+@ProcessPhaseRequisites({ManagerRequisite.MQT})
 public class QueryTimeStemmer implements Process {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(QueryTimeStemmer.class);
