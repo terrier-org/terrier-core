@@ -115,7 +115,7 @@ import org.terrier.utility.TestArrayUtils;
 import org.terrier.utility.TestCollectionStatistics;
 import org.terrier.utility.TestDistance;
 import org.terrier.utility.TestHeapSort;
-import org.terrier.utility.TestIvyResolution;
+import org.terrier.utility.TestMavenResolution;
 import org.terrier.utility.TestRounding;
 import org.terrier.utility.TestStaTools;
 import org.terrier.utility.TestStringTools;
@@ -266,7 +266,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestCollectionStatistics.class,
 	TestDistance.class,
 	TestHeapSort.class,
-	TestIvyResolution.class,
+	TestMavenResolution.class,
 	TestRounding.class,
 	TestTagSet.class,
 	TestStaTools.class,
