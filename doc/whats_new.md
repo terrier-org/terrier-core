@@ -3,13 +3,14 @@ What's New in Terrier
 
 Terrier 5.0 - xx/xx/2018
 ------------------------
-Major update. New features.
+Major update. New features include a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning.
 
 ### Indexing
  - [TR-466](http://terrier.org/issues/browse/TR-466) SimpleXMLCollection - requested constructor not found (Jiho Noh, University of Kentucky)
  - [TR-489](http://terrier.org/issues/browse/TR-489) TaggedDocument cannot make abstract if no global tag (Kiril Mihaylov, University of Glasgow)
  - [TR-479](http://terrier.org/issues/browse/TR-479) Control number of threads during threaded indexing
  - [TR-443](http://terrier.org/issues/browse/TR-443) Index data.properties should record the termpipeline
+ - [TR-493](http://terrier.org/issues/browse/TR-493) Record maxtf in lexicon during indexing
 
 ### Retrieval
  - [TR-317](http://terrier.org/issues/browse/TR-317) ProximityIterablePosting does not calculate the total number of matching phrases
