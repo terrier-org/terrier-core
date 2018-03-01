@@ -118,7 +118,7 @@ public class QueryExpansion implements PostProcess {
 		// make sense to do relevance feedback for a portion of the query. Therefore, 
 		// we re-weight the number of query length of terms.
 		int numberOfTermsToReweight = Math.max(ApplicationSetup.EXPANSION_TERMS, 
-				query.length());
+				query.size());
 		if (ApplicationSetup.EXPANSION_TERMS == 0)
 			numberOfTermsToReweight = 0;
 
@@ -294,7 +294,7 @@ public class QueryExpansion implements PostProcess {
 			return;
 		}
 		if(logger.isDebugEnabled()){
-			logger.info("query length after expansion: " + queryTerms.length());
+			logger.info("query length after expansion: " + queryTerms.size());
 			logger.info("Expanded query: ");
 		}
 		final String[] newQueryTerms = queryTerms.getTerms();
@@ -315,7 +315,7 @@ public class QueryExpansion implements PostProcess {
 			}
 		}
 		
-		logger.debug("NEWQUERY "+q.getQueryID() +" "+newQuery.toString());
+		logger.info("NEWQUERY "+q.getQueryID() +" "+newQuery.toString());
 		lastExpandedQuery = newQuery.toString();
 		q.setControl("QE.ExpandedQuery", newQuery.toString());
 		final boolean no2ndPass = Boolean.parseBoolean(ApplicationSetup.getProperty("qe.no.2nd.matching", "false"));
