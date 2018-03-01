@@ -1,9 +1,24 @@
 What's New in Terrier
 =====================
 
+Terrier 5.0 - xx/xx/2018
+------------------------
+Major update. New features.
+
+### Indexing
+ - [TR-466](http://terrier.org/issues/browse/TR-466) SimpleXMLCollection - requested constructor not found (Jiho Noh, University of Kentucky)
+ - [TR-489](http://terrier.org/issues/browse/TR-489) TaggedDocument cannot make abstract if no global tag (Kiril Mihaylov, University of Glasgow)
+
+### Retrieval
+ - [TR-472](http://terrier.org/issues/browse/TR-472) Request not passed to the WeightingModel (Aldo Lipani, Vienna University of Technology)
+ - [TR-487](http://terrier.org/issues/browse/TR-487) MatchingQueryTerms should be decorated with the EntryStatistics
+
+### Other
+ - [TR-483](http://terrier.org/issues/browse/TR-483) pom.xml should not specify javac
+
 Terrier 4.2 - 22/12/2016
 ------------------------
-Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency. Terrier now required Java 1.8.
+Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency. Terrier now requires Java 1.8.
 
 ### Indexing
 - [TR-377](http://terrier.org/issues/browse/TR-377) TagSet.isTagToProcess and isTagToSkip perform upper-casing even if hashmaps have no size
