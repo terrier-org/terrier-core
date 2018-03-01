@@ -314,7 +314,7 @@ public class QueryExpansion implements PostProcess {
 			}
 		}
 		
-		logger.debug("NEWQUERY "+q.getQueryID() +" "+newQuery.toString());
+		logger.info("NEWQUERY "+q.getQueryID() +" "+newQuery.toString());
 		lastExpandedQuery = newQuery.toString();
 		q.setControl("QE.ExpandedQuery", newQuery.toString());
 		final boolean no2ndPass = Boolean.parseBoolean(ApplicationSetup.getProperty("qe.no.2nd.matching", "false"));
