@@ -8,12 +8,12 @@
 	<description>Terrier IR platform</description>
 	<url>http://terrier.org</url>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <year>2016</year>
-        <gpg.skip>true</gpg.skip>
-	<ivy.version>2.4.0</ivy.version>
-    </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<year>2016</year>
+		<gpg.skip>true</gpg.skip>
+		<ivy.version>2.4.0</ivy.version>
+	</properties>
 
 	<organization>
 		<name>University of Glasgow</name>
@@ -37,13 +37,13 @@
 	<licenses>
 		<license>
 			<name>Mozilla Public License, Version 2.0</name>
-	    <url>http://www.mozilla.org/MPL/2.0/index.txt</url>
-		 </license>
+			<url>http://www.mozilla.org/MPL/2.0/index.txt</url>
+		</license>
 	</licenses>
 
 	<scm>
 		<url>https://github.com/terrier-org/terrier-core</url>
-    <connection>scm:git:https://github.com/terrier-org/terrier-core.git</connection>
+		<connection>scm:git:https://github.com/terrier-org/terrier-core.git</connection>
 		<developerConnection>scm:git:git@github.com:terrier-org/terrier-core.git</developerConnection>
 	</scm>
 
@@ -56,29 +56,29 @@
 
 
 	<distributionManagement>
- 	 <snapshotRepository>
-   	  <id>ossrh</id>
-  	  <url>https://oss.sonatype.org/content/repositories/snapshots</url>
- 	 </snapshotRepository>
-     <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-     </repository>
-    </distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
 
 	<dependencies>
-	
-	<dependency>
-  <groupId>com.jcabi</groupId>
-  <artifactId>jcabi-aether</artifactId>
-  <version>0.10.1</version>
-</dependency>
-<dependency>
-  <groupId>org.apache.maven</groupId>
-  <artifactId>maven-core</artifactId>
-  <version>3.0.5</version>
-</dependency>
+
+		<dependency>
+			<groupId>com.jcabi</groupId>
+			<artifactId>jcabi-aether</artifactId>
+			<version>0.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-core</artifactId>
+			<version>3.0.5</version>
+		</dependency>
 
 		<dependency>
 			<groupId>uk.ac.gla.dcs.terrierteam</groupId>
@@ -155,9 +155,15 @@
 
 		<!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
 		<dependency>
-		    <groupId>org.apache.hadoop</groupId>
-		    <artifactId>hadoop-client</artifactId>
-		    <version>2.8.2</version>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-client</artifactId>
+			<version>2.8.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.3.1</version>
 		</dependency>
 
 		<dependency>
@@ -198,11 +204,11 @@
 		</dependency>
 
 
- 		<dependency>
-     			<groupId>org.eclipse.jetty</groupId>
-         		<artifactId>apache-jsp</artifactId>
-             		<version>9.2.9.v20150224</version>
-             	</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>apache-jsp</artifactId>
+			<version>9.2.9.v20150224</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
@@ -280,7 +286,7 @@
 		<testSourceDirectory>src/test</testSourceDirectory>
 		<resources>
 			<resource>
-          <directory>src/resources</directory>
+				<directory>src/resources</directory>
 			</resource>
 			<resource>
 				<directory>share/templates</directory>
@@ -418,46 +424,49 @@
 
 
 			<!-- require maven 3 at least -->
-			 <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.4.1</version>
-        <executions>
-          <execution>
-            <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>3.0</version>
-                </requireMavenVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.4.1</version>
+				<executions>
+					<execution>
+						<id>enforce-maven</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>3.0</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>1.8</version>
 				<executions>
-						<execution>
-								<phase>generate-sources</phase>
-								<goals><goal>add-source</goal></goals>
-								<configuration>
-										<sources>
-												<source>src/trec</source>
-												<source>src/learning</source>
-												<source>src/test</source>
-												<source>src/websitesearch</source>
-												 <source>target/generated-sources/javacc</source>
-												<source>target/generated-sources/version/</source> <!-- HACK: target should be project.build.directory, but this causes absolute paths in the sources.jar file -->
-									</sources>
-								</configuration>
-						</execution>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/trec</source>
+								<source>src/learning</source>
+								<source>src/test</source>
+								<source>src/websitesearch</source>
+								<source>target/generated-sources/javacc</source>
+								<source>target/generated-sources/version/</source> <!-- HACK: target should be project.build.directory, but this causes absolute 
+									paths in the sources.jar file -->
+							</sources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -508,29 +517,14 @@
 				</dependencies>
 			</plugin>
 
-			<!-- <plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/generated-sources/version/</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin> -->
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
+				<version>1.8</version> <executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
+				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/version/</source> 
+				</sources> </configuration> </execution> </executions> </plugin> -->
 
-			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId>
-				<executions> <execution> <id>add-source</id> <phase>generate-sources</phase>
-				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/antlr/</source>
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
+				<executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
+				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/antlr/</source> 
 				</sources> </configuration> </execution> </executions> </plugin> -->
 
 			<plugin>
@@ -596,7 +590,7 @@
 					<filters>
 						<filter>**/logback.xml</filter>
 						<filter>**\logback.xml</filter>
-          				</filters>
+					</filters>
 				</configuration>
 				<executions>
 					<execution>
@@ -616,30 +610,30 @@
 
 
 			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-javadoc-plugin</artifactId>
-			  <version>2.10.4</version>
-			  <executions>
-			  <execution>
-			      <phase>package</phase>
-			      <goals>
-			        <goal>javadoc</goal>
-			      </goals>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
 						<configuration>
-					    <outputDirectory>${basedir}/doc/</outputDirectory>
-					    <reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
-					    <destDir>javadoc</destDir>
-					    <author>true</author>
-					    <bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
-					    <doctitle>${project.Name} ${project.version} API</doctitle>
-					    <use>true</use>
-					    <version>true</version>
-					    <windowtitle>${project.Name} ${project.version} API</windowtitle>
-					    <sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/:${basedir}/target/generated-sources/javacc/</sourcepath>
-					     <additionalparam>-Xdoclint:none</additionalparam> <!-- http://stackoverflow.com/a/16743137 -->
-					  </configuration>
-			    </execution>
-			  </executions>
+							<outputDirectory>${basedir}/doc/</outputDirectory>
+							<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
+							<destDir>javadoc</destDir>
+							<author>true</author>
+							<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
+							<doctitle>${project.Name} ${project.version} API</doctitle>
+							<use>true</use>
+							<version>true</version>
+							<windowtitle>${project.Name} ${project.version} API</windowtitle>
+							<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/:${basedir}/target/generated-sources/javacc/</sourcepath>
+							<additionalparam>-Xdoclint:none</additionalparam> <!-- http://stackoverflow.com/a/16743137 -->
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -656,105 +650,105 @@
 	</build>
 
 	<profiles>
-	  <profile>
-		    <id>release</id>
-		    <build>
-					<plugins>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
 
-						<plugin>
-							<artifactId>maven-assembly-plugin</artifactId>
-							<version>2.6</version>
-							<configuration>
-								<finalName>terrier-core-${project.version}</finalName>
-								<filters>
-									<filter>**/logback.xml</filter>
-									<filter>**\logback.xml</filter>
-												</filters>
-								</configuration>
-								<executions>
-									<execution>
-										<!-- builds the tar files -->
-										<phase>deploy</phase> <!-- bind to the packaging phase -->
-										<id>srczips</id>
-										<goals>
-											<goal>single</goal>
-										</goals>
-										<configuration>
-											<tarLongFileMode>gnu</tarLongFileMode>
-											<descriptor>src/assembly/src.xml</descriptor>
-											<descriptorRefs></descriptorRefs>
-										</configuration>
-									</execution>
-
-									<execution>
-										<!-- builds the tar files -->
-										<phase>deploy</phase> <!-- bind to the packaging phase -->
-										<id>binzips</id>
-										<goals>
-											<goal>single</goal>
-										</goals>
-										<configuration>
-											<tarLongFileMode>gnu</tarLongFileMode>
-											<descriptor>src/assembly/bin.xml</descriptor>
-											<descriptorRefs></descriptorRefs>
-										</configuration>
-									</execution>
-								</executions>
-							</plugin>
-			<plugin>
-			      <groupId>org.apache.maven.plugins</groupId>
-			      <artifactId>maven-source-plugin</artifactId>
-			      <version>2.2.1</version>
-			      <executions>
-			        <execution>
-			          <id>attach-sources</id>
-			          <goals>
-			            <goal>jar-no-fork</goal>
-			          </goals>
-			        </execution>
-			      </executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.6</version>
 						<configuration>
-							<author>true</author>
-							<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
-							<doctitle>${project.Name} ${project.version} API</doctitle>
-							<use>true</use>
-							<version>true</version>
-							<windowtitle>${project.Name} ${project.version} API</windowtitle>
-							<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/</sourcepath>
-							 <additionalparam>-Xdoclint:none</additionalparam><!-- http://stackoverflow.com/a/16743137 -->
+							<finalName>terrier-core-${project.version}</finalName>
+							<filters>
+								<filter>**/logback.xml</filter>
+								<filter>**\logback.xml</filter>
+							</filters>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+						<executions>
+							<execution>
+								<!-- builds the tar files -->
+								<phase>deploy</phase> <!-- bind to the packaging phase -->
+								<id>srczips</id>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<tarLongFileMode>gnu</tarLongFileMode>
+									<descriptor>src/assembly/src.xml</descriptor>
+									<descriptorRefs></descriptorRefs>
+								</configuration>
+							</execution>
 
-		</plugins>
-	</build>
-</profile>
-</profiles>
+							<execution>
+								<!-- builds the tar files -->
+								<phase>deploy</phase> <!-- bind to the packaging phase -->
+								<id>binzips</id>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<tarLongFileMode>gnu</tarLongFileMode>
+									<descriptor>src/assembly/bin.xml</descriptor>
+									<descriptorRefs></descriptorRefs>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.10.4</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<author>true</author>
+									<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
+									<doctitle>${project.Name} ${project.version} API</doctitle>
+									<use>true</use>
+									<version>true</version>
+									<windowtitle>${project.Name} ${project.version} API</windowtitle>
+									<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/</sourcepath>
+									<additionalparam>-Xdoclint:none</additionalparam><!-- http://stackoverflow.com/a/16743137 -->
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
