@@ -150,7 +150,7 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 			}
 		
 		}catch(IOException ioe) {
-			logger.error("problem opening address list of files in SimpleFileCollectio: ",ioe);	
+			logger.error("problem opening address list of files in SimpleFileCollection: ",ioe);	
 		}
 		FileList = new LinkedList<String>(generatedFileList);
 		firstList = new LinkedList<String>(generatedFileList);
