@@ -28,13 +28,13 @@
 package org.terrier.learning;
 
 import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.terrier.evaluation.TRECQrelsInMemory;
 import org.terrier.querying.Manager;
-import org.terrier.querying.PostProcess;
 import org.terrier.querying.Request;
+import org.terrier.querying.Process;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.MetaIndex;
 import org.terrier.utility.ApplicationSetup;
@@ -50,7 +50,7 @@ import org.terrier.utility.ApplicationSetup;
 * @author Rodrygo Santos, Craig Macdonald
 * @since 4.0
 */ 
-public class LabelDecorator implements PostProcess {
+public class LabelDecorator implements Process {
 
 	protected TRECQrelsInMemory qrels;
 	protected String defLabel;
