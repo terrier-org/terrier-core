@@ -77,7 +77,7 @@ import org.terrier.utility.ArrayUtils;
  * This class merges the structures created by Terrier, so that
  * we use fewer and larger inverted and direct files.
  * <p>
- * <b>Properties:</b>&lt;ul&gt;
+ * <b>Properties:</b>
   * <li><tt>lexicon.use.hash</tt> - build a lexicon hash file for new index. Set to <tt>true</tt> by default.</li>
  * <li><tt>merge.direct</tt> - merge the direct indices if both indices have them. Set to <tt>true</tt> by default.</li>
  * @author Vassilis Plachouras and Craig Macdonald
