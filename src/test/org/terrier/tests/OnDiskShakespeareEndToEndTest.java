@@ -43,7 +43,7 @@ public class OnDiskShakespeareEndToEndTest extends BasicShakespeareEndToEndTest 
 	@Override
 	protected void doIndexing(String... trec_terrier_args) throws Exception
 	{
-		
+		checkTermPipelineRecorded = false;
 		String indextype = "basic";
 		if (ArrayUtils.toString(trec_terrier_args).contains("FieldTags.process")) indextype="fields";
 		else FieldScore.FIELDS_COUNT=0;

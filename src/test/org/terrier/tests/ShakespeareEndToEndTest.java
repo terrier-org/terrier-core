@@ -64,6 +64,7 @@ import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.PostingUtil;
 import org.terrier.structures.restructure.Tr4BasicLexiconEntry;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.StaTools;
 
@@ -174,6 +175,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 	}
 	
 	protected boolean checkTermIds = true;
+	protected boolean checkTermPipelineRecorded = true;
 	
 	
 	@SuppressWarnings({ "unchecked", "resource" })
@@ -497,6 +499,9 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 			assertTrue("Index has no "+ structureName + " structure", index.hasIndexStructure(structureName));
 		for (String structureName : expectedStructuresInputStream )
 			assertTrue("Index has no "+ structureName + " inputstream structure", index.hasIndexStructure(structureName));
+		
+		if (checkTermPipelineRecorded)
+			assertTrue(index.getProperties().containsKey("termpipelines"));
 		
 		checkDocumentLengths(index, DOCUMENT_LENGTHS, DOCUMENT_UNIQUE_TERMS);
 		checkMetaIndex(index, DOCUMENT_NAMES);

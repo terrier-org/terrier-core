@@ -459,6 +459,7 @@ public class BlockIndexer extends Indexer {
 		{
 			currentIndex.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
 		}
+		currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
 		/* flush the index buffers */
 		directIndexBuilder.close();
 		docIndexBuilder.finishedCollections();

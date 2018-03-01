@@ -286,6 +286,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 				{
 					currentIndex.addIndexStructure("document-factory", SimpleDocumentIndexEntry.Factory.class.getName(), "", "");
 				}
+				currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
 				metaBuilder.close();
 				currentIndex.flush();
 				

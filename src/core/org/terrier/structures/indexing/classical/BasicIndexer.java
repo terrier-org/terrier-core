@@ -360,6 +360,7 @@ public class BasicIndexer extends Indexer
 		/* and then merge all the temporary lexicons */
 		lexiconBuilder.finishedDirectIndexBuild();
 		currentIndex.setIndexProperty("num.Tokens", ""+numberOfTokens);
+		currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
 		if (FieldScore.FIELDS_COUNT > 0)
 		{
 			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");

@@ -207,7 +207,7 @@ public class StructureMerger {
 			
 			for(String property : new String[] {"index.inverted.fields.names", "max.term.length", "index.lexicon-keyfactory.class", "index.lexicon-keyfactory.parameter_values",
 					"index.lexicon-keyfactory.parameter_types", "index.lexicon-valuefactory.class", "index.lexicon-valuefactory.parameter_values",
-					"index.lexicon-valuefactory.parameter_types"} )
+					"index.lexicon-valuefactory.parameter_types", "termpipelines"} )
 			{
 				destIndex.setIndexProperty(property, srcIndex1.getIndexProperty(property, null));
 			}
