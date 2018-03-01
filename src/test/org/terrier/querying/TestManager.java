@@ -26,10 +26,13 @@
  */
 package org.terrier.querying;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.models.BM25;
 import org.terrier.structures.Index;
 import org.terrier.tests.ApplicationSetupBasedTest;
 
@@ -61,6 +64,38 @@ public class TestManager extends ApplicationSetupBasedTest {
 		assertEquals(2.0d, mqt.getTermWeight("fox"), 0.0d);
 		assertEquals(1.3d, mqt.getTermWeight("dog"), 0.0d);
 		
+	}
+	
+	public static class myModel extends BM25
+	{
+		private static final long serialVersionUID = 1L;
+
+		public myModel(){}
+		
+		@Override
+		public double score(double tf, double docLength) {
+			assertNotNull(super.rq);
+			assertNotNull(super.rq.getIndex());
+			return super.score(tf, docLength);
+		}
+	};
+	
+	//TR-472 Request not passed to the WeightingModel
+	@Test public void testIndexAndRequestAreSet() throws Exception {
+		
+		Index index = IndexTestUtils.makeIndex(
+				new String[]{"doc1", "doc2"}, 
+				new String[]{"The quick brown fox jumps over the lazy dog", 
+					"Exploring the zoo, we saw every kangaroo jump and quite a few carried babies."});
+		Manager m = new Manager(index);
+		SearchRequest srq = m.newSearchRequestFromQuery("brown fox");
+		Request rq = (Request)srq;
+		assertNotNull( rq.getIndex() );
+		srq.addMatchingModel(org.terrier.matching.daat.Full.class.getName(), myModel.class.getName());
+		m.runSearchRequest(srq);
+		
+		srq.addMatchingModel(org.terrier.matching.taat.Full.class.getName(), myModel.class.getName());
+		m.runSearchRequest(srq);
 	}
 	
 }

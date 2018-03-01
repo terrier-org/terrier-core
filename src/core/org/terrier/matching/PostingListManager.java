@@ -331,6 +331,10 @@ public class PostingListManager implements Closeable
 			}
 		}
 		
+		//TR-472 Request not passed to the WeightingModel
+		for(WeightingModel wmodel : termModels)
+			wmodel.setRequest(mqt.getRequest());
+		
 		for(PostingListManagerPlugin p : plugins)
 		{
 			p.processQuery(mqt, index, this);
