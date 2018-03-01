@@ -23,15 +23,21 @@
  * Contributor(s):
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
-package org.terrier.structures;
+package org.terrier.structures.restructure;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import org.terrier.structures.BitFilePosition;
+import org.terrier.structures.BitIndexPointer;
+import org.terrier.structures.EntryStatistics;
+import org.terrier.structures.LexiconEntry;
+import org.terrier.structures.Pointer;
 /** A LexiconEntry which only contains EntryStatistics
  * @author Craig Macdonald
  */
-public class BasicTermStatsLexiconEntry extends LexiconEntry {
+public class Tr4BasicTermStatsLexiconEntry extends LexiconEntry {
 	private static final long serialVersionUID = 1L;
 	protected int n_t;
 	protected int TF;
@@ -40,14 +46,14 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	/**
 	 * Constructs an instance of the BasicTermStatsLexiconEntry.
 	 */
-	public BasicTermStatsLexiconEntry() {}
+	public Tr4BasicTermStatsLexiconEntry() {}
 	/**
 	 * Constructs an instance of the BasicTermStatsLexiconEntry.
 	 * @param _TF
 	 * @param _n_t
 	 * @param _termId
 	 */
-	public BasicTermStatsLexiconEntry(int _TF, int _n_t, int _termId)
+	public Tr4BasicTermStatsLexiconEntry(int _TF, int _n_t, int _termId)
 	{
 		TF = _TF;
 		n_t = _n_t;
@@ -150,7 +156,6 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	public void readFields(DataInput in) throws IOException {
 		TF = in.readInt();
 		n_t = in.readInt();
-		maxtf = in.readInt();
 		termId = in.readInt();
 	}
 	/** 
@@ -159,7 +164,6 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	public void write(DataOutput out) throws IOException {
 		out.writeInt(TF);
 		out.writeInt(n_t);
-		out.writeInt(maxtf);
 		out.writeInt(termId);
 	}
 	/** 

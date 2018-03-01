@@ -56,11 +56,16 @@ public class LexiconMap {
 	/** mapping: term to document frequency */
 	protected final TObjectIntHashMap<String>nts = new TObjectIntHashMap<String>(BUNDLE_AVG_UNIQUE_TERMS);	
 
+	/** mapping: term to max tf */
+	protected final TObjectIntHashMap<String>maxtfs = new TObjectIntHashMap<String>(BUNDLE_AVG_UNIQUE_TERMS);	
+
+	
 	/** Clear the lexicon map */
 	public void clear()	
 	{
 		tfs.clear(); tfs.compact();
 		nts.clear(); nts.compact();
+		maxtfs.clear(); maxtfs.compact();
 	}
 
 	/**
@@ -73,6 +78,8 @@ public class LexiconMap {
 		if (term.length()==0) throw new IllegalArgumentException("Attempted to add a term with length 0 to the lexicon, empty terms may not be added to the lexicon.");
 		tfs.adjustOrPutValue(term, tf, tf);
 		nts.adjustOrPutValue(term, 1 , 1);
+		if (tf > maxtfs.get(term))
+			maxtfs.put(term, tf);
 		numberOfPointers++;
 	}
 
@@ -85,9 +92,10 @@ public class LexiconMap {
 		doc.forEachTerm(new TObjectIntProcedure<String>() {
 			public boolean execute(final String t, final int tf)
 			{
-				//insert(a,b);
 				tfs.adjustOrPutValue(t, tf, tf);
 				nts.adjustOrPutValue(t, 1 , 1);
+				if (tf > maxtfs.get(t))
+					maxtfs.put(t, tf);
 				return true;
 			}
 		});	
@@ -106,6 +114,7 @@ public class LexiconMap {
 		{
 			le.setTermId(termCodes.getCode(t));
 			le.setStatistics(nts.get(t), tfs.get(t));
+			le.setMaxFrequencyInDocuments(maxtfs.get(t));
 			lexiconStream.writeNextEntry(t, le);
 		}
 	}

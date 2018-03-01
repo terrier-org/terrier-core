@@ -24,17 +24,22 @@
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk> (original author)
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk>
  */
-package org.terrier.structures;
+package org.terrier.structures.restructure;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.terrier.structures.BitFilePosition;
+import org.terrier.structures.BitIndexPointer;
+import org.terrier.structures.EntryStatistics;
+import org.terrier.structures.LexiconEntry;
+import org.terrier.structures.Pointer;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 
 /** Contains all the information about one entry in the Lexicon. 
   * Created to make thread-safe lookups in the Lexicon easier. */
-public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
+public class Tr4BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 	private static final long serialVersionUID = 1L;
 	/** 
 	 * Factory for creating LexiconEntry objects
@@ -55,13 +60,13 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 		 */
 		public int getSize() {
 			//System.err.println("Value size is"+((3*4) + 8 + 1));
-			return (4*4) + 8 + 1;
+			return (3*4) + 8 + 1;
 		}
 		/** 
 		 * {@inheritDoc} 
 		 */
 		public LexiconEntry newInstance() {
-			return new BasicLexiconEntry();
+			return new Tr4BasicLexiconEntry();
 		}
 
 	}
@@ -80,14 +85,14 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 	public byte startBitOffset;
 
 	/** Create an empty LexiconEntry */
-	public BasicLexiconEntry(){}
+	public Tr4BasicLexiconEntry(){}
 
 	/** Create a lexicon entry with the following information.
 	  * @param tid the term id
 	  * @param _n_t the number of documents the term occurs in (document frequency)
 	  * @param _TF the total count of therm t in the collection
 	  */
-	public BasicLexiconEntry(int tid, int _n_t, int _TF)
+	public Tr4BasicLexiconEntry(int tid, int _n_t, int _TF)
 	{
 		this.termId = tid;
 		this.n_t = _n_t;
@@ -102,7 +107,7 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 	 * @param _startOffset
 	 * @param _startBitOffset
 	 */
-	public BasicLexiconEntry(int tid, int _n_t, int _TF, byte fileId, long _startOffset, byte _startBitOffset) {
+	public Tr4BasicLexiconEntry(int tid, int _n_t, int _TF, byte fileId, long _startOffset, byte _startBitOffset) {
 		this.termId = tid;
 		this.n_t = _n_t;
 		this.TF = _TF;
@@ -117,11 +122,10 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 	 * @param fileId
 	 * @param offset
 	 */
-	public BasicLexiconEntry(int tid, int _n_t, int _TF, int _maxtf, byte fileId, BitFilePosition offset) {
+	public Tr4BasicLexiconEntry(int tid, int _n_t, int _TF, byte fileId, BitFilePosition offset) {
 		this.termId = tid;
 		this.n_t = _n_t;
 		this.TF = _TF;
-		this.maxtf = _maxtf;
 		this.startOffset = offset.getOffset();
 		this.startBitOffset = offset.getOffsetBits();
 		this.startBitOffset += (byte)(fileId << FILE_SHIFT);
@@ -155,7 +159,7 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 	
 	/** returns a string representation of this lexicon entry */	
 	public String toString() {
-		return "term"+ termId + " Nt=" + this.getDocumentFrequency() + " TF=" + this.getFrequency() + " maxTF=" + this.getMaxFrequencyInDocuments()
+		return "term"+ termId + " Nt=" + this.getDocumentFrequency() + " TF=" + this.getFrequency() 
 			+ " @{"+ this.getFileNumber() +" " + startOffset + " " + this.getOffsetBits()+"}";
 	}
 	/** 
@@ -257,7 +261,6 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 		termId = in.readInt();
 		TF = in.readInt();
 		n_t = in.readInt();
-		maxtf = in.readInt();
 		startOffset = in.readLong();
 		startBitOffset = in.readByte();
 	}
@@ -268,7 +271,6 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 		out.writeInt(termId);
 		out.writeInt(TF);
 		out.writeInt(n_t);
-		out.writeInt(maxtf);
 		out.writeLong(startOffset);
 		out.writeByte(startBitOffset);
 	}

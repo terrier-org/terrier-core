@@ -53,8 +53,6 @@ import org.terrier.structures.seralization.FixedSizeWriteableFactory;
  * <li>SimpleBitIndexPointer</li>
  * <li>BasicLexiconEntry</li>
  * <li>FieldLexiconEntry</li>
- * <li>BlockLexiconEntry</li>
- * <li>BlockFieldLexiconEntry</li>
  * <li>BasicDocumentIndexEntry</li>
  * <li>FieldDocumentIndexEntry</li>
  * </ul>
@@ -171,22 +169,7 @@ public class TestBitIndexPointer {
 	public void testFieldLE() throws Exception
 	{
 		test((FixedSizeWriteableFactory<? extends BitIndexPointer>)(FixedSizeWriteableFactory)new FieldLexiconEntry.Factory(3));
-	}
-
-	@Test
-	public void testBlockFieldLE() throws Exception
-	{
- 
-		test((FixedSizeWriteableFactory<? extends BitIndexPointer>)(FixedSizeWriteableFactory)new BlockFieldLexiconEntry.Factory(3));
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testBlockLE() throws Exception
-	{
-		test((FixedSizeWriteableFactory<? extends BitIndexPointer>)(FixedSizeWriteableFactory)new BlockLexiconEntry.Factory());
-	}
-	
+	}	
 	
 	@Test
 	public void testBasicDE() throws Exception

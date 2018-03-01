@@ -45,6 +45,9 @@ public abstract class PostingInRun {
 	protected String term;
 	/** Document frequency */
 	protected int termDf;
+	
+	/** Max tf */
+	protected int maxtf;
 	/** 
 	 * Constructs an instance of the PostingInRun.
 	 */
@@ -55,13 +58,17 @@ public abstract class PostingInRun {
 	/** Return the LexiconEntry for this Posting */
 	public LexiconEntry getLexiconEntry()
 	{
-		return new BasicLexiconEntry(0, termDf, termTF);
+		LexiconEntry rtr = new BasicLexiconEntry(0, termDf, termTF);
+		rtr.setMaxFrequencyInDocuments(maxtf);
+		return rtr;
 	}
 	
 	/** Add statistics for this posting onto the given LexiconEntry */
 	public void addToLexiconEntry(LexiconEntry le)
 	{
 		le.setStatistics(le.getDocumentFrequency() + termDf, le.getFrequency() + termTF);
+		if (maxtf > le.getMaxFrequencyInDocuments())
+			le.setMaxFrequencyInDocuments(maxtf);
 	}
 	
 	/**
@@ -99,6 +106,14 @@ public abstract class PostingInRun {
 	 */
 	public int getTF() {
 		return termTF;
+	}
+	
+	/**
+	 * Setter for the max tf
+	 * @param maxtf the new maxtf
+	 */
+	public void setMaxtf(int maxtf) {
+		this.maxtf = maxtf;
 	}
 
 	/**

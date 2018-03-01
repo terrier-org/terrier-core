@@ -98,9 +98,9 @@ public class FieldPostingInRun extends SimplePostingInRun {
 	@Override
 	public LexiconEntry getLexiconEntry() {
 		FieldLexiconEntry fes = new FieldLexiconEntry(fieldTFs.length);
-		//System.out.println("new lex entry" + Arrays.toString(fieldTFs));
 		fes.setFieldFrequencies(fieldTFs);		
 		fes.setStatistics(termDf, termTF);
+		fes.setMaxFrequencyInDocuments(maxtf);
 		return fes;
 	}
 	

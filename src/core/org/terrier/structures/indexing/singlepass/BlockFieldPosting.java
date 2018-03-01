@@ -30,7 +30,7 @@ package org.terrier.structures.indexing.singlepass;
 import java.io.IOException;
 /**
  * Class representing a posting list in memory containing fields and block iformation.
- * It keeps the information for <code>tf, df, field</code> and the sequence <code>[doc, idf, bockNo [blockId]]</code>
+ * It keeps the information for <code>tf, df, maxtf, field</code> and the sequence <code>[doc, idf, bockNo [blockId]]</code>
  * @author Roi Blanco
  *
  */

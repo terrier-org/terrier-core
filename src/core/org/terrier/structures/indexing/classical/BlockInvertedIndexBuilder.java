@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.terrier.structures.BitIndexPointer;
-import org.terrier.structures.BlockEntryStatistics;
 import org.terrier.structures.FSOMapFileLexicon;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.LexiconEntry;
@@ -332,14 +331,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 		final int tmpNT = le.getDocumentFrequency();
 		for(int i = 0; i < fieldCount+3; i++)
 			tmpArray[i] = new TIntArrayList(tmpNT);
-		if (le instanceof BlockEntryStatistics)
-		{
-			tmpArray[fieldCount+3] = new TIntArrayList(((BlockEntryStatistics)le).getBlockCount());
-		}
-		else
-		{
-			tmpArray[fieldCount+3] = new TIntArrayList(le.getFrequency());
-		}
+		tmpArray[fieldCount+3] = new TIntArrayList(le.getFrequency());
 		return tmpArray;
 	}
 

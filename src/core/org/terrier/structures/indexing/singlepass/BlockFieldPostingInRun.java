@@ -103,6 +103,7 @@ public class BlockFieldPostingInRun extends BlockPostingInRun{
 		FieldLexiconEntry fes = new FieldLexiconEntry(fieldTFs.length);
 		fes.setStatistics(termDf, termTF);
 		fes.setFieldFrequencies(fieldTFs);
+		fes.setMaxFrequencyInDocuments(maxtf);
 		return fes;
 	}
 	

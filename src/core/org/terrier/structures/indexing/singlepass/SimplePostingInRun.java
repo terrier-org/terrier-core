@@ -37,7 +37,7 @@ import org.terrier.structures.postings.WritablePosting;
 /** Class holding the information for a posting list read
  * from a previously written run at disk. Used in the merging phase of the Single pass inversion method.
  * This class knows how to append itself to a {@link org.terrier.compression.bit.BitOut} and it
- * represents the simpler class of posting <code>(TF, df, [docid, tf])</code>
+ * represents the simpler class of posting <code>(TF, df, maxtf, [docid, tf])</code>
  * @author Roi Blanco
  *
  */
@@ -53,7 +53,7 @@ public class SimplePostingInRun extends PostingInRun {
 	/**
 	 * Writes the document data of this posting to a {@link org.terrier.compression.bit.BitOut} 
 	 * It encodes the data with the right compression methods.
-	 * The stream is written as <code>d1, idf(d1) , d2 - d1, idf(d2)</code> etc.
+	 * The stream is written as <code>d1, idf(d1), d2 - d1, idf(d2)</code> etc.
 	 * @param bos BitOut to be written.
 	 * @param last int representing the last document written in this posting.
 	 * @param runShift int representing the last document read document read in this posting stream.

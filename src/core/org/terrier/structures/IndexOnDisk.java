@@ -37,9 +37,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.terrier.Version;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 import org.terrier.utility.restructure.Terrier4;
+import org.terrier.utility.restructure.Terrier5;
 /** 
  * The replacement for what was Index in earlier Terrier versions.
  * Represents the most common type of index, i.e. one which is stored
@@ -450,18 +452,28 @@ public class IndexOnDisk extends Index {
 		final String[] versionStringParts = versionString.split("\\.", 2);
 		final int MAJOR_VERSION = Integer.parseInt(versionStringParts[0]);
 		if (MAJOR_VERSION < MINIMUM_INDEX_TERRIER_VERSION) {
-			if (MAJOR_VERSION == 3) {
+			loadSuccess = false;
+			logger.error(loadError = "This index is too old. Need at least version "
+					+ MINIMUM_INDEX_TERRIER_VERSION + " index");
+			return false;
+		} else if (MAJOR_VERSION == 3) {
 				Terrier4 upgrade = new Terrier4();
 				upgrade.updateIndexProperties(properties);
 				logger.warn(this.toString() + " is a Terrier " + versionString 
 					+ " index - temporarily upgrading. Use " + Terrier4.class.getName() + " to make changes permanent");
-			} else {
-				loadSuccess = false;
-				logger.error(loadError = "This index is too old. Need at least version "
-						+ MINIMUM_INDEX_TERRIER_VERSION + " index");
-				return false;
 			}
+		else if (MAJOR_VERSION == 4) {
+			Terrier5 upgrade = new Terrier5();
+			upgrade.updateIndexProperties(properties);
+			logger.warn(this.toString() + " is a Terrier " + versionString 
+				+ " index - temporarily upgrading. Use " + Terrier5.class.getName() + " to make changes permanent. Some functionality may be lost.");
+		} 
+		else if (MAJOR_VERSION > Version.getMajorVersion())
+		{
+			logger.warn(this.toString() + " is a Terrier " + versionString + " index, which is more modern than this release ("+Version.VERSION+"). YMMV!");
 		}
+		//ELSE: index is this version, all good
+		else {}
 		return true;
 	}
 

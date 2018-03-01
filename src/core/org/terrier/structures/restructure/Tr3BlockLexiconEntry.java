@@ -23,28 +23,32 @@
  * Contributor(s):
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
-package org.terrier.structures;
+package org.terrier.structures.restructure;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 import org.slf4j.LoggerFactory;
+import org.terrier.structures.BitFilePosition;
+import org.terrier.structures.BlockEntryStatistics;
+import org.terrier.structures.EntryStatistics;
+import org.terrier.structures.LexiconEntry;
 /** 
  * Blocks lexicon entry. A basic lexicon entry with block statistics.
  * @deprecated
  */
-public class BlockLexiconEntry extends BasicLexiconEntry implements BlockEntryStatistics {
+public class Tr3BlockLexiconEntry extends Tr4BasicLexiconEntry implements BlockEntryStatistics {
 	private static final long serialVersionUID = 1L;
 	int blockCount;
 	/** 
 	 * Factory for creating block lexicon entries
 	 */
-	public static class Factory extends BasicLexiconEntry.Factory
+	public static class Factory extends Tr4BasicLexiconEntry.Factory
 	{
 		public Factory()
 		{
-			LoggerFactory.getLogger(Factory.class).warn(BlockLexiconEntry.class.getSimpleName() + " has now been deprecated and will be removed in a future release");
+			LoggerFactory.getLogger(Factory.class).warn(Tr3BlockLexiconEntry.class.getSimpleName() + " has now been deprecated and will be removed in a future release");
 		}
 		
 		/** 
@@ -57,13 +61,13 @@ public class BlockLexiconEntry extends BasicLexiconEntry implements BlockEntrySt
 		 * {@inheritDoc} 
 		 */
 		public LexiconEntry newInstance() {
-			return new BlockLexiconEntry();
+			return new Tr3BlockLexiconEntry();
 		}
 	}
 	/**
 	 * Construct an instance of the class.
 	 */
-	public BlockLexiconEntry() {
+	public Tr3BlockLexiconEntry() {
 		super();
 	}
 	/**
@@ -75,7 +79,7 @@ public class BlockLexiconEntry extends BasicLexiconEntry implements BlockEntrySt
 	 * @param offset
 	 * @param _blockCount
 	 */
-	public BlockLexiconEntry(int tid, int n_t, int TF, byte fileId, BitFilePosition offset, int _blockCount) {
+	public Tr3BlockLexiconEntry(int tid, int n_t, int TF, byte fileId, BitFilePosition offset, int _blockCount) {
 		super(tid, n_t, TF, fileId, offset);
 		blockCount = _blockCount;
 	}
@@ -89,7 +93,7 @@ public class BlockLexiconEntry extends BasicLexiconEntry implements BlockEntrySt
 	 * @param _startBitOffset
 	 * @param _blockCount
 	 */
-	public BlockLexiconEntry(int tid, int n_t, int TF, byte fileId, long _startOffset, byte _startBitOffset, int _blockCount) {
+	public Tr3BlockLexiconEntry(int tid, int n_t, int TF, byte fileId, long _startOffset, byte _startBitOffset, int _blockCount) {
 		super(tid, n_t, TF, fileId, _startOffset, _startBitOffset);
 		blockCount = _blockCount;
 	}
@@ -100,7 +104,7 @@ public class BlockLexiconEntry extends BasicLexiconEntry implements BlockEntrySt
 	 * @param TF
 	 * @param _blockCount
 	 */
-	public BlockLexiconEntry(int tid, int n_t, int TF, int _blockCount) {
+	public Tr3BlockLexiconEntry(int tid, int n_t, int TF, int _blockCount) {
 		super(tid, n_t, TF);
 		blockCount = _blockCount;
 	}

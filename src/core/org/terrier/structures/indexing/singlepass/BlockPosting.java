@@ -31,7 +31,7 @@ import java.io.IOException;
 
 /**
  * Class representing a posting list in memory with block information
- * It keeps the information for <code>DF, TF</code>, and the sequence <code>[doc, tf, blockCount, [blockId]] </code>
+ * It keeps the information for <code>DF, TF, maxtf</code>, and the sequence <code>[doc, tf, blockCount, [blockId]] </code>
  * @author Roi Blanco
  *
  */

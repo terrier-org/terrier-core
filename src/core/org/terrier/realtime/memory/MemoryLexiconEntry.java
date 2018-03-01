@@ -75,6 +75,7 @@ public class MemoryLexiconEntry extends LexiconEntry implements MemoryPointer,Se
 		this.termid = -1;
 		this.df = df;
 		this.tf = tf;
+		this.maxtf = tf;
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class MemoryLexiconEntry extends LexiconEntry implements MemoryPointer,Se
 	public void add(EntryStatistics es) {
 		df += es.getDocumentFrequency();
 		tf += es.getFrequency();
-		if (es.getMaxFrequencyInDocuments() > maxtf)
+		if (es.getMaxFrequencyInDocuments() < maxtf)
 			maxtf = es.getMaxFrequencyInDocuments();
 	}
 

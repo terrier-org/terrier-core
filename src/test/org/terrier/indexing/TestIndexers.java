@@ -220,6 +220,7 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 		assertNotNull(le);
 		assertEquals(2, le.getFrequency());
 		assertEquals(2, le.getNumberOfEntries());
+		assertEquals(1, le.getMaxFrequencyInDocuments());
 		if (fieldsExpected)
 		{
 			assertTrue(le instanceof FieldEntryStatistics);
@@ -233,6 +234,7 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 		le = lexicon.getLexiconEntry("chicken");
 		assertNotNull(le);
 		assertEquals(3, le.getFrequency());
+		assertEquals(3, le.getMaxFrequencyInDocuments());
 		assertEquals(1, le.getNumberOfEntries());
 		if (fieldsExpected)
 		{

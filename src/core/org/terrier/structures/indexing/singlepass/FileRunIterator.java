@@ -93,7 +93,8 @@ public class FileRunIterator<K extends PostingInRun> extends RunIterator {
 		try{
 			posting.setTerm(readString());
 			posting.setDf(mbis.readGamma());
-			posting.setTF(readTermFrequency());
+			posting.setMaxtf(mbis.readGamma());
+			posting.setTF(readTermFrequency());			
 			posting.setPostingSource(mbis);
 			currentPosting++;
 		} catch (Exception e) {

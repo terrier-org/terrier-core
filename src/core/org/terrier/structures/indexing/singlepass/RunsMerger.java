@@ -75,8 +75,7 @@ public class RunsMerger {
 	/** BitOut used to write the merged postings to disk*/
 	protected BitOut bos;	
 	/** RunReader reference for instantiation*/
-	//protected RunReader run;
-	/** Last term written to disk (useful for terms appearing in mutiple runs */
+	/** Last term written to disk (useful for terms appearing in multiple runs */
 	protected String lastTermWritten = "";
 	
 	protected LexiconEntry termStatistics = null;

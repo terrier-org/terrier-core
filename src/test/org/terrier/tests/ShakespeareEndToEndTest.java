@@ -41,12 +41,13 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.CompressingMetaIndex;
+import org.terrier.structures.CompressingMetaIndex.InputStream;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FieldDocumentIndexEntry;
@@ -59,9 +60,9 @@ import org.terrier.structures.MetaIndex;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PostingIndexInputStream;
-import org.terrier.structures.CompressingMetaIndex.InputStream;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.PostingUtil;
+import org.terrier.structures.restructure.Tr4BasicLexiconEntry;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.StaTools;
@@ -516,8 +517,10 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		}
 		else
 		{
-			assertTrue("LexiconEntry is not of type BasicLexiconEntry", ((FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure("lexicon-valuefactory")).newInstance()
-					instanceof BasicLexiconEntry);
+			LexiconEntry le = ((FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure("lexicon-valuefactory")).newInstance();
+			assertTrue("LexiconEntry is not of type BasicLexiconEntry", 
+					(le instanceof BasicLexiconEntry) || (le instanceof Tr4BasicLexiconEntry)
+					);
 		}
 		index.close();
 		super.checkIndex();

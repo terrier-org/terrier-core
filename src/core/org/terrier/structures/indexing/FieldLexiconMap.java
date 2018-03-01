@@ -99,6 +99,7 @@ public class FieldLexiconMap extends LexiconMap {
 			final FieldLexiconEntry fle = new FieldLexiconEntry(getFieldFrequency(t));
 			fle.setTermId(termCodes.getCode(t));
 			fle.setStatistics(nts.get(t), tfs.get(t));
+			fle.setMaxFrequencyInDocuments(maxtfs.get(t));
 			final int[] TFf = new int[fieldCount];
 			for(int fi=0;fi< fieldCount;fi++)
 				TFf[fi] = field_tfs[fi].get(t);

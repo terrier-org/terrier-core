@@ -248,6 +248,18 @@ public class Terrier4 {
 		propertyMap.get("index.lexicon.parameter_types").add(new PropertySwap("java.lang.String,org.terrier.structures.Index", "java.lang.String,org.terrier.structures.IndexOnDisk"));
 		propertyMap.get("index.lexicon-inputstream.parameter_types").add(new PropertySwap("java.lang.String,org.terrier.structures.Index", "java.lang.String,org.terrier.structures.IndexOnDisk"));
 		propertyMap.get("index.lexicon-entry-inputstream.parameter_types").add(new PropertySwap("java.lang.String,org.terrier.structures.Index", "java.lang.String,org.terrier.structures.IndexOnDisk"));
+	
+		//Tr 4->5
+		propertyMap.put("index.lexicon-valuefactory.class",new ArrayList<PropertySwap>());
+
+		propertyMap.get("index.lexicon-valuefactory.class").add(new PropertySwap("org.terrier.structures.FieldLexiconEntry$Factory", "org.terrier.structures.restructure.Tr4FieldLexiconEntry$Factory"));
+		propertyMap.get("index.lexicon-valuefactory.class").add(new PropertySwap("org.terrier.structures.BasicLexiconEntry$Factory", "org.terrier.structures.restructure.Tr4BasicLexiconEntry$Factory"));
+		propertyMap.get("index.lexicon-valuefactory.class").add(new PropertySwap("org.terrier.structures.BlockFieldLexiconEntry$Factory", "org.terrier.structures.restructure.Tr3BlockFieldLexiconEntry$Factory"));
+		propertyMap.get("index.lexicon-valuefactory.class").add(new PropertySwap("org.terrier.structures.BlockLexiconEntry$Factory", "org.terrier.structures.restructure.Tr3BlockLexiconEntry$Factory"));
+		
+		//this latter class has no factory, so not even sure it can happen
+		propertyMap.get("index.lexicon-valuefactory.class").add(new PropertySwap("org.terrier.structures.BasicTermStatsLexiconEntry$Factory", "org.terrier.structures.restructure.Tr4BasicTermStatsLexiconEntry$Factory"));
+
 	}
 	
 	private class PropertySwap {

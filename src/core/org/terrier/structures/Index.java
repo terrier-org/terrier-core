@@ -97,7 +97,7 @@ public abstract class Index implements Closeable, Flushable {
 		
 	}
 
-	protected final static int MINIMUM_INDEX_TERRIER_VERSION = 4;
+	protected final static int MINIMUM_INDEX_TERRIER_VERSION = 3;
 	protected final static String PROPERTIES_SUFFIX = ".properties";
 
 	protected static boolean RETRIEVAL_LOADING_PROFILE = Boolean

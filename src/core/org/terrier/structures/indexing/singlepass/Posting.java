@@ -33,7 +33,7 @@ import org.terrier.compression.bit.MemorySBOS;
 
 /**
  * Class representing a simple posting list in memory.
- * It keeps the information for <code>TF, Nt</code>, and the sequence <code>[doc, tf]</code>
+ * It keeps the information for <code>TF, Nt, maxtf</code>, and the sequence <code>[doc, tf]</code>
  * @author Roi Blanco
  *
  */
@@ -43,6 +43,8 @@ public class Posting {
 	protected int TF;
 	/** The document frequency */
 	protected int Nt;
+	
+	protected int maxtf;
 	/** The compressed in-memory object holding the sequence doc_id, idf*/	
 	protected MemorySBOS docIds;
 	/** Last document inserted in the posting */
@@ -59,6 +61,7 @@ public class Posting {
 		docIds = new MemorySBOS();
 		TF = freq;			
 		Nt = 1;
+		maxtf = freq;
 		//System.err.println("Writing docid="+ (docId+1) + " f=" + freq);
 		docIds.writeGamma(docId + 1);
 		docIds.writeGamma(freq);
@@ -79,12 +82,21 @@ public class Posting {
 		final int bytes = docIds.getSize();
 		Nt++;
 		TF += freq;
+		if (freq > maxtf)
+			maxtf = freq;
 		docIds.writeGamma(doc - lastInt);
 		docIds.writeGamma(freq);
 		lastInt = doc;					
 		return docIds.getSize() - bytes;
 	}
 
+	/**
+	 * @return the max term frequency of the term in any document in the run
+	 */
+	public int getMaxtf(){
+		return maxtf;
+	}
+	
 	/**
 	 * @return the term frequency of the term in the run
 	 */

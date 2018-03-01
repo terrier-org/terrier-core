@@ -100,7 +100,8 @@ public class RunWriter {
 	public void writeTerm(final String term, final Posting post) throws IOException{		
 		stringDos.writeUTF(term);
 		bos.writeGamma(post.getDocF());
-		bos.writeGamma(post.getTF());
+		bos.writeGamma(post.getMaxtf());
+		bos.writeGamma(post.getTF());		
 		//System.err.println("Writing "+term + " TF="+post.getTF()+ " Nt="+post.getDocF());
 		final MemorySBOS Docs = post.getDocs();
 		Docs.pad();
