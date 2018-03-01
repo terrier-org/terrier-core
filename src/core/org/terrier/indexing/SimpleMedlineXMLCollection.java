@@ -79,6 +79,11 @@ public class SimpleMedlineXMLCollection extends SimpleXMLCollection
 	{
 		super(CollectionSpecFilename, BlacklistSpecFilename);
 	}
+	
+	/** Constructor required by TRECIndexing */	
+	public SimpleMedlineXMLCollection(String CollectionSpecFilename, String ignored1, String BlacklistSpecFilename, String ignored2) {
+		this(CollectionSpecFilename, BlacklistSpecFilename);
+	}
 
 	/**
 	 * Parse through up to a limited number of documents in the XML file. The limit is
