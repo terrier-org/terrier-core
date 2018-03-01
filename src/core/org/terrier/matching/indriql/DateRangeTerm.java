@@ -82,11 +82,8 @@ public class DateRangeTerm extends QueryTerm {
 	@Override
 	public MatchingEntry getMatcher(QueryTermProperties qtp, Index index,
 			Lexicon<String> lexTerm, PostingIndex<Pointer> invTerm,
-			CollectionStatistics collectionStats) throws IOException {
-		
-		
-		
-		
+			CollectionStatistics collectionStats) throws IOException
+	{
 		
 		WeightingModel[] wmodels = qtp.termModels.toArray(new WeightingModel[0]);
 		if (wmodels.length == 0) {
@@ -98,7 +95,7 @@ public class DateRangeTerm extends QueryTerm {
 		Pair<EntryStatistics,IterablePosting> pair = this.getPostingIterator(index);
 		
 		if (entryStats == null)
-			entryStats = pair.getKey();
+			qtp.stats = entryStats = pair.getKey();
 		if (logger.isDebugEnabled())
 			logger.debug("Date range term "+this.toString()+ " stats" + entryStats.toString());
 		for (WeightingModel w : wmodels)

@@ -120,7 +120,7 @@ public class SingleQueryTerm extends QueryTerm {
 			return null;
 		}
 		if (entryStats == null)
-			entryStats = t;
+			qtp.stats = entryStats = t;
 		for (WeightingModel w : wmodels)
 		{
 			w.setEntryStatistics(entryStats);
