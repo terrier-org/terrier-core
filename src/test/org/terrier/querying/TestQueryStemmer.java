@@ -1,10 +1,9 @@
 package org.terrier.querying;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.Properties;
 
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
@@ -32,7 +31,7 @@ public class TestQueryStemmer extends ApplicationSetupBasedTest {
 		String[] found = qts.getEquiv("fox");
 		Arrays.sort(found);
 		System.out.println(Arrays.toString(found));
-		assertEquals(new String[]{"fox", "foxed"}, found);
+		assertArrayEquals(new String[]{"fox", "foxed"}, found);
 	}
 	
 	
