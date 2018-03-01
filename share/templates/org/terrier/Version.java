@@ -7,7 +7,12 @@ package org.terrier;
  */
 public class Version {
 
-	public static String VERSION = "${project.version}";
+	public static final String VERSION = "${project.version}";
+
+	public static int getMajorVersion()
+	{
+		return Integer.parseInt(VERSION.split("\\.", 2)[0]);
+	}
 
 	public static void main(String[] args) {
 		System.out.println(VERSION);
