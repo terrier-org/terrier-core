@@ -2,11 +2,20 @@ What's New in Terrier
 =====================
 
 
-Unreleased
+Terrier 4.3 - xx/03/2018
 ------------------------
+Minor update with mostly bug fixes and minor improvements. Likely the last in the 4.x series.
+
+### Indexing
+ - [TR-466](http://terrier.org/issues/browse/TR-466) SimpleXMLCollection - requested constructor not found (Jiho Noh, University of Kentucky)
+ - [TR-489](http://terrier.org/issues/browse/TR-489) TaggedDocument cannot make abstract if no global tag (Kiril Mihaylov, University of Glasgow)
 
 ### Retrieval
-- [TR-472](http://terrier.org/issues/browse/TR-472) Request not passed to the WeightingModel (Aldo Lipani, Vienna University of Technology)
+ - [TR-472](http://terrier.org/issues/browse/TR-472) Request not passed to the WeightingModel (Aldo Lipani, Vienna University of Technology)
+ - [TR-487](http://terrier.org/issues/browse/TR-487) MatchingQueryTerms should be decorated with the EntryStatistics
+
+### Other
+ - [TR-483](http://terrier.org/issues/browse/TR-483) pom.xml should not specify javac
 
 Terrier 4.2 - 22/12/2016
 ------------------------
