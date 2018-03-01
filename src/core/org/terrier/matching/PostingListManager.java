@@ -175,21 +175,24 @@ public class PostingListManager implements Closeable
 		this(_index, _cs);
 		for(String queryTerm : mqt.getTerms())
 		{
+			EntryStatistics es = null;
 			if (splitSynonyms && queryTerm.contains("|"))
 			{
 				String[] alternatives = queryTerm.split("\\|");
-				addSingleTermAlternatives(alternatives, queryTerm,
+				es = addSingleTermAlternatives(alternatives, queryTerm,
 						mqt.getTermWeight(queryTerm), 
 						mqt.getStatistics(queryTerm), 
 						mqt.getTermWeightingModels(queryTerm));
 			}
 			else
 			{
-				addSingleTerm(queryTerm, 
+				es = addSingleTerm(queryTerm, 
 					mqt.getTermWeight(queryTerm), 
 					mqt.getStatistics(queryTerm), 
 					mqt.getTermWeightingModels(queryTerm));
 			}
+			//TR-487: PostingListManager does not decorate MatchingQueryTerms with the EntryStatistics
+			mqt.setTermProperty(queryTerm, es);
 		}
 		
 		//TR-472 Request not passed to the WeightingModel
@@ -215,7 +218,7 @@ public class PostingListManager implements Closeable
 	 * @param wmodels weighting models to be applied for this query term
 	 * @throws IOException
 	 */
-	public void addSingleTerm(String queryTerm, double weight, EntryStatistics entryStats, WeightingModel[] wmodels) throws IOException
+	public EntryStatistics addSingleTerm(String queryTerm, double weight, EntryStatistics entryStats, WeightingModel[] wmodels) throws IOException
 	{
 		LexiconEntry t = lexicon.getLexiconEntry(queryTerm);
 		if (t == null) {
@@ -246,6 +249,7 @@ public class PostingListManager implements Closeable
 			}
 			termModels.add(wmodels);
 		}
+		return entryStats;
 	}
 	
 	/** Knows how to merge several EntryStatistics for a single effective term */
@@ -268,10 +272,10 @@ public class PostingListManager implements Closeable
 	 * @param wmodels WeightingModels for the synonym group (NOT one per member).
 	 * @throws IOException
 	 */
-	public void addSingleTermAlternatives(String[] terms, String stringForm,  double weight, EntryStatistics[] entryStats, WeightingModel[] wmodels) throws IOException
+	public EntryStatistics addSingleTermAlternatives(String[] terms, String stringForm,  double weight, EntryStatistics[] entryStats, WeightingModel[] wmodels) throws IOException
 	{		
 		EntryStatistics joined = mergeStatistics(entryStats);
-		addSingleTermAlternatives(terms, stringForm, weight, joined, wmodels);
+		return addSingleTermAlternatives(terms, stringForm, weight, joined, wmodels);
 	}
 	
 	/** Adds a synonym group to the matching process. 
@@ -282,7 +286,7 @@ public class PostingListManager implements Closeable
 	 * @param wmodels WeightingModels for the synonym group (NOT one per member).
 	 * @throws IOException
 	 */
-	public void addSingleTermAlternatives(String[] terms, String stringForm, double weight, EntryStatistics entryStats, WeightingModel[] wmodels) throws IOException
+	public EntryStatistics addSingleTermAlternatives(String[] terms, String stringForm, double weight, EntryStatistics entryStats, WeightingModel[] wmodels) throws IOException
 	{
 		List<LexiconEntry> _le = new ArrayList<LexiconEntry>(terms.length);
 		List<IterablePosting> _joinedPostings = new ArrayList<IterablePosting>(terms.length);
@@ -307,7 +311,7 @@ public class PostingListManager implements Closeable
 		if (_le.size() == 0)
 		{
 			logger.warn("No alternatives matched in " + Arrays.toString(terms));
-			return;
+			return null;
 		}
 		if (entryStats == null)
 			entryStats = mergeStatistics(_le.toArray(new LexiconEntry[_le.size()]));
@@ -328,6 +332,7 @@ public class PostingListManager implements Closeable
 			w.prepare();			
 		}
 		termModels.add(wmodels);
+		return entryStats;
 	}
 	
 	/** Counts the number of terms active. If firstMove is true,

@@ -149,19 +149,18 @@ import org.terrier.utility.ApplicationSetup;
 
 public class IndexingExample {
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         // Directory containing files to index
-    		String aDirectoryToIndex = "/my/directory/containing/files/";
+        String aDirectoryToIndex = "/my/directory/containing/files/";
 
         // Configure Terrier
-				ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
+        ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
         ApplicationSetup.setProperty("indexer.meta.forward.keylens", "200");
 
-				Indexer indexer = new BasicIndexer("/path/to/my/index", "data");
-				Collection coll = new SimpleFileCollection(Arrays.asList(aDirectoryToIndex), true);
-				indexer.index(new Collection[]{coll});
-				indexer.close();
+        Indexer indexer = new BasicIndexer("/path/to/my/index", "data");
+        Collection coll = new SimpleFileCollection(Arrays.asList(aDirectoryToIndex), true);
+        indexer.index(new Collection[]{coll});
     }
 }
 ```
@@ -272,33 +271,32 @@ public class IndexingAndRetrievalExample {
 		Indexer indexer = new BasicIndexer("/path/to/my/index", "data");
 		Collection coll = new SimpleFileCollection(Arrays.asList(aDirectoryToIndex), true);
 		indexer.index(new Collection[]{coll});
-		indexer.close();
 
 		Index index = Index.createIndex("/path/to/my/index", "data");
 
-    // Enable the decorate enhancement
-    ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying.SimpleDecorate");
+		// Enable the decorate enhancement
+		ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying.SimpleDecorate");
 		ApplicationSetup.setProperty("querying.postfilters.controls", "decorate:org.terrier.querying.SimpleDecorate");
 
-    // Create a new manager run queries
+ 		// Create a new manager run queries
 		Manager queryingManager = new Manager(index);
 
-    // Create a search request
+		// Create a search request
 		SearchRequest srq = queryingManager.newSearchRequestFromQuery("search for document");
 
-    // Specify the model to use when searching
+		// Specify the model to use when searching
 		srq.addMatchingModel("Matching","BM25");
 
-    // Turn on decoration for this search request
+		// Turn on decoration for this search request
 		srq.setControl("decorate", "on");
 
-    // Run the search
+ 		// Run the search
 		queryingManager.runSearchRequest(srq);
 
-    // Get the result set
+		// Get the result set
 		ResultSet results = srq.getResultSet();
 
-    // Print the results
+		// Print the results
 		System.out.println(results.getExactResultSize()+" documents were scored");
 		System.out.println("The top "+results.getResultSize()+" of those documents were returned");
 		System.out.println("Document Ranking");
@@ -307,7 +305,7 @@ public class IndexingAndRetrievalExample {
 			double score = results.getScores()[i];
 			System.out.println("   Rank "+i+": "+docid+" "+results.getMetaItem("filename", docid)+" "+score);
 		}
-  }
+    }
 }
 ```
 

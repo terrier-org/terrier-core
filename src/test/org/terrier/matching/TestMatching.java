@@ -122,6 +122,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		mqt.setTermProperty("quick", 1);
 		mqt.setDefaultTermWeightingModel(new DLH13());
 		ResultSet rs = matching.match("query1", mqt);
+		assertNotNull(mqt.getStatistics("quick"));
 		assertNotNull(rs);
 		assertEquals(1, rs.getResultSize());
 		assertEquals(0, rs.getDocids()[0]);
