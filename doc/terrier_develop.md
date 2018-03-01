@@ -18,7 +18,7 @@ Additional implementations can implement methods of the FileSystem interface tha
 
 Finally, the Files layer supports transparent compression for reading or writing file streams. In particular, compressed files using Gzip (.gz) and Bzip2 (.bz2) can be obtained by just adding the extension to the file. Moreover, alternative compression/decompression libraries can be added using the `addFilterInputStreamMapping()` method.
 
-**NB**: We intend to replace the FileSystem Abstraction Layer with Java's nio FileSystem in a future release.
+**NB**: We may replace the FileSystem Abstraction Layer with Java's nio FileSystem in a future release.
 
 
 Using your own classes in Terrier
@@ -32,7 +32,7 @@ For your new functionality, make a new project with a compile-time dependency on
 <dependency>
   <groupId>org.terrier</groupId>
   <artifactId>terrier-core</artifactId>
-  <version>4.2</version>
+  <version>5.0</version>
   <scope>provided</scope>
 </dependency>
 ```
@@ -45,14 +45,11 @@ Once you have compiled your project into a jar file, you have two options:
 CLASSPATH=/path/to/my/project.jar bin/trec_terrier.sh -Dtrec.model=my.project.MyWeightingModel
 ```
 
-2. Using Maven to add that dependency in Terrier, which is slightly more complex. Firstly, you should `mvn install` your project to your local repository. Secondly, you add dependency on your project to Terrier; Thirdly, you repackage Terrier so that the jar-with-dependencies includes your project, using `mvn package`.
+2. Install your project to your local Maven repository (e.g. using `mvn install`) or to a remote repository (`mvn deploy`). You can then tell Terrier to import that project at startup:
 
-```xml
-<dependency>
-  <groupId>my.group</groupId>
-  <artifactId>my.project</artifactId>
-  <version>0.1-SNAPSHOT</version>
-</dependency>
+```
+#terrier.mvn.coords=<orgId>:<artifactId>:<version>
+terrier.mvn.coords=org.me:my-terrier-ext:5.1
 ```
 
 

@@ -7,7 +7,7 @@ import java.util.Properties;
 import org.junit.Test;
 import org.terrier.tests.ApplicationSetupBasedTest;
 
-public class TestIvyResolution extends ApplicationSetupBasedTest {
+public class TestMavenResolution extends ApplicationSetupBasedTest {
 
 	@Test public void testImportSingleDirect() throws Exception
 	{
