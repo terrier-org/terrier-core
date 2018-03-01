@@ -34,7 +34,6 @@ import java.io.PrintWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.terrier.matching.ResultSet;
 import org.terrier.querying.Manager;
 import org.terrier.querying.SearchRequest;
@@ -257,31 +256,57 @@ public class InteractiveQuerying {
 		pw.flush();
 		//pw.write("finished outputting\n");
 	}
+	
+	public static class Command extends CLITool
+	{
+		
+		@Override
+		public String commandname() {
+			return "interactive";
+		}
+	
+		@Override
+		public String help() {
+			return commandname() + " [--noverbose] | [your query]";
+		}
+	
+		@Override
+		public String helpsummary() {
+			return "runs an interactive querying session on the commandline";
+		}
+	
+		@Override
+		public int run(String[] args) {
+			InteractiveQuerying iq = new InteractiveQuerying();
+			if (args.length == 0)
+			{
+				iq.processQueries(1.0);
+			}
+			else if (args.length == 1 && args[0].equals("--noverbose"))
+			{
+				iq.verbose = false;
+				iq.processQueries(1.0);
+			}
+			else
+			{
+				iq.verbose = false;
+				StringBuilder s = new StringBuilder();
+				for(int i=0; i<args.length;i++)
+				{
+					s.append(args[i]);
+					s.append(" ");
+				}
+				iq.processQuery("CMDLINE", s.toString(), 1.0);
+			}
+			return 0;
+		}
+	}
 	/**
 	 * Starts the interactive query application.
 	 * @param args the command line arguments.
 	 */
 	public static void main(String[] args) {
-		InteractiveQuerying iq = new InteractiveQuerying();
-		if (args.length == 0)
-		{
-			iq.processQueries(1.0);
-		}
-		else if (args.length == 1 && args[0].equals("--noverbose"))
-		{
-			iq.verbose = false;
-			iq.processQueries(1.0);
-		}
-		else
-		{
-			iq.verbose = false;
-			StringBuilder s = new StringBuilder();
-			for(int i=0; i<args.length;i++)
-			{
-				s.append(args[i]);
-				s.append(" ");
-			}
-			iq.processQuery("CMDLINE", s.toString(), 1.0);
-		}	
+		CLITool.run(InteractiveQuerying.Command.class, args);
 	}
+	
 }

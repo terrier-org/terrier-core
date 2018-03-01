@@ -94,13 +94,43 @@ import org.terrier.utility.TerrierTimer;
  * @since 4.0
  *
  */
-public class InvertedIndexRecompresser {
+public class InvertedIndexRecompresser extends CLITool {
 	
-	static Logger logger = LoggerFactory.getLogger(InvertedIndexRecompresser.class);
+	@Override
+	public int run(String[] args) {
+		try{
+			IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
+			IndexOnDisk index = Index.createIndex();
+			recompressInverted(index);	
+			index.close();
+		}catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return 0;
+	}
+
+	@Override
+	public String commandname() {
+		return "recompress";
+	}
+
+	@Override
+	public String help() {
+		return helpsummary();
+	}
+
+	@Override
+	public String helpsummary() {
+		return "allows an inverted index to be recompressed, changing compression";
+	}
+
+	//static 
 	
 	@SuppressWarnings("unchecked")
 	static void compressInverted(IndexOnDisk index, AbstractPostingOutputStream icpw, Set<String> queryTerms) throws IOException {
 			
+		Logger logger = LoggerFactory.getLogger(InvertedIndexRecompresser.class);
+		
 		if (queryTerms == null)
 			logger.info("Saving all terms...");
 		
@@ -150,6 +180,7 @@ public class InvertedIndexRecompresser {
 	
 	public static void recompressInverted(IndexOnDisk index) throws Exception 
 	{
+		Logger logger = LoggerFactory.getLogger(InvertedIndexRecompresser.class);
 		assert ! IndexUtil.isStructureOpen(index, "inverted");
 		assert ! IndexUtil.isStructureOpen(index, "lexicon");
 		
@@ -195,24 +226,8 @@ public class InvertedIndexRecompresser {
 		index.flush();
 	}
 
-	public static void main(String[] args) throws Exception {
-//		
-//		String chooice = args[1];
-//		String dataSource = null;
-//		if ("FILE".equalsIgnoreCase(chooice)) {
-//			dataSource = "file";
-//		}
-//		else if ("MEMORY".equalsIgnoreCase(chooice)){
-//			dataSource = "fileinmem";
-//		} else {
-//			System.err.println("Second parameter must be FILE or MEMORY");
-//			System.exit(-1);
-//		}		
-
-		IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
-		IndexOnDisk index = Index.createIndex();
-		recompressInverted(index);	
-		index.close();
+	public static void main(String[] args) {
+		CLITool.run(InvertedIndexRecompresser.class, args);
 	}
 
 }

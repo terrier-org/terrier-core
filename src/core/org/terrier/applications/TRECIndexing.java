@@ -49,6 +49,8 @@ public class TRECIndexing extends BatchIndexing {
 	/** The collection to index. */
 	protected Collection collectionTREC;
 	
+	boolean blocks = ApplicationSetup.BLOCK_INDEXING;
+	
 	
 	public TRECIndexing(String _path, String _prefix) {
 		this(_path, _prefix, ApplicationSetup.COLLECTION_SPEC);

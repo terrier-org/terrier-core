@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.terrier.applications.CLITool;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
 import org.terrier.utility.Rounding;
@@ -15,6 +15,33 @@ import uk.ac.gla.terrier.jtreceval.trec_eval;
 
 public class TrecEvalEvaluation implements Evaluation {
 
+	public static class Command extends CLITool
+	{
+
+		@Override
+		public String commandname() {
+			return "treceval";
+		}
+
+		@Override
+		public String help() {
+			new trec_eval().run(new String[]{"-h"});
+			return "";
+		}
+
+		@Override
+		public String helpsummary() {
+			return "runs the NIST standard treceval tool";
+		}
+
+		@Override
+		public int run(String[] args) throws Exception {
+			new trec_eval().run(args);
+			return 0;
+		}
+		
+	}
+	
 	protected static final Logger logger = LoggerFactory.getLogger(TrecEvalEvaluation.class);
 
 	String qrels;

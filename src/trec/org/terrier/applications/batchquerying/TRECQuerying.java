@@ -40,8 +40,15 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.indriql.IndriQLParser;
@@ -166,6 +173,98 @@ import org.terrier.utility.Files;
  */
 public class TRECQuerying {
 
+	public static class Command extends CLIParsedCLITool
+	{
+		@Override
+		protected Options getOptions()
+		{
+			Options options = new Options();
+			options.addOption(Option.builder("c")
+					.argName("controls")
+					.longOpt("controls")
+					.hasArgs()
+					.valueSeparator(',')
+					.desc("allows one of more controls to be set")
+					.build());
+			options.addOption(Option.builder("F")
+					.argName("format")
+					.longOpt("format")
+					.hasArg()
+					.desc("changes the default run OutputFormat class")
+					.build());
+			options.addOption(Option.builder("docids")
+					.argName("docids")
+					.desc("specifies that Terrier will returns docids rather than docnos")
+					.build());
+			options.addOption(Option.builder("i")
+					.argName("indriql")
+					.longOpt("indrqi")
+					.desc("specifies that topics are presumed to be Indri QL, rather than Terrier QL")
+					.build());			
+			options.addOption(Option.builder("q")
+					.argName("queryexpanion")
+					.longOpt("queryexpanion")
+					.desc("apply query expansion")
+					.build());
+			options.addOption(Option.builder("s")
+					.argName("singleline")
+					.longOpt("singleline")
+					.desc("use SingleLineTRECQuery to parse the topics")
+					.build());
+			options.addOption(Option.builder("t")
+					.argName("topics")
+					.longOpt("topics")
+					.desc("specify the location of the topics file")
+					.build());			
+			options.addOption(Option.builder("w")
+					.argName("wmodel")
+					.longOpt("wmodel")
+					.desc("change the default document weighting model")
+					.build());
+			return options;
+		}
+
+		@Override
+		public String commandname() {
+			return "batchretrieval";
+		}
+
+		@Override
+		public String helpsummary() {
+			return "performs a batch retrieval \"run\" over a set of queries";
+		}
+
+		@Override
+		public int run(String[] args) throws Exception {
+			
+			CommandLineParser parser = new DefaultParser();
+			try {
+				CommandLine line = parser.parse(getOptions(), args);
+				TRECQuerying tq = new TRECQuerying();
+				
+				if (line.hasOption("c"))
+					throw new UnsupportedOperationException();
+				
+				if (line.hasOption("docids"))
+					tq.printer = new TRECDocidOutputFormat(null);
+				
+				if (line.hasOption("i"))
+					tq.indriQL = true;
+				
+				if (line.hasOption("q"))
+					tq.queryexpansion = true;
+				
+				if (line.hasOption('w'))
+					tq.wModel = line.getOptionValue('w');
+				
+			} catch (ParseException e) {
+				System.err.println(e);
+				return 1;
+			}
+			return 0;
+		}
+		
+	}
 	
 	/** The name of the query expansion model used. */
 	protected String defaultQEModel;

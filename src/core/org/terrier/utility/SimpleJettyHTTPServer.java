@@ -37,6 +37,7 @@ import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.terrier.applications.CLITool;
 
 
 /** Class to make a simple Jetty servlet. Two arguments: port name, and webapps root path.
@@ -102,6 +103,37 @@ public class SimpleJettyHTTPServer {
 	public void stop() throws Exception {
 	    webserver.stop();
 	}
+	
+	public static class Command extends CLITool
+	{
+
+		@Override
+		public String commandname() {
+			return "http";
+		}
+
+		@Override
+		public String help() {
+			return "Usage: SimpleJettyHTTPServer port src/webapps/simple/";
+		}
+
+		@Override
+		public String helpsummary() {
+			return "runs a simple JSP webserver, to serve results";
+		}
+
+		@Override
+		public int run(String[] args) throws Exception {
+			if (args.length != 2)
+			{
+				System.err.println(help());
+				return 1;
+			}
+			new SimpleJettyHTTPServer(null, Integer.parseInt(args[0]), args[1]).start();
+			return 0;
+		}
+		
+	}
 	/**
 	 * main
 	 * @param args
@@ -109,12 +141,7 @@ public class SimpleJettyHTTPServer {
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		if (args.length != 2)
-		{
-			System.err.println("Usage: SimpleJettyHTTPServer port src/webapps/simple/");
-			return;
-		}
-		new SimpleJettyHTTPServer(null, Integer.parseInt(args[0]), args[1]).start();
+		CLITool.run(Command.class, args);		
 	}
 	
 }
