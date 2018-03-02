@@ -487,7 +487,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.7.0</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<fork>true</fork>
@@ -509,7 +509,7 @@
 
 		  <plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.6</version>
+				<version>3.1.0</version>
 				<configuration>
 					<finalName>terrier-core-${project.version}</finalName>
 					<archive>
@@ -541,7 +541,7 @@
 			<plugin>
 			  <groupId>org.apache.maven.plugins</groupId>
 			  <artifactId>maven-javadoc-plugin</artifactId>
-			  <version>2.10.4</version>
+			      <version>3.0.0</version>
 			  <executions>
 			  <execution>
 			      <phase>package</phase>
