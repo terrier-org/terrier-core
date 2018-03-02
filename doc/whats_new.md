@@ -16,6 +16,7 @@ Minor update with mostly bug fixes and minor improvements. Likely the last in th
 
 ### Other
  - [TR-483](http://terrier.org/issues/browse/TR-483) pom.xml should not specify javac
+ - [TR-495](http://terrier.org/issues/browse/TR-495) Build should work on JDK9
 
 Terrier 4.2 - 22/12/2016
 ------------------------
