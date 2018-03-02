@@ -19,8 +19,8 @@ import org.terrier.utility.io.WrappedIOException;
 @SuppressWarnings("rawtypes")
 public abstract class FSOMapFileLexiconGeneric<K1,K2 extends WritableComparable> extends MapLexicon<K1,K2> {
 
-	static final String ID_EXT = ".fsomapid";
-	static final String MAPFILE_EXT = FSOrderedMapFile.USUAL_EXTENSION;
+	public static final String ID_EXT = ".fsomapid";
+	public static final String MAPFILE_EXT = FSOrderedMapFile.USUAL_EXTENSION;
 
     static class OnDiskLookup implements Id2EntryIndexLookup, java.io.Closeable
     {

@@ -848,7 +848,7 @@ public class LexiconBuilder
 				//other uses of lexicons shouldnt overwrite the tokens in the index
 				counter = new NullCollectionStatisticsCounter();
 			}
-			FSOMapFileLexicon.optimise(structureName, index, counter);
+			FSOMapFileLexiconUtilities.optimise(structureName, index, counter);
 			counter.close();
 			index.flush();
 		} catch(IOException ioe) {
