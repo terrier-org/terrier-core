@@ -95,8 +95,6 @@ public class InteractiveQuerying {
 		try{
 		if (managerName.indexOf('.') == -1)
 			managerName = "org.terrier.querying."+managerName;
-		else if (managerName.startsWith("uk.ac.gla.terrier"))
-			managerName = managerName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 		queryingManager = ApplicationSetup.getClass(managerName).asSubclass(Manager.class)
 			.getConstructor(new Class[]{Index.class})
 			.newInstance(new Object[]{index});
@@ -142,10 +140,7 @@ public class InteractiveQuerying {
 		srq.setControl("c", Double.toString(cParameter));
 		srq.addMatchingModel(mModel, wModel);
 		matchingCount++;
-		queryingManager.runPreProcessing(srq);
-		queryingManager.runMatching(srq);
-		queryingManager.runPostProcessing(srq);
-		queryingManager.runPostFilters(srq);
+		queryingManager.runSearchRequest(srq);
 		try{
 			printResults(resultFile, srq);
 		} catch (IOException ioe) {

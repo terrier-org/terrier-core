@@ -29,12 +29,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.dsms.DocumentScoreModifier;
+import org.terrier.matching.indriql.MatchingEntry;
 import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.matching.models.WeightingModel;
@@ -174,6 +179,22 @@ implements Serializable,Cloneable
 			weight = w;
 			termModels.add(model);
 			stats = _stats;
+		}
+
+		public double getWeight() {
+			return weight;
+		}
+
+		public String getTag() {
+			return tag;
+		}
+
+		public void setWeight(double weight) {
+			this.weight = weight;
+		}
+
+		public void setTag(String tag) {
+			this.tag = tag;
 		}
 
 		@Override
@@ -497,9 +518,6 @@ implements Serializable,Cloneable
 		return null;
 	}
 	
-//	public void setTermProperty(String term) {
-//		setTermProperty(term, 1);
-//	}
 	
 	public void setTermProperty(String term, double weight) {
 		Map.Entry<QueryTerm, QueryTermProperties> e = get(term);
@@ -535,6 +553,21 @@ implements Serializable,Cloneable
 			l.add(e.getKey().toString());
 		}
 		return l.toArray(new String[l.size()]);
+	}
+	
+	public Set<String> getMatchingTags()
+	{
+		return matchOnTags;
+	}
+	
+	Set<String> matchOnTags = new HashSet<String>();
+	public List<MatchingTerm> getMatchingTermsMatchingTags()
+	{
+		if (matchOnTags.size() == 0)
+			return this;
+		return this.stream()
+				.filter(kv -> matchOnTags.contains( kv.getValue().getTag()) )
+				.collect(Collectors.toList());
 	}
 	
 	/** 

@@ -1,6 +1,6 @@
 options {
 	STATIC = false;
-	LOOKAHEAD = 1;
+	LOOKAHEAD = 3;
 	FORCE_LA_CHECK = true;
 	DEBUG_PARSER=false;
 }
@@ -9,12 +9,17 @@ PARSER_BEGIN(IndriQLParser)
 
 package org.terrier.matching.indriql;
 
-import java.util.List;
+import org.terrier.querying.parser.Query.QTPBuilder;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.StringReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
 
 public class IndriQLParser
 {
@@ -34,7 +39,7 @@ public class IndriQLParser
 	        	String line = null;
 	        	while((line = br.readLine())!= null) {
 	        		IndriQLParser parser = new IndriQLParser(line.trim());
-	        		System.out.println(Arrays.toString(parser.parseAll()));
+	        		System.out.println(parser.parseAll());
 	        	}
 	        }
 	        else
@@ -81,26 +86,51 @@ TOKEN :
    |  <UW:  "uw">
    |  <OW:  "ow">
    |  <SYN: "syn">
+   |  <TAG: "tag">
+   |  <COMBINE: "combine">
    |  <OPEN_PAREN: "("> : DEFAULT
+   | <COLON : ":">
+   | <EQUALS : "=">
+   | <FLOAT : (["0"-"9"])+"."(["0"-"9"])* >
    | <INT : (["0"-"9"])+ >
 }
 
-QueryTerm[] parseAll() : 
+
+
+List<MatchingTerm> parseOne() : 
 {
-	List<QueryTerm> rtrList = new ArrayList<QueryTerm>();
-	QueryTerm newWord = null;
+	List<MatchingTerm> rtrList = new ArrayList<MatchingTerm>();
+	MatchingTerm newWord = null;
+	List<MatchingTerm> newWords = null;
 }
 {
-	(newWord = parse() { rtrList.add(newWord); })+
+	(LOOKAHEAD(<HASH> <TAG>)
+	<HASH> <TAG> newWords = tag() { rtrList.addAll(newWords); } 
+	| <HASH> <COMBINE> newWords = combine() { rtrList.addAll(newWords); } 
+	| newWord = parse() { rtrList.add(newWord); })
 	{
-		return rtrList.toArray(new QueryTerm[rtrList.size()]);
+		return rtrList;
+	}
+}
+
+List<MatchingTerm> parseAll() : 
+{
+	List<MatchingTerm> rtrList = new ArrayList<MatchingTerm>();
+	List<MatchingTerm> newWords = null;
+}
+{
+	(
+	newWords = parseOne() { rtrList.addAll(newWords); } 
+	)+
+	{
+		return rtrList;
 	}
 }
 
 
-QueryTerm parse() :
+MatchingTerm parse() :
 {
-	QueryTerm rtr = null;
+	MatchingTerm rtr = null;
 }
 {
 	(
@@ -119,77 +149,119 @@ QueryTerm parse() :
 	}
 }
 
+List<MatchingTerm> combine(): {
+	List<MatchingTerm> allInnerWords = new ArrayList<MatchingTerm>();
+	List<MatchingTerm> innerWords = null;
+	Token key;
+	Token value;
+	int offset = 0;
+	Map<Integer,String> kv = new HashMap<Integer,String>();
+}
+{
+	(<COLON> key = <INT> <EQUALS> value = <FLOAT> { kv.put(Integer.parseInt(key.image), value.image); } )*
+	<OPEN_PAREN>  (innerWords = parseOne() { 
+		  for(MatchingTerm qt : innerWords)
+		  {
+	    		if (kv.containsKey(offset))
+	    		{
+	    			qt.getValue().setWeight(qt.getValue().getWeight() * Double.parseDouble(kv.get(offset)));
+	    		}
+	      }
+		  offset++; 
+		  allInnerWords.addAll(innerWords);
+		  }  
+	)+  <CLOSE_PAREN>
+	{
+    	return allInnerWords;
+    }
+}
 
-QueryTerm syn(): {
+List<MatchingTerm> tag(): {
+	List<MatchingTerm> innerWords = null;
+	Token tagName;
+}
+{
+	<OPEN_PAREN> tagName = <WORD> innerWords = parseAll()  <CLOSE_PAREN>
+	{
+    	for(MatchingTerm qt : innerWords)
+    	{
+    		qt.getValue().setTag(tagName.image);
+    	}
+    	return innerWords;
+    }
+}
+
+
+MatchingTerm syn(): {
   List<QueryTerm> words = new ArrayList<QueryTerm>();
-  QueryTerm newWord = null;
+  MatchingTerm newWord = null;
 }
 { 
-  <SYN>  <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+ <CLOSE_PAREN>
+  <SYN> <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
   {
-    return new SynonymTerm(words.toArray(new QueryTerm[words.size()]));
+    return QTPBuilder.of(new SynonymTerm(words.toArray(new QueryTerm[words.size()]))).build();
   }
 }
 
-QueryTerm band() : {
+MatchingTerm band() : {
   List<QueryTerm> words = new ArrayList<QueryTerm>();
-  QueryTerm newWord = null;
+  MatchingTerm newWord = null;
 }
 { 
-  <BAND>  <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+ <CLOSE_PAREN>
+  <BAND>  <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
   {
-    return new ANDQueryTerm(words.toArray(new QueryTerm[words.size()]));
+    return QTPBuilder.of(new ANDQueryTerm(words.toArray(new QueryTerm[words.size()]))).build();
   }
 }
 
-QueryTerm uw(): {
+MatchingTerm uw(): {
   List<QueryTerm> words = new ArrayList<QueryTerm>();
-  QueryTerm newWord = null;
+  MatchingTerm newWord = null;
   Token dist;
 }
 { 
-  <UW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+ <CLOSE_PAREN>
+  <UW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
   {
-    return new UnorderedWindowTerm(words.toArray(new QueryTerm[words.size()]), Integer.parseInt(dist.image));
+    return QTPBuilder.of(new UnorderedWindowTerm(words.toArray(new QueryTerm[words.size()]), Integer.parseInt(dist.image))).build();
   }
 }
 
-QueryTerm ow(): {
+MatchingTerm ow(): {
   List<QueryTerm> words = new ArrayList<QueryTerm>();
-  QueryTerm newWord = null;
+  MatchingTerm newWord = null;
   Token dist;
 }
 { 
-  <OW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+ <CLOSE_PAREN>
+  <OW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
   {
     int iDist = Integer.parseInt(dist.image);
   	if (iDist != 1)
   	{
   		throw new ParseException("Ordered windows > 1 not yet supported");
   	}
-    return new PhraseTerm(words.toArray(new QueryTerm[words.size()]));
+    return QTPBuilder.of(new PhraseTerm(words.toArray(new QueryTerm[words.size()]))).build();
   }
 }
 
 
-QueryTerm ow_implicit(): {
+MatchingTerm ow_implicit(): {
   List<QueryTerm> words = new ArrayList<QueryTerm>();
-  QueryTerm newWord = null;
+  MatchingTerm newWord = null;
   Token dist;
 }
 { 
-  dist=<INT> <OPEN_PAREN> (newWord = parse() { words.add(newWord); })+  <CLOSE_PAREN>
+  dist=<INT> <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+  <CLOSE_PAREN>
   {
   	int iDist = Integer.parseInt(dist.image);
   	if (iDist != 1)
   	{
   		throw new ParseException("Ordered windows > 1 not yet supported");
   	}
-    return new PhraseTerm(words.toArray(new QueryTerm[words.size()]));
+    return QTPBuilder.of(new PhraseTerm(words.toArray(new QueryTerm[words.size()]))).build();
   }
 }
 
-QueryTerm word() : {
+MatchingTerm word() : {
 	Token word;
 	Token field = null;
 }
@@ -199,6 +271,6 @@ QueryTerm word() : {
 		String fieldName = null;
 		if (field != null)
 			fieldName = field.image;
-		return new SingleQueryTerm(word.image, fieldName);
+		return QTPBuilder.of(new SingleQueryTerm(word.image, fieldName)).build();
 	}
 }

@@ -29,6 +29,7 @@ import gnu.trove.TIntArrayList;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +55,8 @@ import org.terrier.structures.Index;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
+
+import com.google.common.collect.Lists;
 /**
   * This class is responsible for handling/co-ordinating the main high-level
   * operations of a query. These are:
@@ -72,30 +75,25 @@ import org.terrier.utility.ApplicationSetup;
   * <b>Properties</b><ul>
   * <li><tt>querying.default.controls</tt> - sets the default controls for each query</li>
   * <li><tt>querying.allowed.controls</tt> - sets the controls which a users is allowed to set in a query</li>
-  * <li><tt>querying.postprocesses.order</tt> - the order post processes should be run in</li>
-  * <li><tt>querying.postprocesses.controls</tt> - mappings between controls and the post processes they should cause</li>
-  * <li><tt>querying.preprocesses.order</tt> - the order pre processes should be run in</li>
-  * <li><tt>querying.preprocesses.controls</tt> - mappings between controls and the pre processes they should cause</li>
-  * <li><tt>querying.postfilters.order</tt> - the order post filters should be run in </li>
-  * <li><tt>querying.postfilters.controls</tt> - mappings between controls and the post filters they should cause</li>
+  * <li><tt>querying.processes</tt> - mappings between controls and the processes they should cause, in order that they should execute</li>
+  * <li><tt>querying.postfilters</tt> - mappings between controls and the post filters they should cause, in order that they should execute</li>
   * </ul>
   * <p><b>Controls</b><ul>
   * <li><tt>start</tt> : The result number to start at - defaults to 0 (1st result)</li>
   * <li><tt>end</tt> : the result number to end at - defaults to 0 (display all results)</li>
-  * <li><tt>c</tt> : the c parameter for the DFR models, or more generally, the parameters for weighting model scheme</li>
+  * <li><tt>c</tt> : the c parameter for the DFR models, or more generally, the parameters for weighting models</li>
+  * <li><tt>c_set</tt> : "yes" if the c control has been set</li>
+  * <li><tt>c_set</tt> : "yes" if the c control has been set</li>
   * </ul>
   */
-public class Manager
+public class Manager implements IManager
 {
 	protected static final Logger logger = LoggerFactory.getLogger(Manager.class);
 
 	/* ------------Module default namespaces -----------*/
-	/** The default namespace for PostProcesses to be loaded from */
-	public static final String NAMESPACE_POSTPROCESS
-		= "org.terrier.querying.";
-	/** The default namespace for PreProcesses to be loaded from */
-	public static final String NAMESPACE_PREPROCESS
-		= "org.terrier.querying.";
+	/** The default namespace for Process instances to be loaded from */
+	public static final String NAMESPACE_PROCESS
+		= "org.terrier.querying";
 	
 	/** The default namespace for PostFilters to be loaded from */
 	public static final String NAMESPACE_POSTFILTER
@@ -107,7 +105,7 @@ public class Manager
 	public static final String NAMESPACE_WEIGHTING
 		= "org.terrier.matching.models.";
 
-	/** Class that keeps a cache of queries
+	/** Class that keeps a cache of processes
 	 * @since 5.0
 	 */
 	static class ModuleCache<K> {
@@ -122,9 +120,9 @@ public class Manager
 		}
 		
 		/** Returns the post filter class named ModelName. Caches already
-		  * instantiaed matching models in map Cache_PostFilter.
+		  * instantiated matching models in map Cache_PostFilter.
 		  * If the matching model name doesn't contain '.',
-		  * then NAMESPACE_POSTFILTER is prefixed to the name.
+		  * then def_namespace is prefixed to the name.
 		  * @param Name The name of the post filter to return */
 		@SuppressWarnings("unchecked")
 		K getModule(String Name)
@@ -132,8 +130,6 @@ public class Manager
 			K rtr = null;
 			if (Name.indexOf(".") < 0 )
 				Name = def_namespace +'.' +Name;
-			else if (Name.startsWith("uk.ac.gla.terrier"))
-				Name = Name.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			//check for already loaded post filters
 			if (caching)
@@ -179,7 +175,8 @@ public class Manager
 		ModuleManager(String _typeName, String namespace, boolean _caching){
 			super(namespace, _caching);
 			this.typeName = _typeName;
-			this.load_module_controls();
+			this.load_module_controls_old();
+			System.err.println(Arrays.deepToString(Class_Controls));
 		}		
 		
 		List<K> getActive(Map<String,String> controls) {
@@ -215,12 +212,38 @@ public class Manager
 			return getActive(controls).iterator();
 		}
 		
-		
-		
 		/** load in the allowed post filter controls, and the order to run post processes in */
 		protected void load_module_controls()
 		{
-			/* what we have is a mapping of controls to post filters, and an order post processes should
+			if (ApplicationSetup.getProperty("querying."+typeName, "").length() == 0 
+					&& ApplicationSetup.getProperty("querying."+typeName+".order", "").length() > 0)
+			{
+				load_module_controls_old();
+				return;
+			}
+			String[] control_pf;
+			List<String> _Class_Order = new ArrayList<>();
+			List<String[]> _controls = new ArrayList<>();
+			String tmp = ApplicationSetup.getProperty("querying."+typeName, "").trim();
+			if (tmp.length() > 0)
+				control_pf = tmp.split("\\s*,\\s*");
+			else
+				control_pf = new String[0];
+			for(String pair : control_pf)
+			{
+				String[] tuple = pair.split(":", 2);
+				_Class_Order.add(tuple[1]);
+				_controls.add(new String[]{tuple[0]});
+			}
+			Class_Order = _Class_Order.toArray(new String[0]);
+			Class_Controls = _controls.toArray(new String[0][]);
+			
+		}
+		
+		/** load in the allowed post filter controls, and the order to run post processes in */
+		protected void load_module_controls_old()
+		{
+			/* what we have is a mapping of controls to processes, and an order processes should
 			   be run in.
 			   what we need is the order to check the controls in, and which pp to run for each
 			*/
@@ -279,14 +302,175 @@ public class Manager
 		}
 		
 	}
+	
 
-	/** A generaic query id for when no query id is given **/
+	@ProcessPhaseRequisites(ManagerRequisite.MQT)
+	static class ApplyLocalMatching implements Process {	
+	
+		protected final boolean MATCH_EMPTY_QUERY = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
+		protected Map<Index, Map<String, Matching>> Cache_Matching = new HashMap<Index, Map<String, Matching>>();
+		
+		/** Returns the matching model indicated to be used, based on the Index and the Matching
+		 * name specified in the passed Request object. Caches already 
+		  * instantiated matching models in Map Cache_Matching.
+		  * If the matching model name doesn't contain '.', then NAMESPACE_MATCHING
+		  * is prefixed to the name. 
+		  * @param rq The request indicating the Matching class, and the corresponding
+		  * instance to use
+		  * @return null If an error occurred obtaining the matching class
+		  */
+		protected Matching getMatchingModel(Request rq)
+		{
+			Matching rtr = null;
+			Index _index = rq.getIndex();
+			String ModelName = rq.getMatchingModel();
+			//add the namespace if the modelname is not fully qualified
+			
+			if (ModelName == null || ModelName.length() == 0)
+				throw new IllegalArgumentException("matching model must be set in request");
+			final String ModelNames[] = ModelName.split("\\s*,\\s*");
+			final int modelCount = ModelNames.length;
+			StringBuilder entireSequence = new StringBuilder();
+			for(int i =0;i<modelCount;i++)
+			{
+				if (ModelNames[i].indexOf(".") < 0 )
+					ModelNames[i]  = NAMESPACE_MATCHING + ModelNames[i];
+				entireSequence.append(ModelNames[i]);
+				entireSequence.append(",");
+			}
+			ModelName = entireSequence.substring(0,entireSequence.length() -1);
+			//check for already instantiated class
+			Map<String, Matching> indexMap = Cache_Matching.get(_index);
+			if (indexMap == null)
+			{
+				Cache_Matching.put(_index, indexMap = new HashMap<String, Matching>());
+			}
+			else
+			{
+				rtr = indexMap.get(ModelName);
+			}
+			if (rtr == null)
+			{
+				boolean first = true;
+				for(int i=modelCount-1;i>=0;i--)
+				{
+					try
+					{
+						//load the class
+						if (ModelNames[i].equals("org.terrier.matching.Matching"))
+							ModelNames[i] = "org.terrier.matching.daat.Full";
+						Class<? extends Matching> formatter = ApplicationSetup.getClass(ModelNames[i]).asSubclass(Matching.class);
+						//get the correct constructor - an Index class in this case
+						
+						Class<?>[] params;
+						Object[] params2;
+						if (first)
+						{
+							params = new Class[1];
+							params2 = new Object[1];
+							
+							params[0] = Index.class;
+							params2[0] = _index;
+						}
+						else
+						{
+							params = new Class[2];
+							params2 = new Object[2];
+							
+							params[0] = Index.class;
+							params2[0] = _index;
+							params[1] = Matching.class;
+							params2[1] = rtr;
+						}
+						//and instantiate
+						rtr = (Matching) (formatter.getConstructor(params).newInstance(params2));
+						first = false;
+					}
+					catch(java.lang.reflect.InvocationTargetException ite)
+					{
+						logger.error("Recursive problem with matching model named: "+ModelNames[i],ite);
+						return null;
+					}
+					catch(Exception e)
+					{
+						logger.error("Problem with matching model named: "+ModelNames[i],e);
+						return null;
+					}
+				}
+			}
+			Cache_Matching.get(_index).put(ModelName, rtr);
+			return rtr;
+		}
+		
+		@Override
+		public void process(Manager manager, SearchRequest srq) {
+			Request rq = (Request)srq;
+			if (rq.isEmpty() && ! MATCH_EMPTY_QUERY )
+			{
+				logger.warn("Returning empty result set as query "+rq.getQueryID()+" is empty");
+				rq.setResultSet(new QueryResultSet(0));
+			}
+			
+			MatchingQueryTerms mqt = rq.getMatchingQueryTerms();
+			
+			//TODO some exception handling here for not found models
+			Model wmodel = getWeightingModel(rq);
+			
+			/* craigm 05/09/2006: only set the parameter of the weighting model
+			 * if it was explicitly set if c_set control is set to true. Otherwise
+			 * allow the weighting model to assume it's default value.
+			 * This changes previous behaviour. TODO: some consideration for
+			 * non TREC applications */
+			if (rq.getControl("c_set").equals("true"))
+			{
+				wmodel.setParameter(Double.parseDouble(rq.getControl("c")));
+			}
+			
+			// this allows matching to only operate on scoring a subset of the query terms
+			if (rq.getControl("matchingtags").length() > 0)
+			{
+				String[] tags = rq.getControl("matchingtags").split(";");
+				mqt.getMatchingTags().addAll(Lists.newArrayList(tags));
+			}
+			
+			Matching matching = getMatchingModel(rq);
+			if (logger.isDebugEnabled()){
+				logger.debug("weighting model: " + wmodel.getInfo());
+			}
+			mqt.setDefaultTermWeightingModel((WeightingModel)wmodel);
+			Query q = rq.getQuery();
+			logger.info(mqt.toString());
+				
+	
+			mqt.setQuery(q);
+			mqt.normaliseTermWeights();
+			try{
+				ResultSet outRs = matching.match(rq.getQueryID(), mqt);
+				//check to see if we have any negative infinity scores that should be removed
+				int badDocuments = 0;
+				for (int i = 0; i < outRs.getResultSize(); i++) {
+					if (outRs.getScores()[i] == Double.NEGATIVE_INFINITY)
+						badDocuments++;
+				}
+				if (badDocuments > 0)
+					logger.debug("Found "+badDocuments+" documents with a score of negative infinity in the result set returned, they will be removed.");
+				
+				//now crop the resultset down to a query result set.
+				rq.setResultSet(outRs.getResultSet(0, outRs.getResultSize()-badDocuments));
+			} catch (IOException ioe) {
+				logger.error("Problem running Matching, returning empty result set as query "+rq.getQueryID(), ioe);
+				rq.setResultSet(new QueryResultSet(0));
+			}
+		}
+	}
+	
+
+	/** A generic query id for when no query id is given **/
 	private static final String GENERICQUERYID = "GenericQuery";
 	
 	/* ------------------------------------------------*/
 	/* ------------Instantiation caches --------------*/
 	/** Cache loaded Matching models per Index in this map */
-	protected Map<Index, Map<String, Matching>> Cache_Matching = new HashMap<Index, Map<String, Matching>>();
 		
 	
 	/** TermPipeline processing */
@@ -303,11 +487,9 @@ public class Manager
 	  * Directly corresponds to Default_Controls.size() */
 	protected int Defaults_Size = 0;
 	
-	protected boolean CACHING_FILTERS = Boolean.parseBoolean(ApplicationSetup.getProperty("manager.caching.filters","false"));
 	
-	ModuleManager<Process> preprocessModuleManager = new ModuleManager<>("preprocesses", "org.terrier.querying", true);
-	ModuleManager<Process> postprocessModuleManager = new ModuleManager<>("postprocesses", "org.terrier.querying", true);
-	ModuleManager<Process> postfilterModuleManager = new ModuleManager<>("postfilters", "org.terrier.querying", CACHING_FILTERS);
+	ModuleManager<Process> processModuleManager = new ModuleManager<>("processes", NAMESPACE_PROCESS, true);
+	
 	
 	/** This class is used as a TermPipelineAccessor, and this variable stores
 	  * the result of the TermPipeline run for that term. */
@@ -315,8 +497,7 @@ public class Manager
 
 	
 	
-	protected final boolean MATCH_EMPTY_QUERY = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
-
+	
 	/** Default constructor. Use the default index
 	  * @since 2.0 */
 	public Manager()
@@ -389,8 +570,10 @@ public class Manager
 	}
 
 	/* -------------- factory methods for SearchRequest objects ---------*/
-	/** Ask for new SearchRequest object to be made. This is internally a
-	  * Request object */
+	/* (non-Javadoc)
+	 * @see org.terrier.querying.IManager#newSearchRequest()
+	 */
+	@Override
 	public SearchRequest newSearchRequest()
 	{
 		Request q = new Request();
@@ -399,10 +582,10 @@ public class Manager
 		q.setIndex(this.index);
 		return (SearchRequest)q;
 	}
-	/** Ask for new SearchRequest object to be made. This is internally a
-	  * Request object
-	  * @param QueryID The request should be identified by QueryID
-	  */
+	/* (non-Javadoc)
+	 * @see org.terrier.querying.IManager#newSearchRequest(java.lang.String)
+	 */
+	@Override
 	public SearchRequest newSearchRequest(String QueryID)
 	{
 		Request q = new Request();
@@ -413,12 +596,10 @@ public class Manager
 		return (SearchRequest)q;
 	}
 
-	/** Ask for new SearchRequest object to be made, instantiated using the 
- 	  * specified query id, and that the specified query should be parsed.
- 	  * @since 2.0
- 	  * @param QueryID The request should be identified by QueryID
- 	  * @param query The actual user query
- 	  * @return The fully init'd search request for use in the manager */
+	/* (non-Javadoc)
+	 * @see org.terrier.querying.IManager#newSearchRequest(java.lang.String, java.lang.String)
+	 */
+	@Override
 	public SearchRequest newSearchRequest(String QueryID, String query)
 	{
 		Request q = new Request();
@@ -435,10 +616,10 @@ public class Manager
 		return q;
 	}
 	
-	/** Ask for new SearchRequest object to be made given a query to be parsed
-	  * @since 4.2
-	  * @param query The actual user query
-	  * @return The fully init'd search request for use in the manager */
+	/* (non-Javadoc)
+	 * @see org.terrier.querying.IManager#newSearchRequestFromQuery(java.lang.String)
+	 */
+	@Override
 	public SearchRequest newSearchRequestFromQuery(String query)
 	{
 		return newSearchRequest(GENERICQUERYID, query);
@@ -463,16 +644,19 @@ public class Manager
 		return index;
 	}
 	
-	/** Provide a common interface for changing property values.
-	  * @param key Key of property to set
-	  * @param value Value of property to set */
+	/* (non-Javadoc)
+	 * @see org.terrier.querying.IManager#setProperty(java.lang.String, java.lang.String)
+	 */
+	@Override
 	public void setProperty(String key, String value)
 	{
 		ApplicationSetup.setProperty(key, value);
 	}
 
-	/** Set all these properties. Implemented using setProperty(String,String).
-	  * @param p All properties to set */
+	/* (non-Javadoc)
+	 * @see org.terrier.querying.IManager#setProperties(java.util.Properties)
+	 */
+	@Override
 	public void setProperties(Properties p) {
 		//for(String k : ((Set<String>)p.keySet()))
 		Enumeration<?> e = p.keys();
@@ -483,7 +667,7 @@ public class Manager
 		}
 	}
 	
-	boolean hasAnnotation(Class<?> clazz, ManagerRequisite req)
+	static boolean hasAnnotation(Class<?> clazz, ManagerRequisite req)
 	{
 		ProcessPhaseRequisites anno =  clazz.getAnnotation(ProcessPhaseRequisites.class);
 		if (anno == null)
@@ -493,440 +677,195 @@ public class Manager
 				return true;
 		return false;
 	}
-
-
-	//run methods
-	//These methods are called by the application in turn
-	//(or could just have one RUN method, and these are privates,
-	//but I would prefer the separate method)
-	/** runPreProcessing */
-	public void runPreProcessing(SearchRequest srq)
+	
+	/** Runs the PostFilter modules in order added. PostFilter modules
+	  * filter the resultset. Examples might be removing results that don't have
+	  * a hostname ending in the required postfix (site), or document ids that don't match
+	  * a pattern (scope).
+	  */
+	static class PostFilterProcess implements Process
 	{
+
+		protected boolean CACHING_FILTERS = Boolean.parseBoolean(ApplicationSetup.getProperty("manager.caching.filters","false"));
+		ModuleManager<Process> postfilterModuleManager = new ModuleManager<>("postfilters", "org.terrier.querying", CACHING_FILTERS);
+
+		@Override
+		public void process(Manager manager, SearchRequest srq) {
+			Request rq = (Request)srq;
+			PostFilter[] filters = postfilterModuleManager.getActive(rq.getControlHashtable()).toArray(new PostFilter[0]);
+			final int filters_length = filters.length;
+			
+			//the results to filter
+			ResultSet results = rq.getResultSet();
+
+			//the size of the results - this could be more than what we need to display
+			int ResultsSize = results.getResultSize();
+
+			//load in the lower and upper bounds of the resultset
+			String tmp = rq.getControl("start");/* 0 based */
+			if (tmp.length() == 0)
+				tmp = "0";
+			int Start = Integer.parseInt(tmp);
+			tmp = rq.getControl("end");
+			if (tmp.length() == 0)
+				tmp = "0";
+			int End = Integer.parseInt(tmp);/* 0 based */
+			if (End == 0)
+			{
+				End = ResultsSize -1;
+			}
+			int length = End-Start+1;
+			if (length > ResultsSize)
+				length = ResultsSize-Start;
+			//we've got no filters set, so just give the results ASAP
+			if (filters_length == 0)
+			{
+				if (Start != 0 && length != ResultsSize)
+					rq.setResultSet( results.getResultSet(Start, length) );
+				if (logger.isDebugEnabled()) { 
+					logger.debug("No filters, just Crop: "+Start+", length "+length);
+					logger.debug("Resultset is now "+results.getScores().length + " long");
+				}
+				return;
+			}
+
+			//tell all the postfilters that they are processing another query
+			for(int i=0;i<filters_length; i++)
+			{
+				filters[i].new_query(manager, srq, results);
+			}
+			
+			int doccount = -1;//doccount is zero-based, so 0 means 1 document
+			TIntArrayList docatnumbers = new TIntArrayList();//list of resultset index numbers to keep
+			byte docstatus; int thisDocId;
+			int[] docids = results.getDocids();
+			//int elitesetsize = results.getExactResultSize();
+			//the exact result size is the total number of
+			//documents that would be retrieved if we
+			//didn't do any cropping
+			int elitesetsize = results.getResultSize();
+			for(int thisdoc = 0; thisdoc < elitesetsize; thisdoc++)
+			{
+				//run this document through all the filters
+				docstatus = PostFilter.FILTER_OK;
+				thisDocId = docids[thisdoc];
+				//run this doc through the filters
+				for(int i=0;i<filters_length; i++)
+				{
+					if ( ( docstatus = filters[i].filter(manager, srq, results, thisdoc, thisDocId) )
+						== PostFilter.FILTER_REMOVE
+					)
+						break;
+						//break if the document has to be removed
+				}
+				//if it's not being removed, then
+				if (docstatus != PostFilter.FILTER_REMOVE) //TODO this should always be true
+				{
+					//success, another real document
+					doccount++;
+					//check if it's in our results "WINDOW"
+					if (doccount >= Start)
+					{
+						if (doccount <= End)
+						{	//add to the list of documents to keep
+							docatnumbers.add(thisdoc);
+							//System.out.println("Keeping @"+thisdoc);
+						}
+						else
+						{
+							//we've now got enough results, break
+							break;
+						}
+					}
+				}
+				else
+				{
+					//System.out.println("Removed");
+				}
+			}
+			//since doccount is zero-based, we add one so that it
+			//corresponds to the real number of documents.
+			doccount++; 
+			rq.setNumberOfDocumentsAfterFiltering(doccount);
+			if (docatnumbers.size() < docids.length)
+			{
+				//result set is definently shorter, replace with new one
+				rq.setResultSet( results.getResultSet(docatnumbers.toNativeArray()));
+				rq.getResultSet().setExactResultSize(results.getExactResultSize());
+			}
+		}
+		
+	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see org.terrier.querying.IManager#runSearchRequest(org.terrier.querying.SearchRequest)
+	 */
+//	@Override
+//	public void runSearchRequest(SearchRequest srq)
+//	 {
+//	  this.runPreProcessing(srq);
+//	  this.runMatching(srq);
+//	  this.runPostProcessing(srq);
+//	  this.runPostFilters(srq);
+//	 }
+	
+	public void runSearchRequest(SearchRequest srq)
+	{	
 		Request rq = (Request)srq;		
 		
 		boolean mqtObtained = rq.getMatchingQueryTerms() != null;
-		Iterator<Process> iter = preprocessModuleManager.getActiveIterator(rq.getControlHashtable());
+		boolean hasRawQuery = rq.getOriginalQuery() != null;
+		boolean hasTerrierQLquery = rq.getQuery() != null;
+		boolean hasResultSet = rq.getResultSet() != null;
+		Iterator<Process> iter = processModuleManager.getActiveIterator(rq.getControlHashtable());
 		int ran = 0;
+		rq.setControl("runname", "");
 		while(iter.hasNext())
 		{
 			
 			Process p = iter.next();
 			assert(p != null);
 			if (hasAnnotation(p.getClass(), ManagerRequisite.MQT) && ! mqtObtained)
-				throw new IllegalStateException("Process " + p.getInfo() + " required matchingqueryterms, but mqt not yet set for query " + rq.getQueryID());
-			logger.info("running preprocess " + p.getInfo());
+				throw new IllegalStateException("Process " + p.getInfo() + " required matchingqueryterms, but mqt not yet set for query qid " + rq.getQueryID());
+			if (hasAnnotation(p.getClass(), ManagerRequisite.RAWQUERY) && ! hasRawQuery)
+				throw new IllegalStateException("Process " + p.getInfo() + " required rawquery, but no raw query found for qid " + rq.getQueryID());
+			if (hasAnnotation(p.getClass(), ManagerRequisite.TERRIERQL) && ! hasTerrierQLquery)
+				throw new IllegalStateException("Process " + p.getInfo() + " required TerrierQL query, but no TerrierQL query found for qid " + rq.getQueryID());
+			if (hasAnnotation(p.getClass(), ManagerRequisite.RESULTSET) && ! hasResultSet)
+				throw new IllegalStateException("Process " + p.getInfo() + " required resultset, but none found for qid " + rq.getQueryID());
+			
+			
+			logger.info("running process " + p.getInfo());
 			p.process(this, srq);
+			hasTerrierQLquery = rq.getQuery() != null;
 			mqtObtained = rq.getMatchingQueryTerms() != null;
+			hasRawQuery = rq.getOriginalQuery() != null;
+			hasResultSet = rq.getResultSet() != null;
+			rq.setControl("previousprocess", p.getClass().getName());
+			rq.setControl("runname", rq.getControl("runname")+ "_" + p.getInfo());
 			ran++;
 		}
 		
 		if (! mqtObtained)
 		{
-			logger.warn("After running " + ran + " pre-processes, no MQT was obtained. Matching will likely fail");
+			logger.warn("After running " + ran + " processes, no MQT was obtained. Matching will likely fail");
 		}
-		
-//		
-//		
-//		Query query = rq.getQuery();
-//		//System.out.println(query);
-//		//get the controls
-//		boolean rtr = ! query.obtainControls(Allowed_Controls, rq.getControlHashtable());
-//		//we check that there is stil something left in the query
-//		if (! rtr)
-//		{
-//			rq.setEmpty(true);
-//			return;
-//		}
-//		
-//		synchronized(this) {
-//			rtr = query.applyTermPipeline(tpa);
-//			tpa.resetPipeline();
-//		}
-
-		
-	}
-	/** Runs the weighting and matching stage - this the main entry
-	  * into the rest of the Terrier framework.
-	  * @param srq the current SearchRequest object.
-	  */
-	public void runMatching(SearchRequest srq)
-	{
-		Request rq = (Request)srq;
-		if ( (! rq.isEmpty()) || MATCH_EMPTY_QUERY )
+		if (! hasResultSet)
 		{
-			//TODO some exception handling here for not found models
-			Model wmodel = getWeightingModel(rq);
-			
-			/* craigm 05/09/2006: only set the parameter of the weighting model
-			 * if it was explicitly set if c_set control is set to true. Otherwise
-			 * allow the weighting model to assume it's default value.
-			 * This changes previous behaviour. TODO: some consideration for
-			 * non TREC applications */
-			if (rq.getControl("c_set").equals("true"))
-			{
-				wmodel.setParameter(Double.parseDouble(rq.getControl("c")));
-			}
-			
-			Matching matching = getMatchingModel(rq);
-			
-			if (logger.isDebugEnabled()){
-				logger.debug("weighting model: " + wmodel.getInfo());
-			}
-			MatchingQueryTerms mqt = rq.getMatchingQueryTerms();
-			if (mqt == null)
-				throw new IllegalStateException("Cannot run matching without MatchingQueryTerms. Are preprocesses configured properly?");
-			
-			mqt.setDefaultTermWeightingModel((WeightingModel)wmodel);
-			Query q = rq.getQuery();
-			logger.info(mqt.toString());
-			
-			/* now propagate fields into requirements, and apply boolean matching
-			   for the decorated terms. */
-//			ArrayList<Query> requirement_list_all = new ArrayList<Query>();
-//			ArrayList<Query> requirement_list_positive = new ArrayList<Query>();
-//			ArrayList<Query> requirement_list_negative = new ArrayList<Query>();
-//			ArrayList<Query> field_list = new ArrayList<Query>();
-//			
-//			// Issue TREC-370
-//			q.getTermsOf(RequirementQuery.class, requirement_list_all, true);
-//			for (Query query : requirement_list_all ) {
-//				if (((SingleTermQuery)query).required>=0) {
-//					//System.err.println(query.toString()+" was a positive requirement "+((SingleTermQuery)query).required);
-//					requirement_list_positive.add(query);
-//				}
-//				else {
-//					//System.err.println(query.toString()+" was a negative requirement"+((SingleTermQuery)query).required);
-//					requirement_list_negative.add(query);
-//				}
-//			}
-//			for (Query negativeQuery : requirement_list_negative) {
-//				//System.err.println(negativeQuery.toString()+" was a negative requirement");
-//				mqt.setTermProperty(negativeQuery.toString(), Double.NEGATIVE_INFINITY);
-//			}
-//			
-//			
-//			q.getTermsOf(FieldQuery.class, field_list, true);
-//			for (int i=0; i<field_list.size(); i++) 
-//				if (!requirement_list_positive.contains(field_list.get(i)))
-//					requirement_list_positive.add(field_list.get(i));
-
-			/*if (logger.isDebugEnabled())
-			{
-				for (int i=0; i<requirement_list.size(); i++) {
-					if(logger.isDebugEnabled()){
-					logger.debug("requirement: " + ((RequiredTermModifier)requirement_list.get(i)).getName());
-					}
-				}
-				for (int i=0; i<field_list.size(); i++) {
-					if(logger.isDebugEnabled()){
-					logger.debug("field: " + ((TermInFieldModifier)field_list.get(i)).getName()); 
-					}
-				}
-			}*/
-		
-//			if (requirement_list_positive.size()>0) {
-//				mqt.addDocumentScoreModifier(new BooleanScoreModifier(requirement_list_positive));
-//			}
-
-			mqt.setQuery(q);
-			mqt.normaliseTermWeights();
-			try{
-				ResultSet outRs = matching.match(rq.getQueryID(), mqt);
-				
-				//check to see if we have any negative infinity scores that should be removed
-				int badDocuments = 0;
-				for (int i = 0; i < outRs.getResultSize(); i++) {
-					if (outRs.getScores()[i] == Double.NEGATIVE_INFINITY)
-						badDocuments++;
-				}
-				if (badDocuments > 0)
-					logger.debug("Found "+badDocuments+" documents with a score of negative infinity in the result set returned, they will be removed.");
-				
-				//now crop the collectionresultset down to a query result set.
-				rq.setResultSet(outRs.getResultSet(0, outRs.getResultSize()-badDocuments));
-			} catch (IOException ioe) {
-				logger.error("Problem running Matching, returning empty result set as query "+rq.getQueryID(), ioe);
-				rq.setResultSet(new QueryResultSet(0));
-			}
+			logger.warn("After running " + ran + " processes, no ResultSet was obtained.");
 		}
-		else
-		{
-			logger.warn("Returning empty result set as query "+rq.getQueryID()+" is empty");
-			rq.setResultSet(new QueryResultSet(0));
-		}
-	}
-	/** Runs the PostProcessing modules in order added. PostProcess modules
-	  * alter the resultset. Examples might be query expansions which completely replaces
-	  * the resultset.
-	  * @param srq the current SearchRequest object. */
-	public void runPostProcessing(SearchRequest srq)
-	{
-		Request rq = (Request)srq;
-		
-		Iterator<Process> iter = postprocessModuleManager.getActiveIterator(rq.getControlHashtable());
-		while(iter.hasNext())
-		{
-			iter.next().process(this, srq);
-		}
-//		
-//		for(int i=0; i<PostProcesses_Order.length; i++)
-//		{
-//			String PostProcesses_Name = PostProcesses_Order[i];
-//			for(int j=0; j<PostProcesses_Controls[i].length; j++)
-//			{
-//				String ControlName = PostProcesses_Controls[i][j];
-//				String value = (String)controls.get(ControlName);
-//				//System.err.println(ControlName+ "("+PostProcesses_Name+") => "+value);
-//				if (value == null)
-//					continue;
-//				value = value.toLowerCase();
-//				if(! (value.equals("off") || value.equals("false")))
-//				{
-//					if (logger.isDebugEnabled()){
-//						logger.debug("Processing: "+PostProcesses_Name);
-//					}
-//					getPostProcessModule(PostProcesses_Name).process(this, srq);
-//					//we've now run this post process module, no need to check the rest of the controls for it.
-//					break;
-//				}
-//			}
-//		}
-//		String lastPP = null;
-//		if ((lastPP = ApplicationSetup.getProperty("querying.lastpostprocess",null)) != null)
-//		{
-//			getPostProcessModule(lastPP).process(this, srq);
-//		}
-	}
-	
-	
-	/** Runs the PostFilter modules in order added. PostFilter modules
-	  * filter the resultset. Examples might be removing results that don't have
-	  * a hostname ending in the required postfix (site), or document ids that don't match
-	  * a pattern (scope).
-	  * @param srq the current SearchRequest object. */
-	public void runPostFilters(SearchRequest srq)
-	{
-		Request rq = (Request)srq;
-		PostFilter[] filters = this.postfilterModuleManager.getActive(rq.getControlHashtable()).toArray(new PostFilter[0]);
-		final int filters_length = filters.length;
-		
-		//the results to filter
-		ResultSet results = rq.getResultSet();
-
-		//the size of the results - this could be more than what we need to display
-		int ResultsSize = results.getResultSize();
-
-		//load in the lower and upper bounds of the resultset
-		String tmp = rq.getControl("start");/* 0 based */
-		if (tmp.length() == 0)
-			tmp = "0";
-		int Start = Integer.parseInt(tmp);
-		tmp = rq.getControl("end");
-		if (tmp.length() == 0)
-			tmp = "0";
-		int End = Integer.parseInt(tmp);/* 0 based */
-		if (End == 0)
-		{
-			End = ResultsSize -1;
-		}
-		int length = End-Start+1;
-		if (length > ResultsSize)
-			length = ResultsSize-Start;
-		//we've got no filters set, so just give the results ASAP
-		if (filters_length == 0)
-		{
-			if (Start != 0 && length != ResultsSize)
-				rq.setResultSet( results.getResultSet(Start, length) );
-			if (logger.isDebugEnabled()) { 
-				logger.debug("No filters, just Crop: "+Start+", length "+length);
-				logger.debug("Resultset is now "+results.getScores().length + " long");
-			}
-			return;
-		}
-
-		//tell all the postfilters that they are processing another query
-		for(int i=0;i<filters_length; i++)
-		{
-			filters[i].new_query(this, srq, results);
-		}
-		
-		int doccount = -1;//doccount is zero-based, so 0 means 1 document
-		TIntArrayList docatnumbers = new TIntArrayList();//list of resultset index numbers to keep
-		byte docstatus; int thisDocId;
-		int[] docids = results.getDocids();
-		//int elitesetsize = results.getExactResultSize();
-		//the exact result size is the total number of
-		//documents that would be retrieved if we
-		//didn't do any cropping
-		int elitesetsize = results.getResultSize();
-		for(int thisdoc = 0; thisdoc < elitesetsize; thisdoc++)
-		{
-			//run this document through all the filters
-			docstatus = PostFilter.FILTER_OK;
-			thisDocId = docids[thisdoc];
-			//run this doc through the filters
-			for(int i=0;i<filters_length; i++)
-			{
-				if ( ( docstatus = filters[i].filter(this, srq, results, thisdoc, thisDocId) )
-					== PostFilter.FILTER_REMOVE
-				)
-					break;
-					//break if the document has to be removed
-			}
-			//if it's not being removed, then
-			if (docstatus != PostFilter.FILTER_REMOVE) //TODO this should always be true
-			{
-				//success, another real document
-				doccount++;
-				//check if it's in our results "WINDOW"
-				if (doccount >= Start)
-				{
-					if (doccount <= End)
-					{	//add to the list of documents to keep
-						docatnumbers.add(thisdoc);
-						//System.out.println("Keeping @"+thisdoc);
-					}
-					else
-					{
-						//we've now got enough results, break
-						break;
-					}
-				}
-			}
-			else
-			{
-				//System.out.println("Removed");
-			}
-		}
-		//since doccount is zero-based, we add one so that it
-		//corresponds to the real number of documents.
-		doccount++; 
-		rq.setNumberOfDocumentsAfterFiltering(doccount);
-		if (docatnumbers.size() < docids.length)
-		{
-			//result set is definently shorter, replace with new one
-			rq.setResultSet( results.getResultSet(docatnumbers.toNativeArray()));
-			rq.getResultSet().setExactResultSize(results.getExactResultSize());
-		}
-	}
-	
-	
-	
-	/**
-	 * This runs a given SearchRequest through the four retrieval stages and adds the ResultSet to the
-	 * SearchRequest object. 
-	 * @param srq - the SearchRequest to be processed
-	 */
-	public void runSearchRequest(SearchRequest srq)
-	 {
-	  this.runPreProcessing(srq);
-	  this.runMatching(srq);
-	  this.runPostProcessing(srq);
-	  this.runPostFilters(srq);
 	 }
 	
 	/*-------------------------------- helper methods -----------------------------------*/
-	//helper methods. These get the appropriate modules named Name of the appropate type
-	//from a hashtable cache, or instantiate them should they not exist.
-	/** Returns the matching model indicated to be used, based on the Index and the Matching
-	 * name specified in the passed Request object. Caches already 
-	  * instantiaed matching models in Map Cache_Matching.
-	  * If the matching model name doesn't contain '.', then NAMESPACE_MATCHING
-	  * is prefixed to the name. 
-	  * @param rq The request indicating the Matching class, and the corresponding
-	  * instance to use
-	  * @return null If an error occurred obtaining the matching class
-	  */
-	protected Matching getMatchingModel(Request rq)
-	{
-		Matching rtr = null;
-		Index _index = rq.getIndex();
-		String ModelName = rq.getMatchingModel();
-		//add the namespace if the modelname is not fully qualified
-		
-		final String ModelNames[] = ModelName.split("\\s*,\\s*");
-		final int modelCount = ModelNames.length;
-		StringBuilder entireSequence = new StringBuilder();
-		for(int i =0;i<modelCount;i++)
-		{
-			if (ModelNames[i].indexOf(".") < 0 )
-				ModelNames[i]  = NAMESPACE_MATCHING + ModelNames[i];
-			else if (ModelNames[i].startsWith("uk.ac.gla.terrier"))
-				ModelNames[i] = ModelNames[i].replaceAll("uk.ac.gla.terrier", "org.terrier");
-			entireSequence.append(ModelNames[i]);
-			entireSequence.append(",");
-		}
-		ModelName = entireSequence.substring(0,entireSequence.length() -1);
-		//check for already instantiated class
-		Map<String, Matching> indexMap = Cache_Matching.get(_index);
-		if (indexMap == null)
-		{
-			Cache_Matching.put(_index, indexMap = new HashMap<String, Matching>());
-		}
-		else
-		{
-			rtr = indexMap.get(ModelName);
-		}
-		if (rtr == null)
-		{
-			boolean first = true;
-			for(int i=modelCount-1;i>=0;i--)
-			{
-				try
-				{
-					//load the class
-					if (ModelNames[i].equals("org.terrier.matching.Matching"))
-						ModelNames[i] = "org.terrier.matching.daat.Full";
-						//TODO why init was disabled:  Class.forName(ModelNames[i], false, this.getClass().getClassLoader())
-					Class<? extends Matching> formatter = ApplicationSetup.getClass(ModelNames[i]).asSubclass(Matching.class);
-					//get the correct constructor - an Index class in this case
-					
-					Class<?>[] params;
-					Object[] params2;
-					if (first)
-					{
-						params = new Class[1];
-						params2 = new Object[1];
-						
-						params[0] = Index.class;
-						params2[0] = _index;
-					}
-					else
-					{
-						params = new Class[2];
-						params2 = new Object[2];
-						
-						params[0] = Index.class;
-						params2[0] = _index;
-						params[1] = Matching.class;
-						params2[1] = rtr;
-					}
-					//and instantiate
-					rtr = (Matching) (formatter.getConstructor(params).newInstance(params2));
-					first = false;
-				}
-				catch(java.lang.reflect.InvocationTargetException ite)
-				{
-					logger.error("Recursive problem with matching model named: "+ModelNames[i],ite);
-					return null;
-				}
-				catch(Exception e)
-				{
-					logger.error("Problem with matching model named: "+ModelNames[i],e);
-					return null;
-				}
-			}
-		}
-		Cache_Matching.get(_index).put(ModelName, rtr);
-		return rtr;
-	}
-	/** Returns the weighting model requested by the Reqes from
+	
+	/** Returns the weighting model requested by the Request from
 	 * the WeightingModel factory.
 	 * @param rq The name of the weighting model to instantiate */
-	protected Model getWeightingModel(Request rq) {
+	protected static Model getWeightingModel(Request rq) {
 		return WeightingModelFactory.newInstance(rq.getWeightingModel(), rq.getIndex());
 	}
-	
 	
 	
 	/**
@@ -948,12 +887,15 @@ public class Manager
 			wmodel.setParameter(Double.parseDouble(param));
 		info.append(wmodel.getInfo());
 		
+		info.append(srq.getControl("runname"));
+		
 		//obtaining the post-processors information
-		Map<String,String> controls = rq.getControlHashtable();
-		for(Process p : postprocessModuleManager.getActive(controls))
-		{
-			info.append("_"+p.getInfo());
-		}
+		
+//		Map<String,String> controls = rq.getControlHashtable();
+//		for(Process p : postprocessModuleManager.getActive(controls))
+//		{
+//			info.append("_"+p.getInfo());
+//		}
 		return info.toString();
 	}
 }

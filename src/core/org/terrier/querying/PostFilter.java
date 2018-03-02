@@ -33,10 +33,11 @@ import org.terrier.matching.ResultSet;
   * Which PostFilters are run, and when is controlled by two properties, as mentioned below.<br/>
   * <B>Properties</B>
   * <ul>
-  * <li><tt>querying.postfilters.controls</tt> : A comma separated list of control to PostFilter
-  * class mappings. Mappings are separated by ":". eg <tt>querying.postfilters.controls=scope:Scope</tt></li>
-  * <li><tt>querying.postfilters.order</tt> : The order postfilters should be run in</li></ul>
-  * '''NB:''' Initialisation and running of post filters is carried out by the Manager.
+  * <li><tt>querying.postfilters</tt> : A comma separated list of control to PostFilter
+  * class mappings, in the order postfilters should be run in. Mappings are separated by ":". 
+  * eg <tt>querying.postfilters=scope:Scope</tt></li>
+  * </ul>
+  * '''NB:''' Initialisation and running of post filters is carried out by a subclass of the Manager.
   * @author Craig Macdonald
     */
 public interface PostFilter

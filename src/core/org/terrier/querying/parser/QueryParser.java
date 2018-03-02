@@ -26,12 +26,11 @@
 
 package org.terrier.querying.parser;
 
-import antlr.TokenStreamSelector;
-import org.terrier.querying.parser.TerrierLexer;
-import org.terrier.querying.parser.TerrierFloatLexer;
-import org.terrier.querying.parser.TerrierQueryParser;
 import java.io.StringReader;
-import org.terrier.querying.SearchRequest;
+
+import org.terrier.querying.Request;
+
+import antlr.TokenStreamSelector;
 
 /** Useful class to parse the query. (We should have had this class years ago).
  * This class replaces all replicated code about how to parse a String query into
@@ -50,7 +49,7 @@ public class QueryParser
 	 * @param query The string query to parse
 	 * @param srq The request object that the manager can use
 	 * @throws QueryParserException when the query cannot be parsed */
-	public static void parseQuery(final String query, final SearchRequest srq) throws QueryParserException
+	public static void parseQuery(final String query, final Request srq) throws QueryParserException
 	{
 		Query q = parseQuery(query);
 		srq.setQuery(q);

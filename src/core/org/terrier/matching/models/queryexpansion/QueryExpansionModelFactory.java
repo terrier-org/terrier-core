@@ -58,9 +58,6 @@ public class QueryExpansionModelFactory {
 		if (name.indexOf(".") < 0) {
 			name = NAMESPACE + name;
 		}
-		else if (name.startsWith("uk.ac.gla.terrier")) {
-			name = name.replaceAll("uk.ac.gla.terrier", "org.terrier");
-		}
 		
 		//check for already instantiated model
 		if (cache.containsKey(name)) {

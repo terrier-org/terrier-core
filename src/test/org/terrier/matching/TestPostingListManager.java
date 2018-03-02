@@ -30,7 +30,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
+import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.models.TF_IDF;
+import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.structures.Index;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.tests.ApplicationSetupBasedTest;
@@ -48,6 +50,25 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		return index;
 	}
 	
+	
+	
+	@Test public void testTaggedMatching() throws Exception {
+		Index index = createIndex();
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		mqt.add(QTPBuilder.of(QueryTerm.parse("brown")).setWeight(1.2d).setTag("match").build());
+		mqt.add(QTPBuilder.of(QueryTerm.parse("fox")).setWeight(1.2d).setTag("nomatch").build());
+		mqt.matchOnTags.add("match");
+		mqt.setDefaultTermWeightingModel(new TF_IDF());
+		PostingListManager p;
+		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);
+		p.prepare(true);
+		assertEquals(2, p.size());
+		assertEquals(1, p.getMatchingTerms().length);
+		assertEquals(0, p.getMatchingTerms()[0]);
+		assertEquals(1, p.getNonMatchingTerms().length);
+		assertEquals(1, p.getNonMatchingTerms()[0]);
+		p.close();
+	}
 	
 	
 	@Test public void testSingleTermNoMatch() throws Exception {

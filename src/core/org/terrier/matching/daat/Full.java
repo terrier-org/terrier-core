@@ -99,15 +99,17 @@ public class Full extends BaseMatching
         LongPriorityQueue postingHeap = new LongHeapPriorityQueue();
 		
 		// The posting list iterator array (one per term) and initialization
-		for (int i = 0; i < plm.size(); i++) {
+		for(int i : plm.getMatchingTerms()) {
+        //for (int i = 0; i < plm.size(); i++) {
 			long docid = plm.getPosting(i).getId();
 			//some ephemeral posting lists may not match any documents; skip these.
 			if (docid == IterablePosting.EOL)
 				continue;
 			postingHeap.enqueue((docid << 32) + i);
 		}
+		final int[] nonMatchingTerms = plm.getNonMatchingTerms();
         boolean targetResultSetSizeReached = false;
-        Queue<CandidateResult> candidateResultList = new PriorityQueue<CandidateResult>();
+        final Queue<CandidateResult> candidateResultList = new PriorityQueue<CandidateResult>();
         int currentDocId = selectMinimumDocId(postingHeap);
         IterablePosting currentPosting = null;
         double threshold = 0.0d;
@@ -140,9 +142,13 @@ public class Full extends BaseMatching
             if ((! targetResultSetSizeReached) || currentCandidate.getScore() > threshold) {
             	//System.err.println("id="+currentDocId + " occurrence="+currentCandidate.getOccurrence() + " pattern="+requiredBitPattern + " match=" + (currentCandidate.getOccurrence() & requiredBitPattern));
             	if ( (currentCandidate.getOccurrence() & requiredBitPattern) == requiredBitPattern)
-            	{     	
-            		//TODO here, we should score the non-optional postings
-            		
+            	{     
+            		for(int i : nonMatchingTerms) { 
+            			//these are postings that we need to keep/score, but which wont change the threshold
+            			//often these might be so FAT can score them later
+            			plm.getPosting(i).next(currentDocId);
+            			assignScore(i, currentCandidate);
+            		}
 	            	//System.err.println("New document " + currentCandidate.getDocId() + " with score " + currentCandidate.getScore() + " passes threshold of " + threshold);
 	        		candidateResultList.add(currentCandidate);
 	        		if (RETRIEVED_SET_SIZE != 0 && candidateResultList.size() == RETRIEVED_SET_SIZE + 1)

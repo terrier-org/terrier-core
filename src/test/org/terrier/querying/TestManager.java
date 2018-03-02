@@ -33,6 +33,8 @@ import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.models.BM25;
+import org.terrier.matching.daat.Full;
+import org.terrier.matching.models.PL2;
 import org.terrier.structures.Index;
 import org.terrier.tests.ApplicationSetupBasedTest;
 
@@ -45,6 +47,21 @@ public class TestManager extends ApplicationSetupBasedTest {
 	}
 	
 	@Test
+	public void testSimpleRetrieval() throws Exception
+	{
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"The quick brown fox jumps over the lazy dog"});
+		Manager m = new Manager(index);
+		SearchRequest srq;
+		srq = m.newSearchRequest("testQuery", "fox fox dog");
+		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
+		m.runSearchRequest(srq);
+		assertNotNull(srq.getResultSet());
+		assertEquals(1, srq.getResultSet().getResultSize());
+		assertEquals(0, srq.getResultSet().getDocids()[0]);
+		
+	}
+	
+	@Test
 	public void testCountingQueryTerms() throws Exception
 	{
 		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"The quick brown fox jumps over the lazy dog"});
@@ -52,14 +69,16 @@ public class TestManager extends ApplicationSetupBasedTest {
 		SearchRequest srq;
 		MatchingQueryTerms mqt;
 		srq = m.newSearchRequest("testQuery", "fox fox dog");
-		m.runPreProcessing(srq);
+		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
+		m.runSearchRequest(srq);
 		mqt = ((Request)srq).getMatchingQueryTerms();
 		assertEquals(2.0d, mqt.getTermWeight("fox"), 0.0d);
 		assertEquals(1.0d, mqt.getTermWeight("dog"), 0.0d);
 		
 		
 		srq = m.newSearchRequest("testQuery", "fox fox dog^1.3");
-		m.runPreProcessing(srq);
+		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
+		m.runSearchRequest(srq);
 		mqt = ((Request)srq).getMatchingQueryTerms();
 		assertEquals(2.0d, mqt.getTermWeight("fox"), 0.0d);
 		assertEquals(1.3d, mqt.getTermWeight("dog"), 0.0d);

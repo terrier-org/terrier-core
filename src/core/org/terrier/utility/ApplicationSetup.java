@@ -575,8 +575,6 @@ public class ApplicationSetup {
 		{
 			if (pluginName.length() == 0)
 				continue;
-			if (pluginName.startsWith("uk.ac.gla.terrier.utility"))
-				pluginName = pluginName.replaceFirst("uk.ac.gla.terrier.utility", "org.terrier.utility");
 			try{
 				TerrierApplicationPlugin plugin = Class.forName(pluginName).asSubclass(TerrierApplicationPlugin.class).newInstance();
 				plugin.initialise();

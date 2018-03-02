@@ -2,6 +2,7 @@ package org.terrier.querying;
 
 import org.terrier.querying.parser.Query;
 
+@ProcessPhaseRequisites(ManagerRequisite.TERRIERQL)
 public class TerrierQLToControls implements Process {
 
 	@Override

@@ -187,8 +187,6 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 				{
 					if (mapping[1].indexOf(".") == -1)
 						mapping[1] = NAMESPACE_DOCUMENTS + mapping[1];
-					else if (mapping[1].startsWith("uk.ac.gla.terrier"))
-						mapping[1] = mapping[1].replaceAll("uk.ac.gla.terrier", "org.terrier");
 					try{
 						Class<? extends Document> d = ApplicationSetup.getClass(mapping[1], false).asSubclass(Document.class);
 						extension_DocumentClass.put(mapping[0].toLowerCase(), d);
@@ -204,8 +202,6 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 		if (!defaultMapping.equals("")) {
   			if (defaultMapping.indexOf(".") == -1)
   				defaultMapping = NAMESPACE_DOCUMENTS + defaultMapping;
-  			else if (defaultMapping.startsWith("uk.ac.gla.terrier"))
-  				defaultMapping = defaultMapping.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
   			try{
   				Class<? extends Document> d =  ApplicationSetup.getClass(defaultMapping, false).asSubclass(Document.class);

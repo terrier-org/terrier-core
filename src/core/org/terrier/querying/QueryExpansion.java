@@ -64,7 +64,7 @@ import org.terrier.utility.Rounding;
   * @author Gianni Amatti, Ben He, Vassilis Plachouras, Craig Macdonald
  */
 @ProcessPhaseRequisites({ManagerRequisite.MQT, ManagerRequisite.RESULTSET})
-public class QueryExpansion implements PostProcess {
+public class QueryExpansion implements Process {
 	protected static final Logger logger = LoggerFactory.getLogger(QueryExpansion.class);
 	/**
 	 * The default namespace of query expansion model classes.
@@ -186,8 +186,6 @@ public class QueryExpansion implements PostProcess {
 			ExpansionTerms next = null;
 			if (! expanderName.contains("."))
 				expanderName = "org.terrier.querying."+expanderName;
-			else if (expanderName.startsWith("uk.ac.gla.terrier"))
-				expanderName = expanderName.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			try{
 				Class<? extends ExpansionTerms> clz = ApplicationSetup.getClass(expanderName).asSubclass(ExpansionTerms.class);
@@ -222,8 +220,6 @@ public class QueryExpansion implements PostProcess {
 			String name = names[i];
 			if (! name.contains("."))
 				name = "org.terrier.querying."+name;
-			else if (name.startsWith("uk.ac.gla.terrier"))
-				name = name.replaceAll("uk.ac.gla.terrier", "org.terrier");
 			
 			FeedbackSelector next = null;
 			try{
@@ -326,8 +322,8 @@ public class QueryExpansion implements PostProcess {
 		
 		//run retrieval process again for the expanded query
 		logger.info("Accessing inverted file for expanded query " + q.getQueryID());
-		manager.runMatching(q);
-		
+		//THIS ASSUMES THAT QueryExpansion directly follows Matching
+		manager.processModuleManager.getModule(q.getControl("previousprocess")).process(manager, q);
 	}
 	/** Obtain the query expansion model for QE to use.
 	 *  This will be cached in a hashtable for the lifetime of the

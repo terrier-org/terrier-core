@@ -3,6 +3,7 @@ package org.terrier.querying;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.querying.parser.Query;
 
+@ProcessPhaseRequisites(ManagerRequisite.TERRIERQL)
 public class TerrierQLToMatchingQueryTerms implements Process {
 
 	@Override

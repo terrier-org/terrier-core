@@ -25,8 +25,10 @@
  *   
  */
 package org.terrier.querying;
-/** Process Interface
-   */
+/** Process Interface. A Process implementation should be annotated with parameters
+ *  of the Request object that need to be set for it to be successfully used
+ *  using {@link ManagerRequisite}
+ */
 public interface Process {
 	/** Run the instantiated process on the search request represented by q.
 	  * @param manager The manager instance handling this search session.
@@ -38,5 +40,7 @@ public interface Process {
 	 * Returns the name of the processor.
 	 * @return String the name of the processor.
 	 */
-	String getInfo();
+	default String getInfo() {
+		return this.getClass().getSimpleName();
+	}
 }
