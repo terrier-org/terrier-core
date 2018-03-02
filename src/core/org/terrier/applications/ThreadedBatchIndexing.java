@@ -127,6 +127,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					BatchIndexing indexing = singlePass 
 							? new TRECIndexingSinglePass(path, thisPrefix, c)
 							: new TRECIndexing(path, thisPrefix, c);
+					indexing.blocks = blocks;
 					indexing.index();
 					return thisPrefix;
 				}	

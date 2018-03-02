@@ -37,6 +37,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.hadoop.io.Writable;
+import org.terrier.applications.CLITool;
 import org.terrier.structures.bit.BitPostingIndex;
 import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.postings.IterablePosting;
@@ -47,6 +48,182 @@ import org.terrier.utility.Files;
  * @since 3.0 */
 public class IndexUtil {
 
+	public static class Command extends CLITool
+	{
+
+		@Override
+		public String commandname() {
+			return "indexutil";
+		}
+
+		@Override
+		public String help() {
+			return MAIN_USAGE;
+		}
+
+		@Override
+		public String helpsummary() {
+			return "utilities for displaying the content of an index";
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		public int run(String[] args) throws Exception {
+			Index.setIndexLoadingProfileAsRetrieval(false);
+			if (args.length < 2)
+			{
+				System.err.println(MAIN_USAGE);
+				return 1;
+			}
+			final String cmd = args[0].trim();
+			final String structureName = args[1].trim();
+			
+			//load the index
+			final Index index = Index.createIndex();
+			if (index == null)
+			{
+				System.err.println("Index not found: " + Index.getLastIndexLoadError());
+				return 2;
+			}
+			
+			//command loop
+			if (cmd.equals("--printbitfile"))
+			{
+				BitPostingIndexInputStream bpiis = (BitPostingIndexInputStream) index.getIndexStructureInputStream(structureName);
+				bpiis.print();
+				bpiis.close();
+			}
+			else if (cmd.equals("--printterm"))
+			{
+				IndexUtil.forceStructure(index, "document", new DocumentIndex() {	
+					@Override
+					public int getNumberOfDocuments() {
+						return index.getCollectionStatistics().getNumberOfDocuments();
+					}
+					
+					@Override
+					public int getDocumentLength(int docid) throws IOException {
+						return 0;
+					}
+					
+					@Override
+					public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
+						return null;
+					}
+				});
+				Lexicon<String> lex = index.getLexicon();
+				PostingIndex<?> inv = (PostingIndex<?>) index.getInvertedIndex();
+				LexiconEntry le = lex.getLexiconEntry(args[1]);
+				IterablePosting ip = inv.getPostings(le);
+				while(ip.next() != IterablePosting.EOL)
+				{
+					System.out.print(ip.toString());
+					System.out.println(" ");
+				}
+				ip.close();
+				lex.close();
+				close(inv);
+			}
+			else if (cmd.equals("--printPosting"))
+			{
+				IndexUtil.forceStructure(index, "document", new DocumentIndex() {
+					
+					@Override
+					public int getNumberOfDocuments() {
+						return index.getCollectionStatistics().getNumberOfDocuments();
+					}
+					
+					@Override
+					public int getDocumentLength(int docid) throws IOException {
+						return 0;
+					}
+					
+					@Override
+					public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
+						return null;
+					}
+				});
+				Lexicon<String> lex = index.getLexicon();
+				PostingIndex<Pointer> inv = (PostingIndex<Pointer>) index.getInvertedIndex();
+				LexiconEntry le = lex.getLexiconEntry(args[1]);
+				IterablePosting ip = inv.getPostings(le);
+				int targetId = Integer.parseInt(args[2]);
+				int foundId = ip.next(targetId);
+				if (foundId == targetId)
+				{
+					System.out.println(ip.toString());
+				}
+				else
+				{
+					System.err.println("Docid " + targetId + " not found for term " + args[1] + " (nearest was " + foundId+")");
+				}
+				ip.close();
+				lex.close();
+				close(inv);
+			}
+			else if (cmd.equals("--printbitentry"))
+			{
+				List<BitIndexPointer> pointerList = (List<BitIndexPointer>) index.getIndexStructure(args[2]);
+				BitPostingIndex bpi = (BitPostingIndex) index.getIndexStructure(structureName);
+				//for every docid on cmdline
+				for(int argC=3;argC<args.length;argC++)
+				{
+					BitIndexPointer pointer = pointerList.get(Integer.parseInt(args[argC]));
+					if (pointer.getNumberOfEntries() == 0)
+						continue;
+					System.out.print(args[argC] + " ");
+					IterablePosting ip = bpi.getPostings(pointer);
+					while(ip.next() != IterablePosting.EOL)
+					{
+						System.out.print(ip.toString());
+						System.out.print(" ");
+					}
+					System.out.println();
+				}
+			}
+			else if (cmd.equals("--printlex"))
+			{
+				LexiconUtil.printLexicon(index, structureName);
+			}
+			else if (cmd.equals("--printdocument"))
+			{
+				printDocumentIndex(index, structureName);
+			}
+			else if (cmd.equals("--printlist"))
+			{
+				Iterator<? extends Writable> in = (Iterator<? extends Writable>) index.getIndexStructureInputStream(structureName);
+				while(in.hasNext())
+				{
+					System.out.println(in.next().toString());
+				}
+				IndexUtil.close(in);
+			}
+			else if (cmd.equals("--printlistentry"))
+			{
+				List<? extends Writable> list = (List<? extends Writable>) index.getIndexStructure(structureName);
+				for(int argC=2;argC<args.length;argC++)
+				{
+					System.out.println(list.get(Integer.parseInt(args[argC])).toString());
+				}
+				IndexUtil.close(list);
+			}
+			else if (cmd.equals("--printmeta"))
+			{
+				printMetaIndex(index, structureName);
+			}
+			else
+			{
+				System.err.println(MAIN_USAGE);
+			}
+			index.close();
+			return 0;
+		}
+		
+	}
+	
+	
+	
+	
 	private final static String MAIN_USAGE = "Usage: " + IndexUtil.class.getName() + " {--printbitfile|--printlex|--printdocument|--printlist|--printmeta} structureName";
 	/** Has some handy utilities for printing various index structures to System.out.
 	 * <ul>
@@ -58,156 +235,8 @@ public class IndexUtil {
 	 * <li>--printmeta - print the meta index</li>
 	 * </ul>
 	 */
-	@SuppressWarnings("unchecked")
-	public static void main(String[] args) throws Exception
-	{
-		Index.setIndexLoadingProfileAsRetrieval(false);
-		if (args.length < 2)
-		{
-			System.err.println(MAIN_USAGE);
-			return;
-		}
-		final String cmd = args[0].trim();
-		final String structureName = args[1].trim();
-		
-		//load the index
-		final Index index = Index.createIndex();
-		if (index == null)
-		{
-			System.err.println("Index not found: " + Index.getLastIndexLoadError());
-			return;
-		}
-		
-		//command loop
-		if (cmd.equals("--printbitfile"))
-		{
-			BitPostingIndexInputStream bpiis = (BitPostingIndexInputStream) index.getIndexStructureInputStream(structureName);
-			bpiis.print();
-			bpiis.close();
-		}
-		else if (cmd.equals("--printterm"))
-		{
-			IndexUtil.forceStructure(index, "document", new DocumentIndex() {	
-				@Override
-				public int getNumberOfDocuments() {
-					return index.getCollectionStatistics().getNumberOfDocuments();
-				}
-				
-				@Override
-				public int getDocumentLength(int docid) throws IOException {
-					return 0;
-				}
-				
-				@Override
-				public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
-					return null;
-				}
-			});
-			Lexicon<String> lex = index.getLexicon();
-			PostingIndex<Pointer> inv = (PostingIndex<Pointer>) index.getInvertedIndex();
-			LexiconEntry le = lex.getLexiconEntry(args[1]);
-			IterablePosting ip = inv.getPostings(le);
-			while(ip.next() != IterablePosting.EOL)
-			{
-				System.out.print(ip.toString());
-				System.out.println(" ");
-			}
-			ip.close();
-			lex.close();
-			close(inv);
-		}
-		else if (cmd.equals("--printPosting"))
-		{
-			IndexUtil.forceStructure(index, "document", new DocumentIndex() {
-				
-				@Override
-				public int getNumberOfDocuments() {
-					return index.getCollectionStatistics().getNumberOfDocuments();
-				}
-				
-				@Override
-				public int getDocumentLength(int docid) throws IOException {
-					return 0;
-				}
-				
-				@Override
-				public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
-					return null;
-				}
-			});
-			Lexicon<String> lex = index.getLexicon();
-			PostingIndex<Pointer> inv = (PostingIndex<Pointer>) index.getInvertedIndex();
-			LexiconEntry le = lex.getLexiconEntry(args[1]);
-			IterablePosting ip = inv.getPostings(le);
-			int targetId = Integer.parseInt(args[2]);
-			int foundId = ip.next(targetId);
-			if (foundId == targetId)
-			{
-				System.out.println(ip.toString());
-			}
-			else
-			{
-				System.err.println("Docid " + targetId + " not found for term " + args[1] + " (nearest was " + foundId+")");
-			}
-			ip.close();
-			lex.close();
-			close(inv);
-		}
-		else if (cmd.equals("--printbitentry"))
-		{
-			List<BitIndexPointer> pointerList = (List<BitIndexPointer>) index.getIndexStructure(args[2]);
-			BitPostingIndex bpi = (BitPostingIndex) index.getIndexStructure(structureName);
-			//for every docid on cmdline
-			for(int argC=3;argC<args.length;argC++)
-			{
-				BitIndexPointer pointer = pointerList.get(Integer.parseInt(args[argC]));
-				if (pointer.getNumberOfEntries() == 0)
-					continue;
-				System.out.print(args[argC] + " ");
-				IterablePosting ip = bpi.getPostings(pointer);
-				while(ip.next() != IterablePosting.EOL)
-				{
-					System.out.print(ip.toString());
-					System.out.print(" ");
-				}
-				System.out.println();
-			}
-		}
-		else if (cmd.equals("--printlex"))
-		{
-			LexiconUtil.printLexicon(index, structureName);
-		}
-		else if (cmd.equals("--printdocument"))
-		{
-			printDocumentIndex(index, structureName);
-		}
-		else if (cmd.equals("--printlist"))
-		{
-			Iterator<? extends Writable> in = (Iterator<? extends Writable>) index.getIndexStructureInputStream(structureName);
-			while(in.hasNext())
-			{
-				System.out.println(in.next().toString());
-			}
-			IndexUtil.close(in);
-		}
-		else if (cmd.equals("--printlistentry"))
-		{
-			List<? extends Writable> list = (List<? extends Writable>) index.getIndexStructure(structureName);
-			for(int argC=2;argC<args.length;argC++)
-			{
-				System.out.println(list.get(Integer.parseInt(args[argC])).toString());
-			}
-			IndexUtil.close(list);
-		}
-		else if (cmd.equals("--printmeta"))
-		{
-			printMetaIndex(index, structureName);
-		}
-		else
-		{
-			System.err.println(MAIN_USAGE);
-		}
-		index.close();
+	public static void main(String[] args) {
+		CLITool.run(Command.class, args);
 	}
 	
 	/** Force the specified object into the structure cache of the specified object, 

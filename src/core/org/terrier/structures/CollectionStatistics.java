@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.hadoop.io.Writable;
+import org.terrier.applications.CLITool;
 
 /**
  * This class provides basic statistics for the indexed
@@ -218,6 +219,36 @@ public class CollectionStatistics implements Serializable,Writable {
 		{
 			out.writeLong(fieldTokens[fi]);
 		}
+	}
+	
+	public static class Command extends CLITool
+	{
+
+		@Override
+		public int run(String[] args) {
+			Index.setIndexLoadingProfileAsRetrieval(false);
+			Index i = Index.createIndex();
+			System.out.println("Collection statistics:");
+			System.out.println("number of indexed documents: " + i.getCollectionStatistics().getNumberOfDocuments());
+			System.out.println("size of vocabulary: " +  i.getCollectionStatistics().getNumberOfUniqueTerms());
+			System.out.println("number of tokens: " +  i.getCollectionStatistics().getNumberOfTokens());
+			System.out.println("number of pointers: " +  i.getCollectionStatistics().getNumberOfPointers());
+			try {
+				i.close();
+			} catch (IOException e) {}
+			return 0;
+		}
+
+		@Override
+		public String commandname() {
+			return "indexstats";
+		}
+
+		@Override
+		public String helpsummary() {
+			return "display the statistics of an index";
+		}
+		
 	}
 
 }

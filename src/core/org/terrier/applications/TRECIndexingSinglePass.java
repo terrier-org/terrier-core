@@ -29,7 +29,6 @@ import org.terrier.indexing.Collection;
 import org.terrier.structures.indexing.Indexer;
 import org.terrier.structures.indexing.singlepass.BasicSinglePassIndexer;
 import org.terrier.structures.indexing.singlepass.BlockSinglePassIndexer;
-import org.terrier.utility.ApplicationSetup;
 
 public class TRECIndexingSinglePass extends TRECIndexing {
 
@@ -53,7 +52,7 @@ public class TRECIndexingSinglePass extends TRECIndexing {
 	@Override
 	protected Indexer loadIndexer(String pa, String pr) {
 		BasicSinglePassIndexer _indexer;
-		if (ApplicationSetup.BLOCK_INDEXING)
+		if (blocks)
 			_indexer = new BlockSinglePassIndexer(pa, pr);
 		else
 			_indexer = new BasicSinglePassIndexer(pa, pr);

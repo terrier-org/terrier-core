@@ -23,6 +23,7 @@ Major update. New features include a low-level matching/query language inspired/
  - [TR-491](http://terrier.org/issues/browse/TR-491) Split out MapReduce indexer from core, upgrade Hadoop
  - [TR-480](http://terrier.org/issues/browse/TR-480) Resolve additional Terrier "plugins" from Maven repositories. Ramification of this change is that Class.forName() should be replaced by ApplicationSetup.getClass(). 
  - [TR-483](http://terrier.org/issues/browse/TR-483) pom.xml should not specify javac
+ - [TR-495](http://terrier.org/issues/browse/TR-495) Build should work on JDK9
 
 Terrier 4.2 - 22/12/2016
 ------------------------
