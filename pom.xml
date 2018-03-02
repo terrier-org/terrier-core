@@ -628,6 +628,7 @@
 					    <doctitle>${project.Name} ${project.version} API</doctitle>
 					    <use>true</use>
 					    <version>true</version>
+					    <doclint>none</doclint>
 					    <windowtitle>${project.Name} ${project.version} API</windowtitle>
 					    <sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/:${basedir}/target/generated-sources/javacc/</sourcepath>
 					     <additionalparam>-Xdoclint:none</additionalparam> <!-- http://stackoverflow.com/a/16743137 -->
