@@ -148,7 +148,8 @@ public abstract class MultiDocumentFileCollection implements Collection {
 	/** Closes the collection, any files that may be open. */
 	public void close() {
 		try{
-			is.close();
+			if (is != null)
+				is.close();
 		} catch (IOException ioe) { 
 			logger.warn("Problem closing collection",ioe);
 		}
