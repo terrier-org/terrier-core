@@ -39,7 +39,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.terrier.indexing.tokenisation.EnglishTokeniser;
-import org.terrier.realtime.MemoryIndexer;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FieldDocumentIndex;
@@ -173,7 +172,8 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 					Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX)
 					: Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH, "fields");
 		} else {
-			index = ((MemoryIndexer)indexer).getIndex();
+			throw new UnsupportedOperationException();
+			//index = ((MemoryIndexer)indexer).getIndex();
 		}
 				
 		assertNotNull(index);

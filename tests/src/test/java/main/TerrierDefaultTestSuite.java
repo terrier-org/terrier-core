@@ -76,14 +76,6 @@ import org.terrier.querying.TestManager;
 import org.terrier.querying.TestSimpleDecorate;
 import org.terrier.querying.parser.TestQueryParser;
 import org.terrier.querying.summarisation.TestDefaultSummariser;
-import org.terrier.realtime.incremental.TestIncremental;
-import org.terrier.realtime.memory.TestMemoryIndex;
-import org.terrier.realtime.memory.TestMemoryIndexer;
-import org.terrier.realtime.memory.TestMemoryInvertedIndex;
-import org.terrier.realtime.memory.TestMemoryLexicon;
-import org.terrier.realtime.memory.TestMemoryMetaIndex;
-import org.terrier.realtime.memory.fields.TestMemoryFieldsIndex;
-import org.terrier.realtime.multi.TestMultiIndex;
 import org.terrier.statistics.TestGammaFunction.TestWikipediaLanczosGammaFunction;
 import org.terrier.structures.TestBasicLexiconEntry;
 import org.terrier.structures.TestBitIndexPointer;
@@ -280,18 +272,6 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestRandomDataInputMemory.class,
 	TestHadoopPlugin.class,
 	TestCountingInputStream.class,
-	
-	// memory and incremental index tests
-	TestMemoryFieldsIndex.class,
-	TestMemoryIndexer.class,
-	TestMemoryInvertedIndex.class,
-	TestMemoryIndex.class,
-	TestMemoryLexicon.class,
-	TestMemoryMetaIndex.class,
-	TestMultiIndex.class,
-	TestIncremental.class
-	
-	
 	
 	
 })

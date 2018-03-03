@@ -1,0 +1,5 @@
+org.terrier.applications.CLITool$HelpCLITool
+org.terrier.applications.InteractiveQuerying$Command
+org.terrier.structures.CollectionStatistics$Command
+org.terrier.structures.IndexUtil$Command
+org.terrier.utility.SimpleJettyHTTPServer$Command

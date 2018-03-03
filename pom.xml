@@ -74,6 +74,7 @@
 		<module>learning</module>
 		<module>integer-compression</module>
 		<module>realtime</module>
+		<module>tests</module>
 	</modules>
 
 
@@ -273,20 +274,6 @@
 	</dependencies>
 
 	<build>
-		<testSourceDirectory>src/test</testSourceDirectory>
-		<resources>
-			<resource>
-				<directory>src/resources</directory>
-			</resource>
-			<resource>
-				<directory>share/templates</directory>
-				<includes>
-					<include>**/*.java</include>
-				</includes>
-				<filtering>true</filtering>
-				<targetPath>${project.build.directory}/generated-sources/version</targetPath>
-			</resource>
-		</resources>
 
 		<pluginManagement>
 			<plugins>
@@ -447,6 +434,7 @@
 				</configuration>
 			</plugin>
 
+
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.1.0</version>
@@ -463,9 +451,10 @@
 					</filters>
 				</configuration>
 				<executions>
-					<execution>
-						<!-- builds the jar-with-dependencies -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
+					
+					<!--<execution>
+						 builds the jar-with-dependencies 
+						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
@@ -474,7 +463,7 @@
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
 						</configuration>
-					</execution>
+					</execution>-->
 				</executions>
 			</plugin>
 
