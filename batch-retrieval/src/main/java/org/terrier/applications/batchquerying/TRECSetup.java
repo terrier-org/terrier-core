@@ -170,9 +170,6 @@ public class TRECSetup {
 			propertiesWriter.println("TrecQueryTags.process=TOP,NUM,TITLE");
 			propertiesWriter.println("TrecQueryTags.skip=DESC,NARR");
 			propertiesWriter.println();
-			propertiesWriter.println("#stop-words file");
-			propertiesWriter.println("stopwords.filename=stopword-list.txt");
-			propertiesWriter.println();
 			propertiesWriter.println("#the processing stages a term goes through");
 			propertiesWriter.println("termpipelines=Stopwords,PorterStemmer");
 			propertiesWriter.println();
