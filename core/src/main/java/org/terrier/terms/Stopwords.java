@@ -40,7 +40,7 @@ import org.terrier.utility.ApplicationSetup;
  * Note that this TermPipeline uses the system default encoding for the stopword list.
  * <b>Properties</b><br />
  * <ul><li><tt>stopwords.filename</tt> - the stopword list to load. More than one stopword list can be specified, by comma-separating
- * the filenames.</li>
+ * the filenames. The default is <tt>resource:/stopword-list.txt</tt> which is included in the terrier-core jar file.</li>
  * <li><tt>stopwords.intern.terms</tt> - optimisation of Java for indexing: Stopwords terms are likely to appear extremely frequently
  * in a Collection, <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/lang/String.html#intern()">interning</a> them in Java will
  * save on GC costs during indexing.</li>
