@@ -2,18 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src/webapps"/>
 	<classpathentry kind="src" path="src/websitesearch"/>
-	<classpathentry kind="src" path="batch-indexers/src/main/java"/>
-	<classpathentry kind="src" path="batch-retrieval/src/main/java"/>
-	<classpathentry kind="src" path="core/src/main/java"/>
-	<classpathentry kind="src" path="integer-compression/src/main/java"/>
-	<classpathentry kind="src" path="realtime/src/main/java"/>
-	<classpathentry kind="src" path="core/target/generated-sources/version"/>
-	<classpathentry kind="src" path="core/target/generated-sources/javacc"/>
-	<classpathentry kind="src" path="batch-indexers/src/main/resources"/>
-	<classpathentry kind="src" path="batch-retrieval/src/main/resources"/>
-	<classpathentry kind="src" path="core/src/main/resources"/>
-	<classpathentry kind="src" path="tests/src/test/java"/>
-	<classpathentry kind="src" path="realtime/src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java SE 8">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
