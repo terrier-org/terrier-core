@@ -64,7 +64,6 @@ import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.PostingUtil;
 import org.terrier.structures.restructure.Tr4BasicLexiconEntry;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
-import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.StaTools;
 
@@ -535,8 +534,8 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 
 	@Override
 	protected void makeCollectionSpec(PrintWriter p) throws Exception {
-		p.println(System.getProperty("user.dir") + "/share/tests/shakespeare/shakespeare-merchant.trec.1");
-		p.println(System.getProperty("user.dir") + "/share/tests/shakespeare/shakespeare-merchant.trec.2");
+		p.println(System.getProperty("user.dir") + "/../share/tests/shakespeare/shakespeare-merchant.trec.1");
+		p.println(System.getProperty("user.dir") + "/../share/tests/shakespeare/shakespeare-merchant.trec.2");
 		p.close();
 	}
 
