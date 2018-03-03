@@ -441,7 +441,7 @@ public class FatUtils {
 				frs.setDocids(docids);
 				frs.setPostings(postings);
 				frs.setOccurrences(occurrences);
-
+				frs.setTags(tags);
 				frs.setEntryStatistics(new EntryStatistics[0]);
                 frs.setKeyFrequencies(new double[0]);
                 frs.setQueryTerms(new String[0]);
