@@ -68,12 +68,12 @@
 	</distributionManagement>
 
 	<modules>
-		<module>terrier-core</module>
-		<module>terrier-batch-indexers</module>
-		<module>terrier-batch-retrieval</module>
-		<module>terrier-learning</module>
-		<module>terrier-integer-compression</module>
-		<module>terrier-realtime</module>
+		<module>core</module>
+		<module>batch-indexers</module>
+		<module>batch-retrieval</module>
+		<module>learning</module>
+		<module>integer-compression</module>
+		<module>realtime</module>
 	</modules>
 
 
