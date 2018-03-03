@@ -42,7 +42,7 @@ public class BlockOnDiskShakespeareEndToEndTest extends BlockShakespeareEndToEnd
 	@Override
 	protected void doIndexing(String... trec_terrier_args) throws Exception
 	{
-		
+		checkTermPipelineRecorded = false;
 		String indextype = "blocks";
 		if (ArrayUtils.toString(trec_terrier_args).contains("FieldTags.process")) indextype="fieldsblocks";
 		else FieldScore.FIELDS_COUNT=0;

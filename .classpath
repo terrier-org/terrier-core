@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="src/trec"/>
 	<classpathentry kind="src" path="src/webapps"/>
 	<classpathentry kind="src" path="src/websitesearch"/>
-	<classpathentry kind="src" path="target/generated-sources/antlr"/>
 	<classpathentry kind="src" path="target/generated-sources/version"/>
 	<classpathentry kind="src" path="src/resources"/>
 	<classpathentry kind="src" path="target/generated-sources/javacc"/>

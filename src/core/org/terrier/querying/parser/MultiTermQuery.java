@@ -45,6 +45,17 @@ public class MultiTermQuery extends Query {
 	protected String prefix = "";
 	protected String suffix = "";
 	
+	/** The weight of this "term". */
+	double weight = 1.0d;
+	
+	/**
+	 * Sets the weight of the disjunctive "term".
+	 * @param w double the weight of the disjunctive "term".
+	 */
+	public void setWeight(double w) {
+		weight = w;
+	}
+	
 	/**
 	 * 
 	 */
@@ -141,7 +152,10 @@ public class MultiTermQuery extends Query {
 	
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight) {
 	    for (Query child : v)
-	      child.obtainQueryTerms(terms, field, required, weight);
+	      child.obtainQueryTerms(terms, 
+	    		  field, 
+	    		  required, 
+	    		  weight == null ? this.weight : this.weight*weight);
 	  }
 	
 //	/**
@@ -298,6 +312,8 @@ public class MultiTermQuery extends Query {
 				s.append(",");			
 		}
 		s.append(')');
+		if (weight != 1.0d) 
+			s.append("^" + weight);
 		return s.toString();
 	}
 }

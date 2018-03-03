@@ -72,16 +72,16 @@ public class TestManager extends ApplicationSetupBasedTest {
 		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
 		m.runSearchRequest(srq);
 		mqt = ((Request)srq).getMatchingQueryTerms();
-		assertEquals(2.0d, mqt.getTermWeight("fox"), 0.0d);
-		assertEquals(1.0d, mqt.getTermWeight("dog"), 0.0d);
+		assertEquals(1d, mqt.getTermWeight("fox"), 0.0d);
+		assertEquals(0.5d, mqt.getTermWeight("dog"), 0.0d);
 		
 		
 		srq = m.newSearchRequest("testQuery", "fox fox dog^1.3");
 		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
 		m.runSearchRequest(srq);
 		mqt = ((Request)srq).getMatchingQueryTerms();
-		assertEquals(2.0d, mqt.getTermWeight("fox"), 0.0d);
-		assertEquals(1.3d, mqt.getTermWeight("dog"), 0.0d);
+		assertEquals(1d, mqt.getTermWeight("fox"), 0.0d);
+		assertEquals(1.3d/2d, mqt.getTermWeight("dog"), 0.0d);
 		
 	}
 	

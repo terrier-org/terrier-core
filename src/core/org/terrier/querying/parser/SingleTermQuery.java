@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
+import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
@@ -184,26 +186,51 @@ public class SingleTermQuery extends Query {
 	@Override
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field,
 			Boolean required, Double weight) {
-		QTPBuilder qtp = QTPBuilder.of(new SingleQueryTerm(this.term, field));
+		
+		QueryTerm matchTerm = new SingleQueryTerm(this.term, field);
+		QueryTermProperties qtp = terms.get(matchTerm);
+		if (qtp != null)
+		{
+			if (weight != null)
+			{
+				qtp.setWeight(qtp.getWeight() + (weight * this.weight));
+			}
+			else
+			{
+				qtp.setWeight(qtp.getWeight() + this.weight);
+			}
+			if (required != null && required)
+			{
+				qtp.setRequired(true);
+			}
+			else if (required != null && !required)
+			{
+				qtp.setRequired(false);
+				qtp.setWeight(Double.NEGATIVE_INFINITY);
+			}
+			return;
+		}
+		
+		QTPBuilder qtpb = QTPBuilder.of(matchTerm);
 		if (weight != null)
 		{
-			qtp.setWeight(weight * this.weight);
+			qtpb.setWeight(weight * this.weight);
 		}
 		else
 		{
-			qtp.setWeight(this.weight);
+			qtpb.setWeight(this.weight);
 		}
 		if (required != null && required)
 		{
-			qtp.setRequired(true);
+			qtpb.setRequired(true);
 		}
 		else if (required != null && !required)
 		{
-			qtp.setRequired(false);
-			qtp.setWeight(Double.NEGATIVE_INFINITY);
+			qtpb.setRequired(false);
+			qtpb.setWeight(Double.NEGATIVE_INFINITY);
 		}
 		//qtp.setField(field);
-		terms.add(qtp.build());
+		terms.add(qtpb.build());
 	}
 	
 //	/**

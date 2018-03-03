@@ -26,11 +26,7 @@
 
 package org.terrier.querying.parser;
 
-import java.io.StringReader;
-
 import org.terrier.querying.Request;
-
-import antlr.TokenStreamSelector;
 
 /** Useful class to parse the query. (We should have had this class years ago).
  * This class replaces all replicated code about how to parse a String query into
@@ -63,18 +59,9 @@ public class QueryParser
     public static Query parseQuery(String query) throws QueryParserException
     {
         Query rtr = null;
+        
         try{
-			//TODO: Are any of these classes thread safe, and would not have to be created for each query?
-            TerrierLexer lexer = new TerrierLexer(new StringReader(query));
-            TerrierFloatLexer flexer = new TerrierFloatLexer(lexer.getInputState());
-
-            TokenStreamSelector selector = new TokenStreamSelector();
-            selector.addInputStream(lexer, "main");
-            selector.addInputStream(flexer, "numbers");
-            selector.select("main");
-            TerrierQueryParser parser = new TerrierQueryParser(selector);
-            parser.setSelector(selector);
-            rtr = parser.query();
+        	rtr = new TerrierQLParser(query).parse();
         }catch (Exception e) {
             throw new QueryParserException("Failed to process '"+query+"'",e);
         }

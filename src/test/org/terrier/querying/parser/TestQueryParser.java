@@ -62,16 +62,46 @@ public class TestQueryParser {
 		assertEquals("a", q.toString());
 	}
 	
-	@Test public void testSingleTermSegmentQuery() throws Exception
+	@Test public void testSingleTermQueryWeighted() throws Exception
 	{
-		Query q = QueryParser.parseQuery("[a]");
+		Query q = QueryParser.parseQuery("a^2");
 		List<Query> terms = new ArrayList<Query>();
 		q.getTerms(terms);
 		assertEquals(1, terms.size());
 		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
-		if (checkParseTree) assertEquals("SegmentQuery(SingleTermQuery(a))", q.parseTree());
-		assertEquals("[a]", q.toString());
+		if (checkParseTree) assertEquals("SingleTermQuery(a)", q.parseTree());
+		assertEquals("a^2.0", q.toString());
 	}
+	
+	@Test public void testMultipleWithWeights() throws Exception
+	{
+		final String term1 = "a";
+		final String term2 = "b";
+		Query q = QueryParser.parseQuery(term1+"^0.5 " + term2 + "^1.0");
+	}
+	
+	
+	@Test public void testSingleTermQueryWeightedFloat() throws Exception
+	{
+		Query q = QueryParser.parseQuery("a^1.5");
+		List<Query> terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		assertEquals(1, terms.size());
+		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+		if (checkParseTree) assertEquals("SingleTermQuery(a)", q.parseTree());
+		assertEquals("a^1.5", q.toString());
+	}
+	
+//	@Test public void testSingleTermSegmentQuery() throws Exception
+//	{
+//		Query q = QueryParser.parseQuery("[a]");
+//		List<Query> terms = new ArrayList<Query>();
+//		q.getTerms(terms);
+//		assertEquals(1, terms.size());
+//		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+//		if (checkParseTree) assertEquals("SegmentQuery(SingleTermQuery(a))", q.parseTree());
+//		assertEquals("[a]", q.toString());
+//	}
 	
 	
 	@Test public void testTwoTermQuery() throws Exception
@@ -110,56 +140,56 @@ public class TestQueryParser {
 		assertEquals("{a b}^1.5", q.toString());
 	}
 	
-	@Test public void testTwoTermQuerySegment() throws Exception
-	{
-		Query q = QueryParser.parseQuery("[a b]");
-		List<Query> terms = new ArrayList<Query>();
-		q.getTerms(terms);
-		assertEquals(2, terms.size());
-		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
-		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
-		if (checkParseTree) assertEquals("SegmentQuery(SingleTermQuery(a),SingleTermQuery(b))", q.parseTree());
-		assertEquals("[a b]", q.toString());
-	}
+//	@Test public void testTwoTermQuerySegment() throws Exception
+//	{
+//		Query q = QueryParser.parseQuery("[a b]");
+//		List<Query> terms = new ArrayList<Query>();
+//		q.getTerms(terms);
+//		assertEquals(2, terms.size());
+//		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+//		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
+//		if (checkParseTree) assertEquals("SegmentQuery(SingleTermQuery(a),SingleTermQuery(b))", q.parseTree());
+//		assertEquals("[a b]", q.toString());
+//	}
 	
-	@Test public void testThreeTermQuerySegmentLast() throws Exception
-	{
-		Query q = QueryParser.parseQuery("a [b c]");
-		List<Query> terms = new ArrayList<Query>();
-		q.getTerms(terms);
-		assertEquals(3, terms.size());
-		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
-		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
-		assertEquals("c", ((SingleTermQuery)terms.get(2)).getTerm());
-		if (checkParseTree) assertEquals("MultiTermQuery(SingleTermQuery(a),SegmentQuery(SingleTermQuery(b),SingleTermQuery(c)))", q.parseTree());
-		assertEquals("a [b c]", q.toString());
-	}
+//	@Test public void testThreeTermQuerySegmentLast() throws Exception
+//	{
+//		Query q = QueryParser.parseQuery("a [b c]");
+//		List<Query> terms = new ArrayList<Query>();
+//		q.getTerms(terms);
+//		assertEquals(3, terms.size());
+//		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+//		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
+//		assertEquals("c", ((SingleTermQuery)terms.get(2)).getTerm());
+//		if (checkParseTree) assertEquals("MultiTermQuery(SingleTermQuery(a),SegmentQuery(SingleTermQuery(b),SingleTermQuery(c)))", q.parseTree());
+//		assertEquals("a [b c]", q.toString());
+//	}
 	
-	@Test public void testThreeTermQuerySegment2_3() throws Exception
-	{
-		Query q = QueryParser.parseQuery("[a] [b c]");
-		List<Query> terms = new ArrayList<Query>();
-		q.getTerms(terms);
-		assertEquals(3, terms.size());
-		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
-		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
-		assertEquals("c", ((SingleTermQuery)terms.get(2)).getTerm());
-		if (checkParseTree) assertEquals("MultiTermQuery(SegmentQuery(SingleTermQuery(a)),SegmentQuery(SingleTermQuery(b),SingleTermQuery(c)))", q.parseTree());
-		assertEquals("[a] [b c]", q.toString());
-	}
-	
-	
-	@Test public void testThreeTermDisjunctiveSegmentFirst() throws Exception
-	{
-		Query q = QueryParser.parseQuery("{a b} c");
-		List<Query> terms = new ArrayList<Query>();
-		q.getTerms(terms);
-		assertEquals(3, terms.size());
-		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
-		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
-		if (checkParseTree) assertEquals("MultiTermQuery(SegmentQuery(SingleTermQuery(a),SingleTermQuery(b)),SingleTermQuery(c))", q.parseTree());
-		assertEquals("{a b} c", q.toString());
-	}
+//	@Test public void testThreeTermQuerySegment2_3() throws Exception
+//	{
+//		Query q = QueryParser.parseQuery("[a] [b c]");
+//		List<Query> terms = new ArrayList<Query>();
+//		q.getTerms(terms);
+//		assertEquals(3, terms.size());
+//		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+//		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
+//		assertEquals("c", ((SingleTermQuery)terms.get(2)).getTerm());
+//		if (checkParseTree) assertEquals("MultiTermQuery(SegmentQuery(SingleTermQuery(a)),SegmentQuery(SingleTermQuery(b),SingleTermQuery(c)))", q.parseTree());
+//		assertEquals("[a] [b c]", q.toString());
+//	}
+//	
+//	
+//	@Test public void testThreeTermDisjunctiveSegmentFirst() throws Exception
+//	{
+//		Query q = QueryParser.parseQuery("{a b} c");
+//		List<Query> terms = new ArrayList<Query>();
+//		q.getTerms(terms);
+//		assertEquals(3, terms.size());
+//		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+//		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
+//		if (checkParseTree) assertEquals("MultiTermQuery(SegmentQuery(SingleTermQuery(a),SingleTermQuery(b)),SingleTermQuery(c))", q.parseTree());
+//		assertEquals("{a b} c", q.toString());
+//	}
 	
 	@Test public void testThreeTermQueryDisjunctiveLast() throws Exception
 	{
@@ -170,36 +200,36 @@ public class TestQueryParser {
 		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
 		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
 		assertEquals("c", ((SingleTermQuery)terms.get(2)).getTerm());
-		if (checkParseTree) assertEquals("MultiTermQuery(SingleTermQuery(a),SegmentQuery(SingleTermQuery(b),SingleTermQuery(c)))", q.parseTree());
+		if (checkParseTree) assertEquals("MultiTermQuery(SingleTermQuery(a),DisjunctiveQuery(SingleTermQuery(b),SingleTermQuery(c)))", q.parseTree());
 		assertEquals("a {b c}", q.toString());
 	}
 	
-	@Test public void testThreeTermQuerySegmentFirst() throws Exception
-	{
-		Query q = QueryParser.parseQuery("[a b] c");
-		List<Query> terms = new ArrayList<Query>();
-		q.getTerms(terms);
-		assertEquals(3, terms.size());
-		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
-		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
-		assertEquals("c", ((SingleTermQuery)terms.get(2)).getTerm());
-		//if (checkParseTree) assertEquals("MultiTermQuery(SegmentQuery(SingleTermQuery(a),SingleTermQuery(b)),SingleTermQuery(c))", q.parseTree());
-		assertEquals("[a b] c", q.toString());
-	}
+//	@Test public void testThreeTermQuerySegmentFirst() throws Exception
+//	{
+//		Query q = QueryParser.parseQuery("[a b] c");
+//		List<Query> terms = new ArrayList<Query>();
+//		q.getTerms(terms);
+//		assertEquals(3, terms.size());
+//		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
+//		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
+//		assertEquals("c", ((SingleTermQuery)terms.get(2)).getTerm());
+//		//if (checkParseTree) assertEquals("MultiTermQuery(SegmentQuery(SingleTermQuery(a),SingleTermQuery(b)),SingleTermQuery(c))", q.parseTree());
+//		assertEquals("[a b] c", q.toString());
+//	}
 	
-	@Test public void testFourTermQuerySegmentWithDisjunctive() throws Exception
-	{
-		Query q = QueryParser.parseQuery("[{a1 a2} b] c");
-		List<Query> terms = new ArrayList<Query>();
-		q.getTerms(terms);
-		assertEquals(4, terms.size());
-		assertEquals("a1", ((SingleTermQuery)terms.get(0)).getTerm());
-		assertEquals("a2", ((SingleTermQuery)terms.get(1)).getTerm());
-		assertEquals("b", ((SingleTermQuery)terms.get(2)).getTerm());
-		assertEquals("c", ((SingleTermQuery)terms.get(3)).getTerm());
-		//if (checkParseTree) assertEquals("MultiTermQuery(SegmentQuery(SingleTermQuery(a),SingleTermQuery(b)),SingleTermQuery(c))", q.parseTree());
-		assertEquals("[{a1 a2} b] c", q.toString());
-	}
+//	@Test public void testFourTermQuerySegmentWithDisjunctive() throws Exception
+//	{
+//		Query q = QueryParser.parseQuery("[{a1 a2} b] c");
+//		List<Query> terms = new ArrayList<Query>();
+//		q.getTerms(terms);
+//		assertEquals(4, terms.size());
+//		assertEquals("a1", ((SingleTermQuery)terms.get(0)).getTerm());
+//		assertEquals("a2", ((SingleTermQuery)terms.get(1)).getTerm());
+//		assertEquals("b", ((SingleTermQuery)terms.get(2)).getTerm());
+//		assertEquals("c", ((SingleTermQuery)terms.get(3)).getTerm());
+//		//if (checkParseTree) assertEquals("MultiTermQuery(SegmentQuery(SingleTermQuery(a),SingleTermQuery(b)),SingleTermQuery(c))", q.parseTree());
+//		assertEquals("[{a1 a2} b] c", q.toString());
+//	}
 	
 	@Test public void testTwoTermWeight() throws Exception
 	{

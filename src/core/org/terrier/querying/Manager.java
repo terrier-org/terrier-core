@@ -49,8 +49,6 @@ import org.terrier.matching.ResultSet;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.matching.models.WeightingModelFactory;
 import org.terrier.querying.parser.Query;
-import org.terrier.querying.parser.QueryParser;
-import org.terrier.querying.parser.QueryParserException;
 import org.terrier.structures.Index;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
@@ -175,7 +173,7 @@ public class Manager implements IManager
 		ModuleManager(String _typeName, String namespace, boolean _caching){
 			super(namespace, _caching);
 			this.typeName = _typeName;
-			this.load_module_controls_old();
+			this.load_module_controls();
 			System.err.println(Arrays.deepToString(Class_Controls));
 		}		
 		
@@ -607,11 +605,11 @@ public class Manager implements IManager
 			setDefaults(q);
 		q.setQueryID(QueryID);
 		q.setIndex(this.index);
-		try{
-			QueryParser.parseQuery(query, q);	
-		} catch (QueryParserException qpe) {
-			logger.error("Error while parsing the query.",qpe);
-		}
+//		try{
+//			QueryParser.parseQuery(query, q);	
+//		} catch (QueryParserException qpe) {
+//			logger.error("Error while parsing the query.",qpe);
+//		}
 		q.setOriginalQuery(query);
 		return q;
 	}
