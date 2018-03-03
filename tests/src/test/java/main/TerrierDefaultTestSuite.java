@@ -52,17 +52,6 @@ import org.terrier.indexing.TestTweetJSONCollection;
 import org.terrier.indexing.TestWARC10Collection;
 import org.terrier.indexing.tokenisation.TestEnglishTokeniser;
 import org.terrier.indexing.tokenisation.TestUTFTokeniser;
-import org.terrier.integer.TestByteInByteOut;
-import org.terrier.integer.TestIntCompressionConfiguration;
-import org.terrier.integer.structure.TestIntegerCoding;
-import org.terrier.integer.structure.TestIntegerCoding2;
-import org.terrier.integer.structure.TestNext;
-import org.terrier.integer.tests.BasicShak;
-import org.terrier.integer.tests.BasicShakFastPFORRecompress;
-import org.terrier.integer.tests.BasicShakNullRecompress;
-import org.terrier.integer.tests.BasicShakSmallChunk;
-import org.terrier.integer.tests.BlockShak;
-import org.terrier.integer.tests.BlockShakSmallMaxBlockSize;
 import org.terrier.matching.TestMatching.TestDAATFullMatching;
 import org.terrier.matching.TestMatching.TestTAATFullMatching;
 import org.terrier.matching.TestMatchingQueryTerms;
@@ -129,20 +118,6 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	
 	//.tests
 	ShakespeareEndToEndTestSuite.class,
-	
-	//.integer
-	BasicShak.class,
-	BasicShakFastPFORRecompress.class,
-	BasicShakNullRecompress.class,
-	BasicShakSmallChunk.class,
-	BlockShak.class,
-	BlockShakSmallMaxBlockSize.class,
-
-	TestByteInByteOut.class,
-	TestIntCompressionConfiguration.class,
-	TestIntegerCoding.class,
-	TestIntegerCoding2.class,
-	TestNext.class,
 	
 	//.compression
 	TestCompressedBitFiles.class,

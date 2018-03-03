@@ -72,13 +72,19 @@
 		<module>batch-indexers</module>
 		<module>batch-retrieval</module>
 		<module>learning</module>
+		<module>tests</module>
 		<module>integer-compression</module>
 		<module>realtime</module>
-		<module>tests</module>
 	</modules>
 
 
 	<dependencies>
+
+	<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>10.0.1</version>
+</dependency>
 
 		<dependency>
 			<groupId>com.jcabi</groupId>
@@ -452,8 +458,8 @@
 				</configuration>
 				<executions>
 					
-					<!--<execution>
-						 builds the jar-with-dependencies 
+					<execution>
+						<!--  builds the jar-with-dependencies  -->
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
@@ -463,7 +469,7 @@
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
 						</configuration>
-					</execution>-->
+					</execution>
 				</executions>
 			</plugin>
 
