@@ -196,6 +196,10 @@ implements Serializable,Cloneable
 		public void setTag(String tag) {
 			this.tag = tag;
 		}
+		
+		public void setRequired(boolean b) {
+			required = b;
+		}
 
 		@Override
 		public QueryTermProperties clone()
@@ -223,6 +227,8 @@ implements Serializable,Cloneable
 		{
 			return "{ req=" + this.required + ", w=" + this.weight + ", stats=" + this.stats + ", models=" + this.termModels.toString() + " tag="+null+"}";
 		}
+
+		
 		
 	}
 	

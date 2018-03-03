@@ -9,7 +9,7 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>terrier-batch-indexers</artifactId>
+	<artifactId>terrier-integer-compression</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -17,6 +17,18 @@
 			<artifactId>terrier-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+                <dependency>
+                        <groupId>org.terrier</groupId>
+                        <artifactId>terrier-batch-indexers</artifactId>
+                        <version>${project.version}</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>me.lemire.integercompression</groupId>
+                        <artifactId>JavaFastPFOR</artifactId>
+                        <version>0.1.3</version>
+                </dependency>
 	</dependencies>
 
 </project>

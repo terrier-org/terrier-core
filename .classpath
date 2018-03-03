@@ -4,12 +4,13 @@
 	<classpathentry kind="src" path="src/webapps"/>
 	<classpathentry kind="src" path="src/websitesearch"/>
 	<classpathentry kind="src" path="src/resources"/>
-	<classpathentry kind="src" path="target/generated-sources/javacc"/>
 	<classpathentry kind="src" path="terrier-batch-indexers/src/main/java"/>
 	<classpathentry kind="src" path="terrier-batch-retrieval/src/main/java"/>
 	<classpathentry kind="src" path="terrier-core/src/main/java"/>
 	<classpathentry kind="src" path="terrier-integer-compression/src/main/java"/>
 	<classpathentry kind="src" path="terrier-realtime/src/main/java"/>
+	<classpathentry kind="src" path="terrier-core/target/generated-sources/version"/>
+	<classpathentry kind="src" path="terrier-core/target/generated-sources/javacc"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java SE 8">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

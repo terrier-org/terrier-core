@@ -183,8 +183,9 @@ public class TestMatchingQueryTerms {
 		q = QueryParser.parseQuery(term1 + " " + " +"+term1);
 		mqt = new MatchingQueryTerms();
 		q.obtainQueryTerms(mqt, null, null, null);
-		assertEquals(2, mqt.size());	
-		assertEquals(2, mqt.getMatchingTerms().length);	
+		//Semantics have changed with TREC-420
+//		assertEquals(2, mqt.size());	
+//		assertEquals(2, mqt.getMatchingTerms().length);	
 		
 		q = QueryParser.parseQuery(term1 + " " + " field:"+term1);
 		mqt = new MatchingQueryTerms();

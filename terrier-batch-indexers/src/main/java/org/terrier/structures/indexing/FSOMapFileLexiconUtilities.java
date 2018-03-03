@@ -17,7 +17,6 @@ import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.collections.FSOrderedMapFile;
-import org.terrier.structures.indexing.LexiconBuilder.CollectionStatisticsCounter;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.Files;
 import org.terrier.utility.io.WrappedIOException;
@@ -162,7 +161,7 @@ public class FSOMapFileLexiconUtilities {
 			LexiconBuilder.CollectionStatisticsCounter statsCounter) 
 		throws IOException
 	{
-		final String mapFileFilename = constructFilename(structureName, index.getPath(), index.getPrefix(), MAPFILE_EXT);
+		final String mapFileFilename = FSOMapFileLexicon.constructFilename(structureName, index.getPath(), index.getPrefix(), FSOMapFileLexicon.MAPFILE_EXT);
 		final FixedSizeWriteableFactory<Text> keyFactory = 
 			(FixedSizeWriteableFactory<Text>)index.getIndexStructure(structureName+"-keyfactory");
 		final FixedSizeWriteableFactory<LexiconEntry> valueFactory = 

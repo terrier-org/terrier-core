@@ -70,8 +70,10 @@
 	<modules>
 		<module>terrier-core</module>
 		<module>terrier-batch-indexers</module>
-		<!--  <module>terrier-batch-retrieval</module>
-		<module>terrier-learning</module> -->
+		<module>terrier-batch-retrieval</module>
+		<module>terrier-learning</module>
+		<module>terrier-integer-compression</module>
+		<module>terrier-realtime</module>
 	</modules>
 
 
@@ -98,18 +100,6 @@
 			<groupId>com.github.yasserg</groupId>
 			<artifactId>jforests</artifactId>
 			<version>v0.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>me.lemire.integercompression</groupId>
-			<artifactId>JavaFastPFOR</artifactId>
-			<version>0.1.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>antlr</groupId>
-			<artifactId>antlr</artifactId>
-			<version>20030911</version>
 		</dependency>
 
 		<dependency>
@@ -141,13 +131,6 @@
 			<artifactId>annotations</artifactId>
 			<version>1.3.2</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr-runtime</artifactId>
-			<version>3.4</version>
-		</dependency>
-
 
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
@@ -318,20 +301,6 @@
 
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-antlr-plugin</artifactId>
-										<versionRange>2.0-beta-1</versionRange>
-										<goals>
-											<goal>generate</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore /> <!-- <execute /> -->
-									</action>
-								</pluginExecution>
-
-								<pluginExecution>
-									<pluginExecutionFilter>
 										<groupId>org.codehaus.mojo</groupId>
 										<artifactId>build-helper-maven-plugin</artifactId>
 										<versionRange>[1.0,)</versionRange>
@@ -455,20 +424,6 @@
 			
 
 
-			
-
-			
-
-			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
-				<version>1.8</version> <executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
-				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/version/</source> 
-				</sources> </configuration> </execution> </executions> </plugin> -->
-
-			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
-				<executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
-				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/antlr/</source> 
-				</sources> </configuration> </execution> </executions> </plugin> -->
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -532,7 +487,7 @@
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>javadoc</goal>
+							<goal>aggregate</goal>
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/doc/</outputDirectory>
@@ -545,8 +500,6 @@
 							<version>true</version>
 							<doclint>none</doclint>
 							<windowtitle>${project.Name} ${project.version} API</windowtitle>
-							<sourcepath>${basedir}/src/core:${basedir}/src/trec:${basedir}/src/learning:${basedir}/src/websitesearch:${basedir}/target/generated-sources/antlr/:${basedir}/target/generated-sources/version/:${basedir}/target/generated-sources/javacc/</sourcepath>
-							<additionalparam>-Xdoclint:none</additionalparam> <!-- http://stackoverflow.com/a/16743137 -->
 						</configuration>
 					</execution>
 				</executions>

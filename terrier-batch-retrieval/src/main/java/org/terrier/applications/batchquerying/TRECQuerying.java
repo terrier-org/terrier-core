@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -50,10 +49,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
-import org.terrier.matching.MatchingQueryTerms;
-import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.ResultSet;
-import org.terrier.matching.indriql.IndriQLParser;
 import org.terrier.matching.models.InL2;
 import org.terrier.matching.models.queryexpansion.Bo1;
 import org.terrier.querying.IManager;

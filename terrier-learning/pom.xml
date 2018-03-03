@@ -9,7 +9,7 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>terrier-batch-indexers</artifactId>
+	<artifactId>terrier-learning</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -17,6 +17,12 @@
 			<artifactId>terrier-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+                <dependency>
+                        <groupId>org.terrier</groupId>
+                        <artifactId>terrier-batch-retrieval</artifactId>
+                        <version>${project.version}</version>
+                </dependency>
 	</dependencies>
 
 </project>
