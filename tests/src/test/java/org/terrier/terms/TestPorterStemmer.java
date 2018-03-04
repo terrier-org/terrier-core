@@ -31,7 +31,6 @@ import java.io.BufferedReader;
 
 import org.junit.Test;
 import org.terrier.tests.ApplicationSetupBasedTest;
-import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 
 /** Test that the Porter Stemmer behaves as described by Martin Porter */
