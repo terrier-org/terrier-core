@@ -66,7 +66,7 @@ public class TestSimpleFileCollection extends ApplicationSetupBasedTest {
 		final PrintWriter p = new PrintWriter(Files.writeFileWriter(ApplicationSetup.TERRIER_ETC +  "/collection.spec"));
 		for(String ext : EXTS)
 		{
-			p.println(ApplicationSetup.TERRIER_SHARE + "/tests/simplefilecollection/document." + ext);
+			p.println("../tests/simplefilecollection/document." + ext);
 		}
 		p.close();
 		Collection c = new SimpleFileCollection();
