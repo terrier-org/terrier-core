@@ -48,16 +48,16 @@ public class OnDiskShakespeareEndToEndTest extends BasicShakespeareEndToEndTest 
 		if (ArrayUtils.toString(trec_terrier_args).contains("FieldTags.process")) indextype="fields";
 		else FieldScore.FIELDS_COUNT=0;
 		
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".direct.bf", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".direct.bf");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".document.fsarrayfile", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".document.fsarrayfile");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".inverted.bf", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".inverted.bf");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".lexicon.fsomapfile", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".lexicon.fsomapfile");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".lexicon.fsomaphash", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".lexicon.fsomaphash");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".lexicon.fsomapid", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".lexicon.fsomapid");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".meta-0.fsomapfile", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".meta-0.fsomapfile");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".meta.idx", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".meta.idx");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".meta.zdata", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".meta.zdata");
-		Files.copyFile("share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".properties", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".properties");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".direct.bf", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".direct.bf");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".document.fsarrayfile", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".document.fsarrayfile");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".inverted.bf", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".inverted.bf");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".lexicon.fsomapfile", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".lexicon.fsomapfile");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".lexicon.fsomaphash", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".lexicon.fsomaphash");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".lexicon.fsomapid", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".lexicon.fsomapid");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".meta-0.fsomapfile", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".meta-0.fsomapfile");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".meta.idx", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".meta.idx");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".meta.zdata", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".meta.zdata");
+		Files.copyFile("../share/tests/shakespeare/indices/terrier-3.x/shak-"+indextype+".properties", ApplicationSetup.TERRIER_INDEX_PATH+ApplicationSetup.FILE_SEPARATOR+ApplicationSetup.TERRIER_INDEX_PREFIX+".properties");
 		
 		//check that indexing actually created an index
 		assertTrue("Index does not exist at ["+ApplicationSetup.TERRIER_INDEX_PATH+","+ApplicationSetup.TERRIER_INDEX_PREFIX+"]", Index.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
