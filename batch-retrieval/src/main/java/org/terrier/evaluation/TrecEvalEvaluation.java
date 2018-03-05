@@ -3,6 +3,7 @@ package org.terrier.evaluation;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.terrier.applications.CLITool;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
 import org.terrier.utility.Rounding;
+
+import com.google.common.collect.Sets;
 
 import uk.ac.gla.terrier.jtreceval.trec_eval;
 
@@ -20,7 +23,13 @@ public class TrecEvalEvaluation implements Evaluation {
 
 		@Override
 		public String commandname() {
-			return "treceval";
+			return "trec_eval";
+		}
+		
+		
+		@Override
+		public Set<String> commandaliases() {
+			return Sets.newHashSet("treceval");
 		}
 
 		@Override
@@ -31,7 +40,7 @@ public class TrecEvalEvaluation implements Evaluation {
 
 		@Override
 		public String helpsummary() {
-			return "runs the NIST standard treceval tool";
+			return "runs the NIST standard trec_eval tool";
 		}
 
 		@Override

@@ -39,6 +39,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -67,6 +68,8 @@ import org.terrier.structures.outputformat.TRECDocnoOutputFormat;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
+
+import com.google.common.collect.Sets;
 
 /**
  * This class performs a batch mode retrieval from a set of TREC queries. 
@@ -224,6 +227,11 @@ public class TRECQuerying {
 		@Override
 		public String commandname() {
 			return "batchretrieval";
+		}
+		
+		@Override
+		public Set<String> commandaliases() {
+			return Sets.newHashSet("br");
 		}
 
 		@Override

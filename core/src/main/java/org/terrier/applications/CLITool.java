@@ -6,9 +6,11 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
@@ -75,7 +77,7 @@ public abstract class CLITool {
 		public String commandname() {
 			return "help";
 		}
-
+		
 		@Override
 		public String help() {
 			return helpsummary();
@@ -90,6 +92,10 @@ public abstract class CLITool {
 	
 	public void setConfigurtion(Object o){}
 	
+	public Set<String> commandaliases() {
+		return new HashSet<String>();
+	}
+
 	public abstract int run(String[] args) throws Exception;
 	
 	public String commandname() {
@@ -157,6 +163,8 @@ public abstract class CLITool {
 		for(CLITool tool : toolLoader)
 		{
 			if (tool.commandname().equals(commandname))
+				return Optional.of(tool);
+			if (tool.commandaliases().contains(commandname))
 				return Optional.of(tool);
 		}
 		return Optional.empty();

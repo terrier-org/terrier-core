@@ -25,6 +25,8 @@
  */
 package org.terrier.applications;
 
+import java.util.Set;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -35,6 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.utility.ApplicationSetup;
+
+import com.google.common.collect.Sets;
 /** Abstract class for all code that set up the batch indexers */
 public abstract class BatchIndexing {
 
@@ -68,6 +72,11 @@ public abstract class BatchIndexing {
 		@Override
 		public String commandname() {
 			return "batchindexing";
+		}
+
+		@Override
+		public Set<String> commandaliases() {
+			return Sets.newHashSet("bi");
 		}
 
 		@Override
