@@ -81,11 +81,11 @@
 
 	<dependencies>
 
-	<dependency>
-    <groupId>com.google.guava</groupId>
-    <artifactId>guava</artifactId>
-    <version>10.0.1</version>
-</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>10.0.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.jcabi</groupId>
@@ -415,7 +415,7 @@
 				</executions>
 			</plugin>
 
-			
+
 
 
 			<plugin>
@@ -458,17 +458,19 @@
 					</filters>
 				</configuration>
 				<executions>
-					
+
 					<execution>
-						<!--  builds the jar-with-dependencies  -->
+						<!-- builds the jar-with-dependencies -->
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
+							<descriptors>
+								<descriptor>src/assembly/module-jar-with-dependencies.xml</descriptor>
+							</descriptors>
+							<!--<descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> 
+								</descriptorRefs> -->
 						</configuration>
 					</execution>
 				</executions>
