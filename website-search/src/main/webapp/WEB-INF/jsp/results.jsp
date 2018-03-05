@@ -343,7 +343,7 @@ out.print("</div>");
 if (indexpath != null && indexpath.length() > 0) {
   
 %>
-<h2> Writting current index to <%=indexpath %> with name <%=indexprefix %></h2>
+<h2> Writing current index to <%=indexpath %> with name <%=indexprefix %></h2>
 <%
   
 } else {

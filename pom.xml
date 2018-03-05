@@ -75,6 +75,7 @@
 		<module>tests</module>
 		<module>integer-compression</module>
 		<module>realtime</module>
+		<module>website-search</module>
 	</modules>
 
 
