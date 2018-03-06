@@ -19,6 +19,16 @@ import org.terrier.utility.ApplicationSetup;
 
 import com.google.common.collect.Lists;
 
+/** CLITool is an abstract class for all classes that are Terrier commands.
+ * These can generally be easily run through the <tt>bin/terrier</tt command
+ * script.
+ * 
+ * To advertise a new functionality, list the class in the 
+ * <tt>resources/META-INF/services/org.terrier.applications.CLITool</tt> file.
+ *  
+ * @since 5.0
+ */
+
 public abstract class CLITool {
 	
 	public static abstract class CLIParsedCLITool extends CLITool
@@ -51,7 +61,7 @@ public abstract class CLITool {
 		public int run(String[] args) {
 			System.err.println("Terrier version " + Version.VERSION);
 			if (args.length == 1 && args[0].equals("no-command-specified")) {
-				System.err.println("You must specify a command");
+				System.err.println("No command specified. You must specify a command. Possible commands:");
 				args = new String[0];
 			}
 			if (args.length == 0) {
@@ -63,6 +73,7 @@ public abstract class CLITool {
 						name += '\t';
 					System.err.println("\t" + name + "\t" + tool.helpsummary());
 				}
+				System.err.println("See 'terrier help <command>' to read about a specific command.");
 			} else if (args.length >= 1) {
 				Optional<CLITool> tool = getTool(args[0]);
 				if (tool.isPresent())
@@ -92,20 +103,24 @@ public abstract class CLITool {
 	
 	public void setConfigurtion(Object o){}
 	
+	/** What short commands aliases should this command respond to */
 	public Set<String> commandaliases() {
 		return new HashSet<String>();
 	}
 
 	public abstract int run(String[] args) throws Exception;
 	
+	/** What commandname should this command respond to */
 	public String commandname() {
 		return this.getClass().getName();
 	}
 	
+	/** Return a long message about how to use this command */
 	public String help() {
 		return "(no help provided)";
 	}
 	
+	/** Returns a short sentence about what this command is for */
 	public String helpsummary() {
 		return "(no summary provided)";
 	}
