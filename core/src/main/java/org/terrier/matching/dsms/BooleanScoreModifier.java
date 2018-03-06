@@ -109,7 +109,7 @@ public class BooleanScoreModifier implements DocumentScoreModifier, Serializable
 			}
 			
 		} else {
-			for (int i = 0; i < query.length(); i++) {
+			for (int i = 0; i < query.size(); i++) {
 				queryLengthMask = (short)((queryLengthMask << 1) + 1);
 			}
 		}

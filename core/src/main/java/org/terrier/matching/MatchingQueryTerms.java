@@ -34,12 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.dsms.DocumentScoreModifier;
-import org.terrier.matching.indriql.MatchingEntry;
 import org.terrier.matching.indriql.QueryTerm;
 import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.matching.models.WeightingModel;

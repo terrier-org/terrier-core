@@ -87,7 +87,6 @@ import org.terrier.utility.io.WrappedIOException;
  * @author Craig Macdonald &amp; Vassilis Plachouras
  * @since 3.0
  */
-@SuppressWarnings("deprecation")
 public class CompressingMetaIndex implements MetaIndex {
 	
 	private final static Pattern SPLIT_SPACE = Pattern.compile("\\s+");

@@ -340,7 +340,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		for (String term : docContents.termSet()) {
 
 			// Add/update term in lexicon.
-			int termid = lexicon.term(term, new MemoryLexiconEntry(1,
+			lexicon.term(term, new MemoryLexiconEntry(1,
 					docContents.getFrequency(term)));
 
 			// Add document posting to inverted file.
@@ -746,7 +746,6 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	}
 
 	/** FIXME */
-	@SuppressWarnings("unchecked")
 	protected void load_pipeline() {
 		String[] pipes = ApplicationSetup
 				.getProperty("termpipelines", "Stopwords,PorterStemmer").trim()
