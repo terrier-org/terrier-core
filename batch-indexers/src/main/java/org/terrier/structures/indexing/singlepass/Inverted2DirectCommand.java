@@ -27,7 +27,7 @@ public class Inverted2DirectCommand extends CLIParsedCLITool {
 
 	@Override
 	public String commandname() {
-		return "invert2direct";
+		return "inverted2direct";
 	}
 
 	@Override

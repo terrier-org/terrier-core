@@ -231,7 +231,7 @@ public class TRECQuerying {
 		
 		@Override
 		public Set<String> commandaliases() {
-			return Sets.newHashSet("br");
+			return Sets.newHashSet("br", "batchretrieve");
 		}
 
 		@Override
