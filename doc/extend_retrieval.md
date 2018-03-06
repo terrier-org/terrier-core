@@ -86,7 +86,7 @@ double p = le == null
 **What terms occur in the 11th document?**
 ```java
 Index index = Index.createIndex();
-PostingIndex<Pointer> di = index.getDirectIndex();
+PostingIndex<?> di = index.getDirectIndex();
 DocumentIndex doi = index.getDocumentIndex();
 Lexicon<String> lex = index.getLexicon();
 int docid = 10; //docids are 0-based
@@ -103,14 +103,14 @@ We assume that the index contains positional information.
 
 ```java
 Index index = Index.createIndex();
-PostingIndex<Pointer> inv = index.getInvertedIndex();
+PostingIndex<?> inv = index.getInvertedIndex();
 MetaIndex meta = index.getMetaIndex();
 Lexicon<String> lex = index.getLexicon();
 LexiconEntry le = lex.getLexiconEntry( "Z" );
 IterablePosting postings = inv.getPostings((BitIndexPointer) le);
 while (postings.next() != IterablePosting.EOL) {
 	String docno = meta.getItem("docno", postings.getId());
-  int[] positions = ((BlockPosting)postings).getPositions();
+	int[] positions = ((BlockPosting)postings).getPositions();
 	System.out.println(docno + " with frequency " + postings.getFrequency() + " and positions " + Arrays.toString(positions));
 }
 ```

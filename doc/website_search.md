@@ -11,7 +11,7 @@ The website search application is comprised of two main components. First, the [
 
 Since the interface is represented as a java servlet page, it can be loaded into a Jetty webserver using [http\_terrier.sh](terrier_http.md) by specifying the website search interface as follows:
 
-    bin/http_terrier.sh 8080 src/webapps/websitesearch/
+    bin/terrier http 8080 src/webapps/websitesearch/
 
 This will host the website search demo at:
 

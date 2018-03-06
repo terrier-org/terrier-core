@@ -15,7 +15,7 @@ Once all documents in the index have been created, the InvertedIndex is created 
 
 Essentially, instead of building a direct file from the collection, term posting lists are held in memory, and written to disk as a 'run' when memory is exhausted. These are then merged to form the lexicon and the inverted file. Note that no direct index is created - indeed, the single-pass indexing is much faster than classical two-pass indexing when the direct index is not required. If the direct index is required, then this can be built from the inverted index using the [Inverted2DirectIndexBuilder](javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html).
 
-The single-pass indexer can be used by using the `-i -j` command line argument to TrecTerrier.
+The single-pass indexer can be used by using the `batchindexing -j` commandline to TrecTerrier.
 
 The majority of the properties configuring the single-pass indexer are related to memory consumption, and how it decides that memory has been exhausted. Firstly, the indexer will commit a run to disk when free memory falls below the threshold set by `memory.reserved` (100MB for 64bit JVMs, 50MB for 32bit). To ensure that this doesn’t happen too soon, 85% of the possible heap must be allocated (controlled by the property `memory.heap.usage`). This check occurs every 20 documents (`docs.checks`).
 

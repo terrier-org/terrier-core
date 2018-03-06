@@ -71,8 +71,8 @@ Once you have your project setup with Maven, its time to add Terrier to your pro
 ```xml
 <dependency>
 	<groupId>org.terrier</groupId>
-	<artifactId>terrier-core</artifactId>
-	<version>4.2</version>
+	<artifactId>terrier-project</artifactId>
+	<version>5.0</version>
 </dependency>
 ```
 

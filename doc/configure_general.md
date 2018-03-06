@@ -44,14 +44,14 @@ In the terrier.properties file, properties are specified in the format `name=val
 
 TrecTerrier supports specifying properties on the command line. This allows the easy over-riding of properties, even if they are specified in the `etc/terrier.properties` file. For example, to create an index without using a stemmer, you could use the command line:
 
-    $ bin/trec_terrier.sh -i -Dtermpipelines=Stopwords
+    $ bin/terrier batchindexing -Dtermpipelines=Stopwords
 
 Aside: When looking for properties, Terrier also checks the [System properties provided by Java](http://download.oracle.com/javase/tutorial/essential/environment/sysprop.html). This means that you can set a property anywhere within Java code, or on the Java command line.
 
 As another example, you can use shell scripting (e.g. Bash) to run Terrier with many settings for the `expansion.terms` property of query expansion:
 
     $ for((i=2;i<10;i++)); do
-        bin/trec_terrier.sh -r -q -Dexpansion.terms=$i
+        bin/terrier batchretrieval -q -Dexpansion.terms=$i
     done
 
 ### Configuring Logging

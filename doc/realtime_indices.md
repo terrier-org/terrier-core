@@ -15,21 +15,18 @@ To support real-time indexing, two new interfaces have been defined, namely [Upd
 Real-time Index Types
 ---------------------
 
-There are two real-time index structures supported in Terrier 4.0:
+There are two real-time index types supported since Terrier 45.0:
 
 -   [MemoryIndex](javadoc/org/terrier/realtime/memory/MemoryIndex.html): Represents an index that is held wholly in memory. MemoryIndex is both an UpdatableIndex and a WritableIndex. MemoryIndex is designed to provide a fast updatable index structure for relatively small numbers of documents.
 
 -   [IncrementalIndex](javadoc/org/terrier/realtime/incremental/IncrementalIndex.html): A hybrid index structure that combines a MemoryIndex with zero or more IndexOnDisk indices, facilitating the updating of a large index that could not be stored in memory alone. An incremental index is a [MultiIndex](javadoc/org/terrier/realtime/multi/MultiIndex.html), where one index shard is stored in memory and the rest are stored on disk. Periodically, the memory index is then written to disk, defined as per a FlushPolicy. When the memory index has been flushed to disk, optionally the on-disk portion of the incremental index can then be merged together (based upon a MergePolicy) and/or deleted (based upon a DeletePolicy). Incremental index uses the following properties:
 
-    -   incremental.flush: the flush policy to use. Four possible values are supported: noflush (default), flushdocs, flushmem, flushtime
+ - `incremental.flush`: the flush policy to use. Four possible values are supported: noflush (default), flushdocs, flushmem, flushtime
 
-    <!-- -->
 
-    -   incremental.merge: the merge policy to use. Three possible values are supported: nomerge (default), single, geometric
+ - `incremental.merge`: the merge policy to use. Three possible values are supported: nomerge (default), single, geometric
 
-    <!-- -->
-
-    -   incremental.delete: the delete policy to use. Two possible values are supported: nodelete (default), deleteFixedSize
+ - `incremental.delete`: the delete policy to use. Two possible values are supported: nodelete (default), deleteFixedSize
 
 Usage
 -----
@@ -44,7 +41,7 @@ Below we give some examples for using the real-time Terrier index structures.
 
     // define an example document and query
     String docContent = "Real-time indexing and retrieval is easy to use in Terrier";
-    String query = "Indexing";
+    String queryString = "Indexing";
 
     // create a new index
     MemoryIndex memIndex = new MemoryIndex();
@@ -66,9 +63,8 @@ Below we give some examples for using the real-time Terrier index structures.
     Manager queryingManager = new Manager(memIndex);
 
     // a search request represents the search to be carried out
-    SearchRequest srq = queryingManager.newSearchRequest("query", sb.toString());
-    srq.setOriginalQuery(sb.toString());
-
+    SearchRequest srq = queryingManager.newSearchRequest("query", queryString);
+    
     // define a matching model, in this case use the classical BM25 retrieval model
     srq.addMatchingModel("Matching","BM25");
 

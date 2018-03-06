@@ -31,7 +31,7 @@ For your new functionality, make a new project with a compile-time dependency on
 ```xml
 <dependency>
   <groupId>org.terrier</groupId>
-  <artifactId>terrier-core</artifactId>
+  <artifactId>terrier-project</artifactId>
   <version>5.0</version>
   <scope>provided</scope>
 </dependency>
@@ -42,7 +42,7 @@ Once you have compiled your project into a jar file, you have two options:
 1. Add the generated jar to Terrier's classpath manually, by altering the CLASSPATH environment variable:
 
 ```shell
-CLASSPATH=/path/to/my/project.jar bin/trec_terrier.sh -Dtrec.model=my.project.MyWeightingModel
+CLASSPATH=/path/to/my/project.jar bin/terrier batchretrieval  -Dtrec.model=my.project.MyWeightingModel
 ```
 
 2. Install your project to your local Maven repository (e.g. using `mvn install`) or to a remote repository (`mvn deploy`). You can then tell Terrier to import that project at startup:

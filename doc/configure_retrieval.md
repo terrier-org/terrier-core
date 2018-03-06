@@ -43,8 +43,8 @@ The tags specified by TrecQueryTags are case-insensitive (note the difference fr
 
 Single-line topic files have a simpler format, without the additional description and narrative information:
 
-  1 a few query terms
-  2 some different query terms
+1. a few query terms
+2. some different query terms
 
 Support for single-line topic files is provided by the SingleLineTRECQuery class. To use a topics file in this format, you must firstly set `trec.topics.parser=SingleLineTRECQuery`.
 
@@ -92,13 +92,13 @@ Terrier provides implementations of many weighting models (see [org.terrier.matc
 
 To process the queries, ensure the topics are specified in the `trec.topics` property, then type the following:
 
-    bin/trec_terrier.sh -r -c 1.0
+    bin/terrier batchretrieval -c c:1.0
 
 where the option `-r` specifies that we want to perform retrieval, and the option `-c 1.0` specifies the parameter value for the term frequency normalisation.
 
 To process queries using a specific weighting model, we can *override* the `trec.model` property on the command line:
 
-    bin/trec_terrier.sh -r -Dtrec.model=DLH13
+    bin/terrier batchretrieval -Dtrec.model=DLH13
 
 -D tells TrecTerrier that we wish to override a property.
 
@@ -121,7 +121,7 @@ To use a field-based model, you have to index using fields. See [Configuring Ind
 
 Different field-based models have different parameters, as controlled by various properties. These generally include weights for each field, namely `w.0`, `w.1`, etc. Per-field normalisation models, such as BM25F and PL2F also require the normalisation parameters for each field, namely `c.0`, `c.1`, and so on. To run with a field-based model:
 
-    bin/trec_terrier.sh -r -Dtrec.model=PL2F -Dc.0=1.0 -Dc.1=2.3 -Dc.3=40 -Dw.0=4 -Dw.1=2 -Dw.3=25
+    bin/terrier batchretrieval -Dtrec.model=PL2F -Dc.0=1.0 -Dc.1=2.3 -Dc.3=40 -Dw.0=4 -Dw.1=2 -Dw.3=25
 
 For improved efficiency of field-based weighting models, it is recommended that you manually alter the `data.properties` file of your index to change the DocumentIndex implementation in use, by updating it to read `index.document.class=org.terrier.structures.FSAFieldDocumentIndex`.
 
@@ -138,7 +138,7 @@ Two dependence models are included:
 
 To enable the dependence models, use the `matching.dsms` property. E.g. :
 
-    bin/trec_terrier.sh -r -Dmatching.dsms=DFRDependenceScoreModifier
+    bin/terrier batchretrieval -Dmatching.dsms=DFRDependenceScoreModifier
 
 The dependence models have various parameters to set. For more information, see the classes themselves.
 
@@ -147,11 +147,11 @@ Document Prior Features
 
 Terrier can easily integrate a query-independent document feature (or prior) into your retrieval model. The simplest way to do this is using [SimpleStaticScoreModifier](javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html). For instance, say you generate a feature for all documents in the collection (e.g. using link analysis). You should export your file in one of the formats supported by SimpleStaticScoreModifier, e.g. feature value for each document, one per line. You can then add the feature as:
 
-    bin/trec_terrier.sh -r -Dmatching.dsms=SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
+    bin/terrier batchretrieval -Dmatching.dsms=SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
 
 The property `ssa.w` controls the weight of your feature. For more information on the type of files supported, see [SimpleStaticScoreModifier](javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html). Finally, Terrier can support multiple DSMs, using them in a comma-delimited manner:
 
-    bin/trec_terrier.sh -r -Dmatching.dsms=DFRDependenceScoreModifier,SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
+    bin/terrier batchretrieval -Dmatching.dsms=DFRDependenceScoreModifier,SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
 
 Query Expansion
 ---------------
@@ -162,11 +162,11 @@ In addition, there are two parameters that can be set for applying query expansi
 
 To retrieve from an indexed test collection, using query expansion, with the term frequency normalisation parameter equal to 1.0, we can type:
 
-    bin/trec_terrier.sh -r -q -c 1.0
+    bin/terrier batchretrieval -q -c 1.0
 
 Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format qrels file. To use feedback documents in query expansion, change the [FeedbackSelector](javadoc/org/terrier/querying/FeedbackSelector.html), as follows:
 
-    bin/trec_terrier.sh -r -q -Dqe.feedback.selector=RelevantOnlyFeedbackDocuments,RelevanceFeedbackSelector -Dqe.feedback.filename=/path/to/feedback/qrels
+    bin/terrier batchretrieval -q -Dqe.feedback.selector=RelevantOnlyFeedbackDocuments,RelevanceFeedbackSelector -Dqe.feedback.filename=/path/to/feedback/qrels
 
 Learning to Rank
 ----------------

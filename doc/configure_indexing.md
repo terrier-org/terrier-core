@@ -93,7 +93,7 @@ Note that for presenting results to a user, additional indexing configuration is
 
 ### Choice of Indexers
 
-Terrier supports three types of indexing: *classical two-pass*, *single-pass* and *MapReduce*. All three methods create an identical inverted index, that produces identical retrieval effectiveness. However, they differ on other characteristics, namely their support for query expansion, and the scalability and efficiency when indexing large corpora. The choice of indexing method is likely to be driven by your need for query expansion, and the scale of the data you are working with. In particular, only classical two-pass indexing directly creates a direct index, which is used for query expansion. However, classical two-pass indexing doesn't scale to large corpora (maximum practical is about 25 million documents). Single pass indexing is faster, but doesn't create a direct index. MapReduce indexing can be used when you have very large data (e.g. 50+ million documents), and already have an existing Hadoop cluster. If you do create an index that doesn't have a direct index, you can create one later using `--inverted2direct` option of TrecTerrier
+Terrier supports three types of indexing: *classical two-pass*, and *single-pass*. All three methods create an identical inverted index, that produces identical retrieval effectiveness. However, they differ on other characteristics, namely their support for query expansion, and the scalability and efficiency when indexing large corpora. The choice of indexing method is likely to be driven by your need for query expansion, and the scale of the data you are working with. In particular, only classical two-pass indexing directly creates a direct index, which is used for query expansion. However, classical two-pass indexing doesn't scale to large corpora (maximum practical is about 25 million documents). Single pass indexing is faster, but doesn't create a direct index. If you do create an index that doesn't have a direct index, you can create one later using the `inverted2direct` command of Terrier.
 
 ### Classical two-pass indexing
 
@@ -101,17 +101,13 @@ Classical indexing works by creating a direct index, and then inverting that dat
 
 ### Single-pass indexing
 
-Single-pass indexing is implemented by the classes [BasicSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html) and [BlockSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html). Essentially, instead of building a direct file from the collection, term posting lists are held in memory, and written to disk when memory is exhausted. The final step merged the temporary files to form the lexicon and the inverted file. Notably, single-pass indexing does not build a direct index. However, a direct index can be build later using the `--inverted2direct` command line argument to TrecTerrier.
+Single-pass indexing is implemented by the classes [BasicSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html) and [BlockSinglePassIndexer](javadoc/org/terrier/structures/indexing/singlepass/BasicSinglePassIndexer.html). Essentially, instead of building a direct file from the collection, term posting lists are held in memory, and written to disk when memory is exhausted. The final step merged the temporary files to form the lexicon and the inverted file. Notably, single-pass indexing does not build a direct index. However, a direct index can be build later using the `inverted2direct` command of Terrier.
 
 For details on the implementation of single-pass indexing, see the [indexing implementation](indexer_details.md) documentation.
 
 ### Threaded indexing
 
-Starting from version 4.2, Terrier has *experimental* support for indexing using multiple threads. This can be enabled using `-P` option to TrecTerrier when specifying ``-i`. Both single-pass and classical indexing are supported by threaded indexing.  The number of threads used is equal to the number of CPU cores in the machine, minus one.
-
-### MapReduce indexing
-
-For large-scale collections, Terrier provides a MapReduce based indexing system. For more details, please see [Hadoop MapReduce Indexing with Terrier](hadoop_indexing.md).
+Starting from version 4.2, Terrier has *experimental* support for indexing using multiple threads. This can be enabled using `-p` option to `batchindexing`. Both single-pass and classical indexing are supported by threaded indexing.  The number of threads used is equal to the number of CPU cores in the machine, minus one, or can be specified by an optional argument to `-p`.
 
 ### Real-time indexing
 
@@ -120,7 +116,7 @@ Terrier also supports the real-time indexing of document collections using Memor
 Compression
 -----------
 
-By default, Terrier uses Elias-Gamma and Elias-Unary algorithms for ensuring a highly compressed direct and inverted indices, however starting with version 4.0 Terrier now has support for a variety of state-of-the-art compression schemes including PForDelta. For more information about configuring the compression used for indexing, see the [documentation on compression](compression.md).
+By default, Terrier uses Elias-Gamma and Elias-Unary algorithms for ensuring a highly compressed direct and inverted indices, however since version 4.0 Terrier has support for a variety of state-of-the-art compression schemes including PForDelta. For more information about configuring the compression used for indexing, see the [documentation on compression](compression.md).
 
 More about Block Indexing
 -------------------------
@@ -131,13 +127,13 @@ A block is a unit of text in a document. When you index using blocks, you tell T
 
 ### How do I use blocks?
 
-You can enable block indexing by setting the property `block.indexing` to `true` in your terrier.properties file. This ensures that the Indexer used for indexing is the BlockIndexer, not the BasicIndexer (or BlockSinglePassIndexer instead of BasicSinglePassIndexer). When loading an index, Terrier will detect that the index has block information saved and use the appropriate classes for reading the index files.
+You can enable block indexing by setting the property `block.indexing` to `true` in your terrier.properties file. The `batchindexing` command also supports a `-b` option. When set, these ensure that the Indexer used for indexing is the BlockIndexer, not the BasicIndexer (or BlockSinglePassIndexer instead of BasicSinglePassIndexer). When loading an index, Terrier will detect that the index has block information saved and use the appropriate classes for reading the index files.
 
-You can use the positional information when doing retrieval. For instance, you can search for documents matching a phrase, e.g. `Terabyte retriever`, or where the words occur near each other, e.g. `indexing blocks~20`.
+You can use the positional information when doing retrieval. For instance, you can search for documents matching a phrase, e.g. `"Terabyte retriever"`, or where the words occur near each other, e.g. `"indexing blocks"~20`.
 
 ### What changes when I use block indexing?
 
-When you enable the property `block.indexing`, TrecTerrier will use the BlockIndexer, not the BasicIndexer (if you have specified single-pass indexing, it is the BlockSinglePassIndexer, not the BasicSinglePassIndexer that is used). The created index data structures will contain the positions for each posting, and can be read by, and when accessed through PostingIndex.getPostings() will implement BlockPosting in addition to IterablePosting.
+When you enable the property `block.indexing`, TrecTerrier will use the BlockIndexer, not the BasicIndexer (if you have specified single-pass indexing, it is the BlockSinglePassIndexer, not the BasicSinglePassIndexer that is used). The created index data structures will contain the positions for each posting, and can be read by, and when accessed through `PostingIndex.getPostings()` will implement [BlockPosting](javadoc/org/terrier/structures/postings/BlockPosting.html) in addition to [IterablePosting](javadoc/org/terrier/structures/postings/IterablePosting.html).
 
 ------------------------------------------------------------------------
 
