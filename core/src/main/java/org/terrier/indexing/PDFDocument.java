@@ -31,7 +31,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.pdfbox.exceptions.CryptographyException;

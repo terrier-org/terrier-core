@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.List;
 
-import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang3.CharEncoding;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.StringTools;
 

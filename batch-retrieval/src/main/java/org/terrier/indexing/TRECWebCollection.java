@@ -32,7 +32,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang3.CharEncoding;
 import org.terrier.utility.StringTools;
 
 /** Version of TRECCollection which can parse

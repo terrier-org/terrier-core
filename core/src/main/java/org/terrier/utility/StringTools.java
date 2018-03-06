@@ -36,7 +36,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 public class StringTools {
 
 	/** Defines escape encodings that are supported. Most are implemented using
-	 * org.apache.commons.lang.StringEscapeUtils. See methods escape() and unescape() in StringTools.
+	 * org.apache.commons.lang3.StringEscapeUtils. See methods escape() and unescape() in StringTools.
 	 * 
 	 * @author Craig Macdonald
 	 * @since 3.0

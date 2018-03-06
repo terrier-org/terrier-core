@@ -99,24 +99,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>uk.ac.gla.dcs.terrierteam</groupId>
-			<artifactId>jtreceval</artifactId>
-			<version>0.0.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.yasserg</groupId>
-			<artifactId>jforests</artifactId>
-			<version>v0.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.3</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>4.0</version>
@@ -262,14 +244,6 @@
 			<groupId>net.sf.trove4j</groupId>
 			<artifactId>trove4j</artifactId>
 			<version>2.0.2</version>
-		</dependency>
-
-
-
-		<dependency>
-			<groupId>edu.uci.ics</groupId>
-			<artifactId>crawler4j</artifactId>
-			<version>4.1</version>
 		</dependency>
 
 		<dependency>
