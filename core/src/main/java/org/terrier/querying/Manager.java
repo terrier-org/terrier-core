@@ -174,7 +174,7 @@ public class Manager implements IManager
 			super(namespace, _caching);
 			this.typeName = _typeName;
 			this.load_module_controls();
-			System.err.println(Arrays.deepToString(Class_Controls));
+			//System.err.println(Arrays.deepToString(Class_Controls));
 		}		
 		
 		List<K> getActive(Map<String,String> controls) {
