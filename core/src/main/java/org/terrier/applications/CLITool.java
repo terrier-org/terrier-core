@@ -100,9 +100,10 @@ public abstract class CLITool {
 				System.err.println("See 'terrier help <command>' to read about a specific command.");
 			} else if (args.length >= 1) {
 				Optional<CLITool> tool = getTool(args[0]);
-				if (tool.isPresent())
-				{
+				if (tool.isPresent()) {
 					System.err.println(tool.get().help());
+				} else {
+					System.err.println("No such known command " + args[0] + ". Use 'terrier help' to get a list of commands.");
 				}
 			}
 			return 0;
