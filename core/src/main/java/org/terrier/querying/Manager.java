@@ -817,7 +817,9 @@ public class Manager implements IManager
 		boolean hasRawQuery = rq.getOriginalQuery() != null;
 		boolean hasTerrierQLquery = rq.getQuery() != null;
 		boolean hasResultSet = rq.getResultSet() != null;
+		logger.debug(rq.getControlHashtable().toString());
 		Iterator<Process> iter = processModuleManager.getActiveIterator(rq.getControlHashtable());
+		List<String> processesDone = new ArrayList<String>();
 		int ran = 0;
 		rq.setControl("runname", "");
 		while(iter.hasNext())
@@ -826,13 +828,13 @@ public class Manager implements IManager
 			Process p = iter.next();
 			assert(p != null);
 			if (hasAnnotation(p.getClass(), ManagerRequisite.MQT) && ! mqtObtained)
-				throw new IllegalStateException("Process " + p.getInfo() + " required matchingqueryterms, but mqt not yet set for query qid " + rq.getQueryID());
+				throw new IllegalStateException("Process " + p.getInfo() + " required matchingqueryterms, but mqt not yet set for query qid " + rq.getQueryID()  + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControlHashtable().toString());
 			if (hasAnnotation(p.getClass(), ManagerRequisite.RAWQUERY) && ! hasRawQuery)
-				throw new IllegalStateException("Process " + p.getInfo() + " required rawquery, but no raw query found for qid " + rq.getQueryID());
+				throw new IllegalStateException("Process " + p.getInfo() + " required rawquery, but no raw query found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControlHashtable().toString());
 			if (hasAnnotation(p.getClass(), ManagerRequisite.TERRIERQL) && ! hasTerrierQLquery)
-				throw new IllegalStateException("Process " + p.getInfo() + " required TerrierQL query, but no TerrierQL query found for qid " + rq.getQueryID());
+				throw new IllegalStateException("Process " + p.getInfo() + " required TerrierQL query, but no TerrierQL query found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControlHashtable().toString());
 			if (hasAnnotation(p.getClass(), ManagerRequisite.RESULTSET) && ! hasResultSet)
-				throw new IllegalStateException("Process " + p.getInfo() + " required resultset, but none found for qid " + rq.getQueryID());
+				throw new IllegalStateException("Process " + p.getInfo() + " required resultset, but none found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControlHashtable().toString());
 			
 			
 			logger.info("running process " + p.getInfo());
@@ -843,6 +845,7 @@ public class Manager implements IManager
 			hasResultSet = rq.getResultSet() != null;
 			rq.setControl("previousprocess", p.getClass().getName());
 			rq.setControl("runname", rq.getControl("runname")+ "_" + p.getInfo());
+			processesDone.add(p.getInfo());
 			ran++;
 		}
 		
