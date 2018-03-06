@@ -3,6 +3,7 @@ package org.terrier.applications;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +32,21 @@ import com.google.common.collect.Lists;
 
 public abstract class CLITool {
 	
+	//we use strings of classnames here so that no dependency arises
+	public static String[] POPULAR_COMMANDS = new String[]{
+		//batch-indexers
+		"org.terrier.applications.CLITool$HelpCLITool",
+		"org.terrier.applications.BatchIndexing$Command",
+		"org.terrier.applications.InteractiveQuerying$Command",		
+		//batch-retrieval
+		"org.terrier.applications.batchquerying.TRECQuerying$Command",
+		"org.terrier.evaluation.BatchEvaluationCommand"
+		
+	};
+	
+	static final Comparator<CLITool> byName =
+			(CLITool o1, CLITool o2)->o1.commandname().compareTo(o2.commandname());
+	
 	public static abstract class CLIParsedCLITool extends CLITool
 	{
 		protected abstract Options getOptions();
@@ -54,25 +70,33 @@ public abstract class CLITool {
 	
 	public static class HelpCLITool extends CLITool {
 		
-		static final Comparator<CLITool> byName =
-				(CLITool o1, CLITool o2)->o1.commandname().compareTo(o2.commandname());
+		protected void displayCommandSummaries(Iterable<CLITool> commandIter) {
+			
+			List<CLITool> list = Lists.newArrayList(commandIter);
+			Collections.sort(list, byName);
+			for(CLITool tool : list) {
+				String name = tool.commandname();
+				if (name.length() <= 5)
+					name += '\t';
+				System.err.println("\t" + name + "\t" + tool.helpsummary());
+			}
+			
+		}
 
 		@Override
 		public int run(String[] args) {
 			System.err.println("Terrier version " + Version.VERSION);
 			if (args.length == 1 && args[0].equals("no-command-specified")) {
-				System.err.println("No command specified. You must specify a command. Possible commands:");
+				System.err.println("No command specified. You must specify a command.");
 				args = new String[0];
 			}
 			if (args.length == 0) {
-				List<CLITool> list = Lists.newArrayList(getServiceIterator());
-				Collections.sort(list, byName);
-				for(CLITool tool : list) {
-					String name = tool.commandname();
-					if (name.length() <= 5)
-						name += '\t';
-					System.err.println("\t" + name + "\t" + tool.helpsummary());
-				}
+				System.err.println("Popular commands:");
+				displayCommandSummaries(getServiceIterator(true));
+				System.err.println();
+				System.err.println("All possible commands:");
+				displayCommandSummaries(getServiceIterator(false));
+				System.err.println();
 				System.err.println("See 'terrier help <command>' to read about a specific command.");
 			} else if (args.length >= 1) {
 				Optional<CLITool> tool = getTool(args[0]);
@@ -168,13 +192,25 @@ public abstract class CLITool {
 		//return Optional.empty();
 	}
 	
-	static Iterable<CLITool> getServiceIterator()
+	static Iterable<CLITool> getServiceIterator(boolean popular)
 	{
+		if (popular)
+		{
+			List<CLITool> list = new ArrayList<CLITool>();
+			for(String toolClass : POPULAR_COMMANDS)
+			{
+				try{
+					list.add(Class.forName(toolClass).asSubclass(CLITool.class).newInstance());
+				}catch (Exception e) {}
+				
+			}
+			return list;
+		}
 		return ServiceLoader.load(CLITool.class);
 	}
 	
 	static Optional<CLITool> getTool(String commandname) {
-		Iterable<CLITool> toolLoader = getServiceIterator();
+		Iterable<CLITool> toolLoader = getServiceIterator(false);
 		for(CLITool tool : toolLoader)
 		{
 			if (tool.commandname().equals(commandname))
