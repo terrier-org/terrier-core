@@ -80,7 +80,6 @@ import org.terrier.utility.io.HadoopUtility;
  * @since 3.0
  * @author Craig Macdonald &amp; Vassilis Plachouras 
  */
-@SuppressWarnings("deprecation")
 public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flushable {
 	protected static final Logger logger = LoggerFactory.getLogger(CompressingMetaIndexBuilder.class);
 	protected static final int MAX_MB_IN_MEM_RETRIEVAL = 

@@ -43,6 +43,9 @@ import org.terrier.structures.postings.WritablePosting;
 import org.terrier.utility.TermCodes;
 /** BlockFieldDocumentPostingList class */
 public class BlockFieldDocumentPostingList extends FieldDocumentPostingList {
+	
+	private static final long serialVersionUID = 1L;
+
 	/** mapping term to blockids in this document */
 	protected final THashMap<String, TIntHashSet> term_blocks = new THashMap<String, TIntHashSet>(AVG_DOCUMENT_UNIQUE_TERMS);
 	/** number of blocks in this document. usually equal to document length, but perhaps less */

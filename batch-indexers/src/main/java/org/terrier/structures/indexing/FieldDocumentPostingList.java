@@ -44,6 +44,8 @@ import org.terrier.utility.TermCodes;
 /** FieldDocumentPostingList class */
 public class FieldDocumentPostingList extends DocumentPostingList {
 	
+	private static final long serialVersionUID = 1L;
+
 	/** number of fields */
 	protected final int fieldCount;	
 	/** length of each field */
