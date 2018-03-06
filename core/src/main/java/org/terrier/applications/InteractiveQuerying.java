@@ -63,7 +63,7 @@ public class InteractiveQuerying {
 	protected int matchingCount = 0;
 	/** The file to store the output to.*/
 	protected PrintWriter resultFile = new PrintWriter(System.out);
-	/** The name of the manager object that handles the queries. Set by property <tt>trec.manager</tt>, defaults to Manager. */
+	/** The name of the manager object that handles the queries. Set by property <tt>interactive.manager</tt>, defaults to Manager. */
 	protected String managerName = ApplicationSetup.getProperty("interactive.manager", "Manager");
 	/** The query manager.*/
 	protected Manager queryingManager;
@@ -200,6 +200,7 @@ public class InteractiveQuerying {
 				pw.write("\n\tDisplaying 1-"+set.getResultSize()+ " results\n");
 			else
 				pw.write("\n\tNo results\n");
+		pw.flush();
 		if (set.getResultSize() == 0)
 			return;
 		
