@@ -38,6 +38,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.applications.CLITool;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.BasicDocumentIndexEntry;
 import org.terrier.structures.BitIndexPointer;
@@ -680,41 +681,56 @@ public class StructureMerger {
 			termcodeHashmap = null;
 		}
 	}
+	
+	public static class Command extends CLITool
+	{
 
-	/** Usage: java org.terrier.structures.merging.StructureMerger [binary bits] [inverted file 1] [inverted file 2] [output inverted file] <p>
-      * Binary bits concerns the number of fields in use in the index. */
+		@Override
+		public String commandname() {
+			return "structuremerger";
+		}
+
+		@Override
+		public String helpsummary() {
+			return "merges 2 disk indices";
+		}
+
+		@Override
+		public int run(String[] args) throws Exception {
+			if (args.length != 6)
+			{
+				System.err.println("usage: bin/terrier "+this.commandname()+" srcPath1 srcPrefix1 srcPath2 srcPrefix2 destPath1 destPrefix1 ");
+				return 1;
+			}
+			
+			Index.setIndexLoadingProfileAsRetrieval(false);
+			IndexOnDisk indexSrc1 = Index.createIndex(args[0], args[1]);
+			IndexOnDisk indexSrc2 = Index.createIndex(args[2], args[3]);
+			IndexOnDisk indexDest = Index.createNewIndex(args[4], args[5]);
+			
+			StructureMerger sMerger = new StructureMerger(indexSrc1, indexSrc2, indexDest);
+			long start = System.currentTimeMillis();
+			logger.info("started at " + (new Date()));
+			if (ApplicationSetup.getProperty("merger.onlydocids","false").equals("true")) {
+				sMerger.mergeDocumentIndexFiles();
+			} else {
+				sMerger.mergeStructures();
+			}
+			indexSrc1.close();
+			indexSrc2.close();
+			indexDest.close();
+			
+			logger.info("finished at " + (new Date()));
+			long end = System.currentTimeMillis();
+			logger.info("time elapsed: " + ((end-start)*1.0d/1000.0d) + " sec.");
+			
+			return 0;
+		}
+		
+	}
+	
 	public static void main(String[] args) throws Exception {
-		
-		if (args.length != 6)
-		{
-			logger.error("usage: java org.terrier.structures.merging.StructureMerger srcPath1 srcPrefix1 srcPath2 srcPrefix2 destPath1 destPrefix1 ");
-			logger.error("Exiting ...");
-			return;
-		}
-		
-		Index.setIndexLoadingProfileAsRetrieval(false);
-		IndexOnDisk indexSrc1 = Index.createIndex(args[0], args[1]);
-		IndexOnDisk indexSrc2 = Index.createIndex(args[2], args[3]);
-		IndexOnDisk indexDest = Index.createNewIndex(args[4], args[5]);
-		
-		StructureMerger sMerger = new StructureMerger(indexSrc1, indexSrc2, indexDest);
-		long start = System.currentTimeMillis();
-		logger.info("started at " + (new Date()));
-		if (ApplicationSetup.getProperty("merger.onlylexicons","false").equals("true")) {
-			System.err.println("Use LexiconMerger");
-			return;
-		} else if (ApplicationSetup.getProperty("merger.onlydocids","false").equals("true")) {
-			sMerger.mergeDocumentIndexFiles();
-		} else {
-			sMerger.mergeStructures();
-		}
-		indexSrc1.close();
-		indexSrc2.close();
-		indexDest.close();
-		
-		logger.info("finished at " + (new Date()));
-		long end = System.currentTimeMillis();
-		logger.info("time elapsed: " + ((end-start)*1.0d/1000.0d) + " sec.");
+		CLITool.run(Command.class, args);		
 	}
 
 

@@ -7,3 +7,5 @@ org.terrier.structures.IndexUtil$Command
 org.terrier.applications.batchquerying.TRECQuerying$Command
 org.terrier.evaluation.TrecEvalEvaluation$Command
 org.terrier.utility.SimpleJettyHTTPServer$Command
+org.terrier.structures.indexing.singlepass.Inverted2DirectCommand
+org.terrier.structures.merging.StructureMerger$Command

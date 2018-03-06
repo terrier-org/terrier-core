@@ -34,6 +34,7 @@ import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.applications.CLITool;
 import org.terrier.compression.bit.BitIn;
 import org.terrier.compression.bit.BitInputStream;
 import org.terrier.compression.bit.BitOut;
@@ -41,7 +42,6 @@ import org.terrier.compression.bit.BitOutputStream;
 import org.terrier.compression.bit.MemorySBOS;
 import org.terrier.structures.BasicDocumentIndexEntry;
 import org.terrier.structures.DocumentIndexEntry;
-import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.LexiconEntry;
@@ -406,23 +406,8 @@ public class Inverted2DirectIndexBuilder {
 		}
 		return i-1;
 	}
-	/**
-	 * main
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main (String[] args) throws Exception
-	{
-		Index.setIndexLoadingProfileAsRetrieval(false);
-		IndexOnDisk i = Index.createIndex();
-		if (i== null)
-		{
-			System.err.println("Sorry, no index could be found in default location");
-			return;
-		}
-		//disabling TR-279 optimisation
-		//LexiconBuilder.reAssignTermIds(i, "lexicon", i.getCollectionStatistics().getNumberOfUniqueTerms());
-		new Inverted2DirectIndexBuilder(i).createDirectIndex();
-		i.close();
+	
+	public static void main(String[] args) throws Exception {
+		CLITool.run(Inverted2DirectCommand.class, args);
 	}
 }

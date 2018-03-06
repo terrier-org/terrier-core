@@ -28,7 +28,6 @@ package org.terrier.structures.indexing.singlepass;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.PostingIndexInputStream;
@@ -168,23 +167,5 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
 		}
 		return tokens;
     }
-
-	/**
-	 * main
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main (String[] args) throws Exception
-	{
-		Index.setIndexLoadingProfileAsRetrieval(false);
-		IndexOnDisk i = Index.createIndex();
-		if (i== null)
-		{
-			System.err.println("Sorry, no index could be found in default location");
-			return;
-		}
-		new BlockInverted2DirectIndexBuilder(i).createDirectIndex();
-		i.close();
-	}
 
 }
