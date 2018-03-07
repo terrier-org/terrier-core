@@ -12,72 +12,103 @@
 	<artifactId>terrier-core</artifactId>
 
 	<dependencies>
-                <dependency>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                        <version>1.1.2</version>	
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.2</version>
 			<scope>compile</scope>
-                </dependency>
+		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<!--  <id>version</id> -->
+			<activation>
+				<file>
+					<missing>target/generated-sources/version/org/terrier/Version.java</missing>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>version-generation</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>resources</goal>
+								</goals>
+								<configuration>
+									<resources>
+										<resource>
+											<directory>src/main/templates</directory>
+											<includes>
+												<include>**/*.java</include>
+											</includes>
+											<filtering>true</filtering>
+											<targetPath>${project.build.directory}/generated-sources/version</targetPath>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/templates</directory>
-				<includes>
-					<include>**/*.java</include>
-				</includes>
-				<filtering>true</filtering>
-				<targetPath>${project.build.directory}/generated-sources/version</targetPath>
-			</resource>
-		</resources>
+
 		<plugins>
-			
+
 
 			<plugin>
-                                <groupId>org.codehaus.mojo</groupId>
-                                <artifactId>javacc-maven-plugin</artifactId>
-                                <version>2.6</version>
-                                <executions>
-                                        <execution>
-                                                <id>terrierql</id>
-                                                <phase>generate-sources</phase>
-                                                <goals>
-                                                        <goal>javacc</goal>
-                                                </goals>
-                                                <configuration>
-                                                        <jdkVersion>1.8</jdkVersion>
-                                                        <javadocFriendlyComments>true</javadocFriendlyComments>
-                                                        <packageName>org.terrier.querying.parser.</packageName>
-                                                        <sourceDirectory>src/main/javacc/terrierql</sourceDirectory>
-                                                        <outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
-                                                </configuration>
-                                        </execution>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>javacc-maven-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>terrierql</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>javacc</goal>
+						</goals>
+						<configuration>
+							<jdkVersion>1.8</jdkVersion>
+							<javadocFriendlyComments>true</javadocFriendlyComments>
+							<packageName>org.terrier.querying.parser.</packageName>
+							<sourceDirectory>src/main/javacc/terrierql</sourceDirectory>
+							<outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
+						</configuration>
+					</execution>
 
-                                        <execution>
-                                                <id>indriql</id>
-                                                <phase>generate-sources</phase>
-                                                <goals>
-                                                        <goal>javacc</goal>
-                                                </goals>
-                                                <configuration>
-                                                        <jdkVersion>1.8</jdkVersion>
-                                                        <javadocFriendlyComments>true</javadocFriendlyComments>
-                                                        <packageName>org.terrier.matching.indriql</packageName>
-                                                        <sourceDirectory>src/main/javacc/indriql</sourceDirectory>
-                                                        <outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
-                                                </configuration>
-                                        </execution>
+					<execution>
+						<id>indriql</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>javacc</goal>
+						</goals>
+						<configuration>
+							<jdkVersion>1.8</jdkVersion>
+							<javadocFriendlyComments>true</javadocFriendlyComments>
+							<packageName>org.terrier.matching.indriql</packageName>
+							<sourceDirectory>src/main/javacc/indriql</sourceDirectory>
+							<outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
+						</configuration>
+					</execution>
 
-                                </executions>
-                                <dependencies>
-                                        <dependency>
-                                                <groupId>net.java.dev.javacc</groupId>
-                                                <artifactId>javacc</artifactId>
-                                                <version>6.1.2</version>
-                                        </dependency>
-                                </dependencies>
-                        </plugin>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>net.java.dev.javacc</groupId>
+						<artifactId>javacc</artifactId>
+						<version>6.1.2</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
