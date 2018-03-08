@@ -28,11 +28,8 @@ package org.terrier.applications;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
@@ -48,7 +45,7 @@ public abstract class BatchIndexing {
 		@Override
 		protected Options getOptions()
 		{
-			Options options = new Options();
+			Options options = super.getOptions();
 			options.addOption(Option.builder("j")
 					.argName("singlepass")
 					.longOpt("singlepass")
@@ -85,33 +82,24 @@ public abstract class BatchIndexing {
 		}
 
 		@Override
-		public int run(String[] args) {
+		public int run(CommandLine line) throws Exception {
 			
-			CommandLineParser parser = new DefaultParser();
-			try {
-				CommandLine line = parser.parse(getOptions(), args);
-				
-				BatchIndexing indexing;
-				if (line.hasOption("parallel"))
-				{
-					indexing = new ThreadedBatchIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX, line.hasOption("singlepass"));
-					String threads = line.getOptionValue("parallel");
-					if (threads != null)
-						((ThreadedBatchIndexing)indexing).setMaxThreads(Integer.parseInt(threads));
-				}
-				else
-				{
-					indexing = line.hasOption("singlepass")
-							? new TRECIndexingSinglePass(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX)
-							: new TRECIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
-				}
-				indexing.blocks = line.hasOption("blocks");
-				indexing.index();
-			} catch (ParseException e) {
-				 System.err.println( "Usage problem:" + e);
-				 System.err.println( help() );
+			BatchIndexing indexing;
+			if (line.hasOption("parallel"))
+			{
+				indexing = new ThreadedBatchIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX, line.hasOption("singlepass"));
+				String threads = line.getOptionValue("parallel");
+				if (threads != null)
+					((ThreadedBatchIndexing)indexing).setMaxThreads(Integer.parseInt(threads));
 			}
-			
+			else
+			{
+				indexing = line.hasOption("singlepass")
+						? new TRECIndexingSinglePass(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX)
+						: new TRECIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+			}
+			indexing.blocks = line.hasOption("blocks");
+			indexing.index();			
 			return 0;
 		}
 		

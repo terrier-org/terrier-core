@@ -4,11 +4,8 @@ import java.io.File;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.utility.ApplicationSetup;
 
@@ -32,20 +29,11 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 	}
 
 	@Override
-	public int run(String[] args) throws Exception {
+	public int run(CommandLine line) throws Exception {
 		Evaluation te = null;
 		String evaluationFilename = null;
 		boolean use_jtrec_eval = true;
 		boolean evaluation_per_query = false;
-		
-		CommandLineParser parser = new DefaultParser();
-		CommandLine line = null;
-		try{
-			line = parser.parse(getOptions(), args);
-		} catch (ParseException pe) {
-			System.err.println(pe);
-			return 1;
-		}
 		
 		String qrels = ApplicationSetup.getProperty("trec.qrels", null);
 		if (line.hasOption('q'))
@@ -105,7 +93,7 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 
 	@Override
 	protected Options getOptions() {
-		Options options = new Options();
+		Options options = super.getOptions();
 		options.addOption(Option.builder("j")
 				.argName("no_jtreceval")
 				.longOpt("jtreceval")

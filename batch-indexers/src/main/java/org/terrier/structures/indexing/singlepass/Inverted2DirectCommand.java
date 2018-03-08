@@ -3,8 +3,6 @@ package org.terrier.structures.indexing.singlepass;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
@@ -22,7 +20,7 @@ public class Inverted2DirectCommand extends CLIParsedCLITool {
 
 	@Override
 	public String helpsummary() {
-		return "makes a direct index from an index with only an inverted index";
+		return "makes a direct index from a disk index with only an inverted index";
 	}
 
 	@Override
@@ -32,7 +30,7 @@ public class Inverted2DirectCommand extends CLIParsedCLITool {
 
 	@Override
 	protected Options getOptions() {
-		Options options = new Options();
+		Options options = super.getOptions();
 		options.addOption(Option.builder("b")
 				.argName("blocks")
 				.longOpt("blocks")
@@ -42,9 +40,7 @@ public class Inverted2DirectCommand extends CLIParsedCLITool {
 	}
 
 	@Override
-	public int run(String[] args) throws Exception {
-		CommandLineParser clp = new DefaultParser();
-		CommandLine line = clp.parse(getOptions(), args);
+	public int run(CommandLine line) throws Exception {
 		Index.setIndexLoadingProfileAsRetrieval(false);
 		IndexOnDisk i = Index.createIndex();
 		if (i== null)

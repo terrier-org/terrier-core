@@ -42,11 +42,8 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
@@ -178,7 +175,7 @@ public class TRECQuerying {
 		@Override
 		protected Options getOptions()
 		{
-			Options options = new Options();
+			Options options = super.getOptions();
 			options.addOption(Option.builder("c")
 					.argName("controls")
 					.longOpt("controls")
@@ -240,32 +237,25 @@ public class TRECQuerying {
 		}
 
 		@Override
-		public int run(String[] args) throws Exception {
+		public int run(CommandLine line) throws Exception {
 			
-			CommandLineParser parser = new DefaultParser();
-			try {
-				CommandLine line = parser.parse(getOptions(), args);
-				TRECQuerying tq = new TRECQuerying();
+			TRECQuerying tq = new TRECQuerying();
 				
-				if (line.hasOption("c"))
-					throw new UnsupportedOperationException();
+			if (line.hasOption("c"))
+				throw new UnsupportedOperationException();
+			
+			if (line.hasOption("docids"))
+				tq.printer = new TRECDocidOutputFormat(null);
+			
+			if (line.hasOption("i"))
+				tq.indriQL = true;
+			
+			if (line.hasOption("q"))
+				tq.queryexpansion = true;
+			
+			if (line.hasOption('w'))
+				tq.wModel = line.getOptionValue('w');
 				
-				if (line.hasOption("docids"))
-					tq.printer = new TRECDocidOutputFormat(null);
-				
-				if (line.hasOption("i"))
-					tq.indriQL = true;
-				
-				if (line.hasOption("q"))
-					tq.queryexpansion = true;
-				
-				if (line.hasOption('w'))
-					tq.wModel = line.getOptionValue('w');
-				
-			} catch (ParseException e) {
-				System.err.println(e);
-				return 1;
-			}
 			return 0;
 		}
 		

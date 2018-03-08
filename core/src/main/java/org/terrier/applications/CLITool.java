@@ -10,10 +10,15 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.terrier.Version;
 import org.terrier.utility.ApplicationSetup;
@@ -49,7 +54,19 @@ public abstract class CLITool {
 	
 	public static abstract class CLIParsedCLITool extends CLITool
 	{
-		protected abstract Options getOptions();
+		protected Options getOptions()
+		{
+			Options options = new Options();
+			options.addOption(Option.builder("D")
+					.argName("property")
+					.desc("specify property name=value")
+					.build());
+			options.addOption(Option.builder("I")
+					.argName("indexref")
+					.desc("override the default indexref (location)")
+					.build());
+			return options;
+		}
 		
 		@Override
 		public String help() {
@@ -66,6 +83,26 @@ public abstract class CLITool {
 			rtr += st.toString();
 			return rtr;
 		}
+
+		@Override
+		public final int run(String[] args) throws Exception {
+			CommandLineParser parser = new DefaultParser();
+			CommandLine line = parser.parse(getOptions(), args);
+			Properties props = null;
+			if (line.hasOption('D'))
+			{
+				props = line.getOptionProperties("D");
+				props.forEach( (k,v) -> ApplicationSetup.setProperty((String)k, (String)v));
+			}
+//			if (line.hasOption('I'))
+//			{
+//				String indexLocation = line.getOptionValue('I');
+//			}
+			return this.run(line);
+		}
+		
+		public abstract int run(CommandLine line) throws Exception;
+		
 	}
 	
 	public static class HelpCLITool extends CLITool {
@@ -126,7 +163,7 @@ public abstract class CLITool {
 		
 	}
 	
-	public void setConfigurtion(Object o){}
+	public void setConfiguration(Object o){}
 	
 	/** What short commands aliases should this command respond to */
 	public Set<String> commandaliases() {
