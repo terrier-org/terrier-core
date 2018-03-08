@@ -39,7 +39,6 @@ import java.util.Set;
 import org.apache.hadoop.io.Writable;
 import org.terrier.applications.CLITool;
 import org.terrier.structures.bit.BitPostingIndex;
-import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
@@ -89,7 +88,7 @@ public class IndexUtil {
 			//command loop
 			if (cmd.equals("--printbitfile"))
 			{
-				BitPostingIndexInputStream bpiis = (BitPostingIndexInputStream) index.getIndexStructureInputStream(structureName);
+				PostingIndexInputStream bpiis = (PostingIndexInputStream) index.getIndexStructureInputStream(structureName);
 				bpiis.print();
 				bpiis.close();
 			}
@@ -164,7 +163,7 @@ public class IndexUtil {
 			else if (cmd.equals("--printbitentry"))
 			{
 				List<BitIndexPointer> pointerList = (List<BitIndexPointer>) index.getIndexStructure(args[2]);
-				BitPostingIndex bpi = (BitPostingIndex) index.getIndexStructure(structureName);
+				PostingIndex<?> bpi = (PostingIndex<?>) index.getIndexStructure(structureName);
 				//for every docid on cmdline
 				for(int argC=3;argC<args.length;argC++)
 				{
