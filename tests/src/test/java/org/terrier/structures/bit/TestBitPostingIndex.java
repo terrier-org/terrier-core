@@ -49,6 +49,7 @@ public class TestBitPostingIndex extends ApplicationSetupBasedTest {
 		String filename = PostingTestUtils.writePostingsToFile(new Iterator[]{postings.iterator()}, pointerList);
 		BitPostingIndex structure = new BitPostingIndex(filename, (byte) 1, BasicIterablePosting.class, "file", 0);
 		PostingTestUtils.comparePostings(postings, structure.getPostings(pointerList.get(0)));
+		structure.close();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -63,6 +64,7 @@ public class TestBitPostingIndex extends ApplicationSetupBasedTest {
 		String filename = PostingTestUtils.writePostingsToFile(new Iterator[]{postings.iterator()}, pointerList);
 		BitPostingIndex structure = new BitPostingIndex(filename, (byte) 1, BasicIterablePosting.class, "file", 0);
 		PostingTestUtils.comparePostings(postings, structure.getPostings(pointerList.get(0)));
+		structure.close();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -83,6 +85,7 @@ public class TestBitPostingIndex extends ApplicationSetupBasedTest {
 		BitPostingIndex structure = new BitPostingIndex(filename, (byte) 1, BasicIterablePosting.class, "file", 0);
 		PostingTestUtils.comparePostings(postings1, structure.getPostings(pointerList.get(0)));
 		PostingTestUtils.comparePostings(postings2, structure.getPostings(pointerList.get(1)));
+		structure.close();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -99,6 +102,7 @@ public class TestBitPostingIndex extends ApplicationSetupBasedTest {
 		BitPostingIndex structure = new BitPostingIndex(filename, (byte) 1, BasicIterablePosting.class, "file", 0);
 		PostingTestUtils.comparePostings(postings1, structure.getPostings(pointerList.get(0)));
 		PostingTestUtils.comparePostings(postings2, structure.getPostings(pointerList.get(1)));
+		structure.close();
 	}
 
 }
