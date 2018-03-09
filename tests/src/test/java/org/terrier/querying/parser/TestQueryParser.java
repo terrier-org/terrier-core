@@ -77,7 +77,7 @@ public class TestQueryParser {
 	{
 		final String term1 = "a";
 		final String term2 = "b";
-		Query q = QueryParser.parseQuery(term1+"^0.5 " + term2 + "^1.0");
+		QueryParser.parseQuery(term1+"^0.5 " + term2 + "^1.0");
 	}
 	
 	
