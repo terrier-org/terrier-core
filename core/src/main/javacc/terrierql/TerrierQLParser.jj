@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 
+@SuppressWarnings("all")
 public class TerrierQLParser
 {
     private final static boolean DEBUG = false;
