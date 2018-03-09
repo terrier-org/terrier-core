@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,7 +52,6 @@ import org.terrier.utility.io.HadoopPlugin;
 import org.terrier.utility.io.HadoopUtility;
 
 /** Unit test for CompressingMetaIndex */
-@SuppressWarnings("deprecation")
 public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 
 	static boolean validPlatform()
@@ -73,20 +73,22 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 	};
 	
 	@Test
-	public void testNumKeysConfigurationMismatch()
+	public void testNumKeysConfigurationMismatch() throws IOException
 	{
 		exception.expect(IllegalArgumentException.class);
-		new CompressingMetaIndexBuilder(
+		CompressingMetaIndexBuilder x = new CompressingMetaIndexBuilder(
 				null, new String[]{"docno"}, new int[0], new String[0]);
+		x.close();
 	}
 
 	@Test
-	public void testKeysSubsetConfigurationMismatch()
+	public void testKeysSubsetConfigurationMismatch() throws IOException
 	{
 		exception.expect(IllegalArgumentException.class);
-		new CompressingMetaIndexBuilder(
+		CompressingMetaIndexBuilder x = new CompressingMetaIndexBuilder(
 				Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX), 
 				new String[]{"docno"}, new int[]{20}, new String[]{"url"});
+		x.close();
 	}
 
 	

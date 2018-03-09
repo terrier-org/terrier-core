@@ -34,7 +34,6 @@ import org.terrier.structures.indexing.CompressingMetaIndexBuilder.KeyedPartitio
 import junit.framework.TestCase;
 
 /** Test that the meta index partitioner works as expected */
-@SuppressWarnings("deprecation")
 public class TestCompressingMetaIndexBuilderPartitioner extends TestCase {
 
 	static boolean validPlatform()
