@@ -326,7 +326,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
       * @param SD is sequential dependence to be used
       * @return score of this dependence score modifier for the current document
       */
-    protected double calculateDependence(IterablePosting[] ips, boolean[] okToUse, double[] phraseTermWeights, boolean SD) {
+    protected double calculateDependence(Posting[] ips, boolean[] okToUse, double[] phraseTermWeights, boolean SD) {
         final int numPhraseTerms = phraseTerms.length;
         int i;
         double finalScore = 0.0d;
