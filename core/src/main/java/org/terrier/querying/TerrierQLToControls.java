@@ -6,8 +6,7 @@ import org.terrier.querying.parser.Query;
 public class TerrierQLToControls implements Process {
 
 	@Override
-	public void process(Manager manager, SearchRequest q) {
-		Request rq = (Request)q;
+	public void process(Manager manager, Request rq) {
 		Query query = rq.getQuery();
 		//System.out.println(query);
 		//get the controls

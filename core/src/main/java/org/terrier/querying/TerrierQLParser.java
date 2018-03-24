@@ -11,9 +11,9 @@ public class TerrierQLParser implements Process {
 	protected static final Logger logger = LoggerFactory.getLogger(TerrierQLParser.class);
 	
 	@Override
-	public void process(Manager manager, SearchRequest q) {
+	public void process(Manager manager, Request q) {
 		try{
-			QueryParser.parseQuery(q.getOriginalQuery(), (Request) q);	
+			QueryParser.parseQuery(q.getOriginalQuery(), q);	
 		} catch (QueryParserException qpe) {
 			logger.error("Error while parsing the query.",qpe);
 		}

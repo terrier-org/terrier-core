@@ -42,7 +42,7 @@ public class ApplyTermPipeline implements Process {
 	
 	
 	@Override
-	public void process(Manager manager, SearchRequest q) {
+	public void process(Manager manager, Request q) {
 		
 		
 		TIntArrayList toDel = new TIntArrayList();
@@ -78,7 +78,8 @@ public class ApplyTermPipeline implements Process {
 				QueryTerm[] qts = mqt.getConstituents();
 				boolean OK = true;
 				for(QueryTerm qt : qts) {
-					boolean OKqt = this.visit(qt);
+					//boolean OKqt = 
+					this.visit(qt);
 				}
 				//TODO check if all required?
 				return OK;
@@ -86,7 +87,7 @@ public class ApplyTermPipeline implements Process {
 			
 		};
 		
-		MatchingQueryTerms mqt = ((Request)q).getMatchingQueryTerms();		
+		MatchingQueryTerms mqt = q.getMatchingQueryTerms();		
 		for(MatchingTerm t : mqt)
 		{
 			i++;

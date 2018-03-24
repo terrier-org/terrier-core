@@ -249,7 +249,7 @@ public class QueryExpansion implements Process {
 	 * Runs the actual query expansion
 	 * @see org.terrier.querying.PostProcess#process(org.terrier.querying.Manager,org.terrier.querying.SearchRequest)
 	 */
-	public void process(Manager manager, SearchRequest q) {
+	public void process(Manager manager, Request q) {
 	   	Index index = getIndex(manager);
 		lastIndex = index;
 		documentIndex = index.getDocumentIndex();
@@ -276,7 +276,7 @@ public class QueryExpansion implements Process {
 		if(logger.isDebugEnabled()){
 			logger.info("query expansion model: " + QEModel.getInfo());
 		}
-		MatchingQueryTerms queryTerms = ((Request)q).getMatchingQueryTerms();
+		MatchingQueryTerms queryTerms = q.getMatchingQueryTerms();
 		if (queryTerms == null)
 		{
 			logger.warn("No query terms for this query. Skipping QE");
@@ -284,7 +284,7 @@ public class QueryExpansion implements Process {
 		}
 		// get the expanded query terms
 		try{
-			expandQuery(queryTerms, (Request)q);
+			expandQuery(queryTerms, q);
 		} catch (IOException ioe) {
 			logger.error("IOException while expanding query, skipping QE", ioe);
 			return;

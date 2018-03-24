@@ -33,8 +33,16 @@ public interface Process {
 	/** Run the instantiated process on the search request represented by q.
 	  * @param manager The manager instance handling this search session.
 	  * @param q the current query being processed
+	  * 
 	  */
-	void process(Manager manager, SearchRequest q);
+	@Deprecated
+	default void process(Manager manager, SearchRequest q) {
+		this.process(manager, (Request) q);
+	}
+	
+	default void process(Manager manager, Request q) {
+		this.process(manager, (SearchRequest) q);
+	}
 	
 	/**
 	 * Returns the name of the processor.

@@ -7,8 +7,7 @@ import org.terrier.querying.parser.Query;
 public class TerrierQLToMatchingQueryTerms implements Process {
 
 	@Override
-	public void process(Manager manager, SearchRequest q) {
-		Request rq = (Request) q;
+	public void process(Manager manager, Request rq) {
 		MatchingQueryTerms queryTerms = new MatchingQueryTerms(rq.getQueryID(), rq);
 		Query query = rq.getQuery();
 		query.obtainQueryTerms(queryTerms, null, null, null);

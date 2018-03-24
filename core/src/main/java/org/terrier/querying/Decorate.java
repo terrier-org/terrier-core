@@ -219,7 +219,7 @@ public class Decorate implements Process, PostFilter {
 	  * @param manager The manager instance handling this search session.
 	  * @param q the current query being processed
 	  */
-	public void process(Manager manager, SearchRequest q)
+	public void process(Manager manager, Request q)
 	{
 		ResultSet rs = q.getResultSet();
 		new_query(manager, q, rs);
