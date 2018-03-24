@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.terrier.utility.io.HadoopPlugin.JobFactory;
 
 /** Test HadoopPlugin works as expected */
-@SuppressWarnings("deprecation")
 public class TestHadoopPlugin extends TestCase {
 
 	final static String RANDOM_PROPERTY = "random.property.name";	
