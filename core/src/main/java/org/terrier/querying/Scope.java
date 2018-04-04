@@ -25,6 +25,8 @@
  */
 package org.terrier.querying;
 import org.terrier.matching.ResultSet;
+import org.terrier.structures.IndexFactory;
+
 import java.util.HashSet;
 /**
  * Checks that the prefix of the document number (upto the first "-") is included in
@@ -37,9 +39,12 @@ public class Scope implements PostFilter
 {
 	/** The list of documber number prefixes that each document must have one of
 	  * to be allowed into the final resultset */
-	private HashSet<String> AllowedScopes;
+	HashSet<String> AllowedScopes;
 	/** If any scopes have been set - basically a safecheck */
-	private boolean useScopes = false;
+	boolean useScopes = false;
+	
+	boolean rsHasDocno = false;
+	
 	/** 
 	 * Creates a HashSet of scopes that can are allowed to 
 	 * be in the document number prefix. 
@@ -50,6 +55,7 @@ public class Scope implements PostFilter
 	public void new_query(Manager m, SearchRequest srq, ResultSet rs)
 	{
 		AllowedScopes = new HashSet<String>();
+		rsHasDocno = rs.hasMetaItems("docno");
 		String scope = srq.getControl("scope");
 		if (scope.equals(""))
 			scope = srq.getControl("scopes");
@@ -71,7 +77,7 @@ public class Scope implements PostFilter
 	  * @param srq The search request being processed
 	  * @param rs the resultset that is being iterated through
 	  * @param rank the array index in the resultset have we reached
-	  * @param docid The document number of the currently being procesed result.
+	  * @param docid The document number of the currently being processed result.
 	  */
 	public byte filter(Manager m, SearchRequest srq, ResultSet rs, int rank, int docid)
 	{
@@ -79,13 +85,16 @@ public class Scope implements PostFilter
 			return FILTER_OK;
 		//get docno for DocAtNo
 		try{
-			String docno = m.getIndex().getMetaIndex().getItem("docno", docid);
+			String docno = rsHasDocno
+					? rs.getMetaItems("docno")[rank]
+					: IndexFactory.of(m.getIndexRef()).getMetaIndex().getItem("docno", docid);
 			String[] sScope = docno.split("-");
 			if (! AllowedScopes.contains(sScope[0].toLowerCase()))
 			{
 				return FILTER_REMOVE;
 			}
-			rs.addMetaItem("docid", rank, docno); //can we know if this is needed?
+			if (! rsHasDocno)
+				rs.addMetaItem("docno", rank, docno); //can we know if this is needed?
 			return FILTER_OK;
 		}catch (Exception e) {
 			return FILTER_OK;

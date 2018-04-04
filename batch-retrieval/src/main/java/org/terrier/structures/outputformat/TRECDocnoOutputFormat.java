@@ -35,6 +35,7 @@ import java.io.PrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.ResultSet;
+import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 import org.terrier.structures.MetaIndex;
@@ -92,7 +93,7 @@ public class TRECDocnoOutputFormat implements OutputFormat {
 	 */
 	public void printResults(final PrintWriter pw, final SearchRequest q,
 			String method, String iteration, int _RESULTS_LENGTH) throws IOException {
-		final ResultSet set = q.getResultSet();
+		final ResultSet set = ((Request) q).getResultSet();
 		final String metaIndexDocumentKey = ApplicationSetup.getProperty("trec.querying.outputformat.docno.meta.key", "docno");
 		final double[] scores = set.getScores();
 		if (set.getResultSize() == 0) {

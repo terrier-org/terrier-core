@@ -65,6 +65,8 @@ public interface ResultSet extends Serializable {
 	 */
 	boolean hasMetaItems(String name);
 	
+	String[][] allMetaItems();
+	
 	/**
 	 * Returns the documents ids after retrieval
 	 * @return the docids

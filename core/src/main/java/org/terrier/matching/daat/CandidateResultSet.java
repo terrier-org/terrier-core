@@ -74,6 +74,8 @@ public class CandidateResultSet implements ResultSet, Serializable
 	public boolean hasMetaItems(String name) { return false; }
 	@Override /** {@inheritDoc}. Unsupported for this implementation */
 	public String[] getMetaKeys() { return null; }
+	@Override
+	public String[][] allMetaItems() {return new String[0][0];}
 	
 	protected CandidateResultSet(){}
 	

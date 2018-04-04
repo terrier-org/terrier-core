@@ -1,0 +1,2 @@
+org.terrier.structures.realtime.incremental.IncrementalIndex$Loader
+org.terrier.structures.realtime.memory.MemoryIndex$Loader

@@ -69,11 +69,11 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 		
 	@Test public void testOneDocument() throws Exception {
 		Index index = createIndex();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox");
 		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
 		m.runSearchRequest(srq);
-		ResultSet rs = srq.getResultSet();
+		ResultSet rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
 		SimpleDecorate decorate = new SimpleDecorate();
 		decorate.new_query(m, srq, rs);
@@ -84,11 +84,11 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 	
 	@Test public void testOneDocumentTwoKeys() throws Exception {
 		Index index = createIndexAbstract();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox");
 		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
 		m.runSearchRequest(srq);
-		ResultSet rs = srq.getResultSet();
+		ResultSet rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
 		SimpleDecorate decorate = new SimpleDecorate();
 		decorate.new_query(m, srq, rs);
@@ -102,11 +102,11 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 	
 	@Test public void testTwoDocuments() throws Exception {
 		Index index = createIndex();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox foxes");
 		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
 		m.runSearchRequest(srq);
-		ResultSet rs = srq.getResultSet();
+		ResultSet rs = ((Request) srq).getResultSet();
 		assertEquals(2, rs.getResultSize());
 		SimpleDecorate decorate = new SimpleDecorate();
 		decorate.new_query(m, srq, rs);

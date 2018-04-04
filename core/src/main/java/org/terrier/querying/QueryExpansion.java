@@ -39,6 +39,7 @@ import org.terrier.querying.parser.SingleTermQuery;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndex;
@@ -167,7 +168,11 @@ public class QueryExpansion implements Process {
 	/** For easier sub-classing of which index the query expansion comes from */
 	protected Index getIndex(Manager m)
 	{
-		return m.getIndex();
+		if (! IndexFactory.isLocal(m.getIndexRef()))
+		{
+			throw new IllegalStateException("QueryExpansion needs a local index");
+		}
+		return IndexFactory.of(m.getIndexRef());
 	}
 	
 	/** load the expansion terms, as per the property <tt>qe.expansion.terms.class</tt>. Defaults to DFRBagExpansionTerms.
@@ -323,7 +328,7 @@ public class QueryExpansion implements Process {
 		//run retrieval process again for the expanded query
 		logger.info("Accessing inverted file for expanded query " + q.getQueryID());
 		//THIS ASSUMES THAT QueryExpansion directly follows Matching
-		manager.processModuleManager.getModule(q.getControl("previousprocess")).process(manager, q);
+		((LocalManager)manager).processModuleManager.getModule(q.getControl("previousprocess")).process(manager, q);
 	}
 	/** Obtain the query expansion model for QE to use.
 	 *  This will be cached in a hashtable for the lifetime of the

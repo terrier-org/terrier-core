@@ -33,9 +33,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.terrier.matching.ResultSet;
+import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 
-/** an astract results cache that puts stuff into an ever-growing Map */
+/** an abstract results cache that puts stuff into an ever-growing Map */
 public abstract class GrowingMapQueryResultCache<K> implements QueryResultCache 
 {
 	Map<K, ResultSet> cache = new HashMap<K, ResultSet>();		
@@ -47,7 +48,7 @@ public abstract class GrowingMapQueryResultCache<K> implements QueryResultCache
 	
 	public void add(SearchRequest q)
 	{
-		cache.put(hashQuery(q), q.getResultSet());
+		cache.put(hashQuery(q), ((Request) q).getResultSet());
 	}		
 	
 	public ResultSet checkCache(SearchRequest q)

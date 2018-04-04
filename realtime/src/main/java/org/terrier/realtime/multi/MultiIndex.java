@@ -57,6 +57,7 @@ import org.terrier.utility.ApplicationSetup;
  * @since 4.0
  */
 public class MultiIndex extends Index {
+	
 	private static final Logger logger = LoggerFactory.getLogger(MultiIndex.class);
 
 	/*

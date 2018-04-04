@@ -21,7 +21,7 @@ public class TestTRECQueryingIndriql extends ApplicationSetupBasedTest {
 				"2 #1(fox jumped)"
 		});
 		ApplicationSetup.setProperty("trec.topics", f);
-		TRECQuerying tq = new TRECQuerying(index);
+		TRECQuerying tq = new TRECQuerying(index.getIndexRef());
 		tq.processQueries();
 	}
 	

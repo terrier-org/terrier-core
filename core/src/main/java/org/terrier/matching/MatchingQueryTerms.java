@@ -223,7 +223,7 @@ implements Serializable,Cloneable
 		@Override
 		public String toString()
 		{
-			return "{ req=" + this.required + ", w=" + this.weight + ", stats=" + this.stats + ", models=" + this.termModels.toString() + " tag="+null+"}";
+			return "{ req=" + this.required + ", w=" + this.weight + ", stats=" + this.stats + ", models=" + this.termModels.toString() + " tag="+tag+"}";
 		}
 
 		

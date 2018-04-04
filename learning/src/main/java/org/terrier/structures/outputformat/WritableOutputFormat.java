@@ -35,6 +35,7 @@ import org.apache.hadoop.io.Writable;
 import org.terrier.matching.FatResultSet;
 import org.terrier.matching.FatResultsMatching;
 import org.terrier.matching.ResultSet;
+import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 
@@ -63,7 +64,7 @@ public class WritableOutputFormat implements RawOutputFormat {
 			String method, String iteration, int numberOfResults)
 			throws IOException 
 	{		
-		final ResultSet rs = q.getResultSet();
+		final ResultSet rs = ((Request) q).getResultSet();
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeUTF(q.getQueryID());
 		((Writable)rs).write(dos);

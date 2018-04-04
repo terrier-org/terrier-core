@@ -193,17 +193,27 @@ public class AccumulatorResultSet implements ResultSet, Serializable
 	
 	
 	/** Unsupported */
+	@Override
 	public void addMetaItem(String name, int docid, String value) {}
 	/** Unsupported */
+	@Override
 	public void addMetaItems(String name, String[] values) {}	
 	/** Unsupported */
+	@Override
 	public String getMetaItem(String name, int docid) {	return null; }
 	/** Unsupported */
+	@Override
 	public String[] getMetaItems(String name) {	return null; }
 	/** Unsupported */
+	@Override
 	public boolean hasMetaItems(String name) { return false; }
 	/** Unsupported */
+	@Override
 	public String[] getMetaKeys() { return new String[0]; }
+	/** Unsupported */
+	@Override
+	public String[][] allMetaItems() {return new String[0][0];}
+	
 	
 	/** {@inheritDoc} */
 	public ResultSet getResultSet(int start, int length) 

@@ -37,6 +37,7 @@ import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.indriql.SingleQueryTerm;
 import org.terrier.matching.indriql.SynonymTerm;
 import org.terrier.matching.models.DLH13;
+import org.terrier.querying.LocalManager;
 import org.terrier.querying.Manager;
 import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
@@ -460,7 +461,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		System.err.println("testTwoDocumentsNegativeMatch: " + index.toString());
 		assertNotNull(index);
 		assertEquals(2, index.getCollectionStatistics().getNumberOfDocuments());
-		Manager matching = new Manager(index);
+		Manager matching = new LocalManager(index);
 		assertNotNull(matching);
 		ResultSet rs;
 		
@@ -468,7 +469,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		search.addMatchingModel("Matching", "DPH");
 		search.setOriginalQuery("dog +window");
 		matching.runSearchRequest(search);
-		rs = search.getResultSet();
+		rs = ((Request)search).getResultSet();
 		assertNotNull(rs);
 		assertEquals(1, rs.getResultSize());
 		TIntHashSet docids = new TIntHashSet(rs.getDocids());
@@ -489,7 +490,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		System.err.println("testTwoDocumentsNegativeMatch: " + index.toString());
 		assertNotNull(index);
 		assertEquals(2, index.getCollectionStatistics().getNumberOfDocuments());
-		Manager matching = new Manager(index);
+		Manager matching = new LocalManager(index);
 		assertNotNull(matching);
 		ResultSet rs;
 		
@@ -497,7 +498,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		search.addMatchingModel("Matching", "DPH");
 		search.setOriginalQuery("dog -window");
 		matching.runSearchRequest(search);
-		rs = search.getResultSet();
+		rs = ((Request)search).getResultSet();
 		assertNotNull(rs);
 		assertEquals(1, rs.getResultSize());
 		TIntHashSet docids = new TIntHashSet(rs.getDocids());
@@ -517,26 +518,26 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 				new String[]{
 						"The quick brown fox jumps over the lazy dog", //doc1
 						"how much is that dog in the window"}); //doc2
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		SearchRequest srq = null;
 		
 		//1, are documents retrieved: single term, one document
 		srq = m.newSearchRequest("test1", "dog");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
 		m.runSearchRequest(srq);
-		assertEquals(2, srq.getResultSet().getResultSize());
+		assertEquals(2, srq.getResults().size());
 		
 		//2, are documents retrieved: two terms, best match
 		srq = m.newSearchRequest("test1", "brown window");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
 		m.runSearchRequest(srq);
-		assertEquals(2, srq.getResultSet().getResultSize());
+		assertEquals(2, srq.getResults().size());
 	
 		//3, are documents retrieved: two terms, one of which is positive requirement
 		srq = m.newSearchRequest("test1", "dog +window");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
 		m.runSearchRequest(srq);
-		assertEquals(1, srq.getResultSet().getResultSize());
+		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
 	
 		//4, are documents retrieved: two terms, one of which is negative requirement
 		srq = m.newSearchRequest("test1", "dog -fox");
@@ -546,13 +547,13 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
 			System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
 		}*/
-		assertEquals(1, srq.getResultSet().getResultSize());	
+		assertEquals(1, ((Request) srq).getResultSet().getResultSize());	
 		
 		//5, are documents retrieved: two terms, both of which are positive requirements
 		srq = m.newSearchRequest("test1", "+dog +fox");
 		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
 		m.runSearchRequest(srq);
-		assertEquals(1, srq.getResultSet().getResultSize());	
+		assertEquals(1, ((Request) srq).getResultSet().getResultSize());	
 
 	}
 	
@@ -565,7 +566,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 				new String[]{
 						"<title>Animal</title><content>The quick brown fox jumps over the lazy dog</content>", //doc1
 						"<title>Dog</title><content>how much is that animal in the window</content>"}); //doc2
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		SearchRequest srq = null;
 		
 		
@@ -577,8 +578,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		/*for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
 			System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
 		}*/
-		assertEquals(1, srq.getResultSet().getResultSize());
-		assertEquals(1, srq.getResultSet().getDocids()[0]);	
+		assertEquals(1, srq.getResults().size());
+		assertEquals(1, srq.getResults().get(0).getDocid());	
 			
 
 	}

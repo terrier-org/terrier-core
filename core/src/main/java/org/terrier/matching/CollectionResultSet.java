@@ -286,6 +286,9 @@ public class CollectionResultSet implements ResultSet, Serializable{
 		return null;
 	}
 	
+	@Override
+	public String[][] allMetaItems() {return new String[0][0];}
+	
 	/**
 	 * Crops the existing result file and extracts a subset
 	 * from the given starting point to the ending point.

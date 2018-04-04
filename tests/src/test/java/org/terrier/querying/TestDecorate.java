@@ -69,12 +69,12 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 	
 	@Test public void testOneDocumentBasic() throws Exception {
 		Index index = createIndex();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		ResultSet rs; Decorate decorate; SearchRequest srq;
 		//postfilter
 		srq = performQuery(m, "fox");
 		
-		rs = srq.getResultSet();
+		rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
 		decorate = new Decorate();
 		decorate.new_query(m, srq, rs);
@@ -87,16 +87,16 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 	
 	@Test public void testOneDocumentBasicEarly() throws Exception {
 		Index index = createIndex();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		ResultSet rs; Decorate decorate; SearchRequest srq;
 
 		//postprocess
 		srq = performQuery(m, "fox");
 		srq.setControl("earlyDecorate", "filename;abstract");
-		rs = srq.getResultSet();
+		rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
 		decorate = new Decorate();
-		decorate.process(m, srq);
+		decorate.process(m, (Request)srq);
 		decorate.new_query(m, srq, rs);
 		decorate.filter(m, srq, rs, 0, rs.getDocids()[0]);
 		
@@ -107,11 +107,11 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 	
 	@Test public void testOneDocumentEscape() throws Exception {
 		Index index = createIndex();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		ResultSet rs; Decorate decorate; SearchRequest srq;
 		
 		srq = performQuery(m, "fox");
-		rs = srq.getResultSet();
+		rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
 		
 		srq.setControl("escape", "abstract");
@@ -125,12 +125,12 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 	
 	@Test public void testOneDocumentEmph() throws Exception {
 		Index index = createIndex();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		ResultSet rs; Decorate decorate; SearchRequest srq;
 		
 		//postfilter
 		srq = performQuery(m, "fox");
-		rs = srq.getResultSet();
+		rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
 		srq.setControl("emphasis", "abstract");
 		decorate = new Decorate();
@@ -144,11 +144,11 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 	
 	@Test public void testOneDocumentSummary() throws Exception {
 		Index index = createIndex();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		ResultSet rs; Decorate decorate; SearchRequest srq;
 		
 		srq = performQuery(m, "lorem ipsum");
-		rs = srq.getResultSet();
+		rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
 		srq.setControl("emphasis", "abstract");
 		srq.setControl("summaries", "abstract");
@@ -163,11 +163,11 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 	
 	@Test public void testOneDocumentSummaryField() throws Exception {
 		Index index = createIndex();
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		ResultSet rs; Decorate decorate; SearchRequest srq;
 		
 		srq = performQuery(m, "lorem ipsum");
-		rs = srq.getResultSet();
+		rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
 		srq.setControl("emphasis", "abstract");
 		srq.setControl("summaries", "abstract");

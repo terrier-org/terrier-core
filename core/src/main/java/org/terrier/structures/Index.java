@@ -34,6 +34,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.querying.IndexRef;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 /** 
@@ -375,6 +376,10 @@ public abstract class Index implements Closeable, Flushable {
 	 */
 	public String getIndexProperty(String key, String defaultValue) {
 		return properties.getProperty(key, defaultValue);
+	}
+	
+	public IndexRef getIndexRef() {
+		return new IndexFactory.DirectIndexRef(this);
 	}
 
 	/**

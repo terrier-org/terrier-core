@@ -8,9 +8,9 @@ public class TerrierQLToControls implements Process {
 	@Override
 	public void process(Manager manager, Request rq) {
 		Query query = rq.getQuery();
-		//System.out.println(query);
 		//get the controls
-		boolean rtr = ! query.obtainControls(manager.Allowed_Controls, rq.getControlHashtable());
+		//TODO: this is a hack
+		boolean rtr = ! query.obtainControls(((LocalManager) manager).Allowed_Controls, rq.getControlHashtable());
 		//we check that there is still something left in the query
 		if (! rtr)
 		{

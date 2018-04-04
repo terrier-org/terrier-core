@@ -115,18 +115,20 @@ while (postings.next() != IterablePosting.EOL) {
 }
 ```
 
-Moreover, if you're not comfortable with using Java, you can dump the indices of a collection using the –print\* options of TrecTerrier. See the javadoc of [TrecTerrier](javadoc/org/terrier/applications/TrecTerrier.html) for more information.
+Moreover, if you're not comfortable with using Java, you can dump the indices of a collection using the --print\* options of the indexutil command. See the javadoc of [IndexUtils](javadoc/org/terrier/structures/IndexUtils.html) for more information.
 
 ### Example Querying Code
 
 Below, you can find a example sample of using the querying functionalities of Terrier.
 
 ```java
-    String query = "term1 term2";
-    SearchRequest srq = queryingManager.newSearchRequestFromQuery(query);
-    srq.addMatchingModel("Matching", "PL2");
-    queryingManager.runSearchRequest(srq);
-    ResultSet rs = srq.getResultSet();
+	IndexRef indexref = IndexRef.of("/path/to/data.properties");
+	Manager queryingManager = ManagerFactory.from(indexref);
+	String query = "term1 term2";
+	SearchRequest srq = queryingManager.newSearchRequestFromQuery(query);
+	srq.addMatchingModel("org.terrier.matching.daat.Full", "PL2");
+	queryingManager.runSearchRequest(srq);
+	List<ScoredDoc> rs = srq.getResults();
 ```
 
 ------------------------------------------------------------------------

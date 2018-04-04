@@ -31,15 +31,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terrier.matching.ResultSet;
+import org.terrier.querying.IndexRef;
 import org.terrier.querying.Manager;
+import org.terrier.querying.ManagerFactory;
+import org.terrier.querying.ScoredDoc;
 import org.terrier.querying.SearchRequest;
-import org.terrier.structures.Index;
-import org.terrier.structures.MetaIndex;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.ArrayUtils;
 /**
  * This class performs interactive querying at the command line. It asks
  * for a query on Standard Input, and then displays the document IDs that
@@ -63,8 +65,6 @@ public class InteractiveQuerying {
 	protected int matchingCount = 0;
 	/** The file to store the output to.*/
 	protected PrintWriter resultFile = new PrintWriter(System.out);
-	/** The name of the manager object that handles the queries. Set by property <tt>interactive.manager</tt>, defaults to Manager. */
-	protected String managerName = ApplicationSetup.getProperty("interactive.manager", "Manager");
 	/** The query manager.*/
 	protected Manager queryingManager;
 	/** The weighting model used. */
@@ -72,7 +72,7 @@ public class InteractiveQuerying {
 	/** The matching model used.*/
 	protected String mModel = ApplicationSetup.getProperty("interactive.matching", "Matching");
 	/** The data structures used.*/
-	protected Index index;
+	protected IndexRef indexref;
 	/** The maximum number of presented results. */
 	protected static int RESULTS_LENGTH = 
 		Integer.parseInt(ApplicationSetup.getProperty("interactive.output.format.length", "1000"));
@@ -83,7 +83,6 @@ public class InteractiveQuerying {
 	
 	/** A default constructor initialises the index, and the Manager. */
 	public InteractiveQuerying() {
-		loadIndex();
 		createManager();		
 	}
 
@@ -92,41 +91,13 @@ public class InteractiveQuerying {
 	* another matching model is required.
 	*/
 	protected void createManager(){
-		try{
-		if (managerName.indexOf('.') == -1)
-			managerName = "org.terrier.querying."+managerName;
-		queryingManager = ApplicationSetup.getClass(managerName).asSubclass(Manager.class)
-			.getConstructor(new Class[]{Index.class})
-			.newInstance(new Object[]{index});
-		} catch (Exception e) {
-			logger.error("Problem loading Manager ("+managerName+"): ",e);	
-		}
+		queryingManager = ManagerFactory.from(IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
 	}
 	
-	/**
-	* Loads index(s) from disk.
-	*
-	*/
-	protected void loadIndex(){
-		long startLoading = System.currentTimeMillis();
-		index = Index.createIndex();
-		if(index == null)
-		{
-			logger.error("Failed to load index. Perhaps index files are missing");
-		}
-		long endLoading = System.currentTimeMillis();
-		if (logger.isInfoEnabled())
-			logger.info("time to intialise index : " + ((endLoading-startLoading)/1000.0D));
-	}
 	/**
 	 * Closes the used structures.
 	 */
 	public void close() {
-		try{
-			index.close();
-		} catch (IOException ioe) {
-			logger.warn("Problem closing index", ioe);
-		}
 		
 	}
 	/**
@@ -186,71 +157,47 @@ public class InteractiveQuerying {
 	 * @param q SearchRequest the search request to get results from.
 	 */
 	public void printResults(PrintWriter pw, SearchRequest q) throws IOException {
-		ResultSet set = q.getResultSet();
-		int[] docids = set.getDocids();
-		double[] scores = set.getScores();
-		int minimum = RESULTS_LENGTH;
-		//if the minimum number of documents is more than the
-		//number of documents in the results, aw.length, then
-		//set minimum = aw.length
-		if (minimum > set.getResultSize())
-			minimum = set.getResultSize();
-		if (verbose)
-			if(set.getResultSize()>0)
-				pw.write("\n\tDisplaying 1-"+set.getResultSize()+ " results\n");
-			else
-				pw.write("\n\tNo results\n");
-		pw.flush();
-		if (set.getResultSize() == 0)
-			return;
+		List<ScoredDoc> results = q.getResults();
+		if (results.size() > RESULTS_LENGTH)
+			results = results.subList(0, RESULTS_LENGTH-1);
 		
-		int metaKeyId = 0; final int metaKeyCount = metaKeys.length;
-		String[][] docNames = new String[metaKeyCount][];
-		for(String metaIndexDocumentKey : metaKeys)
-		{
-			if (set.hasMetaItems(metaIndexDocumentKey))
+		if (verbose)
+			if(results.size()>0)
 			{
-				docNames[metaKeyId] = set.getMetaItems(metaIndexDocumentKey);
+				pw.write("\n\tDisplaying 1-"+results.size()+ " results\n");
+				pw.flush();
 			}
 			else
 			{
-				final MetaIndex metaIndex = index.getMetaIndex();
-				docNames[metaKeyId] = metaIndex.getItems(metaIndexDocumentKey, docids);
+				pw.write("\n\tNo results\n");
+				pw.flush();
+				return;
 			}
-			metaKeyId++;
-		}
 		
 		
 		StringBuilder sbuffer = new StringBuilder();
-		//the results are ordered in asceding order
-		//with respect to the score. For example, the
-		//document with the highest score has score
-		//score[scores.length-1] and its docid is
-		//docid[docids.length-1].
-		int start = 0;
-		int end = minimum;
-		for (int i = start; i < end; i++) {
-			if (scores[i] <= 0d)
+		int i = -1;
+		for(ScoredDoc doc : results)
+		{
+			i++;
+			
+			//TODO check this should be here. 
+			if (doc.getScore() <= 0d)
 				continue;
 			sbuffer.append(i);
 			sbuffer.append(" ");
-			for(metaKeyId = 0; metaKeyId < metaKeyCount; metaKeyId++)
-			{
-				sbuffer.append(docNames[metaKeyId][i]);
-				sbuffer.append(" ");
-			}
+			sbuffer.append(ArrayUtils.join(doc.getAllMetadata(), ' '));
+			
 			if (printDocid)
 			{
-				sbuffer.append(docids[i]);
+				sbuffer.append(doc.getDocid());
 				sbuffer.append(" ");
 			}
-			sbuffer.append(scores[i]);
+			sbuffer.append(doc.getScore());
 			sbuffer.append('\n');
 		}
-		//System.out.println(sbuffer.toString());
 		pw.write(sbuffer.toString());
 		pw.flush();
-		//pw.write("finished outputting\n");
 	}
 	
 	public static class Command extends CLITool

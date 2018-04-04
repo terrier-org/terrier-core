@@ -29,8 +29,8 @@ package org.terrier.realtime;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,7 +47,9 @@ import org.terrier.indexing.Document;
 import org.terrier.indexing.FileDocument;
 import org.terrier.indexing.tokenisation.EnglishTokeniser;
 import org.terrier.matching.ResultSet;
+import org.terrier.querying.LocalManager;
 import org.terrier.querying.Manager;
+import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.realtime.memory.MemoryIndex;
 import org.terrier.realtime.memory.fields.MemoryFieldsIndex;
@@ -130,13 +132,13 @@ public class TestUtils {
 	 */
 	public static ResultSet query(String query,Index index) {
 		ApplicationSetup.setProperty("ignore.low.idf.terms", "false");
-		Manager mgr = new Manager(index);
+		Manager mgr = new LocalManager(index);
 		assertNotNull(mgr);
 		SearchRequest srq = mgr.newSearchRequest(query, query);
 		assertNotNull(srq);
 		srq.addMatchingModel("Matching","TF_IDF");
 		mgr.runSearchRequest(srq);
-		ResultSet result = srq.getResultSet();
+		ResultSet result = ((Request) srq).getResultSet();
 		assertNotNull(result);
 		return result;
 	}

@@ -38,7 +38,6 @@ import java.util.Set;
 
 import org.apache.hadoop.io.Writable;
 import org.terrier.applications.CLITool;
-import org.terrier.structures.bit.BitPostingIndex;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
@@ -397,19 +396,18 @@ public class IndexUtil {
 		
 		/* if source and destination index as the same, then a ConcurrentModificationException
 		 * will occur if we try to alter the Properties table while the iteration is taking place.
-		 * Hence, to prevent this, we create a temporary new index, put new properties to that, 
+		 * Hence, to prevent this, we create a temporary Properties, put new properties to that, 
 		 * then apply all new properties back on the source(dest) index */
 		
 		final boolean sameIndex = sourceIndex == destIndex;
-		// use temporary index as destination
-		IndexOnDisk tmpDestIndex = (IndexOnDisk) (sameIndex ? new IndexOnDisk((long)0, (long)0, (long)0) : destIndex);
-
+		// use temporary index as destination if sameIndex
+		Properties destProperties = sameIndex ? new Properties() : destIndex.properties;
 		for(Object o : sourceIndex.getProperties().keySet())
 		{
 			String key = (String)o;
 			if (key.startsWith("index."+sourceStructureName + "."))
 			{
-				tmpDestIndex.setIndexProperty(
+				destProperties.setProperty(
 						key.replaceFirst("^index\\."+sourceStructureName + "\\.", 
 						"index." + destinationStructureName + "."), sourceIndex.getProperties().getProperty(key));
 				found = true;
@@ -418,13 +416,12 @@ public class IndexUtil {
 		//copy new properties to real index
 		if (sameIndex)
 		{
-			for(Object o : tmpDestIndex.getProperties().keySet())
+			for(Object o : destProperties.keySet())
 			{
 				String key = (String)o;
-				sourceIndex.setIndexProperty((String)o, tmpDestIndex.getIndexProperty(key, null));
+				sourceIndex.setIndexProperty((String)o, destProperties.getProperty(key, null));
 			}
 		}
-		tmpDestIndex = null;
 		//copy 
 		for(String file : Files.list(((IndexOnDisk) sourceIndex).getPath()))
 		{

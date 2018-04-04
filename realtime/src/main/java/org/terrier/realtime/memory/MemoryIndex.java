@@ -39,6 +39,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.indexing.Document;
+import org.terrier.querying.IndexRef;
 import org.terrier.realtime.UpdatableIndex;
 import org.terrier.realtime.WritableIndex;
 import org.terrier.structures.AbstractPostingOutputStream;
@@ -50,6 +51,7 @@ import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
@@ -82,6 +84,25 @@ import org.terrier.utility.ArrayUtils;
  * @since 4.0
  */
 public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
+	
+	public static class Loader implements IndexFactory.IndexLoader
+	{
+		@Override
+		public boolean supports(IndexRef ref) {
+			return ref.size() == 1 && ref.toString().equals("#memory");
+		}
+
+		@Override
+		public Index load(IndexRef ref) {
+			return new MemoryIndex();
+		}
+
+		@Override
+		public Class<? extends Index> indexImplementor(IndexRef ref) {
+			return MemoryIndex.class;
+		}
+	}
+	
 	protected static final Logger logger = LoggerFactory.getLogger(MemoryIndex.class);
 
 	/*

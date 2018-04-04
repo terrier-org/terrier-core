@@ -43,21 +43,21 @@ public class TestManager extends ApplicationSetupBasedTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testNullIndexException() throws Exception
 	{
-		new Manager(null);
+		new LocalManager(null);
 	}
 	
 	@Test
 	public void testSimpleRetrieval() throws Exception
 	{
 		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"The quick brown fox jumps over the lazy dog"});
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		SearchRequest srq;
 		srq = m.newSearchRequest("testQuery", "fox fox dog");
 		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
 		m.runSearchRequest(srq);
-		assertNotNull(srq.getResultSet());
-		assertEquals(1, srq.getResultSet().getResultSize());
-		assertEquals(0, srq.getResultSet().getDocids()[0]);
+		assertNotNull(((Request) srq).getResultSet());
+		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
+		assertEquals(0, ((Request) srq).getResultSet().getDocids()[0]);
 		
 	}
 	
@@ -65,7 +65,7 @@ public class TestManager extends ApplicationSetupBasedTest {
 	public void testCountingQueryTerms() throws Exception
 	{
 		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"The quick brown fox jumps over the lazy dog"});
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		SearchRequest srq;
 		MatchingQueryTerms mqt;
 		srq = m.newSearchRequest("testQuery", "fox fox dog");
@@ -106,7 +106,7 @@ public class TestManager extends ApplicationSetupBasedTest {
 				new String[]{"doc1", "doc2"}, 
 				new String[]{"The quick brown fox jumps over the lazy dog", 
 					"Exploring the zoo, we saw every kangaroo jump and quite a few carried babies."});
-		Manager m = new Manager(index);
+		Manager m = new LocalManager(index);
 		SearchRequest srq = m.newSearchRequestFromQuery("brown fox");
 		Request rq = (Request)srq;
 		assertNotNull( rq.getIndex() );

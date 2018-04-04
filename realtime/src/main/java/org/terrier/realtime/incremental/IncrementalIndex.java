@@ -40,9 +40,11 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.indexing.Document;
+import org.terrier.querying.IndexRef;
 import org.terrier.realtime.UpdatableIndex;
 import org.terrier.realtime.memory.MemoryIndex;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.indexing.DocumentPostingList;
 import org.terrier.utility.ApplicationSetup;
 
@@ -66,6 +68,31 @@ public class IncrementalIndex extends org.terrier.realtime.multi.MultiIndex impl
 	protected static final Logger logger = LoggerFactory
 			.getLogger(IncrementalIndex.class);
 
+	
+	public static class Loader implements IndexFactory.IndexLoader
+	{
+
+		@Override
+		public boolean supports(IndexRef ref) {
+			return ref.toString().contains("#INCREMENTAL");
+		}
+
+		@Override
+		public Index load(IndexRef ref) {
+			
+			File file = new File(ref.toString());
+			String path = file.getParent(); 
+			String prefix = file.getName().replace("#INCREMENTAL", "");
+			return IncrementalIndex.createIndex(path, prefix);
+		}
+
+		@Override
+		public Class<? extends Index> indexImplementor(IndexRef ref) {
+			return IncrementalIndex.class;
+		}
+		
+	}
+	
 	/*
 	 * In-memory index.
 	 */

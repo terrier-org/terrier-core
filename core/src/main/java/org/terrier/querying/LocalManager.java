@@ -49,6 +49,7 @@ import org.terrier.matching.models.WeightingModel;
 import org.terrier.matching.models.WeightingModelFactory;
 import org.terrier.querying.parser.Query;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
@@ -80,11 +81,26 @@ import com.google.common.collect.Lists;
   * <li><tt>end</tt> : the result number to end at - defaults to 0 (display all results)</li>
   * <li><tt>c</tt> : the c parameter for the DFR models, or more generally, the parameters for weighting models</li>
   * <li><tt>c_set</tt> : "yes" if the c control has been set</li>
-  * <li><tt>c_set</tt> : "yes" if the c control has been set</li>
   * </ul>
   */
-public class Manager implements IManager
+public class LocalManager implements Manager
 {
+	public static class Builder implements ManagerFactory.Builder
+	{
+		@Override
+		public boolean supports(IndexRef ref) {
+			return IndexFactory.whoSupports(ref) != null;
+		}
+
+		@Override
+		public Manager fromIndex(IndexRef ref) {
+			Index index = IndexFactory.of(ref);
+			assert index != null;
+			return new LocalManager(index);
+		}
+		
+	}
+	
 	protected static final Logger logger = LoggerFactory.getLogger(Manager.class);
 
 	/* ------------Module default namespaces -----------*/
@@ -400,8 +416,7 @@ public class Manager implements IManager
 		}
 		
 		@Override
-		public void process(Manager manager, SearchRequest srq) {
-			Request rq = (Request)srq;
+		public void process(Manager manager, Request rq) {
 			if (rq.isEmpty() && ! MATCH_EMPTY_QUERY )
 			{
 				logger.warn("Returning empty result set as query "+rq.getQueryID()+" is empty");
@@ -497,7 +512,7 @@ public class Manager implements IManager
 	
 	/** Default constructor. Use the default index
 	  * @since 2.0 */
-	public Manager()
+	public LocalManager()
 	{
 		this(Index.createIndex());
 	}
@@ -506,7 +521,7 @@ public class Manager implements IManager
 	  * Throws IllegalArgumentException if the specified index is null
 	  * @param _index The index to use in this manage
 	  */
-	public Manager(Index _index)
+	public LocalManager(Index _index)
 	{
 		if (_index == null)
 			throw new IllegalArgumentException("Null index specified to manager. Did the index load?");
@@ -530,20 +545,21 @@ public class Manager implements IManager
 		String allowed = ApplicationSetup.getProperty("querying.allowed.controls", "c,start,end").trim().toLowerCase();
 		String[] controls = allowed.split("\\s*,\\s*");
 		Allowed_Controls = new HashSet<String>();
-		for(int i=0;i<controls.length;i++)
+		for(String control : controls)
 		{
-			Allowed_Controls.add(controls[i]);
+			Allowed_Controls.add(control);
 		}
 	}
+	
 	/** load in the control defaults */
 	protected void load_controls_default()
 	{
 		String defaults = ApplicationSetup.getProperty("querying.default.controls", "").trim();
 		String[] controls = defaults.split("\\s*,\\s*");
 		Default_Controls = new HashMap<String, String>();
-		for(int i=0;i<controls.length;i++)
+		for(String kv : controls)
 		{
-			String control[] = controls[i].split(":");
+			String control[] = kv.split(":", 2);
 			/* control[0] contains the control name, control[1] contains the value */
 			if (control.length < 2)
 			{
@@ -641,6 +657,11 @@ public class Manager implements IManager
 		return index;
 	}
 	
+	@Override
+	public IndexRef getIndexRef() {
+		return index.getIndexRef();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.terrier.querying.IManager#setProperty(java.lang.String, java.lang.String)
 	 */
@@ -687,8 +708,7 @@ public class Manager implements IManager
 		ModuleManager<Process> postfilterModuleManager = new ModuleManager<>("postfilters", "org.terrier.querying", CACHING_FILTERS);
 
 		@Override
-		public void process(Manager manager, SearchRequest srq) {
-			Request rq = (Request)srq;
+		public void process(Manager manager, Request rq) {
 			PostFilter[] filters = postfilterModuleManager.getActive(rq.getControlHashtable()).toArray(new PostFilter[0]);
 			final int filters_length = filters.length;
 			
@@ -729,7 +749,7 @@ public class Manager implements IManager
 			//tell all the postfilters that they are processing another query
 			for(int i=0;i<filters_length; i++)
 			{
-				filters[i].new_query(manager, srq, results);
+				filters[i].new_query(manager, rq, results);
 			}
 			
 			int doccount = -1;//doccount is zero-based, so 0 means 1 document
@@ -749,7 +769,7 @@ public class Manager implements IManager
 				//run this doc through the filters
 				for(int i=0;i<filters_length; i++)
 				{
-					if ( ( docstatus = filters[i].filter(manager, srq, results, thisdoc, thisDocId) )
+					if ( ( docstatus = filters[i].filter(manager, rq, results, thisdoc, thisDocId) )
 						== PostFilter.FILTER_REMOVE
 					)
 						break;
@@ -837,7 +857,7 @@ public class Manager implements IManager
 			
 			
 			logger.info("running process " + p.getInfo());
-			p.process(this, srq);
+			p.process(this, rq);
 			hasTerrierQLquery = rq.getQuery() != null;
 			mqtObtained = rq.getMatchingQueryTerms() != null;
 			hasRawQuery = rq.getOriginalQuery() != null;

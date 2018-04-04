@@ -68,6 +68,7 @@
 	</distributionManagement>
 
 	<modules>
+		<module>retrieval-api</module>
 		<module>core</module>
 		<module>batch-indexers</module>
 		<module>batch-retrieval</module>

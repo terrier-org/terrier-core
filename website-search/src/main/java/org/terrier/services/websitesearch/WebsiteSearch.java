@@ -29,6 +29,7 @@ package org.terrier.services.websitesearch;
 import java.io.IOException;
 
 import org.terrier.querying.Manager;
+import org.terrier.querying.ManagerFactory;
 import org.terrier.querying.SearchRequest;
 import org.terrier.realtime.memory.MemoryIndex;
 import org.terrier.services.websitesearch.crawlers.CrawlerProcess;
@@ -96,14 +97,14 @@ public class WebsiteSearch {
 		
 		sb.append(query);
 		
-		Manager queryingManager = new Manager(memIndex);
+		Manager queryingManager = ManagerFactory.from(memIndex.getIndexRef());
 
 		SearchRequest srq = queryingManager.newSearchRequest("query", sb.toString());
 		srq.addMatchingModel("Matching","DirichletLM");
 		srq.setOriginalQuery(sb.toString());
 		srq.setControl("decorate", "on");
 		queryingManager.runSearchRequest(srq);
-		System.err.println("Returned "+srq.getResultSet().getDocids().length+" documents");
+		System.err.println("Returned "+srq.getResults().size()+" documents");
 		return srq;
 	}
 	

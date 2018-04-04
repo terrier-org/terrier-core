@@ -2,7 +2,7 @@ package org.terrier.querying;
 
 import java.util.Properties;
 
-public interface IManager {
+public interface Manager {
 
 	/* -------------- factory methods for SearchRequest objects ---------*/
 	/** Ask for new SearchRequest object to be made. This is internally a
@@ -44,5 +44,7 @@ public interface IManager {
 	 * @param srq - the SearchRequest to be processed
 	 */
 	public abstract void runSearchRequest(SearchRequest srq);
+	
+	public abstract IndexRef getIndexRef();
 
 }

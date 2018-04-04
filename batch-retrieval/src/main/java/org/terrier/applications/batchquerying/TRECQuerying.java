@@ -50,11 +50,13 @@ import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.models.InL2;
 import org.terrier.matching.models.queryexpansion.Bo1;
-import org.terrier.querying.IManager;
+import org.terrier.querying.IndexRef;
 import org.terrier.querying.Manager;
+import org.terrier.querying.ManagerFactory;
 import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.cache.NullQueryResultCache;
 import org.terrier.structures.cache.QueryResultCache;
 import org.terrier.structures.outputformat.NullOutputFormat;
@@ -82,7 +84,7 @@ import com.google.common.collect.Sets;
  * &lt;top&gt;
  * &lt;num&gt; Number 1 &lt;/num&gt;
  * &lt;title&gt; Query terms &lt;/title&gt;
- * &lt;desc&gt; Description : A setence about the information need &lt;/desc&gt;
+ * &lt;desc&gt; Description : A sentence about the information need &lt;/desc&gt;
  * &lt;narr&gt; Narrative: More sentences about what is relevant or not&lt;/narr&gt;
  * &lt;/top&gt;
  * </pre>
@@ -295,12 +297,6 @@ public class TRECQuerying {
 			.parseBoolean(ApplicationSetup.getProperty(
 					"trec.querying.dump.settings", "true"));
 
-	/**
-	 * The name of the manager object that handles the queries. Set by property
-	 * <tt>trec.manager</tt>, defaults to Manager.
-	 */
-	protected String managerName = ApplicationSetup.getProperty("trec.manager",
-			"Manager");
 	/** The manager object that handles the queries. */
 	protected Manager queryingManager;
 
@@ -318,7 +314,7 @@ public class TRECQuerying {
 			"Matching");
 
 	/** The object that encapsulates the data structures used by Terrier. */
-	protected Index index;
+	protected IndexRef indexref;
 
 	/** The number of results to output. Set by property <tt>trec.output.format.length</tt>.  */
 	protected static int RESULTS_LENGTH = Integer.parseInt(ApplicationSetup
@@ -384,8 +380,8 @@ public class TRECQuerying {
 	 * 
 	 * @param i The specified index.
 	 */
-	public TRECQuerying(Index i) {
-		this.setIndex(i);
+	public TRECQuerying(IndexRef _indexref) {
+		this.indexref = _indexref;
 		this.createManager();
 		this.querySource = this.getQueryParser();
 		this.printer = getOutputFormat();
@@ -418,7 +414,7 @@ public class TRECQuerying {
 			if (!className.contains("."))
 				className = OutputFormat.class.getPackage().getName() +'.' + className;
 			rtr = ApplicationSetup.getClass(className).asSubclass(OutputFormat.class)
-					.getConstructor(Index.class).newInstance(this.index);
+					.getConstructor(Index.class).newInstance(IndexFactory.of(indexref));
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new IllegalArgumentException("Could not load TREC OutputFormat class", e);
@@ -427,21 +423,9 @@ public class TRECQuerying {
 		return rtr;
 	}
 
-	/**
-	 * Create a querying manager. This method should be overriden if another
-	 * matching model is required.
-	 */
-	protected void createManager() {
-		try {
-			if (managerName.indexOf('.') == -1)
-				managerName = "org.terrier.querying." + managerName;
-			queryingManager = (Manager) (ApplicationSetup.getClass(managerName)
-					.getConstructor(new Class[] { Index.class })
-					.newInstance(new Object[] { index }));
-		} catch (Exception e) {
-			logger.error("Problem loading Manager (" + managerName + "): ", e);
 
-		}
+	protected void createManager() {
+		queryingManager = ManagerFactory.from(indexref);
 	}
 
 	/**
@@ -449,16 +433,7 @@ public class TRECQuerying {
 	 * 
 	 */
 	protected void loadIndex() {
-		long startLoading = System.currentTimeMillis();
-		index = Index.createIndex();
-		if (index == null) {
-			logger.error("Failed to load index. " + Index.getLastIndexLoadError());
-			throw new IllegalArgumentException("Failed to load index: " + Index.getLastIndexLoadError());
-		}
-		long endLoading = System.currentTimeMillis();
-		if (logger.isInfoEnabled())
-			logger.info("time to intialise index : "
-					+ ((endLoading - startLoading) / 1000.0D));
+		indexref = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 	}
 
 	/**
@@ -466,21 +441,8 @@ public class TRECQuerying {
 	 * 
 	 * @return The index pointer.
 	 */
-	public Index getIndex() {
-		return index;
-	}
-
-	/**
-	 * Set the index pointer.
-	 * 
-	 * @param i
-	 *            The index pointer.
-	 */
-	public void setIndex(Index i) {
-		this.index = i;
-		if (index == null) {
-			throw new IllegalArgumentException("Index specified was null. Perhaps index files are missing");
-		}
+	public IndexRef getIndexRef() {
+		return indexref;
 	}
 
 	/**
@@ -488,7 +450,7 @@ public class TRECQuerying {
 	 * 
 	 * @return The querying manager.
 	 */
-	public IManager getManager() {
+	public Manager getManager() {
 		return queryingManager;
 	}
 
@@ -496,11 +458,7 @@ public class TRECQuerying {
 	 * Closes the used structures.
 	 */
 	public void close() {
-		if (index != null)
-			try {
-				index.close();
-			} catch (IOException e) {
-		}
+		
 	}
 
 	/**
@@ -691,7 +649,7 @@ public class TRECQuerying {
 
 		synchronized (this) {
 			if (resultFile == null) {
-				method = ApplicationSetup.getProperty("trec.runtag", queryingManager.getInfo(srq));
+				method = ApplicationSetup.getProperty("trec.runtag", srq.getControl("wmodel"));//TODO FIX
 				if (queryexpansion)
 					method = method +
 					"_d_"+ApplicationSetup.getProperty("expansion.documents", "3")+

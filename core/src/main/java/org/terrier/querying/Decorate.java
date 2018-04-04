@@ -41,6 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.ResultSet;
 import org.terrier.querying.summarisation.Summariser;
+import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.collections.LRUMap;
 import org.terrier.utility.ApplicationSetup;
@@ -130,7 +132,13 @@ public class Decorate implements Process, PostFilter {
 	@SuppressWarnings("unchecked")
 	public void new_query(Manager m, SearchRequest q, ResultSet rs)
 	{
-		metaIndex = m.getIndex().getMetaIndex();
+		if( ! IndexFactory.isLocal(m.getIndexRef()))
+		{
+			throw new IllegalStateException("Can only use decorate for a local index");
+		}
+		Index index = IndexFactory.of(m.getIndexRef());
+		metaIndex = index.getMetaIndex();
+				
 		int i=0;
 		for(String k : metaIndex.getKeys())
 		{
@@ -154,8 +162,8 @@ public class Decorate implements Process, PostFilter {
 			escapeKeys.put(escapeKey, defaultEscape);
 		}
 		
-		if (m.getIndex().hasIndexStructure("metacache"))
-			metaCache = (LRUMap<Integer,String[]>) m.getIndex().getIndexStructure("metacache");
+		if (index.hasIndexStructure("metacache"))
+			metaCache = (LRUMap<Integer,String[]>) index.getIndexStructure("metacache");
 		else
 			metaCache = new LRUMap<Integer,String[]>(1000);
 
@@ -235,7 +243,7 @@ public class Decorate implements Process, PostFilter {
 		logger.info("Early decorating resultset with metadata for " + resultsetsize + " documents");
 		
 		String[] earlykeys = earlyKeys.toArray(new String[earlyKeys.size()]);
-		String[] allKeys = manager.getIndex().getMetaIndex().getKeys();
+		String[] allKeys = metaIndex.getKeys();
 		String[][] metadata = getMetadata(allKeys, docids);
 		int keyId = 0;
 		for(String k : allKeys)

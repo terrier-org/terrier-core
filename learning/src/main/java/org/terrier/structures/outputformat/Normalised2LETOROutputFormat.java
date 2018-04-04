@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 
 import org.terrier.learning.FeaturedResultSet;
 import org.terrier.matching.ResultSet;
+import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 import org.terrier.utility.StaTools;
@@ -48,7 +49,7 @@ public class Normalised2LETOROutputFormat extends LETOROutputFormat {
 	public void printResults(PrintWriter pw, SearchRequest q, String method,
 			String iteration, int numberOfResults) throws IOException
 	{
-		ResultSet r = q.getResultSet();
+		ResultSet r = ((Request) q).getResultSet();
 		StaTools.standardNormalisation(r.getScores());
 		
 		if (r instanceof FeaturedResultSet)

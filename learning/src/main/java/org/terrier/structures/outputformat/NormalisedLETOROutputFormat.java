@@ -49,7 +49,7 @@ public class NormalisedLETOROutputFormat extends LETOROutputFormat {
 	public void printResults(PrintWriter pw, SearchRequest q, String method,
 			String iteration, int numberOfResults) throws IOException 
 	{
-		ResultSet rs = q.getResultSet();
+		ResultSet rs = ((Request) q).getResultSet();
 		FeaturedResultSet frs = null;
 		int f;
 		if (rs instanceof FeaturedResultSet)

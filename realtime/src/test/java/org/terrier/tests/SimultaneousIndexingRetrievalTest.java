@@ -26,7 +26,7 @@
 
 package org.terrier.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -39,7 +39,9 @@ import org.junit.Test;
 import org.terrier.indexing.FileDocument;
 import org.terrier.indexing.tokenisation.Tokeniser;
 import org.terrier.matching.ResultSet;
+import org.terrier.querying.LocalManager;
 import org.terrier.querying.Manager;
+import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.realtime.UpdatableIndex;
 import org.terrier.realtime.incremental.IncrementalIndex;
@@ -349,14 +351,14 @@ public class SimultaneousIndexingRetrievalTest extends ApplicationSetupBasedTest
 			
 			sb.append(query);
 			
-			Manager queryingManager = new Manager((Index)index);
+			Manager queryingManager = new LocalManager((Index)index);
 
 			SearchRequest srq = queryingManager.newSearchRequest("query", sb.toString());
 			srq.addMatchingModel("Matching","DirichletLM");
 			srq.setOriginalQuery(sb.toString());
 			
 			queryingManager.runSearchRequest(srq);
-			return srq.getResultSet();
+			return ((Request) srq).getResultSet();
 		}
 
 		@Override
