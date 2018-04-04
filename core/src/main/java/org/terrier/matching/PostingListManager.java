@@ -324,11 +324,11 @@ public class PostingListManager implements Closeable
 				}
 				if (mqt.matchOnTags.size() == 0 || mqt.matchOnTags.contains( me.getTag() ) )
 				{
-					matchOnTerms.add(termIndex);
+					matchOnTerms.add(termPostings.size() -1);
 				}
 				else
 				{
-					nonMatchOnTerms.add(termIndex);
+					nonMatchOnTerms.add(termPostings.size() -1);
 				}
 			} else {
 				//this provides support for Fat indices	
@@ -343,11 +343,11 @@ public class PostingListManager implements Closeable
 				termModels.add(WeightingModelMultiProxy.getModel(new WeightingModel[0]));
 				if (mqt.matchOnTags.size() == 0 || mqt.matchOnTags.contains( entry.getValue().getTag() ))
 				{
-					matchOnTerms.add(termIndex);
+					matchOnTerms.add(termPostings.size() -1);
 				}
 				else
 				{
-					nonMatchOnTerms.add(termIndex);
+					nonMatchOnTerms.add(termPostings.size() -1);
 				}
 			}
 		}

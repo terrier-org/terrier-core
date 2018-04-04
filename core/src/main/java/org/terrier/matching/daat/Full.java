@@ -146,8 +146,8 @@ public class Full extends BaseMatching
             		for(int i : nonMatchingTerms) { 
             			//these are postings that we need to keep/score, but which wont change the threshold
             			//often these might be so FAT can score them later
-            			plm.getPosting(i).next(currentDocId);
-            			assignScore(i, currentCandidate);
+            			if (plm.getPosting(i).next(currentDocId) != IterablePosting.EOL)
+            				assignScore(i, currentCandidate);
             		}
 	            	//System.err.println("New document " + currentCandidate.getDocId() + " with score " + currentCandidate.getScore() + " passes threshold of " + threshold);
 	        		candidateResultList.add(currentCandidate);
