@@ -44,7 +44,7 @@ import org.terrier.utility.ApplicationSetup;
  * <li><tt>stopwords.intern.terms</tt> - optimisation of Java for indexing: Stopwords terms are likely to appear extremely frequently
  * in a Collection, <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/lang/String.html#intern()">interning</a> them in Java will
  * save on GC costs during indexing.</li>
- * <li><tt>stopwords.encoding</tt> - encoding of the file containing the stopwords, if not set defaults to <tt>trec.encoding</tt>,
+ * <li><tt>stopwords.encoding</tt> - encoding of the file containing the stopwords
  * and if that is not set, onto the default system encoding.</li></ul>
  * @author Craig Macdonald <craigm{a.}dcs.gla.ac.uk> 
   */
@@ -121,9 +121,7 @@ public class Stopwords implements TermPipeline
 		//get the absolute filename
 		stopwordsFilename = ApplicationSetup.makeAbsolute(stopwordsFilename, ApplicationSetup.TERRIER_SHARE);
 		//determine encoding to use when reading the stopwords files
-		String stopwordsEncoding = 
-			ApplicationSetup.getProperty("stopwords.encoding", 
-				ApplicationSetup.getProperty("trec.encoding", null));
+		String stopwordsEncoding = ApplicationSetup.getProperty("stopwords.encoding", null);	
 		try {
 			//use sys default encoding if none specified
 			BufferedReader br = stopwordsEncoding != null
