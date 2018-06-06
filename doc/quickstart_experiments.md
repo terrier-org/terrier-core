@@ -37,7 +37,7 @@ Step by Step Windows Installation
 
 In order to be able to use Terrier you simply have to extract the contents of the downloaded Zip file into a directory of your choice. Terrier requires Java version 1.8 or higher. If your system does not meet this requirement you can download an appropriate version from the [JRE download website](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Finally, Terrier assumes that java.exe is on the path, so you should use the System applet in the control panel, to ensure that your [Java\\bin folder is in your PATH environment variable](http://www.oracle.com/technetwork/java/javase/install-windows-189425.html#Environment).
 
-The following instructions are equally applicable to Windows, **with the exception that the script filenames are suffixed by .bat**.
+**The following instructions are equally applicable to Windows, with the exception that the script filenames are suffixed by .bat**.
 
 Using Terrier
 -------------
