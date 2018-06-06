@@ -37,7 +37,7 @@ Step by Step Windows Installation
 
 In order to be able to use Terrier you simply have to extract the contents of the downloaded Zip file into a directory of your choice. Terrier requires Java version 1.8 or higher. If your system does not meet this requirement you can download an appropriate version from the [JRE download website](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Finally, Terrier assumes that java.exe is on the path, so you should use the System applet in the control panel, to ensure that your [Java\\bin folder is in your PATH environment variable](http://www.oracle.com/technetwork/java/javase/install-windows-189425.html#Environment).
 
-The following instructions are equally applicable to Windows, with the exception that the script filenames are suffixed by .bat.
+The following instructions are equally applicable to Windows, **with the exception that the script filenames are suffixed by .bat**.
 
 Using Terrier
 -------------
@@ -117,7 +117,7 @@ $bin/terrier batchindexing
 
 With Terrier's default settings, the resulting index will be created in the `var/index` folder within the Terrier installation folder.
 
-**Note:** If you do not need the direct index structure for e.g. for query expansion, then you can use `bin/trec_terrier.sh -i -j` for the faster single-pass indexing.
+**Note:** If you do not need the direct index structure for e.g. for query expansion, then you can use `bin/terrier batchindexing -j` for the faster single-pass indexing.
 
 Once indexing completes, you can verify your index by obtaining its statistics, using the `indexstats` command of Terrier.
 
@@ -166,7 +166,7 @@ b.  The weighting model (e.g. TF\_IDF) to use - specified using `trec.model` - a
 
 c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels`.
 
-2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line (all other configurration remains using Terrier’s default settings):
+2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line (all other configuration remains using Terrier’s default settings):
 
 ```
     $bin/terrier batchretrieve -Dtrec.topics=share/vaswani_npl/query-text.trec
@@ -180,11 +180,11 @@ c.  The corresponding relevance assessments file (or qrels) for the topics - spe
 
 If all goes well this will result in a `.res` file in the `var/results` directory called `InL2c1_0.res`. We call each `.res` a run.
 
-You can also configure more options on the command line, e.g.:
+For example, you can also configure more options on the command line, e.g.:
 
-    $bin/terrier batchretrieve -Dtrec.model=BM25 -c 0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
+    $bin/terrier batchretrieve -Dtrec.model=BM25 -c c:0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
 
-So what are these? The `batchretrieve` command instructs Terrier to perform retrieval, while `-Dtrec.model=BM25`  tells Terrier to use the BM25 weighting model.  `-c` tells Terrier the parameter for the weighting model. BM25 is a classical Okapi model firstly defined by Stephen Robertson, while InL2 is a Divergence From Randomness weighting model (to learn more, see [the description of the DFR framework](dfr_description.md)).
+So what are these? The `batchretrieve` command instructs Terrier to perform retrieval, while `-Dtrec.model=BM25`  tells Terrier to use the BM25 weighting model --  BM25 is a classical Okapi model firstly defined by Stephen Robertson, while InL2 is a Divergence From Randomness weighting model (to learn more, see [the description of the DFR framework](dfr_description.md)).  `-c c:0.4` tells Terrier the parameter for the weighting model. Note - if you do not specify `c:0.4`, then the default parameter will be used for that weighting model.
 
 3. Now we will evaluate the obtained results by using the `batchevaluate` option of trec\_terrier:
 

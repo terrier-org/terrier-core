@@ -94,7 +94,7 @@ To process the queries, ensure the topics are specified in the `trec.topics` pro
 
     bin/terrier batchretrieval -c c:1.0
 
-where the option `-r` specifies that we want to perform retrieval, and the option `-c 1.0` specifies the parameter value for the term frequency normalisation.
+where the option `-r` specifies that we want to perform retrieval, and the option `-c c:1.0` specifies the parameter value for the term frequency normalisation.
 
 To process queries using a specific weighting model, we can *override* the `trec.model` property on the command line:
 
@@ -162,7 +162,7 @@ In addition, there are two parameters that can be set for applying query expansi
 
 To retrieve from an indexed test collection, using query expansion, with the term frequency normalisation parameter equal to 1.0, we can type:
 
-    bin/terrier batchretrieval -q -c 1.0
+    bin/terrier batchretrieval -q -c c:1.0
 
 Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format qrels file. To use feedback documents in query expansion, change the [FeedbackSelector](javadoc/org/terrier/querying/FeedbackSelector.html), as follows:
 
