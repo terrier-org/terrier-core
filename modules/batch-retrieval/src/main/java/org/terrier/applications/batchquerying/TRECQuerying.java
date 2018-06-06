@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -244,12 +245,19 @@ public class TRECQuerying {
 			TRECQuerying tq = new TRECQuerying();
 				
 			if (line.hasOption("c"))
-				throw new UnsupportedOperationException();
+			{
+				String[] controlCVs = line.getOptionValues("c");
+				for(String tuple : controlCVs)
+				{
+					String[] kv = tuple.split((":|="));
+					tq.controls.put(kv[0], kv[1]);
+				}
+			}
 			
 			if (line.hasOption("docids"))
 				tq.printer = new TRECDocidOutputFormat(null);
 			
-			if (line.hasOption("i"))
+			if (line.hasOption("m"))
 				tq.matchopQL = true;
 			
 			if (line.hasOption("q"))
@@ -279,6 +287,8 @@ public class TRECQuerying {
 
 	/** the boolean indicates whether to expand queries */
 	protected boolean queryexpansion = false;
+	
+	protected Map<String,String> controls = new HashMap<String,String>();
 	
 	protected boolean matchopQL = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false")); 
 	
@@ -620,6 +630,7 @@ public class TRECQuerying {
 	 * @param cParameter
 	 *            double the value of the parameter to use.
 	 */
+	@Deprecated
 	public SearchRequest processQuery(String queryId, String query,
 			double cParameter) {
 		return processQuery(queryId, query, cParameter, true);
@@ -704,6 +715,7 @@ public class TRECQuerying {
 			srq.setControl("terrierql", "off");
 			srq.setControl("matchopql", "on");
 		}
+		this.controls.forEach((k,v) -> srq.setControl(k, v));
 				
 		initSearchRequestModification(queryId, srq);
 		String c = null;
