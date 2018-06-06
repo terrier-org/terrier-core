@@ -143,8 +143,8 @@ public class TRECSetup {
 			propertiesWriter.println("#default controls for manager");
 			
 			propertiesWriter.println("querying.processes=terrierql:TerrierQLParser,parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,"
-					+"matchopql:MatchingOpQLParser,applypipeline:ApplyTermPipeline,localmatching:Manager$ApplyLocalMatching,"
-					+"qe:QueryExpansion,filters:Manager$PostFilterProcess");
+					+"matchopql:MatchingOpQLParser,applypipeline:ApplyTermPipeline,localmatching:LocalManager$ApplyLocalMatching,"
+					+"qe:QueryExpansion,filters:LocalManager$PostFilterProcess");
 			
 			propertiesWriter.println("#default controls for the web-based interface. SimpleDecorate");
 			propertiesWriter.println("#is the simplest metadata decorator. For more control, see Decorate.");
