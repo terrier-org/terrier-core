@@ -1,4 +1,4 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,18 +9,21 @@ import org.terrier.structures.postings.ANDIterablePosting;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ArrayUtils;
 
-
-public class ANDQueryTerm extends MultiQueryTerm {
+/** This combines multiple operators into a single op, where must all occur
+ * in a document. It is logically equivalent to Indri's #band() operator.
+ * @since 5.0
+ */
+public class ANDQueryOp extends MultiTermOp {
 	
 	public static final String STRING_PREFIX = "#band";
 
 	private static final long serialVersionUID = 1L;
 
-	public ANDQueryTerm(String[] ts) {
+	public ANDQueryOp(String[] ts) {
 		super(ts);
 	}
 	
-	public ANDQueryTerm(QueryTerm[] ts) {
+	public ANDQueryOp(Operator[] ts) {
 		super(ts);
 	}
 
@@ -60,7 +63,7 @@ public class ANDQueryTerm extends MultiQueryTerm {
 		return STRING_PREFIX + "(" + ArrayUtils.join(terms, ' ') + ")";
 	}
 	
-	public ANDQueryTerm clone()
+	public ANDQueryOp clone()
 	{
 		throw new UnsupportedOperationException(); //TODO
 	}

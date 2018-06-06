@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
-import org.terrier.matching.indriql.QueryTerm;
+import org.terrier.matching.matchops.Operator;
 import org.terrier.matching.models.TF_IDF;
 import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.structures.Index;
@@ -57,8 +57,8 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 	@Test public void testTaggedMatching() throws Exception {
 		Index index = createIndex();
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		mqt.add(QTPBuilder.of(QueryTerm.parse("brown")).setWeight(1.2d).setTag("match").build());
-		mqt.add(QTPBuilder.of(QueryTerm.parse("fox")).setWeight(1.2d).setTag("nomatch").build());
+		mqt.add(QTPBuilder.of(Operator.parse("brown")).setWeight(1.2d).setTag("match").build());
+		mqt.add(QTPBuilder.of(Operator.parse("fox")).setWeight(1.2d).setTag("nomatch").build());
 		mqt.matchOnTags.add("match");
 		mqt.setDefaultTermWeightingModel(new TF_IDF());
 		PostingListManager p;
@@ -75,9 +75,9 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 	@Test public void testTaggedMatchingWithMissing() throws Exception {
 		Index index = createIndex();
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		mqt.add(QTPBuilder.of(QueryTerm.parse("zebra")).setWeight(1.2d).setTag("nomatch").build());
-		mqt.add(QTPBuilder.of(QueryTerm.parse("brown")).setWeight(1.2d).setTag("match").build());
-		mqt.add(QTPBuilder.of(QueryTerm.parse("fox")).setWeight(1.2d).setTag("nomatch").build());
+		mqt.add(QTPBuilder.of(Operator.parse("zebra")).setWeight(1.2d).setTag("nomatch").build());
+		mqt.add(QTPBuilder.of(Operator.parse("brown")).setWeight(1.2d).setTag("match").build());
+		mqt.add(QTPBuilder.of(Operator.parse("fox")).setWeight(1.2d).setTag("nomatch").build());
 		mqt.matchOnTags.add("match");
 		mqt.setDefaultTermWeightingModel(new TF_IDF());
 		PostingListManager p;

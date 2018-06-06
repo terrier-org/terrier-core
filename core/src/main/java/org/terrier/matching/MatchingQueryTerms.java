@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.dsms.DocumentScoreModifier;
-import org.terrier.matching.indriql.QueryTerm;
-import org.terrier.matching.indriql.SingleQueryTerm;
+import org.terrier.matching.matchops.Operator;
+import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.querying.Request;
 import org.terrier.querying.parser.Query;
@@ -62,10 +62,10 @@ implements Serializable,Cloneable
 {
 	
 	public static class MatchingTerm 
-	extends MapEntry<QueryTerm, MatchingQueryTerms.QueryTermProperties>
-	implements Map.Entry<QueryTerm, MatchingQueryTerms.QueryTermProperties>{
+	extends MapEntry<Operator, MatchingQueryTerms.QueryTermProperties>
+	implements Map.Entry<Operator, MatchingQueryTerms.QueryTermProperties>{
 
-		public MatchingTerm(QueryTerm _key, QueryTermProperties _value) {
+		public MatchingTerm(Operator _key, QueryTermProperties _value) {
 			super(_key, _value);
 		}
 	}
@@ -230,15 +230,15 @@ implements Serializable,Cloneable
 		
 	}
 	
-	static class StringQueryTermPropertiesByIndexComparator implements Comparator<Map.Entry<QueryTerm,QueryTermProperties>>, Serializable
+	static class StringQueryTermPropertiesByIndexComparator implements Comparator<Map.Entry<Operator,QueryTermProperties>>, Serializable
 	{
 		private static final long serialVersionUID = 1L;
-		public int compare(Entry<QueryTerm, QueryTermProperties> o1, Entry<QueryTerm, QueryTermProperties> o2)
+		public int compare(Entry<Operator, QueryTermProperties> o1, Entry<Operator, QueryTermProperties> o2)
 		{
 			return o1.getValue().index - o2.getValue().index;
 		}		
 	}
-	static final Comparator<Map.Entry<QueryTerm,QueryTermProperties>> BY_INDEX_COMPARATOR = new StringQueryTermPropertiesByIndexComparator();
+	static final Comparator<Map.Entry<Operator,QueryTermProperties>> BY_INDEX_COMPARATOR = new StringQueryTermPropertiesByIndexComparator();
 	
 	
 	/** The query ID, if provided */
@@ -375,7 +375,7 @@ implements Serializable,Cloneable
 	}
 	
 	
-	public void setTermProperty(QueryTerm term, EntryStatistics e) {
+	public void setTermProperty(Operator term, EntryStatistics e) {
 		QueryTermProperties properties = (QueryTermProperties)this.get(term);
 		if (properties == null) {
 			this.add( new MatchingTerm(term, new QueryTermProperties(0, e)));
@@ -390,7 +390,7 @@ implements Serializable,Cloneable
 	 * @param e EntryStatistics the term score modifier to apply for the given term.
 	 */
 	public void setTermProperty(String term, EntryStatistics e) {
-		setTermProperty(new SingleQueryTerm(term), e);
+		setTermProperty(new SingleTermOp(term), e);
 	}
 	
 	/**
@@ -398,7 +398,7 @@ implements Serializable,Cloneable
 	 * @param term String the term for which to add a term score modifier.
 	 * @param tsm TermScoreModifier the term score modifier to apply for the given term.
 	 */
-	public void setTermProperty(QueryTerm term, WeightingModel tsm) {
+	public void setTermProperty(Operator term, WeightingModel tsm) {
 		QueryTermProperties properties = (QueryTermProperties)this.get(term);
 		if (properties == null) {
 		//	this.put(term, new QueryTermProperties(termAdditionIndex++, tsm));
@@ -413,7 +413,7 @@ implements Serializable,Cloneable
 	 * @param weight int the weight of the query term.
 	 * @param tsm TermScoreModifier the term score modifier applied for the query term.
 	 */
-	public void setTermProperty(QueryTerm term, double weight, WeightingModel tsm) {
+	public void setTermProperty(Operator term, double weight, WeightingModel tsm) {
 		QueryTermProperties properties = (QueryTermProperties)this.get(term);
 		if (properties == null) {
 			this.add(new MatchingTerm(term, new QueryTermProperties(0 /*termAdditionIndex++*/, weight, tsm)));
@@ -453,7 +453,7 @@ implements Serializable,Cloneable
 	 * @return double the weight of the given query term. If the term is not part
 	 *         of the query, then it returns 0.
 	 */
-	public double getTermWeight(QueryTerm term) {
+	public double getTermWeight(Operator term) {
 		final QueryTermProperties tp = this.get(term);
 		if (tp!=null)
 			return tp.weight;
@@ -461,7 +461,7 @@ implements Serializable,Cloneable
 	}
 	
 	public double getTermWeight(String term) {
-		Map.Entry<QueryTerm,QueryTermProperties> ee = this.get(term);
+		Map.Entry<Operator,QueryTermProperties> ee = this.get(term);
 		if (ee != null)
 			return ee.getValue().weight;
 		return 0d;
@@ -474,7 +474,7 @@ implements Serializable,Cloneable
 	public double[] getTermWeights(){
 		double[] tws = new double[this.size()];
 		int i=0;
-		for(Map.Entry<QueryTerm, QueryTermProperties> e : this)
+		for(Map.Entry<Operator, QueryTermProperties> e : this)
 			tws[i++] = e.getValue().weight;
 		return tws;
 	}
@@ -485,7 +485,7 @@ implements Serializable,Cloneable
 	 * @return EntryStatistics the statistics of the term, or null if the
 	 * term does not appear in the query.
 	 */
-	public EntryStatistics getStatistics(QueryTerm term) {
+	public EntryStatistics getStatistics(Operator term) {
 		final QueryTermProperties tp = this.get(term);
 		if (tp == null)
 			return null;
@@ -493,15 +493,15 @@ implements Serializable,Cloneable
 	}
 	
 	public EntryStatistics getStatistics(String term) {
-		final Map.Entry<QueryTerm, QueryTermProperties> ee = this.get(term);
+		final Map.Entry<Operator, QueryTermProperties> ee = this.get(term);
 		if (ee == null)
 			return null;
 		return ee.getValue().stats;
 	}
 	
-	public QueryTermProperties get(QueryTerm term) {
+	public QueryTermProperties get(Operator term) {
 		//TODO: this is slow
-		for( Map.Entry<QueryTerm, QueryTermProperties> e : this)
+		for( Map.Entry<Operator, QueryTermProperties> e : this)
 		{
 			if (e.getKey().equals(term))
 				return e.getValue();
@@ -509,9 +509,9 @@ implements Serializable,Cloneable
 		return null;
 	}
 	
-	public Map.Entry<QueryTerm, QueryTermProperties> get(String singleTerm) {
+	public Map.Entry<Operator, QueryTermProperties> get(String singleTerm) {
 		//TODO: this is slow
-		for( Map.Entry<QueryTerm, QueryTermProperties> e : this)
+		for( Map.Entry<Operator, QueryTermProperties> e : this)
 		{
 			if (e.getKey().toString().equals(singleTerm))
 				return e;
@@ -524,9 +524,9 @@ implements Serializable,Cloneable
 	
 	
 	public void setTermProperty(String term, double weight) {
-		Map.Entry<QueryTerm, QueryTermProperties> e = get(term);
+		Map.Entry<Operator, QueryTermProperties> e = get(term);
 		if (e == null)
-			this.add(new MatchingTerm(new SingleQueryTerm(term), new QueryTermProperties(0, weight)));
+			this.add(new MatchingTerm(new SingleTermOp(term), new QueryTermProperties(0, weight)));
 		else
 			e.getValue().weight = weight;
 	}
@@ -536,14 +536,14 @@ implements Serializable,Cloneable
 	/** Returns the query terms, as they were added to this object. 
 	 * @return Query terms in order that they were added to the query. Empty array if object has no query terms added.
 	 */
-	public QueryTerm[] getMatchingTerms() {
+	public Operator[] getMatchingTerms() {
 		
-		List<QueryTerm> l = Lists.newArrayList();
-		for( Map.Entry<QueryTerm, QueryTermProperties> e : this)
+		List<Operator> l = Lists.newArrayList();
+		for( Map.Entry<Operator, QueryTermProperties> e : this)
 		{
 			l.add(e.getKey());
 		}
-		return l.toArray(new QueryTerm[l.size()]);
+		return l.toArray(new Operator[l.size()]);
 	}
 	
 	/** Returns the query terms, as they were added to this object. 
@@ -552,7 +552,7 @@ implements Serializable,Cloneable
 	public String[] getTerms() {
 		
 		List<String> l = Lists.newArrayList();
-		for( Map.Entry<QueryTerm, QueryTermProperties> e : this)
+		for( Map.Entry<Operator, QueryTermProperties> e : this)
 		{
 			l.add(e.getKey().toString());
 		}
@@ -580,7 +580,7 @@ implements Serializable,Cloneable
 	* @param term String the term to add.
 	* @param weight double the weight of the added term.
 	*/
-	public void setTermProperty(QueryTerm term, double weight) {
+	public void setTermProperty(Operator term, double weight) {
 		QueryTermProperties properties = this.get(term);
 		if (properties == null) {
 		//	termProperties.put(term, new QueryTermProperties(termAdditionIndex++, weight));
@@ -606,7 +606,7 @@ implements Serializable,Cloneable
 		
 		//copy queryID, Strings are immutable
 		//clone query term properties
-		for (Map.Entry<QueryTerm, QueryTermProperties> e : this)
+		for (Map.Entry<Operator, QueryTermProperties> e : this)
 		{
 			newMQT.add(new MatchingTerm(e.getKey().clone(), e.getValue().clone()));
 		}
@@ -623,7 +623,7 @@ implements Serializable,Cloneable
 	/** Remove a term from the list of terms to be matched
 	 * @since 3.6 
 	 */
-	public void removeTerm(QueryTerm term)
+	public void removeTerm(Operator term)
 	{
 		this.remove(term);
 	}
@@ -654,7 +654,7 @@ implements Serializable,Cloneable
 	/** Set the default weighting model to be used for terms that do NOT have an explicit WeightingModel set. */
 	public void setDefaultTermWeightingModel(WeightingModel weightingModel) {
 		defaultWeightingModel = weightingModel;
-		for(Map.Entry<QueryTerm, QueryTermProperties> e : this)
+		for(Map.Entry<Operator, QueryTermProperties> e : this)
 		{
 			if (e.getValue().termModels.size() == 0)
 				e.getValue().termModels.add(weightingModel.clone());
@@ -670,7 +670,7 @@ implements Serializable,Cloneable
 	public String toString()
 	{
 		StringBuilder s = new StringBuilder();
-		for(Map.Entry<QueryTerm, QueryTermProperties> e : this)
+		for(Map.Entry<Operator, QueryTermProperties> e : this)
 		{
 			s.append(e.getKey().toString());
 			s.append(' ');

@@ -143,7 +143,7 @@ public class TRECSetup {
 			propertiesWriter.println("#default controls for manager");
 			
 			propertiesWriter.println("querying.processes=terrierql:TerrierQLParser,parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,"
-					+"indriql:IndriQLParser,applypipeline:ApplyTermPipeline,localmatching:Manager$ApplyLocalMatching,"
+					+"matchopql:MatchingOpQLParser,applypipeline:ApplyTermPipeline,localmatching:Manager$ApplyLocalMatching,"
 					+"qe:QueryExpansion,filters:Manager$PostFilterProcess");
 			
 			propertiesWriter.println("#default controls for the web-based interface. SimpleDecorate");

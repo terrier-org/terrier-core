@@ -30,9 +30,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.terrier.matching.MatchingQueryTerms;
-import org.terrier.matching.indriql.PhraseTerm;
-import org.terrier.matching.indriql.QueryTerm;
-import org.terrier.matching.indriql.UnorderedWindowTerm;
+import org.terrier.matching.matchops.PhraseOp;
+import org.terrier.matching.matchops.Operator;
+import org.terrier.matching.matchops.UnorderedWindowOp;
 
 import com.google.common.collect.Lists;
 /**
@@ -121,9 +121,9 @@ public class PhraseQuery extends MultiTermQuery {
 		}
 		
 		String[] ts = singleTerms.toArray(new String[singleTerms.size()]);
-		QueryTerm t = this.proximityDistance == 1
-				? new PhraseTerm(ts)
-				: new UnorderedWindowTerm(ts, this.proximityDistance);
+		Operator t = this.proximityDistance == 1
+				? new PhraseOp(ts)
+				: new UnorderedWindowOp(ts, this.proximityDistance);
 		
 		QTPBuilder factory = QTPBuilder.of(t);
 		if (required == null || required == true)

@@ -34,7 +34,7 @@ import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.CollectionResultSet;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.ResultSet;
-import org.terrier.matching.indriql.SingleQueryTerm;
+import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.matching.models.InL2;
 import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.structures.Index;
@@ -69,8 +69,8 @@ public class TestDependenceScoreModifier extends ApplicationSetupBasedTest {
 		
 		mqt = new MatchingQueryTerms();
 		mqt.setDefaultTermWeightingModel(new InL2());
-		mqt.add(QTPBuilder.of(new SingleQueryTerm("quick")).build());
-		mqt.add(QTPBuilder.of(new SingleQueryTerm("dog")).build());		
+		mqt.add(QTPBuilder.of(new SingleTermOp("quick")).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("dog")).build());		
 		r = new CollectionResultSet(1);
 		r.getScores()[0] = 1.0d;
 		dsm.modifyScores(index1, mqt, r);
@@ -79,8 +79,8 @@ public class TestDependenceScoreModifier extends ApplicationSetupBasedTest {
 		
 		mqt = new MatchingQueryTerms();
 		mqt.setDefaultTermWeightingModel(new InL2());
-		mqt.add(QTPBuilder.of(new SingleQueryTerm("brown")).build());
-		mqt.add(QTPBuilder.of(new SingleQueryTerm("fox")).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("brown")).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("fox")).build());
 		r = new CollectionResultSet(1);
 		r.getScores()[0] = 1.0d;
 		dsm.modifyScores(index1, mqt, r);

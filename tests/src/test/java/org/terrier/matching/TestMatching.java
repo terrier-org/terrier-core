@@ -34,8 +34,8 @@ import gnu.trove.TIntHashSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
-import org.terrier.matching.indriql.SingleQueryTerm;
-import org.terrier.matching.indriql.SynonymTerm;
+import org.terrier.matching.matchops.SingleTermOp;
+import org.terrier.matching.matchops.SynonymOp;
 import org.terrier.matching.models.DLH13;
 import org.terrier.querying.LocalManager;
 import org.terrier.querying.Manager;
@@ -353,7 +353,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		mqt = new MatchingQueryTerms();
-		mqt.add(QTPBuilder.of( new SynonymTerm(new String[]{"quick","waggily"})).build());
+		mqt.add(QTPBuilder.of( new SynonymOp(new String[]{"quick","waggily"})).build());
 		//mqt.setTermProperty("quick|waggily");
 		mqt.setDefaultTermWeightingModel(new DLH13());
 		rs = matching.match("query1", mqt);
@@ -426,8 +426,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		mqt = new MatchingQueryTerms();
-		mqt.add(QTPBuilder.of(new SingleQueryTerm("dog")).build());
-		mqt.add(QTPBuilder.of(new SingleQueryTerm("window")).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("dog")).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("window")).build());
 //		mqt.setTermProperty("dog");
 //		mqt.setTermProperty("window");
 		mqt.setDefaultTermWeightingModel(new DLH13());

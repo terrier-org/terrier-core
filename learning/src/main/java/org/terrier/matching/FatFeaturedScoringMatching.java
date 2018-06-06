@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.terrier.learning.FeaturedQueryResultSet;
 import org.terrier.learning.FeaturedResultSet;
 import org.terrier.matching.dsms.DocumentScoreModifier;
-import org.terrier.matching.indriql.UnorderedWindowTerm;
+import org.terrier.matching.matchops.UnorderedWindowOp;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.matching.models.WeightingModelFactory;
 import org.terrier.sorting.MultiSort;
@@ -234,7 +234,7 @@ public class FatFeaturedScoringMatching implements Matching {
 	{
 		@Override
 		public boolean test(Pair<String,String> queryTerm) {
-			if (queryTerm.getLeft().contains(UnorderedWindowTerm.STRING_PREFIX))
+			if (queryTerm.getLeft().contains(UnorderedWindowOp.STRING_PREFIX))
 				return true;
 			return false;
 		}

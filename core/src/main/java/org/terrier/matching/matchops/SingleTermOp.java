@@ -1,4 +1,4 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,22 +19,22 @@ import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.FieldOnlyIterablePosting;
 import org.terrier.structures.postings.IterablePosting;
 
-public class SingleQueryTerm extends QueryTerm {
+public class SingleTermOp extends Operator {
 
 	private static final long serialVersionUID = 1L;
 	
 	
-	protected static final Logger logger = LoggerFactory.getLogger(SingleQueryTerm.class);
+	protected static final Logger logger = LoggerFactory.getLogger(SingleTermOp.class);
 	
 	String queryTerm;
 	String field = null;
 	
-	public SingleQueryTerm(String t)
+	public SingleTermOp(String t)
 	{
 		queryTerm = t;
 	}
 	
-	public SingleQueryTerm(String t, String f)
+	public SingleTermOp(String t, String f)
 	{
 		queryTerm = t;
 		this.field = f;
@@ -55,9 +55,9 @@ public class SingleQueryTerm extends QueryTerm {
 		return queryTerm + '.'  + field;
 	}
 	
-	public SingleQueryTerm clone()
+	public SingleTermOp clone()
 	{
-		SingleQueryTerm rtr = (SingleQueryTerm) super.clone();
+		SingleTermOp rtr = (SingleTermOp) super.clone();
 		rtr.queryTerm = queryTerm; //strings are immutable
 		return rtr;
 	}

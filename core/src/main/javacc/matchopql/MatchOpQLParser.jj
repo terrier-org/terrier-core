@@ -5,12 +5,13 @@ options {
 	DEBUG_PARSER=false;
 }
 
-PARSER_BEGIN(IndriQLParser)
+PARSER_BEGIN(MatchOpQLParser)
 
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +22,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 @SuppressWarnings("all")
-public class IndriQLParser
+public class MatchOpQLParser
 {
     private final static boolean DEBUG = false;
     
-    public IndriQLParser(String r) {
+    public MatchOpQLParser(String r) {
     	this(new StringReader(r));
     }
 	   
@@ -38,14 +39,14 @@ public class IndriQLParser
 	        	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	        	String line = null;
 	        	while((line = br.readLine())!= null) {
-	        		IndriQLParser parser = new IndriQLParser(line.trim());
+	        		MatchOpQLParser parser = new MatchOpQLParser(line.trim());
 	        		System.out.println(parser.parseAll());
 	        	}
 	        }
 	        else
 	        {
 	            String query = args[0];
-	            IndriQLParser parser = new IndriQLParser(query);
+	            MatchOpQLParser parser = new MatchOpQLParser(query);
 	            System.out.println(parser.parse());
 	        }
         }
@@ -56,7 +57,7 @@ public class IndriQLParser
     }
 }
 
-PARSER_END(IndriQLParser) 
+PARSER_END(MatchOpQLParser) 
 
 /** Skip these characters, they are considered "white space" **/
 SKIP :                              
@@ -193,41 +194,41 @@ List<MatchingTerm> tag(): {
 
 
 MatchingTerm syn(): {
-  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  List<Operator> words = new ArrayList<Operator>();
   MatchingTerm newWord = null;
 }
 { 
   <SYN> <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
   {
-    return QTPBuilder.of(new SynonymTerm(words.toArray(new QueryTerm[words.size()]))).build();
+    return QTPBuilder.of(new SynonymOp(words.toArray(new Operator[words.size()]))).build();
   }
 }
 
 MatchingTerm band() : {
-  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  List<Operator> words = new ArrayList<Operator>();
   MatchingTerm newWord = null;
 }
 { 
   <BAND>  <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
   {
-    return QTPBuilder.of(new ANDQueryTerm(words.toArray(new QueryTerm[words.size()]))).build();
+    return QTPBuilder.of(new ANDQueryOp(words.toArray(new Operator[words.size()]))).build();
   }
 }
 
 MatchingTerm uw(): {
-  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  List<Operator> words = new ArrayList<Operator>();
   MatchingTerm newWord = null;
   Token dist;
 }
 { 
   <UW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
   {
-    return QTPBuilder.of(new UnorderedWindowTerm(words.toArray(new QueryTerm[words.size()]), Integer.parseInt(dist.image))).build();
+    return QTPBuilder.of(new UnorderedWindowOp(words.toArray(new Operator[words.size()]), Integer.parseInt(dist.image))).build();
   }
 }
 
 MatchingTerm ow(): {
-  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  List<Operator> words = new ArrayList<Operator>();
   MatchingTerm newWord = null;
   Token dist;
 }
@@ -239,13 +240,13 @@ MatchingTerm ow(): {
   	{
   		throw new ParseException("Ordered windows > 1 not yet supported");
   	}
-    return QTPBuilder.of(new PhraseTerm(words.toArray(new QueryTerm[words.size()]))).build();
+    return QTPBuilder.of(new PhraseOp(words.toArray(new Operator[words.size()]))).build();
   }
 }
 
 
 MatchingTerm ow_implicit(): {
-  List<QueryTerm> words = new ArrayList<QueryTerm>();
+  List<Operator> words = new ArrayList<Operator>();
   MatchingTerm newWord = null;
   Token dist;
 }
@@ -257,7 +258,7 @@ MatchingTerm ow_implicit(): {
   	{
   		throw new ParseException("Ordered windows > 1 not yet supported");
   	}
-    return QTPBuilder.of(new PhraseTerm(words.toArray(new QueryTerm[words.size()]))).build();
+    return QTPBuilder.of(new PhraseOp(words.toArray(new Operator[words.size()]))).build();
   }
 }
 
@@ -271,6 +272,6 @@ MatchingTerm word() : {
 		String fieldName = null;
 		if (field != null)
 			fieldName = field.image;
-		return QTPBuilder.of(new SingleQueryTerm(word.image, fieldName)).build();
+		return QTPBuilder.of(new SingleTermOp(word.image, fieldName)).build();
 	}
 }

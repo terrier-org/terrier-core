@@ -31,7 +31,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-import org.terrier.matching.indriql.SingleQueryTerm;
+import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.querying.parser.Query;
 import org.terrier.querying.parser.QueryParser;
 import org.terrier.querying.parser.Query.QTPBuilder;
@@ -75,7 +75,7 @@ public class TestMatchingQueryTerms {
 		assertNotNull(mqt.getMatchingTerms());
 		assertEquals(0, mqt.getMatchingTerms().length);	
 		//default weight of a term is 1
-		mqt.add(QTPBuilder.of(new SingleQueryTerm(term)).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp(term)).build());
 		assertEquals(1.0d, mqt.getTermWeight(term), 0.0d);
 		mqt.setTermProperty(term, 1);
 		//set overwrite, should still be 1

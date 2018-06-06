@@ -1,4 +1,4 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,8 +8,12 @@ import org.terrier.structures.SimpleNgramEntryStatistics;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.ProximityIterablePosting;
 import org.terrier.utility.ArrayUtils;
-
-public class UnorderedWindowTerm extends ANDQueryTerm {
+/** This combines multiple operators into a single op, where they occur within a specified
+ * window of tokens. It is logically equivalent 
+ * to Indri's #uwN() operator.
+ * @since 5.0
+ */
+public class UnorderedWindowOp extends ANDQueryOp {
 
 	public static final String STRING_PREFIX = "#uw";
 	private static final long serialVersionUID = 1L;
@@ -17,12 +21,12 @@ public class UnorderedWindowTerm extends ANDQueryTerm {
 	
 	int distance;
 	
-	public UnorderedWindowTerm(QueryTerm[] ts, int dist) {
+	public UnorderedWindowOp(Operator[] ts, int dist) {
 		super(ts);
 		this.distance = dist;
 	}
 	
-	public UnorderedWindowTerm(String[] ts, int dist) {
+	public UnorderedWindowOp(String[] ts, int dist) {
 		super(ts);
 		this.distance = dist;
 	}

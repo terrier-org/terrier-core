@@ -1,4 +1,4 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,18 +8,21 @@ import org.terrier.structures.SimpleNgramEntryStatistics;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.PhraseIterablePosting;
 import org.terrier.utility.ArrayUtils;
-
-public class PhraseTerm extends ANDQueryTerm {
+/** This combines multiple operators into a single op, where they occur adjacently. 
+ * It is logically equivalent to Indri's #1() operator.
+ * @since 5.0
+ */
+public class PhraseOp extends ANDQueryOp {
 
 	public static final String STRING_PREFIX = "#1";
 	
 	private static final long serialVersionUID = 1L;
 
-	public PhraseTerm(QueryTerm[] ts) {
+	public PhraseOp(Operator[] ts) {
 		super(ts);
 	}
 	
-	public PhraseTerm(String[] ts) {
+	public PhraseOp(String[] ts) {
 		super(ts);
 	}
 

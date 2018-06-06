@@ -57,8 +57,8 @@ import org.terrier.matching.TestMatching.TestTAATFullMatching;
 import org.terrier.matching.TestMatchingQueryTerms;
 import org.terrier.matching.TestResultSets;
 import org.terrier.matching.TestTRECResultsMatching;
-import org.terrier.matching.indriql.TestIndriQLParser;
-import org.terrier.matching.indriql.TestTRECQueryingIndriql;
+import org.terrier.matching.matchops.TestMatchOpQLParser;
+import org.terrier.matching.matchops.TestTRECQueryingMatchOpQL;
 import org.terrier.matching.models.TestWeightingModelFactory;
 import org.terrier.querying.TestDecorate;
 import org.terrier.querying.TestManager;
@@ -163,9 +163,9 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestTRECResultsMatching.class,
 	TestResultSets.class,
 	
-	//matching.indriql
-	TestTRECQueryingIndriql.class,
-	TestIndriQLParser.class,
+	//matching.matchops
+	TestTRECQueryingMatchOpQL.class,
+	TestMatchOpQLParser.class,
 	
 	//matching.models
 	TestWeightingModelFactory.class,

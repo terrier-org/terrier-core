@@ -4,9 +4,9 @@ import gnu.trove.TIntArrayList;
 
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
-import org.terrier.matching.indriql.MultiQueryTerm;
-import org.terrier.matching.indriql.QueryTerm;
-import org.terrier.matching.indriql.SingleQueryTerm;
+import org.terrier.matching.matchops.MultiTermOp;
+import org.terrier.matching.matchops.Operator;
+import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
@@ -34,9 +34,9 @@ public class ApplyTermPipeline implements Process {
 	}
 	
 	interface Visitor {
-		boolean visit(QueryTerm qt);
-		boolean visit(SingleQueryTerm sqt);
-		boolean visit(MultiQueryTerm mqt);
+		boolean visit(Operator qt);
+		boolean visit(SingleTermOp sqt);
+		boolean visit(MultiTermOp mqt);
 	}
 	
 	
@@ -51,20 +51,20 @@ public class ApplyTermPipeline implements Process {
 		Visitor visitor = new Visitor()
 		{
 			@Override
-			public boolean visit(QueryTerm qt) {
-				if(qt instanceof SingleQueryTerm)
+			public boolean visit(Operator qt) {
+				if(qt instanceof SingleTermOp)
 				{
-					return this.visit((SingleQueryTerm)qt);
+					return this.visit((SingleTermOp)qt);
 				}
-				else if(qt instanceof MultiQueryTerm)
+				else if(qt instanceof MultiTermOp)
 				{
-					return this.visit((MultiQueryTerm)qt);
+					return this.visit((MultiTermOp)qt);
 				}
 				return true;
 			}
 			
 			@Override
-			public boolean visit(SingleQueryTerm sqt) {
+			public boolean visit(SingleTermOp sqt) {
 				String origTerm = sqt.getTerm();
 				String newTerm = tpa.pipelineTerm(origTerm);
 				if (newTerm == null)
@@ -74,10 +74,10 @@ public class ApplyTermPipeline implements Process {
 			}
 
 			@Override
-			public boolean visit(MultiQueryTerm mqt) {
-				QueryTerm[] qts = mqt.getConstituents();
+			public boolean visit(MultiTermOp mqt) {
+				Operator[] qts = mqt.getConstituents();
 				boolean OK = true;
-				for(QueryTerm qt : qts) {
+				for(Operator qt : qts) {
 					//boolean OKqt = 
 					this.visit(qt);
 				}

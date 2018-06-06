@@ -30,8 +30,8 @@ import java.util.Set;
 
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
-import org.terrier.matching.indriql.QueryTerm;
-import org.terrier.matching.indriql.SingleQueryTerm;
+import org.terrier.matching.matchops.Operator;
+import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
 /**
@@ -187,7 +187,7 @@ public class SingleTermQuery extends Query {
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field,
 			Boolean required, Double weight) {
 		
-		QueryTerm matchTerm = new SingleQueryTerm(this.term, field);
+		Operator matchTerm = new SingleTermOp(this.term, field);
 		QueryTermProperties qtp = terms.get(matchTerm);
 		if (qtp != null)
 		{

@@ -1,4 +1,4 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,8 +13,10 @@ import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ApplicationSetup;
-
-public abstract class QueryTerm implements Serializable, Cloneable {
+/** A match op is a possible query "term" in the query 
+ * @since 5.0
+ */
+public abstract class Operator implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	protected static boolean IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","true"));
@@ -28,9 +30,9 @@ public abstract class QueryTerm implements Serializable, Cloneable {
 
 	@Override
 	public boolean equals(Object _o) {
-		if (! (_o instanceof QueryTerm))
+		if (! (_o instanceof Operator))
 			return false;
-		QueryTerm o = (QueryTerm)_o;
+		Operator o = (Operator)_o;
 		return o.toString().equals(this.toString());
 	}
 
@@ -40,10 +42,10 @@ public abstract class QueryTerm implements Serializable, Cloneable {
 	}
 	
 	@Override 
-	public QueryTerm clone()
+	public Operator clone()
 	{
 		try{
-			return (QueryTerm) super.clone();
+			return (Operator) super.clone();
 		} catch (CloneNotSupportedException cnse){
 			//this is cloneable, cannot happen
 			return null;
@@ -53,10 +55,10 @@ public abstract class QueryTerm implements Serializable, Cloneable {
 	/** get posting iterator for this query op. */
 	public abstract Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException;
 	
-	public static QueryTerm parse(String stringRep) {
+	public static Operator parse(String stringRep) {
 		if (! stringRep.startsWith("#"))
 		{
-			return new SingleQueryTerm(stringRep);
+			return new SingleTermOp(stringRep);
 		}
 		int firstBracket = stringRep.indexOf('(');
 		int lastBracket = stringRep.lastIndexOf(')');
@@ -67,26 +69,26 @@ public abstract class QueryTerm implements Serializable, Cloneable {
 			throw new IllegalArgumentException("Recursive parsing not supported!");
 		}
 		String[] terms = insideBracket.split("\\s+");
-		if (prefix.startsWith(ANDQueryTerm.STRING_PREFIX))
+		if (prefix.startsWith(ANDQueryOp.STRING_PREFIX))
 		{
-			return new ANDQueryTerm(terms);
+			return new ANDQueryOp(terms);
 		}
 //		if (insideBracket.startsWith(DateRangeTerm.STRING_PREFIX))
 //		{
 //			return new DateRangeTerm(terms);
 //		}
-		if (prefix.startsWith(PhraseTerm.STRING_PREFIX))
+		if (prefix.startsWith(PhraseOp.STRING_PREFIX))
 		{
-			return new PhraseTerm(terms);
+			return new PhraseOp(terms);
 		}
-		if (prefix.startsWith(SynonymTerm.STRING_PREFIX))
+		if (prefix.startsWith(SynonymOp.STRING_PREFIX))
 		{
-			return new SynonymTerm(terms);
+			return new SynonymOp(terms);
 		}
-		if (prefix.startsWith(UnorderedWindowTerm.STRING_PREFIX))
+		if (prefix.startsWith(UnorderedWindowOp.STRING_PREFIX))
 		{
-			int distance = Integer.parseInt( prefix.replaceFirst(UnorderedWindowTerm.STRING_PREFIX, "") );
-			return new UnorderedWindowTerm(terms, distance);
+			int distance = Integer.parseInt( prefix.replaceFirst(UnorderedWindowOp.STRING_PREFIX, "") );
+			return new UnorderedWindowOp(terms, distance);
 		}
 		throw new IllegalArgumentException("Unsupported operator " + prefix);
 	}

@@ -32,7 +32,7 @@ import java.util.Set;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
-import org.terrier.matching.indriql.QueryTerm;
+import org.terrier.matching.matchops.Operator;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.terms.TermPipelineAccessor;
 /**
@@ -45,14 +45,14 @@ public abstract class Query implements Serializable, Cloneable{
 
 	public static class QTPBuilder
 	{
-		public static QTPBuilder of(QueryTerm term)
+		public static QTPBuilder of(Operator term)
 		{
 			return new QTPBuilder(term);
 		}
 		
-		QueryTerm t;
+		Operator t;
 		QueryTermProperties qtp = new QueryTermProperties(0);
-		QTPBuilder(QueryTerm _t) {
+		QTPBuilder(Operator _t) {
 			this.t = _t; 
 			qtp.weight = 1;
 		}

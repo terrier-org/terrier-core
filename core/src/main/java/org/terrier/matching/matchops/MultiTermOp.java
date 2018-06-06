@@ -1,4 +1,4 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,29 +19,29 @@ import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
 
-public abstract class MultiQueryTerm extends QueryTerm {
+public abstract class MultiTermOp extends Operator {
 
 	private static final long serialVersionUID = 1L;
-	protected static final Logger logger = LoggerFactory.getLogger(MultiQueryTerm.class);
-	QueryTerm[] terms;
-	public MultiQueryTerm(String[] ts)
+	protected static final Logger logger = LoggerFactory.getLogger(MultiTermOp.class);
+	Operator[] terms;
+	public MultiTermOp(String[] ts)
 	{
 		this(getSingleTerms(ts));	
 	}
 	
-	public MultiQueryTerm(QueryTerm[] _ts)
+	public MultiTermOp(Operator[] _ts)
 	{
 		this.terms = _ts;
 	}
 	
-	public QueryTerm[] getConstituents() {
+	public Operator[] getConstituents() {
 		return terms;
 	}
 	
-	static QueryTerm[] getSingleTerms(String[] ts) {
-		 QueryTerm[] rtr = new QueryTerm[ts.length];
+	static Operator[] getSingleTerms(String[] ts) {
+		 Operator[] rtr = new Operator[ts.length];
 		 for(int i=0;i<ts.length;i++)
-			 rtr[i] = new SingleQueryTerm(ts[i]);
+			 rtr[i] = new SingleTermOp(ts[i]);
 		 return rtr;
 	}
 	
@@ -70,7 +70,7 @@ public abstract class MultiQueryTerm extends QueryTerm {
 	{
 		List<EntryStatistics> _le = new ArrayList<EntryStatistics>(terms.length);
 		List<IterablePosting> _joinedPostings = new ArrayList<IterablePosting>(terms.length);
-		for(QueryTerm ts : terms) {
+		for(Operator ts : terms) {
 			Pair<EntryStatistics,IterablePosting> pair = ts.getPostingIterator(index);
 			if (pair == null || pair.getLeft() == null)
 			{
@@ -130,7 +130,7 @@ public abstract class MultiQueryTerm extends QueryTerm {
 		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required, qtp.tag);
 	}
 	
-	public MultiQueryTerm clone()
+	public MultiTermOp clone()
 	{
 		throw new UnsupportedOperationException(); //TODO
 	}

@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
-import org.terrier.matching.indriql.PhraseTerm;
-import org.terrier.matching.indriql.SingleQueryTerm;
-import org.terrier.matching.indriql.UnorderedWindowTerm;
+import org.terrier.matching.matchops.PhraseOp;
+import org.terrier.matching.matchops.SingleTermOp;
+import org.terrier.matching.matchops.UnorderedWindowOp;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.matching.models.dependence.pBiL;
 import org.terrier.querying.parser.Query.QTPBuilder;
@@ -57,7 +57,7 @@ public class DependenceModelPreProcess implements Process {
 		List<String> queryTerms = new ArrayList<>();
 		for(MatchingTerm e : mqt)
 		{
-			if (! ( e.getKey() instanceof SingleQueryTerm))
+			if (! ( e.getKey() instanceof SingleTermOp))
 				continue;
 			queryTerms.add(e.getKey().toString());
 		}
@@ -77,7 +77,7 @@ public class DependenceModelPreProcess implements Process {
 		//#1
 		for(int i=0;i<queryTerms.size()-1;i++)
 		{
-			QTPBuilder qtp = QTPBuilder.of(new PhraseTerm(new String[]{queryTerms.get(i), queryTerms.get(i+1)}));
+			QTPBuilder qtp = QTPBuilder.of(new PhraseOp(new String[]{queryTerms.get(i), queryTerms.get(i+1)}));
 			qtp.setWeight(0.1d);
 			qtp.addWeightingModel(getModel(modelName,2));
 			qtp.setTag(DEPENDENCE_TAG);
@@ -87,7 +87,7 @@ public class DependenceModelPreProcess implements Process {
 		//#uw8
 		for(int i=0;i<queryTerms.size()-1;i++)
 		{
-			QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowTerm(new String[]{queryTerms.get(i), queryTerms.get(i+1)}, 8));
+			QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowOp(new String[]{queryTerms.get(i), queryTerms.get(i+1)}, 8));
 			qtp.setWeight(0.1d);
 			qtp.addWeightingModel(getModel(modelName,8));
 			qtp.setTag(DEPENDENCE_TAG);
@@ -98,7 +98,7 @@ public class DependenceModelPreProcess implements Process {
 		List<String> allTerms = queryTerms;
 		if (allTerms.size() > 12)
 			allTerms = allTerms.subList(0, 11);
-		QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowTerm(allTerms.toArray(new String[allTerms.size()]), 12));
+		QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowOp(allTerms.toArray(new String[allTerms.size()]), 12));
 		qtp.setWeight(0.1d);
 		qtp.addWeightingModel(getModel(modelName,12));
 		qtp.setTag(DEPENDENCE_TAG);

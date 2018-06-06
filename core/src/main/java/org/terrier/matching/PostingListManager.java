@@ -38,8 +38,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terrier.matching.indriql.MatchingEntry;
-import org.terrier.matching.indriql.QueryTerm;
+import org.terrier.matching.matchops.MatchingEntry;
+import org.terrier.matching.matchops.Operator;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.querying.Request;
 import org.terrier.structures.CollectionStatistics;
@@ -293,10 +293,10 @@ public class PostingListManager implements Closeable
 		
 		int termIndex = -1;
 		
-		for(Map.Entry<QueryTerm, MatchingQueryTerms.QueryTermProperties> entry : mqt)
+		for(Map.Entry<Operator, MatchingQueryTerms.QueryTermProperties> entry : mqt)
 		{
 			termIndex++;
-			QueryTerm term = entry.getKey();
+			Operator term = entry.getKey();
 			if (splitSynonyms)
 			{
 				MatchingEntry me = term.getMatcher(

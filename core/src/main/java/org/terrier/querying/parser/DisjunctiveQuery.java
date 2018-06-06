@@ -28,9 +28,9 @@ package org.terrier.querying.parser;
 import java.util.List;
 
 import org.terrier.matching.MatchingQueryTerms;
-import org.terrier.matching.indriql.QueryTerm;
-import org.terrier.matching.indriql.SingleQueryTerm;
-import org.terrier.matching.indriql.SynonymTerm;
+import org.terrier.matching.matchops.Operator;
+import org.terrier.matching.matchops.SingleTermOp;
+import org.terrier.matching.matchops.SynonymOp;
 
 import com.google.common.collect.Lists;
 
@@ -98,13 +98,13 @@ public class DisjunctiveQuery extends MultiTermQuery {
 	
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight)
 	{
-		List<QueryTerm> singleTerms = Lists.newArrayList();
+		List<Operator> singleTerms = Lists.newArrayList();
 		for(Query child : v)
 		{
 			SingleTermQuery term = (SingleTermQuery)child;
-			singleTerms.add(new SingleQueryTerm(term.getTerm(), field));
+			singleTerms.add(new SingleTermOp(term.getTerm(), field));
 		}
-		QTPBuilder qtp = QTPBuilder.of(new SynonymTerm(singleTerms.toArray(new QueryTerm[singleTerms.size()])));
+		QTPBuilder qtp = QTPBuilder.of(new SynonymOp(singleTerms.toArray(new Operator[singleTerms.size()])));
 		if (weight != null)
 		{
 			qtp.setWeight(weight * this.weight);

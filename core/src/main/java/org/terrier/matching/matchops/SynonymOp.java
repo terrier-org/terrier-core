@@ -1,4 +1,4 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,21 +9,24 @@ import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.ORIterablePosting;
 import org.terrier.utility.ArrayUtils;
-
-public class SynonymTerm extends MultiQueryTerm {
+/** This combines multiple operators into a single op. It is logically equivalent 
+ * to Indri's #syn() operator.
+ * @since 5.0
+ */
+public class SynonymOp extends MultiTermOp {
 
 	public static final String STRING_PREFIX = "#syn";
 	private static final long serialVersionUID = 1L;
 	
 	
-	protected static final Logger logger = LoggerFactory.getLogger(SynonymTerm.class);
+	protected static final Logger logger = LoggerFactory.getLogger(SynonymOp.class);
 	
-	public SynonymTerm(QueryTerm[] ts) {
+	public SynonymOp(Operator[] ts) {
 		super(ts);
 	}
 
 	
-	public SynonymTerm(String[] ts) {
+	public SynonymOp(String[] ts) {
 		super(ts);
 	}
 

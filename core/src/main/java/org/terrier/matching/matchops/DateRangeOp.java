@@ -1,4 +1,4 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,16 +24,16 @@ import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.ORIterablePosting;
 
-public class DateRangeTerm extends QueryTerm {
+public class DateRangeOp extends Operator {
 
 	public static final String STRING_PREFIX = "#datebetween";
 	
-	protected static final Logger logger = LoggerFactory.getLogger(MultiQueryTerm.class);
+	protected static final Logger logger = LoggerFactory.getLogger(MultiTermOp.class);
 	private static final long serialVersionUID = 1L;
 	Date lowRange;
 	Date hiRange;
 	
-	public DateRangeTerm(Date _lo, Date _hi)
+	public DateRangeOp(Date _lo, Date _hi)
 	{
 		this.lowRange = _lo;
 		this.hiRange = _hi;
@@ -74,7 +74,7 @@ public class DateRangeTerm extends QueryTerm {
 			logger.warn("No alternatives matched in "+this.toString());
 			return null;
 		}
-		entryStats = MultiQueryTerm.addStatistics(_le.toArray(new LexiconEntry[_le.size()]));
+		entryStats = MultiTermOp.addStatistics(_le.toArray(new LexiconEntry[_le.size()]));
 		return Pair.of(entryStats, (IterablePosting) ORIterablePosting.mergePostings(_joinedPostings.toArray(new IterablePosting[_joinedPostings.size()])));
 	}
 

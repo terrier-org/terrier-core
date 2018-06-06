@@ -44,8 +44,8 @@ import org.terrier.matching.Matching;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.daat.FatFull;
-import org.terrier.matching.indriql.PhraseTerm;
-import org.terrier.matching.indriql.UnorderedWindowTerm;
+import org.terrier.matching.matchops.PhraseOp;
+import org.terrier.matching.matchops.UnorderedWindowOp;
 import org.terrier.matching.models.TF_IDF;
 import org.terrier.matching.models.Tf;
 import org.terrier.querying.parser.Query.QTPBuilder;
@@ -123,12 +123,12 @@ public class TestFatFeaturedScoringMatching extends ApplicationSetupBasedTest {
 		mqt.setTermProperty("lazy", 1.0d);
 		mqt.setTermProperty("fox", 1.0d);		
 		mqt.add(QTPBuilder
-				.of(new PhraseTerm(new String[]{"lazy", "dog"}))
+				.of(new PhraseOp(new String[]{"lazy", "dog"}))
 				.setWeight(0.1).setTag("sdm")
 				.setWeightingModels(Arrays.asList(new Tf()))
 				.build());
 		mqt.add(QTPBuilder
-				.of(new UnorderedWindowTerm(new String[]{"lazy", "dog"}, 8))
+				.of(new UnorderedWindowOp(new String[]{"lazy", "dog"}, 8))
 				.setWeight(0.1).setTag("sdm")
 				.setWeightingModels(Arrays.asList(new Tf()))
 				.build());

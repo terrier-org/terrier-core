@@ -124,7 +124,7 @@ import com.google.common.collect.Sets;
  * 
  * <li><tt>trec.topics</tt> - the name of the topic file. Multiple topics files can be used, if separated by comma. </li>
  * 
- * <li><tt>trec.topics.indriql</tt> - if the topics should be parsed using the indriql parser. Defaults to false. </li>
+ * <li><tt>trec.topics.matchopql</tt> - if the topics should be parsed using the matchopql parser. Defaults to false. </li>
  * 
  * <li><tt>trec.model</tt> the name of the weighting model to be used during retrieval. Default InL2 </li>
  *<li><tt>trec.qe.model</tt> the name of the query expansino model to be used during query expansion. Default Bo1. </li>
@@ -195,10 +195,10 @@ public class TRECQuerying {
 					.argName("docids")
 					.desc("specifies that Terrier will returns docids rather than docnos")
 					.build());
-			options.addOption(Option.builder("i")
-					.argName("indriql")
-					.longOpt("indrqi")
-					.desc("specifies that topics are presumed to be Indri QL, rather than Terrier QL")
+			options.addOption(Option.builder("m")
+					.argName("matchingql")
+					.longOpt("matchingql")
+					.desc("specifies that topics are presumed to be formatted be as the Indri-esque QL, rather than Terrier QL")
 					.build());			
 			options.addOption(Option.builder("q")
 					.argName("queryexpanion")
@@ -250,7 +250,7 @@ public class TRECQuerying {
 				tq.printer = new TRECDocidOutputFormat(null);
 			
 			if (line.hasOption("i"))
-				tq.indriQL = true;
+				tq.matchopQL = true;
 			
 			if (line.hasOption("q"))
 				tq.queryexpansion = true;
@@ -280,7 +280,7 @@ public class TRECQuerying {
 	/** the boolean indicates whether to expand queries */
 	protected boolean queryexpansion = false;
 	
-	protected boolean indriQL = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.indriql", "false")); 
+	protected boolean matchopQL = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false")); 
 	
 	/** The file to store the output to. */
 	protected volatile PrintWriter resultFile;
@@ -378,7 +378,7 @@ public class TRECQuerying {
 	 * TRECQuerying constructor initialises the specified inverted index, the
 	 * lexicon and the document index structures.
 	 * 
-	 * @param i The specified index.
+	 * @param _indexref The specified index reference.
 	 */
 	public TRECQuerying(IndexRef _indexref) {
 		this.indexref = _indexref;
@@ -696,12 +696,12 @@ public class TRECQuerying {
 		if (logger.isInfoEnabled())
 			logger.info(queryId + " : " + query);
 		SearchRequest srq = queryingManager.newSearchRequest(queryId, query);
-		if (indriQL)
+		if (matchopQL)
 		{
 			srq.setControl("parsecontrols", "off");
 			srq.setControl("parseql", "off");
 			srq.setControl("terrierql", "off");
-			srq.setControl("indriql", "on");
+			srq.setControl("matchopql", "on");
 		}
 				
 		initSearchRequestModification(queryId, srq);

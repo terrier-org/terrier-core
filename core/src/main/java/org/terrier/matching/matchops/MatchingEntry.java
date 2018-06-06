@@ -1,10 +1,13 @@
-package org.terrier.matching.indriql;
+package org.terrier.matching.matchops;
 
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.IterablePosting;
 
-
+/** A MatchingEntry is the application of a matching Operator to the index at hand, 
+ * i.e. with statistics, weighting models, and the posting list operator opened 
+ * @since 5.0 
+ */
 public class MatchingEntry {
 
 	IterablePosting postingIterator;
