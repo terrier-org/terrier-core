@@ -87,7 +87,7 @@ Firstly, we setup Terrier. This also generates configuration files for learning-
 Next, we need to create an index, with fields and blocks enabled. For brevity, we set the appropriate properties on the the command line:
 
 ```
-    bin/terrier -j -Dblock.indexing=true -DFieldTags.process=TITLE,ELSE
+    bin/terrier -j -b -DFieldTags.process=TITLE,ELSE
 
     Setting TERRIER_HOME to /home/terrier-4.0
     INFO - TRECCollection read collection specification (4613 files)
@@ -125,7 +125,7 @@ DSM:org.terrier.matching.dsms.MRFDependenceScoreModifier
 Next, we want to retrieve results for the training topics. In this, we are going to be calculating results with multiple features, as listed in the `etc/features.list` file, so we use a series of Matching classes: [FatFull](javadoc/org/terrier/matching/daat/FatFull.html) to make a [FatResultSet](javadoc/org/terrier/matching/FatResultSet.html) (i.e. a ResultSet with extra posting information), and [FatFeaturedScoringMatching](javadoc/org/terrier/matching/FatFeaturedScoringMatching.html) to add the additional features, and return a FeaturedResultSet. We then add the document label from the qrels using LabelDecorator, and write the results in a LETOR-compatible results file using Normalised2LETOROutputFormat:
 
 ```
-    bin/terrier batchretrieval-Dtrec.model=DPH -Dtrec.topics=$TR_TOPICS -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list  -Dtrec.querying.outputformat=Normalised2LETOROutputFormat -Dquerying.postprocesses.order=QueryExpansion,org.terrier.learning.LabelDecorator -Dquerying.postprocesses.controls=labels:org.terrier.learning.LabelDecorator,qe:QueryExpansion -Dquerying.default.controls=labels:on -Dlearning.labels.file=$TR_QRELS -Dtrec.results.file=tr.letor -Dproximity.dependency.type=SD
+    bin/terrier batchretrieval -Dtrec.model=DPH -Dtrec.topics=$TR_TOPICS -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list  -Dtrec.querying.outputformat=Normalised2LETOROutputFormat -Dquerying.postprocesses.order=QueryExpansion,org.terrier.learning.LabelDecorator -Dquerying.postprocesses.controls=labels:org.terrier.learning.LabelDecorator,qe:QueryExpansion -Dquerying.default.controls=labels:on -Dlearning.labels.file=$TR_QRELS -Dtrec.results.file=tr.letor -Dproximity.dependency.type=SD
 
 
     Setting TERRIER_HOME to /home/terrier
