@@ -37,6 +37,8 @@ import com.google.common.collect.Lists;
 
 public abstract class CLITool {
 	
+	static boolean DEBUG = Boolean.parseBoolean(System.getProperty("org.terrier.desktop.CLITool.debug", "false"));
+	
 	//we use strings of classnames here so that no dependency arises
 	public static String[] POPULAR_COMMANDS = new String[]{
 		//batch-indexers
@@ -204,6 +206,8 @@ public abstract class CLITool {
 				throw e;
 			}
 			return;
+		} else {
+			System.err.println("WARN: " + commandname + " did not match any known commands, checking for class definitions..");
 		}
 		Class<?> clz = getClassName(commandname);
 		try{
@@ -251,6 +255,8 @@ public abstract class CLITool {
 		Iterable<CLITool> toolLoader = getServiceIterator(false);
 		for(CLITool tool : toolLoader)
 		{
+			if (DEBUG)
+				System.err.println("Checking" + tool.getClass().getName());
 			if (tool.commandname().equals(commandname))
 				return Optional.of(tool);
 			if (tool.commandaliases().contains(commandname))
