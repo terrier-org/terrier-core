@@ -182,13 +182,12 @@ public class InteractiveQuerying {
 		{
 			i++;
 			
-			//TODO check this should be here. 
-			if (doc.getScore() <= 0d)
+			if (Double.isInfinite(doc.getScore()) && doc.getScore()< 0)
 				continue;
 			sbuffer.append(i);
 			sbuffer.append(" ");
 			sbuffer.append(ArrayUtils.join(doc.getAllMetadata(), ' '));
-			
+			sbuffer.append(" ");
 			if (printDocid)
 			{
 				sbuffer.append(doc.getDocid());
