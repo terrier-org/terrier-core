@@ -33,6 +33,8 @@ public class IndexRef {
 	@Deprecated
 	/** This is NOT intended for long term use. */
 	public static IndexRef of(String path, String prefix){
+		if (path.startsWith("http"))
+			return new IndexRef(path);
 		return new IndexRef(path + "/" + prefix + ".properties");
 	}
 	
