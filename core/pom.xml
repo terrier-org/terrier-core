@@ -92,7 +92,7 @@
 					</execution>
 
 					<execution>
-						<id>indriql</id>
+						<id>matchopql</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>javacc</goal>
@@ -100,8 +100,8 @@
 						<configuration>
 							<jdkVersion>1.8</jdkVersion>
 							<javadocFriendlyComments>true</javadocFriendlyComments>
-							<packageName>org.terrier.matching.indriql</packageName>
-							<sourceDirectory>src/main/javacc/indriql</sourceDirectory>
+							<packageName>org.terrier.matching.matchops</packageName>
+							<sourceDirectory>src/main/javacc/matchopql</sourceDirectory>
 							<outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
 						</configuration>
 					</execution>
