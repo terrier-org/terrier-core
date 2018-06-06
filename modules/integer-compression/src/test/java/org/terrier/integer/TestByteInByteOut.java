@@ -77,7 +77,8 @@ public class TestByteInByteOut {
 				
 		//RandomDataInputMemory inData = new RandomDataInputMemory(baos.toByteArray());
 		
-		ByteIn in = (new ByteFileBuffered(tmpFilename)).readReset(0);
+		final ByteFileBuffered bbb = new ByteFileBuffered(tmpFilename);
+		ByteIn in = bbb.readReset(0);
 		assertEquals(18348, in.readVInt());
 		assertEquals(1000, in.readVInt());
 		assertEquals(-1, in.readVInt());
@@ -90,6 +91,7 @@ public class TestByteInByteOut {
 		in.skipBytes(6);
 		assertEquals(314, in.readVInt());
 		in.close();
+		bbb.close();
 	}
 	
 	@Test
@@ -98,7 +100,8 @@ public class TestByteInByteOut {
 		//test various output/input method
 								
 		RandomDataInputMemory inData = new RandomDataInputMemory(tmpFilename);
-		ByteIn in = (new ByteFileInMemory(inData)).readReset(0);
+		final ByteFileInMemory bbM = new ByteFileInMemory(inData);
+		ByteIn in = bbM.readReset(0);
 		assertEquals(18348, in.readVInt());
 		assertEquals(1000, in.readVInt());
 		assertEquals(-1, in.readVInt());
@@ -111,6 +114,7 @@ public class TestByteInByteOut {
 		in.skipBytes(6);
 		assertEquals(314, in.readVInt());		
 		in.close();
+		bbM.close();
 	}	
 	
 //	@Test
@@ -150,10 +154,12 @@ public class TestByteInByteOut {
 		byte[][] bytes = new byte[1][];
 		bytes[0] = baos.toByteArray();
 		RandomDataInputMemory inData = new RandomDataInputMemory(baos.toByteArray());
-		ByteIn in = (new ByteFileInMemory(inData)).readReset(4);
+		final ByteFileInMemory bbM = new ByteFileInMemory(inData);
+		ByteIn in = bbM.readReset(4);
 		in.skipBytes(1);
 		assertEquals(314, in.readVInt());		
 		in.close();
+		bbM.close();
 	}	
 	
 	@Test
