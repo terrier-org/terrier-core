@@ -50,11 +50,11 @@ This allows you to easily index, retrieve, and evaluate results on TREC collecti
 
 ### Interactive Terrier
 
-This allows you to to do interactive retrieval. This is a quick way to test Terrier. Given that you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive`. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` file. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](javadoc/org/terrier/applications/InteractiveQuerying.html) class.
+This allows you to to do interactive retrieval. This is a quick way to test Terrier. If that you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive`. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` file. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](javadoc/org/terrier/applications/InteractiveQuerying.html) class.
 
 ### Desktop Terrier
 
-A sample Desktop search application, available [separately from Github](https://github.com/terrier-org/terrier-desktop).
+A sample Desktop search application, is available [separately from Github](https://github.com/terrier-org/terrier-desktop).
 
 Tutorial: How to use the Batch (TREC) Terrier
 ---------------------------------------------
@@ -152,7 +152,7 @@ Firstly, lets see if we can get search results from our index. We can use the `b
     ...
     Please enter your query: exit
 
-In responding to the query `compression`, Terrier found document 11196 was estimated to be most relevant, scoring 6.96. 11196 was recorded from the DOCNO tag of the corresponding index.
+In responding to the query `compressed`, Terrier found document 11196 was estimated to be most relevant, scoring 6.96. 11196 was recorded from the DOCNO tag of the corresponding document.
 
 ### Retrieval
 
@@ -166,7 +166,7 @@ b.  The weighting model (e.g. TF\_IDF) to use - specified using `trec.model` - a
 
 c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels`.
 
-1. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line (all other configurration remains using Terrier’s default settings):
+2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line (all other configurration remains using Terrier’s default settings):
 
 ```
     $bin/terrier batchretrieve -Dtrec.topics=share/vaswani_npl/query-text.trec

@@ -151,17 +151,17 @@ public class IndexingExample {
 
 	public static void main(String[] args) throws Exception {
 
-        // Directory containing files to index
+		// Directory containing files to index
     		String aDirectoryToIndex = "/my/directory/containing/files/";
 
-        // Configure Terrier
-				ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
-        ApplicationSetup.setProperty("indexer.meta.forward.keylens", "200");
+		// Configure Terrier
+		ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
+		ApplicationSetup.setProperty("indexer.meta.forward.keylens", "200");
 
-				Indexer indexer = new BasicIndexer("/path/to/my/index", "data");
-				Collection coll = new SimpleFileCollection(Arrays.asList(aDirectoryToIndex), true);
-				indexer.index(new Collection[]{coll});
-				indexer.close();
+		Indexer indexer = new BasicIndexer("/path/to/my/index", "data");
+		Collection coll = new SimpleFileCollection(Arrays.asList(aDirectoryToIndex), true);
+		indexer.index(new Collection[]{coll});
+		indexer.close();
     }
 }
 ```
@@ -175,7 +175,7 @@ Terrier's properties can be configured using a `terrier.properties` file, usuall
 
 When running Terrier, Terrier expects to be informed of the location of the `terrier.home` and `terrier.etc` directories, so that it can find its terrier.properties file:
 
-	java -cp /path/to/terrier/target/terrier-4.2-jar-with-dependencies.jar -Dterrier.home=/path/to/terrier -Dterrier.etc=/path/to/terrier/etc
+	java -cp /path/to/terrier/target/terrier-5.0-jar-with-dependencies.jar -Dterrier.home=/path/to/terrier -Dterrier.etc=/path/to/terrier/etc
 
 If you are running an application that depends on Terrier, you may wish to set these properties, either from the command line or System.setProperty().
 
