@@ -68,15 +68,15 @@
 	</distributionManagement>
 
 	<modules>
-		<module>retrieval-api</module>
-		<module>core</module>
-		<module>batch-indexers</module>
-		<module>batch-retrieval</module>
-		<module>learning</module>
-		<module>tests</module>
-		<module>integer-compression</module>
-		<module>realtime</module>
-		<module>website-search</module>
+		<module>modules/retrieval-api</module>
+		<module>modules/core</module>
+		<module>modules/batch-indexers</module>
+		<module>modules/batch-retrieval</module>
+		<module>modules/learning</module>
+		<module>modules/tests</module>
+		<module>modules/integer-compression</module>
+		<module>modules/realtime</module>
+		<module>modules/website-search</module>
 	</modules>
 
 
