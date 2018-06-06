@@ -77,7 +77,7 @@ else
 	CLASSPATH=$CLASSPATH:$JAVA_HOME/lib/tools.jar
 fi
 
-JAR=`ls $TERRIER_HOME/*/target/terrier-*-*-jar-with-dependencies.jar | xargs| tr ' ' :`
+JAR=`ls $TERRIER_HOME/modules/*/target/terrier-*-*-jar-with-dependencies.jar | xargs| tr ' ' :`
 if [ ! -n "$CLASSPATH" ]
 then
 	CLASSPATH=$JAR:$TERRIER_ETC/logback.xml
