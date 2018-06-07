@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>terrier-project</artifactId>
+		<artifactId>terrier-base</artifactId>
 		<groupId>org.terrier</groupId>
 		<version>5.0-SNAPSHOT</version>
-		<relativePath>../../</relativePath>
+		<relativePath>../base</relativePath>
 	</parent>
 
 	<artifactId>terrier-rest-client</artifactId>
@@ -17,7 +17,13 @@
 			<artifactId>terrier-retrieval-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-	
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.5</version>
+		</dependency>
+
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>

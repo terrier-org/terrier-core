@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<artifactId>terrier-project</artifactId>
+<parent>
+		<artifactId>terrier-base</artifactId>
 		<groupId>org.terrier</groupId>
 		<version>5.0-SNAPSHOT</version>
-		<relativePath>../../</relativePath>
+		<relativePath>../base</relativePath>
 	</parent>
 
 	<artifactId>terrier-batch-retrieval</artifactId>

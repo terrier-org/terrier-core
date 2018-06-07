@@ -1,0 +1,162 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>terrier-project</artifactId>
+		<groupId>org.terrier</groupId>
+		<version>5.0-SNAPSHOT</version>
+		<relativePath>../../</relativePath>
+	</parent>
+
+	<artifactId>terrier-assemblies</artifactId>
+	<version>5.0-SNAPSHOT</version>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-retrieval-api</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-core</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-batch-retrieval</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-batch-indexers</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-integer-compression</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-learning</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-rest-client</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-rest-server</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-tests</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-website-search</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-realtime</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.0</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/doc/</outputDirectory>
+							<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
+							<destDir>javadoc</destDir>
+							<author>true</author>
+							<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
+							<doctitle>${project.Name} ${project.version} API</doctitle>
+							<use>true</use>
+							<version>true</version>
+							<doclint>none</doclint>
+							<windowtitle>${project.Name} ${project.version} API</windowtitle>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<finalName>terrier-project-${project.version}</finalName>
+					<archive>
+						<manifest>
+							<mainClass>org.terrier.applications.CLITool</mainClass>
+						</manifest>
+					</archive>
+					<filters>
+						<filter>**/logback.xml</filter>
+						<filter>**\logback.xml</filter>
+					</filters>
+				</configuration>
+				<executions>
+
+					<execution>
+						<!-- builds the jar-with-dependencies -->
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							
+							<descriptors>
+								<descriptor>src/assembly/module-jar-with-dependencies.xml</descriptor>
+							</descriptors>
+							<!-- <descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> 
+								</descriptorRefs> -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

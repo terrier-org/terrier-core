@@ -62,7 +62,7 @@ REM -- Build up class path
 REM ------------------------
 call "%BIN%\lcp.bat" %CLASSPATH%
 call "%BIN%\lcp.bat" "%TERRIER_ETC%\logback.xml"
-FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\modules\*\target\terrier-core-*-jar-with-dependencies.jar') DO call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\%%G"
+FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\modules\*\target\terrier-project-*-jar-with-dependencies.jar') DO call "%BIN%\lcp.bat" "%TERRIER_HOME%\target\%%G"
 
 
 :dorun

@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>terrier-project</artifactId>
+		<artifactId>terrier-base</artifactId>
 		<groupId>org.terrier</groupId>
 		<version>5.0-SNAPSHOT</version>
-		<relativePath>../../</relativePath>
+		<relativePath>../base</relativePath>
 	</parent>
 
 	<artifactId>terrier-learning</artifactId>
@@ -18,17 +18,17 @@
 			<version>${project.version}</version>
 		</dependency>
 
-                <dependency>
-                        <groupId>org.terrier</groupId>
-                        <artifactId>terrier-batch-retrieval</artifactId>
-                        <version>${project.version}</version>
-                </dependency>
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-batch-retrieval</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
-                        <groupId>com.github.yasserg</groupId>
-                        <artifactId>jforests</artifactId>
-                        <version>v0.5</version>
-                </dependency>
+			<groupId>com.github.yasserg</groupId>
+			<artifactId>jforests</artifactId>
+			<version>v0.5</version>
+		</dependency>
 	</dependencies>
 
 </project>

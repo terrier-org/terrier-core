@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>terrier-project</artifactId>
+		<artifactId>terrier-base</artifactId>
 		<groupId>org.terrier</groupId>
 		<version>5.0-SNAPSHOT</version>
-		<relativePath>../../</relativePath>
+		<relativePath>../base</relativePath>
 	</parent>
 
 	<artifactId>terrier-integer-compression</artifactId>
@@ -28,6 +28,18 @@
 			<groupId>me.lemire.integercompression</groupId>
 			<artifactId>JavaFastPFOR</artifactId>
 			<version>0.1.3</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.sna-projects.kamikaze</groupId>
+			<artifactId>kamikaze</artifactId>
+			<version>3.0.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.lucene</groupId>
+					<artifactId>lucene-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
