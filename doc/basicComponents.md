@@ -15,6 +15,8 @@ Since version 5.0, the Terrier open source project has a number of open source m
 - batch-retrieval - this is the code of perform batch retrieval experiments
 - learning - this extends batch-retrieval with learning-to-rank capabilities
 - realtime - this provides incremental and updatable index data structures
+- rest-server - this provides a simple RESTful HTTP server that can serve results 
+- rest-client - this allows a Manager to be created for an IndexRef that refers to a REST server URL
 - website-search - this provides additional web-based interfaces
 
 The components within these various modules interact.
