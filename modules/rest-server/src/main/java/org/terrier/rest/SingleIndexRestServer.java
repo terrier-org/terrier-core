@@ -47,7 +47,7 @@ public class SingleIndexRestServer extends CLIParsedCLITool {
     public static HttpServer startServer(String uri) {
         // create a resource config that scans for JAX-RS resources and providers
         // in org.terrier.terrier_rest package
-        final ResourceConfig rc = new ResourceConfig().packages("org.terrier.terrier_rest");
+        final ResourceConfig rc = new ResourceConfig().packages(SearchResource.class.getPackage().getName());
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
