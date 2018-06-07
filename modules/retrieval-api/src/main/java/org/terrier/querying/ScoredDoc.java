@@ -30,7 +30,7 @@ public class ScoredDoc {
 	}
 	
 	public String getMetadata(String key) {
-		return metadata[metaKeyOffset.get(key)];
+		return metaKeyOffset.containsKey(key) ? metadata[metaKeyOffset.get(key)] : null;
 	}
 	
 	public String[] getAllMetadata() {
