@@ -125,6 +125,10 @@ public class QueryResultSet extends CollectionResultSet {
 		return metadata[metaMap.get(name)];
 	}
 	
+	public String[][] allMetaItems() {
+		return metadata;
+	}
+	
 	@Override
 	public boolean hasMetaItems(String name) {
 		return metaMap.containsKey(name);
