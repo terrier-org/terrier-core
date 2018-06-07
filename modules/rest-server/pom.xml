@@ -17,13 +17,13 @@
 			<artifactId>terrier-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.terrier</groupId>
 			<artifactId>terrier-batch-retrieval</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.terrier</groupId>
 			<artifactId>terrier-learning</artifactId>
@@ -33,7 +33,13 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-grizzly2-http</artifactId>
-			<version>2.27</version>
+			<version>2.26</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>2.26</version>
 		</dependency>
 
 		<dependency>
