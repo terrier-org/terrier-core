@@ -265,7 +265,8 @@ public class TRECQuerying {
 			
 			if (line.hasOption('w'))
 				tq.wModel = line.getOptionValue('w');
-				
+			
+			tq.processQueries();
 			return 0;
 		}
 		
@@ -920,7 +921,7 @@ public class TRECQuerying {
 			if (topicsFiles != null)
 				for (String f : topicsFiles)
 					pw.println("# topicfile: " + f);
-			java.util.Map<String, String> controls = ((org.terrier.querying.Request) default_q).getControlHashtable();
+			java.util.Map<String, String> controls = default_q.getControls();
 			for (Map.Entry<String,String> kv : controls.entrySet())
 			{
 				pw.println(String.format("# control: %s=%s", kv.getKey(), kv.getValue()));

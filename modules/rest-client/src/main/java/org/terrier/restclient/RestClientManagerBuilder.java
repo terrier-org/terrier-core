@@ -75,7 +75,8 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 
 		@Override
 		public String getControl(String Name) {
-			return controls.get(Name);
+			String rtr = controls.get(Name);
+			return rtr != null ? rtr : "";
 		}
 
 		@Override
@@ -126,6 +127,11 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 		@Override
 		public Object getContextObject(String key) {
 			return null;
+		}
+
+		@Override
+		public Map<String, String> getControls() {
+			return controls;
 		}
 		
 	}

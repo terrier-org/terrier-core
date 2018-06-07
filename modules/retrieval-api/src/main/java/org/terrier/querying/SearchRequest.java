@@ -26,6 +26,7 @@
  */
 package org.terrier.querying;
 import java.io.Serializable;
+import java.util.Map;
 /** SearchRequest is the one of two main classes of which are made available to client code by
   * the Terrier framework at retrieval time. Each search query, whether entered by a user or
   * in batch mode retrieval creates a search request. Each search request is then passed to 4
@@ -60,10 +61,6 @@ public interface SearchRequest extends Serializable
 	/** Set a unique identifier for this query request.
 	  * @param qid the unique string identifier*/
 	void setQueryID(String qid);
-	/** Get the Query syntax tree
-	  * @return The query object as set with setQuery.
-	  * */
-	//Query getQuery();
 	/** Set a control named to have value Value. This is essentially a
 	  * hashtable wrappers. Controls are used to set properties of the
 	  * retrieval process.
@@ -74,6 +71,7 @@ public interface SearchRequest extends Serializable
 	  * @return the query Id as a string. */
 	String getQueryID();
 	
+	Map<String,String> getControls();
 	
 	/** Returns the value of the control. Null or empty string if not set.
 	  * @return the value. */

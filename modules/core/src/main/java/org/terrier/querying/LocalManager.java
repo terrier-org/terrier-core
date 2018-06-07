@@ -65,7 +65,8 @@ import com.google.common.collect.Lists;
   * &lt;/ul&gt;
   * Example usage:
   * <pre>
-  * Manager m = new Manager(index);
+  * IndexRef indexRef = IndexRef.of("/path/to/data.properties");
+  * Manager m = ManagerFactory.from(indexRef);
   * SearchRequest srq = m.newSearchRequest("Q1", "term1 title:term2");
   * m.runSearchRequest(srq);
   * </pre>
@@ -709,7 +710,7 @@ public class LocalManager implements Manager
 
 		@Override
 		public void process(Manager manager, Request rq) {
-			PostFilter[] filters = postfilterModuleManager.getActive(rq.getControlHashtable()).toArray(new PostFilter[0]);
+			PostFilter[] filters = postfilterModuleManager.getActive(rq.getControls()).toArray(new PostFilter[0]);
 			final int filters_length = filters.length;
 			
 			//the results to filter
@@ -836,8 +837,8 @@ public class LocalManager implements Manager
 		boolean hasRawQuery = rq.getOriginalQuery() != null;
 		boolean hasTerrierQLquery = rq.getQuery() != null;
 		boolean hasResultSet = rq.getResultSet() != null;
-		logger.debug(rq.getControlHashtable().toString());
-		Iterator<Process> iter = processModuleManager.getActiveIterator(rq.getControlHashtable());
+		logger.debug(rq.getControls().toString());
+		Iterator<Process> iter = processModuleManager.getActiveIterator(rq.getControls());
 		List<String> processesDone = new ArrayList<String>();
 		int ran = 0;
 		rq.setControl("runname", "");
@@ -847,13 +848,13 @@ public class LocalManager implements Manager
 			Process p = iter.next();
 			assert(p != null);
 			if (hasAnnotation(p.getClass(), ManagerRequisite.MQT) && ! mqtObtained)
-				throw new IllegalStateException("Process " + p.getInfo() + " required matchingqueryterms, but mqt not yet set for query qid " + rq.getQueryID()  + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControlHashtable().toString());
+				throw new IllegalStateException("Process " + p.getInfo() + " required matchingqueryterms, but mqt not yet set for query qid " + rq.getQueryID()  + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControls().toString());
 			if (hasAnnotation(p.getClass(), ManagerRequisite.RAWQUERY) && ! hasRawQuery)
-				throw new IllegalStateException("Process " + p.getInfo() + " required rawquery, but no raw query found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControlHashtable().toString());
+				throw new IllegalStateException("Process " + p.getInfo() + " required rawquery, but no raw query found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControls().toString());
 			if (hasAnnotation(p.getClass(), ManagerRequisite.TERRIERQL) && ! hasTerrierQLquery)
-				throw new IllegalStateException("Process " + p.getInfo() + " required TerrierQL query, but no TerrierQL query found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControlHashtable().toString());
+				throw new IllegalStateException("Process " + p.getInfo() + " required TerrierQL query, but no TerrierQL query found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControls().toString());
 			if (hasAnnotation(p.getClass(), ManagerRequisite.RESULTSET) && ! hasResultSet)
-				throw new IllegalStateException("Process " + p.getInfo() + " required resultset, but none found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControlHashtable().toString());
+				throw new IllegalStateException("Process " + p.getInfo() + " required resultset, but none found for qid " + rq.getQueryID() + " previousProcess=" + processesDone.toString() + " controls=" + rq.getControls().toString());
 			
 			
 			logger.info("running process " + p.getInfo());

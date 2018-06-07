@@ -167,12 +167,15 @@ public class Request implements SearchRequest
 	
 	public ScoredDocList getResults() {
 		ResultSet rs = this.getResultSet();
+		if (rs == null)
+			throw new IllegalStateException("No resultset found");
 		
 		final String[] metaKeys = rs.getMetaKeys();
 		Results rtr = new Results(metaKeys);
 		Map<String,Integer> metaoffsets = new HashMap<>();
+		final int metaCount = metaKeys.length;
 		if (metaKeys != null)
-			for(int j=0;j<metaKeys.length;j++)
+			for(int j=0;j<metaCount;j++)
 			{
 				metaoffsets.put(metaKeys[j], j);
 			}
@@ -183,7 +186,10 @@ public class Request implements SearchRequest
 		final String[][] meta = rs.allMetaItems();
 		for(int i=0;i<size;i++)
 		{
-			rtr.add(new ScoredDoc(docids[i], scores[i], occ[i], meta[i], metaoffsets));
+			String[] metaValues = new String[metaCount];
+			for(int j=0;j<metaCount;j++)
+				metaValues[j] = meta[j][i];
+			rtr.add(new ScoredDoc(docids[i], scores[i], occ[i], metaValues, metaoffsets));
 		}
 		return rtr;
 	}
@@ -224,7 +230,8 @@ public class Request implements SearchRequest
 		resultSet = results;
 	}
 	/** Get the entire hashtable used for storing controls for this query */
-	public Map<String,String> getControlHashtable()
+	@Override
+	public Map<String,String> getControls()
 	{
 		return Control;
 	}
