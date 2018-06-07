@@ -15,12 +15,14 @@ import javax.ws.rs.core.Response;
 import org.terrier.querying.IndexRef;
 import org.terrier.querying.Manager;
 import org.terrier.querying.ManagerFactory;
+import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexFactory;
 import org.terrier.structures.outputformat.Normalised2LETOROutputFormat;
 import org.terrier.structures.outputformat.OutputFormat;
 import org.terrier.structures.outputformat.TRECDocnoOutputFormat;
+import org.terrier.utility.ApplicationSetup;
 
 @Path("/search")
 public class SearchResource {
@@ -30,8 +32,8 @@ public class SearchResource {
 	static final String DEFAULT_WMODEL = org.terrier.matching.models.DPH.class.getName();
 	
 	
-	IndexRef indexRef = IndexRef.of("/Users/craigm/git/Terrier/var/index/data.properties");
-	Manager m = ManagerFactory.from(indexRef);
+	static IndexRef indexRef = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+	static Manager m = ManagerFactory.from(indexRef);
 	
 	@GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -74,7 +76,7 @@ public class SearchResource {
 			
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);			
-			OutputFormat of = getOutputFormat(format);
+			OutputFormat of = getOutputFormat(srq, format);
 			of.printResults(pw, srq, "terrier-rest", "Q0", 0);
 			pw.flush();
 	        return Response.ok(sw.toString()).build();
@@ -88,12 +90,13 @@ public class SearchResource {
 		}
     }
 	
-	OutputFormat getOutputFormat(String format) {
+	OutputFormat getOutputFormat(SearchRequest srq, String format) {
 		if (! IndexFactory.isLocal(indexRef))
 			throw new IllegalArgumentException(indexRef + " does not refer to a local index");
-		Index index = IndexFactory.of(indexRef);
-		if (index == null)
-			throw new IllegalArgumentException("No such index " + indexRef);
+		Index index = ((Request)srq).getIndex();
+//		Index index = IndexFactory.of(indexRef);
+//		if (index == null)
+//			throw new IllegalArgumentException("No such index " + indexRef);
 
 		switch (format) {
 		case "trec": return new TRECDocnoOutputFormat(index);
