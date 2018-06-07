@@ -130,16 +130,17 @@ else
 	}
 }
 
-Index index = (Index)application.getAttribute("terrier.jsp.index");
-if (index == null)
+IndexRef indexref = (IndexRef)application.getAttribute("terrier.jsp.index");
+if (indexref == null)
 {
-	index = Index.createIndex();
-	application.setAttribute("terrier.jsp.index", index);
+	indexref = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH,
+			ApplicationSetup.TERRIER_INDEX_PREFIX);
+	application.setAttribute("terrier.jsp.index", indexref);
 }	
-Manager queryingManager = (Manager)application.getAttribute("terrier.jsp.manager");
+IManager queryingManager = (IManager)application.getAttribute("terrier.jsp.manager");
 if (queryingManager == null)
 {
-	queryingManager = new Manager(index);
+	queryingManager = ManagerFactory.from(indexref);
 	application.setAttribute("terrier.jsp.manager", queryingManager);
 }
 
@@ -149,10 +150,7 @@ srq.setControl("start", sStart);
 srq.setControl("decorate", "on");
 srq.setControl("end", String.valueOf(iStart + NUM_RESULTS_PER_PAGE -1));
 srq.addMatchingModel(defaultMatching, defaultModel);
-queryingManager.runPreProcessing(srq);
-queryingManager.runMatching(srq);
-queryingManager.runPostProcessing(srq);
-queryingManager.runPostFilters(srq);
+queryingManager.runSearchRequest(srq);
 ResultSet rs = srq.getResultSet();
 int firstDisplayRank = iStart +1;
 int lastDisplayRank = 1+ Math.min(rs.getExactResultSize() -1, iStart + NUM_RESULTS_PER_PAGE);

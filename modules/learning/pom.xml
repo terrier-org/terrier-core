@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>terrier-project</artifactId>
+		<groupId>org.terrier</groupId>
+		<version>5.0-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+
+	<artifactId>terrier-learning</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+                <dependency>
+                        <groupId>org.terrier</groupId>
+                        <artifactId>terrier-batch-retrieval</artifactId>
+                        <version>${project.version}</version>
+                </dependency>
+
+		<dependency>
+                        <groupId>com.github.yasserg</groupId>
+                        <artifactId>jforests</artifactId>
+                        <version>v0.5</version>
+                </dependency>
+	</dependencies>
+
+</project>

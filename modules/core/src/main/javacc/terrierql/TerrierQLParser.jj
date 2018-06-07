@@ -1,0 +1,282 @@
+options {
+	STATIC = false;
+	LOOKAHEAD = 2;
+	FORCE_LA_CHECK = true;
+	DEBUG_PARSER=false;
+	DEBUG_LOOKAHEAD=false;
+	DEBUG_TOKEN_MANAGER=false;
+}
+
+PARSER_BEGIN(TerrierQLParser)
+
+package org.terrier.querying.parser;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.io.StringReader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+
+@SuppressWarnings("all")
+public class TerrierQLParser
+{
+    private final static boolean DEBUG = false;
+    
+    public TerrierQLParser(String r) {
+    	this(new StringReader(r));
+    }
+	   
+    public static void main(String args[])
+    {
+        try
+        {
+	        if (args.length == 1 && args[0].equals("-"))
+	        {
+	        	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	        	String line = null;
+	        	while((line = br.readLine())!= null) {
+	        		TerrierQLParser parser = new TerrierQLParser(line.trim());
+	        		System.out.println(parser.parse());
+	        	}
+	        }
+	        else
+	        {
+	            String query = args[0];
+	            TerrierQLParser parser = new TerrierQLParser(query);
+	            System.out.println(parser.parse());
+	        }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+}
+
+PARSER_END(TerrierQLParser) 
+
+/** Skip these characters, they are considered "white space" **/
+SKIP :                              
+{
+    <SPACE: [" ", "\t", "\f", "\u0085", "\u00A0", "\u1680", "\u180e", "\u2000", "\u2001", "\u2002", "\u2003", "\u2004", "\u2005",
+      "\u2006", "\u2007", "\u2008", "\u2009", "\u200a", "\u200b", "\u200c", "\u200d", "\u2028", "\u2029", "\u202f", "\u205f", "\u2060", "\u3000", "\ufeff"]>
+	| <WINDOWS_EOL : "\r\n">
+	| <UNIX_EOL: "\n">
+	| <OLD_MAC_EOL: "\r">
+}
+
+
+/** Reserved tokens for TQL */
+TOKEN :
+{
+	<ALPHANUMERIC : (["A"-"Z","a"-"z","0"-"9"])+ > 
+	| <REQUIRED : "+">
+	| <NOT_REQUIRED : "-">
+	| <HAT : "^"> : WithinWeight
+	| <PROXIMITY : "~"> : WithinWeight
+	| <COLON : ":">
+	| <QUOTE : "\"">
+	| <OPEN_DISJUNCTIVE : "{">
+	| <CLOSE_DISJUNCTIVE : "}">
+	| <OPEN_PAREN : "(">
+	| <CLOSE_PAREN: ")"> : DEFAULT
+	
+}
+
+<WithinWeight> TOKEN : {
+	<FLOAT : (["0"-"9"])+("."(["0"-"9"])+)? > : DEFAULT
+  // | <INT : (["0"-"9"])+ > : DEFAULT
+}
+
+Query parseOne() :
+{
+	Query rtr = null;
+}
+{
+	(
+	 rtr = explicitMultiTermQuery()
+	| rtr = phraseQuery() 
+	| rtr = disjunctiveQuery()
+	| LOOKAHEAD(<ALPHANUMERIC> <COLON>) rtr = fieldQuery()
+	| rtr = requirementQuery()
+	| rtr = singleTermQuery()
+	)
+	{
+		return rtr;
+	}
+}
+
+Query parse() :
+{
+	Query rtr = null;
+	Query child = null;
+	MultiTermQuery mtq = new MultiTermQuery();
+}
+{
+	(child = parseOne() {mtq.add(child);} )+
+	{
+		if (mtq.getNumberOfTerms() == 1)
+		{
+			return child;
+		}
+		return mtq;
+	}
+}
+
+
+Query singleTermQuery() : 
+{
+	SingleTermQuery stq = new SingleTermQuery();
+	Token word = null;
+	Token weight = null;
+}
+{
+	word = <ALPHANUMERIC> 
+	( 
+		LOOKAHEAD(<HAT> <FLOAT>)
+		<HAT> 
+		weight = <FLOAT> { stq.setWeight(Double.parseDouble(weight.image)); } 
+	)?
+	{
+		stq.setTerm(word.image);
+		return stq;
+	}
+}
+
+/* fields can be applied to single terms, phrases or explicit multi-terms 
+   (ie parenthesis) only */
+Query fieldQuery() :
+{ 
+  	FieldQuery fq = new FieldQuery(); Query child = null; 
+  	Token f;
+}
+{
+  f = <ALPHANUMERIC> <COLON>  
+  (   child = singleTermQuery()
+      | child = phraseQuery()
+      | child = explicitMultiTermQuery()  
+  ) 
+  {
+  	fq.setChild(child);
+  	fq.setField(f.image);
+	return fq;
+  }
+}
+
+//phrase queries can only contain one of more single terms
+//even though the PROXIMITY operator is followed by a FLOAT, 
+//the number has to be an integer, so that it is parsed 
+//correctly.
+Query phraseQuery() : 
+{
+	PhraseQuery pq = new PhraseQuery(); MultiTermQuery mq = new MultiTermQuery();
+	Token dist = null;
+	Query rtr = mq;
+	Query child = null;
+}
+{
+	<QUOTE> ( child = singleTermQuery() {mq.add(child); pq.add(child);} )+
+	(<QUOTE> {rtr = pq;}
+		(<PROXIMITY>
+			dist = <FLOAT>
+		)?
+	)?
+	{
+		int iDist = 0;
+		if (dist != null) {
+			iDist = Integer.parseInt(dist.image);
+			pq.setProximityDistance(iDist);
+		}
+		return rtr;
+	}
+}
+  
+Query disjunctiveQuery() : 
+{
+	DisjunctiveQuery dq = new DisjunctiveQuery();
+	Query child = null;
+	Token weight = null;
+}
+{
+	<OPEN_DISJUNCTIVE>
+	child=singleTermQuery() { dq.add(child); }
+	(
+  	child=singleTermQuery() { dq.add(child); }
+	)+
+  	<CLOSE_DISJUNCTIVE>
+  	(<HAT> 
+  		weight = <FLOAT> { dq.setWeight(Double.parseDouble(weight.image)); }
+  	)?
+  	{
+  		return dq;
+  	}
+}
+  
+// a list of terms
+//Query impliedMultiTermQuery() : 
+//{
+//	 MultiTermQuery mtq = new MultiTermQuery(); Query child = null;
+//}
+//{
+//	(child = singleTermQuery() {mtq.add(child);}
+//	
+//	(
+//	LOOKAHEAD(3)
+//	child = explicitMultiTermQuery() {mtq.add(child);}
+//	| child = requirementQuery() {mtq.add(child);}
+//	| child = phraseQuery() {mtq.add(child);}
+//	| child = disjunctiveQuery() {mtq.add(child);}
+//	| child = fieldQuery() {mtq.add(child);}
+//	| child = singleTermQuery() {mtq.add(child);}
+//	)+
+//	{
+//		return mtq;
+//	}
+//}
+
+Query explicitMultiTermQuery() : 
+{
+	 MultiTermQuery mtq = new ExplicitMultiTermQuery(); Query child = null;
+	 Token weight = null;
+}
+{
+	<OPEN_PAREN>
+	( 
+	LOOKAHEAD(3)
+	child=singleTermQuery() { mtq.add(child); }
+    |  child=fieldQuery() { mtq.add(child); }
+    |  child=requirementQuery() { mtq.add(child); }
+    |  child=phraseQuery() { mtq.add(child); }
+    |  child=disjunctiveQuery() { mtq.add(child); }
+	)+
+	(<CLOSE_PAREN>)?
+	( 
+		<HAT>
+		weight = <FLOAT> { mtq.setWeight(Double.parseDouble(weight.image)); } 
+	)?
+	{
+		return mtq;
+	}
+}
+
+Query requirementQuery() :
+{
+	RequirementQuery rq = new RequirementQuery(); Query child = null;
+}
+{
+	(<REQUIRED> {rq.setRequired(true);} | <NOT_REQUIRED> {rq.setRequired(false);})
+	(
+	LOOKAHEAD(2)
+	child =  phraseQuery()
+	| child = explicitMultiTermQuery()
+	| LOOKAHEAD(2) child = fieldQuery()
+	| child = singleTermQuery()	)
+	{
+		rq.setChild(child);
+		return rq;
+	}
+}

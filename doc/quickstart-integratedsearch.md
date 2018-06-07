@@ -71,8 +71,8 @@ Once you have your project setup with Maven, its time to add Terrier to your pro
 ```xml
 <dependency>
 	<groupId>org.terrier</groupId>
-	<artifactId>terrier-core</artifactId>
-	<version>4.2</version>
+	<artifactId>terrier-project</artifactId>
+	<version>5.0</version>
 </dependency>
 ```
 
@@ -354,4 +354,4 @@ public class IndexingAndRetrievalExample {
 
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

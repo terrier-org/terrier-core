@@ -50,15 +50,15 @@ Here we give an example of using Terrier to index WT2G - a standard [TREC](http:
     echo trec.qrels=/local/collections2/WT2G/info/qrels.trec8.small_web.gz >> etc/terrier.properties
 
     #index the collection
-    bin/trec_terrier.sh -i
+    bin/terrier batchindexing
 
     #run the topics, with suggested c value 10.99
-    bin/trec_terrier.sh -r -c 10.99
+    bin/batchretrieval -c c:10.99
     #run topics again with query expansion enabled
-    bin/trec_terrier.sh -r -q -c 10.99
+    bin/batchretrieval -r -q -c 10.99
 
     #evaluate the results in var/results/
-    bin/trec_terrier.sh -e
+    bin/batchevaluate
 
     #display the Mean Average Precision
     grep ^map var/results/*.eval
@@ -94,7 +94,7 @@ Finally, the length of the DOCNOs in the TREC Blogs06 collection are 31 characte
 
 Now you are ready to start indexing the collection.
 
-    $ ./bin/trec_terrier.sh -i
+    $ bin/terrier batchindexing
     Setting TERRIER_HOME to /local/terrier
     INFO - TRECCollection read collection specification
     INFO - Processing /local/collections/Blogs06/20051206/permalinks-000.gz
@@ -105,7 +105,7 @@ Now you are ready to start indexing the collection.
 
 If we did not plan to use Query Expansion initially, then the faster single-pass indexing could be enabled, using the -j option of TrecTerrier. If we decide to use query expansion later, we can use the [Inverted2DirectIndexBuilder](javadoc/org/terrier/structures/indexing/singlepass/Inverted2DirectIndexBuilder.html) to create the direct index ([BlockInverted2DirectIndexBuilder](javadoc/org/terrier/structures/indexing/singlepass/BlockInverted2DirectIndexBuilder.html) for blocks).
 
-    $ ./bin/trec_terrier.sh -i -j
+    $ bin/terrier batchindexing -j
     Setting TERRIER_HOME to /local/terrier
     INFO - TRECCollection read collection specification
     INFO - Processing /local/collections/Blogs06/20051206/permalinks-000.gz
@@ -141,7 +141,7 @@ Next, we should specify the retrieval weighting model that we want to use. In th
 
 Now we are ready to start retrieval. We use the `-c` to set the parameter of the weighting model to the value 1. Terrier will do retrieval by taking each query (called a topic) from the specified topics file, query the index using it, and save the results to a file in the `var/results` folder, named similar to `PL2c1.0_0.res`. The file `PL2c1.0_0.res.settings` contains a dump of the properties and other settings used to generated the run.
 
-    $ ./bin/trec_terrier.sh -r -c 1
+    $ bin/terrier batchretrieval -c c:1
     Setting TERRIER_HOME to /local/terrier
     INFO - 900 : mcdonalds
     INFO - Processing query: 900
@@ -154,7 +154,7 @@ Now we are ready to start retrieval. We use the `-c` to set the parameter of the
 
 We can now evaluate the retrieval performance of the generated run using the qrels specified earlier:
 
-    $ ./bin/trec_terrier.sh -e
+    $ bin/terrier batchevaluate
     Setting TERRIER_HOME to /local/terrier
     INFO - Evaluating result file: /local/terrier/var/results/PL2c1.0_0.res
     Average Precision: 0.2703
@@ -248,4 +248,4 @@ Many of the above TREC collections can be obtained directly from either [TREC (N
 
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

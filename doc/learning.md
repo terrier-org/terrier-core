@@ -8,7 +8,7 @@ Introduction
 
 Learning to rank is the ability to (a) use multiple features in a uniform way during ranking, and (b) to learn an appropriate method to combine those features. For learning, Terrier has the ability to calculate multiple features, be they query-dependent (c.f. multiple weighting models, such as BM25, PL2 etc), or be they query-independent (c.f. Document Length).
 
-If you wish to use Terrier with a learning-to-rank technique, you must generate a LETOR-formatted file – which can be done using Terrier’s Normalised2LETOROutputFormat class – to provide as to a learning-to-rank technique such as Jforests. A LETOR formatted file looks as follows:
+If you wish to use Terrier with a learning-to-rank technique, you must generate a LETOR-formatted file – which can be done using Terrier's Normalised2LETOROutputFormat class – to provide as to a learning-to-rank technique such as Jforests. A LETOR formatted file looks as follows:
 
     #1: featureName
     #2: featureName
@@ -87,7 +87,7 @@ Firstly, we setup Terrier. This also generates configuration files for learning-
 Next, we need to create an index, with fields and blocks enabled. For brevity, we set the appropriate properties on the the command line:
 
 ```
-    bin/trec_terrier.sh -i -j -Dblock.indexing=true -DFieldTags.process=TITLE,ELSE
+    bin/terrier -j -b -DFieldTags.process=TITLE,ELSE
 
     Setting TERRIER_HOME to /home/terrier-4.0
     INFO - TRECCollection read collection specification (4613 files)
@@ -125,10 +125,10 @@ DSM:org.terrier.matching.dsms.MRFDependenceScoreModifier
 Next, we want to retrieve results for the training topics. In this, we are going to be calculating results with multiple features, as listed in the `etc/features.list` file, so we use a series of Matching classes: [FatFull](javadoc/org/terrier/matching/daat/FatFull.html) to make a [FatResultSet](javadoc/org/terrier/matching/FatResultSet.html) (i.e. a ResultSet with extra posting information), and [FatFeaturedScoringMatching](javadoc/org/terrier/matching/FatFeaturedScoringMatching.html) to add the additional features, and return a FeaturedResultSet. We then add the document label from the qrels using LabelDecorator, and write the results in a LETOR-compatible results file using Normalised2LETOROutputFormat:
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.model=DPH -Dtrec.topics=$TR_TOPICS -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list  -Dtrec.querying.outputformat=Normalised2LETOROutputFormat -Dquerying.postprocesses.order=QueryExpansion,org.terrier.learning.LabelDecorator -Dquerying.postprocesses.controls=labels:org.terrier.learning.LabelDecorator,qe:QueryExpansion -Dquerying.default.controls=labels:on -Dlearning.labels.file=$TR_QRELS -Dtrec.results.file=tr.letor -Dproximity.dependency.type=SD
+    bin/terrier batchretrieval -Dtrec.model=DPH -Dtrec.topics=$TR_TOPICS -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list  -Dtrec.querying.outputformat=Normalised2LETOROutputFormat -Dquerying.postprocesses.order=QueryExpansion,org.terrier.learning.LabelDecorator -Dquerying.postprocesses.controls=labels:org.terrier.learning.LabelDecorator,qe:QueryExpansion -Dquerying.default.controls=labels:on -Dlearning.labels.file=$TR_QRELS -Dtrec.results.file=tr.letor -Dproximity.dependency.type=SD
 
 
-    Setting TERRIER_HOME to /home/terrier-4.0
+    Setting TERRIER_HOME to /home/terrier
     INFO - Structure meta reading lookup file into memory
     INFO - Structure meta loading data file into memory
     INFO - time to intialise index : 1.113
@@ -164,10 +164,10 @@ Next, we want to retrieve results for the training topics. In this, we are going
     phrase term: farm
     MRFDependenceScoreModifier altered scores for 1000 documents
     INFO - Applying LabelDecorator
-    INFO - Writing results to /home/terrier-4.0/var/results/tr.letor
+    INFO - Writing results to /home/terrier/var/results/tr.letor
     ...
-    INFO - Settings of Terrier written to /home/terrier-4.0/var/results/tr.letor.settings
-    INFO - Finished topics, executed 150 queries in 361.379 seconds, results written to /home/terrier-4.0/var/results/tr.letor
+    INFO - Settings of Terrier written to /home/terrier/var/results/tr.letor.settings
+    INFO - Finished topics, executed 150 queries in 361.379 seconds, results written to /home/terrier/var/results/tr.letor
 ```
 
 Lets a have a look at what was output into `tr.letor`:
@@ -190,36 +190,36 @@ The header reports the name of the features. "score"”" means the model used to
 We repeat the retrieval step for the validation queries, this time from the 2003 TREC task:
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.model=DPH -Dtrec.topics=$VA_TOPICS -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list  -Dtrec.querying.outputformat=Normalised2LETOROutputFormat -Dquerying.postprocesses.order=QueryExpansion,org.terrier.learning.LabelDecorator -Dquerying.postprocesses.controls=labels:org.terrier.learning.LabelDecorator,qe:QueryExpansion -Dquerying.default.controls=labels:on -Dlearning.labels.file=$VA_QRELS -Dtrec.results.file=va.letor -Dproximity.dependency.type=SD
+    bin/terrier batchretrieval -Dtrec.model=DPH -Dtrec.topics=$VA_TOPICS -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list  -Dtrec.querying.outputformat=Normalised2LETOROutputFormat -Dquerying.postprocesses.order=QueryExpansion,org.terrier.learning.LabelDecorator -Dquerying.postprocesses.controls=labels:org.terrier.learning.LabelDecorator,qe:QueryExpansion -Dquerying.default.controls=labels:on -Dlearning.labels.file=$VA_QRELS -Dtrec.results.file=va.letor -Dproximity.dependency.type=SD
 ```
 
 To obtain a learned model, we use the [Jforests learning to rank technique](https://github.com/yasserg/jforests/), which is included with Terrier. In particular, we use Jforests data preparation command to prepare the LETOR formatted results files, then learn a LambdaMART learned model. These use Jforests configuration own configuration file `etc/jforests.properties` -- in Terrier this is provided automatically by TRECSetup.
 
 ```
-    bin/anyclass.sh edu.uci.jforests.applications.Runner  --config-file etc/jforests.properties --cmd=generate-bin --ranking --folder var/results/ --file tr.letor  --file va.letor
+    bin/terrier jforests --config-file etc/jforests.properties --cmd=generate-bin --ranking --folder var/results/ --file tr.letor  --file va.letor
 
-    bin/anyclass.sh edu.uci.jforests.applications.Runner  --config-file etc/jforests.properties --cmd=train --ranking --folder var/results/ --train-file var/results/tr.bin --validation-file var/results/va.bin --output-model ensemble.txt
+    bin/terrier jforests --config-file etc/jforests.properties --cmd=train --ranking --folder var/results/ --train-file var/results/tr.bin --validation-file var/results/va.bin --output-model ensemble.txt
 ```
 
 Once the learned model (from Jforests, this is an XML file which takes the form of a gradient boosted regression tree) is obtained in `ensemble.txt`, we can use this to apply the learned model. The configuration for Terrier is similar to retrieval for the training topics, but we additionally use [JforestsModelMatching](javadoc/org/terrier/matching/JforestsModelMatching.html) for application of the learned model, and output the final results using the default, trec\_eval compatible [TRECDocnoOutputFormat](javadoc/org/terrier/structures/outputformat/TRECDocnoOutputFormat.html):
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.model=DPH -Dtrec.topics=$TE_TOPICS -Dtrec.matching=JforestsModelMatching,FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list -Dtrec.results.file=te.res -Dfat.matching.learned.jforest.model=$PWD/ensemble.txt -Dfat.matching.learned.jforest.statistics=$PWD/var/results/jforests-feature-stats.txt -Dproximity.dependency.type=SD
+    bin/terrier batchretrieval -Dtrec.model=DPH -Dtrec.topics=$TE_TOPICS -Dtrec.matching=JforestsModelMatching,FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list -Dtrec.results.file=te.res -Dfat.matching.learned.jforest.model=$PWD/ensemble.txt -Dfat.matching.learned.jforest.statistics=$PWD/var/results/jforests-feature-stats.txt -Dproximity.dependency.type=SD
 ```
 
 
 Finally, for comparison, we additionally make a simple DPH run:
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.model=DPH -Dtrec.topics=$TE_TOPICS
+    bin/terrier batchretrieval -Dtrec.model=DPH -Dtrec.topics=$TE_TOPICS
 ```
 
 On evaluating the two runs using trec\_eval for Mean Reciprocal Rank, we find a marked increase in effectiveness, despite the deployment of no Web-specific features (such as anchor text, URL or link analysis features).
 
 ```
-    bin/trec_eval.sh -m recip_rank $TE_QRELS var/results/DPH_0.res
+    bin/terrier trec_eval -m recip_rank $TE_QRELS var/results/DPH_0.res
     recip_rank              all 0.4447
-    bin/trec_eval.sh  -m recip_rank $TE_QRELS var/results/te.res
+    bin/terrier trec_eval -m recip_rank $TE_QRELS var/results/te.res
     recip_rank              all 0.5201
 ```
 
@@ -231,7 +231,7 @@ In the following, we give typical configurations for using the learning/fat comp
 ### From inverted index -> LETOR file with many features
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=/path/to/list.features -Dtrec.querying.outputformat=Normalised2LETOROutputFormat
+    bin/terrier batchretrieval -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=/path/to/list.features -Dtrec.querying.outputformat=Normalised2LETOROutputFormat
 ```
 
 ### From inverted index -> Fat result file -> LETOR file with many features
@@ -239,15 +239,15 @@ In the following, we give typical configurations for using the learning/fat comp
 You can save intermediate FatResultSets, to that can go back and compute different sets of features without retrieval from the inverted index.
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.matching=org.terrier.matching.daat.FatFull -Dtrec.querying.outputformat=WritableOutputFormat
+    bin/terrier batchretrieval -Dtrec.matching=org.terrier.matching.daat.FatFull -Dtrec.querying.outputformat=WritableOutputFormat
 
-    bin/trec_terrier.sh -r -Dtrec.matching=FatFeaturedScoringMatching,FatResultsMatching -Dfat.results.matching.file=bla.fat.res.gz  -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=/path/to/list.features -Dtrec.querying.outputformat=Normalised2LETOROutputFormat
+    bin/terrier batchretrieval -Dtrec.matching=FatFeaturedScoringMatching,FatResultsMatching -Dfat.results.matching.file=bla.fat.res.gz  -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=/path/to/list.features -Dtrec.querying.outputformat=Normalised2LETOROutputFormat
 ```
 
 ### From inverted index -> Final Ranking having applied learned model to documents
 
 ```
-    bin/trec_terrier.sh -r -Dtrec.matching=JforestsModelMatching,FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features=$PWD/list.features -Dfat.matching.learned.jforest.model=/path/to/jforest.model
+    bin/terrier batchretrieval -Dtrec.matching=JforestsModelMatching,FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features=$PWD/list.features -Dfat.matching.learned.jforest.model=/path/to/jforest.model
 ```
 
 References
@@ -265,4 +265,4 @@ References
 
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

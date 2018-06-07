@@ -1,9 +1,33 @@
 What's New in Terrier
 =====================
 
+Terrier 5.0 - xx/xx/2018
+------------------------
+Major update. New features include a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning.
+
+### Indexing
+ - [TR-466](http://terrier.org/issues/browse/TR-466) SimpleXMLCollection - requested constructor not found (Jiho Noh, University of Kentucky)
+ - [TR-489](http://terrier.org/issues/browse/TR-489) TaggedDocument cannot make abstract if no global tag (Kiril Mihaylov, University of Glasgow)
+ - [TR-479](http://terrier.org/issues/browse/TR-479) Control number of threads during threaded indexing
+ - [TR-443](http://terrier.org/issues/browse/TR-443) Index data.properties should record the termpipeline
+ - [TR-493](http://terrier.org/issues/browse/TR-493) Record maxtf in lexicon during indexing
+
+### Retrieval
+ - [TR-317](http://terrier.org/issues/browse/TR-317) ProximityIterablePosting does not calculate the total number of matching phrases
+ - [TR-472](http://terrier.org/issues/browse/TR-472) Request not passed to the WeightingModel (Aldo Lipani, Vienna University of Technology)
+ - [TR-487](http://terrier.org/issues/browse/TR-487) MatchingQueryTerms should be decorated with the EntryStatistics
+ - [TR-442](http://terrier.org/issues/browse/TR-442) IterablePosting.EOL should be Integer.MAX_VALUE (Nicola Tonellotto, ISTI-CNR)
+
+### Other
+ - [TR-445](http://terrier.org/issues/browse/TR-445) Infrastructure support for non-String lexicons
+ - [TR-491](http://terrier.org/issues/browse/TR-491) Split out MapReduce indexer from core, upgrade Hadoop
+ - [TR-480](http://terrier.org/issues/browse/TR-480) Resolve additional Terrier "plugins" from Maven repositories. Ramification of this change is that Class.forName() should be replaced by ApplicationSetup.getClass(). 
+ - [TR-483](http://terrier.org/issues/browse/TR-483) pom.xml should not specify javac
+ - [TR-495](http://terrier.org/issues/browse/TR-495) Build should work on JDK9
+
 Terrier 4.2 - 22/12/2016
 ------------------------
-Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency. Terrier now required Java 1.8.
+Minor update with mostly bug fixes and minor improvements. Inclusion of new feature of **experimental** multi-threaded indexing [TR-450](http://terrier.org/issues/browse/TR-450), and some time was spent trying to improve indexing efficiency. Terrier now requires Java 1.8.
 
 ### Indexing
 - [TR-377](http://terrier.org/issues/browse/TR-377) TagSet.isTagToProcess and isTagToSkip perform upper-casing even if hashmaps have no size
@@ -1000,4 +1024,4 @@ Terrier 1.0 Beta - 18/11/2004
 ---------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

@@ -3,6 +3,22 @@ Terrier Components
 
 On this page we will give an overview of Terrier's main components and their interaction.
 
+
+Modules
+-------
+
+Since version 5.0, the Terrier open source project has a number of open source modules:
+
+- retrieval-api - this is the client-side interface for performing querying
+- core - this is the main architectural components. All other implementation components depends on core.
+- batch-indexers - this is the code for indexing corpora of documents
+- batch-retrieval - this is the code of perform batch retrieval experiments
+- learning - this extends batch-retrieval with learning-to-rank capabilities
+- realtime - this provides incremental and updatable index data structures
+- website-search - this provides additional web-based interfaces
+
+The components within these various modules interact.
+
 Component Interaction
 ---------------------
 
@@ -39,7 +55,7 @@ The graphic below gives an overview of the interaction of Terrier's components i
 
 -   Afterwards, the PostProcessing and PostFiltering takes place. In PostProcessing, the ResultSet can be altered in any way - for example, QueryExpansion expands the query, and then calls Matching again to generate an improved ranking of documents. PostFiltering is simpler, allowing documents to be either included or excluded - this is ideal for interactive applications where users want to restrict the domain of the documents being retrieved.
 
--   Finally, the ResultSet will be returned to the application component.
+-   Finally, the ResultSet (or ScoredDocList) is returned to the client application.
 
 Component description
 ---------------------
@@ -101,4 +117,4 @@ See [org.terrier.querying.Manager](javadoc/org/terrier/querying/Manager.html) fo
 ----------------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

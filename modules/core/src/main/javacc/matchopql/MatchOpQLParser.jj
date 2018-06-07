@@ -1,0 +1,277 @@
+options {
+	STATIC = false;
+	LOOKAHEAD = 3;
+	FORCE_LA_CHECK = true;
+	DEBUG_PARSER=false;
+}
+
+PARSER_BEGIN(MatchOpQLParser)
+
+package org.terrier.matching.matchops;
+
+import org.terrier.querying.parser.Query.QTPBuilder;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.io.StringReader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+@SuppressWarnings("all")
+public class MatchOpQLParser
+{
+    private final static boolean DEBUG = false;
+    
+    public MatchOpQLParser(String r) {
+    	this(new StringReader(r));
+    }
+	   
+    public static void main(String args[])
+    {
+        try
+        {
+	        if (args.length == 1 && args[0].equals("-"))
+	        {
+	        	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	        	String line = null;
+	        	while((line = br.readLine())!= null) {
+	        		MatchOpQLParser parser = new MatchOpQLParser(line.trim());
+	        		System.out.println(parser.parseAll());
+	        	}
+	        }
+	        else
+	        {
+	            String query = args[0];
+	            MatchOpQLParser parser = new MatchOpQLParser(query);
+	            System.out.println(parser.parse());
+	        }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+}
+
+PARSER_END(MatchOpQLParser) 
+
+/** Skip these characters, they are considered "white space" **/
+SKIP :                              
+{
+      " "
+    | "\t"
+    | "\r"
+    | "\n"
+
+}
+
+< WithinIndri > SKIP : {
+	" "
+}
+
+/** Reserved tokens for UQL */
+TOKEN :
+{
+	  <HASH : "#"> : WithinIndri
+	  | <WORD : (["A"-"Z","a"-"z","0"-"9"])+ > 
+	  | <PERIOD : ".">
+	  | <CLOSE_PAREN: ")"> : DEFAULT
+}
+
+<WithinIndri> TOKEN : {
+   <BAND: "band">
+   |  <UW:  "uw">
+   |  <OW:  "ow">
+   |  <SYN: "syn">
+   |  <TAG: "tag">
+   |  <COMBINE: "combine">
+   |  <OPEN_PAREN: "("> : DEFAULT
+   | <COLON : ":">
+   | <EQUALS : "=">
+   | <FLOAT : (["0"-"9"])+"."(["0"-"9"])* >
+   | <INT : (["0"-"9"])+ >
+}
+
+
+
+List<MatchingTerm> parseOne() : 
+{
+	List<MatchingTerm> rtrList = new ArrayList<MatchingTerm>();
+	MatchingTerm newWord = null;
+	List<MatchingTerm> newWords = null;
+}
+{
+	(LOOKAHEAD(<HASH> <TAG>)
+	<HASH> <TAG> newWords = tag() { rtrList.addAll(newWords); } 
+	| <HASH> <COMBINE> newWords = combine() { rtrList.addAll(newWords); } 
+	| newWord = parse() { rtrList.add(newWord); })
+	{
+		return rtrList;
+	}
+}
+
+List<MatchingTerm> parseAll() : 
+{
+	List<MatchingTerm> rtrList = new ArrayList<MatchingTerm>();
+	List<MatchingTerm> newWords = null;
+}
+{
+	(
+	newWords = parseOne() { rtrList.addAll(newWords); } 
+	)+
+	{
+		return rtrList;
+	}
+}
+
+
+MatchingTerm parse() :
+{
+	MatchingTerm rtr = null;
+}
+{
+	(
+	<HASH>
+	(	
+	  rtr = syn()
+	| rtr = band()
+	| rtr = uw() 
+	| rtr = ow()
+	| rtr = ow_implicit()
+	)
+	| rtr = word()
+	)
+	{
+		return rtr;
+	}
+}
+
+List<MatchingTerm> combine(): {
+	List<MatchingTerm> allInnerWords = new ArrayList<MatchingTerm>();
+	List<MatchingTerm> innerWords = null;
+	Token key;
+	Token value;
+	int offset = 0;
+	Map<Integer,String> kv = new HashMap<Integer,String>();
+}
+{
+	(<COLON> key = <INT> <EQUALS> value = <FLOAT> { kv.put(Integer.parseInt(key.image), value.image); } )*
+	<OPEN_PAREN>  (innerWords = parseOne() { 
+		  for(MatchingTerm qt : innerWords)
+		  {
+	    		if (kv.containsKey(offset))
+	    		{
+	    			qt.getValue().setWeight(qt.getValue().getWeight() * Double.parseDouble(kv.get(offset)));
+	    		}
+	      }
+		  offset++; 
+		  allInnerWords.addAll(innerWords);
+		  }  
+	)+  <CLOSE_PAREN>
+	{
+    	return allInnerWords;
+    }
+}
+
+List<MatchingTerm> tag(): {
+	List<MatchingTerm> innerWords = null;
+	Token tagName;
+}
+{
+	<OPEN_PAREN> tagName = <WORD> innerWords = parseAll()  <CLOSE_PAREN>
+	{
+    	for(MatchingTerm qt : innerWords)
+    	{
+    		qt.getValue().setTag(tagName.image);
+    	}
+    	return innerWords;
+    }
+}
+
+
+MatchingTerm syn(): {
+  List<Operator> words = new ArrayList<Operator>();
+  MatchingTerm newWord = null;
+}
+{ 
+  <SYN> <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
+  {
+    return QTPBuilder.of(new SynonymOp(words.toArray(new Operator[words.size()]))).build();
+  }
+}
+
+MatchingTerm band() : {
+  List<Operator> words = new ArrayList<Operator>();
+  MatchingTerm newWord = null;
+}
+{ 
+  <BAND>  <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
+  {
+    return QTPBuilder.of(new ANDQueryOp(words.toArray(new Operator[words.size()]))).build();
+  }
+}
+
+MatchingTerm uw(): {
+  List<Operator> words = new ArrayList<Operator>();
+  MatchingTerm newWord = null;
+  Token dist;
+}
+{ 
+  <UW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
+  {
+    return QTPBuilder.of(new UnorderedWindowOp(words.toArray(new Operator[words.size()]), Integer.parseInt(dist.image))).build();
+  }
+}
+
+MatchingTerm ow(): {
+  List<Operator> words = new ArrayList<Operator>();
+  MatchingTerm newWord = null;
+  Token dist;
+}
+{ 
+  <OW> dist=<INT>  <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+ <CLOSE_PAREN>
+  {
+    int iDist = Integer.parseInt(dist.image);
+  	if (iDist != 1)
+  	{
+  		throw new ParseException("Ordered windows > 1 not yet supported");
+  	}
+    return QTPBuilder.of(new PhraseOp(words.toArray(new Operator[words.size()]))).build();
+  }
+}
+
+
+MatchingTerm ow_implicit(): {
+  List<Operator> words = new ArrayList<Operator>();
+  MatchingTerm newWord = null;
+  Token dist;
+}
+{ 
+  dist=<INT> <OPEN_PAREN> (newWord = parse() { words.add(newWord.getKey()); })+  <CLOSE_PAREN>
+  {
+  	int iDist = Integer.parseInt(dist.image);
+  	if (iDist != 1)
+  	{
+  		throw new ParseException("Ordered windows > 1 not yet supported");
+  	}
+    return QTPBuilder.of(new PhraseOp(words.toArray(new Operator[words.size()]))).build();
+  }
+}
+
+MatchingTerm word() : {
+	Token word;
+	Token field = null;
+}
+{
+	word = <WORD> (<PERIOD> field = <WORD>)?
+	{
+		String fieldName = null;
+		if (field != null)
+			fieldName = field.image;
+		return QTPBuilder.of(new SingleTermOp(word.image, fieldName)).build();
+	}
+}

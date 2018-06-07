@@ -5,11 +5,11 @@ Terrier uses [jtreceval](https://github.com/terrierteam/jtreceval) to provide th
 
 Before running an evaluation, we need to specify the relevance assessments file in the property `trec.qrels`. To evaluate all .res result files in folder `var/results`, we can type the following:
 
-    bin/trec_terrier.sh -e
+    bin/terrier batchevaluate
 
-The above command evaluates each .res file in folder var/results using trec_eval. We can evaluate for a particular result file by giving the filename in the command line:
+The `batchevaluate` command evaluates each .res file in folder var/results using trec_eval. We can evaluate for a particular result file by giving the filename in the command line:
 
-    bin/trec_terrier.sh -e InL2c1.0_0.res
+    bin/terrier batchevaluate -e InL2c1.0_0.res
 
 or
 
@@ -52,18 +52,18 @@ P_1000	all	0.0209
 
 The above displayed evaluation measures are averaged over a batch of queries. We can obtain per-query results by using option -p in the command line:
 
-    bin/trec_terrier.sh -e PL2c1.0_0.res -p
+    bin/terrier batchevaluate -e PL2c1.0_0.res -p
 
 The resulting output saved in the corresponding .eval file will contain further results, with the middle column indicating the query id.
 
 
 ### Using trec_eval directly
 
-Terrier ships with [treceval](https://github.com/terrierteam/jtreceval), which contains trec\_eval binaries that work on Linux x86, Mac OS X x86_64 and Windows x86. You can therefore use easily trec_eval directly from the command line, by invoking the `trec_eval.sh` script:
+Terrier ships with [treceval](https://github.com/terrierteam/jtreceval), which contains trec\_eval binaries that work on Linux x86/x86_64, Mac OS X x86_64 and Windows x86. You can therefore use easily trec_eval directly from the command line, by invoking the `trec_eval.sh` script:
 
 ```shell
 
-bin/trec_eval.sh qrels var/results/PL2c1.0_0.res
+bin/terrier trec_eval /path/to/qrels var/results/PL2c1.0_0.res
 
 ```
 
@@ -72,4 +72,4 @@ bin/trec_eval.sh qrels var/results/PL2c1.0_0.res
 
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

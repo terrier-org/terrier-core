@@ -1,0 +1,3 @@
+org.terrier.applications.batchquerying.TRECQuerying$Command
+org.terrier.evaluation.TrecEvalEvaluation$Command
+org.terrier.evaluation.BatchEvaluationCommand

@@ -1,7 +1,9 @@
 Query Language
 ==============
 
-Terrier offers a flexible and powerful query language for searching with phrases, fields, or specifying that terms are required to appear in the retrieved documents. Some examples of queries are the following:
+Terrier offers a user flexible query language for searching with phrases, fields, or specifying that terms are required to appear in the retrieved documents.
+
+Some examples of Terrier's query language are the following:
 
  - `term1 term2`  -- retrieves documents that contain term1 or term2 (they do not need to contain both of them).
  - `{term1 term2}` -- retrieves documents that contain term1 or term2, where they are treated as synonyms of each other (they do not need to contain both of them)
@@ -22,4 +24,4 @@ Note that in some configurations, the Terrier query language may not be availabl
 ------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.

@@ -93,7 +93,7 @@ TrecDocTags.casesensitive=true
 #trec.collection.class=SimpleFileCollection
 
 #indexing.simplefilecollection.extensionsparsers - use this to define parsers for know file extensions
-#indexing.simplefilecollection.extensionsparsers=txt:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument, pdf:PDFDocument,html:TaggedDocument,htm:TaggedDocument,xhtml:TaggedDocument, xml:TaggedDocument,doc:MSWordDocument,ppt:MSPowerpointDocument,xls:MSExcelDocument
+#indexing.simplefilecollection.extensionsparsers=txt:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument, pdf:PDFDocument,html:TaggedDocument,htm:TaggedDocument,xhtml:TaggedDocument, xml:TaggedDocument,doc:MSWordDocument,ppt:MSPowerPointDocument,xls:MSExcelDocument
 
 #indexing.simplefilecollection.defaultparser
 #if this is defined, then terrier will attempt to open any file it doesn't have an explicit parser for with the parser given

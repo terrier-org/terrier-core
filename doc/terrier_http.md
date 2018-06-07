@@ -159,7 +159,7 @@ Using the Web-based interface
 Once you have an index with the necessary abstract entries and/or meta-data, you can start a Web-based interface, and begin searching with it. We provide two basic interfaces for illustration, *simple* and *wt2g*. These are stored in: `src/webapps/`. By default, the *simple* interface can be launched using the following command:
 
 ```shell
-bin/http_terrier.sh
+bin/terrier http
 ```
 
 This will start a local HTTP server hosting the src/webapps/simple folder at [http://localhost:8080/](http://localhost:8080/).
@@ -196,7 +196,7 @@ The simple interface provides only the basic functionality. You can change the l
 
 If you wish to use another webapps folder, or start the interface on a port other than 8080, you can override both on the command line.
 
-    bin/http_terrier.sh 8080 src/webapps/wt2g/
+    bin/terrier http 8080 src/webapps/wt2g/
 
 The results for the same example query using the wt2g interface are shown below.
 
@@ -253,21 +253,14 @@ The two initial interfaces provided with Terrier can be easily extended to add m
     // The matching model to choose
     srq.addMatchingModel(defaultMatching, defaultModel);
     // Run any preprocessing (e.g. run the query through the term pipeline)
-    queryingManager.runPreProcessing(srq);
-    // Get the documents that match the query)
-    queryingManager.runMatching(srq);
-    // Run any postprocessing - (e.g. query expansion)
-    queryingManager.runPostProcessing(srq);
-    // Run any postfilters - at this stage the 'decorate' post filter adds the meta-data about each
-    // document to the ResultSet
-    queryingManager.runPostFilters(srq);
+    queryingManager.runSearchRequest(srq);
     // Get our decorated result set
     ResultSet rs = srq.getResultSet();
 ```
 
 ### Further Details
 
-`bin/http_terrier.sh` invokes [SimpleJettyHTTPServer](javadoc/org/terrier/utility/SimpleJettyHTTPServer.html), which starts a [Jetty](http://www.eclipse.org/jetty/) server on the port specified on the command line. The second command line argument is the path to a webapps folder. `share/images` is also mounted as `/images` directory.
+`bin/terrier http` invokes [SimpleJettyHTTPServer](javadoc/org/terrier/utility/SimpleJettyHTTPServer.html), which starts a [Jetty](http://www.eclipse.org/jetty/) server on the port specified on the command line. The second command line argument is the path to a webapps folder. `share/images` is also mounted as `/images` directory.
 
 
 
@@ -275,5 +268,5 @@ The two initial interfaces provided with Terrier can be easily extended to add m
 ------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
  
