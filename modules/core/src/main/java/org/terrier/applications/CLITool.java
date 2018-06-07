@@ -61,6 +61,7 @@ public abstract class CLITool {
 			Options options = new Options();
 			options.addOption(Option.builder("D")
 					.argName("property")
+					.hasArgs()
 					.desc("specify property name=value")
 					.build());
 			options.addOption(Option.builder("I")
@@ -94,7 +95,7 @@ public abstract class CLITool {
 			if (line.hasOption('D'))
 			{
 				props = line.getOptionProperties("D");
-				props.forEach( (k,v) -> ApplicationSetup.setProperty((String)k, (String)v));
+				props.forEach( (k,v) -> System.setProperty((String)k, (String)v));
 			}
 //			if (line.hasOption('I'))
 //			{
