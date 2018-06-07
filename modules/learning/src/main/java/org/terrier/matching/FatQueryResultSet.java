@@ -144,25 +144,29 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 
 	/** {@inheritDoc} */
 	@Override
-	public void sort(int topDocs) {		
+	public void sort(int topDocs) {
+		int[] oldDocids = new int[getDocids().length];
+		System.arraycopy(getDocids(), 0, oldDocids, 0, getDocids().length);
 		HeapSort.descendingHeapSort(getScores(), getDocids(), getOccurrences(), topDocs);
 		TIntIntHashMap sortedOrder = new TIntIntHashMap(postings.length);
 		for(int i=0;i<docids.length;i++)
 		{
 			sortedOrder.put(docids[i], i);
 		}
-		WritablePosting[][] tmp = new WritablePosting[postings.length][];
+		WritablePosting[][] tmp = new WritablePosting[postings.length][];//shouldnt this just be topDocs in length?
 		for(int i=0;i<docids.length;i++)
 		{
-			int docid = -1;
-			for(int j=0;j<postings[i].length;j++)
-				if (postings[i][j] != null)
-				{
-					docid = postings[i][j].getId();
-					break;
-				}
-			assert docid != -1;
-			tmp[sortedOrder.get(docid)] = postings[i];
+			int docid = oldDocids[i];
+			//int docid = -1;
+			//for(int j=0;j<postings[i].length;j++)
+			//	if (postings[i][j] != null)
+			//	{
+			//		docid = postings[i][j].getId();
+			//		break;
+			//	}
+			//assert docid != -1;
+			if (sortedOrder.containsKey(docid))
+				tmp[sortedOrder.get(docid)] = postings[i];
 		}
 		postings = tmp;
 	}
