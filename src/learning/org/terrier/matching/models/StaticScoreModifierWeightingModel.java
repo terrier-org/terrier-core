@@ -57,13 +57,13 @@ public abstract class StaticScoreModifierWeightingModel extends WeightingModel {
 
 	static final Logger logger = LoggerFactory.getLogger(StaticScoreModifierWeightingModel.class);
 	
-	double[] staticScores;
-	float[] FstaticScores;
-	final boolean asFloat;
-	final boolean map;
-	TIntDoubleHashMap staticMap;
-	TIntFloatHashMap FstaticMap;
-	String source;
+	protected double[] staticScores;
+	protected float[] FstaticScores;
+	protected final boolean asFloat;
+	protected final boolean map;
+	protected TIntDoubleHashMap staticMap;
+	protected TIntFloatHashMap FstaticMap;
+	protected String source;
 	
 	public final double getScoreD(int docid)
 	{
@@ -99,7 +99,7 @@ public abstract class StaticScoreModifierWeightingModel extends WeightingModel {
 		staticMap = scores;
 	}
 	
-	StaticScoreModifierWeightingModel(String[] params)
+	public StaticScoreModifierWeightingModel(String[] params)
 	{
 		if (params[0].equals("OOS")||params[0].equals("OIS"))
 		{
