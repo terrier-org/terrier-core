@@ -35,7 +35,8 @@ import java.io.PrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.ResultSet;
-import org.terrier.querying.Request;
+import org.terrier.querying.ScoredDoc;
+import org.terrier.querying.ScoredDocList;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 import org.terrier.structures.MetaIndex;
@@ -80,20 +81,10 @@ public class TRECDocnoOutputFormat implements OutputFormat {
 
 		return docnos;
 	}
-
-	/**
-	 * Prints the results for the given search request, using the specified
-	 * destination.
-	 * 
-	 * @param pw
-	 *            PrintWriter the destination where to save the results.
-	 * @param q
-	 *            SearchRequest the object encapsulating the query and the
-	 *            results.
-	 */
-	public void printResults(final PrintWriter pw, final SearchRequest q,
-			String method, String iteration, int _RESULTS_LENGTH) throws IOException {
-		final ResultSet set = ((Request) q).getResultSet();
+	
+	void printResults(final PrintWriter pw, final SearchRequest q, final ResultSet set,
+			String method, String iteration, int _RESULTS_LENGTH) throws IOException 
+	{
 		final String metaIndexDocumentKey = ApplicationSetup.getProperty("trec.querying.outputformat.docno.meta.key", "docno");
 		final double[] scores = set.getScores();
 		if (set.getResultSize() == 0) {
@@ -142,5 +133,60 @@ public class TRECDocnoOutputFormat implements OutputFormat {
 		}
 		pw.write(sbuffer.toString());
 		pw.flush();
+	}
+	
+	/**
+	 * Prints the results for the given search request, using the specified
+	 * destination.
+	 * 
+	 * @param pw
+	 *            PrintWriter the destination where to save the results.
+	 * @param q
+	 *            SearchRequest the object encapsulating the query and the
+	 *            results.
+	 */
+	public void printResults(final PrintWriter pw, final SearchRequest q,
+			String method, String iteration, int _RESULTS_LENGTH) throws IOException {
+		
+		ScoredDocList results = q.getResults();
+		final int maximum = _RESULTS_LENGTH > results.size()
+				|| _RESULTS_LENGTH == 0 ? results.size()
+				: _RESULTS_LENGTH;
+		final String queryIdExpanded = q.getQueryID() + " " + iteration
+				+ " ";
+		final String methodExpanded = " " + method + ApplicationSetup.EOL;
+		StringBuilder sbuffer = new StringBuilder();
+		
+		// the results are ordered in desceding order
+		// with respect to the score.
+		int limit = 10000;
+		
+		int i=-1;
+		for (ScoredDoc doc : results)
+		{
+			i++;
+			
+			if (doc.getScore() == Double.NEGATIVE_INFINITY)
+				continue;
+			sbuffer.append(queryIdExpanded);
+			sbuffer.append(doc.getMetadata("docno"));
+			sbuffer.append(" ");
+			sbuffer.append(i);
+			sbuffer.append(" ");
+			sbuffer.append(doc.getScore());
+			sbuffer.append(methodExpanded);
+			if (i % limit == 0) {
+				pw.write(sbuffer.toString());
+				sbuffer = null;
+				sbuffer = new StringBuilder();
+				pw.flush();
+			}
+			
+			if (i==maximum)
+				break;
+		}
+		pw.write(sbuffer.toString());
+		pw.flush();
+		
 	}
 }
