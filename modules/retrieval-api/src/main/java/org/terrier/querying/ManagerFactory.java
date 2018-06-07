@@ -22,7 +22,20 @@ public class ManagerFactory {
 		if (! any)
 			throw new UnsupportedOperationException("No Manager implementations found. Do you need to import terrer-core?");
 		throw new IllegalArgumentException("No Manager implementation found for index " 
-			+ ref.toString() + " - Do  you need to import another package");
+			+ ref.toString() + " (" +ref.getClass().getSimpleName()+ ") - Do you need to import another package? Or perhaps the index location is wrong. Found were " + seenList());
+	}
+	
+	static String seenList()
+	{
+		StringBuilder s = new StringBuilder();
+		Iterable<Builder> iter = ServiceLoader.load(Builder.class);
+		for(Builder b : iter)
+		{
+			s.append(b.getClass().getName());
+			s.append(",");
+		}
+		s.setLength(s.length()-1);
+		return s.toString();
 	}
 	
 	
