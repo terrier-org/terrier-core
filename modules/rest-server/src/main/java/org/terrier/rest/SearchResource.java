@@ -12,7 +12,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.terrier.matching.models.BM25;
 import org.terrier.querying.IndexRef;
 import org.terrier.querying.Manager;
 import org.terrier.querying.ManagerFactory;
@@ -27,6 +26,9 @@ import org.terrier.structures.outputformat.TRECDocnoOutputFormat;
 public class SearchResource {
 
 	static final String DEFAULT_FORMAT = "trec";
+	static final String DEFAULT_MATCHING = org.terrier.matching.daat.Full.class.getName();
+	static final String DEFAULT_WMODEL = org.terrier.matching.models.DPH.class.getName();
+	
 	
 	IndexRef indexRef = IndexRef.of("/Users/craigm/git/Terrier/var/index/data.properties");
 	Manager m = ManagerFactory.from(indexRef);
@@ -37,7 +39,10 @@ public class SearchResource {
     public Response search(
     	@QueryParam("query") String query,
     	@QueryParam("controls")@DefaultValue("") String controls,
-    	@PathParam("format") String format
+    	@QueryParam("qid")@DefaultValue("") String qid,
+    	@QueryParam("wmodel")@DefaultValue("") String wmodel,
+    	@QueryParam("matching")@DefaultValue("") String matching,
+    	@PathParam("format")@DefaultValue(DEFAULT_FORMAT) String format
     	) 
 	{
 		if (format == null)
@@ -55,7 +60,16 @@ public class SearchResource {
 					srq.setControl(kvs[0], kvs[1]);
 				}				 
 			}
-			srq.addMatchingModel(org.terrier.matching.daat.Full.class.getName(), BM25.class.getName());
+			
+			if (wmodel.length() == 0)
+				wmodel = DEFAULT_WMODEL;
+			if (matching.length() == 0)
+				matching = DEFAULT_MATCHING;
+			srq.addMatchingModel(DEFAULT_MATCHING, DEFAULT_WMODEL);
+			
+			if (qid.length() != 0)
+				srq.setQueryID(qid);
+			
 			m.runSearchRequest(srq);
 			
 			StringWriter sw = new StringWriter();

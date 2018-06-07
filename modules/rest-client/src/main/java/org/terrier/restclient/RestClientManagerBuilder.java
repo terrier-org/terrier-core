@@ -21,6 +21,15 @@ import org.terrier.querying.ScoredDoc;
 import org.terrier.querying.ScoredDocList;
 import org.terrier.querying.SearchRequest;
 
+/** This class facilitates a Manager to be obtained for a remote HTTP 
+ *  REST index reference. There is NO NEED to refer to the class directly -
+ *  It is sufficient that terrier-rest-client is included in the classpath.
+ *  <pre><code>
+ *  IndexRef ref = IndexRef.of("http://server:8080/");
+ *  Manager m = ManagerFactory.from(ref);
+ *  </code></pre>
+ *  @since 5.0
+ */
 public class RestClientManagerBuilder implements ManagerFactory.Builder {
 
 	@Override
@@ -158,14 +167,12 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 
 		@Override
 		public void setProperty(String key, String value) {
-			// TODO Auto-generated method stub
-			
+			throw new UnsupportedOperationException("sorry, the rest client and server do no yet support changing properties");
 		}
 
 		@Override
 		public void setProperties(Properties p) {
-			// TODO Auto-generated method stub
-			
+			throw new UnsupportedOperationException("sorry, the rest client and server do no yet support changing properties");
 		}
 
 		@Override
@@ -174,12 +181,30 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 			try{
 				srq.setStartedProcessingTime(System.currentTimeMillis());
 				url = ref.toString()+ "/search/trec?" + "query=" + URLEncoder.encode(srq.getOriginalQuery(), "UTF-8");
-				Map<String,String> controls = ((RESTRequest)srq).controls;
+				final RESTRequest rrq = (RESTRequest)srq;
+				Map<String,String> controls = rrq.controls;
+				//controls
 				if (controls.size() > 0)
 				{
 					url = url + "&controls=" + URLEncoder.encode(
 						controls.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue()).collect(Collectors.joining(", ")), "UTF-8");
 				}
+				//wmodel
+				if (rrq.wmodel != null)
+				{
+					url += "&wmodel="+rrq.wmodel;
+				}
+				//matching
+				if (rrq.matching != null)
+				{
+					url += "&matching="+rrq.matching;
+				}
+				//qid
+				if (rrq.qid != null)
+				{
+					url += "&qid="+rrq.qid;
+				}
+				
 				CloseableHttpClient httpclient = HttpClients.createDefault();
 				HttpGet httpGet = new HttpGet(url);
 				CloseableHttpResponse response = httpclient.execute(httpGet);
