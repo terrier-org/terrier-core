@@ -3,7 +3,9 @@ What's New in Terrier
 
 Terrier 5.0 - xx/xx/2018
 ------------------------
-Major update. New features include a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning.
+Major update. New features include a new commandline API, revisions to the retrieval API, a Mavenized layout, a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning.
+
+More information can be found in the [documentation on migration to Terrier 5](Tr5migration.md).
 
 ### Indexing
  - [TR-466](http://terrier.org/issues/browse/TR-466) SimpleXMLCollection - requested constructor not found (Jiho Noh, University of Kentucky)
