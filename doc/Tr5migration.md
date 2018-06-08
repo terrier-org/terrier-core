@@ -32,9 +32,9 @@ How you interact with Terrier defines which Maven dependencies you need to load.
 Index Formats
 -------------
 
-Terrier's index format has changed for Terrier 5. By default, Lexicons now retain the maximum tf observed in each term's posting list. This will allows future easier integration of dynamic pruning techniques such as WAND using a standard Terrier index.
+Terrier's index format has changed for Terrier 5. By default, Lexicons now retain the maximum tf observed in each term's posting list. This will allow future easier integration of dynamic pruning techniques such as WAND using a standard Terrier index.
 
-Terrier 5 continues to support Terrier 4 indices. Support for some earlier Terrier indices is not retained (e.g. Terrier 3 block indices that use BlockLexiconEntry).
+Terrier 5 is backwardly compatible with Terrier 4 indices, i.e. **Terrier 5 can use indices created by Terrier 4**, without any need to re-index. Support for some earlier Terrier indices has not been retained (e.g. Terrier 3 block indices that use BlockLexiconEntry).
 
 MatchingOp Query Language
 -------------------------
