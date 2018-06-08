@@ -32,9 +32,9 @@ System.out.println("We have indexed " + index.getCollectionStatistics().getNumbe
 To search our index, we need to use a querying Manager, which does the work of scoring each document for your query. Your query is stored in a SearchRequest object that the Manager can generate for you. We also need to specify which scoring function to use when ranking documents via the addMatchingModel() method (in this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25)).
 
 ```java
-Manager queryingManager = new Manager(index);
+Manager queryingManager = ManagerFactory.from(index.getIndexRef());
 SearchRequest srq = queryingManager.newSearchRequestFromQuery("my terrier query");
-srq.addMatchingModel("Matching","BM25");
+srq.addMatchingModel("org.terrier.daat.matching.Full","BM25");
 ```
 Finally, we issue the search:
 ```java
@@ -76,6 +76,12 @@ Once you have your project setup with Maven, its time to add Terrier to your pro
 <dependency>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-core</artifactId>
+	<version>5.0</version>
+</dependency>
+
+<dependency>
+	<groupId>org.terrier</groupId>
+	<artifactId>terrier-batch-indexers</artifactId>
 	<version>5.0</version>
 </dependency>
 ```
@@ -202,7 +208,7 @@ In this case, we have specified that org.terrier.querying.SimpleDecorate is a po
 Within Terrier, searches are performed using a Manager class. This class performs the nuts and bolts of actually matching your query against the documents that were indexed. If you are running multiple queries, you need to only create a single manager and use it multiple times. There is only one Manager implementation in Terrier, which you can instantiate as follows:
 
 ```java
-Manager queryingManager = new Manager(index);
+Manager queryingManager = ManagerFactory.from(index.getIndexRef());
 ```
 
 This creates a new querying manager with a default configuration and sets the index to be searched (to our 'memindex' in this case). The next step in the process is to create a SearchRequest, which contains both our query as well as some other information about how we want the search to be processed. The Manager can generate a SearchRequest for you with default settings as shown below:
@@ -215,7 +221,7 @@ In this case we have created a new SearchRequest for the query 'sample query'. T
 
 
 ```java
-srq.addMatchingModel("Matching","BM25");
+srq.addMatchingModel("org.terrier.matching.daat.Full","BM25");
 ```
 
 In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate':
@@ -233,7 +239,7 @@ queryingManager.runSearchRequest(srq);
 Once finished, the results are stored in the SearchRequest as a ResultSet, which can be accessed via:
 
 ```java
-ResultSet results = srq.getResultSet();
+ScoredDocList results = srq.getResults();
 ```
 
 ### Understanding the ResultSet
@@ -253,9 +259,7 @@ import java.io.FileReader;
 import java.util.HashMap;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.SimpleFileCollection;
-import org.terrier.matching.ResultSet;
-import org.terrier.querying.Manager;
-import org.terrier.querying.SearchRequest;
+import org.terrier.querying.*;
 import org.terrier.structures.indexing.classical.BasicIndexer;
 
 public class IndexingAndRetrievalExample {
@@ -276,29 +280,29 @@ public class IndexingAndRetrievalExample {
 
 		Index index = Index.createIndex("/path/to/my/index", "data");
 
-    // Enable the decorate enhancement
-    ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying.SimpleDecorate");
+        // Enable the decorate enhancement
+        ApplicationSetup.setProperty("querying.postfilters.order", "org.terrier.querying.SimpleDecorate");
 		ApplicationSetup.setProperty("querying.postfilters.controls", "decorate:org.terrier.querying.SimpleDecorate");
 
-    // Create a new manager run queries
-		Manager queryingManager = new Manager(index);
+        // Create a new manager run queries
+		Manager queryingManager = ManagerFactory.from(index.getIndexRef());
 
-    // Create a search request
+        // Create a search request
 		SearchRequest srq = queryingManager.newSearchRequestFromQuery("search for document");
 
-    // Specify the model to use when searching
-		srq.addMatchingModel("Matching","BM25");
+        // Specify the model to use when searching
+		srq.addMatchingModel("org.terrier.matching.daat.Full","BM25");
 
-    // Turn on decoration for this search request
+        // Turn on decoration for this search request
 		srq.setControl("decorate", "on");
 
-    // Run the search
+        // Run the search
 		queryingManager.runSearchRequest(srq);
 
-    // Get the result set
+        // Get the result set
 		ResultSet results = srq.getResultSet();
 
-    // Print the results
+        // Print the results
 		System.out.println(results.getExactResultSize()+" documents were scored");
 		System.out.println("The top "+results.getResultSize()+" of those documents were returned");
 		System.out.println("Document Ranking");
