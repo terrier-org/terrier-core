@@ -31,10 +31,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.querying.IndexRef;
 import org.terrier.querying.Manager;
 import org.terrier.querying.ManagerFactory;
@@ -61,6 +67,9 @@ public class InteractiveQuerying {
 	protected final static boolean lowercase = Boolean.parseBoolean(ApplicationSetup.getProperty("lowercase", "true"));
 	/** display user prompts */
 	protected boolean verbose = true;
+	protected boolean matchopQl = false;
+	protected Map<String,String> controls = new HashMap<>();
+	
 	/** the number of processed queries. */
 	protected int matchingCount = 0;
 	/** The file to store the output to.*/
@@ -107,10 +116,17 @@ public class InteractiveQuerying {
 	 * @param query String the query to process.
 	 * @param cParameter double the value of the parameter to use.
 	 */
-	public void processQuery(String queryId, String query, double cParameter) {
+	public void processQuery(String queryId, String query) {
 		SearchRequest srq = queryingManager.newSearchRequest(queryId, query);
-		srq.setControl("c", Double.toString(cParameter));
+		if (matchopQl)
+		{
+			srq.setControl("parsecontrols", "off");
+			srq.setControl("parseql", "off");
+			srq.setControl("terrierql", "off");
+			srq.setControl("matchopql", "on");
+		}
 		srq.addMatchingModel(mModel, wModel);
+		this.controls.forEach((k,v) -> srq.setControl(k, v));
 		matchingCount++;
 		queryingManager.runSearchRequest(srq);
 		try{
@@ -126,9 +142,8 @@ public class InteractiveQuerying {
 	 * in the address_query file), creates the file of results, and for each
 	 * query, gets the relevant documents, scores them, and outputs the results
 	 * to the result file.
-	 * @param cParameter the value of c
 	 */
-	public void processQueries(double cParameter) {
+	public void processQueries() {
 		try {
 			//prepare console input
 			InputStreamReader consoleReader = new InputStreamReader(System.in);
@@ -144,7 +159,7 @@ public class InteractiveQuerying {
 				{
 					return;
 				}
-				processQuery(""+(qid++), lowercase ? query.toLowerCase() : query, cParameter);
+				processQuery(""+(qid++), lowercase ? query.toLowerCase() : query);
 				if (verbose)
 					System.out.print("Please enter your query: ");
 			}
@@ -200,7 +215,7 @@ public class InteractiveQuerying {
 		pw.flush();
 	}
 	
-	public static class Command extends CLITool
+	public static class Command extends CLIParsedCLITool
 	{
 		
 		@Override
@@ -209,37 +224,69 @@ public class InteractiveQuerying {
 		}
 	
 		@Override
-		public String help() {
-			return commandname() + " [--noverbose] | [your query]";
-		}
-	
-		@Override
 		public String helpsummary() {
 			return "runs an interactive querying session on the commandline";
 		}
+		
 	
 		@Override
-		public int run(String[] args) {
+		protected Options getOptions() {
+			Options options = super.getOptions();
+			options.addOption(Option.builder("c")
+					.argName("controls")
+					.longOpt("controls")
+					.hasArgs()
+					.valueSeparator(',')
+					.desc("allows one of more controls to be set")
+					.build());
+			options.addOption(Option.builder("m")
+					.argName("matchingql")
+					.longOpt("matchingql")
+					.desc("specifies that queries are presumed to be formatted be as the matchingop (Indri-esque) QL, rather than the (default) Terrier QL")
+					.build());
+			options.addOption(Option.builder("q")
+					.argName("quiet")
+					.longOpt("quiet")
+					.desc("be quiet, dont issue prompts")
+					.build());			
+			return options;
+		}
+
+		@Override
+		public int run(CommandLine line) throws Exception {
 			InteractiveQuerying iq = new InteractiveQuerying();
-			if (args.length == 0)
+			if (line.hasOption("c"))
 			{
-				iq.processQueries(1.0);
+				String[] controlCVs = line.getOptionValues("c");
+				for(String tuple : controlCVs)
+				{
+					String[] kv = tuple.split((":|="));
+					iq.controls.put(kv[0], kv[1]);
+				}
 			}
-			else if (args.length == 1 && args[0].equals("--noverbose"))
+			if (line.hasOption("m"))
+			{
+				iq.matchopQl = true;
+			}
+			if (line.hasOption("q"))
 			{
 				iq.verbose = false;
-				iq.processQueries(1.0);
-			}
-			else
+			}			
+			if (line.hasOption('w'))
+				iq.wModel = line.getOptionValue('w');
+			String[] args = line.getArgs();
+			if (args.length > 0)
 			{
-				iq.verbose = false;
 				StringBuilder s = new StringBuilder();
 				for(int i=0; i<args.length;i++)
 				{
 					s.append(args[i]);
 					s.append(" ");
-				}
-				iq.processQuery("CMDLINE", s.toString(), 1.0);
+				}	
+				iq.verbose = false;
+				iq.processQuery("CMDLINE", s.toString());
+			} else {
+				iq.processQueries();
 			}
 			return 0;
 		}
