@@ -1,44 +1,39 @@
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>bin</id>
-  <formats>
-    <format>tar.gz</format>
-    <format>zip</format>
-  </formats>
-  <includeBaseDirectory>true</includeBaseDirectory>
-  <fileSets>
-    <fileSet>
-      <directory>.</directory>
-      <includes>
-        <include>LICENCE.txt</include>
-        <include>README.txt</include>    
-        <include>README.md</include>
-        <include>pom.xml</include>            
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>.</directory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-      <excludes>
-        <exclude>.git/**</exclude>
-        <exclude>**/.gitignore</exclude>
-        <exclude>**/.svn</exclude>
-        <exclude>**/*.iws</exclude>
-        <exclude>**/*.ipr</exclude>
-        <exclude>**/*.iml</exclude>
-        <exclude>**/target/*.tar.gz</exclude>
-        <exclude>**/target/*.zip</exclude>
-        <exclude>**/target/archive-tmp/**</exclude>
-        <exclude>**/target/classes/**</exclude>
-        <exclude>**/target/generated-sources/**</exclude>
-        <exclude>**/target/javadoc-bundle-options/**</exclude>
-        <exclude>**/target/maven-archiver/**</exclude>
-        <exclude>**/*.log</exclude>
-        <exclude>**/build/**</exclude>
-        <exclude>**/file:/**</exclude>
-        <exclude>**/SecurityAuth.audit*</exclude>
-      </excludes>
-    </fileSet>
-  </fileSets>
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>bin</id>
+	<formats>
+		<format>tar.gz</format>
+		<format>zip</format>
+	</formats>
+
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<moduleSets>
+		<moduleSet>
+			<useAllReactorProjects>true</useAllReactorProjects>
+			<binaries>
+				<outputDirectory>modules</outputDirectory>
+				<unpack>false</unpack>
+			</binaries>
+		</moduleSet>
+	</moduleSets>
+
+	<!-- <moduleSets> <includeBaseDirectory>true</includeBaseDirectory> <moduleSet> 
+		Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> 
+		<includes> <include>org.terrier:terrier-core</include> <include>org.terrier:terrier-retrieval-api</include> 
+		</includes> <sources> <fileSets> <fileSet> <directory>.</directory> <includes> 
+		<include>LICENCE.txt</include> <include>README.txt</include> <include>README.md</include> 
+		<include>pom.xml</include> </includes> </fileSet> <fileSet> <directory>${basedir}</directory> 
+		<useDefaultExcludes>true</useDefaultExcludes> <excludes> <exclude>${basedir}/.git/**</exclude> 
+		<exclude>**/.gitignore</exclude> <exclude>**/.svn</exclude> <exclude>**/*.iws</exclude> 
+		<exclude>**/*.ipr</exclude> <exclude>**/*.iml</exclude> <exclude>**/target/*.tar.gz</exclude> 
+		<exclude>**/target/*.zip</exclude> <exclude>**/target/archive-tmp/**</exclude> 
+		<exclude>**/target/classes/**</exclude> <exclude>**/target/generated-sources/**</exclude> 
+		<exclude>**/target/javadoc-bundle-options/**</exclude> <exclude>**/target/maven-archiver/**</exclude> 
+		<exclude>**/*.log</exclude> <exclude>**/build/**</exclude> <exclude>**/file:/**</exclude> 
+		<exclude>**/SecurityAuth.audit*</exclude> </excludes> </fileSet> </fileSets> 
+		</sources> </moduleSet> </moduleSets> -->
+
+
 </assembly>
