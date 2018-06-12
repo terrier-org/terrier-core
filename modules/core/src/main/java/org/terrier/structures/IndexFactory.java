@@ -55,6 +55,10 @@ public class IndexFactory {
 		}		
 	}
 	
+	public static boolean isLoaded(IndexRef ref) {
+		return ref instanceof DirectIndexRef;
+	}
+	
 	public static boolean isLocal(IndexRef ref) {
 		String l = ref.toString();
 		if (l.startsWith("http") || l.startsWith("https"))

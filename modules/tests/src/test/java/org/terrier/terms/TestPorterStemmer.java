@@ -61,8 +61,8 @@ public class TestPorterStemmer extends ApplicationSetupBasedTest {
 	@Test
 	public void testAllExamples() throws Exception
 	{
-		BufferedReader brVocab = Files.openFileReader("../share/tests/porterstemmer/voc.txt");
-		BufferedReader brTest = Files.openFileReader("../share/tests/porterstemmer/output.txt");
+		BufferedReader brVocab = Files.openFileReader("../../share/tests/porterstemmer/voc.txt");
+		BufferedReader brTest = Files.openFileReader("../../share/tests/porterstemmer/output.txt");
 		String testWord;
 		while((testWord = brVocab.readLine()) != null)
 		{

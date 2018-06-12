@@ -424,8 +424,9 @@ public class TRECQuerying {
 			logger.debug("Trying to load "+className);
 			if (!className.contains("."))
 				className = OutputFormat.class.getPackage().getName() +'.' + className;
+			Index index = IndexFactory.isLoaded(indexref) ? IndexFactory.of(indexref) : null;
 			rtr = ApplicationSetup.getClass(className).asSubclass(OutputFormat.class)
-					.getConstructor(Index.class).newInstance(IndexFactory.of(indexref));
+					.getConstructor(Index.class).newInstance(index);
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new IllegalArgumentException("Could not load TREC OutputFormat class", e);

@@ -38,11 +38,11 @@ import org.terrier.structures.postings.IterablePosting;
 
 public class BasicShakespeareEndToEndTest extends ShakespeareEndToEndTest {
 
-	String testQrels = System.getProperty("user.dir") + "/../share/tests/shakespeare/test.shakespeare-merchant.all.qrels";
+	String testQrels = System.getProperty("user.dir") + "/../../share/tests/shakespeare/test.shakespeare-merchant.all.qrels";
 	
 	public BasicShakespeareEndToEndTest()
 	{
-		retrievalTopicSets.add(System.getProperty("user.dir") + "/../share/tests/shakespeare/test.shakespeare-merchant.basic.topics");		
+		retrievalTopicSets.add(System.getProperty("user.dir") + "/../../share/tests/shakespeare/test.shakespeare-merchant.basic.topics");		
 	}	
 	
 	@Test public void testBasicClassical() throws Exception {
@@ -117,7 +117,7 @@ public class BasicShakespeareEndToEndTest extends ShakespeareEndToEndTest {
 		testHooks.add(new FieldBatchEndToEndTestEventChecks());
 		doTrecTerrierIndexingRunAndEvaluate(
 				new String[]{"-i", "-DFieldTags.process=TITLE,SPEAKER", "-Dindexer.meta.reverse.keys=docno"}, 
-				new String[]{System.getProperty("user.dir") + "/../share/tests/shakespeare/test.shakespeare-merchant.field.topics"}, new String[0],
+				new String[]{System.getProperty("user.dir") + "/../../share/tests/shakespeare/test.shakespeare-merchant.field.topics"}, new String[0],
 				testQrels, 1.0f);
 	}
 

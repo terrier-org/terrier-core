@@ -534,8 +534,8 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 
 	@Override
 	protected void makeCollectionSpec(PrintWriter p) throws Exception {
-		p.println(System.getProperty("user.dir") + "/../share/tests/shakespeare/shakespeare-merchant.trec.1");
-		p.println(System.getProperty("user.dir") + "/../share/tests/shakespeare/shakespeare-merchant.trec.2");
+		p.println(System.getProperty("user.dir") + "/../../share/tests/shakespeare/shakespeare-merchant.trec.1");
+		p.println(System.getProperty("user.dir") + "/../../share/tests/shakespeare/shakespeare-merchant.trec.2");
 		p.close();
 	}
 

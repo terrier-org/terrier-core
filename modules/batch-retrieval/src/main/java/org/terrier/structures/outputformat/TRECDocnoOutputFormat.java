@@ -32,15 +32,19 @@ package org.terrier.structures.outputformat;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.print.Doc;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.ResultSet;
+import org.terrier.querying.Request;
 import org.terrier.querying.ScoredDoc;
 import org.terrier.querying.ScoredDocList;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 import org.terrier.structures.MetaIndex;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.ArrayUtils;
 
 
 /** Standard OutputFormat for writing TREC runs */
@@ -62,9 +66,14 @@ public class TRECDocnoOutputFormat implements OutputFormat {
 		String[] docnos;
 		if (set.hasMetaItems(metaIndexDocumentKey)) {
 			docnos = set.getMetaItems(metaIndexDocumentKey);
-		} else {
+		} else if (index == null && q instanceof Request) {
+			final MetaIndex metaIndex = ((Request)q).getIndex().getMetaIndex();
+			docnos = metaIndex.getItems(metaIndexDocumentKey, set.getDocids());
+		} else if (index != null) {
 			final MetaIndex metaIndex = index.getMetaIndex();
 			docnos = metaIndex.getItems(metaIndexDocumentKey, set.getDocids());
+		} else {
+			throw new IllegalStateException("Could not obtain meta for key "+metaIndexDocumentKey + " perhaps decorate:on was missing?");
 		}
 		
 		boolean NDN = false;
@@ -148,6 +157,7 @@ public class TRECDocnoOutputFormat implements OutputFormat {
 	public void printResults(final PrintWriter pw, final SearchRequest q,
 			String method, String iteration, int _RESULTS_LENGTH) throws IOException {
 		
+		final String metaIndexDocumentKey = ApplicationSetup.getProperty("trec.querying.outputformat.docno.meta.key", "docno");
 		ScoredDocList results = q.getResults();
 		final int maximum = _RESULTS_LENGTH > results.size()
 				|| _RESULTS_LENGTH == 0 ? results.size()
@@ -156,8 +166,20 @@ public class TRECDocnoOutputFormat implements OutputFormat {
 				+ " ";
 		final String methodExpanded = " " + method + ApplicationSetup.EOL;
 		StringBuilder sbuffer = new StringBuilder();
+		String[] docnos;
+		if (ArrayUtils.contains(results.getMetaKeys(), metaIndexDocumentKey))
+		{
+			docnos = results.stream().map(doc -> doc.getMetadata(metaIndexDocumentKey)).toArray(size -> new String[size]);
+		} else if (index == null && q instanceof Request) {
+			final MetaIndex metaIndex = ((Request)q).getIndex().getMetaIndex();
+			docnos = metaIndex.getItems(metaIndexDocumentKey, results.stream().mapToInt(doc -> doc.getDocid()).toArray());
+		} else if (index != null) {
+			docnos = index.getMetaIndex().getItems(metaIndexDocumentKey, results.stream().mapToInt(doc -> doc.getDocid()).toArray());
+		} else {
+			throw new IllegalStateException("No source for " +metaIndexDocumentKey+ " found. Perhaps you need to set control decorate:on");
+		}
 		
-		// the results are ordered in desceding order
+		// the results are ordered in descending order
 		// with respect to the score.
 		int limit = 10000;
 		
@@ -169,7 +191,7 @@ public class TRECDocnoOutputFormat implements OutputFormat {
 			if (doc.getScore() == Double.NEGATIVE_INFINITY)
 				continue;
 			sbuffer.append(queryIdExpanded);
-			sbuffer.append(doc.getMetadata("docno"));
+			sbuffer.append(docnos[i]);
 			sbuffer.append(" ");
 			sbuffer.append(i);
 			sbuffer.append(" ");

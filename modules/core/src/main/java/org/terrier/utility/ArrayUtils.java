@@ -43,6 +43,12 @@ public class ArrayUtils {
 	/** the Golden ration (&phi;). */ 
 	protected static final double GOLDEN_RATIO = 1.618;
 	
+	public static <T> boolean contains(T[] input, T match) {
+		for(T var : input)
+			if (match.equals(var))
+				return true;
+		return false;
+	}
 	
 	public static int[][] invert(final int[][] input)
 	{
