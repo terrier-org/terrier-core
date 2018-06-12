@@ -7,31 +7,66 @@
 		<format>tar.gz</format>
 		<format>zip</format>
 	</formats>
-
+	
 	<includeBaseDirectory>false</includeBaseDirectory>
-	<moduleSets>
-		<moduleSet>
-			<useAllReactorProjects>true</useAllReactorProjects>
-			<sources>
-				<fileSets>
-					<fileSet>
-						<directory>../..</directory>
-						<excludes>
-							<exclude>target/**</exclude>
-						</excludes>
-					</fileSet>
-				</fileSets>
-			</sources>
-		</moduleSet>
-	</moduleSets>
-
-	<!-- <includeBaseDirectory>true</includeBaseDirectory> <fileSets> <fileSet> 
-		<directory>.</directory> <includes> <include>LICENCE.txt</include> <include>README.txt</include> 
-		<include>README.md</include> <include>pom.xml</include> </includes> </fileSet> 
-		<fileSet> <directory>.</directory> <useDefaultExcludes>true</useDefaultExcludes> 
-		<excludes> <exclude>doc/javadoc/**</exclude> <exclude>.git/**</exclude> <exclude>**/.gitignore</exclude> 
-		<exclude>**/.svn</exclude> <exclude>**/*.iws</exclude> <exclude>**/*.ipr</exclude> 
-		<exclude>**/*.iml</exclude> <exclude>**/target/**</exclude> <exclude>**/*.log</exclude> 
-		<exclude>**/build/**</exclude> <exclude>**/file:/**</exclude> <exclude>**/SecurityAuth.audit*</exclude> 
-		</excludes> </fileSet> </fileSets> -->
+	<fileSets>
+		<fileSet>
+			<directory>../../src</directory>
+		</fileSet>
+		<fileSet>
+			<directory>../../bin</directory>
+		</fileSet>
+		<fileSet>
+			<directory>../../doc</directory>
+			<excludes>
+				<exclude>javadoc/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>../../etc</directory>
+		</fileSet>
+		<fileSet>
+			<directory>../../licences</directory>
+		</fileSet>
+		<fileSet>
+			<directory>../../modules</directory>
+			<excludes>
+				<exclude>**/target/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>../../share</directory>
+		</fileSet>
+		<fileSet>
+			<directory>../../var</directory>
+			<excludes>
+				<exclude>results/**</exclude>
+				<exclude>index/**</exclude>
+			</excludes>
+		</fileSet>
+	</fileSets>
+	
+	<files>
+		<file>
+			<source>../../.classpath</source>
+		</file>
+		<file>
+			<source>../../.gitignore</source>
+		</file>
+		<file>
+			<source>../../.project</source>
+		</file>
+		<file>
+			<source>../../.travis.yml</source>
+		</file>
+		<file>
+			<source>../../LICENSE.txt</source>
+		</file>
+		<file>
+			<source>../../pom.xml</source>
+		</file>
+		<file>
+			<source>../../README.md</source>
+		</file>
+	</files>
 </assembly>

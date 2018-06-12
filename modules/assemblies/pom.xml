@@ -106,6 +106,7 @@
 							<goal>aggregate</goal>
 						</goals>
 						<configuration>
+							<includeDependencySources>true</includeDependencySources>
 							<outputDirectory>${basedir}/doc/</outputDirectory>
 							<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
 							<destDir>javadoc</destDir>
@@ -147,15 +148,15 @@
 							<descriptors>
 								<descriptor>src/assembly/module-jar-with-dependencies.xml</descriptor>
 							</descriptors>
-							
+
 						</configuration>
 					</execution>
 
 				</executions>
 			</plugin>
-			<!--  <descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> 
-								</descriptorRefs> -->
-			
+			<!-- <descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> 
+				</descriptorRefs> -->
+
 
 		</plugins>
 	</build>
