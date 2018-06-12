@@ -25,7 +25,7 @@ public class TestTweetJSONCollection extends ApplicationSetupBasedTest {
 	@Test public void testTokenisation() throws IOException
 	{
 		Writer w = Files.writeFileWriter(ApplicationSetup.COLLECTION_SPEC);
-		w.write("../share/tests/tweets/oscars.json.gz");
+		w.write("../../share/tests/tweets/oscars.json.gz");
 		w.close();
 		
 		TwitterJSONCollection tjc = new TwitterJSONCollection();
