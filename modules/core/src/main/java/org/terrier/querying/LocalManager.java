@@ -102,7 +102,7 @@ public class LocalManager implements Manager
 		
 	}
 	
-	protected static final Logger logger = LoggerFactory.getLogger(Manager.class);
+	protected static final Logger logger = LoggerFactory.getLogger(LocalManager.class);
 
 	/* ------------Module default namespaces -----------*/
 	/** The default namespace for Process instances to be loaded from */
