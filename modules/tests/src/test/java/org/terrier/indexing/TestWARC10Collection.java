@@ -51,7 +51,7 @@ public class TestWARC10Collection extends ApplicationSetupBasedTest {
 
 	@Test public void testCollSpec() throws Exception {
 		Writer w = Files.writeFileWriter(ApplicationSetup.COLLECTION_SPEC);
-		w.append("../share/tests/cw12.sample");
+		w.append("../../share/tests/cw12.sample");
 		w.close();
 		
 		WARC10Collection coll = new WARC10Collection();
@@ -76,7 +76,7 @@ public class TestWARC10Collection extends ApplicationSetupBasedTest {
 	}
 	
 	@Test public void testDocuments() throws Exception {
-		InputStream is = Files.openFileStream("../share/tests/cw12.sample");
+		InputStream is = Files.openFileStream("../../share/tests/cw12.sample");
 		class RedirWARC10Collection extends WARC10Collection
 		{
 			Map<String,String> redirects = new HashMap<String,String>();

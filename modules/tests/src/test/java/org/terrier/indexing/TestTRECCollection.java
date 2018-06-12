@@ -66,9 +66,9 @@ public class TestTRECCollection extends ApplicationSetupBasedTest {
 	@Test public void testTwoFileShakespeare() throws Exception
 	{
 		Writer w = Files.writeFileWriter(ApplicationSetup.COLLECTION_SPEC);
-		w.write("../share/tests/shakespeare/shakespeare-merchant.trec.1");
+		w.write("../../share/tests/shakespeare/shakespeare-merchant.trec.1");
 		w.write("\n");
-		w.write("../share/tests/shakespeare/shakespeare-merchant.trec.2");
+		w.write("../../share/tests/shakespeare/shakespeare-merchant.trec.2");
 		w.write("\n");
 		w.close();
 		Collection c = new TRECCollection();
@@ -84,7 +84,7 @@ public class TestTRECCollection extends ApplicationSetupBasedTest {
 	//test first Shakespeare
 	@Test public void testFirstShakespeare() throws Exception
 	{
-		Collection c = openCollection("../share/tests/shakespeare/shakespeare-merchant.trec.1");
+		Collection c = openCollection("../../share/tests/shakespeare/shakespeare-merchant.trec.1");
 		assertTrue(c.nextDocument());
 		int i=0;
 		

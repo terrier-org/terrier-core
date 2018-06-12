@@ -26,6 +26,26 @@ public class IndexFactory {
 		Class<? extends Index> indexImplementor(IndexRef ref);
 	}
 	
+	public static class DirectIndexLoader implements IndexLoader
+	{
+
+		@Override
+		public boolean supports(IndexRef ref) {
+			return ref instanceof DirectIndexRef;
+		}
+
+		@Override
+		public Index load(IndexRef ref) {
+			return ((DirectIndexRef)ref).underlyingIndex;
+		}
+
+		@Override
+		public Class<? extends Index> indexImplementor(IndexRef ref) {
+			return load(ref).getClass();
+		}
+		
+	}
+	
 	public static class DiskIndexLoader implements IndexLoader
 	{
 		@Override
