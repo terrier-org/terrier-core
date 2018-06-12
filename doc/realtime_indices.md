@@ -23,7 +23,6 @@ There are two real-time index types supported since Terrier 45.0:
 
  - `incremental.flush`: the flush policy to use. Four possible values are supported: noflush (default), flushdocs, flushmem, flushtime
 
-
  - `incremental.merge`: the merge policy to use. Three possible values are supported: nomerge (default), single, geometric
 
  - `incremental.delete`: the delete policy to use. Two possible values are supported: nodelete (default), deleteFixedSize
@@ -60,18 +59,18 @@ Below we give some examples for using the real-time Terrier index structures.
     // the document is now available for searching
 
     // create a search manager (runs the search process over an index)
-    Manager queryingManager = new Manager(memIndex);
+    Manager queryingManager = ManagerFactory.from(memIndex.getIndexRef());
 
     // a search request represents the search to be carried out
-    SearchRequest srq = queryingManager.newSearchRequest("query", queryString);
-    
+    SearchRequest srq = queryingManager.newSearchRequest("query", sb.toString());
+
     // define a matching model, in this case use the classical BM25 retrieval model
-    srq.addMatchingModel("Matching","BM25");
+    srq.addMatchingModel("org.terrier.matching.daat.Full","BM25");
 
     // run a Terrier search
     queryingManager.runSearchRequest(srq);
 
-    ResultSet results = srq.getResultSet();
+    ScoredDocList results = srq.getResults();
 ```
 
 ------------------------
