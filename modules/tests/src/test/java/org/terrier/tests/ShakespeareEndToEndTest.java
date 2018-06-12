@@ -31,7 +31,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gnu.trove.TIntHashSet;
-import gnu.trove.TIntIntHashMap;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIntHashMap;
 
@@ -233,10 +232,12 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		mi = null;
 	}
 	
-	public void checkInvertedIndexStream(Index index, int[] documentLengths) throws Exception
+	public void checkInvertedIndexStream(Index index, int[] documentLengths, int[] docPointers) throws Exception
 	{
 		final int numDocs = index.getCollectionStatistics().getNumberOfDocuments();
-		TIntIntHashMap calculatedDocLengths = new TIntIntHashMap();
+		int[] observedDocLengths = new int[numDocs];
+		int[] observedPointers = new int[numDocs];
+		//TIntIntHashMap calculatedDocLengths = new TIntIntHashMap();
 		PostingIndexInputStream iiis = (PostingIndexInputStream) index.getIndexStructureInputStream("inverted");
 		assertNotNull(iiis);
 		int ithTerm = -1;
@@ -252,18 +253,32 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 				assertTrue("Got too big a docid ("+ip.getId()+") from inverted index input stream for term at index " + ithTerm, ip.getId() < numDocs);
 				assertEquals(documentLengths[ip.getId()], ip.getDocumentLength());
 				count++;
-				calculatedDocLengths.adjustOrPutValue(ip.getId(), ip.getFrequency(), ip.getFrequency());
+				observedDocLengths[ip.getId()]+= ip.getFrequency();
+				observedPointers[ip.getId()]++;
+				//calculatedDocLengths.adjustOrPutValue(ip.getId(), ip.getFrequency(), ip.getFrequency());
 			}
 			assertEquals(expected, count);
 		}
 		iiis.close();
-		assertEquals("Number of documents is unexpected,", documentLengths.length - countZero(documentLengths), calculatedDocLengths.size());
+		
+				
+//		assertEquals("Number of documents is unexpected:"
+//				+" expected " + Arrays.toString(documentLengths)
+//				+" with " + countZero(documentLengths) +  " zeros"
+//				+" versus ids=" + Arrays.toString(calculatedDocLengths)
+//			, documentLengths.length - countZero(documentLengths), calculatedDocLengths.size());
 		long tokens = 0;
-		for(int docid : calculatedDocLengths.keys())
+		for(int docid=0;docid<numDocs;docid++)
 		{
-			assertEquals("Document length for docid "+docid+" is unexpected,", documentLengths[docid], calculatedDocLengths.get(docid));
-			tokens += calculatedDocLengths.get(docid);
+			assertEquals("Document pointers for docid "+docid+" is unexpected,", docPointers[docid], observedPointers[docid]);
+			assertEquals("Document length for docid "+docid+" is unexpected,", documentLengths[docid], observedDocLengths[docid]);
+			tokens += observedDocLengths[docid];
 		}
+		assertEquals("Number of documents with non-zero lengths is unexpected:"
+				+" doclens expected " + Arrays.toString(documentLengths)
+				+" doclens observed " + Arrays.toString(observedDocLengths)
+			,countZero(documentLengths), countZero(observedDocLengths));
+		
 		assertEquals("Number of tokens is unexpected,", StaTools.sum(documentLengths), tokens);
 	}
 	
@@ -474,6 +489,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 	protected void checkCollectionStatistics(Index index)
 	{
 		final CollectionStatistics cs = index.getCollectionStatistics();
+		System.err.println("num docs=" + cs.getNumberOfDocuments());
 		assertEquals("Number of documents doesn't match", DOCUMENT_LENGTHS.length, cs.getNumberOfDocuments());
 		assertEquals("Number of tokens doesn't match", StaTools.sum(DOCUMENT_LENGTHS), cs.getNumberOfTokens());
 		assertEquals("Average document length doesn't match", StaTools.mean(DOCUMENT_LENGTHS), cs.getAverageDocumentLength(), 0.0d);
@@ -505,7 +521,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		checkDocumentLengths(index, DOCUMENT_LENGTHS, DOCUMENT_UNIQUE_TERMS);
 		checkMetaIndex(index, DOCUMENT_NAMES);
 		checkLexicon(index);
-		checkInvertedIndexStream(index, DOCUMENT_LENGTHS);
+		checkInvertedIndexStream(index, DOCUMENT_LENGTHS, DOCUMENT_UNIQUE_TERMS);
 		checkDirectIndex(index, 
 				index.getCollectionStatistics().getNumberOfUniqueTerms(), 
 				index.getCollectionStatistics().getNumberOfUniqueTerms(), 

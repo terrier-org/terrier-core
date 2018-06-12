@@ -46,6 +46,8 @@ public abstract class AbstractPostingOutputStream {
 	}
 
 	public abstract BitFilePosition getOffset();
+	
+	public abstract int getLastDocidWritten();
 
 	public abstract void close();
 

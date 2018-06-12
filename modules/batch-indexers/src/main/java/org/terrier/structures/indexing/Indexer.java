@@ -397,7 +397,8 @@ public abstract class Indexer
 		IndexOnDisk src1 = Index.createIndex(index1[0], index1[1]);
 		IndexOnDisk src2 = Index.createIndex(index2[0], index2[1]);
 		IndexOnDisk dst = Index.createNewIndex(outputIndex[0], outputIndex[1]);
-		logger.info("Merging "+ src1+ " & "+ src2 +" to " + dst);
+		logger.info("Merging "+ src1+ " ("+src1.getCollectionStatistics().getNumberOfDocuments()+" docs) & "
+				+ src2 +" ("+src2.getCollectionStatistics().getNumberOfDocuments()+" docs) to " + dst);
 		if (ApplicationSetup.BLOCK_INDEXING) 
 			sMerger = new BlockStructureMerger(src1, src2, dst);
 		else 
@@ -405,11 +406,13 @@ public abstract class Indexer
 										  
 		//sMerger.setNumberOfBits(FieldScore.FIELDS_COUNT);
 		sMerger.mergeStructures();
+		logger.debug("new index has " + dst.getCollectionStatistics().getNumberOfDocuments() + " docs");
 		try{
 			src1.close(); src2.close(); dst.close();
 		} catch (IOException ioe) {
 			logger.error("Problem flushing index dst", ioe);
 		}
+
 		//delete old indices  
 		try{
 			IndexUtil.deleteIndex(index1[0], index1[1]);

@@ -67,6 +67,7 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 			.getLogger(IntegerCodingPostingOutputStream.class);
 	
 	protected ByteOut output;
+	protected int lastDocid;
 	
 	/**
 	 * Number of posting in a chunk
@@ -215,7 +216,7 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 			for (; i < chunkSize && !postings.endOfPostings(); i++) {//for each chunk
 			
 				postings.next();
-				ids[i] = postings.getId();
+				lastDocid = ids[i] = postings.getId();
 				tfs[i] = postings.getFrequency();
 				if (fieldsCount > 0) {
 					
@@ -373,5 +374,10 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 	public BitIndexPointer writePostings(Iterator<Posting> iterator)
 			throws IOException {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getLastDocidWritten() {
+		return lastDocid;
 	}
 }

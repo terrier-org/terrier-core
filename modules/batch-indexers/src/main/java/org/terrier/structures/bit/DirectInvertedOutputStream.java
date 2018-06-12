@@ -50,6 +50,8 @@ import org.terrier.structures.postings.bit.BasicIterablePosting;
 public class DirectInvertedOutputStream extends AbstractPostingOutputStream implements Closeable {
 	/** what to write to */
 	protected BitOut output;
+	
+	protected int lastDocid;
 	/** The logger used */
 	protected static final Logger logger = LoggerFactory.getLogger(DirectInvertedOutputStream.class);
  
@@ -111,7 +113,7 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 		{
 			posting = iterator.next();
 			output.writeGamma(posting.getId() - previousId);
-			previousId = posting.getId();
+			lastDocid = previousId = posting.getId();
 			writePostingNotDocid(posting);
 			numberOfEntries++;
 		}
@@ -134,7 +136,7 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 		{
 			output.writeGamma(postings.getId() - previousId);
 			//System.err.println("Writing id" + postings.getId());
-			previousId = postings.getId();
+			lastDocid = previousId = postings.getId();
 			writePostingNotDocid(postings);
 			numberOfEntries++;
 		}
@@ -192,12 +194,12 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 		final int[] postings1 = postings[1];
 		
 		//write the first entry
-		output.writeGamma(firstId);
+		output.writeGamma(lastDocid = firstId);
 		output.writeUnary(postings1[offset]);
 	
 		offset++;
 		for (; offset < length; offset++) {
-			output.writeGamma(postings0[offset] - postings0[offset - 1]);
+			output.writeGamma( (lastDocid = postings0[offset]) - postings0[offset - 1]);
 			output.writeUnary(postings1[offset]);
 		}
 		
@@ -240,5 +242,9 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	public BitOut getBitOut()
 	{
 		return output;
+	}
+	@Override
+	public int getLastDocidWritten() {
+		return lastDocid;
 	}
 }

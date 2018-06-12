@@ -295,10 +295,10 @@ public class StructureMerger {
 					
 					//2. postings from the 2nd index have their docids transformed
 					IterablePosting ip2 = inverted2.getPostings(lee2.getValue());
-					BitIndexPointer newPointer2 = invOS.writePostings(ip2, ip1.getId() - numberOfDocs1);
+					BitIndexPointer newPointer2 = invOS.writePostings(ip2, invOS.getLastDocidWritten() - numberOfDocs1);
 					
-					numberOfPointers+= newPointer1.getNumberOfEntries() + newPointer2.getNumberOfEntries();
-						
+					numberOfPointers += newPointer1.getNumberOfEntries() + newPointer2.getNumberOfEntries();
+
 					//don't set numberOfEntries, as LexiconEntry.add() will take care of this.
 					lee1.getValue().setPointer(newPointer1);
 					if (keepTermCodeMap)
