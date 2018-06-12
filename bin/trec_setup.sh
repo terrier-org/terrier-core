@@ -80,7 +80,7 @@ then
 fi
 
 #setup CLASSPATH
-JAR=`ls $TERRIER_HOME/target/terrier-core-*-jar-with-dependencies.jar`
+JAR=`ls $TERRIER_HOME/modules/assemblies/target/terrier-project-*-jar-with-dependencies.jar`
 if [ ! -n "$CLASSPATH" ]
 then
 	CLASSPATH=$JAR:$TERRIER_HOME/etc/logback.xml
