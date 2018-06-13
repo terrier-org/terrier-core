@@ -5,3 +5,4 @@
 /target/
 modules/*/target/
 .settings/
+.DS_Store
