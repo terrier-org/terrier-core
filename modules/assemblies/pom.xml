@@ -132,10 +132,10 @@
 							<mainClass>org.terrier.applications.CLITool</mainClass>
 						</manifest>
 					</archive>
-					<filters>
+					<!-- <filters>
 						<filter>**/logback.xml</filter>
 						<filter>**\logback.xml</filter>
-					</filters>
+					</filters> -->
 				</configuration>
 				<executions>
 					<execution>
