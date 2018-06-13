@@ -53,14 +53,13 @@ import org.terrier.structures.IndexFactory;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
+import static org.terrier.querying.SearchRequest.*;
 
 import com.google.common.collect.Lists;
 /**
   * This class is responsible for handling/co-ordinating the main high-level
   * operations of a query. These are:
-  * <li>Pre Processing (Term Pipeline, Control finding, term aggregration)</li>
-  * <li>Matching</li>
-  * <li>Post-processing @see org.terrier.querying.PostProcess </li>
+  * <li>Processing (Term Pipeline, Control finding, term aggregration, Matching) @see org.terrier.querying.Process</li>
   * <li>Post-filtering @see org.terrier.querying.PostFilter </li>
   * &lt;/ul&gt;
   * Example usage:
@@ -86,6 +85,7 @@ import com.google.common.collect.Lists;
   */
 public class LocalManager implements Manager
 {
+	static final String DEFAULT_MATCHING = org.terrier.matching.daat.Full.class.getName();
 	public static class Builder implements ManagerFactory.Builder
 	{
 		@Override
@@ -337,7 +337,7 @@ public class LocalManager implements Manager
 		{
 			Matching rtr = null;
 			Index _index = rq.getIndex();
-			String ModelName = rq.getMatchingModel();
+			String ModelName = rq.getControl(CONTROL_MATCHING, DEFAULT_MATCHING);
 			//add the namespace if the modelname is not fully qualified
 			
 			if (ModelName == null || ModelName.length() == 0)
@@ -380,21 +380,13 @@ public class LocalManager implements Manager
 						Object[] params2;
 						if (first)
 						{
-							params = new Class[1];
-							params2 = new Object[1];
-							
-							params[0] = Index.class;
-							params2[0] = _index;
+							params = new Class[]{Index.class};
+							params2  = new Object[]{_index};
 						}
 						else
 						{
-							params = new Class[2];
-							params2 = new Object[2];
-							
-							params[0] = Index.class;
-							params2[0] = _index;
-							params[1] = Matching.class;
-							params2[1] = rtr;
+							params = new Class[]{Index.class, Matching.class};
+							params2 = new Object[]{_index, rtr};
 						}
 						//and instantiate
 						rtr = (Matching) (formatter.getConstructor(params).newInstance(params2));
@@ -509,15 +501,6 @@ public class LocalManager implements Manager
 	protected String pipelineOutput = null;
 
 	
-	
-	
-	/** Default constructor. Use the default index
-	  * @since 2.0 */
-	public LocalManager()
-	{
-		this(Index.createIndex());
-	}
-
 	/** Construct a Manager using the specified Index
 	  * Throws IllegalArgumentException if the specified index is null
 	  * @param _index The index to use in this manage
@@ -816,19 +799,6 @@ public class LocalManager implements Manager
 	}
 	
 	
-	
-	/* (non-Javadoc)
-	 * @see org.terrier.querying.IManager#runSearchRequest(org.terrier.querying.SearchRequest)
-	 */
-//	@Override
-//	public void runSearchRequest(SearchRequest srq)
-//	 {
-//	  this.runPreProcessing(srq);
-//	  this.runMatching(srq);
-//	  this.runPostProcessing(srq);
-//	  this.runPostFilters(srq);
-//	 }
-	
 	public void runSearchRequest(SearchRequest srq)
 	{	
 		Request rq = (Request)srq;		
@@ -885,7 +855,9 @@ public class LocalManager implements Manager
 	 * the WeightingModel factory.
 	 * @param rq The name of the weighting model to instantiate */
 	protected static Model getWeightingModel(Request rq) {
-		return WeightingModelFactory.newInstance(rq.getWeightingModel(), rq.getIndex());
+		String wmodel = rq.getControl(CONTROL_WMODEL, 
+				ApplicationSetup.getProperty("trec.model", "DPH"));
+		return WeightingModelFactory.newInstance(wmodel, rq.getIndex());
 	}
 	
 	

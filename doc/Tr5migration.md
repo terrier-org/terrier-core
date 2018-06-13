@@ -28,6 +28,8 @@ Terrier 5 introduces IndexRef as a way to refer to an index. An IndexRef may not
 
 How you interact with Terrier defines which Maven dependencies you need to load. If you only need to connect to a remote RESTful index, you need only depend on `org.terrier:terrier-retrieval-api` for compiling and `org.terrier:terrier-rest-client` at runtime. If you want a local index, then you will also need `org.terrier:terrier-core` at runtime.
 
+There are minor changes to the API of the application-facing SearchRequest interface -- for more information, see the relevant Javadoc.
+
 
 Index Formats
 -------------

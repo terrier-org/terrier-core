@@ -69,6 +69,8 @@ import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
 
+import static org.terrier.querying.SearchRequest.*;
+
 import com.google.common.collect.Sets;
 
 /**
@@ -318,11 +320,11 @@ public class TRECQuerying {
 	protected String wModel = "PL2";
 
 	/**
-	 * The name of the matching model that is used for retrieval. Defaults to
-	 * Matching
+	 * The name of the matching model that is used for retrieval. If not set, defaults to 
+	 * matching configured in the Manager. 
+	 * @see org.terrier.querying.LocalManager
 	 */
-	protected String mModel = ApplicationSetup.getProperty("trec.matching",
-			"Matching");
+	protected String mModel = ApplicationSetup.getProperty("trec.matching", null);
 
 	/** The object that encapsulates the data structures used by Terrier. */
 	protected IndexRef indexref;
@@ -732,7 +734,9 @@ public class TRECQuerying {
 		}
 		srq.setControl("c_set", "" + c_set);
 
-		srq.addMatchingModel(mModel, wModel);
+		if (mModel != null)
+			srq.setControl(CONTROL_MATCHING, mModel);
+		srq.setControl(CONTROL_WMODEL, wModel);
 		
 		if (queryexpansion) {
 			//if (srq.getControl("qemodel").length() == 0)

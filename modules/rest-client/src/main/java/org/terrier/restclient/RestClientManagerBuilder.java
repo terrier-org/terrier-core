@@ -19,7 +19,8 @@ import org.terrier.querying.Manager;
 import org.terrier.querying.ManagerFactory;
 import org.terrier.querying.ScoredDoc;
 import org.terrier.querying.ScoredDocList;
-import org.terrier.querying.SearchRequest;
+import org.terrier.querying.SearchRequest; 
+import static org.terrier.querying.SearchRequest.*;
 
 /** This class facilitates a Manager to be obtained for a remote HTTP 
  *  REST index reference. There is NO NEED to refer to the class directly -
@@ -45,7 +46,7 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 	class RESTRequest implements SearchRequest
 	{
 		private static final long serialVersionUID = 1L;
-		String matching, wmodel, qid, query;
+		String qid, query;
 		Map<String,String> controls = new HashMap<>();
 		ScoredDocList results;
 		long starttime;
@@ -54,8 +55,8 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 		@Override
 		public void addMatchingModel(String MatchingModelName,
 				String WeightingModelName) {
-			matching = MatchingModelName;
-			wmodel = WeightingModelName;
+			setControl(CONTROL_MATCHING, MatchingModelName);
+			setControl(CONTROL_WMODEL, WeightingModelName);
 		}
 
 		@Override
@@ -196,14 +197,14 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 						controls.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue()).collect(Collectors.joining(", ")), "UTF-8");
 				}
 				//wmodel
-				if (rrq.wmodel != null)
+				if (rrq.hasControl(CONTROL_WMODEL))
 				{
-					url += "&wmodel="+rrq.wmodel;
+					url += "&wmodel="+rrq.getControl(CONTROL_WMODEL);
 				}
 				//matching
-				if (rrq.matching != null)
+				if (rrq.hasControl(CONTROL_MATCHING))
 				{
-					url += "&matching="+rrq.matching;
+					url += "&matching="+rrq.getControl(CONTROL_MATCHING);
 				}
 				//qid
 				if (rrq.qid != null)

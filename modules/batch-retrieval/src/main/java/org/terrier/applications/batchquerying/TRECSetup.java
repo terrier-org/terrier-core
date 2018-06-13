@@ -151,7 +151,7 @@ public class TRECSetup {
 			propertiesWriter.println("querying.postfilters=decorate:SimpleDecorate,site:SiteFilter,scope:Scope");
 			propertiesWriter.println();
 			propertiesWriter.println("#default and allowed controls");
-			propertiesWriter.println("querying.default.controls=parsecontrols:on,parseql:on,applypipeline:on,terrierql:on,localmatching:on,filters:on");//,decorate:on
+			propertiesWriter.println("querying.default.controls=wmodel:DPH,parsecontrols:on,parseql:on,applypipeline:on,terrierql:on,localmatching:on,filters:on,decorate:on");
 			propertiesWriter.println("querying.allowed.controls=scope,qe,qemodel,start,end,site,scope");
 			propertiesWriter.println();
 			propertiesWriter.println("#document tags specification");

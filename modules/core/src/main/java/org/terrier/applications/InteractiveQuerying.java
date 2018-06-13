@@ -78,8 +78,6 @@ public class InteractiveQuerying {
 	protected Manager queryingManager;
 	/** The weighting model used. */
 	protected String wModel = ApplicationSetup.getProperty("interactive.model", "PL2");
-	/** The matching model used.*/
-	protected String mModel = ApplicationSetup.getProperty("interactive.matching", "Matching");
 	/** The data structures used.*/
 	protected IndexRef indexref;
 	/** The maximum number of presented results. */
@@ -125,7 +123,7 @@ public class InteractiveQuerying {
 			srq.setControl("terrierql", "off");
 			srq.setControl("matchopql", "on");
 		}
-		srq.addMatchingModel(mModel, wModel);
+		srq.setControl(SearchRequest.CONTROL_WMODEL, wModel);
 		this.controls.forEach((k,v) -> srq.setControl(k, v));
 		matchingCount++;
 		queryingManager.runSearchRequest(srq);

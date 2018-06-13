@@ -28,9 +28,6 @@ import org.terrier.utility.ApplicationSetup;
 public class SearchResource {
 
 	static final String DEFAULT_FORMAT = "trec";
-	static final String DEFAULT_MATCHING = org.terrier.matching.daat.Full.class.getName();
-	static final String DEFAULT_WMODEL = org.terrier.matching.models.DPH.class.getName();
-	
 	
 	static IndexRef indexRef = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 	static Manager m = ManagerFactory.from(indexRef);
@@ -63,11 +60,10 @@ public class SearchResource {
 				}				 
 			}
 			
-			if (wmodel.length() == 0)
-				wmodel = DEFAULT_WMODEL;
-			if (matching.length() == 0)
-				matching = DEFAULT_MATCHING;
-			srq.addMatchingModel(DEFAULT_MATCHING, DEFAULT_WMODEL);
+			if (wmodel.length() > 0)
+				srq.setControl(SearchRequest.CONTROL_WMODEL, wmodel);
+			if (matching.length() > 0)
+				srq.setControl(SearchRequest.CONTROL_MATCHING, matching);
 			
 			if (qid.length() != 0)
 				srq.setQueryID(qid);

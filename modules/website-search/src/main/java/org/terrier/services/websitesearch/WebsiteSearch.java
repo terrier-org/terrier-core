@@ -100,7 +100,6 @@ public class WebsiteSearch {
 		Manager queryingManager = ManagerFactory.from(memIndex.getIndexRef());
 
 		SearchRequest srq = queryingManager.newSearchRequest("query", sb.toString());
-		srq.addMatchingModel("Matching","DirichletLM");
 		srq.setOriginalQuery(sb.toString());
 		srq.setControl("decorate", "on");
 		queryingManager.runSearchRequest(srq);
