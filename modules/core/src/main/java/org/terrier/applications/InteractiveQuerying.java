@@ -157,7 +157,7 @@ public class InteractiveQuerying {
 				{
 					return;
 				}
-				processQuery(""+(qid++), lowercase ? query.toLowerCase() : query);
+				processQuery("interactive"+(qid++), lowercase ? query.toLowerCase() : query);
 				if (verbose)
 					System.out.print("Please enter your query: ");
 			}
