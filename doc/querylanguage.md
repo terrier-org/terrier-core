@@ -1,6 +1,11 @@
 Query Language
 ==============
 
+Terrier offers two query languages - a high-level, user facing query language, and a low-level query language for developers which is expressed in terms of matching operations (matching ops). All user queries are rewritten down into matching operations. The matching op query language borrows from the Indri and Galago query languages.
+
+User Query Language
+-------------------
+
 Terrier offers a user flexible query language for searching with phrases, fields, or specifying that terms are required to appear in the retrieved documents.
 
 Some examples of Terrier's query language are the following:
@@ -20,6 +25,18 @@ Some examples of Terrier's query language are the following:
 Combinations of the different constructs are possible as well. For example, the query `term1 term2 -"term1 term2"` would retrieve all the documents that contain at least one of the terms term1 and term2, but not the documents where the phrase "term1 term2" appears.
 
 Note that in some configurations, the Terrier query language may not be available by default. In particular, if batch processing queries from a file using a class that extends [TRECQuery](javadoc/org/terrier/applications/batchquerying/TRECQuery.html), then the queries are pre-processed by a tokeniser that may remove the query language characters (e.g. brackets and colons). To use the Terrier query language in this case, you should use [SingleLineTRECQuery](javadoc/org/terrier/applications/batchquerying/SingleLineTRECQuery.html) and set `SingleLineTRECQuery.tokenise` to false in the `terrier.properties` file.
+
+Matching Op Query Language
+--------------------------
+In general, this follows a subset of the Indri query language:
+
+ - `term1` -- scores documents containing this single query term.
+ - `term1.title` -- scores documents containing this single query term in the title.
+ - `#band(term1 term2)` -- scores a term containing both query terms. The frequency of each matching document is 1.
+ - `#syn(term1 term2) -- scores documents containing either term1 or term2. The frequency of each matching document is the sum of the frequencies of the constituent words.
+ - `#uw8(term1 term2)` -- the #uwN operator scores documents term1 or term2 within unordered windows of N tokens -- in this case windows of 8 tokens in size.
+ - `#1(term1 term2)` -- the #1 operator scores documents term1 or term2 appearing adjacently.
+ 
 
 ------------------
 > Webpage: <http://terrier.org>  
