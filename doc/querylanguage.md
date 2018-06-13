@@ -37,6 +37,29 @@ In general, this follows a subset of the Indri query language:
  - `#uw8(term1 term2)` -- the #uwN operator scores documents term1 or term2 within unordered windows of N tokens -- in this case windows of 8 tokens in size.
  - `#1(term1 term2)` -- the #1 operator scores documents term1 or term2 appearing adjacently.
  
+ 
+**Using the Matching Op Query Language**
+
+You can use the matchingop query language in `interactive` querying command by passing the `-m` option. The prompt will be `matchop query>`, as shown in the exxample below:
+
+```
+$ bin/terrier interactive -m
+Setting TERRIER_HOME to /home/Terrier
+23:33:14.496 [main] INFO  o.t.structures.CompressingMetaIndex - Structure meta reading lookup file into memory
+23:33:14.503 [main] INFO  o.t.structures.CompressingMetaIndex - Structure meta loading data file into memory
+matchop query> #combine:0=0.85:1=0.15:2=0.05(#combine(dramatise personae) #1(dramatise personae) #uw8(dramatise personae))
+etc
+```
+
+Similarly, `batchretrieve` command also takes a `-m` option, whereby the queries will be assumed to be in matchingop query language. 
+```
+$ cat mytopics
+1 terrier #1(information retrieval)
+2 systems
+$ bin/terrier batchretrieve -s -m -t mytopics
+```
+where `-m` defines that matchingop query language will be used, and `-s` defines that topics are in single-line format.
+ 
 
 ------------------
 > Webpage: <http://terrier.org>  
