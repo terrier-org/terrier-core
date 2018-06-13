@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>terrier-base</artifactId>
+		<artifactId>terrier-project</artifactId>
 		<groupId>org.terrier</groupId>
 		<version>5.0-SNAPSHOT</version>
-		<relativePath>../base</relativePath>
+		<relativePath>../../</relativePath>
 	</parent>
 
 	<artifactId>terrier-integer-compression</artifactId>
