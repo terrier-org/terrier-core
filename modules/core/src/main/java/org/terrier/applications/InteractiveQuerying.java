@@ -27,13 +27,15 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk>
  */
 package org.terrier.applications;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import jline.TerminalFactory;
+import jline.console.ConsoleReader;
+import jline.console.completer.StringsCompleter;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -144,12 +146,15 @@ public class InteractiveQuerying {
 	public void processQueries() {
 		try {
 			//prepare console input
-			InputStreamReader consoleReader = new InputStreamReader(System.in);
-			BufferedReader consoleInput = new BufferedReader(consoleReader);
 			String query; int qid=1;
+			ConsoleReader console = new ConsoleReader();
 			if (verbose)
-				System.out.print("Please enter your query: ");
-			while ((query = consoleInput.readLine()) != null) {
+				console.setPrompt("terrier query> ");
+			if (this.matchopQl) {
+				console.setPrompt("matchop query> ");
+				console.addCompleter(new StringsCompleter("#combine(", "#syn(","#uw("));
+			}
+			while ((query = console.readLine()) != null) {
 				if (query.length() == 0 || 
 					query.toLowerCase().equals("quit") ||
 					query.toLowerCase().equals("exit")
@@ -158,11 +163,15 @@ public class InteractiveQuerying {
 					return;
 				}
 				processQuery("interactive"+(qid++), lowercase ? query.toLowerCase() : query);
-				if (verbose)
-					System.out.print("Please enter your query: ");
 			}
 		} catch(IOException ioe) {
 			logger.error("Input/Output exception while performing the matching. Stack trace follows.",ioe);
+		} finally {
+			try{
+				TerminalFactory.get().restore();
+			} catch(Exception e) {
+                logger.warn("problem closing console", e);
+            }
 		}
 	}
 	/**
