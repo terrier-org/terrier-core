@@ -354,7 +354,7 @@ public class SimultaneousIndexingRetrievalTest extends ApplicationSetupBasedTest
 			Manager queryingManager = new LocalManager((Index)index);
 
 			SearchRequest srq = queryingManager.newSearchRequest("query", sb.toString());
-			srq.addMatchingModel("Matching","DirichletLM");
+			srq.setControl(SearchRequest.CONTROL_WMODEL,"DirichletLM");
 			srq.setOriginalQuery(sb.toString());
 			
 			queryingManager.runSearchRequest(srq);
