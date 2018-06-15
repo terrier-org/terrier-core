@@ -52,6 +52,7 @@ public class SearchResource {
 			srq = m.newSearchRequestFromQuery(query);
 			if (controls.length() > 0)
 			{
+				System.err.println("controls="+ controls);
 				String[] controlKVs = controls.split(",");
 				for(String kv : controlKVs)
 				{
@@ -81,6 +82,8 @@ public class SearchResource {
 			PrintWriter p = new PrintWriter(s);
 			p.println(e.toString());
 			e.printStackTrace(p);
+			System.err.println(e.toString());
+			e.printStackTrace();
 			p.flush();
 			return Response.status(500).entity(s.toString()).build();
 		}
