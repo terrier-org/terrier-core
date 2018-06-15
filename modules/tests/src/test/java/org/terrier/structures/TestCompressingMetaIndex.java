@@ -35,21 +35,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.mapred.InputSplit;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.RecordReader;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.terrier.structures.CompressingMetaIndex.CompressingMetaIndexInputFormat;
 import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
 import org.terrier.structures.indexing.MetaIndexBuilder;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
-import org.terrier.utility.Wrapper;
-import org.terrier.utility.io.HadoopPlugin;
-import org.terrier.utility.io.HadoopUtility;
 
 /** Unit test for CompressingMetaIndex */
 public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
@@ -244,10 +236,10 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 			checkStream(index, name, meta_for_this_key, offset);					
 			offset++;
 		}
-		String[] meta_for_first_key = slice(data, 0);
-		checkMRInputFormat(index, name, meta_for_first_key, -1);// 1 split
-		checkMRInputFormat(index, name, meta_for_first_key, 20);// 2 splits
-		checkMRInputFormat(index, name, meta_for_first_key, 10);// 3 splits
+//		String[] meta_for_first_key = slice(data, 0);
+//		checkMRInputFormat(index, name, meta_for_first_key, -1);// 1 split
+//		checkMRInputFormat(index, name, meta_for_first_key, 20);// 2 splits
+//		checkMRInputFormat(index, name, meta_for_first_key, 10);// 3 splits
 		
 		index.close();
 		IndexUtil.deleteIndex(((IndexOnDisk)index).getPath(), ((IndexOnDisk)index).getPrefix());
@@ -269,37 +261,37 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		assertTrue(index.hasIndexStructure(name));
 		assertTrue(index.hasIndexStructureInputStream(name));
 	}
-	
-	protected void checkMRInputFormat(Index index, String name, String[] docnos, long blocksize) throws Exception
-	{
-		if (! validPlatform()) return;
-		JobConf jc = HadoopPlugin.getJobFactory(this.getClass().getName()).newJob();
-		HadoopUtility.toHConfiguration(index, jc);
-		CompressingMetaIndexInputFormat.setStructure(jc, name);
-		CompressingMetaIndexInputFormat information = new CompressingMetaIndexInputFormat();
-		information.validateInput(jc);
-		information.overrideDataFileBlockSize(blocksize);
-		InputSplit[] splits = information.getSplits(jc, 2);
-		Set<String> unseenDocnos = new HashSet<String>(Arrays.asList(docnos));
-		int seenDocuments = 0;
-		for(InputSplit split : splits)
-		{
-			RecordReader<IntWritable,Wrapper<String[]>> rr = information.getRecordReader(split, jc, null);
-			IntWritable key = rr.createKey();
-			Wrapper<String[]> value = rr.createValue();
-			while(rr.next(key, value))
-			{
-				seenDocuments++;
-				String docno = value.getObject()[0];
-				unseenDocnos.remove(docno);
-				assertEquals(docnos[key.get()], docno);
-			}
-			rr.close();
-		}
-		assertEquals("Not correct number of document seen", docnos.length, seenDocuments);
-		assertEquals("Some documents unseen", 0, unseenDocnos.size());
-	}
-	
+//	
+//	protected void checkMRInputFormat(Index index, String name, String[] docnos, long blocksize) throws Exception
+//	{
+//		if (! validPlatform()) return;
+//		JobConf jc = HadoopPlugin.getJobFactory(this.getClass().getName()).newJob();
+//		HadoopUtility.toHConfiguration(index, jc);
+//		CompressingMetaIndexInputFormat.setStructure(jc, name);
+//		CompressingMetaIndexInputFormat information = new CompressingMetaIndexInputFormat();
+//		information.validateInput(jc);
+//		information.overrideDataFileBlockSize(blocksize);
+//		InputSplit[] splits = information.getSplits(jc, 2);
+//		Set<String> unseenDocnos = new HashSet<String>(Arrays.asList(docnos));
+//		int seenDocuments = 0;
+//		for(InputSplit split : splits)
+//		{
+//			RecordReader<IntWritable,Wrapper<String[]>> rr = information.getRecordReader(split, jc, null);
+//			IntWritable key = rr.createKey();
+//			Wrapper<String[]> value = rr.createValue();
+//			while(rr.next(key, value))
+//			{
+//				seenDocuments++;
+//				String docno = value.getObject()[0];
+//				unseenDocnos.remove(docno);
+//				assertEquals(docnos[key.get()], docno);
+//			}
+//			rr.close();
+//		}
+//		assertEquals("Not correct number of document seen", docnos.length, seenDocuments);
+//		assertEquals("Some documents unseen", 0, unseenDocnos.size());
+//	}
+//	
 	
 	@SuppressWarnings("unchecked")
 	protected void checkStream(Index index, String name, String[] docnos, int ith) throws Exception

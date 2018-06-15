@@ -25,29 +25,22 @@
  *   
  */
 package org.terrier.utility.io;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.Random;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsAction;
-import org.apache.hadoop.mapred.JobConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
-import org.terrier.utility.KillHandler;
 import org.terrier.utility.Files.FSCapability;
-import org.terrier.utility.KillHandler.Killable;
 
 /** This class provides the main glue between Terrier and Hadoop. It has several main roles:<ol>
   * <li>Configure Terrier such that the Hadoop file systems can be accessed by Terrier.</li>
@@ -58,44 +51,7 @@ import org.terrier.utility.KillHandler.Killable;
   * To do so, ensure that your Hadoop <tt>conf/</tt> is on your CLASSPATH, and that the Hadoop plugin is loaded by Terrier,
   * by setting <tt>terrier.plugins=org.terrier.utility.io.HadoopPlugin</tt> in your <tt>terrier.properties</tt> file.
   * </p>
-  * <p><h3>Configuring Terrier to access an existing Hadoop MapReduce cluster</h3>
-  * Terrier can access an existing MapReduce cluster, as long as the <tt>conf/</tt> folder for Hadoop is on your CLASSPATH.
-  * If you do not already have an existing Hadoop cluster, Terrier can be configured to use HOD, to build a temporary
-  * Hadoop cluster from a PBS (Torque) cluster. To configure HOD itself, the reader is referred to the
-  * <a href="http://hadoop.apache.org/core/docs/current/hod.html">HOD documentation</a>. To use HOD from Terrier,
-  * set the following properties:
-  * <ul>
-  * <li><tt>plugin.hadoop.hod</tt> - path to the hod binary, normally $HADOOP_HOME/contrib/hod/bin. If unset, then HOD is presusmed
-  * to be unconfigured.</li>
-  * <li><tt>plugin.hadoop.hod.nodes</tt> - the number of nodes/CPUs that you want to request from the PBS Torque cluster. Defaults to 6.</li>
-  * <li><tt>plugin.hadoop.hod.params</tt> - any additional options you want to set on the HOD command line. See the 
-  * <a href="http://hadoop.apache.org/core/docs/current/hod_user_guide.html#Command+Line">HOD User guide</a> for examples.</li>
-  * </ul>
-  * </p><p><h3>Using Hadoop MapReduce from Terier</h3>
-  * You should use the JobFactory provided by this class when creating a MapReduce job from Terrier. The JobFactory
-  * creates a HOD session should one be required, and also configures jobs such that the Terrier environment can
-  * be recreated on the execution nodes.
-  * <pre>
-  * HadoopPlugin.JobFactory jf = HadoopPlugin.getJobFactory("HOD-TerrierIndexing");
-  * if (jf == null)
-  *	 throw new Exception("Could not get JobFactory from HadoopPlugin");
-  * JobConf conf = jf.newJob();
-  * ....
-  * jf.close(); //closing the JobFactory will ensure that the HOD session ends
-  * </pre>
-  * When using your own code in Terrier MapReduce jobs, ensure that you configure the Terrier application before
-  * anything else:
-  * <pre>
-  * public void configure(JobConf jc)
-  * {
-  *	 try{
-  *		 HadoopUtility.loadTerrierJob(jc);
-  *	 } catch (Exception e) {
-  *		 throw new Error("Cannot load ApplicationSetup", e);
-  *	 }
-  * }
-  * </pre>
-  * </p>
+  * 
   * @since 2.2
   * @author Craig Macdonald
   */
@@ -106,218 +62,9 @@ public class HadoopPlugin implements ApplicationSetup.TerrierApplicationPlugin
 	protected static HadoopPlugin singletonHadoopPlugin;
 	/** main configuration object to use for Hadoop access */
 	protected static Configuration singletonConfiguration;
+
 	/** The logger used */
 	protected static final Logger logger = LoggerFactory.getLogger(HadoopPlugin.class);
-	
-
-	/** a Job Factory is responsible for creating Terrier MapReduce jobs.
-	  * This should be used when requesting a Terrier MapReduce job, as it
-	  * adequately initialises the job, such that Terrier can run correctly.
-	  */	
-	public static abstract class JobFactory {
-		/** Make a new job */
-		public abstract JobConf newJob() throws Exception;
-		
-		/** Add additional informatino to a MapReduce job about the Terrier configuration */
-		protected static void makeTerrierJob(JobConf jc) throws IOException {
-			HadoopUtility.makeTerrierJob(jc);
-		}
-		
-		/** Finish with this job factory. If the JobFactory was created using HOD, then
-		  * the HOD job will also be ended */
-		public abstract void close();
-	}
-	
-	/** JobFactory that doesn't resort to HadoopOnDemand, and directly wraps a Configuration object */
-	static class DirectJobFactory extends JobFactory {
-		protected Configuration c;
-		DirectJobFactory() { c = null; }
-		DirectJobFactory(Configuration _c) { c = _c; }
-		public JobConf newJob() throws Exception {
-			JobConf rtr = c != null ? new JobConf(c) : new JobConf();
-			makeTerrierJob(rtr);
-			return rtr;
-		}
-		public void close() { }
-	}
-	
-	private static final Random random = new Random();
-	
-	/** JobFactory that uses HadoopOnDemand */
-	static class HODJobFactory extends JobFactory implements Killable {
-		protected String hodConfLocation = null;
-		protected String hodBinaryLocation = null;
-		protected boolean connected = false;
-		HODJobFactory(String _hodJobName, String _hodBinaryLocation, String[] hodParams, int HodNumNodes) throws Exception
-		{
-			hodBinaryLocation = _hodBinaryLocation;
-			KillHandler.addKillhandler(this);
-			doHod(_hodJobName, hodParams, HodNumNodes);
-		}
-		
-		protected void doHod(String jobName, String[] hodParams, int NumNodes) throws Exception
-		{
-			if (jobName == null || jobName.length() == 0)
-				jobName = "terrierHOD";	
-			logger.info("Processing HOD for "+jobName+" at "+hodBinaryLocation + " request for " + NumNodes + " nodes");
-
-			File hodDir = null;
-			while (hodDir == null)
-			{
-				hodDir = new File(System.getProperty("java.io.tmpdir", "/tmp") + "/hod" + random.nextInt());
-				if (hodDir.exists())
-					hodDir = null;
-			}
-			if (! hodDir.mkdir())
-			{
-				throw new IOException("Could not create new HOD tmp dir at "+hodDir);
-			}
-
-			//build the HOD command
-			String[] command = new String[8 + hodParams.length];
-			command[0] = hodBinaryLocation;
-			command[1] = "allocate";
-			command[2] = "-d"; 
-			command[3] = hodDir.getAbsolutePath();
-			command[4] = "-n";
-			command[5] = ""+NumNodes;
-			command[6] = "-N";
-			command[7] = jobName;
-			int offset = 8;
-			for(String param : hodParams)
-				command[offset++] = param;
-
-			//execute the command
-			ProcessBuilder pb = new ProcessBuilder();
-			pb.command(command);
-			Process p = pb.start();
-			
-			//log all output from HOD
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-				String line = null;
-				while ((line = br.readLine()) != null)
-					logger.info(line);
-				br.close();
-			} catch(IOException ioe) {
-				logger.warn("Problem reading error stream of HOD", ioe);
-			}
-			p.waitFor();
-			
-			//check for successfull HOD
-			File hodConf = new File(hodDir, "hadoop-site.xml");
-			if (! Files.exists((hodConf.toString())))
-				throw new IOException("HOD did not produce a hadoop-site.xml");
-			final int exitValue = p.exitValue();
-			if (exitValue != 0)
-			{
-				throw new Exception("HOD allocation did not succeed (exit value was "+exitValue+")");
-			}
-			hodConfLocation = hodDir.getAbsolutePath();
-			connected = true;
-		}
-		
-		protected void disconnectHod() throws Exception
-		{
-			logger.info("Processing HOD disconnect");
-			ProcessBuilder pb = new ProcessBuilder();
-			pb.command(new String[]{hodBinaryLocation, "deallocate", "-d", hodConfLocation});
-			Process p = pb.start();
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-				String line = null;
-				while ((line = br.readLine()) != null)
-					logger.info(line);
-				br.close();
-			} catch(IOException ioe) {
-				logger.warn("Problem reading error stream of HOD", ioe);
-			}
-			p.waitFor();
-			final int exitValue = p.exitValue();
-			if (exitValue != 0)
-			{
-				logger.warn("HOD deallocate might not have succeeded (exit value was "+exitValue+")");
-			}
-			connected = false;
-		}
-		
-		public JobConf newJob() throws Exception {
-			JobConf rtr = new JobConf(hodConfLocation+"/hadoop-site.xml");
-				makeTerrierJob(rtr);
-			return rtr;
-		}
-
-		protected void finalize() {
-			close();
-		}
-	
-		public void close()	
-		{
-			if (connected)
-				try{
-					disconnectHod();
-				} catch (Exception e) {
-					logger.warn("Encoutered exception while closing HOD. A PBS job may need to be deleted.", e);
-				} finally {
-					KillHandler.removeKillhandler(this);
-				}
-		}
-
-		public void kill() {
-			close();
-		}
-	}
-	
-	/** Get a JobFactory with the specified session name. This method attempts three processes, in order:
-	  * <ol>
-	  * <li>If the current/default Hadoop configuration has a real Hadoop cluster Job Tracker configured, then
-	  * that will be used. This requires that the <tt>mapred.job.tracker</tt> property in the haddop-site.xml
-	  * be configured.</li>
-	  * <li>Next, it will attempt to use HOD to build a Hadoop MapReduce cluster. This requies the Terrier property
-	  * relating to HOD be configured to point to the location of the HOD binary - <tt>plugin.hadoop.hod</tt></li>
-	  * <li>As a last resort, Terrier will use the local job tracker that Hadoop provides on the localhost. This is
-	  * useful for unit testing, however it does not support multiple reducers.</li> 
-	  * </ol>
-	  */
-	public static JobFactory getJobFactory(String sessionName) { 
-		return getJobFactory(sessionName, false);
-	}
-	
-	/** implements the obtaining of job factories */
-	protected static JobFactory getJobFactory(String sessionName, boolean persistent) {
-		if (persistent)//TODO
-			throw new Error("Persistent JobFactory not yet supported, sorry");
-		Configuration globalConf = getGlobalConfiguration();
-		
-		try {
-			//JobConf jc_sampleConf = new JobConf();
-			//see if the current hadoop configuration has a real job tracker configured
-			String jt = globalConf.get("mapred.job.tracker");
-			if (jt == null)
-			{
-				jt = new JobConf().get("mapred.job.tracker");
-			}
-			if (jt != null && ! jt.equals("local"))
-			{
-				if (logger.isDebugEnabled()) logger.debug("Default configuration has job tracker set to " + globalConf.get("mapred.job.tracker"));	
-				return new DirectJobFactory(/*globalConf*/);
-			}
-			// if not, try HOD	
-			String hod = ApplicationSetup.getProperty("plugin.hadoop.hod", null);
-			String[] hodParams = ApplicationSetup.getProperty("plugin.hadoop.hod.params", "").split(" ");
-			if (hod != null && hod.length() > 0)
-			{
-				int HodNodes = Integer.parseInt(ApplicationSetup.getProperty("plugin.hadoop.hod.nodes", ""+6));
-				return new HODJobFactory(sessionName, hod, hodParams, HodNodes);
-			}
-			//as a last resort, use the local Hadoop job tracker
-			logger.warn("No remote job tracker or HOD configuration found, using local job tracker");
-			return new DirectJobFactory(globalConf);
-		} catch (Exception e) {
-			logger.warn("Exception occurred while creating JobFactory", e);
-			return null;
-		}
-	}
 	
 	/** Update the global Hadoop configuration in use by the plugin */
 	public static void setGlobalConfiguration(Configuration _config) {

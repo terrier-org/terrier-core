@@ -77,7 +77,6 @@ import org.terrier.structures.bit.TestBitPostingIndexInputStream;
 import org.terrier.structures.bit.TestPostingStructures;
 import org.terrier.structures.collections.TestFSArrayFile;
 import org.terrier.structures.collections.TestFSOrderedMapFile;
-import org.terrier.structures.indexing.TestCompressingMetaIndexBuilderPartitioner;
 import org.terrier.structures.indexing.TestIndexing;
 import org.terrier.structures.indexing.TestIndexingFatalErrors;
 import org.terrier.structures.indexing.singlepass.TestInverted2DirectIndexBuilder;
@@ -105,7 +104,6 @@ import org.terrier.utility.TestTermCodes;
 import org.terrier.utility.TestUnitUtils;
 import org.terrier.utility.TestVersion;
 import org.terrier.utility.io.TestCountingInputStream;
-import org.terrier.utility.io.TestHadoopPlugin;
 import org.terrier.utility.io.TestRandomDataInputMemory;
 
 
@@ -201,7 +199,6 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	
 	//.structures.indexing
 	TestIndexing.class,
-	TestCompressingMetaIndexBuilderPartitioner.class,
 	TestIndexingFatalErrors.class,
 	
 	//.structures.indexing.sp.hadoop
@@ -245,7 +242,6 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	
 	//utility.io
 	TestRandomDataInputMemory.class,
-	TestHadoopPlugin.class,
 	TestCountingInputStream.class,
 	
 	
