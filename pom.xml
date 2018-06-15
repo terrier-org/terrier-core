@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-core</artifactId>
-	<version>4.2</version>
+	<version>4.3</version>
 	<name>Terrier Information Retrieval Platform</name>
 	<description>Terrier IR platform</description>
 	<url>http://terrier.org</url>
