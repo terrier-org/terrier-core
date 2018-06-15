@@ -53,7 +53,7 @@ public class FSAFieldDocumentIndex
 	protected void initialise(IndexOnDisk index, String structureName)
 			throws IOException 
 	{
-		logger.debug("Loading document + field lengths for " + structureName + " structure into memory", new Exception());
+		logger.debug("Loading document + field lengths for " + structureName + " structure into memory. NB: The following stacktrace IS NOT AN Exception", new Exception("THIS IS **NOT** AN EXCEPTION"));
 		docLengths = new int[this.size()];
 		fieldLengths = new int[this.size()][];
 		int i=0;
