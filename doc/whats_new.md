@@ -2,7 +2,7 @@ What's New in Terrier
 =====================
 
 
-Terrier 4.3 - xx/03/2018
+Terrier 4.3 - xx/06/2018
 ------------------------
 Minor update with mostly bug fixes and minor improvements. Likely the last in the 4.x series.
 
@@ -16,6 +16,7 @@ Minor update with mostly bug fixes and minor improvements. Likely the last in th
 
 ### Other
  - [TR-483](http://terrier.org/issues/browse/TR-483) pom.xml should not specify javac
+ - [TR-494](http://terrier.org/issues/browse/TR-494) bump jtreceval to print error message from bin/trec_terrier.sh -e
  - [TR-495](http://terrier.org/issues/browse/TR-495) Build should work on JDK9
 
 Terrier 4.2 - 22/12/2016
