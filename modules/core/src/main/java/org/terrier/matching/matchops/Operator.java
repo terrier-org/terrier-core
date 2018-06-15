@@ -19,7 +19,7 @@ import org.terrier.utility.ApplicationSetup;
 public abstract class Operator implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
-	protected static boolean IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","true"));
+	protected static boolean IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","false"));
 	
 	
 	@Override

@@ -66,6 +66,12 @@ public class IndexTestUtils {
 		return makeIndexFields(docnos, documents, new BasicIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count), ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count);
 	}
 	
+	public static Index makeIndexFieldsBlocks(String[] docnos, String[] documents) throws Exception
+	{
+		count++;
+		return makeIndexFields(docnos, documents, new BlockIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count), ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + '-'+ count);
+	}
+	
 	public static Index makeIndexBlocks(String[] docnos, String[] documents) throws Exception
 	{
 		count++;

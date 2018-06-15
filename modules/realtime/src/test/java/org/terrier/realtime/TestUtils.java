@@ -136,7 +136,7 @@ public class TestUtils {
 		assertNotNull(mgr);
 		SearchRequest srq = mgr.newSearchRequest(query, query);
 		assertNotNull(srq);
-		srq.addMatchingModel("Matching","TF_IDF");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, "TF_IDF");
 		mgr.runSearchRequest(srq);
 		ResultSet result = ((Request) srq).getResultSet();
 		assertNotNull(result);

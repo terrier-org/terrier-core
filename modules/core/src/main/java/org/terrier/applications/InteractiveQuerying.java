@@ -162,7 +162,7 @@ public class InteractiveQuerying {
 				{
 					return;
 				}
-				processQuery("interactive"+(qid++), lowercase ? query.toLowerCase() : query);
+				processQuery("interactive"+(qid++), (lowercase && ! matchopQl) ? query.toLowerCase() : query);
 			}
 		} catch(IOException ioe) {
 			logger.error("Input/Output exception while performing the matching. Stack trace follows.",ioe);
