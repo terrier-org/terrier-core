@@ -8,23 +8,24 @@ Major update. New features include a new commandline API, revisions to the retri
 More information can be found in the [documentation on migration to Terrier 5](Tr5migration.md).
 
 ### Indexing
+ - [TR-443](http://terrier.org/issues/browse/TR-443) Index data.properties should record the termpipeline
  - [TR-466](http://terrier.org/issues/browse/TR-466) SimpleXMLCollection - requested constructor not found (Jiho Noh, University of Kentucky)
  - [TR-489](http://terrier.org/issues/browse/TR-489) TaggedDocument cannot make abstract if no global tag (Kiril Mihaylov, University of Glasgow)
  - [TR-479](http://terrier.org/issues/browse/TR-479) Control number of threads during threaded indexing
- - [TR-443](http://terrier.org/issues/browse/TR-443) Index data.properties should record the termpipeline
  - [TR-493](http://terrier.org/issues/browse/TR-493) Record maxtf in lexicon during indexing
 
 ### Retrieval
  - [TR-317](http://terrier.org/issues/browse/TR-317) ProximityIterablePosting does not calculate the total number of matching phrases
+ - [TR-442](http://terrier.org/issues/browse/TR-442) IterablePosting.EOL should be Integer.MAX_VALUE (Nicola Tonellotto, ISTI-CNR)
  - [TR-472](http://terrier.org/issues/browse/TR-472) Request not passed to the WeightingModel (Aldo Lipani, Vienna University of Technology)
  - [TR-487](http://terrier.org/issues/browse/TR-487) MatchingQueryTerms should be decorated with the EntryStatistics
- - [TR-442](http://terrier.org/issues/browse/TR-442) IterablePosting.EOL should be Integer.MAX_VALUE (Nicola Tonellotto, ISTI-CNR)
 
 ### Other
  - [TR-445](http://terrier.org/issues/browse/TR-445) Infrastructure support for non-String lexicons
- - [TR-491](http://terrier.org/issues/browse/TR-491) Split out MapReduce indexer from core, upgrade Hadoop
  - [TR-480](http://terrier.org/issues/browse/TR-480) Resolve additional Terrier "plugins" from Maven repositories. Ramification of this change is that Class.forName() should be replaced by ApplicationSetup.getClass(). 
  - [TR-483](http://terrier.org/issues/browse/TR-483) pom.xml should not specify javac
+ - [TR-491](http://terrier.org/issues/browse/TR-491) Split out MapReduce indexer from core, upgrade Hadoop
+ - [TR-494](http://terrier.org/issues/browse/TR-494) bump jtreceval to print error message from bin/trec_terrier.sh -e
  - [TR-495](http://terrier.org/issues/browse/TR-495) Build should work on JDK9
 
 Terrier 4.2 - 22/12/2016
