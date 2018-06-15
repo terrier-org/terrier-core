@@ -142,8 +142,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 		System.err.println(super.toString() + " ngramlength="+ this.ngramLength);
 		try {
 			if (phraseQTWfnid < 1 || phraseQTWfnid > 4) {
-				System.err
-				.println("ERROR: Wrong function id specified for ProximityScoreModifierTREC2009");
+				System.err.println("ERROR: Wrong function id specified for " + this.getClass().getSimpleName());
 			}
 	
 			MatchingQueryTerms termsFiltered = terms.stream().filter(x -> ! x.getKey().toString().matches("^.*#(\\d|uw\\d|ow\\d).*")).collect(Collectors.toCollection(MatchingQueryTerms::new));
@@ -319,8 +318,8 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 	
 	}
     
-    /** calculates the dependende score for one document, using the iterable postings available.
-      * @param ips all of the Iterablepostings
+    /** calculates the dependence score for one document, using the IterablePostings available.
+      * @param ips all of the IterablePostings
       * @param okToUse the IterablePostings that are set on the current document
       * @param phraseTermWeights weights on each of the query terms
       * @param SD is sequential dependence to be used
