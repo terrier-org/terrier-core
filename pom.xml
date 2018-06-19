@@ -48,14 +48,6 @@
 		<developerConnection>scm:git:git@github.com:terrier-org/terrier-core.git</developerConnection>
 	</scm>
 
-	<repositories>
-		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-
-
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>

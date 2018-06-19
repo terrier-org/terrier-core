@@ -16,6 +16,21 @@
 			<groupId>org.terrier</groupId>
 			<artifactId>terrier-core</artifactId>
 			<version>${project.version}</version>
+
+			<exclusions>
+			<exclusion>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+			</exclusion>
+			 <exclusion>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-core</artifactId>
+            </exclusion>
+	         <exclusion>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+            </exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
