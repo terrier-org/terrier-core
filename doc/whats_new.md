@@ -23,6 +23,8 @@ More information can be found in the [documentation on migration to Terrier 5](T
  - [TR-499](http://terrier.org/issues/browse/TR-487) ExplicitMultiTermQuery does not support query weights
  - [TR-500](http://terrier.org/issues/browse/TR-487) Expose MatchingOp QL to TRECQuerying
  - [TR-502](http://terrier.org/issues/browse/TR-487) Simplify Manager API
+ - [TR-507](http://terrier.org/issues/browse/TR-507) Migrate Terrier query parser from Antlr to javacc
+ - [TR-508](http://terrier.org/issues/browse/TR-508) - Querying (interactive, batchretrieval) commands should have common base class
 
 ### Other
  - [TR-445](http://terrier.org/issues/browse/TR-445) Infrastructure support for non-String lexicons

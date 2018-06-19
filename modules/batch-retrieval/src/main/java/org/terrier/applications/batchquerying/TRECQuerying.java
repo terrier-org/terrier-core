@@ -28,6 +28,9 @@
  */
 package org.terrier.applications.batchquerying;
 
+import static org.terrier.querying.SearchRequest.CONTROL_MATCHING;
+import static org.terrier.querying.SearchRequest.CONTROL_WMODEL;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,7 +40,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -47,7 +49,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terrier.applications.CLITool.CLIParsedCLITool;
+import org.terrier.applications.AbstractQuerying;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.models.InL2;
 import org.terrier.matching.models.queryexpansion.Bo1;
@@ -68,8 +70,6 @@ import org.terrier.structures.outputformat.TRECDocnoOutputFormat;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
-
-import static org.terrier.querying.SearchRequest.*;
 
 import com.google.common.collect.Sets;
 
@@ -173,21 +173,21 @@ import com.google.common.collect.Sets;
  * 
  * @author Gianni Amati, Vassilis Plachouras, Ben He, Craig Macdonald, Nut Limsopatham
  */
-public class TRECQuerying {
+public class TRECQuerying extends AbstractQuerying {
 
-	public static class Command extends CLIParsedCLITool
+	public static final String BATCHRETRIEVE_COMMAND = "batchretrieval";
+	public static final String BATCHRETRIEVE_PROP_PREFIX = "trec";
+	
+	public static class Command extends AbstractQueryingCommand
 	{
+		protected Command() {
+			super(TRECQuerying.class);
+		}
+
 		@Override
 		protected Options getOptions()
 		{
 			Options options = super.getOptions();
-			options.addOption(Option.builder("c")
-					.argName("controls")
-					.longOpt("controls")
-					.hasArgs()
-					.valueSeparator(',')
-					.desc("allows one of more controls to be set")
-					.build());
 			options.addOption(Option.builder("F")
 					.argName("format")
 					.longOpt("format")
@@ -197,17 +197,7 @@ public class TRECQuerying {
 			options.addOption(Option.builder("docids")
 					.argName("docids")
 					.desc("specifies that Terrier will returns docids rather than docnos")
-					.build());
-			options.addOption(Option.builder("m")
-					.argName("matchingql")
-					.longOpt("matchingql")
-					.desc("specifies that topics are presumed to be formatted be as the Indri-esque QL, rather than Terrier QL")
-					.build());			
-			options.addOption(Option.builder("q")
-					.argName("queryexpanion")
-					.longOpt("queryexpanion")
-					.desc("apply query expansion")
-					.build());
+					.build());		
 			options.addOption(Option.builder("s")
 					.argName("singleline")
 					.longOpt("singleline")
@@ -218,17 +208,12 @@ public class TRECQuerying {
 					.longOpt("topics")
 					.desc("specify the location of the topics file")
 					.build());			
-			options.addOption(Option.builder("w")
-					.argName("wmodel")
-					.longOpt("wmodel")
-					.desc("change the default document weighting model")
-					.build());
 			return options;
 		}
 
 		@Override
 		public String commandname() {
-			return "batchretrieval";
+			return BATCHRETRIEVE_COMMAND;
 		}
 		
 		@Override
@@ -242,31 +227,12 @@ public class TRECQuerying {
 		}
 
 		@Override
-		public int run(CommandLine line) throws Exception {
+		public int run(CommandLine line, AbstractQuerying q) throws Exception {
 			
-			TRECQuerying tq = new TRECQuerying();
-				
-			if (line.hasOption("c"))
-			{
-				String[] controlCVs = line.getOptionValues("c");
-				for(String tuple : controlCVs)
-				{
-					String[] kv = tuple.split((":|="));
-					tq.controls.put(kv[0], kv[1]);
-				}
-			}
+			TRECQuerying tq = (TRECQuerying)q;	
 			
 			if (line.hasOption("docids"))
 				tq.printer = new TRECDocidOutputFormat(null);
-			
-			if (line.hasOption("m"))
-				tq.matchopQL = true;
-			
-			if (line.hasOption("q"))
-				tq.queryexpansion = true;
-			
-			if (line.hasOption('w'))
-				tq.wModel = line.getOptionValue('w');
 			
 			tq.processQueries();
 			return 0;
@@ -285,16 +251,6 @@ public class TRECQuerying {
 	/** random number generator */
 	protected static final Random random = new Random();
 
-	/** The number of matched queries. */
-	protected int matchingCount = 0;
-
-	/** the boolean indicates whether to expand queries */
-	protected boolean queryexpansion = false;
-	
-	protected Map<String,String> controls = new HashMap<String,String>();
-	
-	protected boolean matchopQL = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false")); 
-	
 	/** The file to store the output to. */
 	protected volatile PrintWriter resultFile;
 	protected OutputStream resultFileRaw;
@@ -312,12 +268,6 @@ public class TRECQuerying {
 
 	/** The manager object that handles the queries. */
 	protected Manager queryingManager;
-
-	/**
-	 * The name of the weighting model that is used for retrieval. Defaults to
-	 * PL2
-	 */
-	protected String wModel = "PL2";
 
 	/**
 	 * The name of the matching model that is used for retrieval. If not set, defaults to 
@@ -367,24 +317,25 @@ public class TRECQuerying {
 	 * lexicon and the document index structures.
 	 */
 	public TRECQuerying() {
+		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.loadIndex();
 		this.createManager();
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false")); 
 		this.querySource = this.getQueryParser();
 		this.printer = getOutputFormat();
 		this.resultsCache = getResultsCache();
 	}
 	
-	/**
-	 * TRECQuerying constructor initialises the inverted index, the
-	 * lexicon and the document index structures.
-	 */
-	public TRECQuerying(boolean _queryexpansion) {
+	public TRECQuerying(boolean qe) {
+		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.loadIndex();
 		this.createManager();
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false")); 
 		this.querySource = this.getQueryParser();
 		this.printer = getOutputFormat();
 		this.resultsCache = getResultsCache();
-		this.queryexpansion = _queryexpansion;
+		if (qe)
+			super.controls.put("qe", "on");
 	}
 
 	/**
@@ -394,8 +345,10 @@ public class TRECQuerying {
 	 * @param _indexref The specified index reference.
 	 */
 	public TRECQuerying(IndexRef _indexref) {
+		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.indexref = _indexref;
 		this.createManager();
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 		this.querySource = this.getQueryParser();
 		this.printer = getOutputFormat();
 		this.resultsCache = getResultsCache();
@@ -666,7 +619,7 @@ public class TRECQuerying {
 		synchronized (this) {
 			if (resultFile == null) {
 				method = ApplicationSetup.getProperty("trec.runtag", srq.getControl("wmodel"));//TODO FIX
-				if (queryexpansion)
+				if (srq.hasControl("qe"))
 					method = method +
 					"_d_"+ApplicationSetup.getProperty("expansion.documents", "3")+
 					"_t_"+ApplicationSetup.getProperty("expansion.terms", "10");
@@ -712,7 +665,7 @@ public class TRECQuerying {
 		if (logger.isInfoEnabled())
 			logger.info(queryId + " : " + query);
 		SearchRequest srq = queryingManager.newSearchRequest(queryId, query);
-		if (matchopQL)
+		if (super.matchopQl)
 		{
 			srq.setControl("parsecontrols", "off");
 			srq.setControl("parseql", "off");
@@ -738,10 +691,8 @@ public class TRECQuerying {
 			srq.setControl(CONTROL_MATCHING, mModel);
 		srq.setControl(CONTROL_WMODEL, wModel);
 		
-		if (queryexpansion) {
-			//if (srq.getControl("qemodel").length() == 0)
+		if (srq.getControl("qe").equals("on")) {
 			srq.setControl("qemodel", defaultQEModel);
-			srq.setControl("qe", "on");
 		}
 		
 		preQueryingSearchRequestModification(queryId, srq);
