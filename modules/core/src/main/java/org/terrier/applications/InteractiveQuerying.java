@@ -114,7 +114,6 @@ public class InteractiveQuerying {
 	 * According to the given parameters, it sets up the correct matching class.
 	 * @param queryId String the query identifier to use.
 	 * @param query String the query to process.
-	 * @param cParameter double the value of the parameter to use.
 	 */
 	public void processQuery(String queryId, String query) {
 		SearchRequest srq = queryingManager.newSearchRequest(queryId, query);
