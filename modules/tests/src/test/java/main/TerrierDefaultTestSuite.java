@@ -65,6 +65,7 @@ import org.terrier.querying.TestManager;
 import org.terrier.querying.TestSimpleDecorate;
 import org.terrier.querying.parser.TestQueryParser;
 import org.terrier.querying.summarisation.TestDefaultSummariser;
+import org.terrier.rest.TestClientAndServer;
 import org.terrier.statistics.TestGammaFunction.TestWikipediaLanczosGammaFunction;
 import org.terrier.structures.TestBasicLexiconEntry;
 import org.terrier.structures.TestBitIndexPointer;
@@ -178,6 +179,9 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	
 	//querying.summarisation
 	TestDefaultSummariser.class,
+	
+	//rest
+	TestClientAndServer.class,
 	
 	//.statistics
 	TestWikipediaLanczosGammaFunction.class,

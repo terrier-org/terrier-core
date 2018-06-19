@@ -35,6 +35,18 @@
 			<artifactId>terrier-learning</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-rest-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-rest-server</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
