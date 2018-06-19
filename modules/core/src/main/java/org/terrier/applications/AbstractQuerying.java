@@ -81,8 +81,8 @@ public class AbstractQuerying {
 					.argName("controls")
 					.longOpt("controls")
 					.hasArgs()
-					.valueSeparator(',')
-					.desc("allows one of more controls to be set")
+					.valueSeparator(';')
+					.desc("allows one of more controls to be set (keys & values separated by colon, control pairs separated by a semicolon)")
 					.build());
 			options.addOption(Option.builder("q")
 					.argName("queryexpanion")
@@ -108,6 +108,8 @@ public class AbstractQuerying {
 				for(String tuple : controlCVs)
 				{
 					String[] kv = tuple.split((":|="));
+					if (kv.length != 2)
+						throw new IllegalArgumentException("Control spec invalid: "+tuple);
 					aq.controls.put(kv[0], kv[1]);
 				}
 			}
