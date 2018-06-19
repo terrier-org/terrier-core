@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.models.BM25;
-import org.terrier.matching.daat.Full;
 import org.terrier.matching.models.PL2;
 import org.terrier.structures.Index;
 import org.terrier.tests.ApplicationSetupBasedTest;
@@ -53,7 +52,7 @@ public class TestManager extends ApplicationSetupBasedTest {
 		Manager m = new LocalManager(index);
 		SearchRequest srq;
 		srq = m.newSearchRequest("testQuery", "fox fox dog");
-		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		m.runSearchRequest(srq);
 		assertNotNull(((Request) srq).getResultSet());
 		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
@@ -69,7 +68,7 @@ public class TestManager extends ApplicationSetupBasedTest {
 		SearchRequest srq;
 		MatchingQueryTerms mqt;
 		srq = m.newSearchRequest("testQuery", "fox fox dog");
-		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		m.runSearchRequest(srq);
 		mqt = ((Request)srq).getMatchingQueryTerms();
 		assertEquals(1d, mqt.getTermWeight("fox"), 0.0d);
@@ -77,7 +76,7 @@ public class TestManager extends ApplicationSetupBasedTest {
 		
 		
 		srq = m.newSearchRequest("testQuery", "fox fox dog^1.3");
-		srq.addMatchingModel(Full.class.getName(), PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		m.runSearchRequest(srq);
 		mqt = ((Request)srq).getMatchingQueryTerms();
 		assertEquals(1d, mqt.getTermWeight("fox"), 0.0d);
@@ -110,10 +109,11 @@ public class TestManager extends ApplicationSetupBasedTest {
 		SearchRequest srq = m.newSearchRequestFromQuery("brown fox");
 		Request rq = (Request)srq;
 		assertNotNull( rq.getIndex() );
-		srq.addMatchingModel(org.terrier.matching.daat.Full.class.getName(), myModel.class.getName());
+		srq.setControl(SearchRequest.CONTROL_MATCHING, org.terrier.matching.daat.Full.class.getName());
+		srq.setControl(SearchRequest.CONTROL_WMODEL, myModel.class.getName());
 		m.runSearchRequest(srq);
 		
-		srq.addMatchingModel(org.terrier.matching.taat.Full.class.getName(), myModel.class.getName());
+		srq.setControl(SearchRequest.CONTROL_MATCHING, org.terrier.matching.taat.Full.class.getName());
 		m.runSearchRequest(srq);
 	}
 	
