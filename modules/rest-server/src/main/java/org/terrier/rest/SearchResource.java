@@ -54,7 +54,7 @@ public class SearchResource {
 			if (controls.length() > 0)
 			{
 				System.err.println("controls="+ controls);
-				String[] controlKVs = controls.split(",");
+				String[] controlKVs = controls.split(";");
 				for(String kv : controlKVs)
 				{
 					String[] kvs = kv.split(":");

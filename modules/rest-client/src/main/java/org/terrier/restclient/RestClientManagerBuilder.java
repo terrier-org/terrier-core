@@ -19,8 +19,7 @@ import org.terrier.querying.Manager;
 import org.terrier.querying.ManagerFactory;
 import org.terrier.querying.ScoredDoc;
 import org.terrier.querying.ScoredDocList;
-import org.terrier.querying.SearchRequest; 
-import static org.terrier.querying.SearchRequest.*;
+import org.terrier.querying.SearchRequest;
 
 /** This class facilitates a Manager to be obtained for a remote HTTP 
  *  REST index reference. There is NO NEED to refer to the class directly -
@@ -194,18 +193,18 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 				if (controls.size() > 0)
 				{
 					url = url + "&controls=" + URLEncoder.encode(
-						controls.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue()).collect(Collectors.joining(",")), "UTF-8");
+						controls.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue()).collect(Collectors.joining(";")), "UTF-8");
 				}
-				//wmodel
-				if (rrq.hasControl(CONTROL_WMODEL))
-				{
-					url += "&wmodel="+rrq.getControl(CONTROL_WMODEL);
-				}
-				//matching
-				if (rrq.hasControl(CONTROL_MATCHING))
-				{
-					url += "&matching="+rrq.getControl(CONTROL_MATCHING);
-				}
+//				//wmodel
+//				if (rrq.hasControl(CONTROL_WMODEL))
+//				{
+//					url += "&wmodel="+rrq.getControl(CONTROL_WMODEL);
+//				}
+//				//matching
+//				if (rrq.hasControl(CONTROL_MATCHING))
+//				{
+//					url += "&matching="+rrq.getControl(CONTROL_MATCHING);
+//				}
 				//qid
 				if (rrq.qid != null)
 				{
