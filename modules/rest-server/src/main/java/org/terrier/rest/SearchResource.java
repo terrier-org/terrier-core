@@ -29,6 +29,7 @@ public class SearchResource {
 
 	static final String DEFAULT_FORMAT = "trec";
 	
+	@SuppressWarnings("deprecation")
 	static IndexRef indexRef = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 	static Manager m = ManagerFactory.from(indexRef);
 	
