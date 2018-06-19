@@ -180,7 +180,7 @@ public class TRECQuerying extends AbstractQuerying {
 	
 	public static class Command extends AbstractQueryingCommand
 	{
-		protected Command() {
+		public Command() {
 			super(TRECQuerying.class);
 		}
 
