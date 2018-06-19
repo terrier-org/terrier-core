@@ -29,9 +29,7 @@
 package org.terrier.applications;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
@@ -42,10 +40,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terrier.applications.CLITool.CLIParsedCLITool;
-import org.terrier.querying.IndexRef;
-import org.terrier.querying.Manager;
-import org.terrier.querying.ManagerFactory;
 import org.terrier.querying.ScoredDoc;
 import org.terrier.querying.SearchRequest;
 import org.terrier.utility.ApplicationSetup;
@@ -61,7 +55,10 @@ import org.terrier.utility.ArrayUtils;
  * </ul>
  * @author Gianni Amati, Vassilis Plachouras, Ben He, Craig Macdonald
  */
-public class InteractiveQuerying {
+public class InteractiveQuerying extends AbstractQuerying {
+	
+	public static final String INTERACTIVE_COMMAND = "interactive";
+	
 	/** The logger used */
 	protected static final Logger logger = LoggerFactory.getLogger(InteractiveQuerying.class);
 	
@@ -69,19 +66,8 @@ public class InteractiveQuerying {
 	protected final static boolean lowercase = Boolean.parseBoolean(ApplicationSetup.getProperty("lowercase", "true"));
 	/** display user prompts */
 	protected boolean verbose = true;
-	protected boolean matchopQl = false;
-	protected Map<String,String> controls = new HashMap<>();
-	
-	/** the number of processed queries. */
-	protected int matchingCount = 0;
 	/** The file to store the output to.*/
 	protected PrintWriter resultFile = new PrintWriter(System.out);
-	/** The query manager.*/
-	protected Manager queryingManager;
-	/** The weighting model used. */
-	protected String wModel = ApplicationSetup.getProperty("interactive.model", "PL2");
-	/** The data structures used.*/
-	protected IndexRef indexref;
 	/** The maximum number of presented results. */
 	protected static int RESULTS_LENGTH = 
 		Integer.parseInt(ApplicationSetup.getProperty("interactive.output.format.length", "1000"));
@@ -92,49 +78,32 @@ public class InteractiveQuerying {
 	
 	/** A default constructor initialises the index, and the Manager. */
 	public InteractiveQuerying() {
+		super(INTERACTIVE_COMMAND);
 		createManager();		
 	}
 
-	/**
-	* Create a querying manager. This method should be overriden if
-	* another matching model is required.
-	*/
-	@SuppressWarnings("deprecation")
-	protected void createManager(){
-		queryingManager = ManagerFactory.from(IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
-	}
-	
 	/**
 	 * Closes the used structures.
 	 */
 	public void close() {
 		
 	}
+	
 	/**
 	 * According to the given parameters, it sets up the correct matching class.
 	 * @param queryId String the query identifier to use.
 	 * @param query String the query to process.
-	 * @param cParameter double the value of the parameter to use.
 	 */
-	public void processQuery(String queryId, String query) {
-		SearchRequest srq = queryingManager.newSearchRequest(queryId, query);
-		if (matchopQl)
-		{
-			srq.setControl("parsecontrols", "off");
-			srq.setControl("parseql", "off");
-			srq.setControl("terrierql", "off");
-			srq.setControl("matchopql", "on");
-		}
-		srq.setControl(SearchRequest.CONTROL_WMODEL, wModel);
-		this.controls.forEach((k,v) -> srq.setControl(k, v));
-		matchingCount++;
-		queryingManager.runSearchRequest(srq);
+	public SearchRequest processQuery(String queryId, String query) {
+		SearchRequest srq = super.processQuery(queryId, query);
 		try{
 			printResults(resultFile, srq);
 		} catch (IOException ioe) {
 			logger.error("Problem displaying results", ioe);
 		}
+		return srq;
 	}
+	
 	/**
 	 * Performs the matching using the specified weighting model 
 	 * from the setup and possibly a combination of evidence mechanism.
@@ -222,12 +191,17 @@ public class InteractiveQuerying {
 		pw.flush();
 	}
 	
-	public static class Command extends CLIParsedCLITool
+	public static class Command extends AbstractQueryingCommand
 	{
+		
+		public Command()
+		{
+			super(InteractiveQuerying.class);
+		}
 		
 		@Override
 		public String commandname() {
-			return "interactive";
+			return INTERACTIVE_COMMAND;
 		}
 	
 		@Override
@@ -239,48 +213,17 @@ public class InteractiveQuerying {
 		@Override
 		protected Options getOptions() {
 			Options options = super.getOptions();
-			options.addOption(Option.builder("c")
-					.argName("controls")
-					.longOpt("controls")
-					.hasArgs()
-					.valueSeparator(',')
-					.desc("allows one of more controls to be set")
-					.build());
-			options.addOption(Option.builder("m")
-					.argName("matchingql")
-					.longOpt("matchingql")
-					.desc("specifies that queries are presumed to be formatted be as the matchingop (Indri-esque) QL, rather than the (default) Terrier QL")
-					.build());
-			options.addOption(Option.builder("q")
+			options.addOption(Option.builder("quiet")
 					.argName("quiet")
-					.longOpt("quiet")
 					.desc("be quiet, dont issue prompts")
 					.build());			
 			return options;
 		}
 
 		@Override
-		public int run(CommandLine line) throws Exception {
-			InteractiveQuerying iq = new InteractiveQuerying();
-			if (line.hasOption("c"))
-			{
-				String[] controlCVs = line.getOptionValues("c");
-				for(String tuple : controlCVs)
-				{
-					String[] kv = tuple.split((":|="));
-					iq.controls.put(kv[0], kv[1]);
-				}
-			}
-			if (line.hasOption("m"))
-			{
-				iq.matchopQl = true;
-			}
-			if (line.hasOption("q"))
-			{
-				iq.verbose = false;
-			}			
-			if (line.hasOption('w'))
-				iq.wModel = line.getOptionValue('w');
+		public int run(CommandLine line, AbstractQuerying _querying) throws Exception {
+			
+			InteractiveQuerying iq = (InteractiveQuerying)_querying;
 			String[] args = line.getArgs();
 			if (args.length > 0)
 			{

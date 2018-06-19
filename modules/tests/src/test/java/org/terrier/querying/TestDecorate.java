@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.models.TF_IDF;
-import org.terrier.matching.taat.Full;
 import org.terrier.querying.summarisation.TestDefaultSummariser;
 import org.terrier.structures.Index;
 import org.terrier.tests.ApplicationSetupBasedTest;
@@ -62,7 +61,7 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 	SearchRequest performQuery(Manager m, String query)
 	{
 		SearchRequest srq = m.newSearchRequest("test", query);
-		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
+		srq.setControl(SearchRequest.CONTROL_WMODEL, TF_IDF.class.getName());
 		m.runSearchRequest(srq);
 		return srq;
 	}

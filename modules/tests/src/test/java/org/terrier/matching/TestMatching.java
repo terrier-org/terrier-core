@@ -37,6 +37,8 @@ import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.matching.matchops.SynonymOp;
 import org.terrier.matching.models.DLH13;
+import org.terrier.matching.models.DPH;
+import org.terrier.matching.models.PL2;
 import org.terrier.querying.LocalManager;
 import org.terrier.querying.Manager;
 import org.terrier.querying.Request;
@@ -466,7 +468,9 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		SearchRequest search = matching.newSearchRequest("test", "dog +window");
-		search.addMatchingModel("Matching", "DPH");
+		search.setControl(SearchRequest.CONTROL_WMODEL, DPH.class.getName());
+		//search.setControl(SearchRequest.CONTROL_MATCHING, Value)
+		//search.addMatchingModel("Matching", "DPH");
 		search.setOriginalQuery("dog +window");
 		matching.runSearchRequest(search);
 		rs = ((Request)search).getResultSet();
@@ -495,7 +499,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		SearchRequest search = matching.newSearchRequest("test", "dog -window");
-		search.addMatchingModel("Matching", "DPH");
+		search.setControl(SearchRequest.CONTROL_WMODEL, DPH.class.getName());
+		//search.addMatchingModel("Matching", "DPH");
 		search.setOriginalQuery("dog -window");
 		matching.runSearchRequest(search);
 		rs = ((Request)search).getResultSet();
@@ -523,25 +528,29 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		
 		//1, are documents retrieved: single term, one document
 		srq = m.newSearchRequest("test1", "dog");
-		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		assertEquals(2, srq.getResults().size());
 		
 		//2, are documents retrieved: two terms, best match
 		srq = m.newSearchRequest("test1", "brown window");
-		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		assertEquals(2, srq.getResults().size());
 	
 		//3, are documents retrieved: two terms, one of which is positive requirement
 		srq = m.newSearchRequest("test1", "dog +window");
-		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
 	
 		//4, are documents retrieved: two terms, one of which is negative requirement
 		srq = m.newSearchRequest("test1", "dog -fox");
-		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		/*System.err.println(srq.getResultSet().getResultSize());
 		for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
@@ -551,7 +560,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		
 		//5, are documents retrieved: two terms, both of which are positive requirements
 		srq = m.newSearchRequest("test1", "+dog +fox");
-		srq.addMatchingModel(getMatchingClass().getName(), "PL2");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		assertEquals(1, ((Request) srq).getResultSet().getResultSize());	
 
@@ -572,7 +582,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		
 		//4, are documents retrieved: two terms, one of which is negative requirement
 		srq = m.newSearchRequest("test1", "dog -title:Animal");
-		srq.addMatchingModel(this.getMatchingClass().getName(), "PL2");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
+		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		//System.err.println(srq.getResultSet().getResultSize());
 		/*for (int i =0; i<srq.getResultSet().getDocids().length; i++) {

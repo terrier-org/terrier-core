@@ -32,7 +32,6 @@ import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.models.TF_IDF;
-import org.terrier.matching.taat.Full;
 import org.terrier.structures.Index;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
@@ -71,7 +70,7 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 		Index index = createIndex();
 		Manager m = new LocalManager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox");
-		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
+		srq.setControl(SearchRequest.CONTROL_WMODEL, TF_IDF.class.getName());
 		m.runSearchRequest(srq);
 		ResultSet rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
@@ -86,7 +85,7 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 		Index index = createIndexAbstract();
 		Manager m = new LocalManager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox");
-		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
+		srq.setControl(SearchRequest.CONTROL_WMODEL, TF_IDF.class.getName());
 		m.runSearchRequest(srq);
 		ResultSet rs = ((Request) srq).getResultSet();
 		assertEquals(1, rs.getResultSize());
@@ -104,7 +103,7 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 		Index index = createIndex();
 		Manager m = new LocalManager(index);
 		SearchRequest srq = m.newSearchRequest("test", "fox foxes");
-		srq.addMatchingModel(Full.class.getName(), TF_IDF.class.getName());
+		srq.setControl(SearchRequest.CONTROL_WMODEL, TF_IDF.class.getName());
 		m.runSearchRequest(srq);
 		ResultSet rs = ((Request) srq).getResultSet();
 		assertEquals(2, rs.getResultSize());

@@ -100,7 +100,7 @@ public class FatFeaturedScoringMatching implements Matching {
 		{
 			String filename = ApplicationSetup.getProperty("fat.featured.scoring.matching.features.file", null);
 			if (filename == null)
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("For "+FatFeaturedScoringMatching.class+", property fat.featured.scoring.matching.features.file is not set");
 			filename = ApplicationSetup.makeAbsolute(filename, ApplicationSetup.TERRIER_ETC);
 			String line = null;
 			final BufferedReader br = Files.openFileReader(filename);
