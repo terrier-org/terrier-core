@@ -103,20 +103,20 @@
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>aggregate</goal>
+							<goal>javadoc</goal>
 						</goals>
 						<configuration>
 							<includeDependencySources>true</includeDependencySources>
-							<outputDirectory>${basedir}/doc/</outputDirectory>
-							<reportOutputDirectory>${basedir}/doc/</reportOutputDirectory>
+							<outputDirectory>${project.parent.basedir}/doc/</outputDirectory>
+							<reportOutputDirectory>${project.parent.basedir}/doc/</reportOutputDirectory>
 							<destDir>javadoc</destDir>
 							<author>true</author>
-							<bottom><![CDATA[ <a href='${project.Url}'>${project.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
-							<doctitle>${project.Name} ${project.version} API</doctitle>
+							<bottom><![CDATA[ <a href='${project.parent.Url}'>${project.parent.Name}</a> ${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
+							<doctitle>${project.parent.Name} ${project.version} API</doctitle>
 							<use>true</use>
 							<version>true</version>
 							<doclint>none</doclint>
-							<windowtitle>${project.Name} ${project.version} API</windowtitle>
+							<windowtitle>${project.parent.Name} ${project.parent.version} API</windowtitle>
 						</configuration>
 					</execution>
 				</executions>

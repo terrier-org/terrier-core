@@ -13,7 +13,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<year>2018</year>
 		<gpg.skip>true</gpg.skip>
-		<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
 
 	<organization>
@@ -247,6 +246,30 @@
 						<include>TerrierDefaultTestSuite.java</include>
 					</includes>
 				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+						<configuration>
+							<author>true</author>
+							<bottom><![CDATA[ <a href='${project.parent.Url}'>${project.parent.Name}</a>${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
+							<doctitle>${project.parent.Name} ${project.version} API</doctitle>
+							<use>true</use>
+							<version>true</version>
+							<windowtitle>${project.parent.Name} ${project.version} API</windowtitle>
+							<doclint>none</doclint> https://stackoverflow.com/questions/15886209/maven-is-not-working-in-java-8-when-javadoc-tags-are-incomplete#comment82738599_16743137
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
