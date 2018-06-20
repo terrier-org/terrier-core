@@ -17,8 +17,9 @@ limitations under the License.
 
 Copyright (C) 2004-2014 the University of Glasgow. All Rights Reserved.
 */
-package org.terrier.applications;
 /** Provides application-level code that use the Terrier platform to 
 perform indexing and retrieval from either standard test collections, 
 interactive querying of a indexed collection.
 */
+package org.terrier.applications;
+
