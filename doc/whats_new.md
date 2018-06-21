@@ -2,7 +2,7 @@ What's New in Terrier
 =====================
 
 
-Terrier 4.3 - xx/06/2018
+Terrier 4.3 - 21/06/2018
 ------------------------
 Minor update with mostly bug fixes and minor improvements. Likely the last in the 4.x series.
 
