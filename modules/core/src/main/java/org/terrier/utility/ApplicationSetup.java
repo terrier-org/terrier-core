@@ -392,6 +392,7 @@ public class ApplicationSetup {
 			System.err.println("Please ensure that the property terrier.home");
 			System.err.println("is specified in the file terrier.properties,");
 			System.err.println("or as a system property in the command line.");
+			TERRIER_HOME = ".";
 		}
 		if (!commonPropertiesLoaded)
 			loadCommonProperties();
