@@ -25,10 +25,12 @@
  */
 package org.terrier.querying;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class IndexRef {
-
+public class IndexRef implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	String[] location;
 	
 	protected IndexRef(String _location) {
