@@ -67,9 +67,6 @@ Table of Contents
 >[Non English language support](languages.md)  
 >Description of support functionalities in Terrier for indexing and retrieving from documents written in languages other than English.
 
->[Hadoop MapReduce Indexing with Terrier](hadoop_indexing.md)  
->A guide to using the Hadoop MapReduce indexer in Terrier.
-
 >[Terrier/Hadoop Configuration](hadoop_configuration.md)  
 >A guide to how to configure Terrier to use a Hadoop cluster
 
