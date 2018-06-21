@@ -99,6 +99,8 @@ public class JforestsModelMatching extends LearnedModelMatching {
 	
 	protected void loadModel(String model_filename, Class<? extends Tree> treeClass) throws Exception
 	{
+		if (model_filename == null)
+			throw new IllegalArgumentException("model_filename not specified, perhaps you did not specify property fat.matching.learned.jforest.model ?" );
 		ensemble.loadFromFile(treeClass, new File(model_filename));
 		final String featureStats_filename = 
 				ApplicationSetup.getProperty("fat.matching.learned.jforest.statistics", model_filename+".features");
