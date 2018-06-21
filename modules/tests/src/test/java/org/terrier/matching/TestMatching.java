@@ -151,6 +151,9 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		assertEquals(0, rs.getDocids()[0]);
 		assertTrue(rs.getScores()[0] > 0);
 		
+		//TR-487: PostingListManager does not decorate MatchingQueryTerms with the EntryStatistics
+		assertNotNull(mqt.get(0).getValue().stats);
+		
 		mqt = new MatchingQueryTerms();
 		mqt.setTermProperty("dog", 1);
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -159,6 +162,9 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		assertEquals(2, rs.getResultSize());		
 		assertTrue(rs.getScores()[0] > 0);
 		assertTrue(rs.getScores()[1] > 0);
+		
+		//TR-487: PostingListManager does not decorate MatchingQueryTerms with the EntryStatistics
+		assertNotNull(mqt.get(0).getValue().stats);
 		return rs;
 	}
 	
