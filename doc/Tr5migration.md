@@ -19,7 +19,7 @@ Source code layouts
 -------------------
 We have gone full Maven on the layout. The open source Terrier project has been broken down into Maven modules. See the [documentation on Terrier's components](basicComponents.md) for a list of the modules.
 
-Each module is a separate dependency exported to MavenCentral.
+Each module is a separate dependency exported to MavenCentral. If you find that your project that depends on terrier-core no longer compiles, then you will need to select additional appropriate dependencies. 
 
 Index References and Remote Indices
 -----------------------------------
