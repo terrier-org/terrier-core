@@ -24,7 +24,19 @@
     <dependency>
     	<groupId>org.terrier</groupId>
     	<artifactId>terrier-core</artifactId>
-    	<version>5.0-SNAPSHOT</version>
+    	<version>5.0</version>
+    </dependency>
+    
+    <dependency>
+    	<groupId>org.terrier</groupId>
+    	<artifactId>terrier-tests</artifactId>
+    	<version>5.0</version>
+    </dependency>
+    
+    <dependency>
+    	<groupId>org.terrier</groupId>
+    	<artifactId>terrier-batch-retrieval</artifactId>
+    	<version>5.0</version>
     </dependency>
   </dependencies>
 </project>

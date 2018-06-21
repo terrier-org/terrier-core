@@ -14,7 +14,7 @@ public class TestVaswaniParallelTRECQuerying extends BatchEndToEndTest {
 
 	public TestVaswaniParallelTRECQuerying()
 	{
-		retrievalTopicSets.add(System.getProperty("user.dir") + "/share/vaswani_npl/query-text.trec");		
+		retrievalTopicSets.add(System.getProperty("user.dir") + "/../../share/vaswani_npl/query-text.trec");		
 	}
 	
 	
@@ -22,7 +22,7 @@ public class TestVaswaniParallelTRECQuerying extends BatchEndToEndTest {
 		
 		doTrecTerrierIndexing(new String[]{"-i"});
 		doRetrieval(retrievalTopicSets.toArray(new String[0]), new String[0]);
-		doEvaluation(93, System.getProperty("user.dir") + "/share/vaswani_npl/qrels", 0.2948f);
+		doEvaluation(93, System.getProperty("user.dir") + "/../../share/vaswani_npl/qrels", 0.2948f);
 
 	}
 	
@@ -46,7 +46,7 @@ public class TestVaswaniParallelTRECQuerying extends BatchEndToEndTest {
 
 	@Override
 	protected void makeCollectionSpec(PrintWriter p) throws Exception {
-		p.println(System.getProperty("user.dir") + "/share/vaswani_npl/corpus/doc-text.trec");
+		p.println(System.getProperty("user.dir") + "/../../share/vaswani_npl/corpus/doc-text.trec");
 		p.close();
 	}
 

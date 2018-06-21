@@ -9,11 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.terrier.matching.Matching;
-import org.terrier.querying.Manager;
-import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
+import org.terrier.querying.ThreadSafeManager;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.concurrent.ConcurrentIndexUtils;
 import org.terrier.structures.outputformat.NullOutputFormat;
 import org.terrier.structures.outputformat.OutputFormat;
@@ -29,54 +28,26 @@ public class ParallelTRECQuerying extends TRECQuerying {
 	List<Future<?>> runningQueries = Collections.synchronizedList(new ArrayList<Future<?>>());
 
 	public ParallelTRECQuerying() {
-		super(ConcurrentIndexUtils.makeConcurrentForRetrieval(Index.createIndex()));
+		super();
 		pool = Executors.newFixedThreadPool(NUM_PROC);
 		if (! (super.printer instanceof NullOutputFormat))
 			super.printer = new SynchronizedOutputFormat(super.printer);
 	}
 
 	public ParallelTRECQuerying(boolean _queryexpansion) {
-		super(ConcurrentIndexUtils.makeConcurrentForRetrieval(Index.createIndex()));
-		this.queryexpansion = _queryexpansion;
-		pool = Executors.newFixedThreadPool(NUM_PROC);
-		if (! (super.printer instanceof NullOutputFormat))
-			super.printer = new SynchronizedOutputFormat(super.printer);
-	}
-
-
-	public ParallelTRECQuerying(Index i) {
-		super(ConcurrentIndexUtils.makeConcurrentForRetrieval(i));
+		super(_queryexpansion);
 		pool = Executors.newFixedThreadPool(NUM_PROC);
 		if (! (super.printer instanceof NullOutputFormat))
 			super.printer = new SynchronizedOutputFormat(super.printer);
 	}
 	
-	static class ThreadSafeManager extends Manager
-	{
-
-		public ThreadSafeManager() {
-			super();
-			Cache_Matching = Collections.synchronizedMap(Cache_Matching);
-		}
-
-		public ThreadSafeManager(Index _index) {
-			super(_index);
-			Cache_Matching = Collections.synchronizedMap(Cache_Matching);
-		}
-		
-		@Override
-		protected Matching getMatchingModel(Request rq) {
-			synchronized (this) {
-				Cache_Matching.clear();
-				return super.getMatchingModel(rq);
-			}			
-		}
-		
-	}
-	
-
 	@Override
 	protected void createManager() {		
+		if (! IndexFactory.isLocal(super.indexref)){
+			throw new IllegalArgumentException("Must have local index");
+		}
+		Index index = IndexFactory.of(super.indexref);
+		ConcurrentIndexUtils.makeConcurrentForRetrieval(index);
 		this.queryingManager = new ThreadSafeManager(index);
 	}
 

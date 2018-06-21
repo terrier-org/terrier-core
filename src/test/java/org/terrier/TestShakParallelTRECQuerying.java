@@ -14,7 +14,7 @@ public class TestShakParallelTRECQuerying extends BatchEndToEndTest {
 
 	public TestShakParallelTRECQuerying()
 	{
-		retrievalTopicSets.add(System.getProperty("user.dir") + "/share/tests/shakespeare/test.shakespeare-merchant.basic.topics");		
+		retrievalTopicSets.add(System.getProperty("user.dir") + "/../../share/tests/shakespeare/test.shakespeare-merchant.basic.topics");		
 	}
 	
 	
@@ -22,7 +22,7 @@ public class TestShakParallelTRECQuerying extends BatchEndToEndTest {
 		
 		doTrecTerrierIndexing(new String[]{"-i"});
 		doRetrieval(retrievalTopicSets.toArray(new String[0]), new String[0]);
-		doEvaluation(7, System.getProperty("user.dir") + "/share/tests/shakespeare/test.shakespeare-merchant.all.qrels", 1.0f);
+		doEvaluation(7, System.getProperty("user.dir") + "/../../share/tests/shakespeare/test.shakespeare-merchant.all.qrels", 1.0f);
 		System.err.println("done");
 	}
 	
@@ -47,8 +47,8 @@ public class TestShakParallelTRECQuerying extends BatchEndToEndTest {
 
 	@Override
 	protected void makeCollectionSpec(PrintWriter p) throws Exception {
-		p.println(System.getProperty("user.dir") + "/share/tests/shakespeare/shakespeare-merchant.trec.1");
-		p.println(System.getProperty("user.dir") + "/share/tests/shakespeare/shakespeare-merchant.trec.2");
+		p.println(System.getProperty("user.dir") + "/../../share/tests/shakespeare/shakespeare-merchant.trec.1");
+		p.println(System.getProperty("user.dir") + "/../../share/tests/shakespeare/shakespeare-merchant.trec.2");
 		p.close();
 	}
 
