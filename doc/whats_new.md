@@ -1018,4 +1018,4 @@ Terrier 1.0 Beta - 18/11/2004
 ---------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2016 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
