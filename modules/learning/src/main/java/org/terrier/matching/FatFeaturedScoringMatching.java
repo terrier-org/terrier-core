@@ -267,6 +267,7 @@ public class FatFeaturedScoringMatching implements Matching {
 	{
 		final int numResults = fat.getResultSize();
 		final FeaturedQueryResultSet rtr = new FeaturedQueryResultSet(fat);
+		int featureCount = 0;
 		if (fat.getResultSize() == 0)
 		{
 			rtr.scores = new double[0];
@@ -276,13 +277,17 @@ public class FatFeaturedScoringMatching implements Matching {
 		}
 		
 		if (sampleFeature)
+		{
 			rtr.putFeatureScores("SAMPLE", fat.getScores());
+			featureCount++;
+		}
 		
 		//for each WMODEL feature
 		for(int fid=0;fid<wModels.length;fid++)
 		{
 			final ResultSet thinChild = wModels[fid].doMatch(queryNumber, queryTerms, fat);
 			rtr.putFeatureScores(wModelNames[fid], thinChild.getScores());
+			featureCount++;
 		}
 		
 		//for each QI features
@@ -304,6 +309,7 @@ public class FatFeaturedScoringMatching implements Matching {
 					scores[di] = wm.score(p);
 				}
 				rtr.putFeatureScores(qiFeatureNames[fid], scores);
+				featureCount++;
 			}
 		}
 		
@@ -349,6 +355,7 @@ public class FatFeaturedScoringMatching implements Matching {
 				}
 				//add the feature, regardless of whether it has scores or not			
 				rtr.putFeatureScores(dsmNames[fid], scoresFinal);
+				featureCount++;
 			}
 		}
 		final String[] labels = new String[rtr.getResultSize()];
@@ -361,7 +368,7 @@ public class FatFeaturedScoringMatching implements Matching {
 		}
 		if (fat.hasMetaItems("label"))
 			rtr.setLabels(fat.getMetaItems("label"));
-		
+		logger.info("Finished decorating " + queryNumber + " with " + featureCount + " features");
 		return rtr;
 	}
 	
