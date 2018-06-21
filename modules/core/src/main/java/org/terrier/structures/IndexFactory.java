@@ -35,6 +35,7 @@ public class IndexFactory {
 	
 	static class DirectIndexRef extends IndexRef
 	{
+		private static final long serialVersionUID = 1L;
 		Index underlyingIndex;
 		
 		DirectIndexRef(Index i)
