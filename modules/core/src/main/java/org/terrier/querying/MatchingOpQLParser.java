@@ -19,6 +19,7 @@ public class MatchingOpQLParser implements Process {
 			List<MatchingTerm> terms = new org.terrier.matching.matchops.MatchOpQLParser(q.getOriginalQuery()).parseAll();
 			MatchingQueryTerms mqt = new MatchingQueryTerms(terms);
 			q.setMatchingQueryTerms(mqt);
+			mqt.setQueryId(q.getQueryID());
 		} catch (ParseException pe) {
 			logger.error("Error while parsing the query.",pe);
 		}
