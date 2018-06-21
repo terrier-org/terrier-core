@@ -10,7 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <year>2016</year>
+        <year>2018</year>
         <gpg.skip>true</gpg.skip>
     </properties>
 

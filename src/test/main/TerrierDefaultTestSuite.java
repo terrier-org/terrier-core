@@ -19,7 +19,7 @@ package main;
  *
  * The Original Code is TerrierDefaultTestSuite.java
  *
- * The Original Code is Copyright (C) 2004-2016 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2018 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
