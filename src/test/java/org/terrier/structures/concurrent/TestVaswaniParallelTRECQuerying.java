@@ -1,4 +1,4 @@
-package org.terrier;
+package org.terrier.structures.concurrent;
 
 import java.io.PrintWriter;
 import java.util.Properties;

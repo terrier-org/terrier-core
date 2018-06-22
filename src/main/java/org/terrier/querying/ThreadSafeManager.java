@@ -9,6 +9,22 @@ import org.terrier.structures.Index;
 
 public class ThreadSafeManager extends LocalManager
 {
+	public static class Builder implements ManagerFactory.Builder {
+
+		@Override
+		public boolean supports(IndexRef ref) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Manager fromIndex(IndexRef ref) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
+	
 	static class TSApplyLocalMatching extends ApplyLocalMatching {
 		TSApplyLocalMatching() {
 			Cache_Matching = Collections.synchronizedMap(Cache_Matching);
