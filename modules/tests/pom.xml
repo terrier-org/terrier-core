@@ -46,6 +46,18 @@
 			<artifactId>terrier-rest-server</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-rest-server</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-realtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -57,6 +69,7 @@
 				<version>2.19</version>
 				<configuration>
 					<includes>
+						<include>RealtimeTestSuite.java</include>
 						<include>TerrierDefaultTestSuite.java</include>
 					</includes>
 				</configuration>
