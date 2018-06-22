@@ -58,7 +58,11 @@ import org.terrier.utility.Files;
  * <p>
  * Feature names have a particular format: 
  * <ul>
- * <li><tt>WMODEL:</tt> defines a weighting model for each matching query term, i.e. a query dependent feature. </li>
+ * <li><tt>WMODEL:</tt> defines a weighting model for all matching query terms (or other operator), i.e. a query dependent feature. </li>
+ * <li><tt>WMODELt:</tt> defines a weighting model for all matching single terms, i.e. a query dependent feature. </li>
+ * <li><tt>WMODELp1:</tt> defines a weighting model for all matching #1 proximity ops (query dependent). </li>
+ * <li><tt>WMODELuw8:</tt> defines a weighting model for all matching #uw8 proxity op (query dependent). </li>
+ * <li><tt>WMODEL$tag:</tt> defines a weighting model for all the matching op tagged "tag" - see #tag() in the MatchOp ql (query dependent). </li>
  * <li><tt>QI:</tt> defined a weighting model called once for each matching document, i.e. a query independent feature.</li>
  * <li><tt>DSM:</tt> applies a document score modifier.</li>.
  * <li><tt>SAMPLE</tt> the scoring method used by the parent {@link Matching} class becomes a feature.</li>
