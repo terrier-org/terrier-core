@@ -50,14 +50,16 @@ public class AbstractQuerying {
 	protected Manager queryingManager;
 	/** The data structures used.*/
 	protected IndexRef indexref;
-	
-	/** The weighting model used. */
-	protected String wModel = ApplicationSetup.getProperty(appName +".model", "PL2");
-	
+//	
+//	/** The weighting model used. */
+//	protected String 
+//	
 
 	public AbstractQuerying(String _appName) {
 		super();
 		this.appName = _appName;
+		String wModel = ApplicationSetup.getProperty(appName +".model", "PL2");
+		controls.put(SearchRequest.CONTROL_WMODEL, wModel);
 	}
 
 	/**
@@ -83,7 +85,6 @@ public class AbstractQuerying {
 			srq.setControl("terrierql", "off");
 			srq.setControl("matchopql", "on");
 		}
-		srq.setControl(SearchRequest.CONTROL_WMODEL, wModel);
 		this.controls.forEach((k,v) -> srq.setControl(k, v));
 		matchingCount++;
 		queryingManager.runSearchRequest(srq);
@@ -147,7 +148,7 @@ public class AbstractQuerying {
 				aq.controls.put("qe", "on");
 			}
 			if (line.hasOption('w'))
-				aq.wModel = line.getOptionValue('w');
+				aq.controls.put(SearchRequest.CONTROL_WMODEL, line.getOptionValue('w'));
 			return run(line, aq);
 		}
 	}

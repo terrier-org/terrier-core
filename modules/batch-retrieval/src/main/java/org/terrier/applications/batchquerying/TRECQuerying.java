@@ -29,7 +29,6 @@
 package org.terrier.applications.batchquerying;
 
 import static org.terrier.querying.SearchRequest.CONTROL_MATCHING;
-import static org.terrier.querying.SearchRequest.CONTROL_WMODEL;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -683,7 +682,6 @@ public class TRECQuerying extends AbstractQuerying {
 
 		if (mModel != null)
 			srq.setControl(CONTROL_MATCHING, mModel);
-		srq.setControl(CONTROL_WMODEL, wModel);
 		
 		if (srq.getControl("qe").equals("on")) {
 			srq.setControl("qemodel", defaultQEModel);
@@ -826,7 +824,7 @@ public class TRECQuerying extends AbstractQuerying {
 					"# run started at: " + startTime
 							+ "\n# run finished at "
 							+ System.currentTimeMillis() + "\n# c=" + c
-							+ " c_set=" + c_set + "\n# model=" + wModel);
+							+ " c_set=" + c_set + "\n");
 
 		if (doneSomeTopics && doneSomeMethods)
 			logger.info("Finished topics, executed " + matchingCount
