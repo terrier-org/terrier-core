@@ -518,7 +518,7 @@ public class IndexOnDisk extends Index {
 
 	@Override
 	public String toString() {
-		return "Index(" + path + "," + prefix + ")";
+		return path + "/" + prefix + ".properties"; //"Index(" + path + "," + prefix + ")";
 	}
 
 }

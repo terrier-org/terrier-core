@@ -29,7 +29,6 @@
 package org.terrier.applications.batchquerying;
 
 import static org.terrier.querying.SearchRequest.CONTROL_MATCHING;
-import static org.terrier.querying.SearchRequest.CONTROL_WMODEL;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -327,13 +326,7 @@ public class TRECQuerying extends AbstractQuerying {
 	}
 	
 	public TRECQuerying(boolean qe) {
-		super(BATCHRETRIEVE_PROP_PREFIX);
-		this.loadIndex();
-		this.createManager();
-		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false")); 
-		this.querySource = this.getQueryParser();
-		this.printer = getOutputFormat();
-		this.resultsCache = getResultsCache();
+		this();
 		if (qe)
 			super.controls.put("qe", "on");
 	}
@@ -689,7 +682,6 @@ public class TRECQuerying extends AbstractQuerying {
 
 		if (mModel != null)
 			srq.setControl(CONTROL_MATCHING, mModel);
-		srq.setControl(CONTROL_WMODEL, wModel);
 		
 		if (srq.getControl("qe").equals("on")) {
 			srq.setControl("qemodel", defaultQEModel);
@@ -802,7 +794,9 @@ public class TRECQuerying extends AbstractQuerying {
 		boolean doneSomeMethods = false;
 		boolean doneSomeTopics = false;
 		
-		wModel = ApplicationSetup.getProperty("trec.model", InL2.class.getName());		
+		// this is now already done in the constructor. 
+		// wModel = ApplicationSetup.getProperty("trec.model", InL2.class.getName());      
+		
 		defaultQEModel = ApplicationSetup.getProperty("trec.qe.model", Bo1.class.getName());
 		
 		// iterating through the queries
@@ -830,7 +824,7 @@ public class TRECQuerying extends AbstractQuerying {
 					"# run started at: " + startTime
 							+ "\n# run finished at "
 							+ System.currentTimeMillis() + "\n# c=" + c
-							+ " c_set=" + c_set + "\n# model=" + wModel);
+							+ " c_set=" + c_set + "\n");
 
 		if (doneSomeTopics && doneSomeMethods)
 			logger.info("Finished topics, executed " + matchingCount
