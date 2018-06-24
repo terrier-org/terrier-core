@@ -175,6 +175,7 @@ public abstract class MapLexicon<K1,K2 extends WritableComparable> extends Lexic
     	}
     	if (id == -1)
     		return null;
+
         return getIthLexiconEntry(id);
     	}
     }

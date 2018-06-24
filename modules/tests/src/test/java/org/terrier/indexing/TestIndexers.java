@@ -63,6 +63,7 @@ import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
 import org.terrier.structures.postings.bit.FieldIterablePosting;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.realtime.MemoryIndexer;
 
 //TODO: does not check block positions
 public class TestIndexers extends ApplicationSetupBasedTest {
@@ -172,8 +173,8 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 					Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX)
 					: Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH, "fields");
 		} else {
-			throw new UnsupportedOperationException();
-			//index = ((MemoryIndexer)indexer).getIndex();
+			//throw new UnsupportedOperationException();
+			index = ((MemoryIndexer)indexer).getIndex();
 		}
 				
 		assertNotNull(index);

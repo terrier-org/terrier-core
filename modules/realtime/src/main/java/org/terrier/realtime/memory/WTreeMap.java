@@ -45,11 +45,19 @@ public class WTreeMap<K, V> extends TreeMap<K, V> implements OrderedMap<K, V> {
 	@SuppressWarnings("unused")
 	private List<K> ordering = new ArrayList<K>();
 
+	@Override
+	public V put(K key, V value) {
+		V val = super.put(key,value);
+		if (!ordering.contains(key)) ordering.add(key);
+		return val;
+	}
+	
 	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	public java.util.Map.Entry<K, V> get(int index) {
 		//from the JDK documentation of keySet() The set's iterator returns the keys in ascending order.
-		final K _key = (K) super.keySet().toArray()[index];
-		return new MapEntry<K, V>(_key, super.get(_key));
+		//final K _key = (K) super.keySet().toArray()[index];
+		K key = ordering.get(index);
+		return new MapEntry<K, V>(key, super.get(key));
 	}
 }
