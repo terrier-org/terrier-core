@@ -226,6 +226,7 @@ public class CollectionStatistics implements Serializable,Writable {
 	public static class Command extends CLITool
 	{
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public int run(String[] args) {
 			Index.setIndexLoadingProfileAsRetrieval(false);
