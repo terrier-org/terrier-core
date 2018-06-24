@@ -33,6 +33,8 @@ import java.util.Arrays;
 
 import org.apache.hadoop.io.Writable;
 import org.terrier.applications.CLITool;
+import org.terrier.querying.IndexRef;
+import org.terrier.utility.ApplicationSetup;
 
 /**
  * This class provides basic statistics for the indexed
@@ -227,7 +229,7 @@ public class CollectionStatistics implements Serializable,Writable {
 		@Override
 		public int run(String[] args) {
 			Index.setIndexLoadingProfileAsRetrieval(false);
-			Index i = Index.createIndex();
+			Index i = IndexFactory.of(IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
 			System.out.println("Collection statistics:");
 			System.out.println("number of indexed documents: " + i.getCollectionStatistics().getNumberOfDocuments());
 			System.out.println("size of vocabulary: " +  i.getCollectionStatistics().getNumberOfUniqueTerms());
