@@ -65,6 +65,7 @@
 		<module>modules/batch-retrieval</module>
 		<module>modules/learning</module>
 		<module>modules/tests</module>
+		<module>modules/concurrent</module>
 		<module>modules/integer-compression</module>
 		<module>modules/realtime</module>
 		<module>modules/rest-server</module>
