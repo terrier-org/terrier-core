@@ -17,6 +17,7 @@ Since version 5.0, the Terrier open source project has a number of open source m
 - realtime - this provides incremental and updatable index data structures
 - rest-server - this provides a simple RESTful HTTP server that can serve results 
 - rest-client - this allows a Manager to be created for an IndexRef that refers to a REST server URL
+- concurrent - this makes a standard Index thread-safe
 - website-search - this provides additional web-based interfaces
 
 The components within these various modules interact.
