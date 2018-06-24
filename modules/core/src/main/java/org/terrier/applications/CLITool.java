@@ -46,7 +46,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.terrier.Version;
-import org.terrier.utility.ApplicationSetup;
 
 import com.google.common.collect.Lists;
 
@@ -221,12 +220,25 @@ public abstract class CLITool {
 		{
 			args = new String[]{"help", "no-command-specified"};
 		}
+		//this forces the ivy classloader to be in place
+		//org.terrier.utility.ApplicationSetup.bootstrapInitialisation();
+		@SuppressWarnings("unused")
+		String x = org.terrier.utility.ApplicationSetup.TERRIER_VERSION;
 		String commandname = args[0];
 		args = Arrays.copyOfRange(args, 1, args.length);
+		//System.err.println("AppSetup should have Clzloader " + org.terrier.utility.ApplicationSetup.getClassLoader());
+		//
+		//System.err.println( ((MutableURLClassLoader) org.terrier.utility.ApplicationSetup.getClassLoader()).isLoaded("org.terrier.querying.IndexRef"));
+		//ApplicationSetup.getClass("org.terrier.querying.IndexRef");
+		//ApplicationSetup.getClassLoader().loadClass("org.terrier.querying.IndexRef");
+		//System.err.println(org.terrier.querying.IndexRef.class.getClassLoader());
+		//System.err.println( ((MutableURLClassLoader) org.terrier.utility.ApplicationSetup.getClassLoader()).isLoaded("org.terrier.querying.IndexRef"));
+		
+		
 		Optional<CLITool> c = getTool(commandname);
-		if (c.isPresent())
-		{
+		if (c.isPresent()) {
 			try{
+				//System.err.println(c.get().getClass().getName()  + " => " + c.get().getClass().getClassLoader());
 				c.get().run(args);
 			}catch (Exception e) {
 				throw e;
@@ -253,7 +265,7 @@ public abstract class CLITool {
 	
 	static Class<?> getClassName(String classname) {
 		try {
-			return ApplicationSetup.getClass(classname);
+			return org.terrier.utility.ApplicationSetup.getClass(classname);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
@@ -268,19 +280,20 @@ public abstract class CLITool {
 			for(String toolClass : POPULAR_COMMANDS)
 			{
 				try{
-					list.add(Class.forName(toolClass).asSubclass(CLITool.class).newInstance());
+					list.add(org.terrier.utility.ApplicationSetup.getClass(toolClass).asSubclass(CLITool.class).newInstance());
 				}catch (Exception e) {}
 				
 			}
 			return list;
 		}
-		return ServiceLoader.load(CLITool.class);
+		return ServiceLoader.load(CLITool.class, org.terrier.utility.ApplicationSetup.getClassLoader());
 	}
 	
 	static Optional<CLITool> getTool(String commandname) {
 		Iterable<CLITool> toolLoader = getServiceIterator(false);
 		for(CLITool tool : toolLoader)
 		{
+			//System.err.println(tool.getClass().getClassLoader());
 			if (DEBUG)
 				System.err.println("Checking" + tool.getClass().getName());
 			if (tool.commandname().equals(commandname))

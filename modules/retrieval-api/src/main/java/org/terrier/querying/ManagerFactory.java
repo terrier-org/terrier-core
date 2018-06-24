@@ -38,7 +38,7 @@ public class ManagerFactory {
 	/** Load a manager suitable to retrieve from the specified index reference */
 	public static Manager from(IndexRef ref)
 	{
-		Iterable<Builder> iter = ServiceLoader.load(Builder.class);
+		Iterable<Builder> iter = ServiceLoader.load(Builder.class, IndexRef.class.getClassLoader());
 		boolean any = false;
 		for(Builder b : iter)
 		{
@@ -49,13 +49,14 @@ public class ManagerFactory {
 		if (! any)
 			throw new UnsupportedOperationException("No Manager implementations found. Do you need to import terrer-core?");
 		throw new IllegalArgumentException("No Manager implementation found for index " 
-			+ ref.toString() + " (" +ref.getClass().getSimpleName()+ ") - Do you need to import another package? Or perhaps the index location is wrong. Found builders were " + seenList());
+			+ ref.toString() + " (" +ref.getClass().getSimpleName()+ ") - Do you need to import another package? "
+			+"Or perhaps the index location is wrong. Found builders were " + seenList(IndexRef.class.getClassLoader()));
 	}
 	
-	static String seenList()
+	static String seenList(ClassLoader clzLoader)
 	{
 		StringBuilder s = new StringBuilder();
-		Iterable<Builder> iter = ServiceLoader.load(Builder.class);
+		Iterable<Builder> iter = ServiceLoader.load(Builder.class, clzLoader);
 		for(Builder b : iter)
 		{
 			s.append(b.getClass().getName());

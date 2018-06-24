@@ -29,11 +29,12 @@ import java.io.File;
 import java.util.ServiceLoader;
 
 import org.terrier.querying.IndexRef;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 
 public class IndexFactory {
 	
-	static class DirectIndexRef extends IndexRef
+	public static class DirectIndexRef extends IndexRef
 	{
 		private static final long serialVersionUID = 1L;
 		Index underlyingIndex;
@@ -79,7 +80,7 @@ public class IndexFactory {
 			String l = ref.toString();
 			if (ref.size() > 1)
 				return false; //this is a multi-index
-			if (l.startsWith("http") || l.startsWith("https"))
+			if (l.startsWith("http") || l.startsWith("https") || l.startsWith("concurrent"))
 				return false;
 			if (! l.endsWith(".properties"))
 				return false;
@@ -113,7 +114,7 @@ public class IndexFactory {
 	}
 	
 	public static Class<? extends Index> whoSupports(IndexRef ref) {
-		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class);
+		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, ApplicationSetup.getClassLoader());
 		for(IndexLoader l : loaders)
 		{
 			if (l.supports(ref))
@@ -126,7 +127,10 @@ public class IndexFactory {
 	{
 		if (ref instanceof DirectIndexRef)
 			return ((DirectIndexRef)ref).underlyingIndex;
-		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class);
+//		System.err.println(DirectIndexRef.class.getClassLoader());
+//		System.err.println(ApplicationSetup.getClassLoader());
+		
+		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, ApplicationSetup.getClassLoader());
 		for(IndexLoader l : loaders)
 		{
 			if (l.supports(ref))

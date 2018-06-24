@@ -590,6 +590,10 @@ public class ApplicationSetup {
 			clzLoader = ApplicationSetup.class.getClassLoader();
 	}
 
+	public static ClassLoader getClassLoader() {
+		return clzLoader;
+	}
+
 	/** Return a loaded plugin by name. Returns null if a plugin
 	  * of that name has not been loaded */
 	public TerrierApplicationPlugin getPlugin(String name)

@@ -80,6 +80,10 @@ public class AetherResolver implements TerrierApplicationPlugin {
 	            addURL(url);
 	        }
 	    }
+	    
+	    public boolean isLoaded(String clz) {
+	    	return super.findLoadedClass(clz) != null;
+	    }
 	}
 	
 	public static class MavenCoordinate {
@@ -170,6 +174,7 @@ public class AetherResolver implements TerrierApplicationPlugin {
 			}}).collect(Collectors.toList());
 		System.out.println(newJars);
 		ClassLoader newCl = new MutableURLClassLoader(cl, newJars);
+		//new Exception("not an exception: CL replaced here").printStackTrace();
 		Thread.currentThread().setContextClassLoader(newCl);
 	}
 	
