@@ -45,7 +45,7 @@ public class ConcurrentIndexLoader implements IndexFactory.IndexLoader {
 		}
 		else
 		{
-			System.err.println("loading indexref " + ref + "to make it concurrent");
+			System.err.println("loading indexref " + ref + " to make it concurrent");
 			index = IndexFactory.of(getUnderlyingRef(ref));
 		}
 		if (index == null)
