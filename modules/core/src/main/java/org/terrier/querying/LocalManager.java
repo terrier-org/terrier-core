@@ -802,7 +802,7 @@ public class LocalManager implements Manager
 	public void runSearchRequest(SearchRequest srq)
 	{	
 		Request rq = (Request)srq;		
-		
+		logger.info("Starting to execute query " + srq.getQueryID());
 		boolean mqtObtained = rq.getMatchingQueryTerms() != null;
 		boolean hasRawQuery = rq.getOriginalQuery() != null;
 		boolean hasTerrierQLquery = rq.getQuery() != null;
@@ -847,6 +847,7 @@ public class LocalManager implements Manager
 		{
 			logger.warn("After running " + ran + " processes, no ResultSet was obtained.");
 		}
+		logger.info("Finished executing query " + srq.getQueryID());
 	 }
 	
 	/*-------------------------------- helper methods -----------------------------------*/
