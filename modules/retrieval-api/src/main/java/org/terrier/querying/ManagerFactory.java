@@ -47,9 +47,9 @@ public class ManagerFactory {
 				return b.fromIndex(ref);
 		}
 		if (! any)
-			throw new UnsupportedOperationException("No Manager implementations found. Do you need to import terrer-core?");
+			throw new UnsupportedOperationException("No Manager implementations found. Do you need to import terrer-core or terrier-rest-client?");
 		throw new IllegalArgumentException("No Manager implementation found for index " 
-			+ ref.toString() + " (" +ref.getClass().getSimpleName()+ ") - Do you need to import another package? "
+			+ ref.toString() + " (" +ref.getClass().getSimpleName()+ ") - Do you need to import another package (terrer-core or terrier-rest-client)? "
 			+"Or perhaps the index location is wrong. Found builders were " + seenList(IndexRef.class.getClassLoader()));
 	}
 	
