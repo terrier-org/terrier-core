@@ -120,6 +120,12 @@ public class AbstractQuerying {
 					.longOpt("matchingql")
 					.desc("specifies that queries are presumed to be formatted be as the matchingop (Indri-esque) QL, rather than the (default) Terrier QL")
 					.build());
+			options.addOption(Option.builder("w")
+					.argName("wmodel")
+					.longOpt("wmodel")
+					.hasArgs()
+					.desc("allows the default weighting model to be specified")
+					.build());
 			return options;
 		}
 		
@@ -149,6 +155,7 @@ public class AbstractQuerying {
 			}
 			if (line.hasOption('w'))
 				aq.controls.put(SearchRequest.CONTROL_WMODEL, line.getOptionValue('w'));
+			//System.err.println(aq.controls.toString());
 			return run(line, aq);
 		}
 	}
