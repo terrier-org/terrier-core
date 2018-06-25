@@ -46,6 +46,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.terrier.Version;
+import org.terrier.utility.ApplicationSetup;
 
 import com.google.common.collect.Lists;
 
@@ -119,7 +120,8 @@ public abstract class CLITool {
 			if (line.hasOption('D'))
 			{
 				props = line.getOptionProperties("D");
-				props.forEach( (k,v) -> System.setProperty((String)k, (String)v));
+				props.forEach( (k,v) -> org.terrier.utility.ApplicationSetup.setProperty((String)k, (String)v));
+				ApplicationSetup.loadCommonProperties();
 			}
 //			if (line.hasOption('I'))
 //			{
