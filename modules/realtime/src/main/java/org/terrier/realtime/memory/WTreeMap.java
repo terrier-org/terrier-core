@@ -42,7 +42,6 @@ import org.terrier.structures.collections.OrderedMap;
 @SuppressWarnings("serial")
 public class WTreeMap<K, V> extends TreeMap<K, V> implements OrderedMap<K, V> {
 
-	@SuppressWarnings("unused")
 	private List<K> ordering = new ArrayList<K>();
 
 	@Override
@@ -53,7 +52,6 @@ public class WTreeMap<K, V> extends TreeMap<K, V> implements OrderedMap<K, V> {
 	}
 	
 	/** {@inheritDoc} */
-	@SuppressWarnings("unchecked")
 	public java.util.Map.Entry<K, V> get(int index) {
 		//from the JDK documentation of keySet() The set's iterator returns the keys in ascending order.
 		//final K _key = (K) super.keySet().toArray()[index];
