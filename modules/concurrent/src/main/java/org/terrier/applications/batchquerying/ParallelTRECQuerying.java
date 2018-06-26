@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.terrier.querying.IndexRef;
 import org.terrier.querying.SearchRequest;
 import org.terrier.querying.ThreadSafeManager;
 import org.terrier.structures.Index;
@@ -52,8 +53,16 @@ public class ParallelTRECQuerying extends TRECQuerying {
 	final static int NUM_PROC = 20;
 	List<Future<?>> runningQueries = Collections.synchronizedList(new ArrayList<Future<?>>());
 
+	@SuppressWarnings("deprecation")
 	public ParallelTRECQuerying() {
 		super();
+		pool = Executors.newFixedThreadPool(NUM_PROC);
+		if (! (super.printer instanceof NullOutputFormat))
+			super.printer = new SynchronizedOutputFormat(super.printer);
+	}
+	
+	public ParallelTRECQuerying(IndexRef i) {
+		super(i);
 		pool = Executors.newFixedThreadPool(NUM_PROC);
 		if (! (super.printer instanceof NullOutputFormat))
 			super.printer = new SynchronizedOutputFormat(super.printer);
