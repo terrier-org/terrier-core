@@ -205,6 +205,7 @@ public class TRECQuerying extends AbstractQuerying {
 			options.addOption(Option.builder("t")
 					.argName("topics")
 					.longOpt("topics")
+					.hasArg()
 					.desc("specify the location of the topics file")
 					.build());			
 			return options;
@@ -231,8 +232,23 @@ public class TRECQuerying extends AbstractQuerying {
 			TRECQuerying tq = (TRECQuerying)q;	
 			
 			if (line.hasOption("docids"))
-				tq.printer = new TRECDocidOutputFormat(null);
-			
+			{
+				ApplicationSetup.setProperty("trec.querying.outputformat", TRECDocidOutputFormat.class.getName());
+				//tq.printer = new TRECDocidOutputFormat(null);
+			}				
+
+			//ideally, we'd avoid the setting of properties here
+			if (line.hasOption('t'))
+				ApplicationSetup.setProperty("trec.topics", line.getOptionValue('t'));
+
+			if (line.hasOption('s'))
+				tq.topicsParser = SingleLineTRECQuery.class.getName();
+				
+			if (line.hasOption('F'))
+			{
+				ApplicationSetup.setProperty("trec.querying.outputformat", line.getOptionValue('F'));
+			}
+			tq.intialise();
 			tq.processQueries();
 			return 0;
 		}
@@ -314,15 +330,11 @@ public class TRECQuerying extends AbstractQuerying {
 	/**
 	 * TRECQuerying default constructor initialises the inverted index, the
 	 * lexicon and the document index structures.
+	 * @deprecated
 	 */
 	public TRECQuerying() {
 		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.loadIndex();
-		this.createManager();
-		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false")); 
-		this.querySource = this.getQueryParser();
-		this.printer = getOutputFormat();
-		this.resultsCache = getResultsCache();
 	}
 	
 	public TRECQuerying(boolean qe) {
@@ -340,6 +352,10 @@ public class TRECQuerying extends AbstractQuerying {
 	public TRECQuerying(IndexRef _indexref) {
 		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.indexref = _indexref;
+	}
+	
+	void intialise()
+	{
 		this.createManager();
 		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 		this.querySource = this.getQueryParser();
