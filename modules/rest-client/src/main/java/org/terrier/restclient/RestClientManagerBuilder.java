@@ -35,10 +35,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.terrier.querying.IndexRef;
 import org.terrier.querying.Manager;
 import org.terrier.querying.ManagerFactory;
@@ -236,9 +236,9 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 					url += "&qid="+rrq.qid;
 				}
 				
-				CloseableHttpClient httpclient = HttpClients.createDefault();
+				HttpClient httpclient = new DefaultHttpClient();
 				HttpGet httpGet = new HttpGet(url);
-				CloseableHttpResponse response = httpclient.execute(httpGet);
+				HttpResponse response = httpclient.execute(httpGet);
 				BufferedReader br = null;
 				try{
 					int code = response.getStatusLine().getStatusCode();
@@ -264,7 +264,6 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 				} finally {
 					if (br != null)
 						br.close();
-					response.close();
 				}
 			} catch (Exception e) {
 				throw new RuntimeException("Could not access " + url, e);
