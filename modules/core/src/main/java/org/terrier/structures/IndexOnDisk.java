@@ -450,7 +450,7 @@ public class IndexOnDisk extends Index {
 		final String versionString = properties.getProperty(
 				"index.terrier.version", null);
 		if (versionString.equals("5.0-SNAPSHOT"))
-			logger.warn("Be careful, this index perhaps should be declared as 4.2?");
+			logger.warn("Be careful, 5.0-SNAPSHOT index -- perhaps this index perhaps should be declared as 4.2?");
 		final String[] versionStringParts = versionString.split("\\.", 2);
 		final int MAJOR_VERSION = Integer.parseInt(versionStringParts[0]);
 		if (MAJOR_VERSION < MINIMUM_INDEX_TERRIER_VERSION) {

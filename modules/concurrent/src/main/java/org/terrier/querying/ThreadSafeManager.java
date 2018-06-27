@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.terrier.matching.Matching;
+import org.terrier.structures.ConcurrentIndexLoader;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 
 public class ThreadSafeManager extends LocalManager
 {
@@ -38,14 +40,12 @@ public class ThreadSafeManager extends LocalManager
 
 		@Override
 		public boolean supports(IndexRef ref) {
-			// TODO Auto-generated method stub
-			return false;
+			return ConcurrentIndexLoader.isConcurrent(ref);
 		}
 
 		@Override
 		public Manager fromIndex(IndexRef ref) {
-			// TODO Auto-generated method stub
-			return null;
+			return new ThreadSafeManager(IndexFactory.of(ref));
 		}
 		
 	}
@@ -58,7 +58,8 @@ public class ThreadSafeManager extends LocalManager
 		@Override
 		protected Matching getMatchingModel(Request rq) {
 			synchronized (this) {
-				Cache_Matching.clear();//TODO why is this here?
+				//matchings are not re-entrant, so we need to make a new one each time.
+				Cache_Matching.clear();
 				return super.getMatchingModel(rq);
 			}
 		}
@@ -101,6 +102,7 @@ public class ThreadSafeManager extends LocalManager
 	public ThreadSafeManager(Index _index) {
 		super(_index);
 		synchronizeCaches();
+		logger.info("Using " + this.getClass().getSimpleName());
 	}
 	
 	void synchronizeCaches() {

@@ -59,7 +59,7 @@ import com.google.common.collect.Lists;
 /**
   * This class is responsible for handling/co-ordinating the main high-level
   * operations of a query. These are:
-  * <li>Processing (Term Pipeline, Control finding, term aggregration, Matching) @see org.terrier.querying.Process</li>
+  * <li>Processing (Term Pipeline, Control finding, term aggregation, Matching) @see org.terrier.querying.Process</li>
   * <li>Post-filtering @see org.terrier.querying.PostFilter </li>
   * &lt;/ul&gt;
   * Example usage:
@@ -90,7 +90,8 @@ public class LocalManager implements Manager
 	{
 		@Override
 		public boolean supports(IndexRef ref) {
-			return IndexFactory.whoSupports(ref) != null;
+			return IndexFactory.whoSupports(ref) != null 
+					&& ! ref.toString().startsWith("concurrent:"); //this is a small hack
 		}
 
 		@Override
