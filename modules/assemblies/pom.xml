@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -11,6 +12,7 @@
 	<artifactId>terrier-assemblies</artifactId>
 
 	<dependencies>
+		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>terrier-retrieval-api</artifactId>
@@ -53,6 +55,15 @@
 			<!-- <scope>provided</scope> -->
 		</dependency>
 
+                <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>terrier-logging</artifactId>
+                        <version>${project.version}</version>
+                        <!-- <scope>provided</scope> -->
+                </dependency>
+
+
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>terrier-rest-client</artifactId>
@@ -88,12 +99,12 @@
 			<!-- <scope>provided</scope> -->
 		</dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>terrier-concurrent</artifactId>
-            <version>${project.version}</version>
-            <!-- <scope>provided</scope> -->
-        </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>terrier-concurrent</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
 
 	</dependencies>
 
@@ -112,6 +123,9 @@
 						</goals>
 						<configuration>
 							<includeDependencySources>true</includeDependencySources>
+							<dependencySourceExcludes>
+								<dependencySourceExclude>ch.qos.logback:*</dependencySourceExclude>
+							</dependencySourceExcludes>
 							<outputDirectory>${project.parent.basedir}/doc/</outputDirectory>
 							<reportOutputDirectory>${project.parent.basedir}/doc/</reportOutputDirectory>
 							<destDir>javadoc</destDir>
@@ -137,10 +151,8 @@
 							<mainClass>org.terrier.applications.CLITool</mainClass>
 						</manifest>
 					</archive>
-					<!-- <filters>
-						<filter>**/logback.xml</filter>
-						<filter>**\logback.xml</filter>
-					</filters> -->
+					<!-- <filters> <filter>**/logback.xml</filter> <filter>**\logback.xml</filter> 
+						</filters> -->
 				</configuration>
 				<executions>
 					<execution>
