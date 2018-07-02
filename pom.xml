@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-core</artifactId>
-	<version>4.3</version>
+	<version>4.4</version>
 	<name>Terrier Information Retrieval Platform</name>
 	<description>Terrier IR platform</description>
 	<url>http://terrier.org</url>
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>uk.ac.gla.dcs.terrierteam</groupId>
 			<artifactId>jtreceval</artifactId>
-			<version>0.0.3</version>
+			<version>0.0.4</version>
 		</dependency>
 
 		<dependency>
