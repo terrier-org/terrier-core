@@ -1,7 +1,7 @@
 What's New in Terrier
 =====================
 
-Terrier 5.0 - xx/xx/2018
+Terrier 5.0 - xx/07/2018
 ------------------------
 Major update. New features include a new commandline API, revisions to the retrieval API, a Mavenized layout, a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning.
 
@@ -24,8 +24,9 @@ More information can be found in the [documentation on migration to Terrier 5](T
  - [TR-500](http://terrier.org/issues/browse/TR-487) Expose MatchingOp QL to TRECQuerying
  - [TR-502](http://terrier.org/issues/browse/TR-487) Simplify Manager API
  - [TR-507](http://terrier.org/issues/browse/TR-507) Migrate Terrier query parser from Antlr to javacc
- - [TR-508](http://terrier.org/issues/browse/TR-508) - Querying (interactive, batchretrieval) commands should have common base class
-
+ - [TR-508](http://terrier.org/issues/browse/TR-508) Querying (interactive, batchretrieval) commands should have common base class
+ - [TR-510](http://terrier.org/issues/browse/TR-510) bump jtreceval for Windows versions
+ 
 ### Other
  - [TR-445](http://terrier.org/issues/browse/TR-445) Infrastructure support for non-String lexicons
  - [TR-480](http://terrier.org/issues/browse/TR-480) Resolve additional Terrier "plugins" from Maven repositories. Ramification of this change is that Class.forName() should be replaced by ApplicationSetup.getClass(). 
