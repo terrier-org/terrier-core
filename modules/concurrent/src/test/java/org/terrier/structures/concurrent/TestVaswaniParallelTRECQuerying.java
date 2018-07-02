@@ -47,7 +47,9 @@ public class TestVaswaniParallelTRECQuerying extends BatchEndToEndTest {
 		
 		doTrecTerrierIndexing(new String[]{"-i"});
 		doRetrieval(retrievalTopicSets.toArray(new String[0]), new String[0]);
-		doEvaluation(93, System.getProperty("user.dir") + "/../../share/vaswani_npl/qrels", 0.2948f);
+		doEvaluation(93, System.getProperty("user.dir") + "/../../share/vaswani_npl/qrels", 
+				0.2763f //0.2948f -- this is correct for PL2, InL2 is 2948
+				);
 
 	}
 	
@@ -57,6 +59,7 @@ public class TestVaswaniParallelTRECQuerying extends BatchEndToEndTest {
 			throws Exception {
 		ApplicationSetup.setProperty("trec.topics", topicSet[0]);
 		TRECQuerying tq = new ParallelTRECQuerying();
+		tq.intialise();
 		tq.processQueries();
 		return 7;
 	}

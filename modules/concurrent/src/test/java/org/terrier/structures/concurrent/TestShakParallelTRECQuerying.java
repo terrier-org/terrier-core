@@ -57,6 +57,7 @@ public class TestShakParallelTRECQuerying extends BatchEndToEndTest {
 			throws Exception {
 		ApplicationSetup.setProperty("trec.topics", topicSet[0]);
 		TRECQuerying tq = new ParallelTRECQuerying();
+		tq.intialise();
 		tq.processQueries();
 		return 7;
 	}
