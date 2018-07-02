@@ -354,7 +354,7 @@ public class TRECQuerying extends AbstractQuerying {
 		this.indexref = _indexref;
 	}
 	
-	void intialise()
+	public void intialise()
 	{
 		this.createManager();
 		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));

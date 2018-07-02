@@ -414,6 +414,7 @@ public class TrecTerrier {
 			if (docids)
 				ApplicationSetup.setProperty("trec.querying.outputformat", TRECDocidOutputFormat.class.getName());
 			TRECQuerying trecQuerying = new TRECQuerying(queryexpand);
+			trecQuerying.intialise();
 			trecQuerying.processQueries(c, isParameterValueSpecified);
 			trecQuerying.close();
 		} else if (printdocid) {
