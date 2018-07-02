@@ -1,5 +1,6 @@
 Terrier IR Platform - Terabyte Retriever v5.0
 -----------------------------------
+[![Build Status](https://api.travis-ci.org/terrier-org/terrier-core.svg?branch=5.x)](https://travis-ci.org/terrier-org/terrier-core)
 
 [Terrier](http://terrier.org) is a highly flexible, efficient, and effective open source search engine, readily deployable on large-scale collections of documents. Terrier implements state-of-the-art indexing and retrieval functionalities, and provides an ideal platform for the rapid development and evaluation of large-scale retrieval applications.
 
