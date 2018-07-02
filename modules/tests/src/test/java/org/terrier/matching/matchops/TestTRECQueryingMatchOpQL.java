@@ -53,6 +53,7 @@ public class TestTRECQueryingMatchOpQL extends ApplicationSetupBasedTest {
 		});
 		ApplicationSetup.setProperty("trec.topics", f);
 		TRECQuerying tq = new TRECQuerying(index.getIndexRef());
+		tq.intialise();
 		tq.processQueries();
 	}
 	
