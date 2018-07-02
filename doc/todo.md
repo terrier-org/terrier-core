@@ -6,12 +6,10 @@ List of features and known issues that are marked for future Terrier versions:
 Future Features
 ---------------
 
--   The addition of Terrier's own Exceptions for setup, indexing, querying.
+-   Better exception handling. Some retrieval errors should result in a query being aborted, rather than trying to blindly continue running the query with the index is an invalid state.
 
 Known Issues
 ------------
-
--   Query language should be refined: In particular, ambiguity warnings when generating the parser with ANTLR should be removed.
 
 -   The real-time index structures do not currently support block indexing
 

@@ -7,17 +7,15 @@ Configuring Overview
 Terrier is configured overall by a few files, all in the `etc/` directory. The most central files are `terrier.properties` and `terrier-log.xml`. In `terrier.properties`, you can specify any of the various properties that are defined in Terrier. The [Properties](properties.md) documentation page lists the most used properties that you need to configure Terrier, while the [javadoc](javadoc/) for any class lists the properties that directly affect the class. The default `terrier.properties` file is given below:
 
     #default controls for query expansion
-    querying.postprocesses.order=QueryExpansion
-    querying.postprocesses.controls=qe:QueryExpansion
+	querying.processes=terrierql:TerrierQLParser,parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,matchopql:MatchingOpQLParser,applypipeline:ApplyTermPipeline,localmatching:LocalManager$ApplyLocalMatching,qe:QueryExpansion,filters:LocalManager$PostFilterProcess
 
     #default controls for the web-based interface. SimpleDecorate
-    #is the simplest metadata decorator. For more control, see Decorate
-    querying.postfilters.order=SimpleDecorate,SiteFilter,Scope
-    querying.postfilters.controls=decorate:SimpleDecorate,site:SiteFilter,scope:Scope
+    #is the simplest metadata decorator. For more control, see Decorate.
+    querying.postfilters=decorate:SimpleDecorate,site:SiteFilter,scope:Scope
 
     #default and allowed controls
-    querying.default.controls=
-    querying.allowed.controls=qe,start,end,qemodel
+    querying.default.controls=parsecontrols:on,parseql:on,applypipeline:on,terrierql:on,localmatching:on,filters:on,decorate:on
+	querying.allowed.controls=scope,qe,qemodel,start,end,site,scope
 
     #document tags specification
     #for processing the contents of

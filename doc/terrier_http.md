@@ -5,7 +5,7 @@ Using Terrier for Web-based Search
 Terrier supports dynamic search functionality in a Web browser environment. In particular, Terrier provides a customisable Web-based interface to facilitate retrieval of documents for a query and the summarisation of those documents in the form of snippets or abstracts, for display, in a similar way to major Web search engines. This page explains how to configure Terrier to enable a Web-based search interface like the one shown below:
 
 
-![Website Search Crawling](http://terrier.org/docs/v4.1/images/WT2GWebInterface.png "Website Search Crawling")
+![Website Search Crawling](images/WT2GWebInterface.png "Website Search Crawling")
 
 Requirements
 ------------
@@ -170,25 +170,25 @@ Below is an example of a the top search result returned using the *simple* inter
 
 This interface is a [JSP](http://en.wikipedia.org/wiki/JavaServer_Pages) file stored at `src/webapps/simple/results.jsp`. When it is called, it opens the Terrier index specified in the terrier.properties file (if not already open), initialises a manager and retrieves the results for the specified query as a standard terrier ResultSet just like the normal Java application. Of importance is that Terrier must be instructed to decorate the ResultSet with all of the meta-data that we stored previously such that results.jsp can display it. This is done as a Terrier [PostFilter](javadoc/org/terrier/querying/PostFilter.html), in particular using either the [SimpleDecorate](javadoc/org/terrier/querying/SimpleDecorate.html) or [Decorate](javadoc/org/terrier/querying/Decorate.html) classes. SimpleDecorate adds all meta index entries for each document retrieved into the ResultSet. Decorate is more advanced, providing query text highlighting and query-biased summarisation. Below we provide an example where we decorate the Result set using the more advanced Decorate class in the terrier.properties file:
 
-```
-    # We are using org.terrier.querying.Decorate which we are going to name decorate (IMPORTANT: results.jsp
-    # expects it to be called 'decorate')
-    querying.postfilters.controls=decorate:org.terrier.querying.Decorate
-    # In what order should we process the filters? (we have only one so this does nothing but is required)
-    querying.postfilters.order=org.terrier.querying.Decorate
 
-    #default and allowed controls
-    # decorate:on - activate the decorate process
+	# We are using org.terrier.querying.Decorate which we are going to name decorate 
+    #(IMPORTANT: results.jsp expects it to be called 'decorate')
+	querying.processes=terrierql:TerrierQLParser,parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,matchopql:MatchingOpQLParser,applypipeline:ApplyTermPipeline,localmatching:LocalManager$ApplyLocalMatching,qe:QueryExpansion,filters:LocalManager$PostFilterProcess
+	
+	#here we use Decorate rather than SimpleDecorate
+	querying.postfilters=decorate:Decorate,site:SiteFilter,scope:Scope
+    # expects it to be called 'decorate')
+
+	# decorate:on - activate the decorate process
     # summaries:body - special control for the org.terrier.querying.Decorate class, tells it to create a
     #                  query-biased summary based on the text stored in the abstract named 'body'
     # emphasis:title;body - special control for the org.terrier.querying.Decorate class, tells it to create
     #                       additional meta-data where the query terms are emphasised. These are named
     #                       _emph, where name is the meta entry name. In this case, we create two new
     #                       entries called title_emph and body_emph based on the title and body abstracts. 
-    querying.default.controls=decorate:on,summaries:body,emphasis:title;body
-    # We need to also state that decorate is an allowed control
-    querying.allowed.controls=c,scope,decorate,start,end
-```
+    #default and allowed controls
+	querying.default.controls=parsecontrols:on,parseql:on,applypipeline:on,terrierql:on,localmatching:on,filters:on,decorate:on,decorate:on,summaries:body,emphasis:title;body
+	querying.allowed.controls=scope,start,end,site,scope
 
 ### Customising look & feel
 
@@ -200,7 +200,7 @@ If you wish to use another webapps folder, or start the interface on a port othe
 
 The results for the same example query using the wt2g interface are shown below.
 
-![WT2G Web Interface](http://terrier.org/docs/v4.1/images/WT2GWebInterface.png "WT2G Web Interface")
+![WT2G Web Interface](images/WT2GWebInterface.png "WT2G Web Interface")
 
 ### Extending the Query Language
 
@@ -215,7 +215,7 @@ The two initial interfaces provided with Terrier can be easily extended to add m
     Index index = (Index)application.getAttribute("terrier.jsp.index");
     if (index == null)
     {
-        index = Index.createIndex();
+        index = IndexFactory.of("/path/to/index");
         application.setAttribute("terrier.jsp.index", index);
     }
 
@@ -223,7 +223,7 @@ The two initial interfaces provided with Terrier can be easily extended to add m
     Manager queryingManager = (Manager)application.getAttribute("terrier.jsp.manager");
     if (queryingManager == null)
     {
-        queryingManager = new Manager(index);
+        queryingManager = ManagerFatory.from(index);
         application.setAttribute("terrier.jsp.manager", queryingManager);
     }
 
@@ -250,8 +250,6 @@ The two initial interfaces provided with Terrier can be easily extended to add m
 
     // The last document to return
     srq.setControl("end", String.valueOf(iStart + NUM_RESULTS_PER_PAGE -1));
-    // The matching model to choose
-    srq.addMatchingModel(defaultMatching, defaultModel);
     // Run any preprocessing (e.g. run the query through the term pipeline)
     queryingManager.runSearchRequest(srq);
     // Get our decorated result set

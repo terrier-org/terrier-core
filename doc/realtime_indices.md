@@ -15,7 +15,7 @@ To support real-time indexing, two new interfaces have been defined, namely [Upd
 Real-time Index Types
 ---------------------
 
-There are two real-time index types supported since Terrier 45.0:
+There are two real-time index types supported since Terrier 4.0:
 
 -   [MemoryIndex](javadoc/org/terrier/realtime/memory/MemoryIndex.html): Represents an index that is held wholly in memory. MemoryIndex is both an UpdatableIndex and a WritableIndex. MemoryIndex is designed to provide a fast updatable index structure for relatively small numbers of documents.
 
@@ -65,7 +65,7 @@ Below we give some examples for using the real-time Terrier index structures.
     SearchRequest srq = queryingManager.newSearchRequest("query", sb.toString());
 
     // define a matching model, in this case use the classical BM25 retrieval model
-    srq.addMatchingModel("org.terrier.matching.daat.Full","BM25");
+    srq.setControl(SearchRequest.CONTROL_WMODEL,"BM25");
 
     // run a Terrier search
     queryingManager.runSearchRequest(srq);

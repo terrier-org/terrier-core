@@ -26,12 +26,12 @@ Using your own classes in Terrier
 
 If you are adding your own functionality to Terrier, you should have no need to compile Terrier unless you have altered the Terrier source code and wish to check or use your changes. Many configurable properties take class names, so using your own class is as simple as ensuring it is available on the classpath, and giving the class name as a property.
 
-For your new functionality, make a new project with a compile-time dependency on Terrier. For instance, the Maven pom.xml file for your project should contain the following dependency block:
+For your new functionality, make a new project with a compile-time dependency on the Terrier core components. For instance, the Maven pom.xml file for your project should contain the following dependency block:
 
 ```xml
 <dependency>
   <groupId>org.terrier</groupId>
-  <artifactId>terrier-project</artifactId>
+  <artifactId>terrier-core</artifactId>
   <version>5.0</version>
   <scope>provided</scope>
 </dependency>
@@ -41,16 +41,12 @@ Once you have compiled your project into a jar file, you have two options:
 
 1. Add the generated jar to Terrier's classpath manually, by altering the CLASSPATH environment variable:
 
-```shell
-CLASSPATH=/path/to/my/project.jar bin/terrier batchretrieval  -Dtrec.model=my.project.MyWeightingModel
-```
+	CLASSPATH=/path/to/my/project.jar bin/terrier batchretrieval  -Dtrec.model=my.project.MyWeightingModel
 
 2. Install your project to your local Maven repository (e.g. using `mvn install`) or to a remote repository (`mvn deploy`). You can then tell Terrier to import that project at startup:
 
-```
-#terrier.mvn.coords=<orgId>:<artifactId>:<version>
-terrier.mvn.coords=org.me:my-terrier-ext:5.1
-```
+	#terrier.mvn.coords=<orgId>:<artifactId>:<version>
+	terrier.mvn.coords=org.me:my-terrier-ext:5.1
 
 
 Compiling Terrier
@@ -71,7 +67,7 @@ The following Maven goals can be used for recompiling Terrier:
 Testing Terrier
 ---------------
 
-Terrier now has many JUnit test classes, located into the `src/test` folder. In particular, JUnit tests are now provided for a great many of the classes in Terrier, including (but not limited to) indexers, tokenisation, retrieval, query parsing, compression, and evaluation.
+Terrier has many JUnit test classes, located into the `modules/tests/src/test/java` folder. In particular, JUnit tests are provided for a great many of the classes in Terrier, including (but not limited to) indexers, tokenisation, retrieval, query parsing, compression, and evaluation.
 
 In addition, there are JUnit-based end-to-end tests that ensure that the expected results are obtained from a small (22 document) corpus consisting of Shakespeare’s play, the Merchant of Venice. The end-to-end tests test all indexers, as well as retrieval functionality behaves as expected. The corpus, test topics and relevance assessments are located in `share/tests/shakespeare`. Running the unit and Shakespeare end-to-end tests takes about 5 minutes, and can be performed from the command line using the Maven `test` target.
 
@@ -80,6 +76,10 @@ Since Terrier 4.0, Terrier has an end-to-end test based on the TREC WT2G corpus.
     bin/anyclass.sh -Dwt2g.corpus=/path/to/WT2G/ -Dwt2g.topics=/path/to/WT2G_topics/small_web/topics.401-450 -Dwt2g.qrels=/path/to/WT2G_topics/small_web/qrels.trec8 org.junit.runner.JUnitCore org.terrier.tests.TRECWT2GEndtoEndTest
 
 
+Running Terrier from Eclipse
+----------------------------
+
+You can run Terrier commands from the command line. For instance, you can run `batchindexing` by executing the `org.terrier.application.CLITool` class with arguments `batchindexing`. You will need system properties to specify terrier.home etc: `-Dterrier.home=/path/to/terrier -Dterrier.etc=/path/to/terrier/etc`. Finally, you need to adjust the classpath appropriately - for instance, if you are accessing a remote index, you will need `terrier-rest-client` on the classpath; in nearly all cases, you will need to include a logger, as terrier-core does not have dependency on logback ([explanation from SLF4J](https://www.slf4j.org/codes.html#noProviders)).
 
 Contributing to Terrier
 -----------------------
