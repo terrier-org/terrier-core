@@ -1,6 +1,12 @@
 What's New in Terrier
 =====================
 
+Terrier 4.4 - 02/07/2018
+------------------------
+Minor update to increment jtreceval version.
+
+### Retrieval
+ - [TR-510](http://terrier.org/issues/browse/TR-510) bump jtreceval for Windows versions
 
 Terrier 4.3 - 21/06/2018
 ------------------------

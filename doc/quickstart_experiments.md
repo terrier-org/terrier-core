@@ -11,14 +11,14 @@ Terrier’s single requirement consists of an installed Java JRE 1.8.0 or higher
 Download Terrier
 ----------------
 
-Terrier version 4.2 can be downloaded from the following location:[Terrier Home](http://terrier.org/). The site offers pre-compiled releases of the newest and previous Unix and Windows versions of Terrier.
+Terrier version 4.4 can be downloaded from the following location:[Terrier Home](http://terrier.org/). The site offers pre-compiled releases of the newest and previous Unix and Windows versions of Terrier.
 
 Step by Step Unix Installation
 ------------------------------
 
 After having downloaded Terrier, copy the file to the directory where you want to install Terrier. Navigate to this directory and execute the following command to decompress the distribution:
 
-    tar -zxvf terrier-core-4.2-bin.tar.gz
+    tar -zxvf terrier-core-4.4-bin.tar.gz
 
 This will result in the creation of a terrier directory in your current directory. Next we will have to make sure that you have the correct Java version available on the system. Type:
 
@@ -66,7 +66,7 @@ This guide will provide step-by-step instructions for using Terrier to index a T
 1. Go to the Terrier folder.
 
 ```shell
-    cd terrier-core-4.2
+    cd terrier-core-4.4
 ```
 
 2. Setup Terrier for using a TREC test collection by calling

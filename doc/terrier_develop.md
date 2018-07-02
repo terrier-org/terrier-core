@@ -32,7 +32,7 @@ For your new functionality, make a new project with a compile-time dependency on
 <dependency>
   <groupId>org.terrier</groupId>
   <artifactId>terrier-core</artifactId>
-  <version>4.2</version>
+  <version>4.4</version>
   <scope>provided</scope>
 </dependency>
 ```

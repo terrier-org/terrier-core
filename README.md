@@ -1,4 +1,4 @@
-Terrier IR Platform - Terabyte Retriever v4.3
+Terrier IR Platform - Terabyte Retriever v4.4
 -----------------------------------
 [![Build Status](https://api.travis-ci.org/terrier-org/terrier-core.svg?branch=4.2)](https://travis-ci.org/terrier-org/terrier-core)
 
