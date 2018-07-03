@@ -28,8 +28,8 @@
 		<fileSet>
 			<directory>../../modules</directory>
 			<excludes>
-				<exclude>assemblies/target/terrier-project-5.0-SNAPSHOT-bin.tar.gz</exclude>
-				<exclude>assemblies/target/terrier-project-5.0-SNAPSHOT-bin.zip</exclude>
+				<exclude>assemblies/target/terrier-project-5.0-bin.tar.gz</exclude>
+				<exclude>assemblies/target/terrier-project-5.0-bin.zip</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
@@ -39,7 +39,6 @@
 			<directory>../../var</directory>
 			<excludes>
 				<exclude>results/**</exclude>
-				<exclude>index/**</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>
