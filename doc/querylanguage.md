@@ -33,7 +33,7 @@ In general, this follows a subset of the Indri query language:
  - `term1` -- scores documents containing this single query term.
  - `term1.title` -- scores documents containing this single query term in the title.
  - `#band(term1 term2)` -- scores a term containing both query terms. The frequency of each matching document is 1.
- - `#syn(term1 term2) -- scores documents containing either term1 or term2. The frequency of each matching document is the sum of the frequencies of the constituent words.
+ - `#syn(term1 term2)` -- scores documents containing either term1 or term2. The frequency of each matching document is the sum of the frequencies of the constituent words.
  - `#uw8(term1 term2)` -- the #uwN operator scores documents term1 or term2 within unordered windows of N tokens -- in this case windows of 8 tokens in size.
  - `#1(term1 term2)` -- the #1 operator scores documents term1 or term2 appearing adjacently.
  
