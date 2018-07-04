@@ -16,7 +16,7 @@ More information can be found in the [documentation on migration to Terrier 5](T
  - [TR-504](http://terrier.org/issues/browse/TR-504) Tokenisers can be serializable
 
 ### Retrieval
- - A new "matching op" query language, Indri-esque in nature - see the [query language documentation](querylanguage.md)
+ - A new "matching op" query language, Indri-esque in nature - see the [query language documentation](querylanguage.md#matching-op-query-language)
  - [TR-317](http://terrier.org/issues/browse/TR-317) ProximityIterablePosting does not calculate the total number of matching phrases
  - [TR-442](http://terrier.org/issues/browse/TR-442) IterablePosting.EOL should be Integer.MAX_VALUE (Nicola Tonellotto, ISTI-CNR)
  - [TR-472](http://terrier.org/issues/browse/TR-472) Request not passed to the WeightingModel (Aldo Lipani, Vienna University of Technology)
