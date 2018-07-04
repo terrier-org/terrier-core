@@ -16,13 +16,14 @@ More information can be found in the [documentation on migration to Terrier 5](T
  - [TR-504](http://terrier.org/issues/browse/TR-504) Tokenisers can be serializable
 
 ### Retrieval
+ - A new "matching op" query language, Indri-esque in nature - see the [query language documentation](querylanguage.md)
  - [TR-317](http://terrier.org/issues/browse/TR-317) ProximityIterablePosting does not calculate the total number of matching phrases
  - [TR-442](http://terrier.org/issues/browse/TR-442) IterablePosting.EOL should be Integer.MAX_VALUE (Nicola Tonellotto, ISTI-CNR)
  - [TR-472](http://terrier.org/issues/browse/TR-472) Request not passed to the WeightingModel (Aldo Lipani, Vienna University of Technology)
  - [TR-487](http://terrier.org/issues/browse/TR-487) MatchingQueryTerms should be decorated with the EntryStatistics
- - [TR-499](http://terrier.org/issues/browse/TR-487) ExplicitMultiTermQuery does not support query weights
- - [TR-500](http://terrier.org/issues/browse/TR-487) Expose MatchingOp QL to TRECQuerying
- - [TR-502](http://terrier.org/issues/browse/TR-487) Simplify Manager API
+ - [TR-499](http://terrier.org/issues/browse/TR-499) ExplicitMultiTermQuery does not support query weights
+ - [TR-500](http://terrier.org/issues/browse/TR-500) Expose MatchingOp QL to TRECQuerying
+ - [TR-502](http://terrier.org/issues/browse/TR-502) Simplify Manager API
  - [TR-507](http://terrier.org/issues/browse/TR-507) Migrate Terrier query parser from Antlr to javacc
  - [TR-508](http://terrier.org/issues/browse/TR-508) Querying (interactive, batchretrieval) commands should have common base class
  - [TR-510](http://terrier.org/issues/browse/TR-510) bump jtreceval for Windows versions
