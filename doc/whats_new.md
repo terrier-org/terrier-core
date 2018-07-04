@@ -3,7 +3,7 @@ What's New in Terrier
 
 Terrier 5.0 - 04/07/2018
 ------------------------
-Major update. New features include a new commandline API, revisions to the retrieval API, a Mavenized layout, a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning.
+Major update. New features include a new commandline API, revisions to the retrieval API, a Mavenized layout, a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning; RESTful retrieval API and client.
 
 More information can be found in the [documentation on migration to Terrier 5](Tr5migration.md).
 
@@ -26,6 +26,7 @@ More information can be found in the [documentation on migration to Terrier 5](T
  - [TR-507](http://terrier.org/issues/browse/TR-507) Migrate Terrier query parser from Antlr to javacc
  - [TR-508](http://terrier.org/issues/browse/TR-508) Querying (interactive, batchretrieval) commands should have common base class
  - [TR-510](http://terrier.org/issues/browse/TR-510) bump jtreceval for Windows versions
+ - [TR-511](http://terrier.org/issues/browse/TR-511) RESTful server and client
  
 ### Other
  - [TR-445](http://terrier.org/issues/browse/TR-445) Infrastructure support for non-String lexicons
