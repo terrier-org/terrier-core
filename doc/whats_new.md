@@ -1,7 +1,7 @@
 What's New in Terrier
 =====================
 
-Terrier 5.0 - xx/07/2018
+Terrier 5.0 - 04/07/2018
 ------------------------
 Major update. New features include a new commandline API, revisions to the retrieval API, a Mavenized layout, a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning.
 
