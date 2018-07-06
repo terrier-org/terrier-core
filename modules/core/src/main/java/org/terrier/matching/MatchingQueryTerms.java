@@ -82,7 +82,7 @@ implements Serializable,Cloneable
 		//tri-valued logic: if null, then no requirement; if true then required, 
 		//if false, then not required
 		public Boolean required = null;
-		
+
 		/** The weight of a query term. This is usually how many times the term occurred
 		  * in the query, but sometime may be altered if a weight has been specified on the
 		  * query term: eg QueryExpansion will do this, as will manually specifying a weight
@@ -185,6 +185,10 @@ implements Serializable,Cloneable
 
 		public String getTag() {
 			return tag;
+		}
+		
+		public Boolean getRequired() {
+			return required;
 		}
 
 		public void setWeight(double weight) {
