@@ -44,6 +44,8 @@ import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.IterablePosting;
 
+/** this is an abstract operator, which implements common 
+ * functionalities for operators that consist of multiple terms. */
 public abstract class MultiTermOp extends Operator {
 
 	private static final long serialVersionUID = 1L;
