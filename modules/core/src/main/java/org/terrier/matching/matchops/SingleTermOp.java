@@ -44,6 +44,9 @@ import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.FieldOnlyIterablePosting;
 import org.terrier.structures.postings.IterablePosting;
 
+/** This class implements a single indexing token as a matching op.
+ * @since 5.0
+ */
 public class SingleTermOp extends Operator {
 
 	private static final long serialVersionUID = 1L;
