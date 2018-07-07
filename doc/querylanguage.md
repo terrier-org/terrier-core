@@ -28,15 +28,24 @@ Note that in some configurations, the Terrier query language may not be availabl
 
 Matching Op Query Language
 --------------------------
-In general, this follows a subset of the Indri query language:
+In general, this follows a subset of the Indri query language. We have two types of operators, namely: *semantic*, in that they cause a posting list with particular semantics to be generated at matching time; in contrast, *syntactic* operators are syntactic sugar defined within the query language, which allow attributes of the semantic operators to be changed.
+
+The semantic operators will be familiar to those who have used Indri or Galago:
 
  - `term1` -- scores documents containing this single query term.
  - `term1.title` -- scores documents containing this single query term in the title.
- - `#band(term1 term2)` -- scores a term containing both query terms. The frequency of each matching document is 1.
- - `#syn(term1 term2) -- scores documents containing either term1 or term2. The frequency of each matching document is the sum of the frequencies of the constituent words.
- - `#uw8(term1 term2)` -- the #uwN operator scores documents term1 or term2 within unordered windows of N tokens -- in this case windows of 8 tokens in size.
- - `#1(term1 term2)` -- the #1 operator scores documents term1 or term2 appearing adjacently.
- 
+ - `#band(op1 op2)` -- scores a term containing both operators. The frequency of each matching document is 1.
+ - `#syn(op1 op2) -- scores documents containing either op1 or op2. The frequency of each matching document is the sum of the frequencies of the constituent words.
+ - `#uw8(op1 op2)` -- the #uwN operator scores documents op1 or op2 within unordered windows of N tokens -- in this case windows of 8 tokens in size.
+ - `#1(op1 op2)` -- the #1 operator scores documents op1 or op2 appearing adjacently.
+ - `#band(op1 op2)` -- the #band operator scores documents that contain both op1 and op2. 
+
+There are currently two syntactic operators:
+
+  - `#combine:k=v(op1 op2)` -- the `#combine` operator allows several operators to be grouped together. Moreover, multiple key-value pairs can be specified to control those query terms. In particular, the (query term frequency) weight of a term can be controlled by setting the index of that operator -- for example `#combine:0=2:1=1(op1 op2)` will set twice as much weight on op1 as on op2.
+ - `#tag(tagName op1 op2)` -- this sets the tag attribute of these query terms.
+
+Note that semantic operators cannot contain syntactic operators.
  
 **Using the Matching Op Query Language**
 
@@ -59,7 +68,28 @@ $ cat mytopics
 $ bin/terrier batchretrieve -s -m -t mytopics
 ```
 where `-m` defines that matchingop query language will be used, and `-s` defines that topics are in single-line format.
- 
+
+**Matching Op Query Language Specification**
+
+Each top-level match operator must resolve to an expression that can be defined as posting list during Matching. The PostingListManager is responsible for opening the correct postings from the inverted index for each matching operator.
+
+Some match operators may require a particular type of input posting. For instance, a `#uwN` operator requires that each input operator generates postings that implements BlockPosting (i.e. an index created with position information). Moreover, each match operator may return a different type of posting - for instance, the IterablePosting created by a `#uwN` operator does not return the position information, although that from a `#1` does.
+
+|Operator|Class|Type|Input Posting Type|Output Posting Type|
+|------|-------|----|-------|
+| term | SingleTermOp | Any | (as input postings) |
+| term.FIELD | SingleTermOp | Fields (FieldPosting) | Frequency |
+| #band| AndQueryOp | AND | Any | Binary (i.e. frequency=1) |
+| #uwN | UnorderedWindowOp | AND | Positional (BlockPosting) | Frequency |
+| #1   | PhraseOp | AND | Positional (BlockPosting) | Positions |
+| #syn | SynonymOp | OR | Any | (depends on input postings) |
+
+On the other hand, the syntactic operators (such as `#combine` and `#tag`)  are defined solely in the matchop query parser, and hence there is no equivalent matchop class. As these cannot result in a single posting list, their positioning within a matchop is restricted. For instance, all of the following queries are **invalid**:
+
+ - `#uw2( #combine(a b) )` -- a `#combine` cannot create a posting list, so it cannot appear within a `#uwN`.
+ - `#uw2( #band(a b) c)` -- `#band` is a binary operator and does not supply positions. Hence, it cannot be used within a `#uwN`.
+ - `#uw2( #uw5(a b) c)` -- the inner `#uwN` operator does not return position information, and hence is not valid input to the outer `#uwN` operator.
+
 
 ------------------
 > Webpage: <http://terrier.org>  
