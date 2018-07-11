@@ -76,9 +76,9 @@ Each top-level match operator must resolve to an expression that can be defined 
 Some match operators may require a particular type of input posting. For instance, a `#uwN` operator requires that each input operator generates postings that implements BlockPosting (i.e. an index created with position information). Moreover, each match operator may return a different type of posting - for instance, the IterablePosting created by a `#uwN` operator does not return the position information, although that from a `#1` does.
 
 |Operator|Class|Type|Input Posting Type|Output Posting Type|
-|------|-------|----|-------|
-| term | SingleTermOp | Any | (as input postings) |
-| term.FIELD | SingleTermOp | Fields (FieldPosting) | Frequency |
+|------|-------|----|-------|-----|
+| term | SingleTermOp | - | Any | (as input postings) |
+| term.FIELD | SingleTermOp | - | Fields (FieldPosting) | Frequency |
 | #band| AndQueryOp | AND | Any | Binary (i.e. frequency=1) |
 | #uwN | UnorderedWindowOp | AND | Positional (BlockPosting) | Frequency |
 | #1   | PhraseOp | AND | Positional (BlockPosting) | Positions |
