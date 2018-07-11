@@ -118,6 +118,13 @@ public class TestMatchOpQLParser {
 		assertEquals("b", rtr.get(1).getKey().toString());
 	}
 	
+	@Test public void testPrefix() throws Exception {		
+		List<MatchingTerm> rtr = new MatchOpQLParser("#prefix(a)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof PrefixTermOp);
+	}
+	
 	@Test public void testMultiTermsBothTag() throws Exception {		
 		List<MatchingTerm> rtr = new MatchOpQLParser("#tag(org a b)").parseAll();
 		assertNotNull(rtr);

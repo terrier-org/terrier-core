@@ -89,6 +89,7 @@ TOKEN :
    |  <SYN: "syn">
    |  <TAG: "tag">
    |  <COMBINE: "combine">
+   |  <PREFIX: "prefix">
    |  <OPEN_PAREN: "("> : DEFAULT
    | <COLON : ":">
    | <EQUALS : "=">
@@ -142,6 +143,7 @@ MatchingTerm parse() :
 	| rtr = uw() 
 	| rtr = ow()
 	| rtr = ow_implicit()
+	| rtr = prefix()
 	)
 	| rtr = word()
 	)
@@ -190,6 +192,16 @@ List<MatchingTerm> tag(): {
     	}
     	return innerWords;
     }
+}
+
+MatchingTerm prefix(): {
+  MatchingTerm newWord = null;
+}
+{ 
+  <PREFIX> <OPEN_PAREN> newWord = word() <CLOSE_PAREN>
+  {
+    return QTPBuilder.of(new PrefixTermOp( ((SingleTermOp) newWord.getKey()).getTerm())).build();
+  }
 }
 
 
