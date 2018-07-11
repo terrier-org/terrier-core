@@ -21,6 +21,7 @@ import java.io.StringReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+
 @SuppressWarnings("all")
 public class MatchOpQLParser
 {
@@ -79,6 +80,7 @@ TOKEN :
 	  <HASH : "#"> : WithinIndri
 	  | <WORD : (["A"-"Z","a"-"z","0"-"9"])+ > 
 	  | <PERIOD : ".">
+	  | <BASE64WORD : (["A"-"Z","a"-"z","0"-"9", "+", "=", "/"]) + >
 	  | <CLOSE_PAREN: ")"> : DEFAULT
 }
 
@@ -90,6 +92,7 @@ TOKEN :
    |  <TAG: "tag">
    |  <COMBINE: "combine">
    |  <PREFIX: "prefix">
+   |  <BASE64: "base64">
    |  <OPEN_PAREN: "("> : DEFAULT
    | <COLON : ":">
    | <EQUALS : "=">
@@ -144,6 +147,7 @@ MatchingTerm parse() :
 	| rtr = ow()
 	| rtr = ow_implicit()
 	| rtr = prefix()
+	| rtr = base64()
 	)
 	| rtr = word()
 	)
@@ -272,6 +276,23 @@ MatchingTerm ow_implicit(): {
   	}
     return QTPBuilder.of(new PhraseOp(words.toArray(new Operator[words.size()]))).build();
   }
+}
+
+
+MatchingTerm base64() : {
+	Token word;
+	Token field = null;
+}
+{
+	<BASE64> <OPEN_PAREN> word = <BASE64WORD> <CLOSE_PAREN> (<PERIOD> field = <WORD>)?
+	{
+		String fieldName = null;
+		byte[] decoded = java.util.Base64.getMimeDecoder().decode(word.image);
+		String term = new String(decoded);
+		if (field != null)
+			fieldName = field.image;
+		return QTPBuilder.of(new SingleTermOp(term, fieldName)).build();
+	}
 }
 
 MatchingTerm word() : {

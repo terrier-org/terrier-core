@@ -125,6 +125,35 @@ public class TestMatchOpQLParser {
 		assertTrue(rtr.get(0).getKey() instanceof PrefixTermOp);
 	}
 	
+	@Test public void testBase64() throws Exception {		
+		List<MatchingTerm> rtr = new MatchOpQLParser("#base64(YQ==)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
+		assertEquals("a", rtr.get(0).getKey().toString());
+	}
+	
+	@Test public void testBase64Field() throws Exception {		
+		List<MatchingTerm> rtr = new MatchOpQLParser("#base64(YQ==).field").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
+		assertEquals("a.field", rtr.get(0).getKey().toString());
+	}
+	
+	@Test public void testBase64Nested() throws Exception {		
+		List<MatchingTerm> rtr = new MatchOpQLParser("#uw2( b #base64(YQ==))").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof UnorderedWindowOp);
+		Operator[] within = ((UnorderedWindowOp) rtr.get(0).getKey()).getConstituents();
+		
+		assertTrue(within[0] instanceof SingleTermOp);
+		assertEquals("b", within[0].toString());
+		assertTrue(within[1] instanceof SingleTermOp);
+		assertEquals("a", within[1].toString());
+	}
+	
 	@Test public void testMultiTermsBothTag() throws Exception {		
 		List<MatchingTerm> rtr = new MatchOpQLParser("#tag(org a b)").parseAll();
 		assertNotNull(rtr);
