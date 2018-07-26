@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import org.sonatype.aether.artifact.Artifact;
@@ -54,6 +56,13 @@ import com.jcabi.aether.Aether;
  * @since 5.0
  */
 public class AetherResolver implements TerrierApplicationPlugin {
+
+	public static final Set<String> PROVIDED_MODULES = new HashSet<>(Arrays.asList(
+			"terrier-core", "terrier-concurrent", "terrier-retrieval-api",
+			"terrier-rest-client", "terrier-rest-server",
+			"terrier-batch-indexers", "terrier-batch-retrieval",
+			"terrier-learning", "terrier-tests", "terrier-logging",
+			"terrier-integer-compression", "terrier-website-search"));
 
 	//TODO consider using the aether client directly, rather than the jcabi wrapper, which imports other classes.
 	//see https://github.com/liferay/liferay-blade-cli/blob/28556e7e8560dd27d4a5153cb93196ca059ac081/com.liferay.blade.cli/src/com/liferay/blade/cli/aether/AetherClient.java
@@ -142,20 +151,44 @@ public class AetherResolver implements TerrierApplicationPlugin {
 		Aether aether = new Aether(remotes, local);
 		List<MavenCoordinate> deps = extractMavenCoordinates(coordinates);
 		Collection<Artifact> foundDepFiles = new ArrayList<Artifact>();
-		DependencyFilter df = new DependencyFilter(){
+		DependencyFilter df = new DependencyFilter() {
 
 			@Override
-			public boolean accept(DependencyNode node, List<DependencyNode> parents) {
-				//we don't download ourself
-				if (node.getDependency().getArtifact().getGroupId().equals("org.terrier") &&
-						node.getDependency().getArtifact().getArtifactId().equals("terrier-core"))
+			public boolean accept(DependencyNode node,
+					List<DependencyNode> parents) {
+
+				// we don't download ourself
+				if (node.getDependency().getArtifact().getGroupId()
+						.equals("org.terrier")
+						&& PROVIDED_MODULES.contains(node.getDependency()
+								.getArtifact().getArtifactId()))
 					return false;
-				//also, dont mess up scala
-				if (node.getDependency().getArtifact().getArtifactId().equals("scala-library"))
+
+				// also, dont mess up scala
+				if (node.getDependency().getArtifact().getArtifactId()
+						.equals("scala-library"))
 					return false;
+
+				// finally, don't include any dependencies that will be provided
+				// by virtue of Terrier
+				// in doing so, we check that if any parent of a dependency is
+				// in PROVIDED_MODULES
+				if (parents.stream().anyMatch(
+						d -> d.getDependency().getArtifact().getGroupId()
+								.equals("org.terrier")
+								&& PROVIDED_MODULES.contains(d.getDependency()
+										.getArtifact().getArtifactId()))) {
+					// System.err.println("ignoring: " +node +
+					// " as parents include Terrier - parents="+
+					// parents.toString());
+					return false;
+				}
+				// System.err.println("adding: " +node + " parents="+
+				// parents.toString());
+
 				return true;
 			}
-			
+
 		};
 		for(MavenCoordinate mvnc : deps)
 		{
