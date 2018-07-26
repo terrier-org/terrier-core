@@ -35,8 +35,10 @@ public interface EntryStatistics extends Serializable
 {
 	/** The frequency (total number of occurrences) of the entry (term). */
 	int getFrequency(); //F
+	void setFrequency(int F);
 	/** The number of documents that the entry (term) occurred in */
 	int getDocumentFrequency(); //Nt
+	void setDocumentFrequency(int nt);
 	/** The id of the term */
 	int getTermId();
 	

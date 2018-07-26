@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.ORIterablePosting;
@@ -64,8 +65,8 @@ public class SynonymOp extends MultiTermOp {
 	 * 1. The total number of occurrences F is the sum of the constituent frequencies (handled by super).
 	 * 2. The in-document maxTF is the maximum of the constituent maxTFs */
 	@Override
-	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats) {
-		EntryStatistics rtr = super.mergeStatistics(entryStats);
+	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats, CollectionStatistics collStats) {
+		EntryStatistics rtr = super.mergeStatistics(entryStats, collStats);
 		int minTF = Integer.MIN_VALUE;
 		for(EntryStatistics e : entryStats)
 		{

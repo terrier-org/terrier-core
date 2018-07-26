@@ -59,12 +59,7 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	public int getDocumentFrequency() {
 		return n_t;
 	}
-	/** 
-	 * Sets the document frequency
-	 */
-	public void setDocumentFrequency(int _n_t) {
-		n_t = _n_t;
-	}
+	
 	
 	@Override
 	public int getMaxFrequencyInDocuments() {
@@ -82,12 +77,7 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	public int getFrequency() {
 		return TF;
 	}
-	/** 
-	 * Sets the frequency for this term
-	 */
-	public void setFrequency(int _TF) {
-		TF = _TF;
-	}
+	
 	/** 
 	 * {@inheritDoc} 
 	 */
@@ -200,6 +190,19 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	public void setStatistics(int _n_t, int _TF) {
 		this.n_t = _n_t;
 		this.TF = _TF;
+	}
+	
+	@Override
+	public void setFrequency(int F) {
+		TF = F;
+	}
+
+	/** 
+	 * Sets the document frequency
+	 */
+	@Override
+	public void setDocumentFrequency(int nt) {
+		n_t = nt;
 	}
 
 }

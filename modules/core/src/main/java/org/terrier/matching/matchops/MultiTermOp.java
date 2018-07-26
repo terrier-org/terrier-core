@@ -83,7 +83,7 @@ public abstract class MultiTermOp extends Operator {
 		return rtr;
 	}
 	
-	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats)
+	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats, CollectionStatistics collStats)
 	{
 		return addStatistics(entryStats);
 	}
@@ -117,7 +117,8 @@ public abstract class MultiTermOp extends Operator {
 			logger.warn("No alternatives matched in " + Arrays.toString(terms));
 			return null;
 		}
-		EntryStatistics entryStats = mergeStatistics(_le.toArray(new EntryStatistics[_le.size()]));
+		//TODO: shouldnt collstats be allowed to come from elsewhere?
+		EntryStatistics entryStats = mergeStatistics(_le.toArray(new EntryStatistics[_le.size()]), index.getCollectionStatistics());
 		
 		IterablePosting ip = createFinalPostingIterator(_joinedPostings, _le);
 		return Pair.of(entryStats, ip);

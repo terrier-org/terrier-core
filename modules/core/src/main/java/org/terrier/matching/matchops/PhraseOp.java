@@ -28,6 +28,7 @@ package org.terrier.matching.matchops;
 import java.io.IOException;
 import java.util.List;
 
+import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.SimpleNgramEntryStatistics;
 import org.terrier.structures.postings.IterablePosting;
@@ -57,10 +58,18 @@ public class PhraseOp extends ANDQueryOp {
 	}
 	
 	@Override
-	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats) {
-		EntryStatistics parent = super.mergeStatistics(entryStats);
+	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats, CollectionStatistics collStats) {
+		EntryStatistics parent = super.mergeStatistics(entryStats, collStats);
 		SimpleNgramEntryStatistics nes = new SimpleNgramEntryStatistics(parent);
-		nes.setWindowSize(1); //OR should this be terms.length
+		nes.setWindowSize(1); //OR should this be terms.length?
+		
+		//this heuristical definition comes from Ivory - see
+		//https://github.com/lintool/Ivory/blob/cbef55fb0f608e078c064883f6bb5f7b85b4bdb4/src/java/main/ivory/core/RetrievalEnvironment.java#L133
+		//see also discussion in http://www.dcs.gla.ac.uk/~craigm/publications/macdonald10_prox.pdf
+		int defaultDf = collStats.getNumberOfDocuments() / 100;
+		int defaultCf = defaultDf * 2;
+		nes.setFrequency( defaultCf );
+		nes.setDocumentFrequency( defaultDf );
 		return nes;
 	}
 

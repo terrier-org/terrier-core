@@ -28,6 +28,7 @@ package org.terrier.matching.matchops;
 import java.io.IOException;
 import java.util.List;
 
+import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.postings.ANDIterablePosting;
@@ -66,7 +67,7 @@ public class ANDQueryOp extends MultiTermOp {
 	 * 1. The number of occurrences is the minimum of the constituent frequencies (handled by super).
 	 * 2. The in-document maxTF is the minimum of the constituent maxTFs */
 	@Override
-	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats) {
+	protected EntryStatistics mergeStatistics(EntryStatistics[] entryStats, CollectionStatistics collStats) {
 		int minTF = Integer.MAX_VALUE;
 		int minNt = Integer.MAX_VALUE;
 		for(EntryStatistics e : entryStats)
@@ -78,7 +79,7 @@ public class ANDQueryOp extends MultiTermOp {
 		}
 		
 		//TODO update minNt
-		EntryStatistics rtr = super.mergeStatistics(entryStats);		
+		EntryStatistics rtr = super.mergeStatistics(entryStats, collStats);		
 		rtr.setMaxFrequencyInDocuments(minTF);
 		return rtr;
 	}

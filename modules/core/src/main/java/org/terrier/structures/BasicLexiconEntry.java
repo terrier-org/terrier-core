@@ -294,5 +294,15 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 		startBitOffset = ((BitIndexPointer)p).getOffsetBits();
 	}
 
+	@Override
+	public void setFrequency(int F) {
+		TF = F;
+	}
+
+	@Override
+	public void setDocumentFrequency(int nt) {
+		n_t = nt;
+	}
+
 	
 }

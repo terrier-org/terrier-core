@@ -38,6 +38,7 @@ public class SimpleNgramEntryStatistics implements NgramEntryStatistics, Writabl
 	int maxtf;
 	int ws;
 	int nt;
+	int f;
 	
 	public SimpleNgramEntryStatistics(EntryStatistics e){
 		nt = e.getDocumentFrequency();
@@ -51,7 +52,7 @@ public class SimpleNgramEntryStatistics implements NgramEntryStatistics, Writabl
 	
 	@Override
 	public int getFrequency() {
-		return 0;
+		return f;
 	}
 
 	@Override
@@ -67,11 +68,13 @@ public class SimpleNgramEntryStatistics implements NgramEntryStatistics, Writabl
 	@Override
 	public void add(EntryStatistics e) {
 		nt += e.getDocumentFrequency();
+		f += e.getFrequency();
 	}
 
 	@Override
 	public void subtract(EntryStatistics e) {
 		nt -= e.getDocumentFrequency();
+		f -= e.getFrequency();
 	}
 
 	@Override
@@ -93,12 +96,14 @@ public class SimpleNgramEntryStatistics implements NgramEntryStatistics, Writabl
 	public void readFields(DataInput in) throws IOException {
 		ws = in.readInt();
 		nt = in.readInt();
+		f = in.readInt();
 	}
 
 	@Override
 	public void write(DataOutput out) throws IOException {
 		out.writeInt(ws);
 		out.writeInt(nt);
+		out.writeInt(f);
 	}
 
 	@Override
@@ -112,7 +117,17 @@ public class SimpleNgramEntryStatistics implements NgramEntryStatistics, Writabl
 	}
 	
 	public String toString() {
-		return "Nt=" + this.getDocumentFrequency() + " ws=" + this.getWindowSize();
+		return "F="+f+" Nt=" + this.getDocumentFrequency() + " ws=" + this.getWindowSize();
+	}
+
+	@Override
+	public void setFrequency(int F) {
+		this.f = F;
+	}
+
+	@Override
+	public void setDocumentFrequency(int nt) {
+		this.nt = nt;
 	}
 
 }

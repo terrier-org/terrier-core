@@ -65,7 +65,7 @@ public class PrefixTermOp extends SynonymOp {
 			logger.warn("No alternatives matched in " + Arrays.toString(terms));
 			return null;
 		}
-		EntryStatistics entryStats = mergeStatistics(_le.toArray(new EntryStatistics[_le.size()]));
+		EntryStatistics entryStats = mergeStatistics(_le.toArray(new EntryStatistics[_le.size()]), null);
 		
 		IterablePosting ip = createFinalPostingIterator(_joinedPostings, _le);
 		return Pair.of(entryStats, ip);
