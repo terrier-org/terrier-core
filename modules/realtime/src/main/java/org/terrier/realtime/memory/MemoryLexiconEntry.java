@@ -184,5 +184,15 @@ public class MemoryLexiconEntry extends LexiconEntry implements MemoryPointer,Se
 		mle.setTermId(termid);
 		return mle;
 	}
+
+	@Override
+	public void setFrequency(int F) {
+		this.tf = F;
+	}
+
+	@Override
+	public void setDocumentFrequency(int nt) {
+		this.df = nt;
+	}
 	
 }

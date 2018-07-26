@@ -147,4 +147,14 @@ public class MultiLexiconEntry extends LexiconEntry {
 		this.maxtf = max;
 	}
 
+	@Override
+	public void setFrequency(int F) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setDocumentFrequency(int nt) {
+		throw new UnsupportedOperationException();
+	}
+
 }
