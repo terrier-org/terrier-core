@@ -411,6 +411,7 @@ public class IndexUtil {
 						key.replaceFirst("^index\\."+sourceStructureName + "\\.", 
 						"index." + destinationStructureName + "."), sourceIndex.getProperties().getProperty(key));
 				found = true;
+				destIndex.dirtyProperties = true;
 			}			
 		}
 		//copy new properties to real index
