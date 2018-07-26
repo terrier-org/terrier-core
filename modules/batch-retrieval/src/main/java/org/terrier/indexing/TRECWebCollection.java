@@ -28,6 +28,7 @@ package org.terrier.indexing;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,6 +98,10 @@ public class TRECWebCollection extends TRECCollection {
 	public TRECWebCollection(String CollectionSpecFilename, String TagSet,
 			String BlacklistSpecFilename, String ignored) {
 		super(CollectionSpecFilename, TagSet, BlacklistSpecFilename, ignored);
+	}
+
+	public TRECWebCollection(List<String> files, String TagSet, String BlacklistSpecFilename, String ignored) {
+		super(files, TagSet, BlacklistSpecFilename, ignored);
 	}
 
 	final static char[] DOCHDR_START = "<DOCHDR>".toCharArray();
