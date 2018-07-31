@@ -129,7 +129,7 @@ import com.google.common.collect.Sets;
  * <li><tt>trec.topics.matchopql</tt> - if the topics should be parsed using the matchopql parser. Defaults to false. </li>
  * 
  * <li><tt>trec.model</tt> the name of the weighting model to be used during retrieval. Default InL2 </li>
- *<li><tt>trec.qe.model</tt> the name of the query expansino model to be used during query expansion. Default Bo1. </li>
+ *<li><tt>trec.qe.model</tt> the name of the query expansion model to be used during query expansion. Default Bo1. </li>
  * 
  * <li><tt>c</tt> - the term frequency normalisation parameter value. A value specified at runtime as an
  * API parameter (e.g. TrecTerrier -c) overrides this property. 
