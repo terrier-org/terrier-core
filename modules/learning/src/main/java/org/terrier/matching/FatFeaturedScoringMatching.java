@@ -225,37 +225,11 @@ public class FatFeaturedScoringMatching implements Matching {
 	
 	public static final Predicate<Pair<String,String>> getTagPredictate(final String matches)
 	{
-		return new Predicate<Pair<String,String>>()
-		{
-			@Override
-			public boolean test(Pair<String,String> queryTerm) {
-				if (queryTerm.getRight() != null && matches.equals(queryTerm.getRight()))
-					return true;
-				return false;
-			}
-		};
+		return queryTerm -> queryTerm.getRight() != null && matches.equals(queryTerm.getRight());
 	}
 	
-	public static final Predicate<Pair<String,String>> filterUW = new Predicate<Pair<String,String>>()
-	{
-		@Override
-		public boolean test(Pair<String,String> queryTerm) {
-			if (queryTerm.getLeft().contains(UnorderedWindowOp.STRING_PREFIX))
-				return true;
-			return false;
-		}
-	};
-	
-	public static final Predicate<Pair<String,String>> filterOW = new Predicate<Pair<String,String>>()
-	{
-		@Override
-		public boolean test(Pair<String,String> queryTerm) {
-			if (queryTerm.getLeft().matches("^.*#\\d+.*$"))
-				return true;
-			return false;
-		}
-	};
-	
+	public static final Predicate<Pair<String,String>> filterUW = queryTerm -> queryTerm.getLeft().contains(UnorderedWindowOp.STRING_PREFIX);
+	public static final Predicate<Pair<String,String>> filterOW = queryTerm -> queryTerm.getLeft().matches("^.*#\\d+.*$");
 	public static final Predicate<Pair<String,String>> filterProx = filterUW.or(filterOW);
 	public static final Predicate<Pair<String,String>> filterTerm = filterProx.negate();
 	
@@ -326,7 +300,7 @@ public class FatFeaturedScoringMatching implements Matching {
 			{
 				docidMap.put(docid, position++);
 			}
-			final Index fatIndex = FatUtils.makeIndex(fat);		
+			final Index fatIndex = FatUtils.makeIndex(fat);
 			for(int fid=0;fid<dsms.length;fid++)
 			{
 				final double[] scores = new double[numResults];
