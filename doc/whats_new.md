@@ -1,6 +1,23 @@
 What's New in Terrier
 =====================
 
+Terrier 5.x - unreleased
+
+### Indexing
+ - [TR-517](http://terrier.org/issues/browse/TR-517) org.terrier.indexing TRECCollection classes etc are in the wrong module (Nicola Tonellotto, ISTI-CNR)
+ - [TR-521](http://terrier.org/issues/browse/TR-521) TRECWebCollection missing a constructor (Peilin Yang, Twitter)
+ 
+### Retrieval
+ - [TR-512](http://terrier.org/issues/browse/TR-512) Set approximate stats for ngram statistics
+ - [TR-515](http://terrier.org/issues/browse/TR-515) #base64 support in matchopql
+
+### Other
+ - [TR-522](http://terrier.org/issues/browse/TR-522) wrong paths in .bat files (Artur Cieslewicz, Poznan University of Medical Sciences)
+ - [TR-523](http://terrier.org/issues/browse/TR-523) -I option to Terrier doesnt work
+ - [TR-524](http://terrier.org/issues/browse/TR-524) Terrier Aether downloads "too many" dependencies
+ - [TR-525](http://terrier.org/issues/browse/TR-525) switch from jcabi-aether to maven-resolver to reduce dependencies on Spring/hibernate
+ - [TR-526](http://terrier.org/issues/browse/TR-526) CLIParsedTool help formatting can be improved
+
 Terrier 5.0 - 04/07/2018
 ------------------------
 Major update. New features include a new commandline API, revisions to the retrieval API, a Mavenized layout, a low-level matching/query language inspired/partly compatible with Indri/Galago; Revised Lexicon data structure that records the maximum term frequency, to facilitate dynamic pruning; RESTful retrieval API and client.
