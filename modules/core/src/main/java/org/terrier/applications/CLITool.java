@@ -45,6 +45,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.FilenameUtils;
 import org.terrier.Version;
 import org.terrier.utility.ApplicationSetup;
 
@@ -91,6 +92,7 @@ public abstract class CLITool {
 					.build());
 			options.addOption(Option.builder("I")
 					.argName("indexref")
+					.hasArg(true)
 					.desc("override the default indexref (location)")
 					.build());
 			return options;
@@ -106,7 +108,7 @@ public abstract class CLITool {
 			String usage = st.toString();
 			st = new StringWriter();
 			st.append('\n');
-			formatter.printHelp(new PrintWriter(st), HelpFormatter.DEFAULT_WIDTH+8, usage, "", getOptions(), HelpFormatter.DEFAULT_WIDTH, 0, "");
+			formatter.printHelp(new PrintWriter(st), HelpFormatter.DEFAULT_WIDTH+8, usage, "", getOptions(), 3, 4, "");
 			rtr += "\n";
 			rtr += st.toString();
 			return rtr;
@@ -123,10 +125,12 @@ public abstract class CLITool {
 				props.forEach( (k,v) -> org.terrier.utility.ApplicationSetup.setProperty((String)k, (String)v));
 				ApplicationSetup.loadCommonProperties();
 			}
-//			if (line.hasOption('I'))
-//			{
-//				String indexLocation = line.getOptionValue('I');
-//			}
+			if (line.hasOption('I'))
+			{
+				String indexLocation = line.getOptionValue('I');
+				ApplicationSetup.TERRIER_INDEX_PATH = FilenameUtils.getFullPath(indexLocation);
+				ApplicationSetup.TERRIER_INDEX_PREFIX = FilenameUtils.getBaseName(indexLocation);
+			}
 			return this.run(line);
 		}
 		
