@@ -25,6 +25,8 @@
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk>
  */
 package org.terrier.querying;
+import static org.terrier.querying.SearchRequest.CONTROL_MATCHING;
+import static org.terrier.querying.SearchRequest.CONTROL_WMODEL;
 import gnu.trove.TIntArrayList;
 
 import java.io.IOException;
@@ -53,9 +55,6 @@ import org.terrier.structures.IndexFactory;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
-import static org.terrier.querying.SearchRequest.*;
-
-import com.google.common.collect.Lists;
 /**
   * This class is responsible for handling/co-ordinating the main high-level
   * operations of a query. These are:
@@ -433,11 +432,11 @@ public class LocalManager implements Manager
 			}
 			
 			// this allows matching to only operate on scoring a subset of the query terms
-			if (rq.getControl("matchingtags").length() > 0)
-			{
-				String[] tags = rq.getControl("matchingtags").split(";");
-				mqt.getMatchingTags().addAll(Lists.newArrayList(tags));
-			}
+//			if (rq.getControl("matchingtags").length() > 0)
+//			{
+//				String[] tags = rq.getControl("matchingtags").split(";");
+//				mqt.getMatchingTags().addAll(Lists.newArrayList(tags));
+//			}
 			
 			Matching matching = getMatchingModel(rq);
 			if (logger.isDebugEnabled()){

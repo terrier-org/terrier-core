@@ -31,6 +31,7 @@ import gnu.trove.TIntIntHashMap;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Set;
 
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
@@ -50,7 +51,7 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 	String[] queryTerms;
 	double[] keyFrequency;
 	EntryStatistics[] entryStats;
-	String[] tags;
+	Set<String>[] tags;
 	
 	public FatQueryResultSet(
 			int numberOfDocuments,
@@ -221,12 +222,12 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 	}
 	
 	@Override
-	public String[] getTags() {
+	public Set<String>[] getTags() {
 		return tags;
 	}
 
 	@Override
-	public void setTags(String[] ks) {
+	public void setTags(Set<String>[] ks) {
 		this.tags = ks;
 	}
 }

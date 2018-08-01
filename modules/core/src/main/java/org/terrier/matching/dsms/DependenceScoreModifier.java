@@ -149,7 +149,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 			termsFiltered.setQueryId(terms.getQueryId());
 			boolean splitSynonyms = Boolean.parseBoolean(ApplicationSetup.getProperty(
 				"proximity.plm.split.synonyms", "true"));
-			PostingListManager plm = new PostingListManager(index, index.getCollectionStatistics(), termsFiltered, splitSynonyms);
+			PostingListManager plm = new PostingListManager(index, index.getCollectionStatistics(), termsFiltered, splitSynonyms, null, null);
 			plm.prepare(false);
 			phraseTerms = new String[plm.getNumTerms()];
 			EntryStatistics[] es = new EntryStatistics[plm.getNumTerms()];

@@ -29,6 +29,7 @@ package org.terrier.matching.daat;
 
 import java.io.IOException;
 import java.util.Queue;
+import java.util.Set;
 
 import org.terrier.matching.FatResultSet;
 import org.terrier.matching.PostingListManager;
@@ -85,13 +86,14 @@ public class FatFull extends Full {
 		String[] queryTerms = new String[terms];
 		EntryStatistics[] entryStats = new EntryStatistics[terms];
 		double[] keyFreqs = new double[terms];
-		String[] tags = new String[terms];
+		@SuppressWarnings("unchecked")
+		Set<String>[] tags = new Set[terms];
 		
 		for (int i=0; i<terms; i++) {			
 			queryTerms[i] = plm.getTerm(i);
 			entryStats[i] = plm.getStatistics(i).getWritableEntryStatistics();
 			keyFreqs[i] = plm.getKeyFrequency(i);
-			tags[i] = plm.getTag(i);
+			tags[i] = plm.getTags(i);
 			logger.info("term " + queryTerms[i] + " ks="+keyFreqs[i] + " es=" + entryStats[i] + " tag="+tags[i]);
 		}
 		

@@ -166,7 +166,7 @@ public class SingleTermOp extends Operator {
 			required = true;
 		
 		return new MatchingEntry(postingList, 
-				entryStats, qtp.weight, wmodels, required, qtp.tag);
+				entryStats, qtp.weight, wmodels, required, qtp.tags);
 	}
 
 	public String getField() {

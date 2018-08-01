@@ -38,9 +38,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
@@ -435,7 +437,8 @@ public class FatUtils {
 				final int[] docids 		= new int[0];
 				final double[] scores 		= new double[0];
 				final short[] occurrences = new short[0];
-				final String[] tags = new String[0];
+				@SuppressWarnings("unchecked")
+				final Set<String>[] tags = new Set[0];
 				final WritablePosting[][] postings = new WritablePosting[0][];				
 				frs.setScores(scores);
 				frs.setDocids(docids);
@@ -560,6 +563,180 @@ public class FatUtils {
 			frs.setDocids(docids);
 			frs.setPostings(postings);
 			frs.setOccurrences(occurrences);
+			@SuppressWarnings("unchecked")
+			Set<String>[] finalTags = new Set[tags.length];
+			for(int ti=0;ti<tags.length;ti++)
+			{
+				finalTags[ti] = new HashSet<String>();
+				finalTags[ti].add(tags[ti]);
+			}
+			frs.setTags(finalTags);
+		} catch (IOException ioe) {
+			throw new WrappedIOException("IOException (reset to start perhaps?), was reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount + " docid="+lastDocid, ioe);
+		} catch (Exception e) {
+			throw new WrappedIOException("Problem reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount + " docid="+lastDocid, e);
+		}
+		
+	}
+	
+	
+	protected static void readFieldsV5(FatResultSet frs, DataInput in)
+			throws IOException 
+	{
+		int i =-1;
+		int resultSize = -1;
+		int j = -1;
+		int termCount = -1;
+		int lastDocid = -1;
+		
+		try{
+			CollectionStatistics collStats = new CollectionStatistics();
+			collStats.readFields(in);
+			frs.setCollectionStatistics(collStats);
+			
+			final int fieldCount = collStats.getNumberOfFields();
+						
+			
+			//read number of query terms
+			termCount = in.readInt();
+			if (termCount == 0)
+			{
+				frs.setResultSize(0);
+				final int[] docids 		= new int[0];
+				final double[] scores 		= new double[0];
+				final short[] occurrences = new short[0];
+				@SuppressWarnings("unchecked")
+				final Set<String>[] tags = new Set[0];
+				final WritablePosting[][] postings = new WritablePosting[0][];				
+				frs.setScores(scores);
+				frs.setDocids(docids);
+				frs.setPostings(postings);
+				frs.setOccurrences(occurrences);
+				frs.setTags(tags);
+				frs.setEntryStatistics(new EntryStatistics[0]);
+                frs.setKeyFrequencies(new double[0]);
+                frs.setQueryTerms(new String[0]);
+				
+				System.err.println("No found terms for this query");
+				return;
+			}
+			
+			
+			@SuppressWarnings("unchecked")
+			Class<? extends WritablePosting> postingClass[] = new Class[termCount];			
+			
+			//read terms and entry statistics
+			final EntryStatistics[] entryStats = new EntryStatistics[termCount];
+			final String[] queryTerms = new String[termCount];
+			@SuppressWarnings("unchecked")
+			final Set<String>[] tags = new Set[termCount];
+			final double[] keyFrequencies = new double[termCount];
+			final boolean[] fields = new boolean[termCount];
+			final boolean[] blocks = new boolean[termCount];
+			for(j=0;j<termCount;j++)
+			{
+				queryTerms[j] = in.readUTF();
+				if (in.readBoolean())
+				{
+					int tagCount = in.readInt();
+					tags[j] = new HashSet<String>();
+					for(int ti=0;ti<tagCount;ti++)
+						tags[j].add(in.readUTF());
+				}
+				fields[j] = in.readBoolean();
+				blocks[j] = in.readBoolean();
+				boolean anyPostings = in.readBoolean();
+				if (anyPostings)
+					postingClass[j] = ApplicationSetup.getClass(in.readUTF()).asSubclass(WritablePosting.class);
+				Class<? extends EntryStatistics> statisticsClass = ApplicationSetup.getClass(in.readUTF()).asSubclass(EntryStatistics.class);
+				keyFrequencies[j] = in.readDouble();
+				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
+					" es="+statisticsClass.getSimpleName() /*+
+					" es.isAssignableFrom(FieldEntryStatistics.class)="+statisticsClass.isAssignableFrom(FieldEntryStatistics.class) + 
+					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass)*/);
+				EntryStatistics le = fields[j] || /* HACK */ FieldEntryStatistics.class.isAssignableFrom(statisticsClass)
+					? statisticsClass.getConstructor(Integer.TYPE).newInstance(fieldCount)
+					: statisticsClass.newInstance();
+				((Writable)le).readFields(in);
+				if (queryTerms[j].contains("#uw") || queryTerms[j].contains("#1"))
+				{
+					if (queryTerms[j].contains("#uw12")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(12);
+                    }else if (queryTerms[j].contains("#uw8")){
+						le = new SimpleNgramEntryStatistics(le);
+						((SimpleNgramEntryStatistics)le).setWindowSize(8);
+					}else if (queryTerms[j].contains("#uw4")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(8);
+                    }else if (queryTerms[j].contains("#1")){
+                        le = new SimpleNgramEntryStatistics(le);
+                        ((SimpleNgramEntryStatistics)le).setWindowSize(2);
+                    }
+				}
+				entryStats[j] = le;
+			}
+			
+			frs.setEntryStatistics(entryStats);
+			frs.setKeyFrequencies(keyFrequencies);
+			frs.setQueryTerms(queryTerms);
+			
+			
+			//read the number of documents
+			resultSize = in.readInt();
+			//size the arrays
+			final int[] docids 		= new int[resultSize];
+			final double[] scores 		= new double[resultSize];
+			final short[] occurrences = new short[resultSize];
+			final WritablePosting[][] postings = new WritablePosting[resultSize][];
+			
+			//for each document
+			for (i = 0; i < resultSize; i++)
+			{
+				//read: docid, scores, occurrences
+				lastDocid = docids[i] = in.readInt();
+				scores[i] = in.readDouble();
+				occurrences[i] = in.readShort();
+				final int docLen = in.readInt();
+				final int[] fieldLens;
+				if (fieldCount > 0)
+				{
+					fieldLens = new int[fieldCount];
+					for(int fi=0;fi<fieldCount;fi++)
+						fieldLens[fi] = in.readInt();
+					//System.err.println("docid="+docids[i] + " lf=" + org.terrier.utility.ArrayUtils.join(fieldLens, ","));
+				}
+				else
+				{
+					fieldLens = null;
+				}
+				
+				postings[i] = new WritablePosting[termCount];
+				
+				//boolean anyPostings = false;
+				
+				//for each term
+				for (j = 0; j < termCount; j++) {
+					//read the id of the posting, and use Posting.read(in);
+					boolean hasPosting = in.readBoolean();
+					if (! hasPosting)
+						continue;
+					//anyPostings = true;
+					WritablePosting p = postingClass[j].newInstance();
+					p.readFields(in);
+					//check that the posting we read is assigned to the docid
+					assert docids[i] == p.getId() : "rank "+i+" of "+resultSize+", term "+j+" of "+termCount+" expected docid="+docids[i]+" found "+p.getId();
+					
+					p.setDocumentLength(docLen);
+					if (fields[j])
+						((FieldPosting)p).setFieldLengths(fieldLens);
+					postings[i][j] = p;
+				}
+			}
+			frs.setScores(scores);
+			frs.setDocids(docids);
+			frs.setPostings(postings);
+			frs.setOccurrences(occurrences);
 			frs.setTags(tags);
 		} catch (IOException ioe) {
 			throw new WrappedIOException("IOException (reset to start perhaps?), was reading document at rank " + i + " of " + resultSize + ", term " + j + " of " + termCount + " docid="+lastDocid, ioe);
@@ -572,7 +749,7 @@ public class FatUtils {
 	
 	public static void write(FatResultSet frs, DataOutput out) throws IOException
 	{
-		writeV4(frs,out);
+		writeV5(frs,out);
 	}
 	
 	public static void writeV3(FatResultSet frs, DataOutput out) throws IOException
@@ -674,7 +851,7 @@ public class FatUtils {
 		logger.info(docids.length +" documents, "+queryTermCount+" terms, mean postings per document: " + ((double)notNullPostings/(double)docids.length) );
 	}
 	
-	public static void writeV4(FatResultSet frs, DataOutput out) throws IOException
+	public static void writeV5(FatResultSet frs, DataOutput out) throws IOException
 	{
 		if (DEBUG)
 			out = new DebuggingDataOutput(out);
@@ -683,7 +860,7 @@ public class FatUtils {
 		final CollectionStatistics collStats = frs.getCollectionStatistics();
 		final EntryStatistics[] entryStats = frs.getEntryStatistics();
 		final String[] queryTerms = frs.getQueryTerms();
-		final String[] tags = frs.getTags();
+		final Set<String>[] tags = frs.getTags();
 		final double[] keyFrequency = frs.getKeyFrequencies();
 		final WritablePosting[][] postings = frs.getPostings();
 		final int[] docids = frs.getDocids();
@@ -710,7 +887,11 @@ public class FatUtils {
 			out.writeUTF(queryTerms[i]);
 			out.writeBoolean(tags[i] != null);
 			if (tags[i] != null)
-				out.writeUTF(tags[i]);
+			{
+				out.writeInt(tags[i].size());
+				for(String t : tags[i])
+					out.writeUTF(t);
+			}
 			WritablePosting firstPostingForTerm = firstPosting(postings, i);
 			fields[i] = firstPostingForTerm instanceof FieldPosting;
 			blocks[i] = firstPostingForTerm instanceof BlockPosting;

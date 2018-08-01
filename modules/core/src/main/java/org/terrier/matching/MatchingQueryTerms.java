@@ -95,7 +95,7 @@ implements Serializable,Cloneable
 		/** The term score modifiers associated with a particular query term.*/
 		public List<WeightingModel> termModels = new ArrayList<WeightingModel>();
 		
-		public String tag = null;
+		public Set<String> tags = new HashSet<>();
 		
 		public QueryTermProperties(int _index) {
 			this.index = _index;
@@ -183,8 +183,8 @@ implements Serializable,Cloneable
 			return weight;
 		}
 
-		public String getTag() {
-			return tag;
+		public Set<String> getTags() {
+			return tags;
 		}
 		
 		public Boolean getRequired() {
@@ -196,7 +196,7 @@ implements Serializable,Cloneable
 		}
 
 		public void setTag(String tag) {
-			this.tag = tag;
+			this.tags.add(tag);
 		}
 		
 		public void setRequired(boolean b) {
@@ -209,6 +209,8 @@ implements Serializable,Cloneable
 			QueryTermProperties newO = new QueryTermProperties(index, weight, stats);
 			for (WeightingModel model : termModels)
 				newO.termModels.add((WeightingModel)(model.clone()));
+			newO.tags = new HashSet<>(tags);
+			newO.required = required;
 			return newO;
 		}
 
@@ -227,7 +229,7 @@ implements Serializable,Cloneable
 		@Override
 		public String toString()
 		{
-			return "{ req=" + this.required + ", w=" + this.weight + ", stats=" + this.stats + ", models=" + this.termModels.toString() + " tag="+tag+"}";
+			return "{ req=" + this.required + ", w=" + this.weight + ", stats=" + this.stats + ", models=" + this.termModels.toString() + " tags="+tags+"}";
 		}
 
 		
@@ -563,18 +565,18 @@ implements Serializable,Cloneable
 		return l.toArray(new String[l.size()]);
 	}
 	
-	public Set<String> getMatchingTags()
-	{
-		return matchOnTags;
-	}
+//	public Set<String> getMatchingTags()
+//	{
+//		return matchOnTags;
+//	}
 	
-	Set<String> matchOnTags = new HashSet<String>();
-	public List<MatchingTerm> getMatchingTermsMatchingTags()
+	//Set<String> matchOnTags = new HashSet<String>();
+	public List<MatchingTerm> getMatchingTerms(String tag)
 	{
-		if (matchOnTags.size() == 0)
-			return this;
+//		if (matchOnTags.size() == 0)
+//			return this;
 		return this.stream()
-				.filter(kv -> matchOnTags.contains( kv.getValue().getTag()) )
+				.filter(kv -> kv.getValue().getTags().contains(tag) )
 				.collect(Collectors.toList());
 	}
 	
@@ -604,7 +606,7 @@ implements Serializable,Cloneable
 
 	/** Performs a deep clone of this object, and all objects it contains. This allows a MQT to be copied,
 	  * and changed without affecting the original object. */
-	public Object clone()
+	public MatchingQueryTerms clone()
 	{
 		MatchingQueryTerms newMQT = new MatchingQueryTerms(this.queryId);
 		
@@ -621,6 +623,10 @@ implements Serializable,Cloneable
 		//clone query
 		if (this.query != null)
 			newMQT.query = (Query)this.query.clone();
+		if (this.defaultWeightingModel != null)
+			newMQT.defaultWeightingModel = this.defaultWeightingModel.clone();
+		//newMQT.matchOnTags = new HashSet<>(this.matchOnTags);
+		newMQT.queryId = this.queryId;
 		return newMQT;
 	}
 	

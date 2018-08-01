@@ -34,6 +34,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import org.apache.hadoop.io.Writable;
 import org.terrier.matching.FatQueryResultSet;
@@ -57,7 +58,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 	protected WritablePosting[][] postings;
 	String[] queryTerms;
 	double[] keyFrequency;
-	String[] tags;
+	Set<String>[] tags;
 	EntryStatistics[] entryStats;
 
 
@@ -65,7 +66,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 		super();
 	}	
 	
-	public FatCandidateResultSet(Queue<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, String[] tags) {
+	public FatCandidateResultSet(Queue<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, Set<String>[] tags) {
 		super(q);
 		postings = new WritablePosting[q.size()][];
 		this.queryTerms = queryTerms;
@@ -81,6 +82,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public FatCandidateResultSet(List<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency) {
 		super(q);
 		postings = new WritablePosting[q.size()][];
@@ -88,7 +90,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 		this.entryStats = entryStats;
 		this.keyFrequency = keyFrequency;
 		this.collStats = cs;
-		this.tags = new String[queryTerms.length];
+		this.tags = new Set[queryTerms.length];
 		int i=0;
 		for (CandidateResult cc: q)
 		{
@@ -216,13 +218,13 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 	}
 
 	@Override
-	public String[] getTags() {
+	public Set<String>[] getTags() {
 		return tags;
 	}
 
 	@Override
-	public void setTags(String[] ks) {
-		this.tags = ks;
+	public void setTags(Set<String>[] tags) {
+		this.tags = tags;
 	}
 	
 	

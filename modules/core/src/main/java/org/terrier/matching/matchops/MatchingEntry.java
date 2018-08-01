@@ -25,6 +25,8 @@
  */
 package org.terrier.matching.matchops;
 
+import java.util.Set;
+
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.IterablePosting;
@@ -40,17 +42,17 @@ public class MatchingEntry {
 	double keyFreq;
 	WeightingModel[] wmodels;
 	boolean required;
-	String tag;
+	Set<String> tags;
 	
 	public MatchingEntry(IterablePosting postingIterator,
-			EntryStatistics entryStats, double keyFreq, WeightingModel[] wmodels, boolean required, String tag) {
+			EntryStatistics entryStats, double keyFreq, WeightingModel[] wmodels, boolean required, Set<String> tags) {
 		super();
 		this.postingIterator = postingIterator;
 		this.entryStats = entryStats;
 		this.keyFreq = keyFreq;
 		this.wmodels = wmodels;
 		this.required = required;
-		this.tag = tag;
+		this.tags = tags;
 	}
 
 	public IterablePosting getPostingIterator() {
@@ -73,8 +75,8 @@ public class MatchingEntry {
 		return required;
 	}
 	
-	public String getTag() {
-		return tag;
+	public Set<String> getTags() {
+		return tags;
 	}
 	
 }

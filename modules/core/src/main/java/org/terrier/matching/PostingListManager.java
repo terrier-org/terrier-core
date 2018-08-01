@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,16 +227,16 @@ public class PostingListManager implements Closeable
 	}
 	
 	/** posting lists for each term */
-	protected final List<IterablePosting> termPostings = new ArrayList<IterablePosting>();
+	protected final List<IterablePosting> termPostings = new ArrayList<>();
 	/** weighting models for each term */
-	protected final List<WeightingModel> termModels = new ArrayList<WeightingModel>();
+	protected final List<WeightingModel> termModels = new ArrayList<>();
 	/** EntryStatistics for each term */
-	protected final List<EntryStatistics> termStatistics = new ArrayList<EntryStatistics>();
+	protected final List<EntryStatistics> termStatistics = new ArrayList<>();
 	/** String form for each term */
-	protected final List<String> termStrings = new ArrayList<String>();
+	protected final List<String> termStrings = new ArrayList<>();
 	
 	/** String form for each term */
-	protected final List<String> termTags = new ArrayList<String>();
+	protected final List<Set<String>> termTags = new ArrayList<>();
 	
 	
 	protected final TIntArrayList matchOnTerms = new TIntArrayList();
@@ -277,7 +278,7 @@ public class PostingListManager implements Closeable
 	 */
 	public PostingListManager(Index _index, CollectionStatistics _cs, MatchingQueryTerms mqt) throws IOException 
 	{
-		this(_index, _cs, mqt, true);
+		this(_index, _cs, mqt, true, BaseMatching.BASE_MATCHING_TAG, BaseMatching.NONMATCHING_TAG);
 	}
 	
 	/** Create a posting list manager for the given index and statistics, and populated using the specified
@@ -287,7 +288,7 @@ public class PostingListManager implements Closeable
 	 * @param mqt - MatchingQueryTerms object calculated for the query
 	 * @param splitSynonyms - allows the splitting of synonym groups (i.e. singleTermAlternatives) to be disabled
 	 */
-	public PostingListManager(Index _index, CollectionStatistics _cs, MatchingQueryTerms mqt, boolean splitSynonyms) throws IOException
+	public PostingListManager(Index _index, CollectionStatistics _cs, MatchingQueryTerms mqt, boolean splitSynonyms, String scoringTag, String additionalTag) throws IOException
 	{
 		this(_index, _cs);
 		
@@ -312,7 +313,7 @@ public class PostingListManager implements Closeable
 				termPostings.add(me.getPostingIterator());
 				termStatistics.add(me.getEntryStats());
 				termModels.add(WeightingModelMultiProxy.getModel(me.getWmodels()));
-				termTags.add(me.getTag());
+				termTags.add(me.getTags());
 				if (me.getRequired())
 				{
 					requiredBitMask |= 1 << termIndex;
@@ -322,11 +323,11 @@ public class PostingListManager implements Closeable
 							+ term.toString() + "), which was past the maximum supported 64");
 					}
 				}
-				if (mqt.matchOnTags.size() == 0 || mqt.matchOnTags.contains( me.getTag() ) )
+				if (scoringTag == null || me.getTags().size() == 0 || me.getTags().contains(scoringTag))
 				{
 					matchOnTerms.add(termPostings.size() -1);
 				}
-				else
+				else if (me.getTags().size() > 1 && me.getTags().contains(additionalTag))
 				{
 					nonMatchOnTerms.add(termPostings.size() -1);
 				}
@@ -339,13 +340,13 @@ public class PostingListManager implements Closeable
 				termStatistics.add(entry.getValue().stats != null ? entry.getValue().stats : le);	
 				termKeyFreqs.add(entry.getValue().weight);
 				termStrings.add(term.toString());
-				termTags.add(entry.getValue().getTag());
+				termTags.add(entry.getValue().getTags());
 				termModels.add(WeightingModelMultiProxy.getModel(new WeightingModel[0]));
-				if (mqt.matchOnTags.size() == 0 || mqt.matchOnTags.contains( entry.getValue().getTag() ))
+				if (scoringTag == null || entry.getValue().getTags().size() == 0 || entry.getValue().getTags().contains(scoringTag))
 				{
 					matchOnTerms.add(termPostings.size() -1);
 				}
-				else
+				else if (entry.getValue().getTags().size() > 1 && entry.getValue().getTags().contains(additionalTag))
 				{
 					nonMatchOnTerms.add(termPostings.size() -1);
 				}
@@ -467,7 +468,7 @@ public class PostingListManager implements Closeable
 		return termStrings.get(i);
 	}
 	
-	public String getTag(int i) {
+	public Set<String> getTags(int i) {
 		return termTags.get(i);
 	}
 	

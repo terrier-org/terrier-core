@@ -99,12 +99,12 @@ public class TestMatchOpQLParser {
 		assertTrue(rtr.get(2).getKey() instanceof PhraseOp);
 		assertEquals("#1(a b)", rtr.get(2).getKey().toString());
 		assertEquals(0.1, rtr.get(2).getValue().getWeight(), 0d);
-		assertEquals("prox1", rtr.get(2).getValue().getTag());
+		assertTrue(rtr.get(2).getValue().getTags().contains("prox1"));
 		
 		assertTrue(rtr.get(3).getKey() instanceof UnorderedWindowOp);
 		assertEquals("#uw8(a b)", rtr.get(3).getKey().toString());
 		assertEquals(0.05, rtr.get(3).getValue().getWeight(), 0d);
-		assertEquals("prox8", rtr.get(3).getValue().getTag());
+		assertTrue(rtr.get(3).getValue().getTags().contains("prox8"));
 		
 	}
 	
@@ -161,11 +161,11 @@ public class TestMatchOpQLParser {
 		
 		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
 		assertEquals("a", rtr.get(0).getKey().toString());
-		assertEquals("org", rtr.get(0).getValue().tag);
+		assertTrue(rtr.get(1).getValue().getTags().contains("org"));
 		
 		assertTrue(rtr.get(1).getKey() instanceof SingleTermOp);
 		assertEquals("b", rtr.get(1).getKey().toString());
-		assertEquals("org", rtr.get(1).getValue().tag);
+		assertTrue(rtr.get(1).getValue().getTags().contains("org"));
 	}
 	
 	@Test public void testMultiTermsTwoTags() throws Exception {		
@@ -175,19 +175,19 @@ public class TestMatchOpQLParser {
 		
 		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
 		assertEquals("a", rtr.get(0).getKey().toString());
-		assertEquals("org", rtr.get(0).getValue().tag);
+		assertTrue(rtr.get(0).getValue().getTags().contains("org"));
 		
 		assertTrue(rtr.get(1).getKey() instanceof SingleTermOp);
 		assertEquals("b", rtr.get(1).getKey().toString());
-		assertEquals("org", rtr.get(1).getValue().tag);
+		assertTrue(rtr.get(1).getValue().getTags().contains("org"));
 		
 		assertTrue(rtr.get(2).getKey() instanceof SingleTermOp);
 		assertEquals("c", rtr.get(2).getKey().toString());
-		assertEquals("per", rtr.get(2).getValue().tag);
+		assertTrue(rtr.get(2).getValue().getTags().contains("per"));
 		
 		assertTrue(rtr.get(3).getKey() instanceof SingleTermOp);
 		assertEquals("d", rtr.get(3).getKey().toString());
-		assertEquals("per", rtr.get(3).getValue().tag);
+		assertTrue(rtr.get(3).getValue().getTags().contains("per"));
 	}
 
 	@Test public void testOneSimpleTerms() throws Exception {		

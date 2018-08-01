@@ -135,7 +135,7 @@ public class DateRangeOp extends Operator {
 		boolean required = false;
 		if (qtp.required != null && qtp.required)
 			required = true;
-		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required, qtp.tag);
+		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required, qtp.tags);
 	}
 
 }

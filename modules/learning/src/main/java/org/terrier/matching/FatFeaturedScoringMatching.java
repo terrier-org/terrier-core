@@ -26,33 +26,16 @@
 
 package org.terrier.matching;
 
-import gnu.trove.TIntIntHashMap;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.terrier.learning.FeaturedQueryResultSet;
 import org.terrier.learning.FeaturedResultSet;
-import org.terrier.matching.dsms.DocumentScoreModifier;
-import org.terrier.matching.matchops.UnorderedWindowOp;
 import org.terrier.matching.models.WeightingModel;
-import org.terrier.matching.models.WeightingModelFactory;
-import org.terrier.sorting.MultiSort;
-import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.Index;
 import org.terrier.structures.postings.BlockFieldPostingImpl;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.WritablePosting;
-import org.terrier.utility.ApplicationSetup;
-import org.terrier.utility.ArrayUtils;
-import org.terrier.utility.Files;
 
 /** Makes a {@link FeaturedResultSet} by applying a list of features. The input from a parent matching class is a {@link FatResultSet}. 
  * <p>
@@ -81,168 +64,22 @@ import org.terrier.utility.Files;
  * @since 4.0
  * @see "About Learning Models with Multiple Query Dependent Features. Craig Macdonald, Rodrygo L.T. Santos, Iadh Ounis and Ben He. Transactions on Information Systems. 31(3). 2013. <a href="http://www.dcs.gla.ac.uk/~craigm/publications/macdonald13multquerydf.pdf">[PDF]</a>"
  */
-public class FatFeaturedScoringMatching implements Matching {
+public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 
-	static Logger logger = LoggerFactory.getLogger(FatFeaturedScoringMatching.class);
-	
-	final Matching parent;
-	
-	FatScoringMatching[] wModels;
-	String[] wModelNames;
-	DocumentScoreModifier[] dsms;
-	String[] dsmNames;	
-	WeightingModel[] qiFeatures;
-	String[] qiFeatureNames;
-	boolean sampleFeature = false;
-	
-	static String[] getModelNames() throws Exception
-	{
-		String[] modelNames = 
-			ArrayUtils.parseDelimitedString(
-					ApplicationSetup.getProperty("fat.featured.scoring.matching.features", ""), ";");
-		if (modelNames.length == 1 && modelNames[0].equals("FILE"))
-		{
-			String filename = ApplicationSetup.getProperty("fat.featured.scoring.matching.features.file", null);
-			if (filename == null)
-				throw new IllegalArgumentException("For "+FatFeaturedScoringMatching.class+", property fat.featured.scoring.matching.features.file is not set");
-			filename = ApplicationSetup.makeAbsolute(filename, ApplicationSetup.TERRIER_ETC);
-			String line = null;
-			final BufferedReader br = Files.openFileReader(filename);
-			final List<String> models = new ArrayList<String>();
-			while((line = br.readLine()) != null)
-			{
-				//ignore lines starting with comments
-				if (line.startsWith("#"))
-					continue;
-				//remove trailing comments
-				line = line.replaceAll("#.+$", "");
-				//TREC-445: Empty line in feature definition file causes exception
-				if (line.length() == 0) 
-					continue;
-				models.add(line.trim());
-			}
-			br.close();
-			modelNames = models.toArray(new String[models.size()]);
-		}
-		return modelNames;
-	}
-	
 	public FatFeaturedScoringMatching(Index _index, Matching _parent, String[] _featureNames) throws Exception
 	{
-		this.parent = _parent;		
-		loadFeatures(_featureNames);	
+		super(_index, _parent, _featureNames, FatScoringMatching.class);
 	}
 	
 	public FatFeaturedScoringMatching(Index _index, Matching _parent) throws Exception
 	{
-		this(_index, _parent, getModelNames());
+		super(_index, _parent, FatScoringMatching.class);
 	}
 	
-	protected void loadFeatures(final String[] featureNames) throws Exception 
-	{ 		
-		final int featureCount = featureNames.length;
-		
-		final List<FatScoringMatching> _childrenWmodels = new ArrayList<FatScoringMatching>();
-		final List<String> _childrenWmodelNames = new ArrayList<String>();
-		
-		final List<WeightingModel> _childrenQiModels = new ArrayList<WeightingModel>();
-		final List<String> _childrenQiNames = new ArrayList<String>();
-				
-		final List<DocumentScoreModifier> _childrenDsms = new ArrayList<DocumentScoreModifier>();
-		final List<String> _childrenDsmNames = new ArrayList<String>();
-		
-		for(int i=0;i<featureCount;i++)
-		{
-			if (featureNames[i].startsWith("#"))
-				continue;
-			if (featureNames[i].equals("SAMPLE"))
-				sampleFeature = true;
-			if (featureNames[i].startsWith("DSM:"))
-			{
-				String dsmName = featureNames[i].replaceFirst("DSM:", "");
-				if (dsmName.contains("%"))
-				{
-					String[] parts = dsmName.split("%", 2);
-					dsmName = parts[0];
-					String[] props = parts[1].split(" ");
-					for(String kv: props)
-					{
-						String[] part2 = kv.split("=");
-						ApplicationSetup.setProperty(part2[0], part2[1]);
-					}
-				}
-				if (! dsmName.contains("."))
-					dsmName = DocumentScoreModifier.class.getPackage().getName() + '.' + dsmName;
-				final DocumentScoreModifier dsm = ApplicationSetup.getClass(dsmName).asSubclass(DocumentScoreModifier.class).newInstance();
-				_childrenDsms.add(dsm);
-				_childrenDsmNames.add(featureNames[i]);
-			}
-			else if (featureNames[i].startsWith("QI:"))
-			{
-				final String qiName = featureNames[i].replaceFirst("QI:", "");
-				final WeightingModel wm = WeightingModelFactory.newInstance(qiName);
-				_childrenQiModels.add(wm);
-				_childrenQiNames.add(featureNames[i]);
-			}			
-			else//assume WMODEL: WMODELp: WMODELt:
-			{
-				Predicate<Pair<String,String>> filter = null;
-				final String[] parts = featureNames[i].split(":", 2);
-				final String catchName = parts[0];
-				final String wModelName = parts[1];
-				if (catchName.startsWith("WMODEL$"))	
-				{
-					String requiredTag = catchName.split("\\$",2)[1];
-					filter = getTagPredictate(requiredTag);
-				}
-				if (catchName.equals("WMODELp"))
-					filter = filterProx;
-				if (catchName.equals("WMODELt"))
-					filter = filterTerm;
-				if (catchName.equals("WMODELpuw"))
-					filter = filterUW;
-				if (catchName.equals("WMODELp1"))
-					filter = filterOW;
-				
-				WeightingModel wm = WeightingModelFactory.newInstance(wModelName);
-				FatScoringMatching fsm = new FatScoringMatching(null, parent, wm, filter);
-				fsm.sort = false;
-				_childrenWmodels.add(fsm);
-				_childrenWmodelNames.add(featureNames[i]);
-			}
-								
-		}		
-		dsms = _childrenDsms.toArray(new DocumentScoreModifier[0]);
-		dsmNames = _childrenDsmNames.toArray(new String[0]);
-		
-		qiFeatures = _childrenQiModels.toArray(new WeightingModel[0]);
-		qiFeatureNames = _childrenQiNames.toArray(new String[0]);
-		
-		wModels = _childrenWmodels.toArray(new FatScoringMatching[0]);
-		wModelNames = _childrenWmodelNames.toArray(new String[0]);
-		
-	}
-	
-	public static final Predicate<Pair<String,String>> getTagPredictate(final String matches)
-	{
-		return queryTerm -> queryTerm.getRight() != null && matches.equals(queryTerm.getRight());
-	}
-	
-	public static final Predicate<Pair<String,String>> filterUW = queryTerm -> queryTerm.getLeft().contains(UnorderedWindowOp.STRING_PREFIX);
-	public static final Predicate<Pair<String,String>> filterOW = queryTerm -> queryTerm.getLeft().matches("^.*#\\d+.*$");
-	public static final Predicate<Pair<String,String>> filterProx = filterUW.or(filterOW);
-	public static final Predicate<Pair<String,String>> filterTerm = filterProx.negate();
-	
-	
-	@Override
-	public String getInfo() {
-		return this.getClass().getSimpleName() +
-			"["+ArrayUtils.join(wModelNames, ','+ArrayUtils.join(dsmNames, ','))+"]";
-	}
-
-	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, final FatResultSet fat)
+	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, final ResultSet res)
 		throws IOException
 	{
+		final FatResultSet fat = (FatResultSet)res;
 		final int numResults = fat.getResultSize();
 		final FeaturedQueryResultSet rtr = new FeaturedQueryResultSet(fat);
 		int featureCount = 0;
@@ -294,52 +131,25 @@ public class FatFeaturedScoringMatching implements Matching {
 		//for each DSM feature
 		if (dsms.length > 0)
 		{
-			TIntIntHashMap docidMap = new TIntIntHashMap(numResults);
-			int position = 0;
-			for(int docid : fat.getDocids())
-			{
-				docidMap.put(docid, position++);
-			}
 			final Index fatIndex = FatUtils.makeIndex(fat);
-			for(int fid=0;fid<dsms.length;fid++)
+			final MatchingQueryTerms mqtLocal = new MatchingQueryTerms(queryNumber);
+			mqtLocal.setDefaultTermWeightingModel(queryTerms.defaultWeightingModel);
+			int ti = 0;
+			for(String t : fat.getQueryTerms())
 			{
-				final double[] scores = new double[numResults];
-				final int[] docids = new int[numResults];
-				final short[] occurrences = new short[numResults];
-				System.arraycopy(fat.getDocids(), 0, docids, 0, numResults);
-				System.arraycopy(fat.getOccurrences(), 0, occurrences, 0, numResults);
-				
-				// Sort by docid so that term postings we have a recoverable score ordering
-				MultiSort.ascendingHeapSort(docids, scores, occurrences, docids.length);
-				
-				final ResultSet thinChild = new QueryResultSet(docids, scores, occurrences);
-				final MatchingQueryTerms mqtLocal = new MatchingQueryTerms(queryNumber);
-				mqtLocal.setDefaultTermWeightingModel(queryTerms.defaultWeightingModel);
-				int ti = 0;
-				for(String t : fat.getQueryTerms())
-				{
-					mqtLocal.setTermProperty(t, fat.getKeyFrequencies()[ti]);
-					mqtLocal.setTermProperty(t, fat.getEntryStatistics()[ti]);
-					ti++;
-				}
-				//apply the dsm on the temporary resultset
-				dsms[fid].modifyScores(fatIndex, mqtLocal, thinChild);						
-				
-				//map scores back into original ordering
-				double[] scoresFinal = new double[numResults];
-				for(int i=0;i<numResults;i++)
-				{
-					scoresFinal[ docidMap.get(docids[i])] = scores[i];
-				}
-				//add the feature, regardless of whether it has scores or not			
-				rtr.putFeatureScores(dsmNames[fid], scoresFinal);
-				featureCount++;
+				mqtLocal.setTermProperty(t, fat.getKeyFrequencies()[ti]);
+				mqtLocal.setTermProperty(t, fat.getEntryStatistics()[ti]);
+				ti++;
 			}
+			featureCount += applyDSMs(fatIndex, queryNumber, mqtLocal, numResults, fat.getDocids(), fat.getOccurrences(), rtr);
 		}
+		
+		//labels
 		final String[] labels = new String[rtr.getResultSize()];
 		Arrays.fill(labels, "-1");
 		rtr.setLabels(labels);
 		
+		//metadata
 		if (fat.hasMetaItems("docno"))
 		{
 			rtr.addMetaItems("docno", fat.getMetaItems("docno"));
@@ -349,6 +159,8 @@ public class FatFeaturedScoringMatching implements Matching {
 		logger.info("Finished decorating " + queryNumber + " with " + featureCount + " features");
 		return rtr;
 	}
+	
+	
 	
 	@Override
 	public ResultSet match(String queryNumber, MatchingQueryTerms queryTerms)
@@ -361,11 +173,6 @@ public class FatFeaturedScoringMatching implements Matching {
 			return new FeaturedQueryResultSet(0);
 		}
 		return doMatch(queryNumber, queryTerms, fat);
-	}
-
-	@Override
-	public void setCollectionStatistics(CollectionStatistics cs) {
-		throw new UnsupportedOperationException();
 	}
 
 }

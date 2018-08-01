@@ -32,6 +32,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
@@ -40,6 +42,7 @@ import org.terrier.learning.FeaturedResultSet;
 import org.terrier.matching.FatFeaturedScoringMatching;
 import org.terrier.matching.FatResultSet;
 import org.terrier.matching.FatUtils;
+import org.terrier.matching.FeaturedScoringMatching;
 import org.terrier.matching.Matching;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.ResultSet;
@@ -200,14 +203,14 @@ public class TestFatFeaturedScoringMatching extends ApplicationSetupBasedTest {
 	
 	@Test public void testFilters()
 	{
-		String NS = null;
-		assertTrue(FatFeaturedScoringMatching.filterTerm.test(Pair.of("term1", NS)));
-		assertFalse(FatFeaturedScoringMatching.filterTerm.test(Pair.of("#1(term1 term2)", NS)));
-		assertFalse(FatFeaturedScoringMatching.filterTerm.test(Pair.of("#uw8(term1 term2)", NS)));
+		Set<String> NS = new HashSet<>();
+		assertTrue(FeaturedScoringMatching.filterTerm.test(Pair.of("term1", NS)));
+		assertFalse(FeaturedScoringMatching.filterTerm.test(Pair.of("#1(term1 term2)", NS)));
+		assertFalse(FeaturedScoringMatching.filterTerm.test(Pair.of("#uw8(term1 term2)", NS)));
 		
-		assertFalse(FatFeaturedScoringMatching.filterProx.test(Pair.of("term1", NS)));
-		assertTrue(FatFeaturedScoringMatching.filterProx.test(Pair.of("#1(term1 term2)", NS)));
-		assertTrue(FatFeaturedScoringMatching.filterProx.test(Pair.of("#uw8(term1 term2)", NS)));
+		assertFalse(FeaturedScoringMatching.filterProx.test(Pair.of("term1", NS)));
+		assertTrue(FeaturedScoringMatching.filterProx.test(Pair.of("#1(term1 term2)", NS)));
+		assertTrue(FeaturedScoringMatching.filterProx.test(Pair.of("#uw8(term1 term2)", NS)));
 		
 		
 		

@@ -26,8 +26,9 @@
 
 package org.terrier.matching;
 
+import java.util.Set;
+
 import org.apache.hadoop.io.Writable;
-import org.terrier.matching.ResultSet;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.WritablePosting;
@@ -52,8 +53,8 @@ public interface FatResultSet extends ResultSet, Writable {
 	void setKeyFrequencies(double[] ks);
 	
 	/** Return the tags of each of the query terms in the query */	
-	public String[] getTags();
-	void setTags(String[] ks);
+	public Set<String>[] getTags();
+	void setTags(Set<String>[] ks);
 	
 	/** Return the EntryStatistics of each of the query terms in the query */
 	public EntryStatistics[] getEntryStatistics();	
