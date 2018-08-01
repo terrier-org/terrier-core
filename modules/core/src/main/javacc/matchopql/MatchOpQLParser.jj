@@ -11,7 +11,7 @@ package org.terrier.matching.matchops;
 
 import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
-
+import org.terrier.matching.models.WeightingModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,13 +94,18 @@ TOKEN :
    |  <PREFIX: "prefix">
    |  <BASE64: "base64">
    |  <OPEN_PAREN: "("> : DEFAULT
-   | <COLON : ":">
-   | <EQUALS : "=">
-   | <FLOAT : (["0"-"9"])+"."(["0"-"9"])* >
-   | <INT : (["0"-"9"])+ >
+   |  <COLON : ":"> : WithinCombineKV
+//   | <EQUALS : "=">
+//   | <FLOAT : (["0"-"9"])+"."(["0"-"9"])* >
+   |  <INT : (["0"-"9"])+ >
 }
 
-
+<WithinCombineKV> TOKEN : {
+ 	<WORD_OR_INT_OR_FLOAT : (["A"-"Z","a"-"z","0"-"9", "."])+ > 
+ 	| <COLON_KV : ":">
+ 	| <EQUALS : "=">
+ 	| <OPEN_PAREN_KV: "("> : DEFAULT
+}
 
 List<MatchingTerm> parseOne() : 
 {
@@ -109,9 +114,11 @@ List<MatchingTerm> parseOne() :
 	List<MatchingTerm> newWords = null;
 }
 {
-	(LOOKAHEAD(<HASH> <TAG>)
-	<HASH> <TAG> newWords = tag() { rtrList.addAll(newWords); } 
-	| <HASH> <COMBINE> newWords = combine() { rtrList.addAll(newWords); } 
+	(
+	  LOOKAHEAD(<HASH> <TAG>)
+	  <HASH> <TAG> newWords = tag() { rtrList.addAll(newWords); } 
+	| LOOKAHEAD(<HASH> <COMBINE>) 
+	  <HASH> <COMBINE> newWords = combine() { rtrList.addAll(newWords); } 
 	| newWord = parse() { rtrList.add(newWord); })
 	{
 		return rtrList;
@@ -162,16 +169,24 @@ List<MatchingTerm> combine(): {
 	Token key;
 	Token value;
 	int offset = 0;
-	Map<Integer,String> kv = new HashMap<Integer,String>();
+	Map<String,String> kv = new HashMap<String,String>();
 }
 {
-	(<COLON> key = <INT> <EQUALS> value = <FLOAT> { kv.put(Integer.parseInt(key.image), value.image); } )*
-	<OPEN_PAREN>  (innerWords = parseOne() { 
+	
+	(
+		(
+			<COLON>
+			(  key = <WORD_OR_INT_OR_FLOAT> <EQUALS> value = <WORD_OR_INT_OR_FLOAT> { kv.put(key.image, value.image); } )
+			(  <COLON_KV> key = <WORD_OR_INT_OR_FLOAT> <EQUALS> value = <WORD_OR_INT_OR_FLOAT> { kv.put(key.image, value.image); } )*
+			<OPEN_PAREN_KV> 
+		) 
+	| <OPEN_PAREN>)
+	(innerWords = parseOne() { 
 		  for(MatchingTerm qt : innerWords)
 		  {
-	    		if (kv.containsKey(offset))
+	    		if (kv.containsKey(String.valueOf(offset)))
 	    		{
-	    			qt.getValue().setWeight(qt.getValue().getWeight() * Double.parseDouble(kv.get(offset)));
+	    			qt.getValue().setWeight(qt.getValue().getWeight() * Double.parseDouble(kv.get(String.valueOf(offset))));
 	    		}
 	      }
 		  offset++; 
@@ -179,6 +194,34 @@ List<MatchingTerm> combine(): {
 		  }  
 	)+  <CLOSE_PAREN>
 	{
+		//allow #combine to set the weighting model for all terms in the group
+		if (kv.containsKey("wmodel"))
+		{
+			String wmodelName = kv.get("wmodel");
+			for(MatchingTerm qt : allInnerWords)
+			{
+				qt.getValue().termModels.clear();
+			 	qt.getValue().termModels.add(WeightingModelFactory.newInstance(wmodelName));
+			}
+		}
+		//allow #combine to set the requirement for all terms in the group
+		if (kv.containsKey("req"))
+		{
+			boolean req = Boolean.parseBoolean(kv.get("req"));
+			for(MatchingTerm qt : allInnerWords)
+			{
+				qt.getValue().setRequired(req);
+			}
+		}
+		//allow #combine to set the tag for all terms in the group 
+		if (kv.containsKey("tag"))
+		{
+			String tag = kv.get("tag");
+			for(MatchingTerm qt : allInnerWords)
+			{
+				qt.getValue().setTag(tag);
+			}
+		}
     	return allInnerWords;
     }
 }
