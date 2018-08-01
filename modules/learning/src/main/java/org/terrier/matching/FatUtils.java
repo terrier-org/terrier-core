@@ -83,7 +83,7 @@ import org.terrier.utility.io.WrappedIOException;
  */
 public class FatUtils {
 
-	private static final byte VERSION = 4;
+	private static final byte VERSION = 5;
 	private static final boolean DEBUG = false;
 	
 	static Logger logger = LoggerFactory.getLogger(FatUtils.class);
@@ -109,6 +109,7 @@ public class FatUtils {
 				case 2: readFieldsV2(frs, in); break;
 				case 3: readFieldsV3(frs, in); break;
 				case 4: readFieldsV4(frs, in); break;
+				case 5: readFieldsV5(frs, in); break;
 				default: throw new IOException("Version mismatch, version " + version +" is not supported");
 			}			
 		}catch (EOFException eofe) {
