@@ -35,15 +35,18 @@ The semantic operators will be familiar to those who have used Indri or Galago:
  - `term1` -- scores documents containing this single query term.
  - `term1.title` -- scores documents containing this single query term in the title.
  - `#band(op1 op2)` -- scores a term containing both operators. The frequency of each matching document is 1.
- - `#syn(op1 op2) -- scores documents containing either op1 or op2. The frequency of each matching document is the sum of the frequencies of the constituent words.
+ - `#syn(op1 op2)` -- scores documents containing either op1 or op2. The frequency of each matching document is the sum of the frequencies of the constituent words.
+ - `#prefix(term1)` -- scores documents containing terms prefixed by term1.
  - `#uw8(op1 op2)` -- the #uwN operator scores documents op1 or op2 within unordered windows of N tokens -- in this case windows of 8 tokens in size.
  - `#1(op1 op2)` -- the #1 operator scores documents op1 or op2 appearing adjacently.
  - `#band(op1 op2)` -- the #band operator scores documents that contain both op1 and op2. 
+ - `#base64(term1)` -- allows a base64 representation of a query term to be expressed that is not directly compatible with the matchop ql.
 
 There are currently two syntactic operators:
 
-  - `#combine:k=v(op1 op2)` -- the `#combine` operator allows several operators to be grouped together. Moreover, multiple key-value pairs can be specified to control those query terms. In particular, the (query term frequency) weight of a term can be controlled by setting the index of that operator -- for example `#combine:0=2:1=1(op1 op2)` will set twice as much weight on op1 as on op2.
  - `#tag(tagName op1 op2)` -- this sets the tag attribute of these query terms.
+ - `#combine:k=v(op1 op2)` -- the `#combine` operator allows several operators to be grouped together. Moreover, multiple key-value pairs can be specified to control those query terms. In particular, the (query term frequency) weight of a term can be controlled by setting the index of that operator -- for example `#combine:0=2:1=1(op1 op2)` will set twice as much weight on op1 as on op2. The weighting model (`wmodel`) and tag (`tag`) of the query term(s) can also be set, e.g. `#combine:tag=second:wmodel=PL2(op1 op2)`
+
 
 Note that semantic operators cannot contain syntactic operators.
  
@@ -83,6 +86,7 @@ Some match operators may require a particular type of input posting. For instanc
 | #uwN | UnorderedWindowOp | AND | Positional (BlockPosting) | Frequency |
 | #1   | PhraseOp | AND | Positional (BlockPosting) | Positions |
 | #syn | SynonymOp | OR | Any | (depends on input postings) |
+| #prefix | PrefixOp | OR | Any | (depends on input postings) |
 
 On the other hand, the syntactic operators (such as `#combine` and `#tag`)  are defined solely in the matchop query parser, and hence there is no equivalent matchop class. As these cannot result in a single posting list, their positioning within a matchop is restricted. For instance, all of the following queries are **invalid**:
 

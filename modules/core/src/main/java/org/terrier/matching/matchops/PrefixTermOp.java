@@ -20,7 +20,17 @@ public class PrefixTermOp extends SynonymOp {
 
 	public static final String STRING_PREFIX = "#prefix";
 	private static final long serialVersionUID = 1L;
-	Predicate<String> predFunction = (e -> true);
+	Predicate<String> predFunction = (e->true);
+//	(e ->{ 
+//		for (Operator search : terms)
+//		{
+//			if (e.startsWith(search.toString()))
+//			{
+//				return true;
+//			}
+//		}
+//		return false; 
+//		});
 	
 	public PrefixTermOp(String searchString) {
 		super(new String[]{searchString});

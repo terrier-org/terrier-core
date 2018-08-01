@@ -21,7 +21,7 @@ public class TestMatchOpSemantic extends ApplicationSetupBasedTest {
 	@Test
 	public void testPrefix() throws Exception {
 		
-		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"aa ab"});
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"aa ab cc"});
 		Pair<EntryStatistics, IterablePosting> pair = new PrefixTermOp("a").getPostingIterator(index);
 		EntryStatistics es = pair.getLeft();
 		assertEquals(2, es.getFrequency());
