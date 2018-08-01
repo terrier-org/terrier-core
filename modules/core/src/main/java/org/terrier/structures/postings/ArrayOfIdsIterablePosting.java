@@ -28,13 +28,9 @@ package org.terrier.structures.postings;
 
 import java.io.IOException;
 
-import org.terrier.structures.postings.BasicPostingImpl;
-import org.terrier.structures.postings.IterablePostingImpl;
-import org.terrier.structures.postings.WritablePosting;
-
 /** An instance of IterablePostings that works with a passed array of ids 
  * @author Craig Macdonald */
-public class ArrayOfIdsIterablePosting extends IterablePostingImpl {
+public class ArrayOfIdsIterablePosting extends IterablePostingImpl implements Cloneable {
 
 	/** ids of each of the entries in this posting list */
 	protected int[] ids;
@@ -84,5 +80,20 @@ public class ArrayOfIdsIterablePosting extends IterablePostingImpl {
 	 * {@inheritDoc} 
 	 */
 	public void close() throws IOException {}
+	
+	public void reset()
+	{
+		indice = -1;
+	}
+	
+	public ArrayOfIdsIterablePosting clone()
+	{
+		try{
+			return (ArrayOfIdsIterablePosting) super.clone();
+		} catch (CloneNotSupportedException cnse){
+			//this is cloneable, cannot happen
+			return null;
+		}
+	}
 
 }
