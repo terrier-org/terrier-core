@@ -40,7 +40,7 @@ import org.terrier.structures.Pointer;
  */
 public class ANDIterablePosting extends IterablePostingImpl {
 
-	protected int currentId;
+	protected int currentId = -1;
 	protected IterablePosting[] ips;
 	protected final int termCount;
 	protected int frequency = 0;
@@ -137,6 +137,34 @@ public class ANDIterablePosting extends IterablePostingImpl {
 	@Override
 	public void setId(int id) {
 		currentId = id;
+	}
+	
+	@Override
+	public int next(int targetID) throws IOException {
+		
+		ITERATION: do
+		{
+			targetID = ips[0].next(targetID);
+			if (targetID == EOL)
+				return EOL;
+			for(int i=1;i<ips.length;i++)
+			{
+				int foundID = ips[i].getId();
+				if (foundID < targetID)
+					foundID = ips[i].next(targetID);
+				if (foundID > targetID)
+					continue ITERATION;
+				assert foundID == targetID;
+			}
+			
+			if (calculateFrequency())
+			{
+				currentId = targetID;
+				return targetID;
+			}
+			
+		}while(true);
+		
 	}
 
 	@Override
