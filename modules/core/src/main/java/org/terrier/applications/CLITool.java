@@ -87,6 +87,7 @@ public abstract class CLITool {
 			Options options = new Options();
 			options.addOption(Option.builder("D")
 					.argName("property")
+					.valueSeparator()
 					.hasArgs()
 					.desc("specify property name=value")
 					.build());
@@ -116,18 +117,31 @@ public abstract class CLITool {
 
 		@Override
 		public final int run(String[] args) throws Exception {
+			if (DEBUG)
+				System.err.println("args=" + Arrays.toString(args));
 			CommandLineParser parser = new DefaultParser();
 			CommandLine line = parser.parse(getOptions(), args);
+
+			if (DEBUG)
+			{
+				System.err.println("Enabled options:");
+				for(Option o : getOptions().getOptions())
+					System.err.println("\t"+o.getArgName());
+				System.err.println("Found options:");
+				for(Option o : line.getOptions())
+					System.err.println("\t"+o.getArgName());
+			}
+			
 			Properties props = null;
-			if (line.hasOption('D'))
+			if (line.hasOption("D"))
 			{
 				props = line.getOptionProperties("D");
 				props.forEach( (k,v) -> org.terrier.utility.ApplicationSetup.setProperty((String)k, (String)v));
 				ApplicationSetup.loadCommonProperties();
 			}
-			if (line.hasOption('I'))
+			if (line.hasOption("I"))
 			{
-				String indexLocation = line.getOptionValue('I');
+				String indexLocation = line.getOptionValue("I");
 				ApplicationSetup.TERRIER_INDEX_PATH = FilenameUtils.getFullPath(indexLocation);
 				ApplicationSetup.TERRIER_INDEX_PREFIX = FilenameUtils.getBaseName(indexLocation);
 			}
