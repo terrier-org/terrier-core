@@ -111,8 +111,8 @@ public class AbstractQuerying {
 					.desc("allows one of more controls to be set (keys & values separated by colon, control pairs separated by a semicolon)")
 					.build());
 			options.addOption(Option.builder("q")
-					.argName("queryexpanion")
-					.longOpt("queryexpanion")
+					.argName("queryexpansion")
+					.longOpt("queryexpansion")
 					.desc("apply query expansion to all queries (equivalent to -c qe:on)")
 					.build());
 			options.addOption(Option.builder("m")
@@ -124,7 +124,7 @@ public class AbstractQuerying {
 					.argName("wmodel")
 					.longOpt("wmodel")
 					.hasArgs()
-					.desc("allows the default weighting model to be specified")
+					.desc("allows the default weighting model to be specified (equivalent to using -c wmodel:<wmodel>")
 					.build());
 			return options;
 		}
