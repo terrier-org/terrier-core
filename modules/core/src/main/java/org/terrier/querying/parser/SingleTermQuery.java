@@ -206,7 +206,7 @@ public class SingleTermQuery extends Query {
 			else if (required != null && !required)
 			{
 				qtp.setRequired(false);
-				qtp.setWeight(Double.NEGATIVE_INFINITY);
+				qtp.setWeight(0d); //Double.NEGATIVE_INFINITY);
 			}
 			return;
 		}
@@ -227,7 +227,7 @@ public class SingleTermQuery extends Query {
 		else if (required != null && !required)
 		{
 			qtpb.setRequired(false);
-			qtpb.setWeight(Double.NEGATIVE_INFINITY);
+			qtpb.setWeight(0d); //Double.NEGATIVE_INFINITY);
 		}
 		//qtp.setField(field);
 		terms.add(qtpb.build());

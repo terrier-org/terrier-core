@@ -132,9 +132,11 @@ public class DateRangeOp extends Operator {
 			w.prepare();			
 		}
 		
-		boolean required = false;
+		MatchingEntry.Requirement required = MatchingEntry.Requirement.UNKNOWN;
 		if (qtp.required != null && qtp.required)
-			required = true;
+			required = MatchingEntry.Requirement.REQUIRED;
+		if (qtp.required != null && ! qtp.required)
+			required = MatchingEntry.Requirement.NEG_REQUIRED;
 		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required, qtp.tags);
 	}
 

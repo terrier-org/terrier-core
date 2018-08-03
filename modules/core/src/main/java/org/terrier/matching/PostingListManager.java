@@ -257,6 +257,7 @@ public class PostingListManager implements Closeable
 	protected CollectionStatistics collectionStatistics;
 	/** which terms are positively required to match in retrieved documents */
 	protected long requiredBitMask = 0;
+	protected long negRequiredBitMask = 0;
 
 	
 	/** Create a posting list manager for the given index and statistics */
@@ -314,12 +315,21 @@ public class PostingListManager implements Closeable
 				termStatistics.add(me.getEntryStats());
 				termModels.add(WeightingModelMultiProxy.getModel(me.getWmodels()));
 				termTags.add(me.getTags());
-				if (me.getRequired())
+				if (me.isRequired())
 				{
 					requiredBitMask |= 1 << termIndex;
 					if (termIndex >= 64)
 					{
 						logger.warn("A requirement was found for the "+termIndex+"-th query term (" 
+							+ term.toString() + "), which was past the maximum supported 64");
+					}
+				}
+				if (me.isNegRequired())
+				{
+					negRequiredBitMask |= 1 << termIndex;
+					if (termIndex >= 64)
+					{
+						logger.warn("A negative requirement was found for the "+termIndex+"-th query term (" 
 							+ term.toString() + "), which was past the maximum supported 64");
 					}
 				}
@@ -462,6 +472,10 @@ public class PostingListManager implements Closeable
 	
 	public long getRequiredBitMask() {
 		return this.requiredBitMask;
+	}
+	
+	public long getNegRequiredBitMask() {
+		return this.negRequiredBitMask;
 	}
 
 	public String getTerm(int i) {

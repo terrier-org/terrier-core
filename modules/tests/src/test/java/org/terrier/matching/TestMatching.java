@@ -540,32 +540,34 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		assertEquals(2, srq.getResults().size());
 		
 		//2, are documents retrieved: two terms, best match
-		srq = m.newSearchRequest("test1", "brown window");
+		srq = m.newSearchRequest("test2", "brown window");
 		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		assertEquals(2, srq.getResults().size());
 	
 		//3, are documents retrieved: two terms, one of which is positive requirement
-		srq = m.newSearchRequest("test1", "dog +window");
+		srq = m.newSearchRequest("test3", "dog +window");
 		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
 	
 		//4, are documents retrieved: two terms, one of which is negative requirement
-		srq = m.newSearchRequest("test1", "dog -fox");
+		srq = m.newSearchRequest("test4", "dog -fox");
 		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
-		/*System.err.println(srq.getResultSet().getResultSize());
-		for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
-			System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
+		/*System.err.println(((Request) srq).getResultSet().getResultSize());
+		for (int i =0; i<((Request) srq).getResultSet().getDocids().length; i++) {
+			System.err.println("   "+((Request) srq).getResultSet().getDocids()[i]+" "+((Request) srq).getResultSet().getScores()[i]);
 		}*/
-		assertEquals(1, ((Request) srq).getResultSet().getResultSize());	
+		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
+		for(double score : ((Request) srq).getResultSet().getScores())
+			assertTrue(Double.isFinite(score));
 		
 		//5, are documents retrieved: two terms, both of which are positive requirements
-		srq = m.newSearchRequest("test1", "+dog +fox");
+		srq = m.newSearchRequest("test5", "+dog +fox");
 		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);

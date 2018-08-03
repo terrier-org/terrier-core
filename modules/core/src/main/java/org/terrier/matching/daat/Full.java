@@ -113,7 +113,8 @@ public class Full extends BaseMatching
         int currentDocId = selectMinimumDocId(postingHeap);
         IterablePosting currentPosting = null;
         double threshold = 0.0d;
-        long requiredBitPattern = plm.getRequiredBitMask();
+        final long requiredBitPattern = plm.getRequiredBitMask();
+        final long negRequiredBitPattern = plm.getNegRequiredBitMask();
         //int scored = 0;
         
         while (currentDocId != -1)  {
@@ -141,7 +142,9 @@ public class Full extends BaseMatching
             
             if ((! targetResultSetSizeReached) || currentCandidate.getScore() > threshold) {
             	//System.err.println("id="+currentDocId + " occurrence="+currentCandidate.getOccurrence() + " pattern="+requiredBitPattern + " match=" + (currentCandidate.getOccurrence() & requiredBitPattern));
-            	if ( (currentCandidate.getOccurrence() & requiredBitPattern) == requiredBitPattern)
+            	if ( (currentCandidate.getOccurrence() & requiredBitPattern) == requiredBitPattern
+            			&&
+            		((negRequiredBitPattern == 0) || (negRequiredBitPattern > 0 && (currentCandidate.getOccurrence() & negRequiredBitPattern) == 0)))
             	{     
             		for(int i : nonMatchingTerms) { 
             			//these are postings that we need to keep/score, but which wont change the threshold

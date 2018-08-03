@@ -37,15 +37,21 @@ import org.terrier.structures.postings.IterablePosting;
  */
 public class MatchingEntry {
 
+	static enum Requirement {
+		REQUIRED,
+		NEG_REQUIRED,
+		UNKNOWN
+	}
+	
 	IterablePosting postingIterator;
 	EntryStatistics entryStats;
 	double keyFreq;
 	WeightingModel[] wmodels;
-	boolean required;
+	Requirement required;
 	Set<String> tags;
 	
 	public MatchingEntry(IterablePosting postingIterator,
-			EntryStatistics entryStats, double keyFreq, WeightingModel[] wmodels, boolean required, Set<String> tags) {
+			EntryStatistics entryStats, double keyFreq, WeightingModel[] wmodels, Requirement required, Set<String> tags) {
 		super();
 		this.postingIterator = postingIterator;
 		this.entryStats = entryStats;
@@ -71,8 +77,16 @@ public class MatchingEntry {
 		return wmodels;
 	}
 	
-	public boolean getRequired() {
+	public Requirement getRequirement() {
 		return required;
+	}
+	
+	public boolean isRequired() {
+		return required == Requirement.REQUIRED;
+	}
+	
+	public boolean isNegRequired() {
+		return required == Requirement.NEG_REQUIRED;
 	}
 	
 	public Set<String> getTags() {
