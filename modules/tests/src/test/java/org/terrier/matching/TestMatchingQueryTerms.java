@@ -33,6 +33,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.querying.parser.Query;
+import org.terrier.querying.parser.Query.QueryTermsParameter;
 import org.terrier.querying.parser.QueryParser;
 import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.structures.BasicLexiconEntry;
@@ -130,7 +131,7 @@ public class TestMatchingQueryTerms {
 		final String term = "term1";
 		Query q = QueryParser.parseQuery(term);
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		assertEquals(1, mqt.size());	
 		assertEquals(1, mqt.getMatchingTerms().length);	
 		assertEquals(term, mqt.getMatchingTerms()[0].toString());
@@ -149,7 +150,7 @@ public class TestMatchingQueryTerms {
 		Query q = QueryParser.parseQuery(term);
 		term = "#syn(term1 term2)"; //internal notation is different
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		assertEquals(1, mqt.size());	
 		assertEquals(1, mqt.getMatchingTerms().length);	
 		assertEquals(term, mqt.getMatchingTerms()[0].toString());
@@ -167,7 +168,7 @@ public class TestMatchingQueryTerms {
 		final String term1 = "zebra";
 		Query q = QueryParser.parseQuery(term1 +" " + term1);
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		assertEquals(1, mqt.size());	
 		assertEquals(1, mqt.getMatchingTerms().length);	
 		assertEquals(term1, mqt.getMatchingTerms()[0].toString());
@@ -182,14 +183,14 @@ public class TestMatchingQueryTerms {
 		MatchingQueryTerms mqt;
 		q = QueryParser.parseQuery(term1 + " " + " +"+term1);
 		mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		//Semantics have changed with TREC-420
 //		assertEquals(2, mqt.size());	
 //		assertEquals(2, mqt.getMatchingTerms().length);	
 		
 		q = QueryParser.parseQuery(term1 + " " + " field:"+term1);
 		mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		assertEquals(2, mqt.size());	
 		assertEquals(2, mqt.getMatchingTerms().length);	
 		
@@ -201,7 +202,7 @@ public class TestMatchingQueryTerms {
 		final String term1 = "zebra";
 		Query q = QueryParser.parseQuery(term1 +"^0.1 " + term1 + "^0.2");
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		assertEquals(1, mqt.size());	
 		assertEquals(1, mqt.getMatchingTerms().length);	
 		assertEquals(term1, mqt.getMatchingTerms()[0].toString());		
@@ -214,7 +215,7 @@ public class TestMatchingQueryTerms {
 		final String term2 = "crossing";
 		Query q = QueryParser.parseQuery(term1+"^0.5 " + term2 + "^1.0");
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		assertEquals(2, mqt.size());	
 		assertEquals(2, mqt.getMatchingTerms().length);	
 		assertEquals(term1, mqt.getMatchingTerms()[0].toString());

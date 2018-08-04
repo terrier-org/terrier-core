@@ -43,6 +43,69 @@ import org.terrier.terms.TermPipelineAccessor;
   */
 public abstract class Query implements Serializable, Cloneable{
 
+	public static class QueryTermsParameter {
+		
+		public static QueryTermsParameter of(MatchingQueryTerms terms, boolean lowercase) {
+			return new QueryTermsParameter(terms, lowercase, null, null, null);
+		}
+		
+		private MatchingQueryTerms terms;
+		private String field;
+		private Boolean required;
+		private Double weight;
+		private boolean lowercase;
+		
+		public QueryTermsParameter(MatchingQueryTerms terms,  String field,
+				Boolean required, Double weight) {
+			this(terms,true,field,required,weight);
+		}
+
+		public QueryTermsParameter(MatchingQueryTerms terms, boolean lowercase,  String field,
+				Boolean required, Double weight) {
+			this.terms = terms;
+			this.lowercase = lowercase;
+			this.field = field;
+			this.required = required;
+			this.weight = weight;
+		}
+
+		public MatchingQueryTerms getTerms() {
+			return terms;
+		}
+
+		public void setTerms(MatchingQueryTerms terms) {
+			this.terms = terms;
+		}
+
+		public String getField() {
+			return field;
+		}
+
+		public void setField(String field) {
+			this.field = field;
+		}
+
+		public Boolean isRequired() {
+			return required;
+		}
+		
+		public boolean lowercase() {
+			return lowercase;
+		}
+
+		public void setRequired(Boolean required) {
+			this.required = required;
+		}
+
+		public Double getWeight() {
+			return weight;
+		}
+
+		public void setWeight(Double weight) {
+			this.weight = weight;
+		}
+	}
+	
 	public static class QTPBuilder
 	{
 		public static QTPBuilder of(Operator term)
@@ -187,7 +250,12 @@ public abstract class Query implements Serializable, Cloneable{
 		return false;
 	}
 	
+	
+
 	public abstract void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight);
+	//abstract Map.Entry<QueryTerm,QueryTermProperties> getMatchingTerm();
+
+	public abstract void obtainQueryTerms(QueryTermsParameter parameters);
 	//abstract Map.Entry<QueryTerm,QueryTermProperties> getMatchingTerm();
 	
 //	/**

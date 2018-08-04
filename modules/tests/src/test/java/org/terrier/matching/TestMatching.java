@@ -45,6 +45,7 @@ import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.querying.parser.Query;
 import org.terrier.querying.parser.Query.QTPBuilder;
+import org.terrier.querying.parser.Query.QueryTermsParameter;
 import org.terrier.querying.parser.QueryParser;
 import org.terrier.querying.parser.QueryParserException;
 import org.terrier.structures.Index;
@@ -237,7 +238,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt, null, null, null);
+		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		q.setMatchingQueryTerms(mqt);
 		
 		//mqt = new MatchingQueryTerms();
@@ -265,7 +266,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		query = q.getQuery();
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt, null, null, null);
+		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -294,7 +295,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		query = q.getQuery();
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt, null, null, null);
+		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -322,7 +323,7 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		System.err.println(query.parseTree());
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt, null, null, null);
+		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());

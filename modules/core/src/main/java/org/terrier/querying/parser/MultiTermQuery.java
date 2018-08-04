@@ -151,11 +151,13 @@ public class MultiTermQuery extends Query {
 	}
 	
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight) {
+		obtainQueryTerms(new QueryTermsParameter(terms, true, field, required, weight));
+	}
+
+	public void obtainQueryTerms(QueryTermsParameter parameters) {
 	    for (Query child : v)
-	      child.obtainQueryTerms(terms, 
-	    		  field, 
-	    		  required, 
-	    		  weight == null ? this.weight : this.weight*weight);
+	      child.obtainQueryTerms(new QueryTermsParameter(parameters.getTerms(), parameters.lowercase(), parameters.getField(),
+				parameters.isRequired(), parameters.getWeight() == null ? this.weight : this.weight*parameters.getWeight()));
 	  }
 	
 //	/**

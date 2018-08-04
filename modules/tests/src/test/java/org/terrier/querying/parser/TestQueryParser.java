@@ -26,14 +26,19 @@
  */
 package org.terrier.querying.parser;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.querying.parser.Query.QueryTermsParameter;
+
+import com.google.common.collect.Sets;
 
 public class TestQueryParser {
 
@@ -49,6 +54,18 @@ public class TestQueryParser {
 		List<Query> terms = new ArrayList<Query>();
 		q.getTerms(terms);
 		assertEquals(0, terms.size());
+	}
+	
+
+	@Test public void testControls() throws Exception
+	{
+		Query q = QueryParser.parseQuery("a end:10 qemodel:KL");
+		Map<String,String> controlKV = new HashMap<>();
+		q.obtainControls(Sets.newHashSet("end", "qemodel", "start"), controlKV);
+		assertTrue(controlKV.containsKey("end"));
+		assertTrue(controlKV.containsKey("qemodel"));
+		assertFalse(controlKV.containsKey("start"));
+		assertEquals("KL",controlKV.get("qemodel"));
 	}
 	
 	@Test public void testSingleTermQuery() throws Exception
@@ -254,7 +271,7 @@ public class TestQueryParser {
 		assertEquals("(a b)^2.0", q.toString());
 		
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		assertEquals(2, mqt.getTerms().length);
 		assertEquals("a", mqt.getTerms()[0]);
 		assertEquals("b", mqt.getTerms()[1]);
@@ -336,7 +353,7 @@ public class TestQueryParser {
 		
 
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
-		q.obtainQueryTerms(mqt, null, null, null);
+		q.obtainQueryTerms(new QueryTermsParameter(mqt, null, null, null));
 		assertEquals(2, mqt.getTerms().length);
 		assertEquals("a.FIELD", mqt.getTerms()[0]);
 		assertEquals("b.FIELD", mqt.getTerms()[1]);

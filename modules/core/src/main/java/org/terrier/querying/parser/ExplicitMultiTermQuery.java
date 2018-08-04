@@ -43,13 +43,19 @@ public class ExplicitMultiTermQuery extends MultiTermQuery {
 	}
 	
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double parentWeight) {
+		obtainQueryTerms(new QueryTermsParameter(terms, true, field, required,
+				parentWeight));
+	}
+
+	public void obtainQueryTerms(QueryTermsParameter parameters) {
 		Double newWeight = this.weight;
-		if (parentWeight != null)
+		if (parameters.getWeight() != null)
 		{
-			newWeight = parentWeight * parentWeight;
+			newWeight = parameters.getWeight() * parameters.getWeight();
 		}
 		
-		super.obtainQueryTerms(terms, field, required, newWeight);
+		super.obtainQueryTerms(new QueryTermsParameter(parameters.getTerms(), parameters.lowercase(), parameters.getField(),
+				parameters.isRequired(), newWeight));
 	}
 	
 	/**

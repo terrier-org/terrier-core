@@ -33,7 +33,6 @@ import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
 import org.terrier.matching.matchops.Operator;
 import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.terms.TermPipelineAccessor;
-import org.terrier.utility.ApplicationSetup;
 /**
  * Models a query of a single term. 
  * The single term queries can be of the forms:<br>
@@ -56,9 +55,6 @@ public class SingleTermQuery extends Query {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/** checks whether the terms should be lowercase. */
-	protected static final boolean lowercase = Boolean.parseBoolean(ApplicationSetup.getProperty("lowercase", "true"));
-	
 	/** The query term string.*/
 	private String term = null;
 	
@@ -79,7 +75,7 @@ public class SingleTermQuery extends Query {
 	 * @param t String one query term.
 	 */
 	public SingleTermQuery(String t) {
-		term = lowercase ? t.toLowerCase() : t;
+		term = t;
 	}
 	
 	/**
@@ -91,7 +87,7 @@ public class SingleTermQuery extends Query {
 	 *        or not.
 	 */
 	public SingleTermQuery(String t, int r) {
-		term = lowercase ? t.toLowerCase() : t;
+		term = t;
 		required = r;
 	}
 	/** 
@@ -114,7 +110,7 @@ public class SingleTermQuery extends Query {
 	 * @param t String the query term.
 	 */
 	public void setTerm(String t) {
-		term = lowercase ? t.toLowerCase() : t;
+		term = t;
 	}
 	/**
 	 * Gets the query term.
@@ -186,24 +182,31 @@ public class SingleTermQuery extends Query {
 	@Override
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field,
 			Boolean required, Double weight) {
+				obtainQueryTerms(new QueryTermsParameter(terms, true, field,
+						required, weight));
+			}
+	
+	@Override
+	public void obtainQueryTerms(QueryTermsParameter parameters) {
 		
-		Operator matchTerm = new SingleTermOp(this.term, field);
-		QueryTermProperties qtp = terms.get(matchTerm);
+		final String t = parameters.lowercase() ? this.term.toLowerCase() : this.term;
+		Operator matchTerm = new SingleTermOp(t, parameters.getField());
+		QueryTermProperties qtp = parameters.getTerms().get(matchTerm);
 		if (qtp != null)
 		{
-			if (weight != null)
+			if (parameters.getWeight() != null)
 			{
-				qtp.setWeight(qtp.getWeight() + (weight * this.weight));
+				qtp.setWeight(qtp.getWeight() + (parameters.getWeight() * this.weight));
 			}
 			else
 			{
 				qtp.setWeight(qtp.getWeight() + this.weight);
 			}
-			if (required != null && required)
+			if (parameters.isRequired() != null && parameters.isRequired())
 			{
 				qtp.setRequired(true);
 			}
-			else if (required != null && !required)
+			else if (parameters.isRequired() != null && !parameters.isRequired())
 			{
 				qtp.setRequired(false);
 				qtp.setWeight(0d); //Double.NEGATIVE_INFINITY);
@@ -212,25 +215,25 @@ public class SingleTermQuery extends Query {
 		}
 		
 		QTPBuilder qtpb = QTPBuilder.of(matchTerm);
-		if (weight != null)
+		if (parameters.getWeight() != null)
 		{
-			qtpb.setWeight(weight * this.weight);
+			qtpb.setWeight(parameters.getWeight() * this.weight);
 		}
 		else
 		{
 			qtpb.setWeight(this.weight);
 		}
-		if (required != null && required)
+		if (parameters.isRequired() != null && parameters.isRequired())
 		{
 			qtpb.setRequired(true);
 		}
-		else if (required != null && !required)
+		else if (parameters.isRequired() != null && !parameters.isRequired())
 		{
 			qtpb.setRequired(false);
 			qtpb.setWeight(0d); //Double.NEGATIVE_INFINITY);
 		}
 		//qtp.setField(field);
-		terms.add(qtpb.build());
+		parameters.getTerms().add(qtpb.build());
 	}
 	
 //	/**

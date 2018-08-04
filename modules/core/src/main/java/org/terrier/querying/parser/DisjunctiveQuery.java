@@ -98,32 +98,37 @@ public class DisjunctiveQuery extends MultiTermQuery {
 	
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight)
 	{
+		obtainQueryTerms(new QueryTermsParameter(terms, true, field, required, weight));
+	}
+	public void obtainQueryTerms(QueryTermsParameter parameters)
+	{
 		List<Operator> singleTerms = Lists.newArrayList();
 		for(Query child : v)
 		{
 			SingleTermQuery term = (SingleTermQuery)child;
-			singleTerms.add(new SingleTermOp(term.getTerm(), field));
+			final String t = parameters.lowercase() ? term.getTerm().toLowerCase() : term.getTerm();
+			singleTerms.add(new SingleTermOp(t, parameters.getField()));
 		}
 		QTPBuilder qtp = QTPBuilder.of(new SynonymOp(singleTerms.toArray(new Operator[singleTerms.size()])));
-		if (weight != null)
+		if (parameters.getWeight() != null)
 		{
-			qtp.setWeight(weight * this.weight);
+			qtp.setWeight(parameters.getWeight() * this.weight);
 		}
 		else
 		{
 			qtp.setWeight(this.weight);
 		}
-		if (required != null && required)
+		if (parameters.isRequired() != null && parameters.isRequired())
 		{
 			qtp.setRequired(true);
 		}
-		else if (required != null && !required)
+		else if (parameters.isRequired() != null && !parameters.isRequired())
 		{
 			qtp.setRequired(false);
 			qtp.setWeight(Double.NEGATIVE_INFINITY);
 		}
 		//qtp.setField(field);
-		terms.add(qtp.build());
+		parameters.getTerms().add(qtp.build());
 	}
 
 	@Override
