@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.matchops.ParseException;
+import org.terrier.matching.matchops.TokenMgrError;
+import org.terrier.querying.parser.QueryParserException;
 
 @ProcessPhaseRequisites(ManagerRequisite.RAWQUERY)
 public class MatchingOpQLParser implements Process {
@@ -45,8 +47,8 @@ public class MatchingOpQLParser implements Process {
 			MatchingQueryTerms mqt = new MatchingQueryTerms(terms);
 			q.setMatchingQueryTerms(mqt);
 			mqt.setQueryId(q.getQueryID());
-		} catch (ParseException pe) {
-			logger.error("Error while parsing the query.",pe);
+		} catch (ParseException | TokenMgrError e) {
+			throw new QueryParserException("Could not parse query", e);
 		}
 	}
 

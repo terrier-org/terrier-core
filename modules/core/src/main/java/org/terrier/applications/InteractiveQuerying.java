@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.querying.ScoredDoc;
 import org.terrier.querying.SearchRequest;
+import org.terrier.querying.parser.QueryParserException;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 /**
@@ -131,7 +132,12 @@ public class InteractiveQuerying extends AbstractQuerying {
 				{
 					return;
 				}
-				processQuery("interactive"+(qid++), (lowercase && ! matchopQl) ? query.toLowerCase() : query);
+				try {
+					processQuery("interactive"+(qid++), (lowercase && ! matchopQl) ? query.toLowerCase() : query);
+				} catch (QueryParserException e)
+				{
+					logger.error("Could not parse query", e);
+				}
 			}
 		} catch(IOException ioe) {
 			logger.error("Input/Output exception while performing the matching. Stack trace follows.",ioe);
