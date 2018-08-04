@@ -37,6 +37,7 @@ The semantic operators will be familiar to those who have used Indri or Galago:
  - `#band(op1 op2)` -- scores a term containing both operators. The frequency of each matching document is 1.
  - `#syn(op1 op2)` -- scores documents containing either op1 or op2. The frequency of each matching document is the sum of the frequencies of the constituent words.
  - `#prefix(term1)` -- scores documents containing terms prefixed by term1.
+ - `#fuzzy(term1)` -- scores documents containing terms that fuzzily match term1. See [FuzzyTermOp](javadoc/org/terrier/matching/matchops/FuzzyTermOp.html) for more information.
  - `#uw8(op1 op2)` -- the #uwN operator scores documents op1 or op2 within unordered windows of N tokens -- in this case windows of 8 tokens in size.
  - `#1(op1 op2)` -- the #1 operator scores documents op1 or op2 appearing adjacently.
  - `#band(op1 op2)` -- the #band operator scores documents that contain both op1 and op2. 
@@ -86,7 +87,8 @@ Some match operators may require a particular type of input posting. For instanc
 | #uwN | UnorderedWindowOp | AND | Positional (BlockPosting) | Frequency |
 | #1   | PhraseOp | AND | Positional (BlockPosting) | Positions |
 | #syn | SynonymOp | OR | Any | (depends on input postings) |
-| #prefix | PrefixOp | OR | Any | (depends on input postings) |
+| #prefix | PrefixTermOp | OR | Any | (depends on input postings) |
+| #prefix | FuzzyTermOp | OR | Any | (depends on input postings) |
 
 On the other hand, the syntactic operators (such as `#combine` and `#tag`)  are defined solely in the matchop query parser, and hence there is no equivalent matchop class. As these cannot result in a single posting list, their positioning within a matchop is restricted. For instance, all of the following queries are **invalid**:
 

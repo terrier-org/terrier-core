@@ -92,6 +92,7 @@ TOKEN :
    |  <TAG: "tag">
    |  <COMBINE: "combine">
    |  <PREFIX: "prefix">
+   |  <FUZZY: "fuzzy">
    |  <BASE64: "base64">
    |  <OPEN_PAREN: "("> : DEFAULT
    |  <COLON : ":"> : WithinCombineKV
@@ -101,7 +102,7 @@ TOKEN :
 }
 
 <WithinCombineKV> TOKEN : {
- 	<WORD_OR_INT_OR_FLOAT : (["A"-"Z","a"-"z","0"-"9", "."])+ > 
+ 	<WORD_OR_INT_OR_FLOAT : (["A"-"Z","a"-"z","0"-"9", "_", "."])+ > 
  	| <COLON_KV : ":">
  	| <EQUALS : "=">
  	| <OPEN_PAREN_KV: "("> : DEFAULT
@@ -154,6 +155,7 @@ MatchingTerm parse() :
 	| rtr = ow()
 	| rtr = ow_implicit()
 	| rtr = prefix()
+	| rtr = fuzzy()
 	| rtr = base64()
 	)
 	| rtr = word()
@@ -321,6 +323,58 @@ MatchingTerm ow_implicit(): {
   }
 }
 
+MatchingTerm fuzzy() : {
+	Token word;
+	Token key;
+	Token value;
+	Token field = null;
+	Map<String,String> kv = new HashMap<String,String>();
+}
+{
+	<FUZZY> 
+		(
+		(
+			<COLON>
+			(  key = <WORD_OR_INT_OR_FLOAT> <EQUALS> value = <WORD_OR_INT_OR_FLOAT> { kv.put(key.image, value.image); } )
+			(  <COLON_KV> key = <WORD_OR_INT_OR_FLOAT> <EQUALS> value = <WORD_OR_INT_OR_FLOAT> { kv.put(key.image, value.image); } )*
+			<OPEN_PAREN_KV> 
+		) 
+	| <OPEN_PAREN>)
+	word = <WORD> <CLOSE_PAREN> /*(<PERIOD> field = <WORD>)?*/
+	{
+		String fieldName = null;
+		byte[] decoded = java.util.Base64.getMimeDecoder().decode(word.image);
+		String search = word.image;
+		Integer prefix_length = null;
+		Integer maxDist = null;
+		Integer lowT = null; 
+		Integer highT = null;
+		Integer maxExpansions = null;
+		if (kv.containsKey("max_expansions"))
+			maxExpansions = Integer.parseInt(kv.get("max_expansions"));
+		if (kv.containsKey("prefix_length"))
+			prefix_length = Integer.parseInt(kv.get("prefix_length"));
+		if (kv.containsKey("fuzziness"))
+		{
+			if ("AUTO".equals(kv.get("fuzziness")))
+				maxDist = null;
+			else if (kv.get("fuzziness").startsWith("AUTO"))
+			{
+				String[] parts = kv.get("fuzziness").split("\\.");
+				if (parts.length > 1)
+					lowT = Integer.parseInt(parts[1]);
+				if (parts.length > 2)
+					lowT = Integer.parseInt(parts[2]);
+			}
+			else
+			{
+				maxDist = Integer.parseInt(kv.get("fuzziness"));
+			}
+		}
+		
+		return QTPBuilder.of(new FuzzyTermOp(search, prefix_length, maxExpansions, maxDist, lowT, highT)).build();
+	}
+}
 
 MatchingTerm base64() : {
 	Token word;

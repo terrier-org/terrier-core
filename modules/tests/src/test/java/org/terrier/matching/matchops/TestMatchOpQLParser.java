@@ -37,6 +37,26 @@ import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 
 public class TestMatchOpQLParser {
 	
+	@Test public void testFuzzy() throws Exception {
+		List<MatchingTerm> rtr;
+		rtr = new MatchOpQLParser("#fuzzy(ab)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		
+		rtr = new MatchOpQLParser("#fuzzy:fuzziness=AUTO(ab)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		
+		rtr = new MatchOpQLParser("#fuzzy:fuzziness=AUTO.2.5(ab)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		
+		rtr = new MatchOpQLParser("#fuzzy:fuzziness=3:max_expansions=49:prefix_length=3(ab)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+
+	}
+	
 	@Test public void testMultiTermsCombine() throws Exception {		
 		List<MatchingTerm> rtr = new MatchOpQLParser("#combine(a b)").parseAll();
 		assertNotNull(rtr);
