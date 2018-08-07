@@ -41,7 +41,7 @@ public interface DocumentScoreModifier extends Cloneable{
 	 * altered. This is because the resultset has to be resorted after
 	 * each one. 
 	 * @param index Index the data structures used for retrieval.
-	 * @param queryTerms TermTreeNodes[] the query terms
+	 * @param queryTerms MatchingQueryTerms[] the query terms
 	 * @param resultSet ResultSet the current set of results.
 	 * @return true if any scores have been altered
 	 */
