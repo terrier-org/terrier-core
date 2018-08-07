@@ -25,6 +25,7 @@
  */
 package org.terrier.querying;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ import org.terrier.querying.parser.Query.QTPBuilder;
 import org.terrier.utility.ApplicationSetup;
 
 @ProcessPhaseRequisites(ManagerRequisite.MQT)
-public class DependenceModelPreProcess implements Process {
+public class DependenceModelPreProcess implements MQTRewritingProcess{
 	
 	static final String DEFAULT_DEPENDENCE_WEIGHTING_MODEL = pBiL.class.getName();
 	public static final String CONTROL_MODEL = "dependencemodel";
@@ -131,7 +132,11 @@ public class DependenceModelPreProcess implements Process {
 		return newEntries;
 	}
 
-	
+	public boolean expandQuery(MatchingQueryTerms mqt, Request rq) throws IOException {
+		int count = mqt.size();
+		this.process(mqt, DEFAULT_DEPENDENCE_WEIGHTING_MODEL);
+		return (mqt.size() != count);
+	}
 
 	@Override
 	public String getInfo() {
