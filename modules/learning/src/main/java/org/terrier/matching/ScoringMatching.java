@@ -149,7 +149,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 			}		
  		}
 		assert matchingCount <= docids.length;	
-		System.err.println(this.getClass().getSimpleName() + " for "+this.wm.getInfo()+" scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
+		System.err.println(this.getClass().getSimpleName() + " for "+this.wm.getInfo()+" on "+terms+" terms, scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
 		finalise(matchingCount);
 		
 		plm.close();
