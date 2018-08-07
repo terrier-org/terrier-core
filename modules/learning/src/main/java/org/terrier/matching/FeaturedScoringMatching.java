@@ -49,18 +49,18 @@ public abstract class FeaturedScoringMatching extends FilterMatching {
 	public FeaturedScoringMatching(Index _index, Matching _parent,
 			Class<? extends AbstractScoringMatching> _scoringMatchingImpl) throws Exception
 	{
-		this(_index, _parent, getModelNames(), _scoringMatchingImpl);
+		this(_index, _parent, getModelNames("fat.featured.scoring.matching.features"), _scoringMatchingImpl);
 	}
 	
-	protected static String[] getModelNames() throws Exception {
+	protected static String[] getModelNames(String property) throws Exception {
 		String[] modelNames = 
 			ArrayUtils.parseDelimitedString(
-					ApplicationSetup.getProperty("fat.featured.scoring.matching.features", ""), ";");
+					ApplicationSetup.getProperty(property, ""), ";");
 		if (modelNames.length == 1 && modelNames[0].equals("FILE"))
 		{
-			String filename = ApplicationSetup.getProperty("fat.featured.scoring.matching.features.file", null);
+			String filename = ApplicationSetup.getProperty(property + ".file", null);
 			if (filename == null)
-				throw new IllegalArgumentException("For "+FatFeaturedScoringMatching.class+", property fat.featured.scoring.matching.features.file is not set");
+				throw new IllegalArgumentException("For "+FatFeaturedScoringMatching.class+", property "+property+"file is not set");
 			filename = ApplicationSetup.makeAbsolute(filename, ApplicationSetup.TERRIER_ETC);
 			String line = null;
 			final BufferedReader br = Files.openFileReader(filename);
