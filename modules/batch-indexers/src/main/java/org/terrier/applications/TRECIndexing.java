@@ -107,7 +107,7 @@ public class TRECIndexing extends BatchIndexing {
 		//load the appropriate indexer
 		String indexerName = ApplicationSetup.getProperty(
 			"trec.indexer.class",
-			ApplicationSetup.BLOCK_INDEXING
+			blocks
 				? "BlockIndexer"
 				: "BasicIndexer");
 		if (indexerName.indexOf('.') == -1)
