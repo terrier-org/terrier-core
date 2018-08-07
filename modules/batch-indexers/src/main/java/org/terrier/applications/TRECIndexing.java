@@ -31,6 +31,8 @@ import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionFactory;
 import org.terrier.structures.Index;
 import org.terrier.structures.indexing.Indexer;
+import org.terrier.structures.indexing.classical.BasicIndexer;
+import org.terrier.structures.indexing.classical.BlockIndexer;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.TagSet;
 /**
@@ -48,8 +50,6 @@ public class TRECIndexing extends BatchIndexing {
 	//Indexer indexer;
 	/** The collection to index. */
 	protected Collection collectionTREC;
-	
-	boolean blocks = ApplicationSetup.BLOCK_INDEXING;
 	
 	
 	public TRECIndexing(String _path, String _prefix) {
@@ -108,8 +108,8 @@ public class TRECIndexing extends BatchIndexing {
 		String indexerName = ApplicationSetup.getProperty(
 			"trec.indexer.class",
 			blocks
-				? "BlockIndexer"
-				: "BasicIndexer");
+				? BlockIndexer.class.getName()
+				: BasicIndexer.class.getName());
 		if (indexerName.indexOf('.') == -1)
 			indexerName = "org.terrier.structures.indexing.classical."+indexerName;
 		Indexer _indexer = null;
