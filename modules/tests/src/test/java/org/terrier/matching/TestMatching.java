@@ -34,6 +34,7 @@ import gnu.trove.TIntHashSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.matching.matchops.SynonymOp;
 import org.terrier.matching.models.DLH13;
@@ -239,6 +240,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
 		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		for(MatchingTerm me : mqt)
+			me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG);
 		q.setMatchingQueryTerms(mqt);
 		
 		//mqt = new MatchingQueryTerms();
@@ -267,6 +270,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
 		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		for(MatchingTerm me : mqt)
+			me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -296,6 +301,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
 		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		for(MatchingTerm me : mqt)
+			me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -324,6 +331,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
 		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		for(MatchingTerm me : mqt)
+			me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -362,7 +371,10 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		mqt = new MatchingQueryTerms();
-		mqt.add(QTPBuilder.of( new SynonymOp(new String[]{"quick","waggily"})).build());
+		mqt.add(QTPBuilder.of( 
+				new SynonymOp(new String[]{"quick","waggily"}))
+				.setTag(BaseMatching.BASE_MATCHING_TAG)
+				.build());
 		//mqt.setTermProperty("quick|waggily");
 		mqt.setDefaultTermWeightingModel(new DLH13());
 		rs = matching.match("query1", mqt);
@@ -435,8 +447,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		mqt = new MatchingQueryTerms();
-		mqt.add(QTPBuilder.of(new SingleTermOp("dog")).build());
-		mqt.add(QTPBuilder.of(new SingleTermOp("window")).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("dog")).setTag(BaseMatching.BASE_MATCHING_TAG).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("window")).setTag(BaseMatching.BASE_MATCHING_TAG).build());
 //		mqt.setTermProperty("dog");
 //		mqt.setTermProperty("window");
 		mqt.setDefaultTermWeightingModel(new DLH13());

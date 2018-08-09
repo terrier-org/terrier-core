@@ -27,6 +27,7 @@
 package org.terrier.matching;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -252,6 +253,7 @@ implements Serializable,Cloneable
 	
 	protected Request rq = null;
 	
+	protected Set<String> defaultTags = new HashSet<>(Arrays.asList(BaseMatching.BASE_MATCHING_TAG));
 		
 	/** default weighting model for all terms */
 	protected WeightingModel defaultWeightingModel;
@@ -384,7 +386,8 @@ implements Serializable,Cloneable
 	public void setTermProperty(Operator term, EntryStatistics e) {
 		QueryTermProperties properties = (QueryTermProperties)this.get(term);
 		if (properties == null) {
-			this.add( new MatchingTerm(term, new QueryTermProperties(0, e)));
+			this.add( new MatchingTerm(term, properties = new QueryTermProperties(0, e)));
+			properties.tags.addAll(this.defaultTags);
 		} else {
 			properties.stats = e;
 		}
@@ -422,7 +425,9 @@ implements Serializable,Cloneable
 	public void setTermProperty(Operator term, double weight, WeightingModel tsm) {
 		QueryTermProperties properties = (QueryTermProperties)this.get(term);
 		if (properties == null) {
-			this.add(new MatchingTerm(term, new QueryTermProperties(0 /*termAdditionIndex++*/, weight, tsm)));
+			
+			this.add(new MatchingTerm(term, properties = new QueryTermProperties(0 /*termAdditionIndex++*/, weight, tsm)));
+			properties.tags.addAll(this.defaultTags);
 		} else {
 			//properties.weight = weight;
 			//TODO adjust the weights?
@@ -532,7 +537,11 @@ implements Serializable,Cloneable
 	public void setTermProperty(String term, double weight) {
 		Map.Entry<Operator, QueryTermProperties> e = get(term);
 		if (e == null)
-			this.add(new MatchingTerm(new SingleTermOp(term), new QueryTermProperties(0, weight)));
+		{
+			QueryTermProperties ev = new QueryTermProperties(0, weight);
+			ev.tags.addAll(this.defaultTags);
+			this.add(new MatchingTerm(new SingleTermOp(term), ev));
+		}
 		else
 			e.getValue().weight = weight;
 	}

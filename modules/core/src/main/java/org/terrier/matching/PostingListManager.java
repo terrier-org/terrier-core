@@ -333,7 +333,10 @@ public class PostingListManager implements Closeable
 							+ term.toString() + "), which was past the maximum supported 64");
 					}
 				}
-				if (scoringTag == null || me.getTags().size() == 0 || me.getTags().contains(scoringTag))
+				if (me.getTags().size() == 0 && scoringTag != null ) {
+					logger.warn(me + " did not contain any tags, it will not be matched!");
+				}
+				if (scoringTag == null  || me.getTags().contains(scoringTag))
 				{
 					matchOnTerms.add(termPostings.size() -1);
 				}

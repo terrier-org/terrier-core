@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.terrier.matching.BaseMatching;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.matchops.PhraseOp;
@@ -106,7 +107,7 @@ public class DependenceModelPreProcess implements MQTRewritingProcess{
 			QTPBuilder qtp = QTPBuilder.of(new PhraseOp(new String[]{queryTerms.get(i), queryTerms.get(i+1)}));
 			qtp.setWeight(0.1d);
 			qtp.addWeightingModel(getModel(modelName,2));
-			qtp.setTag(DEPENDENCE_TAG);
+			qtp.setTag(DEPENDENCE_TAG).setTag(BaseMatching.BASE_MATCHING_TAG);
 			newEntries.add(qtp.build());
 		}
 		
@@ -116,7 +117,7 @@ public class DependenceModelPreProcess implements MQTRewritingProcess{
 			QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowOp(new String[]{queryTerms.get(i), queryTerms.get(i+1)}, 8));
 			qtp.setWeight(0.1d);
 			qtp.addWeightingModel(getModel(modelName,8));
-			qtp.setTag(DEPENDENCE_TAG);
+			qtp.setTag(DEPENDENCE_TAG).setTag(BaseMatching.BASE_MATCHING_TAG);;
 			newEntries.add(qtp.build());
 		}
 		
@@ -127,7 +128,7 @@ public class DependenceModelPreProcess implements MQTRewritingProcess{
 		QTPBuilder qtp = QTPBuilder.of(new UnorderedWindowOp(allTerms.toArray(new String[allTerms.size()]), 12));
 		qtp.setWeight(0.1d);
 		qtp.addWeightingModel(getModel(modelName,12));
-		qtp.setTag(DEPENDENCE_TAG);
+		qtp.setTag(DEPENDENCE_TAG).setTag(BaseMatching.BASE_MATCHING_TAG);;
 		newEntries.add(qtp.build());
 		return newEntries;
 	}

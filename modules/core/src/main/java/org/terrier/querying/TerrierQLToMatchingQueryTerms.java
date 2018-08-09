@@ -25,7 +25,9 @@
  */
 package org.terrier.querying;
 
+import org.terrier.matching.BaseMatching;
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.querying.parser.Query;
 import org.terrier.querying.parser.Query.QueryTermsParameter;
 import org.terrier.utility.ApplicationSetup;
@@ -40,6 +42,8 @@ public class TerrierQLToMatchingQueryTerms implements Process {
 		MatchingQueryTerms queryTerms = new MatchingQueryTerms(rq.getQueryID(), rq);
 		Query query = rq.getQuery();
 		query.obtainQueryTerms(QueryTermsParameter.of(queryTerms, lowercase));
+		for(MatchingTerm me : queryTerms)
+			me.getValue().getTags().add(BaseMatching.BASE_MATCHING_TAG);
 		rq.setMatchingQueryTerms(queryTerms);
 	}
 
