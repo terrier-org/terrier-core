@@ -6,6 +6,7 @@ Terrier 5.x - unreleased
 ### Indexing
  - [TR-517](http://terrier.org/issues/browse/TR-517) org.terrier.indexing TRECCollection classes etc are in the wrong module (Nicola Tonellotto, ISTI-CNR)
  - [TR-521](http://terrier.org/issues/browse/TR-521) TRECWebCollection missing a constructor (Peilin Yang, Twitter)
+ - [TR-538](http://terrier.org/issues/browse/TR-538) TRECWebCollection doesnt parse all headers (Ian Soboroff, NIST)
  
 ### Retrieval
  - [TR-512](http://terrier.org/issues/browse/TR-512) Set approximate stats for ngram statistics

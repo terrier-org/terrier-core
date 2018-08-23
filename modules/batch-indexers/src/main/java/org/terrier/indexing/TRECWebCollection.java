@@ -169,7 +169,8 @@ public class TRECWebCollection extends TRECCollection {
 			else
 			{
 				int Colon;
-				if ((Colon = lines[i].indexOf(':') ) > 1)
+				//TREC-538 - make sure that there is something after the colon to parse.
+				if ((Colon = lines[i].indexOf(':') ) > 1 && Colon < lines[i].length() -1)
 				{
 					/*
 						Content-Type: text/html
