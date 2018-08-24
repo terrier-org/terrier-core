@@ -125,8 +125,10 @@ public class InteractiveQuerying extends AbstractQuerying {
 				console.addCompleter(new StringsCompleter("#combine(", "#syn(","#uw("));
 			}
 			while ((query = console.readLine()) != null) {
-				if (query.length() == 0 || 
-					query.toLowerCase().equals("quit") ||
+				query = query.trim();
+				if (query.length() == 0)
+					continue;
+				if (query.toLowerCase().equals("quit") ||
 					query.toLowerCase().equals("exit")
 				)
 				{
