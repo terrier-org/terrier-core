@@ -129,7 +129,7 @@ public class ORIterablePosting extends IterablePostingImpl {
 	public int next() throws IOException {
 		IterablePosting ip = postingQueue.poll();
 		if (ip == null)
-			return IterablePosting.EOL;
+			return id = IterablePosting.EOL;
 		id = ip.getId();
 		firstPosting(ip);
 		if (ip.next() != IterablePosting.EOL)
@@ -159,7 +159,7 @@ public class ORIterablePosting extends IterablePostingImpl {
 			}
 		}
 		if (! OK)
-			return IterablePosting.EOL;
+			return id = IterablePosting.EOL;
 		IterablePosting ip = postingQueue.poll();
 		id = ip.getId();
 		firstPosting(ip);
