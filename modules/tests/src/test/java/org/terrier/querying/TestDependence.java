@@ -28,9 +28,12 @@ package org.terrier.querying;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.terrier.matching.BaseMatching;
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.matchops.Operator;
 import org.terrier.matching.matchops.SingleTermOp;
+import org.terrier.matching.matchops.SynonymOp;
 import org.terrier.matching.matchops.UnorderedWindowOp;
 import org.terrier.querying.parser.Query.QTPBuilder;
 
@@ -81,6 +84,43 @@ public class TestDependence {
 		assertTrue(qt instanceof UnorderedWindowOp);
 		UnorderedWindowOp uwt = (UnorderedWindowOp) qt;
 		assertFalse( uwt.getConstituents().length > uwt.getDistance() );
+	}
+	
+
+	@Test public void testSimple() {
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		mqt.setTermProperty("a", 1d);
+		mqt.setTermProperty("b", 1d);
+		assertEquals(2, mqt.size());
+		
+		Request r = new Request();
+		r.setMatchingQueryTerms(mqt);
+		new DependenceModelPreProcess().process(null, r);
+		
+		assertEquals(5, mqt.size());
+		
+	}
+	
+	@Test public void testWithSyn() {
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		mqt.setTermProperty("a", 1d);
+		mqt.add(
+				QTPBuilder.of(new SynonymOp(new String[]{"b", "c"}))
+				.setTag(BaseMatching.BASE_MATCHING_TAG)
+				.build()
+			);
+		
+		assertEquals(2, mqt.size());
+		
+		Request r = new Request();
+		r.setMatchingQueryTerms(mqt);
+		new DependenceModelPreProcess().process(null, r);
+		
+		assertEquals(5, mqt.size());
+		for(MatchingTerm mt : mqt)
+		{
+			System.err.println(mt.getKey().toString() + " " + mt.getValue().toString());
+		}
 	}
 	
 }
