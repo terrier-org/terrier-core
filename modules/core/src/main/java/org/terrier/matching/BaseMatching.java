@@ -299,7 +299,7 @@ public abstract class BaseMatching implements Matching
 			if (documentModifiers.get(t).modifyScores(index, queryTerms, resultSet))
 				resultSet.sort(resultSet.getResultSize());
 		}
-		logger.debug("number of retrieved documents: " + resultSet.getResultSize());
+		logger.debug("query "+ queryTerms.getQueryId() +" number of retrieved documents: " + resultSet.getResultSize());
 		
 		updateEndTime(System.currentTimeMillis());
 	}
