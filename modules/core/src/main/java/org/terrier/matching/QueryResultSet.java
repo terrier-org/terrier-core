@@ -27,6 +27,8 @@
 package org.terrier.matching;
 import gnu.trove.TObjectIntHashMap;
 
+import java.util.Arrays;
+
 //import org.apache.log4j.Logger;
 /**
  * A result set for a given query. This result set is created for
@@ -125,10 +127,14 @@ public class QueryResultSet extends CollectionResultSet {
 		return metadata[metaMap.get(name)];
 	}
 	
+	/** returns all metadata, indexed first by metadata type, then by rank.
+	 * The order of keys is as in getMetaKeys()
+	 */
 	public String[][] allMetaItems() {
 		return metadata;
 	}
 	
+	 /** does the metaindex have a particular type of metadata? */
 	@Override
 	public boolean hasMetaItems(String name) {
 		return metaMap.containsKey(name);
@@ -137,7 +143,9 @@ public class QueryResultSet extends CollectionResultSet {
 	/** {@inheritDoc} */
 	@Override
 	public String[] getMetaKeys() {
-		return metaMap.keys(new String[metaMap.size()]);
+		String[] rtr = metaMap.keys(new String[metaMap.size()]);
+		Arrays.sort(rtr, (String o1, String o2) -> metaMap.get(o1) - metaMap.get(o2));
+		return rtr;
 	}
 	
 	/** Get the metadata index for the given name
@@ -227,6 +235,18 @@ public class QueryResultSet extends CollectionResultSet {
 			}
 		}
 		return resultSet;
+	}
+	@Override
+	public void sort() {
+		if (metaMap.size() > 0)
+			throw new UnsupportedOperationException("sorting with metadata doesnt work");
+		super.sort();
+	}
+	@Override
+	public void sort(int topDocs) {
+		if (metaMap.size() > 0)
+			throw new UnsupportedOperationException("sorting with metadata doesnt work");
+		super.sort(topDocs);
 	}
 	
 }

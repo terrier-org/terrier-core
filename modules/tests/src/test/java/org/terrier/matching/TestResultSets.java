@@ -168,6 +168,38 @@ public class TestResultSets {
 		}
 	}
 	
+	@Test public void testKeys() 
+	{
+		ResultSet r = new QueryResultSet(2);
+		r.initialise();
+		
+		r.getDocids()[0]	= 10;
+		r.getScores()[0] = -5d;
+		r.getDocids()[1]	= 9;
+		r.getScores()[1] = -1d;
+		
+		r.addMetaItems("docno", new String[]{"doc10", "doc9"});
+		r.addMetaItems("filename", new String[]{"aa", "bb"});
+		
+		
+		assertEquals(9, r.getDocids()[1]);
+		assertEquals(10, r.getDocids()[0]);
+		
+		assertEquals("doc10", r.getMetaItem("docno",0));
+		assertEquals("doc9", r.getMetaItem("docno",1));
+		assertEquals("aa", r.getMetaItem("filename",0));
+		assertEquals("bb", r.getMetaItem("filename",1));
+		
+		assertEquals("doc10", r.allMetaItems()[0][0]);
+		assertEquals("aa", r.allMetaItems()[1][0]);
+		
+		assertEquals("doc9", r.allMetaItems()[0][1]);
+		assertEquals("bb", r.allMetaItems()[1][1]);
+		
+		assertEquals("docno", r.getMetaKeys()[0]);
+		assertEquals("filename", r.getMetaKeys()[1]);
+	}
+	
 	@Test public void testSortingNegative() 
 	{
 		ResultSet r1 = new CollectionResultSet(2);
