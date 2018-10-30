@@ -253,6 +253,7 @@ public class CollectionResultSet implements ResultSet, Serializable{
 	 * @param value the metadata value.
 	 */
 	public void addMetaItem(String name, int docid, String value) {
+		throw new UnsupportedOperationException();
 	}
 	
 	/**
@@ -263,16 +264,17 @@ public class CollectionResultSet implements ResultSet, Serializable{
 	 * @param values the metadata values.
 	 */
 	public void addMetaItems(String name, String[] values) {
+		throw new UnsupportedOperationException();
 	}
 	
 	/**
 	 * Empty method.
 	 * @param name the name of the metadata type. 
-	 * @param docid the document identifier of the document.
+	 * @param rank the rank of the document.
 	 * @return a string with the metadata information, or null of the 
 	 *         metadata is not available.
 	 */
-	public String getMetaItem(String name, int docid) {
+	public String getMetaItem(String name, int rank) {
 		return null;
 	}
 	
