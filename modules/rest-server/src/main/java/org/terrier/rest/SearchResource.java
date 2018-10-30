@@ -82,8 +82,14 @@ public class SearchResource {
 				String[] controlKVs = controls.split(";");
 				for(String kv : controlKVs)
 				{
+					//stop trailing & being a problem
+					if (kv.length() == 0)
+						continue;
 					String[] kvs = kv.split(":");
-					srq.setControl(kvs[0], kvs[1]);
+					if (kvs.length == 2)//stop no value being a problem
+						srq.setControl(kvs[0], kvs[1]);
+					else
+						System.err.println("invalid control="+ kv);
 				}				 
 			}
 			
@@ -102,7 +108,10 @@ public class SearchResource {
 			OutputFormat of = getOutputFormat(srq, format);
 			of.printResults(pw, srq, "terrier-rest", "Q0", 0);
 			pw.flush();
-	        return Response.ok(sw.toString()).build();
+	        return Response.ok(sw.toString())
+					.type(of.contentType())
+					.header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (Exception e) {
 			StringWriter s = new StringWriter();
 			PrintWriter p = new PrintWriter(s);
@@ -126,6 +135,7 @@ public class SearchResource {
 		switch (format) {
 		case "trec": return new TRECDocnoOutputFormat(index);
 		case "letor": return new Normalised2LETOROutputFormat(index);
+		case "json": return new JSONOutputFormat(index);
 		}
 		throw new IllegalArgumentException("Format " + format + " is unknown");
 	}
