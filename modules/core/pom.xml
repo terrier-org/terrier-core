@@ -176,26 +176,26 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
-			<version>9.2.9.v20150224</version>
+			<version>9.3.24.v20180605</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>9.2.9.v20150224</version>
+			<version>9.3.24.v20180605</version>
 		</dependency>
 
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>apache-jsp</artifactId>
-			<version>9.2.9.v20150224</version>
+			<version>9.3.24.v20180605</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>1.8.4</version>
+			<version>1.8.16</version>
 		</dependency>
 
 		<dependency>
