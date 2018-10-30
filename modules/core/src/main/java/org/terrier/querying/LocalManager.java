@@ -841,13 +841,16 @@ public class LocalManager implements Manager
 		
 		if (! mqtObtained)
 		{
-			logger.warn("After running " + ran + " processes, no MQT was obtained. Matching will likely fail");
+			logger.warn("After running " + ran + " processes, no MQT was obtained. Matching will likely fail. Controls were: " + rq.getControls().toString());
 		}
-		if (! hasResultSet)
+		String msg = "";
+		if (hasResultSet)
 		{
-			logger.warn("After running " + ran + " processes, no ResultSet was obtained.");
+			msg = " - " + rq.getResultSet().getResultSize() + " results retrieved";
+		} else {
+			logger.warn("After running " + ran + " processes, no ResultSet was obtained. Controls were: " + rq.getControls().toString());
 		}
-		logger.info("Finished executing query " + srq.getQueryID());
+		logger.info("Finished executing query " + srq.getQueryID() + msg);
 	 }
 	
 	/*-------------------------------- helper methods -----------------------------------*/
