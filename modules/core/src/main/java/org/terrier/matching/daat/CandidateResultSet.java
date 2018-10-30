@@ -27,10 +27,11 @@
 package org.terrier.matching.daat;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import org.terrier.matching.QueryResultSet;
 import org.terrier.matching.ResultSet;
@@ -80,10 +81,10 @@ public class CandidateResultSet implements ResultSet, Serializable
 	protected CandidateResultSet(){}
 	
 	/** Create a ResultSet from the specified queue of results */
-	public CandidateResultSet(Queue<CandidateResult> q)
+	public CandidateResultSet(Collection<CandidateResult> _q)
 	{
 		lock = new ReentrantLock();
-		
+		Collection<CandidateResult> q = _q.stream().filter( res -> res.getScore() != Double.NEGATIVE_INFINITY).collect(Collectors.toList());
 		resultSize = q.size();
 		exactResultSize = resultSize;
 
@@ -102,10 +103,10 @@ public class CandidateResultSet implements ResultSet, Serializable
 	}
 
 	/** Create a ResultSet from the specified list of results */
-	public CandidateResultSet(List<CandidateResult> q)
+	public CandidateResultSet(List<CandidateResult> _q)
 	{
 		lock = new ReentrantLock();
-		
+		Collection<CandidateResult> q = _q.stream().filter( res -> res.getScore() != Double.NEGATIVE_INFINITY).collect(Collectors.toList());
 		resultSize = q.size();
 		exactResultSize = resultSize;
 
