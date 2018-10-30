@@ -270,7 +270,8 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		long tokens = 0;
 		for(int docid=0;docid<numDocs;docid++)
 		{
-			assertEquals("Document pointers for docid "+docid+" is unexpected,", docPointers[docid], observedPointers[docid]);
+			if (docPointers != null)
+				assertEquals("Document pointers for docid "+docid+" is unexpected,", docPointers[docid], observedPointers[docid]);
 			assertEquals("Document length for docid "+docid+" is unexpected,", documentLengths[docid], observedDocLengths[docid]);
 			tokens += observedDocLengths[docid];
 		}
