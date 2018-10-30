@@ -113,6 +113,11 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 	{
 		this(ApplicationSetup.COLLECTION_SPEC);
 	}
+	
+	/** additional constructors required by TRECIndexing */
+	public SimpleFileCollection(List<String> filelist, String ignored1, String ignored2, String ignored3) {
+		this(filelist, false);
+	}
 
 	/** additional constructors required by TRECIndexing */
 	public SimpleFileCollection(String addressCollectionFilename, String ignored1, String ignored2, String ignored3) {
