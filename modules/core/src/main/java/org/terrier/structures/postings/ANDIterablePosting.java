@@ -146,7 +146,7 @@ public class ANDIterablePosting extends IterablePostingImpl {
 		{
 			targetID = ips[0].next(targetID);
 			if (targetID == EOL)
-				return EOL;
+				return currentId = EOL;
 			for(int i=1;i<ips.length;i++)
 			{
 				int foundID = ips[i].getId();
@@ -174,7 +174,7 @@ public class ANDIterablePosting extends IterablePostingImpl {
 		{
 			int targetID = ips[0].next();
 			if (targetID == EOL)
-				return EOL;
+				return currentId = EOL;
 			for(int i=1;i<ips.length;i++)
 			{
 				int foundID = ips[i].getId();
@@ -204,7 +204,7 @@ public class ANDIterablePosting extends IterablePostingImpl {
 
 	@Override
 	public boolean endOfPostings() {
-		return ips[0].endOfPostings();
+		return currentId != EOL;
 	}
 
 	@Override

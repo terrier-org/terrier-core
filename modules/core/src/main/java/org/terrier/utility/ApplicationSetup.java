@@ -623,7 +623,7 @@ public class ApplicationSetup {
 		if ( new File(filename).isAbsolute() )
 			return filename;
 		if (filename.startsWith(".."+ FILE_SEPARATOR))
-			return System.getProperty("user.dir") + filename;
+			return System.getProperty("user.dir") + FILE_SEPARATOR + filename;
 		if (filename.startsWith("."+ FILE_SEPARATOR))
 			return filename.replaceAll("^\\.", System.getProperty("user.dir"));
 		if (! DefaultPath.endsWith(FILE_SEPARATOR))

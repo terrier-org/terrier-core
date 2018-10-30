@@ -80,7 +80,9 @@ public class Full extends BaseMatching
 		// The first step is to initialise the arrays of scores and document ids.
 		initialise(queryTerms);
 		plm = new PostingListManager(index, super.collectionStatistics, queryTerms);
+		logger.debug("plm initialised");
 		plm.prepare(true);
+		logger.debug("plm prepared");
 		
 		// Check whether we need to match an empty query. If so, then return the existing result set.
 		if (MATCH_EMPTY_QUERY && plm.size() == 0) {
@@ -107,6 +109,7 @@ public class Full extends BaseMatching
 				continue;
 			postingHeap.enqueue((docid << 32) + i);
 		}
+		logger.debug(" postingHeap.size()= " + postingHeap.size() + " mts = " + java.util.Arrays.toString(plm.getMatchingTerms()));
 		final int[] nonMatchingTerms = plm.getNonMatchingTerms();
         boolean targetResultSetSizeReached = false;
         final Queue<CandidateResult> candidateResultList = new PriorityQueue<CandidateResult>();
@@ -115,6 +118,7 @@ public class Full extends BaseMatching
         double threshold = 0.0d;
         final long requiredBitPattern = plm.getRequiredBitMask();
         final long negRequiredBitPattern = plm.getNegRequiredBitMask();
+		logger.debug("Requirement patterns: mustmatch="+ requiredBitPattern + " must not match="+negRequiredBitPattern);
         //int scored = 0;
         
         while (currentDocId != -1)  {
@@ -122,7 +126,7 @@ public class Full extends BaseMatching
             CandidateResult currentCandidate = makeCandidateResult(currentDocId);
             
             int currentPostingListIndex = (int) (postingHeap.firstLong() & 0xFFFF), nextDocid;
-            //System.err.println("currentDocid="+currentDocId+" currentPostingListIndex="+currentPostingListIndex);
+            //System.err.println("currentDocid="+currentDocId+" currentPostingListIndex="+currentPostingListIndex + " postingHeap.size()= " + postingHeap.size());
             currentPosting = plm.getPosting(currentPostingListIndex); 
             //scored++;
             do {

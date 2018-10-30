@@ -42,4 +42,6 @@ public interface OutputFormat {
 	 */
 	void printResults(final PrintWriter pw, final SearchRequest q,
 			String method, String iteration, int numberOfResults) throws IOException;
+
+	default String contentType() { return "text/plain"; }
 }
