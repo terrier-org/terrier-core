@@ -96,7 +96,13 @@ public class DependenceModelPreProcess implements MQTRewritingProcess{
 			{
 				continue;
 			}
-			queryTerms.add(e.getKey());
+			Operator o = e.getKey().clone();
+			if (o instanceof SingleTermOp && ((SingleTermOp)o).getField() != null)
+			{
+				System.err.println("WARN: The query had fields for op "+o+" but proximity cannot have fields.");
+				((SingleTermOp)o).setField(null);
+			}
+			queryTerms.add(o);
 		}
 		
 		if (queryTerms.size() < 2)
