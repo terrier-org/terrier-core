@@ -83,7 +83,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 		Collection rtr = CollectionFactory.loadCollection(collectionName, constructerClasses, constructorValues);
 		if (rtr == null)
 		{
-			logger.error("Collection class named "+ collectionName + " not found, aborting");
+			throw new IllegalArgumentException("Collection class named "+ collectionName + " not loaded, aborting");
 		}
 		return rtr;
 	}

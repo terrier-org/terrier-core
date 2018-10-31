@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.slf4j.Logger;
@@ -58,7 +59,7 @@ public class TwitterJSONCollection implements Collection {
 	/** logger for this class */	
 	protected static final Logger logger = LoggerFactory.getLogger(TwitterJSONCollection.class);
 	/** The list of files to process. */
-	protected ArrayList<String> FilesToProcess = null;
+	protected List<String> FilesToProcess = null;
 	/** A boolean which is true when a new file is open.*/
 	protected boolean SkipFile = false;
 	/** The JSON stream containing the tweets */
@@ -87,6 +88,21 @@ public class TwitterJSONCollection implements Collection {
 			logger.error("IOException opening first file of collection - is the collection.spec correct?", ioe);
 		}
 	}
+	
+	public TwitterJSONCollection(String CollectionSpecFile, String ignored1, String ignored2, String ignored3) {
+		this(CollectionSpecFile);
+	}
+	
+	public TwitterJSONCollection(List<String> files, String ignored1, String ignored2, String ignored3) {
+		FilesToProcess = files;
+		//open the first file
+		try {
+			openNextFile();
+		} catch (IOException ioe) {
+			logger.error("IOException opening first file of collection - is the collection.spec correct?", ioe);
+		}
+	}
+
 
 	public TwitterJSONCollection() {}
 	

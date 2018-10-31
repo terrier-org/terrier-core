@@ -369,6 +369,13 @@ public class SimpleXMLCollection implements Collection
 		this(addressCollectionFilename, BlacklistSpecFilename);
 	}
 	
+	/** additional constructors required by TRECIndexing */
+	public SimpleXMLCollection(List<String> collSpecFiles, String ignored1, String BlacklistSpecFilename, String ignored2) {
+		this(collSpecFiles);
+		loadBlacklist(BlacklistSpecFilename);
+		
+	}
+	
 	/** 
 	 * Construct a SimpleXMLCollection
 	 * @param CollectionSpecFilename
@@ -377,7 +384,10 @@ public class SimpleXMLCollection implements Collection
 	public SimpleXMLCollection(String CollectionSpecFilename, String BlacklistSpecFilename)
 	{
 		this(CollectionFactory.loadCollectionSpecFileList(CollectionSpecFilename));
-		
+		loadBlacklist(BlacklistSpecFilename);
+	}
+	
+	protected void loadBlacklist(String BlacklistSpecFilename) {
 		//reads the trec_blacklist_docid file
 		if (BlacklistSpecFilename != null && BlacklistSpecFilename.length() >0)
 		{
