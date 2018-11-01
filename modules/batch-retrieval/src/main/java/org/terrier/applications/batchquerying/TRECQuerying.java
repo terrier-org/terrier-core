@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -839,8 +840,10 @@ public class TRECQuerying extends AbstractQuerying {
 					querySource.getInfo(),
 					"# run started at: " + startTime
 							+ "\n# run finished at "
-							+ System.currentTimeMillis() + "\n# c=" + c
-							+ " c_set=" + c_set + "\n");
+							+ System.currentTimeMillis() 
+							//+ "\n# c=" + c
+							//+ " c_set=" + c_set + "\n"
+							);
 
 		if (doneSomeTopics && doneSomeMethods)
 			logger.info("Finished topics, executed " + matchingCount
@@ -872,7 +875,7 @@ public class TRECQuerying extends AbstractQuerying {
 
 	/**
 	 * prints the current settings to a file with the same name as the current
-	 * results file. this assists in tracing the settings used to generate a
+	 * results file. This assists in tracing the settings used to generate a
 	 * given run.
 	 */
 	public void printSettings(final SearchRequest default_q,
@@ -881,14 +884,14 @@ public class TRECQuerying extends AbstractQuerying {
 			OutputStream bos = Files.writeFileStream(resultsFilename.replaceFirst("\\.res(\\.\\w+)?$", ".res") + ".settings");
 			ApplicationSetup.getUsedProperties().store(
 					bos,
-					" Settings of Terrier (TRECQuerying) generated for run "
-							+ resultsFilename);
+					" Settings of Terrier (TRECQuerying) generated for run " + resultsFilename);
 			PrintWriter pw = new PrintWriter(bos);
 			if (topicsFiles != null)
 				for (String f : topicsFiles)
 					pw.println("# topicfile: " + f);
-			java.util.Map<String, String> controls = default_q.getControls();
-			for (Map.Entry<String,String> kv : controls.entrySet())
+			Map<String, String> defaultcontrols = new HashMap<>(default_q.getControls());
+			defaultcontrols.putAll(super.controls);
+			for (Map.Entry<String,String> kv : defaultcontrols.entrySet())
 			{
 				pw.println(String.format("# control: %s=%s", kv.getKey(), kv.getValue()));
 			}

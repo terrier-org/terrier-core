@@ -58,8 +58,9 @@ public class AbstractQuerying {
 	public AbstractQuerying(String _appName) {
 		super();
 		this.appName = _appName;
-		String wModel = ApplicationSetup.getProperty(appName +".model", "PL2");
-		controls.put(SearchRequest.CONTROL_WMODEL, wModel);
+		String wModel = ApplicationSetup.getProperty(appName +".model", null);
+		if (wModel != null)
+			controls.put(SearchRequest.CONTROL_WMODEL, wModel);
 	}
 
 	/**
