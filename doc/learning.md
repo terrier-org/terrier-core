@@ -89,7 +89,7 @@ Next, we need to create an index, with fields and blocks enabled. For brevity, w
 ```
     bin/terrier -j -b -DFieldTags.process=TITLE,ELSE
 
-    Setting TERRIER_HOME to /home/terrier-4.0
+    Setting TERRIER_HOME to /home/terrier
     INFO - TRECCollection read collection specification (4613 files)
     INFO - Processing /extra/Collections/TREC/DOTGOV/G00/02.gz
     INFO - Indexer using 2 fields
