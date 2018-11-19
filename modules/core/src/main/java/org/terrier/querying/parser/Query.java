@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.terrier.matching.BaseMatching;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.MatchingQueryTerms.QueryTermProperties;
