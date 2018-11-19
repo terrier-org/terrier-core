@@ -298,11 +298,12 @@ public class IndexingAndRetrievalExample {
 		// Print the results
 		System.out.println("The top "+results.size()+" of documents were returned");
 		System.out.println("Document Ranking");
+		int rank = 0;
 		for(ScoredDoc doc : results) {
 			int docid = doc.getDocid();
 			double score = doc.getScore();
 			String docno = doc.getMetadata("docno")
-			System.out.println("   Rank "+i+": "+docid+" "+docno+" "+score);
+			System.out.println("   Rank "+ (rank++)+": "+docid+" "+docno+" "+score);
 		}
   }
 }
