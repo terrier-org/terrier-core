@@ -302,7 +302,7 @@ public class IndexingAndRetrievalExample {
 			int docid = doc.getDocid();
 			double score = doc.getScore();
 			String docno = doc.getMetadata("docno")
-			System.out.println(""+docid+" "+docno+" "+score);
+			System.out.println("   Rank "+i+": "+docid+" "+docno+" "+score);
 		}
   }
 }
