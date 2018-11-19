@@ -9,8 +9,8 @@ Terrier 5.x - unreleased
  - [TR-534](http://terrier.org/issues/browse/TR-534) parallel indexing does not merge blocks correctly
  - [TR-535](http://terrier.org/issues/browse/TR-535) batchindexing -b command doesnt work for classical indexing
  - [TR-537](http://terrier.org/issues/browse/TR-537) NPE in parallel indexing with SimpleFileCollection (Ian Soboroff, NIST)
- - [TR-538](http://terrier.org/issues/browse/TR-538) TRECWebCollection doesnt parse all headers (Ian Soboroff, NIST)
- - [TR-542](http://terrier.org/issues/browse/TR-542) TwitterJSONCollection missing constructor?
+ - [TR-538](http://terrier.org/issues/browse/TR-538) TRECWebCollection doesnt parse malformed HTTP headers (Ian Soboroff, NIST)
+ - [TR-542](http://terrier.org/issues/browse/TR-542) TwitterJSONCollection missing constructor
 
 ### Retrieval
  - [TR-512](http://terrier.org/issues/browse/TR-512) Set approximate stats for ngram statistics
