@@ -6,18 +6,41 @@ Terrier 5.x - unreleased
 ### Indexing
  - [TR-517](http://terrier.org/issues/browse/TR-517) org.terrier.indexing TRECCollection classes etc are in the wrong module (Nicola Tonellotto, ISTI-CNR)
  - [TR-521](http://terrier.org/issues/browse/TR-521) TRECWebCollection missing a constructor (Peilin Yang, Twitter)
+ - [TR-534](http://terrier.org/issues/browse/TR-534) parallel indexing does not merge blocks correctly
+ - [TR-535](http://terrier.org/issues/browse/TR-535) batchindexing -b command doesnt work for classical indexing
+ - [TR-537](http://terrier.org/issues/browse/TR-537) NPE in parallel indexing with SimpleFileCollection (Ian Soboroff, NIST)
  - [TR-538](http://terrier.org/issues/browse/TR-538) TRECWebCollection doesnt parse all headers (Ian Soboroff, NIST)
- 
+ - [TR-542](http://terrier.org/issues/browse/TR-542) TwitterJSONCollection missing constructor?
+
 ### Retrieval
  - [TR-512](http://terrier.org/issues/browse/TR-512) Set approximate stats for ngram statistics
+ - [TR-513](http://terrier.org/issues/browse/TR-513) Allow wmodel and tags to be specified as parameters to #combine
+ - [TR-514](http://terrier.org/issues/browse/TR-514) Prefix/levenshtein matching in the matchopql
  - [TR-515](http://terrier.org/issues/browse/TR-515) #base64 support in matchopql
+ - [TR-527](http://terrier.org/issues/browse/TR-527) ANDIterablePosting and descendents should support next(int)
+ - [TR-528](http://terrier.org/issues/browse/TR-528) Each MatchingOp can have more than one tag
+ - [TR-529](http://terrier.org/issues/browse/TR-529) Clone support for matchops 
+ - [TR-530](http://terrier.org/issues/browse/TR-530) Refactor FatScoringMatching and FatFeaturedScoringMatching to make easier subclasses
+ - [TR-532](http://terrier.org/issues/browse/TR-532) interactive query formulation errors results in interactive ending
+ - [TR-533](http://terrier.org/issues/browse/TR-533) control values are lowercased
+ - [TR-536](http://terrier.org/issues/browse/TR-536) Some command-line settings in batchretrieve not reflected in .settings file (Ian Soboroff, NIST)
+ - [TR-539](http://terrier.org/issues/browse/TR-539) Dependence model rewriter should support #syn
+ - [TR-540](http://terrier.org/issues/browse/TR-540) QueryResultSet.getMetaKeys() does not give a defined order
+ - [TR-541](http://terrier.org/issues/browse/TR-541) REST api should set content-types
+ - [TR-543](http://terrier.org/issues/browse/TR-543) CollectionResultSet should warn/error when metadata is added to it
+ - [TR-544](http://terrier.org/issues/browse/TR-544) SimpleDecorate swallows Exceptions
+ - [TR-545](http://terrier.org/issues/browse/TR-545) Proximity shouldn't encapsulate terms with fields set
+ - [TR-547](http://terrier.org/issues/browse/TR-547) JSON output format for REST API
 
 ### Other
  - [TR-522](http://terrier.org/issues/browse/TR-522) wrong paths in .bat files (Artur Cieslewicz, Poznan University of Medical Sciences)
- - [TR-523](http://terrier.org/issues/browse/TR-523) -I option to Terrier doesnt work
+ - [TR-523](http://terrier.org/issues/browse/TR-523) -I option to bin/terrier doesn't work
  - [TR-524](http://terrier.org/issues/browse/TR-524) Terrier Aether downloads "too many" dependencies
  - [TR-525](http://terrier.org/issues/browse/TR-525) switch from jcabi-aether to maven-resolver to reduce dependencies on Spring/hibernate
  - [TR-526](http://terrier.org/issues/browse/TR-526) CLIParsedTool help formatting can be improved
+ - [TR-546](http://terrier.org/issues/browse/TR-546) "Show document" application
+ - [TR-548](http://terrier.org/issues/browse/TR-548) Bump versions as recommended by Github
+ - documentation fixes (Meng Dong, University of Glasgow)
 
 Terrier 5.0 - 04/07/2018
 ------------------------
