@@ -35,7 +35,7 @@ public class JSONOutputFormat implements org.terrier.structures.outputformat.Out
         if (q instanceof Request)
         {
             Request rq = (Request)q;
-            json.put("matchopql", ((Request)q).getMatchingQueryTerms().toString() );
+            json.put("matchopql", rq.getMatchingQueryTerms().toString() );
         }
         json.put("num_results", results.size());
 
