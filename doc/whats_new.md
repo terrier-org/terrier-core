@@ -11,6 +11,7 @@ Terrier 5.x - unreleased
  - [TR-537](http://terrier.org/issues/browse/TR-537) NPE in parallel indexing with SimpleFileCollection (Ian Soboroff, NIST)
  - [TR-538](http://terrier.org/issues/browse/TR-538) TRECWebCollection doesnt parse malformed HTTP headers (Ian Soboroff, NIST)
  - [TR-542](http://terrier.org/issues/browse/TR-542) TwitterJSONCollection missing constructor
+ - [TR-551](http://terrier.org/issues/browse/TR-551) Allow docnos to be overridden for SimpleFileCollection
 
 ### Retrieval
  - [TR-512](http://terrier.org/issues/browse/TR-512) Set approximate stats for ngram statistics

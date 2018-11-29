@@ -87,4 +87,31 @@ public class TestSimpleFileCollection extends ApplicationSetupBasedTest {
 		c.close();
 	}
 	
+	@Test public void testSimpleFileCollectionWithDocno() throws Exception
+	{
+		final PrintWriter p = new PrintWriter(Files.writeFileWriter(ApplicationSetup.TERRIER_ETC +  "/collection.spec"));
+		for(String ext : EXTS)
+		{
+			p.println("../../share/tests/simplefilecollection/document." + ext + "\t" + ext);
+		}
+		p.close();
+		Collection c = new SimpleFileCollection();
+		for(int i=0;i<EXTS.length;i++)
+		{
+			Class<? extends Document> docClass = CLASSES[i];
+			assertFalse(c.endOfCollection());
+			assertTrue(c.nextDocument());
+			Document d = c.getDocument();
+			assertNotNull("Did not get a document for extension ."+ EXTS[i], d);
+			assertTrue(d.getProperty("filename").endsWith("document."+EXTS[i]));
+			assertEquals(EXTS[i], d.getProperty("docno"));
+			assertNotNull(d);
+			assertTrue(docClass.isInstance(d));
+			BaseTestDocument.testDocument(d, LOREM_IPSUM);
+		}
+		assertFalse(c.nextDocument());
+		assertTrue(c.endOfCollection());
+		c.close();
+	}
+	
 }
