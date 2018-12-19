@@ -47,7 +47,7 @@ import com.google.gson.JsonStreamParser;
  * format. Like TRECCollection, it expects a collection specification
  * containing all of the files to be read. Each file is assumed to be in
  * gzip format, with one tweet per line. The google.gson parser is used
- * to read the tweet JSON. The TwitterJSONDocument representation is used.
+ * to read the tweet JSON. The FlatJSONDocument representation is used.
  * 
  * @author Richard McCreadie
  * @since 4.0
@@ -89,6 +89,11 @@ public class TwitterJSONCollection implements Collection {
 	}
 
 	public TwitterJSONCollection() {}
+	
+	/** additional constructors required by TRECIndexing */
+	public TwitterJSONCollection(String addressCollectionFilename, String ignored1, String ignored2, String ignored3) {
+		this(addressCollectionFilename);
+	}
 	
 	public void init() {
 		
@@ -208,7 +213,7 @@ public class TwitterJSONCollection implements Collection {
 		}
 		
 		if (nextOK) {
-			currentDocument = new TwitterJSONDocument(readTweet());
+			currentDocument = new FlatJSONDocument(readTweet());
 			return true;
 		} else {
 			try {
@@ -231,9 +236,9 @@ public class TwitterJSONCollection implements Collection {
 		
 		long docno;
 		try {
-			docno = Long.parseLong(((TwitterJSONDocument)currentDocument).getProperty("docno") );
+			docno = Long.parseLong(((FlatJSONDocument)currentDocument).getProperty("docno") );
 		} catch (Exception e) {
-			System.err.println("WARN: Parsing failure... skipping document");
+			logger.warn("WARN: Parsing failure... skipping document");
 			return null;
 		}
 		
@@ -253,5 +258,6 @@ public class TwitterJSONCollection implements Collection {
 		logger.error("WARN: TwitterJSONCollection.reset() was called but it has not been implemented.");
 		
 	}
+
 
 }
