@@ -29,19 +29,30 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.hadoop.io.Text;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.terrier.indexing.FlatJSONDocument;
+import org.terrier.realtime.memory.MemoryIndex;
 import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
 import org.terrier.structures.indexing.MetaIndexBuilder;
+import org.terrier.structures.seralization.FixedSizeTextFactory;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
+
+import junit.framework.Assert;
 
 /** Unit test for CompressingMetaIndex */
 public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
@@ -350,6 +361,47 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		assertEquals(docids.length, retr_docnos2.length);
 		assertEquals(1, retr_docnos2[0].length);
 		assertTrue(Arrays.equals(docnos, retr_docnos));
+	}
+	
+	
+	@Test
+	public void testCropFunction() throws IOException {
+		String separator = ApplicationSetup.FILE_SEPARATOR;
+		String exampleTweetFile = ApplicationSetup.TERRIER_HOME+separator+"share"+separator+"tests"+separator+"tweets"+separator+"utf8-tweet.json";
+		File tweetFile = new File(exampleTweetFile);
+		assertTrue("Tweet file is available",tweetFile.exists());
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(tweetFile), "UTF-8"));
+		String tweet = br.readLine();
+		br.close();
+		
+		FlatJSONDocument doc = new FlatJSONDocument(tweet);
+		
+		
+		IndexOnDisk index = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+		
+		String[] _keyNames = {"docno", "text"};
+		int[] _valueLens = {20, 140};
+		String[] _forwardKeys = _keyNames;
+		
+		String previousCropConfig = ApplicationSetup.getProperty("metaindex.compressed.crop.long", "false");
+		ApplicationSetup.setProperty("metaindex.compressed.crop.long", "true");
+		
+		CompressingMetaIndexBuilder compressedMetaIndexBuilder;
+		try {
+			compressedMetaIndexBuilder = new CompressingMetaIndexBuilder(index, _keyNames, _valueLens, _forwardKeys);
+			compressedMetaIndexBuilder.writeDocumentEntry(doc.getAllProperties());
+		} catch (Exception e) {
+			Assert.fail("Compressing MetaIndexBuilder failed to write the metadata for an example tweet. "+e.getMessage());
+		}
+		
+		ApplicationSetup.setProperty("metaindex.compressed.crop.long", previousCropConfig);
+		
+		
+		index.close();
+		IndexUtil.deleteIndex(((IndexOnDisk)index).getPath(), ((IndexOnDisk)index).getPrefix());
+		
+	
 	}
 	
 }

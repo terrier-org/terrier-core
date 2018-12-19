@@ -206,19 +206,36 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 			if (value == null)
 				value = "";
 			else if (value.length() > valueLensChars[i])
-				if (CROP_LONG)
+				if (CROP_LONG) {
 					value = value.substring(0,valueLensChars[i]-1);
-				else
+				}else
 					throw new IllegalArgumentException("Data ("+value+") of string length "+value.length()+" for key "
 						+keyNames[i]+" exceeds max string length of " + valueLensChars[i] +"(byte length of " + valueLensBytes[i] + 
 						"). Crop in the Document, increase indexer.meta.forward.keylens, or set metaindex.compressed.crop.long");
 				
-			final byte[] b = Text.encode(value).array();
-			final int numberOfBytesToWrite = b.length;
-			if (numberOfBytesToWrite > valueLensBytes[i])
-				throw new IllegalArgumentException("Data ("+value+") of byte length "+numberOfBytesToWrite+" for key "
-						+keyNames[i]+" exceeds max byte length of " + valueLensBytes[i] +"(string length of " 
-						+ valueLensChars[i] + "). Crop in the Document, or increase indexer.meta.forward.keylens");
+			byte[] b = Text.encode(value).array();
+			int numberOfBytesToWrite = b.length;
+			while (numberOfBytesToWrite > valueLensBytes[i]) {
+				if (CROP_LONG) {
+					// we have reached an exception case, see http://terrier.org/issues/browse/TR-518
+					// incrementally shorten the value until it can be encoded
+						
+					// guess overfill
+					double oversizeRatio = (1.0*valueLensBytes[i])/numberOfBytesToWrite;
+					int newTargetLength = (int)(value.length()*oversizeRatio);
+					value = value.substring(0,newTargetLength-1);
+					b = Text.encode(value).array();
+					numberOfBytesToWrite = b.length;
+					
+					//logger.info("Extra cropping was applied, reducing text to length "+value.length()+" characters to fit in the target byte length "+numberOfBytesToWrite+"/"+valueLensBytes[i]);
+					
+				} else {
+					throw new IllegalArgumentException("Data ('"+value+"') with "+value.length()+" characters and byte length "+numberOfBytesToWrite+" for key "
+							+keyNames[i]+" exceeds max byte length of " + valueLensBytes[i] +"(string length of " 
+							+ valueLensChars[i] + "). Crop in the Document, increase indexer.meta.forward.keylens, or set metaindex.compressed.crop.long");
+				}
+				
+			}
 			baos.write(b);
 			if (numberOfBytesToWrite < valueLensBytes[i]) 
 				baos.write(spaces, 0, valueLensBytes[i]-numberOfBytesToWrite);
