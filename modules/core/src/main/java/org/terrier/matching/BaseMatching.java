@@ -62,6 +62,9 @@ import org.terrier.utility.ApplicationSetup;
  */
 public abstract class BaseMatching implements Matching
 {
+	public static final String BASE_MATCHING_TAG = "firstmatchscore";
+	public static final String NONMATCHING_TAG = "firstkeep";
+	
 	protected long totalTime = 0;
      /** the logger for this class */
 	protected static final Logger logger = LoggerFactory.getLogger(Matching.class);
@@ -296,7 +299,7 @@ public abstract class BaseMatching implements Matching
 			if (documentModifiers.get(t).modifyScores(index, queryTerms, resultSet))
 				resultSet.sort(resultSet.getResultSize());
 		}
-		logger.debug("number of retrieved documents: " + resultSet.getResultSize());
+		logger.debug("query "+ queryTerms.getQueryId() +" number of retrieved documents: " + resultSet.getResultSize());
 		
 		updateEndTime(System.currentTimeMillis());
 	}

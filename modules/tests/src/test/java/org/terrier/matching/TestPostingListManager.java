@@ -59,7 +59,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		MatchingQueryTerms mqt = new MatchingQueryTerms();
 		mqt.add(QTPBuilder.of(Operator.parse("brown")).setWeight(1.2d).setTag("match").build());
 		mqt.add(QTPBuilder.of(Operator.parse("fox")).setWeight(1.2d).setTag("nomatch").build());
-		mqt.matchOnTags.add("match");
+		//mqt.matchOnTags.add("match");
 		mqt.setDefaultTermWeightingModel(new TF_IDF());
 		PostingListManager p;
 		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);
@@ -78,7 +78,7 @@ public class TestPostingListManager extends ApplicationSetupBasedTest {
 		mqt.add(QTPBuilder.of(Operator.parse("zebra")).setWeight(1.2d).setTag("nomatch").build());
 		mqt.add(QTPBuilder.of(Operator.parse("brown")).setWeight(1.2d).setTag("match").build());
 		mqt.add(QTPBuilder.of(Operator.parse("fox")).setWeight(1.2d).setTag("nomatch").build());
-		mqt.matchOnTags.add("match");
+		//mqt.matchOnTags.add("match");
 		mqt.setDefaultTermWeightingModel(new TF_IDF());
 		PostingListManager p;
 		p = new PostingListManager(index, index.getCollectionStatistics(), mqt);

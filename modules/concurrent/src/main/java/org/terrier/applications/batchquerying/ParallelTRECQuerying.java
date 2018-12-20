@@ -141,7 +141,7 @@ public class ParallelTRECQuerying extends TRECQuerying {
 			parent = _parent;
 		}
 		
-		public void printResults(PrintWriter pw, SearchRequest q,
+		public synchronized void printResults(PrintWriter pw, SearchRequest q,
 				String method, String iteration, int numberOfResults)
 				throws IOException {
 			parent.printResults(pw, q, method, iteration, numberOfResults);

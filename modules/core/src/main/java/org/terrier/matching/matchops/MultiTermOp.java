@@ -152,15 +152,24 @@ public abstract class MultiTermOp extends Operator {
 			IndexUtil.configure(index, w);
 			w.prepare();			
 		}
-		boolean required = false;
+		MatchingEntry.Requirement required = MatchingEntry.Requirement.UNKNOWN;
 		if (qtp.required != null && qtp.required)
-			required = true;
-		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required, qtp.tag);
+			required = MatchingEntry.Requirement.REQUIRED;
+		if (qtp.required != null && ! qtp.required)
+			required = MatchingEntry.Requirement.NEG_REQUIRED;
+		return new MatchingEntry(pair.getRight(), entryStats, qtp.weight, wmodels, required, qtp.tags);
 	}
 	
 	public MultiTermOp clone()
 	{
-		throw new UnsupportedOperationException(); //TODO
+		MultiTermOp rtr = (MultiTermOp) super.clone();
+		rtr.terms = new Operator[this.terms.length];
+		int i=0;
+		for (Operator op : terms)
+		{
+			rtr.terms[i++] = op.clone();
+		}
+		return rtr;
 	}
 	
 }

@@ -101,18 +101,26 @@ public class Full extends BaseMatching
 		resultSet.initialise();
 		plm.close();
 		this.numberOfRetrievedDocuments = resultSet.getExactResultSize();
-		long requiredBitPattern = plm.getRequiredBitMask();
-		if (requiredBitPattern > 0)
+		final long requiredBitPattern = plm.getRequiredBitMask();
+		final long requiredNegBitPattern = plm.getNegRequiredBitMask();
+		if (requiredBitPattern > 0 || requiredNegBitPattern > 0)
 		{	
 			final short[] masks = resultSet.getOccurrences();
 			final double[] scores = resultSet.getScores();
 			for(int i=0;i<resultSet.getResultSize();i++)
 			{
-				if ((masks[i] & requiredBitPattern) != requiredBitPattern)
+				if ( requiredBitPattern > 0 && ((masks[i] & requiredBitPattern) != requiredBitPattern))
 				{
-					System.err.println("Document " + resultSet.getDocids()[i] 
-							+ " was discarded as it didnt match required bit pattern, required " + requiredBitPattern + " was "
-							+  masks[i]);
+//					System.err.println("Document " + resultSet.getDocids()[i] 
+//							+ " was discarded as it didnt match required bit pattern, required " + requiredBitPattern + " was "
+//							+  masks[i]);
+					scores[i] = Double.NEGATIVE_INFINITY;
+				}
+				if ( requiredNegBitPattern > 0 && ((masks[i] & requiredNegBitPattern) > 0))
+				{
+//					System.err.println("Document " + resultSet.getDocids()[i] 
+//							+ " was discarded as it matched the required neg bit pattern, required " + requiredNegBitPattern + " was "
+//							+  masks[i]);
 					scores[i] = Double.NEGATIVE_INFINITY;
 				}
 			}

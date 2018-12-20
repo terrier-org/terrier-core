@@ -114,6 +114,8 @@ public class TestTRECWebCollection extends ApplicationSetupBasedTest  {
 				"Client-Peer: 130.209.6.42:8080",
 				"Client-Response-Num: 1",
 				"Proxy-Connection: close",
+				"Pragma: ",//TREC-538 - check for empty values
+				"Pragma2:",//TREC-538 - check for empty values
 				"X-Cache: MISS from bottle",
 				"",
 				"",

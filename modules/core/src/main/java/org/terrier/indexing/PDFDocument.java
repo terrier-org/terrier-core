@@ -32,13 +32,12 @@ import java.io.StringWriter;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.pdfbox.exceptions.CryptographyException;
-import org.apache.pdfbox.exceptions.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.util.PDFTextStripper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terrier.indexing.tokenisation.Tokeniser;
 import org.terrier.utility.Files;
 /** 
@@ -154,12 +153,12 @@ public class PDFDocument extends FileDocument
         {
             throw new RuntimeException( "Error decrypting PDF document: " + e );
         }
-        catch( InvalidPasswordException e )
-        {
-            //they didn't suppply a password and the default of "" was wrong.
-            throw new RuntimeException( 
-                "Error: The PDF document is encrypted and will not be indexed." );
-        }
+//        catch( InvalidPasswordException e )
+//        {
+//            //they didn't suppply a password and the default of "" was wrong.
+//            throw new RuntimeException( 
+//                "Error: The PDF document is encrypted and will not be indexed." );
+//        }
 		catch (Exception e) {
 			throw new RuntimeException("Error extracting PDF document",  e);	
 		}

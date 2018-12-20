@@ -61,6 +61,7 @@ public class SimpleDecorate implements PostFilter {
 			}
 			return PostFilter.FILTER_OK;
 		} catch (Exception e) {
+			logger.warn("Problem performing decoration", e);
 			return PostFilter.FILTER_REMOVE;
 		}
 	}

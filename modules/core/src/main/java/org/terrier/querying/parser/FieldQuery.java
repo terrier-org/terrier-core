@@ -99,7 +99,12 @@ public class FieldQuery extends Query {
 	}
 	
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight) {
-		child.obtainQueryTerms(terms, this.field, required, weight);
+		obtainQueryTerms(new QueryTermsParameter(terms, true, field, required, weight));
+	}
+
+	public void obtainQueryTerms(QueryTermsParameter parameters) {
+		child.obtainQueryTerms(new QueryTermsParameter(parameters.getTerms(), parameters.lowercase(), this.field,
+				parameters.isRequired(), parameters.getWeight()));
 	}
 	
 //	/**

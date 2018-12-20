@@ -29,7 +29,7 @@ System.out.println("We have indexed " + index.getCollectionStatistics().getNumbe
 ```
 
 
-To search our index, we need to use a querying Manager, which does the work of scoring each document for your query. Your query is stored in a SearchRequest object that the Manager can generate for you. We also need to specify which scoring function to use when ranking documents via the addMatchingModel() method (in this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25)).
+To search our index, we need to use a querying Manager, which does the work of scoring each document for your query. Your query is stored in a SearchRequest object that the Manager can generate for you. We also need to specify which scoring function to use when ranking documents via the setControl() method (in this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25)).
 
 ```java
 Manager queryingManager = ManagerFactory.from(index.getIndexRef());
@@ -198,7 +198,7 @@ ApplicationSetup.setProperty("querying.postfilters", "decorate:org.terrier.query
 In this case, we have specified that org.terrier.querying.SimpleDecorate is a post filter we want to have access to, we have given it the name i.e. 'decorate' and we have added it to the list of filters to run.  
 
 > **Troubleshooting Tips**:
-> *  ApplicationSetup.setProperty() must be called before the a Manager is obtained, i.e. before `ManagerFactor.from(indexref)` is called.
+> *  ApplicationSetup.setProperty() must be called before the a Manager is obtained, i.e. before `ManagerFactory.from(indexref)` is called.
 
 ### Using a Search Manager
 
@@ -214,11 +214,11 @@ This creates a new querying manager with a default configuration and sets the in
 SearchRequest srq = queryingManager.newSearchRequestFromQuery("sample query");
 ```
 
-In this case we have created a new SearchRequest for the query 'sample query'. The SearchRequest will have reasonable defaults for running a basic search. However, there is two configuration options that we need to manually set. First, we need to set which scoring function to use when ranking documents. This is done via the addMatchingModel() method as shown below:
+In this case we have created a new SearchRequest for the query 'sample query'. The SearchRequest will have reasonable defaults for running a basic search. However, there is two configuration options that we need to manually set. First, we need to set which scoring function to use when ranking documents. This is done via the setControl() method as shown below:
 
 
 ```java
-srq.addMatchingModel("org.terrier.matching.daat.Full","BM25");
+srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
 ```
 
 In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate':
@@ -298,11 +298,12 @@ public class IndexingAndRetrievalExample {
 		// Print the results
 		System.out.println("The top "+results.size()+" of documents were returned");
 		System.out.println("Document Ranking");
+		int rank = 0;
 		for(ScoredDoc doc : results) {
 			int docid = doc.getDocid();
 			double score = doc.getScore();
 			String docno = doc.getMetadata("docno")
-			System.out.println("   Rank "+i+": "+docid+" "+docno+" "+score);
+			System.out.println("   Rank "+ (rank++)+": "+docid+" "+docno+" "+score);
 		}
   }
 }

@@ -34,6 +34,7 @@ import gnu.trove.TIntHashSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
+import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.matching.matchops.SynonymOp;
 import org.terrier.matching.models.DLH13;
@@ -45,6 +46,7 @@ import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.querying.parser.Query;
 import org.terrier.querying.parser.Query.QTPBuilder;
+import org.terrier.querying.parser.Query.QueryTermsParameter;
 import org.terrier.querying.parser.QueryParser;
 import org.terrier.querying.parser.QueryParserException;
 import org.terrier.structures.Index;
@@ -237,7 +239,9 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt, null, null, null);
+		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		for(MatchingTerm me : mqt)
+			me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG);
 		q.setMatchingQueryTerms(mqt);
 		
 		//mqt = new MatchingQueryTerms();
@@ -265,7 +269,9 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		query = q.getQuery();
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt, null, null, null);
+		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		for(MatchingTerm me : mqt)
+			me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -294,7 +300,9 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		query = q.getQuery();
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt, null, null, null);
+		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		for(MatchingTerm me : mqt)
+			me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -322,7 +330,9 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		System.err.println(query.parseTree());
 		mqt = new MatchingQueryTerms(q.getOriginalQuery(), q);
 		
-		query.obtainQueryTerms(mqt, null, null, null);
+		query.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		for(MatchingTerm me : mqt)
+			me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG);
 		q.setMatchingQueryTerms(mqt);
 
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -361,7 +371,10 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		mqt = new MatchingQueryTerms();
-		mqt.add(QTPBuilder.of( new SynonymOp(new String[]{"quick","waggily"})).build());
+		mqt.add(QTPBuilder.of( 
+				new SynonymOp(new String[]{"quick","waggily"}))
+				.setTag(BaseMatching.BASE_MATCHING_TAG)
+				.build());
 		//mqt.setTermProperty("quick|waggily");
 		mqt.setDefaultTermWeightingModel(new DLH13());
 		rs = matching.match("query1", mqt);
@@ -434,8 +447,8 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		ResultSet rs;
 		
 		mqt = new MatchingQueryTerms();
-		mqt.add(QTPBuilder.of(new SingleTermOp("dog")).build());
-		mqt.add(QTPBuilder.of(new SingleTermOp("window")).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("dog")).setTag(BaseMatching.BASE_MATCHING_TAG).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("window")).setTag(BaseMatching.BASE_MATCHING_TAG).build());
 //		mqt.setTermProperty("dog");
 //		mqt.setTermProperty("window");
 		mqt.setDefaultTermWeightingModel(new DLH13());
@@ -540,32 +553,34 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		assertEquals(2, srq.getResults().size());
 		
 		//2, are documents retrieved: two terms, best match
-		srq = m.newSearchRequest("test1", "brown window");
+		srq = m.newSearchRequest("test2", "brown window");
 		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		assertEquals(2, srq.getResults().size());
 	
 		//3, are documents retrieved: two terms, one of which is positive requirement
-		srq = m.newSearchRequest("test1", "dog +window");
+		srq = m.newSearchRequest("test3", "dog +window");
 		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
 		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
 	
 		//4, are documents retrieved: two terms, one of which is negative requirement
-		srq = m.newSearchRequest("test1", "dog -fox");
+		srq = m.newSearchRequest("test4", "dog -fox");
 		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);
-		/*System.err.println(srq.getResultSet().getResultSize());
-		for (int i =0; i<srq.getResultSet().getDocids().length; i++) {
-			System.err.println("   "+srq.getResultSet().getDocids()[i]+" "+srq.getResultSet().getScores()[i]);
+		/*System.err.println(((Request) srq).getResultSet().getResultSize());
+		for (int i =0; i<((Request) srq).getResultSet().getDocids().length; i++) {
+			System.err.println("   "+((Request) srq).getResultSet().getDocids()[i]+" "+((Request) srq).getResultSet().getScores()[i]);
 		}*/
-		assertEquals(1, ((Request) srq).getResultSet().getResultSize());	
+		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
+		for(double score : ((Request) srq).getResultSet().getScores())
+			assertTrue(Double.isFinite(score));
 		
 		//5, are documents retrieved: two terms, both of which are positive requirements
-		srq = m.newSearchRequest("test1", "+dog +fox");
+		srq = m.newSearchRequest("test5", "+dog +fox");
 		srq.setControl(SearchRequest.CONTROL_WMODEL, PL2.class.getName());
 		srq.setControl(SearchRequest.CONTROL_MATCHING, getMatchingClass().getName());
 		m.runSearchRequest(srq);

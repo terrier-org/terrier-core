@@ -27,9 +27,9 @@ memIndex.indexDocument(document);
 To search our index, we need to use a querying Manager, which does the work of scoring each document for your query. Your query is stored in a SearchRequest object that the Manager can generate for you. We also need to specify which scoring function to use when ranking documents via the setControl() method (in this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25)).
 
 ```java
-Manager queryingManager = new Manager(memIndex);
+Manager queryingManager = ManagerFactory.from(memIndex.getIndexRef());
 SearchRequest srq = queryingManager.newSearchRequestFromQuery("my terrier query");
-srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
+srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 ```
 Finally, we issue the search:
 
@@ -242,7 +242,7 @@ In this case we have created a new SearchRequest for the query 'sample query'. T
 
 
 ```java
-srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
+srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 ```
 
 In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate':
@@ -326,7 +326,7 @@ public class IndexingAndRetrievalExample {
 				SearchRequest srq = queryingManager.newSearchRequestFromQuery("search for document");
 
 				// Specify the model to use when searching
-				srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
+				srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 
 				// Turn on decoration for this search request
 				srq.setControl("decorate", "on");

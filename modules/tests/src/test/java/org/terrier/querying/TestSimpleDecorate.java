@@ -96,6 +96,15 @@ public class TestSimpleDecorate extends ApplicationSetupBasedTest {
 		assertEquals("doc1", rs.getMetaItems("filename")[0]);
 		assertEquals("The quick brown fox jumps over the lazy dog", 
 				StringTools.escape(ESCAPE.JAVA, rs.getMetaItems("abstract")[0]));
+		
+		ScoredDocList res2 = srq.getResults();
+		assertEquals(1, res2.size());
+		ScoredDoc doc1 = res2.get(0);
+		assertEquals(0, doc1.getDocid());
+		assertEquals("doc1", doc1.getMetadata("filename"));
+		assertEquals("The quick brown fox jumps over the lazy dog", doc1.getMetadata("abstract"));
+		
+		
 	}
 	
 	

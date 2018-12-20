@@ -34,6 +34,9 @@ public class ManagerFactory {
 		boolean supports(IndexRef ref);
 		Manager fromIndex(IndexRef ref);
 	}
+
+	/** utility method that doesnt conflict with a Python reserved keyword */
+	public static Manager _from_(IndexRef ref) { return from(ref); }
 	
 	/** Load a manager suitable to retrieve from the specified index reference */
 	public static Manager from(IndexRef ref)

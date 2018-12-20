@@ -28,7 +28,7 @@
 package org.terrier.querying.parser;
 
 /** Thrown by the Manager when it cannot parse the query */
-public class QueryParserException extends Exception
+public class QueryParserException extends RuntimeException
 {
 	private static final long serialVersionUID = 1L;
 	/** 

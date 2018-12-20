@@ -28,6 +28,7 @@ package main;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.terrier.applications.TestCLITool;
 import org.terrier.compression.bit.TestCompressedBitFiles;
 import org.terrier.compression.bit.TestCompressedBitFilesDelta;
 import org.terrier.compression.bit.TestCompressedBitFilesGolomb;
@@ -115,8 +116,13 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 @SuiteClasses({
 	//shakepseare based end-to-end tests are higher up, as otherwise they check if streams in other unit tests are open
 	
+	
+	
 	//.tests
 	ShakespeareEndToEndTestSuite.class,
+	
+	//.applications
+	TestCLITool.class,
 	
 	//.compression
 	TestCompressedBitFiles.class,

@@ -75,6 +75,9 @@ public class SingleTermOp extends Operator {
 	public void setTerm(String newTerm) {
 		queryTerm = newTerm;
 	}
+	public void setField(String newField) {
+		field = newField;
+	}
 	
 	@Override
 	public String toString() {
@@ -161,12 +164,14 @@ public class SingleTermOp extends Operator {
 		if (logger.isDebugEnabled())
 			logger.debug("Term " + queryTerm + " field "+field+" stats " + entryStats.toString() + " weight " + qtp.weight);
 		
-		boolean required = false;
+		MatchingEntry.Requirement required = MatchingEntry.Requirement.UNKNOWN;
 		if (qtp.required != null && qtp.required)
-			required = true;
+			required = MatchingEntry.Requirement.REQUIRED;
+		if (qtp.required != null && ! qtp.required)
+			required = MatchingEntry.Requirement.NEG_REQUIRED;
 		
 		return new MatchingEntry(postingList, 
-				entryStats, qtp.weight, wmodels, required, qtp.tag);
+				entryStats, qtp.weight, wmodels, required, qtp.tags);
 	}
 
 	public String getField() {

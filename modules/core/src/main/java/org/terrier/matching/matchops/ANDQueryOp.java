@@ -88,10 +88,5 @@ public class ANDQueryOp extends MultiTermOp {
 	public String toString() {
 		return STRING_PREFIX + "(" + ArrayUtils.join(terms, ' ') + ")";
 	}
-	
-	public ANDQueryOp clone()
-	{
-		throw new UnsupportedOperationException(); //TODO
-	}
 
 }

@@ -73,7 +73,10 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 	protected List<String> indexedFiles = new ArrayList<String>();
 
 	/** The identifier of a document in the collection.*/
-	protected int Docid = 0;
+	protected int DocCounter = 0;
+	
+	/** overridden docno for the current document */
+	protected String currentDocno = null;
 
 	/** Whether directories should be recursed into by this class */
 	protected boolean Recurse = Boolean.parseBoolean(ApplicationSetup.getProperty("indexing.simplefilecollection.recurse", "true"));
@@ -112,6 +115,11 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 	public SimpleFileCollection()
 	{
 		this(ApplicationSetup.COLLECTION_SPEC);
+	}
+	
+	/** additional constructors required by TRECIndexing */
+	public SimpleFileCollection(List<String> filelist, String ignored1, String ignored2, String ignored3) {
+		this(filelist, false);
 	}
 
 	/** additional constructors required by TRECIndexing */
@@ -249,7 +257,9 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 		thisFilename = null;
 		while(FileList.size() > 0 && ! rtr)
 		{
-			thisFilename = FileList.removeFirst();
+			String[] entry = FileList.removeFirst().split("\t", 2);
+			thisFilename = entry[0];
+			
 			logger.info("NEXT: "+thisFilename);
 				
 			if (! Files.exists(thisFilename) || ! Files.canRead(thisFilename) )
@@ -268,9 +278,14 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 			}
 			else
 			{	//this file is fine - use it!
-				//this block ensures that DocId is only increased once per file
-				Docid++;
+				//this block ensures that the integer we use for a DocNo is only increased once per file
+				DocCounter++;
 				rtr = true;
+				//allow the docno to be overridden
+				if (entry.length > 1)
+					currentDocno = entry[1];
+				else
+					currentDocno = null;
 			}
 		}//loop ends
 		return rtr;
@@ -345,7 +360,7 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 			//and instantiate
 			rtr = reader.getConstructor(InputStream.class, Map.class, Tokeniser.class).newInstance(in, docProperties, tokeniser);
 			indexedFiles.add(thisFilename);
-			rtr.getAllProperties().put("docno", this.getDocid());
+			rtr.getAllProperties().put("docno", currentDocno != null ? currentDocno : "d"+ this.getDocCounter());
 		}catch (OutOfMemoryError e){
 			logger.warn("Problem instantiating a document class; Out of memory error occured: ",e);			
 			System.gc();
@@ -372,7 +387,7 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 	 */
 	public void reset()
 	{
-		Docid = 0;
+		DocCounter = 0;
 		FileList = new LinkedList<String>(firstList);
 		indexedFiles = new ArrayList<String>();
 	}
@@ -381,9 +396,9 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 	 * Returns the current document's identifier string.
 	 * @return String the identifier of the current document.
 	 */	
-	public String getDocid()
+	public String getDocCounter()
 	{
-		return Docid+"";
+		return DocCounter+"";
 	}
 
 	@Override

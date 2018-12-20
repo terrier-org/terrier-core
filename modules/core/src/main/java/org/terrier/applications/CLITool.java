@@ -45,6 +45,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.FilenameUtils;
 import org.terrier.Version;
 import org.terrier.utility.ApplicationSetup;
 
@@ -86,11 +87,13 @@ public abstract class CLITool {
 			Options options = new Options();
 			options.addOption(Option.builder("D")
 					.argName("property")
+					.valueSeparator()
 					.hasArgs()
 					.desc("specify property name=value")
 					.build());
 			options.addOption(Option.builder("I")
 					.argName("indexref")
+					.hasArg(true)
 					.desc("override the default indexref (location)")
 					.build());
 			return options;
@@ -106,7 +109,7 @@ public abstract class CLITool {
 			String usage = st.toString();
 			st = new StringWriter();
 			st.append('\n');
-			formatter.printHelp(new PrintWriter(st), HelpFormatter.DEFAULT_WIDTH+8, usage, "", getOptions(), HelpFormatter.DEFAULT_WIDTH, 0, "");
+			formatter.printHelp(new PrintWriter(st), HelpFormatter.DEFAULT_WIDTH+8, usage, "", getOptions(), 3, 4, "");
 			rtr += "\n";
 			rtr += st.toString();
 			return rtr;
@@ -114,19 +117,34 @@ public abstract class CLITool {
 
 		@Override
 		public final int run(String[] args) throws Exception {
+			if (DEBUG)
+				System.err.println("args=" + Arrays.toString(args));
 			CommandLineParser parser = new DefaultParser();
 			CommandLine line = parser.parse(getOptions(), args);
+
+			if (DEBUG)
+			{
+				System.err.println("Enabled options:");
+				for(Option o : getOptions().getOptions())
+					System.err.println("\t"+o.getArgName());
+				System.err.println("Found options:");
+				for(Option o : line.getOptions())
+					System.err.println("\t"+o.getArgName());
+			}
+			
 			Properties props = null;
-			if (line.hasOption('D'))
+			if (line.hasOption("D"))
 			{
 				props = line.getOptionProperties("D");
 				props.forEach( (k,v) -> org.terrier.utility.ApplicationSetup.setProperty((String)k, (String)v));
 				ApplicationSetup.loadCommonProperties();
 			}
-//			if (line.hasOption('I'))
-//			{
-//				String indexLocation = line.getOptionValue('I');
-//			}
+			if (line.hasOption("I"))
+			{
+				String indexLocation = line.getOptionValue("I");
+				ApplicationSetup.TERRIER_INDEX_PATH = FilenameUtils.getFullPath(indexLocation);
+				ApplicationSetup.TERRIER_INDEX_PREFIX = FilenameUtils.getBaseName(indexLocation);
+			}
 			return this.run(line);
 		}
 		

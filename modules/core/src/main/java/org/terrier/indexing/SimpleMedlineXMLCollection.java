@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
@@ -84,6 +85,12 @@ public class SimpleMedlineXMLCollection extends SimpleXMLCollection
 	public SimpleMedlineXMLCollection(String CollectionSpecFilename, String ignored1, String BlacklistSpecFilename, String ignored2) {
 		this(CollectionSpecFilename, BlacklistSpecFilename);
 	}
+	
+	/** Constructor required by TRECIndexing */	
+	public SimpleMedlineXMLCollection(List<String> files, String ignored1, String BlacklistSpecFilename, String ignored2) {
+		super(files, ignored1, BlacklistSpecFilename, ignored2);
+	}
+
 
 	/**
 	 * Parse through up to a limited number of documents in the XML file. The limit is

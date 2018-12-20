@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -129,7 +130,7 @@ import com.google.common.collect.Sets;
  * <li><tt>trec.topics.matchopql</tt> - if the topics should be parsed using the matchopql parser. Defaults to false. </li>
  * 
  * <li><tt>trec.model</tt> the name of the weighting model to be used during retrieval. Default InL2 </li>
- *<li><tt>trec.qe.model</tt> the name of the query expansino model to be used during query expansion. Default Bo1. </li>
+ *<li><tt>trec.qe.model</tt> the name of the query expansion model to be used during query expansion. Default Bo1. </li>
  * 
  * <li><tt>c</tt> - the term frequency normalisation parameter value. A value specified at runtime as an
  * API parameter (e.g. TrecTerrier -c) overrides this property. 
@@ -839,8 +840,10 @@ public class TRECQuerying extends AbstractQuerying {
 					querySource.getInfo(),
 					"# run started at: " + startTime
 							+ "\n# run finished at "
-							+ System.currentTimeMillis() + "\n# c=" + c
-							+ " c_set=" + c_set + "\n");
+							+ System.currentTimeMillis() 
+							//+ "\n# c=" + c
+							//+ " c_set=" + c_set + "\n"
+							);
 
 		if (doneSomeTopics && doneSomeMethods)
 			logger.info("Finished topics, executed " + matchingCount
@@ -872,7 +875,7 @@ public class TRECQuerying extends AbstractQuerying {
 
 	/**
 	 * prints the current settings to a file with the same name as the current
-	 * results file. this assists in tracing the settings used to generate a
+	 * results file. This assists in tracing the settings used to generate a
 	 * given run.
 	 */
 	public void printSettings(final SearchRequest default_q,
@@ -881,14 +884,14 @@ public class TRECQuerying extends AbstractQuerying {
 			OutputStream bos = Files.writeFileStream(resultsFilename.replaceFirst("\\.res(\\.\\w+)?$", ".res") + ".settings");
 			ApplicationSetup.getUsedProperties().store(
 					bos,
-					" Settings of Terrier (TRECQuerying) generated for run "
-							+ resultsFilename);
+					" Settings of Terrier (TRECQuerying) generated for run " + resultsFilename);
 			PrintWriter pw = new PrintWriter(bos);
 			if (topicsFiles != null)
 				for (String f : topicsFiles)
 					pw.println("# topicfile: " + f);
-			java.util.Map<String, String> controls = default_q.getControls();
-			for (Map.Entry<String,String> kv : controls.entrySet())
+			Map<String, String> defaultcontrols = new HashMap<>(default_q.getControls());
+			defaultcontrols.putAll(super.controls);
+			for (Map.Entry<String,String> kv : defaultcontrols.entrySet())
 			{
 				pw.println(String.format("# control: %s=%s", kv.getKey(), kv.getValue()));
 			}

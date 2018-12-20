@@ -48,18 +48,9 @@ public class Tf extends WeightingModel {
 		return name;
 	}
 
+	@Override
 	public final double score(double tf, double docLength) {
-		return tf;
-	}
-
-	public final double score(
-		double tf,
-		double docLength,
-		double documentFrequency,
-		double termFrequency,
-		double keyFrequency) 
-	{
-		return tf;
+		return keyFrequency * tf;
 	}
 
 	/**

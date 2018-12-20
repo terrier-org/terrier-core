@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.terrier.matching.MatchingQueryTerms;
-import org.terrier.matching.matchops.PhraseOp;
 import org.terrier.matching.matchops.Operator;
+import org.terrier.matching.matchops.PhraseOp;
 import org.terrier.matching.matchops.UnorderedWindowOp;
 
 import com.google.common.collect.Lists;
@@ -112,12 +112,18 @@ public class PhraseQuery extends MultiTermQuery {
 	
 	@Override
 	public void obtainQueryTerms(MatchingQueryTerms terms, String field, Boolean required, Double weight) {
+		obtainQueryTerms(new QueryTermsParameter(terms, true, field, required, weight));
+	}
+
+	@Override
+	public void obtainQueryTerms(QueryTermsParameter parameters) {
 		
 		List<String> singleTerms = Lists.newArrayList();
 		for(Query child : v)
 		{
 			SingleTermQuery term = (SingleTermQuery)child;
-			singleTerms.add(term.getTerm());
+			final String t = parameters.lowercase() ? term.getTerm().toLowerCase() : term.getTerm();
+			singleTerms.add(t);
 		}
 		
 		String[] ts = singleTerms.toArray(new String[singleTerms.size()]);
@@ -126,16 +132,17 @@ public class PhraseQuery extends MultiTermQuery {
 				: new UnorderedWindowOp(ts, this.proximityDistance);
 		
 		QTPBuilder factory = QTPBuilder.of(t);
-		if (required == null || required == true)
+		if (parameters.isRequired() == null || parameters.isRequired() == true)
 		{
 	      factory.setRequired(true);
-	      super.obtainQueryTerms(terms, field, true, weight);
+	      super.obtainQueryTerms(new QueryTermsParameter(parameters.getTerms(), parameters.lowercase(), parameters.getField(),
+				true, parameters.getWeight()));
 		}
-		else if (required == false)
+		else if (parameters.isRequired() == false)
 		{
 			factory.setWeight(Double.NEGATIVE_INFINITY);
 		}
-		terms.add(factory.build());	    
+		parameters.getTerms().add(factory.build());	    
 	  }
 //	/**
 //	 * Stores the query terms of the phrase query in the 

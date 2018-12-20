@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.querying.IndexRef;
@@ -251,7 +251,7 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 				}
 
 				logger.debug("URL is " + url);
-				HttpClient httpclient = new DefaultHttpClient();
+				HttpClient httpclient = HttpClients.createDefault();
 				HttpGet httpGet = new HttpGet(url);
 				HttpResponse response = httpclient.execute(httpGet);
 				BufferedReader br = null;

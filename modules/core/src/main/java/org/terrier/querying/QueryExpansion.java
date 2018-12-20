@@ -34,6 +34,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.models.queryexpansion.Bo1;
 import org.terrier.matching.models.queryexpansion.QueryExpansionModel;
 import org.terrier.querying.parser.SingleTermQuery;
 import org.terrier.structures.CollectionStatistics;
@@ -65,7 +66,7 @@ import org.terrier.utility.Rounding;
   * @author Gianni Amatti, Ben He, Vassilis Plachouras, Craig Macdonald
  */
 @ProcessPhaseRequisites({ManagerRequisite.MQT, ManagerRequisite.RESULTSET})
-public class QueryExpansion implements Process {
+public class QueryExpansion implements MQTRewritingProcess {
 	protected static final Logger logger = LoggerFactory.getLogger(QueryExpansion.class);
 	/**
 	 * The default namespace of query expansion model classes.
@@ -88,17 +89,30 @@ public class QueryExpansion implements Process {
 	/** The direct index used for retrieval. */
 	protected PostingIndex<?> directIndex;
 	
+	protected String expanderNames[] = ApplicationSetup.getProperty("qe.expansion.terms.class", "DFRBagExpansionTerms").split("\\s*,\\s*");
 	
 	/** The statistics of the index */
 	protected CollectionStatistics collStats;
 	/** The query expansion model used. */
-	protected QueryExpansionModel QEModel;
+	protected QueryExpansionModel QEModel = new Bo1();
 	/** The process by which to select feedback documents */
 	protected FeedbackSelector selector = null;
 	/**
 	* The default constructor of QueryExpansion.
 	*/
 	public QueryExpansion() {}
+	
+	public QueryExpansion(String[] expansionTerms) {
+		if (expansionTerms.length > 0)
+		{
+			expanderNames[0] = expansionTerms[0];
+		}
+		if (expansionTerms.length > 1)
+		{
+			this.QEModel = getQueryExpansionModel(expansionTerms[1]);
+		}
+	}
+	
 	/** Set the used query expansion model.
 	*  @param _QEModel QueryExpansionModel The query expansion model to be used.
 	*/
@@ -111,7 +125,8 @@ public class QueryExpansion implements Process {
  	*		the original query.
  	* @param rq the Request thus far, giving access to the query and the result set
  	*/
-	public void expandQuery(MatchingQueryTerms query, Request rq) throws IOException 
+	@Override
+	public boolean expandQuery(MatchingQueryTerms query, Request rq) throws IOException 
 	{
 		// the number of term to re-weight (i.e. to do relevance feedback) is
 		// the maximum between the system setting and the actual query length.
@@ -126,10 +141,10 @@ public class QueryExpansion implements Process {
 		if (selector == null)
 			selector = this.getFeedbackSelector(rq);
 		if (selector == null)
-			return;
+			return false;
 		FeedbackDocument[] feedback = selector.getFeedbackDocuments(rq);
 		if (feedback == null || feedback.length == 0)
-			return;
+			return false;
 	
 		//double totalDocumentLength = 0;
 		//for(FeedbackDocument doc : feedback)
@@ -161,8 +176,7 @@ public class QueryExpansion implements Process {
 					+ Rounding.toString(query.getTermWeight(expandedTerms[i].getTerm()), 4));
 			}
 		}
-			
-
+		return true;
 	}
 
 	/** For easier sub-classing of which index the query expansion comes from */
@@ -180,7 +194,7 @@ public class QueryExpansion implements Process {
 	 */
 	protected ExpansionTerms getExpansionTerms()
 	{
-		String expanderNames[] = ApplicationSetup.getProperty("qe.expansion.terms.class", "DFRBagExpansionTerms").split("\\s*,\\s*");
+		
 		ExpansionTerms rtr = null;
 		
 		//foreach name, starting from the last, finishing with the first
@@ -256,13 +270,7 @@ public class QueryExpansion implements Process {
 	 */
 	public void process(Manager manager, Request q) {
 	   	Index index = getIndex(manager);
-		lastIndex = index;
-		documentIndex = index.getDocumentIndex();
-		invertedIndex = index.getInvertedIndex();
-		lexicon = index.getLexicon();
-		collStats = index.getCollectionStatistics(); 
-		directIndex = index.getDirectIndex();
-		metaIndex = index.getMetaIndex();
+		configureIndex(index);
 		if (directIndex == null)
 		{
 			logger.error("This index does not have a direct index. Query expansion disabled!!");
@@ -330,6 +338,17 @@ public class QueryExpansion implements Process {
 		//THIS ASSUMES THAT QueryExpansion directly follows Matching
 		((LocalManager)manager).processModuleManager.getModule(q.getControl("previousprocess")).process(manager, q);
 	}
+	
+	@Override
+	public void configureIndex(Index index) {
+		lastIndex = index;
+		documentIndex = index.getDocumentIndex();
+		invertedIndex = index.getInvertedIndex();
+		lexicon = index.getLexicon();
+		collStats = index.getCollectionStatistics(); 
+		directIndex = index.getDirectIndex();
+		metaIndex = index.getMetaIndex();
+	}
 	/** Obtain the query expansion model for QE to use.
 	 *  This will be cached in a hashtable for the lifetime of the
 	 *  application. If Name does not contain ".", then <tt>
@@ -351,7 +370,7 @@ public class QueryExpansion implements Process {
 			}
 			catch(Exception e)
 			{
-				logger.error("Problem with postprocess named: "+Name+" : ",e);
+				logger.error("Problem with qemodel named: "+Name+" : ",e);
 				return null;
 			}
 			Cache_QueryExpansionModel.put(Name, rtr);

@@ -15,13 +15,132 @@ import org.terrier.structures.Index;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.tests.ApplicationSetupBasedTest;
+import org.terrier.utility.ApplicationSetup;
 
 public class TestMatchOpSemantic extends ApplicationSetupBasedTest {
+	
+	@Test
+	public void testFuzzyExamples() throws Exception {
+		
+		ApplicationSetup.setProperty("termpipelines", "");
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"Lionel Richie Led Zepplin Sk8er Boi Despacito"});
+		Pair<EntryStatistics, IterablePosting> pair;
+		EntryStatistics es;
+		IterablePosting ip;
+		
+		//matches ritchie -> Richie
+		pair = new MatchOpQLParser("#fuzzy(ritchie)").parse().getKey().getPostingIterator(index);
+		assertNotNull(pair);
+		es = pair.getLeft();
+		assertEquals(1, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		//matches zeppelin -> Zepplin
+		pair = new MatchOpQLParser("#fuzzy(zeppelin)").parse().getKey().getPostingIterator(index);
+		assertNotNull(pair);
+		es = pair.getLeft();
+		assertEquals(1, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		//matches skater -> Sk8er - NB edit distance 3
+		pair = new MatchOpQLParser("#fuzzy:fuzziness=3(skater)").parse().getKey().getPostingIterator(index);
+		assertNotNull(pair);
+		es = pair.getLeft();
+		assertEquals(1, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		//matches skater -> Sk8er - NB edit distance 3
+		pair = new MatchOpQLParser("#fuzzy:fuzziness=3(skater)").parse().getKey().getPostingIterator(index);
+		assertNotNull(pair);
+		es = pair.getLeft();
+		assertEquals(1, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		//matches boy -> Boi
+		pair = new MatchOpQLParser("#fuzzy(boy)").parse().getKey().getPostingIterator(index);
+		assertNotNull(pair);
+		es = pair.getLeft();
+		assertEquals(1, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		//matches deposito -> Despacito - NB edit distance 3
+		pair = new MatchOpQLParser("#fuzzy:fuzziness=3(deposito)").parse().getKey().getPostingIterator(index);
+		assertNotNull(pair);
+		es = pair.getLeft();
+		assertEquals(1, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+	}
 
+	@Test
+	public void testFuzzy() throws Exception {
+		
+		ApplicationSetup.setProperty("termpipelines", "");
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"aaa aba cc"});
+		Pair<EntryStatistics, IterablePosting> pair;
+		EntryStatistics es;
+		IterablePosting ip;
+		
+		//matches aaa and aba - length about low threshold and distance 1
+		pair = new FuzzyTermOp("aaa").getPostingIterator(index);
+		es = pair.getLeft();
+		assertEquals(2, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(2, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		//matches aaa and aba - length about low threshold and distance 1 and prefix 1
+		pair = new FuzzyTermOp("aaa", 1, null, null, null, null).getPostingIterator(index);
+		es = pair.getLeft();
+		assertEquals(2, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(2, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		//matches aaa - length about low threshold and distance 1, but limited matches
+		pair = new FuzzyTermOp("aaa", null, 1, null, null, null).getPostingIterator(index);
+		es = pair.getLeft();
+		assertEquals(1, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+		//matches aaa, aba and ccc - length about low threshold and distance 1, but limited matches
+		pair = new FuzzyTermOp("aaa", null, null, 3, null, null).getPostingIterator(index);
+		es = pair.getLeft();
+		assertEquals(3, es.getFrequency());
+		ip = pair.getRight();
+		assertEquals(0, ip.next());
+		assertEquals(3, ip.getFrequency());
+		assertEquals(IterablePosting.EOL, ip.next());
+		
+	}
+	
 	@Test
 	public void testPrefix() throws Exception {
 		
-		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"aa ab"});
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"aa ab cc"});
 		Pair<EntryStatistics, IterablePosting> pair = new PrefixTermOp("a").getPostingIterator(index);
 		EntryStatistics es = pair.getLeft();
 		assertEquals(2, es.getFrequency());

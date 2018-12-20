@@ -57,8 +57,8 @@ public class PostingUtil {
 		return ids;
 	}
 	
-	/** Get an array of all the ids in a given IterablePosting stream, 
-	 * where the length of the stream is known */
+	/** Get an array of all the ids and frequencies in a given IterablePosting stream, 
+	 * where the length of the stream is unknown */
 	public static int[][] getAllPostings(final IterablePosting ip, final int numPointers) throws IOException
 	{
 		final int[][] rtr = new int[2][numPointers];

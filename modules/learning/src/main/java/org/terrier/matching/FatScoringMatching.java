@@ -27,14 +27,11 @@
 package org.terrier.matching;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.terrier.matching.dsms.DocumentScoreModifier;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.matching.models.WeightingModelFactory;
@@ -49,64 +46,27 @@ import org.terrier.utility.HeapSort;
  * @since 4.0
  * @author Craig Macdonald
  */ 
-public class FatScoringMatching implements Matching {
-
-	/** the default namespace for the document score modifiers that are specified in the properties
-	 * file. */
-	protected static String dsmNamespace = "org.terrier.matching.dsms.";
-	
-	static final Logger logger = LoggerFactory.getLogger(FatScoringMatching.class);
+public class FatScoringMatching extends AbstractScoringMatching {
 	
 	/** check for weighting models giving NaN scores */
 	static final boolean DEBUG = true;
 	
-	Matching parent;
-	/** Contains the document score modifiers to be applied for a query. */
-	protected List<DocumentScoreModifier> documentModifiers = new ArrayList<DocumentScoreModifier>();
-
+	
 	protected static final boolean SCORE_ONLY_FROM_MQT = Boolean.parseBoolean(ApplicationSetup.getProperty("fat.scoring.only.mqt", "false"));
 	
-	Index index;
-	WeightingModel wm;
-	public boolean sort = true;
-	
-	Predicate<Pair<String,String>> filterTerm = null;
-	
-	public FatScoringMatching(Index _index, Matching _parent, WeightingModel _wm, Predicate<Pair<String,String>> _filter)
+	public FatScoringMatching(Index _index, Matching _parent, WeightingModel _wm, Predicate<Pair<String,Set<String>>> _filter)
 	{
-		this(_index, _parent, _wm);
-		this.filterTerm = _filter;
+		super(_index, _parent, _wm, _filter);
 	}
 	
 	public FatScoringMatching(Index _index, Matching _parent, WeightingModel _wm)
 	{
-		this.wm = _wm;
-		this.parent = _parent;
-		this.index =_index;
-		String c = ApplicationSetup.getProperty("fat.scoring.matching.model.c", null);
-		if (c != null)
-			this.wm.setParameter(Double.parseDouble(c));
-		String defaultDSMS =  ApplicationSetup.getProperty("fat.scoring.matching.dsms", ApplicationSetup.getProperty("matching.dsms",""));
-		
-		try {
-			for(String modifierName : defaultDSMS.split("\\s*,\\s*")) {
-				if (modifierName.length() == 0)
-                    continue;
-				if (modifierName.indexOf('.') == -1)
-					modifierName = dsmNamespace + modifierName;
-				documentModifiers.add(ApplicationSetup.getClass(modifierName).asSubclass(DocumentScoreModifier.class).newInstance());
-			}
-		} catch(Exception e) {
-			logger.error("Exception while initialising default modifiers. Please check the name of the modifiers in the configuration file.", e);
-		}
+		super(_index, _parent, _wm);
 	}
 	
 	public FatScoringMatching(Index _index, Matching _parent)
 	{
-		this(
-				_index, 
-				_parent, 
-				ApplicationSetup.getProperty("fat.scoring.matching.model", ApplicationSetup.getProperty("trec.model", "BM25")).equals("FromMQT")
+		super(_index, _parent, ApplicationSetup.getProperty("fat.scoring.matching.model", ApplicationSetup.getProperty("trec.model", "BM25")).equals("FromMQT")
 				? null
 				: WeightingModelFactory.newInstance(
 						ApplicationSetup.getProperty("fat.scoring.matching.model", 
@@ -139,6 +99,7 @@ public class FatScoringMatching implements Matching {
 		return _fields;
 	}
 	
+	@Override
 	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, ResultSet inputRS) throws IOException
 	{
 		final int[] docids = inputRS.getDocids()/*.clone()*/; //cloning is unnecessary, as sort is usually disabled when called from FatScoringMatching
