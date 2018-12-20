@@ -62,19 +62,19 @@ import org.terrier.utility.RuntimeMemoryChecker;
  * @author Craig Macdonald &amp; Vassilis Plachouras 
  */
 public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flushable {
-	protected static final Logger logger = LoggerFactory.getLogger(CompressingMetaIndexBuilder.class);
-	protected static final int MAX_MB_IN_MEM_RETRIEVAL = 
+	protected final Logger logger = LoggerFactory.getLogger(CompressingMetaIndexBuilder.class);
+	protected final int MAX_MB_IN_MEM_RETRIEVAL = 
 			Integer.parseInt(ApplicationSetup.getProperty("metaindex.compressed.max.data.in-mem.mb", "400"));
-	protected static final int MAX_INDEX_MB_IN_MEM_RETRIEVAL = 
+	protected final int MAX_INDEX_MB_IN_MEM_RETRIEVAL = 
 			Integer.parseInt(ApplicationSetup.getProperty("metaindex.compressed.max.index.in-mem.mb", "100"));
-	protected static final boolean REVERSE_ALLOW_DUPS = 
+	protected final boolean REVERSE_ALLOW_DUPS = 
 			Boolean.parseBoolean(ApplicationSetup.getProperty("metaindex.compressed.reverse.allow.duplicates", "false"));
-	protected static final boolean CROP_LONG = 
+	protected final boolean CROP_LONG = 
 			Boolean.parseBoolean(ApplicationSetup.getProperty("metaindex.compressed.crop.long", "false"));
 	
-	protected static final int REVERSE_KEY_LOOKUP_WRITING_BUFFER_SIZE = 20000;
-	protected static final int DOCS_PER_CHECK = ApplicationSetup.DOCS_CHECK_SINGLEPASS;
-	protected static final int ZIP_COMPRESSION_LEVEL = 5;//TODO (auto)configure? 
+	protected final int REVERSE_KEY_LOOKUP_WRITING_BUFFER_SIZE = 20000;
+	protected final int DOCS_PER_CHECK = ApplicationSetup.DOCS_CHECK_SINGLEPASS;
+	protected final int ZIP_COMPRESSION_LEVEL = 5;//TODO (auto)configure? 
 		
 	protected final TObjectIntHashMap<String> key2Index;
 	protected DataOutputStream dataOutput = null;
@@ -209,7 +209,7 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 				if (CROP_LONG) {
 					value = value.substring(0,valueLensChars[i]-1);
 				}else
-					throw new IllegalArgumentException("Data ("+value+") of string length "+value.length()+" for key "
+					throw new IllegalArgumentException("CROP_LONG="+CROP_LONG+": Data ("+value+") of string length "+value.length()+" for key "
 						+keyNames[i]+" exceeds max string length of " + valueLensChars[i] +"(byte length of " + valueLensBytes[i] + 
 						"). Crop in the Document, increase indexer.meta.forward.keylens, or set metaindex.compressed.crop.long");
 				
@@ -230,7 +230,7 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 					//logger.info("Extra cropping was applied, reducing text to length "+value.length()+" characters to fit in the target byte length "+numberOfBytesToWrite+"/"+valueLensBytes[i]);
 					
 				} else {
-					throw new IllegalArgumentException("Data ('"+value+"') with "+value.length()+" characters and byte length "+numberOfBytesToWrite+" for key "
+					throw new IllegalArgumentException("CROP_LONG="+CROP_LONG+": Data ('"+value+"') with "+value.length()+" characters and byte length "+numberOfBytesToWrite+" for key "
 							+keyNames[i]+" exceeds max byte length of " + valueLensBytes[i] +"(string length of " 
 							+ valueLensChars[i] + "). Crop in the Document, increase indexer.meta.forward.keylens, or set metaindex.compressed.crop.long");
 				}

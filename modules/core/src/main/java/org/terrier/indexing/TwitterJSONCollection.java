@@ -88,11 +88,14 @@ public class TwitterJSONCollection implements Collection {
 			logger.error("IOException opening first file of collection - is the collection.spec correct?", ioe);
 		}
 	}
+
+	public TwitterJSONCollection() {}
 	
-	public TwitterJSONCollection(String CollectionSpecFile, String ignored1, String ignored2, String ignored3) {
-		this(CollectionSpecFile);
+	/** additional constructors required by TRECIndexing */
+	public TwitterJSONCollection(String addressCollectionFilename, String ignored1, String ignored2, String ignored3) {
+		this(addressCollectionFilename);
 	}
-	
+
 	public TwitterJSONCollection(List<String> files, String ignored1, String ignored2, String ignored3) {
 		FilesToProcess = files;
 		//open the first file
@@ -101,14 +104,6 @@ public class TwitterJSONCollection implements Collection {
 		} catch (IOException ioe) {
 			logger.error("IOException opening first file of collection - is the collection.spec correct?", ioe);
 		}
-	}
-
-
-	public TwitterJSONCollection() {}
-	
-	/** additional constructors required by TRECIndexing */
-	public TwitterJSONCollection(String addressCollectionFilename, String ignored1, String ignored2, String ignored3) {
-		this(addressCollectionFilename);
 	}
 	
 	public void init() {
