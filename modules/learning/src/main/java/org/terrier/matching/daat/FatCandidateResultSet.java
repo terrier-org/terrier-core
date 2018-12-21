@@ -32,8 +32,8 @@ import gnu.trove.TIntIntHashMap;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 import org.apache.hadoop.io.Writable;
@@ -66,7 +66,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 		super();
 	}	
 	
-	public FatCandidateResultSet(Queue<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, Set<String>[] tags) {
+	public FatCandidateResultSet(Collection<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, Set<String>[] tags) {
 		super(q);
 		postings = new WritablePosting[q.size()][];
 		this.queryTerms = queryTerms;
