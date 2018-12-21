@@ -32,6 +32,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import org.apache.hadoop.io.Writable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terrier.matching.FatResultSet;
 import org.terrier.matching.FatResultsMatching;
 import org.terrier.matching.ResultSet;
@@ -48,6 +50,8 @@ import org.terrier.structures.Index;
  */
 public class WritableOutputFormat implements RawOutputFormat {
 
+	static Logger logger = LoggerFactory.getLogger(WritableOutputFormat.class);
+	
 	/** Created a new NullOuputFormat */
 	public WritableOutputFormat(Index i){} 
 	
@@ -70,7 +74,7 @@ public class WritableOutputFormat implements RawOutputFormat {
 		((Writable)rs).write(dos);
 		dos.flush();
 		dos = null;
-		System.err.println("Wrote " + rs.getResultSize() + " results for query " + q.getQueryID());
+		logger.debug("Wrote " + rs.getResultSize() + " results for query " + q.getQueryID());
 	}
 	
 }
