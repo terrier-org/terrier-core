@@ -188,7 +188,7 @@
 		<plugins>
 
 
-			<!-- require maven 3 at least -->
+			<!-- require maven 3.3 at least -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -202,7 +202,7 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>3.0</version>
+									<version>3.3.9</version>
 								</requireMavenVersion>
 							</rules>
 						</configuration>

@@ -41,6 +41,7 @@ Terrier 5.x - unreleased
  - [TR-526](http://terrier.org/issues/browse/TR-526) CLIParsedTool help formatting can be improved
  - [TR-546](http://terrier.org/issues/browse/TR-546) "Show document" application
  - [TR-548](http://terrier.org/issues/browse/TR-548) Bump versions as recommended by Github
+ - [TR-554](http://terrier.org/issues/browse/TR-554) Current build requires maven 3.3
  - documentation fixes (Meng Dong, University of Glasgow)
 
 Terrier 5.0 - 04/07/2018
