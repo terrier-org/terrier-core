@@ -83,6 +83,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 	}
 
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public FatCandidateResultSet(List<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency) {
 		super(q);
 		postings = new WritablePosting[q.size()][];
@@ -143,7 +144,8 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 				this.getCollectionStatistics(), 
 				this.getQueryTerms(), 
 				this.getEntryStatistics(), 
-				this.getKeyFrequencies());
+				this.getKeyFrequencies(),
+				this.getTags());
 		resultSet.setExactResultSize(this.exactResultSize);
 		System.arraycopy(docids, start, resultSet.getDocids(), 0, length);
 		System.arraycopy(scores, start, resultSet.getScores(), 0, length);

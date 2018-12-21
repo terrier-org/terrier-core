@@ -26,13 +26,14 @@
 
 package org.terrier.fat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
+import org.terrier.matching.BaseMatching;
 import org.terrier.matching.FatResultSet;
 import org.terrier.matching.FatUtils;
 import org.terrier.matching.daat.CandidateResult;
@@ -43,9 +44,12 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.BasicPostingImpl;
 
+import com.google.common.collect.Sets;
+
 
 public class TestFatCandidateResultSet {
 
+	@SuppressWarnings("unchecked")
 	@Test public void testOneDocumentOnePosting() throws Exception
 	{
 		final FatCandidateResult result = new FatCandidateResult(20, 1);
@@ -58,15 +62,18 @@ public class TestFatCandidateResultSet {
 				new CollectionStatistics(5, 5, 5, 5, new long[0]),
 				new String[]{"a"}, 
 				new EntryStatistics[]{new BasicLexiconEntry(5, 20, 25)},
-				new double[]{10}
+				new double[]{10},
+				new Set[]{Sets.newHashSet(BaseMatching.BASE_MATCHING_TAG)}
 				);
 		
 		FatResultSet output = FatUtils.recreate(input);
 
-		String name = "input";
-		for(FatResultSet rs : new FatResultSet[]{input, output})
+		FatResultSet[] sources = new FatResultSet[]{input, input.getResultSet(0, input.getResultSize()), output};
+		String[] names = {"input", "queryresultset", "output"};
+		for(int i=0;i<sources.length;i++)
 		{
-			System.err.println("Iteration: " + name);
+			FatResultSet rs = sources[i];
+			System.err.println("Iteration: " + names[i]);
 			//meta
 			assertEquals(1, rs.getResultSize());
 			
@@ -78,10 +85,14 @@ public class TestFatCandidateResultSet {
 			assertEquals(5, rs.getCollectionStatistics().getNumberOfUniqueTerms());
 			
 			
-			//T OF: query terms etc
+			//T OF: query terms, tags, keyfreqs, entrystats
 			assertNotNull(rs.getQueryTerms());
 			assertEquals(1, rs.getQueryTerms().length);
 			assertEquals("a", rs.getQueryTerms()[0]);
+			
+			assertNotNull(rs.getTags());
+			assertEquals(1, rs.getTags().length);
+			assertTrue(rs.getTags()[0].contains(BaseMatching.BASE_MATCHING_TAG));
 			
 			assertNotNull(rs.getKeyFrequencies());
 			assertEquals(1, rs.getKeyFrequencies().length);
@@ -115,8 +126,6 @@ public class TestFatCandidateResultSet {
 			assertEquals(20, rs.getPostings()[0][0].getId());
 			assertEquals(5, rs.getPostings()[0][0].getFrequency());
 			
-			
-			name = "output";
 		}
 	}
 	

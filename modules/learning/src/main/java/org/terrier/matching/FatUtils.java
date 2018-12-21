@@ -875,6 +875,7 @@ public class FatUtils {
 		final boolean fields[] = new boolean[queryTermCount];
 		final boolean blocks[] = new boolean[queryTermCount];
 		
+		assert tags != null;
 		
 		//write out the number of query terms
 		out.writeInt(queryTermCount);

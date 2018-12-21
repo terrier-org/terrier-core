@@ -58,7 +58,8 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 			CollectionStatistics cs,
 			String[] qs,
 			EntryStatistics[] es,
-			double[] ks			
+			double[] ks,
+			Set<String>[] ts
 			) 
 	{
 		super(numberOfDocuments);
@@ -67,6 +68,7 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 		entryStats = es;
 		keyFrequency = ks;
 		postings = new WritablePosting[numberOfDocuments][];
+		tags = ts;
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -123,7 +125,8 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 				this.getCollectionStatistics(), 
 				this.getQueryTerms(), 
 				this.getEntryStatistics(), 
-				this.getKeyFrequencies());
+				this.getKeyFrequencies(),
+				this.getTags());
 		resultSet.setExactResultSize(this.exactResultSize);
 		System.arraycopy(docids, start, resultSet.getDocids(), 0, length);
 		System.arraycopy(scores, start, resultSet.getScores(), 0, length);
