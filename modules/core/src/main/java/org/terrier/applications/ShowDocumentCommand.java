@@ -85,8 +85,14 @@ public class ShowDocumentCommand extends CLIParsedCLITool {
 	@Override
 	protected Options getOptions() {
 		Options o = super.getOptions();
-		o.addOption(Option.builder("docid").longOpt("docid").build());
-		o.addOption(Option.builder("meta").longOpt("meta").build());
+		o.addOption(Option.builder("docid")
+				.longOpt("docid")
+				.desc("lookup based on docid rather than docno")
+				.build());
+		o.addOption(Option.builder("meta")
+				.longOpt("meta")
+				.desc("print the metadata for the document")
+				.build());
 		return o;
 	}
 
