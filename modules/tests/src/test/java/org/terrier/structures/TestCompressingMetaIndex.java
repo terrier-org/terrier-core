@@ -32,7 +32,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -40,19 +39,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.hadoop.io.Text;
+import junit.framework.Assert;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.terrier.indexing.FlatJSONDocument;
-import org.terrier.realtime.memory.MemoryIndex;
 import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
 import org.terrier.structures.indexing.MetaIndexBuilder;
-import org.terrier.structures.seralization.FixedSizeTextFactory;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
-
-import junit.framework.Assert;
 
 /** Unit test for CompressingMetaIndex */
 public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
