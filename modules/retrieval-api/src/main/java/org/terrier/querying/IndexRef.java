@@ -47,6 +47,11 @@ public class IndexRef implements Serializable {
 	}
 	
 	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+
+	@Override
 	public String toString() {
 		if (location.length == 1)
 			return location[0];
