@@ -28,8 +28,8 @@
 		<fileSet>
 			<directory>../../modules</directory>
 			<excludes>
-				<exclude>assemblies/target/terrier-project-5.0-bin.tar.gz</exclude>
-				<exclude>assemblies/target/terrier-project-5.0-bin.zip</exclude>
+				<exclude>assemblies/target/terrier-project-*-bin.tar.gz</exclude>
+				<exclude>assemblies/target/terrier-project-*-bin.zip</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
