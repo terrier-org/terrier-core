@@ -84,4 +84,9 @@ class ConcurrentMetaIndex implements MetaIndex {
 		return parent.getKeys();
 	}
 
+	@Override
+	public String[] getReverseKeys() {
+		return parent.getKeys();
+	}
+
 }
