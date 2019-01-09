@@ -158,18 +158,18 @@ In responding to the query `compressed`, Terrier found document 11196 was estima
 
 Information retrieval has a history of evaluating search effectiveness automatically, using queries with associated relevance assessments. In order to perform retrieval using an existing index, follow the steps described below.
 
-1. First of all we have to do some configuration. Much of Terrier's functionality is controlled by properties. You can pre-set these in the `etc/terrier.properties` file, or specify each on the command line. In the following, we are going to use the command line to specify the appropriate properties. To perform retrieval and evaluate the results of a batch of queries, we need to know:
+1. First of all we have to do some configuration. Much of Terrier's functionality is controlled by properties. You can pre-set these in the `etc/terrier.properties` file, or specify each on the command line. Some commonly used properties have shortcuts on the commandline. To perform retrieval and evaluate the results of a batch of queries, we need to know:
 
-a.  The location of the queries (also known as topic files) - specified using `trec.topics`
+a.  The location of the queries (also known as topic files) - specified using `trec.topics` property, or the `-t` option to batchretrieve.
 
-b.  The weighting model (e.g. TF\_IDF) to use - specified using `trec.model` - along with any parameter. The default is InL2.
+b.  The weighting model (e.g. TF\_IDF) to use - specified using `trec.model` propert or `-w` option to batchretrieve. The default for Terrier 5 is DPH.
 
-c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels`.
+c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to batchevalute.
 
-2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line (all other configuration remains using Terrier’s default settings):
+2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line using the -t option, as well as the InL2 weighting model, using `-w` (all other configuration remains using Terrier’s default settings):
 
 ```
-    $bin/terrier batchretrieve -Dtrec.topics=share/vaswani_npl/query-text.trec
+    $bin/terrier batchretrieve -t share/vaswani_npl/query-text.trec -w InL2
     ...
     16:14:43.440 [main] INFO  o.t.matching.PostingListManager - Query 93 with 10 terms has 10 posting lists
     16:14:43.444 [main] INFO  o.t.a.batchquerying.TRECQuerying - Time to process query: 0.006
@@ -180,7 +180,7 @@ c.  The corresponding relevance assessments file (or qrels) for the topics - spe
 
 If all goes well this will result in a `.res` file in the `var/results` directory called `InL2c1_0.res`. We call each `.res` a run.
 
-For example, you can also configure more options on the command line, e.g.:
+For example, you can also configure more options on the command line, including arbitrary properties, e.g.:
 
     $bin/terrier batchretrieve -Dtrec.model=BM25 -c c:0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
 
@@ -189,23 +189,23 @@ So what are these? The `batchretrieve` command instructs Terrier to perform retr
 3. Now we will evaluate the obtained results by using the `batchevaluate` option of trec\_terrier:
 
 ```
-    $bin/terrier batchevaluate -Dtrec.qrels=share/vaswani_npl/qrels
+    $bin/terrier batchevaluate -q share/vaswani_npl/qrels
     16:27:28.527 [main] INFO  o.t.evaluation.TrecEvalEvaluation - Evaluating result file: var/results/InL2c1.0_0.res
     Average Precision: 0.2948
 ```
 
 Terrier will look at the `var/results` directory, evaluate each .res file and save the output in a .eval file named the same as the corresponding .res file.
 
-4. We can change the retrieval approach usrd by Terrier to perform retrieval. For instance, query expansion (QE) can enabled by using the `-q` parameter in addition to `-r`.
+4. We can change the retrieval approach used by Terrier to perform retrieval. For instance, query expansion (QE) can enabled by using the `-q` parameter in addition to `-r`.
 
 ```shell
 bin/terrier batchretrieve -q
 ```
 
-See [the guide for configuring retrieval](configure_retrieval.md) for more information about QE. Note that your index must have a direct index structure to support QE, which is not built by default with single-pass indexing (see [Configuring Indexing](configure_indexing.md) for more information). Afterwards we can run the evaluation again by using trec\_terrier.sh with the `-e` parameter.
+See [the guide for configuring retrieval](configure_retrieval.md) for more information about QE. Note that your index must have a direct index structure to support QE, which is not built by default with single-pass indexing (see [Configuring Indexing](configure_indexing.md) for more information). Afterwards we can run the evaluation again by using batchevaluate comand.
 
 ```shell
-bin/terrier batchevaluate -Dtrec.qrels=share/vaswani_npl/qrels
+bin/terrier batchevaluate -q share/vaswani_npl/qrels
 ```
 
 5. Now we can look at all the Mean Average Precision (MAP) values of the runs by inspecting the `.eval` files in `var/results`:
