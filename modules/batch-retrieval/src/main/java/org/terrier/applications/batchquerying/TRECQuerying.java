@@ -195,7 +195,8 @@ public class TRECQuerying extends AbstractQuerying {
 					.desc("changes the default run OutputFormat class")
 					.build());
 			options.addOption(Option.builder("docids")
-					.argName("docids")
+					.argName("d")
+					.longOpt("docids")
 					.desc("specifies that Terrier will returns docids rather than docnos")
 					.build());		
 			options.addOption(Option.builder("s")

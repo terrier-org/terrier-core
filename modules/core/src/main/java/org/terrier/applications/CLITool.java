@@ -101,15 +101,21 @@ public abstract class CLITool {
 		
 		@Override
 		public String help() {
-			String rtr = helpsummary();
+			String rtr = "Command: " + commandname() + " -- " + helpsummary();
+			
+			if (this.commandaliases().size() > 0)
+			{
+				rtr += "\n";
+				rtr += "Aliases: " + String.join(", ", this.commandaliases());
+			}
 			HelpFormatter formatter = new HelpFormatter();
 			StringWriter st = new StringWriter();
 			formatter.printUsage(new PrintWriter(st), HelpFormatter.DEFAULT_WIDTH, commandname(), getOptions());
 			
-			String usage = st.toString();
+			String usage = st.toString().replaceFirst("usage:", "");
 			st = new StringWriter();
-			st.append('\n');
-			formatter.printHelp(new PrintWriter(st), HelpFormatter.DEFAULT_WIDTH+8, usage, "", getOptions(), 3, 4, "");
+			//st.append('\n');
+			formatter.printHelp(new PrintWriter(st), HelpFormatter.DEFAULT_WIDTH+8, usage, "", getOptions(), 3, 4, "", false);
 			rtr += "\n";
 			rtr += st.toString();
 			return rtr;
@@ -226,7 +232,13 @@ public abstract class CLITool {
 	
 	/** Return a long message about how to use this command */
 	public String help() {
-		return "(no help provided)";
+		String rtr = this.commandname() + " - " +  this.helpsummary();
+		if (this.commandaliases().size() > 0)
+		{
+			rtr += "\n";
+			rtr += "Command aliases: " + String.join(", ", this.commandaliases());
+		}
+		return rtr;
 	}
 	
 	/** Returns a short sentence about what this command is for */

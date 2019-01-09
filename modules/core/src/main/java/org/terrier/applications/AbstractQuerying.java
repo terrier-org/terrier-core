@@ -125,7 +125,7 @@ public class AbstractQuerying {
 					.argName("wmodel")
 					.longOpt("wmodel")
 					.hasArgs()
-					.desc("allows the default weighting model to be specified (equivalent to using -c wmodel:<wmodel>")
+					.desc("allows the default weighting model to be specified (equivalent to using -c wmodel:<wmodel>)")
 					.build());
 			return options;
 		}

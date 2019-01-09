@@ -122,7 +122,7 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 		options.addOption(Option.builder("j")
 				.argName("no_jtreceval")
 				.longOpt("jtreceval")
-				.desc("disabled use of jtreceval.")
+				.desc("disable use of jtreceval, using instead Terrier's in-built evaluation package.")
 				.build());
 		options.addOption(Option.builder("p")
 				.argName("perquery")
@@ -133,6 +133,7 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 				.argName("qrels")
 				.longOpt("qrels")
 				.desc("specify location of qrels file.")
+				.hasArg()
 				.build());
 		return options;
 	}
