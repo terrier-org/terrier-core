@@ -164,9 +164,9 @@ a.  The location of the queries (also known as topic files) - specified using `t
 
 b.  The weighting model (e.g. TF\_IDF) to use - specified using `trec.model` propert or `-w` option to batchretrieve. The default for Terrier 5 is DPH.
 
-c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to batchevalute.
+c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to batchevaluate.
 
-2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line using the -t option, as well as the InL2 weighting model, using `-w` (all other configuration remains using Terrier’s default settings):
+2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line using the -t option, as well as the InL2 weighting model using `-w` (all other configuration remains using Terrier’s default settings):
 
 ```
     $bin/terrier batchretrieve -t share/vaswani_npl/query-text.trec -w InL2
