@@ -45,4 +45,9 @@ public class JForestsCommand extends CLITool {
 		return 0;
 	}
 
+	@Override
+	public String help() {
+		return "For information on running jforests, see https://github.com/yasserg/jforests or http://terrier.org/docs/current/learning.html"; 
+	}
+
 }
