@@ -136,9 +136,7 @@ import com.google.common.collect.Sets;
  * API parameter (e.g. TrecTerrier -c) overrides this property. 
  * 
  * <li><tt>trec.matching</tt> the name of the matching model that is used for
- * retrieval. Defaults to org.terrier.matching.taat.Full. </li>
- * 
- * <li><tt>trec.manager</tt> the name of the Manager that is used for retrieval. Defaults to Manager.</li> 
+ * retrieval. Defaults to org.terrier.matching.daat.Full. </li>
  * 
  * <li><tt>trec.results</tt> the location of the results folder for results.
  * Defaults to TERRIER_VAR/results/</li>
@@ -188,17 +186,23 @@ public class TRECQuerying extends AbstractQuerying {
 		protected Options getOptions()
 		{
 			Options options = super.getOptions();
+			options.addOption(Option.builder("d")
+					.argName("docids")
+					.longOpt("docids")
+					.desc("specifies that Terrier will returns docids rather than docnos. Do not mix with -F.")
+					.build());
 			options.addOption(Option.builder("F")
 					.argName("format")
 					.longOpt("format")
 					.hasArg()
 					.desc("changes the default run OutputFormat class")
 					.build());
-			options.addOption(Option.builder("docids")
-					.argName("d")
-					.longOpt("docids")
-					.desc("specifies that Terrier will returns docids rather than docnos")
-					.build());		
+			options.addOption(Option.builder("o")
+					.argName("output res file")
+					.longOpt("output")
+					.hasArg()
+					.desc("specify the filename of the run will be generated")
+					.build());			
 			options.addOption(Option.builder("s")
 					.argName("singleline")
 					.longOpt("singleline")
@@ -233,23 +237,22 @@ public class TRECQuerying extends AbstractQuerying {
 			
 			TRECQuerying tq = (TRECQuerying)q;	
 			
-			if (line.hasOption("docids"))
-			{
-				ApplicationSetup.setProperty("trec.querying.outputformat", TRECDocidOutputFormat.class.getName());
-				//tq.printer = new TRECDocidOutputFormat(null);
-			}				
-
 			//ideally, we'd avoid the setting of properties here
-			if (line.hasOption('t'))
-				ApplicationSetup.setProperty("trec.topics", line.getOptionValue('t'));
+			if (line.hasOption("docids"))
+				ApplicationSetup.setProperty("trec.querying.outputformat", TRECDocidOutputFormat.class.getName());
 
+			if (line.hasOption('F'))
+				ApplicationSetup.setProperty("trec.querying.outputformat", line.getOptionValue('F'));
+			
+			if (line.hasOption('o'))
+				ApplicationSetup.setProperty("trec.results.file", line.getOptionValue('o'));
+			
 			if (line.hasOption('s'))
 				tq.topicsParser = SingleLineTRECQuery.class.getName();
 				
-			if (line.hasOption('F'))
-			{
-				ApplicationSetup.setProperty("trec.querying.outputformat", line.getOptionValue('F'));
-			}
+			if (line.hasOption('t'))
+				ApplicationSetup.setProperty("trec.topics", line.getOptionValue('t'));			
+			
 			tq.intialise();
 			tq.processQueries();
 			return 0;
