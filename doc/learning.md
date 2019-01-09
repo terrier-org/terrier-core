@@ -87,7 +87,7 @@ Firstly, we setup Terrier. This also generates configuration files for learning-
 Next, we need to create an index, with fields and blocks enabled. For brevity, we set the appropriate properties on the the command line:
 
 ```
-    bin/terrier -j -b -DFieldTags.process=TITLE,ELSE
+    bin/terrier batchindexing -j -b -DFieldTags.process=TITLE,ELSE
 
     Setting TERRIER_HOME to /home/terrier
     INFO - TRECCollection read collection specification (4613 files)
