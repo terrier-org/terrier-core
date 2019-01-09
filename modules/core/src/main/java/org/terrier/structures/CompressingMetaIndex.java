@@ -661,6 +661,12 @@ public class CompressingMetaIndex implements MetaIndex {
 			IndexUtil.close(m);
 		}
 	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String[] getReverseKeys() {
+		return key2forwardOffset.keys(new String[key2forwardOffset.size()]);
+	}
 	
 	/** {@inheritDoc} */
 	public int getDocument(String key, String value) throws IOException {

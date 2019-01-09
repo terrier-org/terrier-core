@@ -95,6 +95,11 @@ public class ArrayMetaIndex implements MetaIndex {
 	}
 
 	@Override
+	public String[] getReverseKeys() {
+		return getKeys();
+	}
+
+	@Override
 	public void close() throws IOException {}
 
 }

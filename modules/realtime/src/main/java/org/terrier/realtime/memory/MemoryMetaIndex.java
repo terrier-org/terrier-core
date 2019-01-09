@@ -220,6 +220,12 @@ public class MemoryMetaIndex extends MetaIndexBuilder implements MetaIndex,Seria
 			return -1;
 		return map.get(value) -1;
 	}
+	
+	@Override
+	public String[] getReverseKeys()
+	{
+		return key2value2id.keySet().toArray(new String[key2value2id.size()]);
+	}
 
 	/**
 	 * Delete contents of metadata index (but keep the configured keys).

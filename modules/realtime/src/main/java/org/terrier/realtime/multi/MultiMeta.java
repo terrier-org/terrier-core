@@ -117,6 +117,12 @@ public class MultiMeta implements MetaIndex {
 	}
 
 	/** Not implemented. */
+	@Override
+	public String[] getReverseKeys() {
+		return new String[0];
+	}
+
+	/** Not implemented. */
 	public int getDocument(String key, String value) throws IOException {
 		return -1;
 	}

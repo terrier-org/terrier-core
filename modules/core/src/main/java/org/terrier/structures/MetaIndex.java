@@ -72,4 +72,7 @@ public interface MetaIndex extends java.io.Closeable {
 	
 	/** Returns the keys of this meta index */
 	String[] getKeys();
+	
+	/** Returns the reverse keys of this meta index */
+	default String[] getReverseKeys() { return new String[0]; }
 }
