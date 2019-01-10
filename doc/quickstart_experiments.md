@@ -1,7 +1,7 @@
 Quickstart Guide: Using Terrier for Experiments
 ==============================
 
-If you are interested in using Terrier straight-away in order to index and retrieve from standard test collections, then you may follow the steps described below. We provide step-by-step instructions for the installation of Terrier on Linux and Windows operating systems and guide you through your first indexing and retrieval steps on a test collection.
+If you are interested in using Terrier straight-away in order to index and retrieve from standard test collections, then you may follow the steps described below. We provide step-by-step instructions for the installation of Terrier on Linux/Mac/Unix and Windows operating systems and guide you through your first indexing and retrieval steps on a test collection.
 
 Terrier Requirements
 --------------------
@@ -11,14 +11,14 @@ Terrier’s single requirement consists of an installed Java JRE 1.8.0 or higher
 Download Terrier
 ----------------
 
-Terrier can be downloaded from the following location:[Terrier Home](http://terrier.org/). The site offers pre-compiled releases of the newest and previous Unix and Windows versions of Terrier.
+Terrier can be obtained from its [download page](http://terrier.org/download/). The site offers pre-compiled releases of the newest and previous Max/Linux/Unix (.tar.gz) and Windows (.zip) downloads of Terrier.
 
 Step by Step Unix Installation
 ------------------------------
 
 After having downloaded Terrier, copy the file to the directory where you want to install Terrier. Navigate to this directory and execute the following command to decompress the distribution:
 
-    tar -zxvf terrier-project-5.0-bin.tar.gz
+    tar -zxvf terrier-project-5.1-bin.tar.gz
 
 This will result in the creation of a terrier directory in your current directory. Next we will have to make sure that you have the correct Java version available on the system. Type:
 
@@ -42,7 +42,36 @@ In order to be able to use Terrier you simply have to extract the contents of th
 Using Terrier
 -------------
 
-Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` commandline script. While In Terrier's home directory, type `bin/terrier` to see the available commands.
+Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` commandline script. While in Terrier's home directory, type `bin/terrier` to see the available commands:
+
+	$ bin/terrier 
+	Terrier version 5.1-SNAPSHOT
+	No command specified. You must specify a command.
+	Popular commands:
+		batchevaluate	evaluate all run result files in the results directory
+		batchindexing	allows a static collection of documents to be indexed
+		batchretrieval	performs a batch retrieval "run" over a set of queries
+		help		provides a list of available commands
+		interactive	runs an interactive querying session on the commandline
+	
+	All possible commands:
+		batchevaluate	evaluate all run result files in the results directory
+		batchindexing	allows a static collection of documents to be indexed
+		batchretrieval	performs a batch retrieval "run" over a set of queries
+		help		provides a list of available commands
+		http		runs a simple JSP webserver, to serve results
+		indexstats	display the statistics of an index
+		indexutil	utilities for displaying the content of an index
+		interactive	runs an interactive querying session on the commandline
+		inverted2direct	makes a direct index from a disk index with only an inverted index
+		jforests	runs the Jforests LambdaMART LTR implementation
+		recompress	allows an inverted index to be recompressed, changing compression
+		rest-singleindex	starts a HTTP REST server to serve a single index
+		showdocument	displays the contents of a document
+		structuremerger	merges 2 disk indices
+		trec_eval	runs the NIST standard trec_eval tool
+	
+	See 'terrier help <command>' to read about a specific command.
 
 ### Batch Indexing and Retrieval using Terrier
 
@@ -50,18 +79,18 @@ This allows you to easily index, retrieve, and evaluate results on TREC collecti
 
 ### Interactive Terrier
 
-This allows you to to do interactive retrieval. This is a quick way to test Terrier. If that you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive`. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` file. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](javadoc/org/terrier/applications/InteractiveQuerying.html) class.
+This allows you to to do interactive retrieval. This is a quick way to test Terrier. If you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive`. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` file. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](javadoc/org/terrier/applications/InteractiveQuerying.html) class.
 
 ### Desktop Terrier
 
-A sample Desktop search application, is available [separately from Github](https://github.com/terrier-org/terrier-desktop).
+A sample desktop search application (built using the Swing UI technology), is packaged separately, but can be automatically installed and used from Terrier using the following command: `bin/terrier -Dterrier.mvn.coords=org.terrier:terrier-desktop:5.0 desktop`. Its source is available [separately from Github](https://github.com/terrier-org/terrier-desktop).
 
 Tutorial: How to use the Batch (TREC) Terrier
 ---------------------------------------------
 
 ### Indexing
 
-This guide will provide step-by-step instructions for using Terrier to index a TREC collection. We assume that the operating system is Linux, and that the collection, along with the topics and the relevance assessments (qrels), is stored in the directory `share/vaswani_npl/`.
+This guide will provide step-by-step instructions for using Terrier to index a TREC collection. We assume that the operating system is Linux, and that the collection, along with the topics and the relevance assessments (qrels), are stored in the directory `share/vaswani_npl/`.
 
 1. Go to the Terrier folder.
 
@@ -75,7 +104,7 @@ This guide will provide step-by-step instructions for using Terrier to index a T
   bin/trec_setup.sh <absolute-path-to-collection-files>
 ```
 
-In our example we are using a collection called VASWANI_NPL located at `share/vaswani_npl/`. It follows a traditional TREC test collection, with a corpus file, topics, and relevance assessments (qrels), and using the same format.
+In our example we are using a collection called VASWANI_NPL located at `share/vaswani_npl/`. It follows the format of a traditional [TREC](https://trec.nist.gov/) test collection, with a corpus file, topics, and relevance assessments (qrels), and using the same format.
 
     $head share/vaswani_npl/corpus/doc-text.trec
     <DOC>
@@ -154,17 +183,17 @@ Firstly, lets see if we can get search results from our index. We can use the `b
 
 In responding to the query `compressed`, Terrier found document 11196 was estimated to be most relevant, scoring 6.96. 11196 was recorded from the DOCNO tag of the corresponding document.
 
-### Retrieval
+### Batch Retrieval
 
-Information retrieval has a history of evaluating search effectiveness automatically, using queries with associated relevance assessments. In order to perform retrieval using an existing index, follow the steps described below.
+Information retrieval has a history of evaluating search effectiveness automatically, using many queries with associated relevance assessments, in a *batch* manner. In order to perform batch retrieval using an existing index, follow the steps described below.
 
 1. First of all we have to do some configuration. Much of Terrier's functionality is controlled by properties. You can pre-set these in the `etc/terrier.properties` file, or specify each on the command line. Some commonly used properties have shortcuts on the commandline. To perform retrieval and evaluate the results of a batch of queries, we need to know:
 
-a.  The location of the queries (also known as topic files) - specified using `trec.topics` property, or the `-t` option to batchretrieve.
+  a.  The location of the queries (also known as topic files) - specified using the `trec.topics` property, or the `-t` option to batchretrieve.
 
-b.  The weighting model (e.g. TF\_IDF) to use - specified using `trec.model` propert or `-w` option to batchretrieve. The default for Terrier 5 is DPH.
+  b.  The weighting model (e.g. [TF\_IDF](javadoc/org/terrier/matching/models/TF_IDF.html)) to use - specified using `trec.model` property or the `-w` option to batchretrieve. The default weighting model for Terrier 5 is [DPH](javadoc/org/terrier/matching/models/DPH.html).
 
-c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to batchevaluate.
+  c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to batchevaluate.
 
 2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line using the -t option, as well as the InL2 weighting model using `-w` (all other configuration remains using Terrier’s default settings):
 
@@ -178,9 +207,9 @@ c.  The corresponding relevance assessments file (or qrels) for the topics - spe
     Time elapsed: 0.987 seconds.
 ```
 
-If all goes well this will result in a `.res` file in the `var/results` directory called `InL2c1_0.res`. We call each `.res` a run.
+This will result in a `.res` file in the `var/results` directory called `InL2c1_0.res`. We call each `.res` file a *run*.
 
-For example, you can also configure more options on the command line, including arbitrary properties, e.g.:
+You can also configure more options on the command line, including arbitrary properties using the `-D` option to any Terrier command, e.g.:
 
     $bin/terrier batchretrieve -Dtrec.model=BM25 -c c:0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
 
