@@ -56,7 +56,8 @@ import com.google.common.collect.Lists;
  * script.
  * 
  * To advertise a new functionality, list the class in the 
- * <tt>resources/META-INF/services/org.terrier.applications.CLITool</tt> file.
+ * <tt>resources/META-INF/services/org.terrier.applications.CLITool</tt> file
+ * corresponding to your package.
  *  
  * @since 5.0
  */
@@ -156,6 +157,47 @@ public abstract class CLITool {
 		
 		public abstract int run(CommandLine line) throws Exception;
 		
+	}
+	
+	public static class HelpAliasCLITool extends CLITool {
+		@Override
+		public int run(String[] args) {
+			System.err.println("All possible commands & aliases:");
+			displayCommandAndAliases(getServiceIterator(false));
+			
+			return 0;
+		}
+		
+		@Override
+		public String commandname() {
+			return "help-aliases";
+		}
+		
+		@Override
+		public String help() {
+			return helpsummary();
+		}
+		
+		@Override
+		public String helpsummary() {
+			return "provides a list of all available commands and their aliases";
+		}
+		
+		@Override
+		public Set<String> commandaliases() {
+			return new HashSet<String>(Arrays.asList("aliases", "alias"));
+		}
+
+		protected void displayCommandAndAliases(Iterable<CLITool> commandIter) {
+			List<CLITool> list = Lists.newArrayList(commandIter);
+			Collections.sort(list, byName);
+			for(CLITool tool : list) {
+				String name = tool.commandname();
+				if (name.length() <= 5)
+					name += '\t';
+				System.err.println("\t" + name + "\t" + String.join(" ", tool.commandaliases()));
+			}
+		}
 	}
 	
 	public static class HelpCLITool extends CLITool {

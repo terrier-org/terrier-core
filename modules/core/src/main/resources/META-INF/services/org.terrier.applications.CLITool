@@ -1,4 +1,5 @@
 org.terrier.applications.CLITool$HelpCLITool
+org.terrier.applications.CLITool$HelpAliasCLITool
 org.terrier.applications.InteractiveQuerying$Command
 org.terrier.applications.ShowDocumentCommand
 org.terrier.structures.CollectionStatistics$Command
