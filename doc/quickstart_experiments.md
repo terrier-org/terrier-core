@@ -189,11 +189,11 @@ Information retrieval has a history of evaluating search effectiveness automatic
 
 1. First of all we have to do some configuration. Much of Terrier's functionality is controlled by properties. You can pre-set these in the `etc/terrier.properties` file, or specify each on the command line. Some commonly used properties have shortcuts on the commandline. To perform retrieval and evaluate the results of a batch of queries, we need to know:
 
-  a.  The location of the queries (also known as topic files) - specified using the `trec.topics` property, or the `-t` option to batchretrieve.
+   a.  The location of the queries (also known as topic files) - specified using the `trec.topics` property, or the `-t` option to batchretrieve.
 
-  b.  The weighting model (e.g. [TF\_IDF](javadoc/org/terrier/matching/models/TF_IDF.html)) to use - specified using `trec.model` property or the `-w` option to batchretrieve. The default weighting model for Terrier 5 is [DPH](javadoc/org/terrier/matching/models/DPH.html).
+   b.  The weighting model (e.g. [TF\_IDF](javadoc/org/terrier/matching/models/TF_IDF.html)) to use - specified using `trec.model` property or the `-w` option to batchretrieve. The default weighting model for Terrier 5 is [DPH](javadoc/org/terrier/matching/models/DPH.html).
 
-  c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to batchevaluate.
+   c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to batchevaluate.
 
 2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line using the -t option, as well as the InL2 weighting model using `-w` (all other configuration remains using Terrier’s default settings):
 
