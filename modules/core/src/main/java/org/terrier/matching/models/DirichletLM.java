@@ -17,7 +17,7 @@
  *
  * The Original Code is DirichletLM.java.
  *
- * The Original Code is Copyright (C) 2004-2018 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2019 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s): Craig Macdonald <craigm{a.}dcs.gla.ac.uk>

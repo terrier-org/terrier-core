@@ -1,4 +1,4 @@
-Terrier IR Platform - Terabyte Retriever v5.0
+Terrier IR Platform - Terabyte Retriever v5.1
 -----------------------------------
 [![Build Status](https://api.travis-ci.org/terrier-org/terrier-core.svg?branch=5.x)](https://travis-ci.org/terrier-org/terrier-core)
 
@@ -34,4 +34,4 @@ In order to start [experimenting with Terrier](http://terrier.org/docs/current/q
 ------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2018 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
+> Copyright (C) 2004-2019 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
