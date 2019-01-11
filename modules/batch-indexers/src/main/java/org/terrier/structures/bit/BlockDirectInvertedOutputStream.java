@@ -27,6 +27,7 @@
 package org.terrier.structures.bit;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.terrier.compression.bit.BitOut;
 import org.terrier.structures.BitIndexPointer;
@@ -57,6 +58,10 @@ public class BlockDirectInvertedOutputStream extends DirectInvertedOutputStream 
 	public BlockDirectInvertedOutputStream(BitOut out)
 	{
 		super(out);
+	}
+	
+	public BlockDirectInvertedOutputStream(OutputStream os) throws IOException {
+		super(os);
 	}
 	
 	@Override

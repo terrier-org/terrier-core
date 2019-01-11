@@ -26,6 +26,7 @@
 package org.terrier.structures.bit;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.terrier.compression.bit.BitOut;
 import org.terrier.structures.postings.FieldPosting;
@@ -51,6 +52,10 @@ public class FieldDirectInvertedOutputStream extends DirectInvertedOutputStream 
 	public FieldDirectInvertedOutputStream(String filename)
 			throws IOException {
 		super(filename);
+	}
+	
+	public FieldDirectInvertedOutputStream(OutputStream os) throws IOException {
+		super(os);
 	}
 	
 	@Override

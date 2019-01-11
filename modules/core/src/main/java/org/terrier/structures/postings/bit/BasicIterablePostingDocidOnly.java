@@ -60,7 +60,7 @@ public class BasicIterablePostingDocidOnly extends BasicIterablePosting {
 	@Override
 	public int next() throws IOException {
 		if (numEntries-- <= 0)
-			return EOL;
+			return id = EOL;
 		id = bitFileReader.readGamma() + id;
 		return id;
 	}

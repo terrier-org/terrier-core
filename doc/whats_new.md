@@ -18,6 +18,7 @@ Terrier 5.x - unreleased
  - [TR-513](http://terrier.org/issues/browse/TR-513) Allow wmodel and tags to be specified as parameters to #combine
  - [TR-514](http://terrier.org/issues/browse/TR-514) Prefix/levenshtein matching in the matchopql
  - [TR-515](http://terrier.org/issues/browse/TR-515) #base64 support in matchopql
+ - [TR-519](http://terrier.org/issues/browse/TR-519) getId() should return EOL in (AND|Field|Block|BlockField)IterablePosting after EOL (Nicola Tonellotto, ISTI-CNR)
  - [TR-527](http://terrier.org/issues/browse/TR-527) ANDIterablePosting and descendents should support next(int)
  - [TR-528](http://terrier.org/issues/browse/TR-528) Each MatchingOp can have more than one tag
  - [TR-529](http://terrier.org/issues/browse/TR-529) Clone support for matchops 
@@ -27,7 +28,7 @@ Terrier 5.x - unreleased
  - [TR-536](http://terrier.org/issues/browse/TR-536) Some command-line settings in batchretrieve not reflected in .settings file (Ian Soboroff, NIST)
  - [TR-539](http://terrier.org/issues/browse/TR-539) Dependence model rewriter should support #syn
  - [TR-540](http://terrier.org/issues/browse/TR-540) QueryResultSet.getMetaKeys() does not give a defined order
- - [TR-541](http://terrier.org/issues/browse/TR-541) REST api should set content-types
+ - [TR-541](http://terrier.org/issues/browse/TR-541) REST API should set Content-Type headers
  - [TR-543](http://terrier.org/issues/browse/TR-543) CollectionResultSet should warn/error when metadata is added to it
  - [TR-544](http://terrier.org/issues/browse/TR-544) SimpleDecorate swallows Exceptions
  - [TR-545](http://terrier.org/issues/browse/TR-545) Proximity shouldn't encapsulate terms with fields set
@@ -42,7 +43,7 @@ Terrier 5.x - unreleased
  - [TR-546](http://terrier.org/issues/browse/TR-546) "Show document" application
  - [TR-548](http://terrier.org/issues/browse/TR-548) Bump versions as recommended by Github
  - [TR-554](http://terrier.org/issues/browse/TR-554) Current build requires maven 3.3
- - documentation fixes (Meng Dong, University of Glasgow)
+ - documentation fixes (Meng Dong, Iadh Ounis, Richard McCreadie, Graham McDonald, University of Glasgow)
 
 Terrier 5.0 - 04/07/2018
 ------------------------

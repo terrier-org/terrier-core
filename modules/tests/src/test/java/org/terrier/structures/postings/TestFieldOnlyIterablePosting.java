@@ -43,6 +43,7 @@ public class TestFieldOnlyIterablePosting {
 		assertEquals(8, ip1.getFrequency());
 		assertEquals(3, ip1.getDocumentLength());
 		assertEquals(IterablePosting.EOL, ip1.next());
+		assertEquals(IterablePosting.EOL, ip1.getId());
 		ip1.close();
 	}
 

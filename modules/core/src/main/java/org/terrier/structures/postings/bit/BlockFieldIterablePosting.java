@@ -85,7 +85,7 @@ public class BlockFieldIterablePosting extends BasicIterablePosting implements B
 	/** {@inheritDoc} */
 	public int next() throws IOException {
 		if (numEntries-- <= 0)
-			return EOL;
+			return id = EOL;
 		id = bitFileReader.readGamma() + id;
 		tf = bitFileReader.readUnary();
 		for(int i = 0;i<fieldCount;i++)

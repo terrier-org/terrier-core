@@ -66,7 +66,7 @@ public class BlockIterablePosting extends BasicIterablePosting implements BlockP
 	 */
 	public int next() throws IOException {
 		if (numEntries-- <= 0)
-			return EOL;
+			return id = EOL;
 		id = bitFileReader.readGamma() + id;
 		tf = bitFileReader.readUnary();
 		//TODO: this has a memory allocation for every posting in the posting list. can we reuse an array?

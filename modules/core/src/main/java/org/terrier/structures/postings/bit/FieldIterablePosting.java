@@ -101,7 +101,7 @@ public class FieldIterablePosting extends BasicIterablePosting implements FieldP
 	@Override
 	public int next() throws IOException {
 		if (numEntries-- <= 0)
-			return EOL;
+			return id = EOL;
 		id = bitFileReader.readGamma() + id;
 		tf = bitFileReader.readUnary();
 		for(int i = 0;i<fieldCount;i++)

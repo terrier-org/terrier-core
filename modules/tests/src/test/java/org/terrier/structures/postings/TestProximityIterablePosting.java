@@ -71,6 +71,7 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getFrequency());
 		
 		assertEquals(IterablePosting.EOL, ip.next());
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 		//check next(int)
 		ip = ProximityIterablePosting.createProximityPostingList(
@@ -89,6 +90,7 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getFrequency());
 		
 		assertEquals(IterablePosting.EOL, ip.next(10));
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 		System.err.println("test duplicate");
 		
@@ -101,6 +103,7 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertNotNull(ip);
 		assertEquals(4, ip.next());
 		assertEquals(IterablePosting.EOL, ip.next());
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 	}
 	
@@ -133,6 +136,7 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getFrequency());
 		
 		assertEquals(IterablePosting.EOL, ip.next());
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 		//check next(int)
 		ip = ProximityIterablePosting.createProximityPostingList(
@@ -148,6 +152,7 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertEquals(1, ip.getFrequency());
 		
 		assertEquals(IterablePosting.EOL, ip.next());
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 		//one dist  match
 		ip = ProximityIterablePosting.createProximityPostingList(
@@ -158,9 +163,11 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertNotNull(ip);
 		assertEquals(4, ip.next());
 		assertEquals(IterablePosting.EOL, ip.next());
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 		
 		assertEquals(IterablePosting.EOL, ip.next(10));
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 		//no match with window of size 1
 		ip = ProximityIterablePosting.createProximityPostingList(
@@ -179,6 +186,7 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 				6);
 		assertNotNull(ip);
 		assertEquals(IterablePosting.EOL, ip.next());
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 		//one match with window of size 7
 		ip = ProximityIterablePosting.createProximityPostingList(
@@ -189,6 +197,7 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertNotNull(ip);
 		assertEquals(2, ip.next());
 		assertEquals(IterablePosting.EOL, ip.next());
+		assertEquals(IterablePosting.EOL, ip.getId());
 		
 		//one dist  match
 		ip = ProximityIterablePosting.createProximityPostingList(
@@ -199,7 +208,7 @@ public class TestProximityIterablePosting extends ApplicationSetupBasedTest {
 		assertNotNull(ip);
 		assertEquals(4, ip.next());
 		assertEquals(IterablePosting.EOL, ip.next());
-		
+		assertEquals(IterablePosting.EOL, ip.getId());
 	}
 	
 }

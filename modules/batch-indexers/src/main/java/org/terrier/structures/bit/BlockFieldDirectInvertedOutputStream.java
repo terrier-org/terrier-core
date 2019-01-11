@@ -26,6 +26,7 @@
 package org.terrier.structures.bit;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.terrier.compression.bit.BitOut;
 import org.terrier.structures.postings.BlockPosting;
@@ -56,6 +57,10 @@ public class BlockFieldDirectInvertedOutputStream extends
 		super(filename);
 	}
 	
+	public BlockFieldDirectInvertedOutputStream(OutputStream os) throws IOException {
+		super(os);
+	}
+
 	@Override
 	public Class<? extends IterablePosting> getPostingIteratorClass()
 	{

@@ -34,9 +34,15 @@ import org.junit.Test;
 import org.terrier.compression.bit.BitInputStream;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.postings.BasicPostingImpl;
+import org.terrier.structures.postings.BlockFieldPostingImpl;
+import org.terrier.structures.postings.BlockPostingImpl;
+import org.terrier.structures.postings.FieldPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.Posting;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
+import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
+import org.terrier.structures.postings.bit.BlockIterablePosting;
+import org.terrier.structures.postings.bit.FieldIterablePosting;
 import org.terrier.tests.ApplicationSetupBasedTest;
 
 /** Tests that the Posting structures behave as expected */
@@ -68,6 +74,52 @@ public class TestPostingStructures extends ApplicationSetupBasedTest {
 		IterablePosting ip = new BasicIterablePosting(bitIn, postings.size(), null);
 		PostingTestUtils.comparePostings(postings, ip);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test public void testSingleEntrySeveralPostingsBlocks() throws Exception
+	{
+		List<Posting> postings = new ArrayList<Posting>();
+		postings.add(new BlockPostingImpl(1,1, new int[]{5}));
+		postings.add(new BlockPostingImpl(2,1, new int[]{5}));
+		postings.add(new BlockPostingImpl(10,1, new int[]{5}));
+		postings.add(new BlockPostingImpl(100,1, new int[]{5}));
+		List<BitIndexPointer> pointerList = new ArrayList<BitIndexPointer>();
+		DataInput file = PostingTestUtils.writeBlockPostingsToData(new Iterator[]{postings.iterator()}, pointerList);
+		BitInputStream bitIn = new BitInputStream(file);
+		IterablePosting ip = new BlockIterablePosting(bitIn, postings.size(), null);
+		PostingTestUtils.comparePostings(postings, ip);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test public void testSingleEntrySeveralPostingsFields() throws Exception
+	{
+		List<Posting> postings = new ArrayList<Posting>();
+		postings.add(new FieldPostingImpl(1,1, new int[]{5}));
+		postings.add(new FieldPostingImpl(2,1, new int[]{5}));
+		postings.add(new FieldPostingImpl(10,1, new int[]{5}));
+		postings.add(new FieldPostingImpl(100,1, new int[]{5}));
+		List<BitIndexPointer> pointerList = new ArrayList<BitIndexPointer>();
+		DataInput file = PostingTestUtils.writeFieldPostingsToData(new Iterator[]{postings.iterator()}, pointerList);
+		BitInputStream bitIn = new BitInputStream(file);
+		IterablePosting ip = new FieldIterablePosting(bitIn, postings.size(), null, 1);
+		PostingTestUtils.comparePostings(postings, ip);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test public void testSingleEntrySeveralPostingsBlocksFields() throws Exception
+	{
+		List<Posting> postings = new ArrayList<Posting>();
+		postings.add(new BlockFieldPostingImpl(1,1, new int[]{5}, new int[]{5}));
+		postings.add(new BlockFieldPostingImpl(2,1, new int[]{5}, new int[]{5}));
+		postings.add(new BlockFieldPostingImpl(10,1, new int[]{5}, new int[]{5}));
+		postings.add(new BlockFieldPostingImpl(100,1, new int[]{5}, new int[]{5}));
+		List<BitIndexPointer> pointerList = new ArrayList<BitIndexPointer>();
+		DataInput file = PostingTestUtils.writeBlockFieldPostingsToData(new Iterator[]{postings.iterator()}, pointerList);
+		BitInputStream bitIn = new BitInputStream(file);
+		IterablePosting ip = new BlockFieldIterablePosting(bitIn, postings.size(), null, 1);
+		PostingTestUtils.comparePostings(postings, ip);
+	}
+	
 	
 	
 }

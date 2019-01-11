@@ -27,7 +27,8 @@ package org.terrier.structures.bit;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -71,7 +72,8 @@ public class PostingTestUtils {
 			assertEquals(p.getId(), outputPostings.getId());
 			assertEquals(p.getFrequency(), outputPostings.getFrequency());
 		}
-		assertFalse(outputPostings.next() != IterablePosting.EOL);
+		assertTrue(outputPostings.next() == IterablePosting.EOL);
+		assertTrue(outputPostings.getId() == IterablePosting.EOL); //TR-519
 	}
 	
 	public static void comparePostingsDocids(List<Posting> inputPostings, IterablePosting outputPostings) throws Exception
@@ -86,7 +88,8 @@ public class PostingTestUtils {
 				System.err.println("at 2");
 			}
 		}
-		assertFalse(outputPostings.next() != IterablePosting.EOL);
+		assertTrue(outputPostings.next() == IterablePosting.EOL);
+		assertTrue(outputPostings.getId() == IterablePosting.EOL); //TR-519
 	}
 	
 	public static void compareBlockPostings(List<Posting> inputPostings, IterablePosting outputPostings) throws Exception
@@ -98,7 +101,8 @@ public class PostingTestUtils {
             assertEquals(p.getFrequency(), outputPostings.getFrequency());
             assertArrayEquals(((BlockPosting) p).getPositions(), ((BlockPosting) p).getPositions());
         }
-        assertFalse(outputPostings.next() != IterablePosting.EOL);
+        assertTrue(outputPostings.next() == IterablePosting.EOL);
+        assertTrue(outputPostings.getId() == IterablePosting.EOL); //TR-519
     }
      
     public static void compareFieldPostings(List<Posting> inputPostings, IterablePosting outputPostings) throws Exception
@@ -110,7 +114,8 @@ public class PostingTestUtils {
             assertEquals(p.getFrequency(), outputPostings.getFrequency());
             assertArrayEquals(((FieldPosting) p).getFieldFrequencies(), ((FieldPosting) p).getFieldFrequencies());
         }
-        assertFalse(outputPostings.next() != IterablePosting.EOL);
+        assertTrue(outputPostings.next() == IterablePosting.EOL);
+        assertTrue(outputPostings.getId() == IterablePosting.EOL); //TR-519
     }
      
     public static void compareBlockFieldPostings(List<Posting> inputPostings, IterablePosting outputPostings) throws Exception
@@ -123,7 +128,8 @@ public class PostingTestUtils {
             assertArrayEquals(((FieldPosting) p).getFieldFrequencies(), ((FieldPosting) p).getFieldFrequencies());
             assertArrayEquals(((BlockPosting) p).getPositions(), ((BlockPosting) p).getPositions());            
         }
-        assertFalse(outputPostings.next() != IterablePosting.EOL);
+        assertTrue(outputPostings.next() == IterablePosting.EOL);
+        assertTrue(outputPostings.getId() == IterablePosting.EOL); //TR-519
     }
 	
 	
@@ -140,6 +146,20 @@ public class PostingTestUtils {
 	        assertEquals(iterators.length, pointerList.size());
 	        return tmpFile.toString();
 	    }
+	  
+	  public static DataInput writeBlockPostingsToData(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
+	    {
+		  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        DirectInvertedOutputStream dios = new BlockDirectInvertedOutputStream(baos);
+	        for(Iterator<Posting> iterator : iterators)
+	        {
+	            BitIndexPointer p = dios.writePostings(iterator);
+	            pointerList.add(p);
+	        }
+	        dios.close();
+	        assertEquals(iterators.length, pointerList.size());
+	        return new DataInputStream(new ByteArrayInputStream(baos.toByteArray()));
+	    }
 	     
 	    public static String writeFieldPostingsToFile(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
 	    {
@@ -154,6 +174,20 @@ public class PostingTestUtils {
 	        assertEquals(iterators.length, pointerList.size());
 	        return tmpFile.toString();
 	    }
+	    
+	    public static DataInput writeFieldPostingsToData(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
+	    {
+	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        DirectInvertedOutputStream dios = new FieldDirectInvertedOutputStream(baos);
+	        for(Iterator<Posting> iterator : iterators)
+	        {
+	            BitIndexPointer p = dios.writePostings(iterator);
+	            pointerList.add(p);
+	        }
+	        dios.close();
+	        assertEquals(iterators.length, pointerList.size());
+	        return new DataInputStream(new ByteArrayInputStream(baos.toByteArray()));
+	    }
 	     
 	    public static String writeBlockFieldPostingsToFile(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
 	    {
@@ -167,7 +201,21 @@ public class PostingTestUtils {
 	        dios.close();
 	        assertEquals(iterators.length, pointerList.size());
 	        return tmpFile.toString();
-	    }   
+	    }
+	    
+	    public static DataInput writeBlockFieldPostingsToData(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
+	    {
+	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        DirectInvertedOutputStream dios = new BlockFieldDirectInvertedOutputStream(baos);
+	        for(Iterator<Posting> iterator : iterators)
+	        {
+	            BitIndexPointer p = dios.writePostings(iterator);
+	            pointerList.add(p);
+	        }
+	        dios.close();
+	        assertEquals(iterators.length, pointerList.size());
+	        return new DataInputStream(new ByteArrayInputStream(baos.toByteArray()));
+	    }
 	
 	
 	public static String writePostingsToFile(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
