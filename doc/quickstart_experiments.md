@@ -84,7 +84,11 @@ This allows you to to do interactive retrieval. This is a quick way to test Terr
 
 ### Desktop Terrier
 
-A sample desktop search application (built using the Swing UI technology), is packaged separately, but can be automatically installed and used from Terrier using the following command: `bin/terrier -Dterrier.mvn.coords=org.terrier:terrier-desktop:5.0 desktop`. Its source is available [separately from Github](https://github.com/terrier-org/terrier-desktop).
+A sample desktop search application (built using the Swing UI technology) is packaged separately, but can be automatically installed and used from Terrier using the following command: 
+
+	bin/terrier -Dterrier.mvn.coords=org.terrier:terrier-desktop:5.0 desktop
+	
+The desktop search application's source is available [separately from Github](https://github.com/terrier-org/terrier-desktop).
 
 Tutorial: How to use the Batch (TREC) Terrier
 ---------------------------------------------
