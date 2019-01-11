@@ -29,10 +29,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Random;
 
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.terrier.applications.batchquerying.SingleLineTRECQuery;
+import org.terrier.applications.batchquerying.TRECQuerying;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.matching.FatFeaturedScoringMatching;
 import org.terrier.matching.daat.FatFull;
@@ -45,10 +52,13 @@ import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.Files;
 
 public class TestClientAndServer extends ApplicationSetupBasedTest {
 
-
+	 @Rule
+	 public TemporaryFolder tempFolder = new TemporaryFolder();
+	
 	@Test public void itWorksBlocksFeatures() throws Exception {
 		Index index = IndexTestUtils.makeIndexBlocks(new String[]{"doc1"}, new String[]{"token1 token2 token3"});		
 		int port = new Random().nextInt(65536-1024)+1024;
@@ -70,7 +80,7 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 	}
 	
 	@Test public void itWorks() throws Exception {
-		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"token1 token2 token3"});		
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"token1 token2 token3"});
 		int port = new Random().nextInt(65536-1024)+1024;
 		String uri = "http://127.0.0.1:"+port+"/";		
 		HttpServer server = makeServer(index, uri);
@@ -84,6 +94,46 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 		assertEquals(1, srq.getResults().size());
 		assertEquals("doc1", srq.getResults().get(0).getMetadata("docno"));		
 		server.shutdown();		
+	}
+	
+	@Test public void testTRECQuerying() throws Exception {
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"token1 token2 token3"});
+		int port = new Random().nextInt(65536-1024)+1024;
+		String uri = "http://127.0.0.1:"+port+"/";		
+		HttpServer server = makeServer(index, uri);
+		index.close();
+		
+		//write topics
+		File f = tempFolder.newFile("topics");
+		FileWriter fw = new FileWriter(f);
+		fw.append("1 token2");
+		fw.close();
+		String topicsFile = f.toString();
+		
+//		f = tempFolder.newFile("qrels");
+//		fw = new FileWriter(f);
+//		fw.append("1 Q0 doc1 1");
+//		fw.close();
+//		String qrelsFilename = f.toString();
+		
+		
+		TRECQuerying tq = new TRECQuerying(IndexRef.of(uri));
+		tq.setTopicsParser(SingleLineTRECQuery.class.getName());
+		ApplicationSetup.setProperty("trec.topics", topicsFile);
+		tq.intialise();
+		String resFilename = tq.processQueries();
+		
+		String line;
+		BufferedReader br = Files.openFileReader(resFilename);
+		while((line = br.readLine()) != null)
+		{
+			System.err.println(line);
+			String[] parts = line.split("\\s+");
+			assertEquals(6, parts.length);
+			assertTrue(parts[5].length() > 0);
+		}
+		br.close();
+		server.shutdown().get();
 	}
 
 	protected HttpServer makeServer(Index index, String uri) {

@@ -83,9 +83,17 @@ public interface SearchRequest extends Serializable
 		return getControl(Name).length() > 0;
 	}
 	
-	/** Returns the value of the control. Null or empty string if not set.
+	/** Returns the value of the control.empty string if not set.
 	  * @return the value. */
 	String getControl(String Name);
+	
+	/** Returns the value of the control, or Default if not set.
+	  * @return the value. */
+	default String getControl(String Name, String Default)
+	{
+		return hasControl(Name) ? getControl(Name) : Default;
+	}
+	
 	/** Set if the query input had no terms.
 	  * @return true if the query has no terms. Used by Manager.runMatching() to short circuit the
 	  * matching process - if this is set, then a resultset with 0 documents is created
@@ -146,6 +154,8 @@ public interface SearchRequest extends Serializable
 	 * @since 3.6
 	 */
 	public Object getContextObject(String key);
+
+	
 	
 }
 /* the following methods are implmented in the SearchRequest - ie Request.java

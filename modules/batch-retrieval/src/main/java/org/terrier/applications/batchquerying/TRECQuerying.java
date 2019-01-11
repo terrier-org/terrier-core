@@ -248,7 +248,7 @@ public class TRECQuerying extends AbstractQuerying {
 				ApplicationSetup.setProperty("trec.results.file", line.getOptionValue('o'));
 			
 			if (line.hasOption('s'))
-				tq.topicsParser = SingleLineTRECQuery.class.getName();
+				tq.setTopicsParser(SingleLineTRECQuery.class.getName());
 				
 			if (line.hasOption('t'))
 				ApplicationSetup.setProperty("trec.topics", line.getOptionValue('t'));			
@@ -317,7 +317,7 @@ public class TRECQuerying extends AbstractQuerying {
 	 * What class parse to parse the batch topic files. Configured by property
 	 * <tt>trec.topics.parser</tt>
 	 */
-	protected String topicsParser = ApplicationSetup.getProperty(
+	private String topicsParser = ApplicationSetup.getProperty(
 			"trec.topics.parser", "TRECQuery");
 
 	/** Where the stream of queries is obtained from. Configured by property
@@ -632,7 +632,7 @@ public class TRECQuerying extends AbstractQuerying {
 
 		synchronized (this) {
 			if (resultFile == null) {
-				method = ApplicationSetup.getProperty("trec.runtag", srq.getControl("wmodel"));//TODO FIX
+				method = ApplicationSetup.getProperty("trec.runtag", srq.getControl("wmodel", srq.getControl("runtag", "unknown")));
 				if (srq.hasControl("qe"))
 					method = method +
 					"_d_"+ApplicationSetup.getProperty("expansion.documents", "3")+
@@ -769,8 +769,8 @@ public class TRECQuerying extends AbstractQuerying {
 		QuerySource rtr = null;
 		try {
 			Class<? extends QuerySource> queryingClass = ApplicationSetup.getClass(
-					topicsParser.indexOf('.') > 0 ? topicsParser
-							: "org.terrier.structures." + topicsParser)
+					getTopicsParser().indexOf('.') > 0 ? getTopicsParser()
+							: "org.terrier.structures." + getTopicsParser())
 					.asSubclass(QuerySource.class);
 
 			if ((topicsFiles = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("trec.topics", ""))).length > 0) {
@@ -785,7 +785,7 @@ public class TRECQuerying extends AbstractQuerying {
 			// } catch (ClassNotFoundException cnfe) {
 
 		} catch (Exception e) {
-			logger.error("Error instantiating topic file QuerySource called " + topicsParser, e);
+			logger.error("Error instantiating topic file QuerySource called " + getTopicsParser(), e);
 		}
 		return rtr;
 	}
@@ -906,6 +906,14 @@ public class TRECQuerying extends AbstractQuerying {
 		} catch (IOException ioe) {
 			logger.warn("Couldn't write settings out to disk in TRECQuerying (.res.settings)", ioe);
 		}
+	}
+
+	public String getTopicsParser() {
+		return topicsParser;
+	}
+
+	public void setTopicsParser(String topicsParser) {
+		this.topicsParser = topicsParser;
 	}
 
 }

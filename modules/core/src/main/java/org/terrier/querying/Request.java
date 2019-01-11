@@ -135,6 +135,7 @@ public class Request implements SearchRequest
 	}
 	/** Returns the value of the control. Null or empty string if not set.
 	  * @return the value. */
+	@Override
 	public String getControl(String Name)
 	{
 		Object o = Control.get(Name);
@@ -145,6 +146,7 @@ public class Request implements SearchRequest
 	
 	/** Returns the value of the control. Null or empty string if not set.
 	  * @return the value. */
+	@Override
 	public String getControl(String Name, String Default)
 	{
 		String o = Control.get(Name);

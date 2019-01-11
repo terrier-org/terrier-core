@@ -164,6 +164,11 @@ public class RestClientManagerBuilder implements ManagerFactory.Builder {
 			return controls;
 		}
 
+		@Override
+		public String getControl(String Name, String Default) {
+			return controls.getOrDefault(Name, Default);
+		}
+
 	}
 
 	class RESTManagerProxy implements Manager {
