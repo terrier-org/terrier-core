@@ -25,6 +25,7 @@
  */
 package org.terrier.structures.bit;
 
+import java.io.DataInput;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,8 +48,8 @@ public class TestPostingStructures extends ApplicationSetupBasedTest {
 		List<Posting> postings = new ArrayList<Posting>();
 		postings.add(new BasicPostingImpl(1,1));
 		List<BitIndexPointer> pointerList = new ArrayList<BitIndexPointer>();
-		String filename = PostingTestUtils.writePostingsToFile(new Iterator[]{postings.iterator()}, pointerList);
-		BitInputStream bitIn = new BitInputStream(filename);
+		DataInput file = PostingTestUtils.writePostingsToData(new Iterator[]{postings.iterator()}, pointerList);
+		BitInputStream bitIn = new BitInputStream(file);
 		IterablePosting ip = new BasicIterablePosting(bitIn, postings.size(), null);
 		PostingTestUtils.comparePostings(postings, ip);
 	}
@@ -62,8 +63,8 @@ public class TestPostingStructures extends ApplicationSetupBasedTest {
 		postings.add(new BasicPostingImpl(10,1));
 		postings.add(new BasicPostingImpl(100,1));
 		List<BitIndexPointer> pointerList = new ArrayList<BitIndexPointer>();
-		String filename = PostingTestUtils.writePostingsToFile(new Iterator[]{postings.iterator()}, pointerList);
-		BitInputStream bitIn = new BitInputStream(filename);
+		DataInput file = PostingTestUtils.writePostingsToData(new Iterator[]{postings.iterator()}, pointerList);
+		BitInputStream bitIn = new BitInputStream(file);
 		IterablePosting ip = new BasicIterablePosting(bitIn, postings.size(), null);
 		PostingTestUtils.comparePostings(postings, ip);
 	}

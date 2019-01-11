@@ -27,11 +27,11 @@
 package org.terrier.structures.bit;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.terrier.compression.bit.BitOut;
 import org.terrier.compression.bit.BitOutputStream;
 import org.terrier.structures.AbstractPostingOutputStream;
@@ -55,6 +55,15 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	/** The logger used */
 	protected static final Logger logger = LoggerFactory.getLogger(DirectInvertedOutputStream.class);
  
+	/** Creates a new output stream, writing a BitOutputStream to the specified file. The number of binary bits
+	  * for fields must also be specified.
+	  * @param filename Location of the file to write to
+	  */
+	public DirectInvertedOutputStream(OutputStream os) throws IOException
+	{
+		this.output = new BitOutputStream(os);
+	}
+	
 	/** Creates a new output stream, writing a BitOutputStream to the specified file. The number of binary bits
 	  * for fields must also be specified.
 	  * @param filename Location of the file to write to

@@ -25,8 +25,14 @@
  */
 package org.terrier.structures.bit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -36,11 +42,6 @@ import org.terrier.compression.bit.BitIn;
 import org.terrier.structures.BitFilePosition;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.Skipable;
-import org.terrier.structures.bit.BlockDirectInvertedOutputStream;
-import org.terrier.structures.bit.BlockFieldDirectInvertedOutputStream;
-import org.terrier.structures.bit.DirectInvertedDocidOnlyOuptutStream;
-import org.terrier.structures.bit.DirectInvertedOutputStream;
-import org.terrier.structures.bit.FieldDirectInvertedOutputStream;
 import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.IterablePosting;
@@ -181,6 +182,21 @@ public class PostingTestUtils {
 		dios.close();
 		assertEquals(iterators.length, pointerList.size());
 		return tmpFile.toString();
+	}
+	
+	public static DataInput writePostingsToData(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
+	{
+		//File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DirectInvertedOutputStream dios = new DirectInvertedOutputStream(baos);
+		for(Iterator<Posting> iterator : iterators)
+	 	{
+	 		BitIndexPointer p = dios.writePostings(iterator);
+	 		pointerList.add(p);
+	 	}
+		dios.close();
+		assertEquals(iterators.length, pointerList.size());
+		return new DataInputStream(new ByteArrayInputStream(baos.toByteArray()));
 	}
 	
 	public static String writePostingsToFileDocidOnly(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
