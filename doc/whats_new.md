@@ -19,6 +19,7 @@ Terrier 5.x - unreleased
  - [TR-514](http://terrier.org/issues/browse/TR-514) Prefix/levenshtein matching in the matchopql
  - [TR-515](http://terrier.org/issues/browse/TR-515) #base64 support in matchopql
  - [TR-519](http://terrier.org/issues/browse/TR-519) getId() should return EOL in (AND|Field|Block|BlockField)IterablePosting after EOL (Nicola Tonellotto, ISTI-CNR)
+ - [TR-522](http://terrier.org/issues/browse/TR-522) batch retrieval from a remote index doesnt create valid run files
  - [TR-527](http://terrier.org/issues/browse/TR-527) ANDIterablePosting and descendents should support next(int)
  - [TR-528](http://terrier.org/issues/browse/TR-528) Each MatchingOp can have more than one tag
  - [TR-529](http://terrier.org/issues/browse/TR-529) Clone support for matchops 
