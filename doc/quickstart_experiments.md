@@ -20,7 +20,7 @@ After having downloaded Terrier, copy the file to the directory where you want t
 
     tar -zxvf terrier-project-5.1-bin.tar.gz
 
-This will result in the creation of a terrier directory in your current directory. Next we will have to make sure that you have the correct Java version available on the system. Type:
+This will result in the creation of a `terrier-project` directory in your current directory. Next we will have to make sure that you have the correct Java version available on the system. Type:
 
     echo $JAVA_HOME
 
@@ -35,14 +35,14 @@ e.g.
 Step by Step Windows Installation
 ---------------------------------
 
-In order to be able to use Terrier you simply have to extract the contents of the downloaded Zip file into a directory of your choice. Terrier requires Java version 1.8 or higher. If your system does not meet this requirement you can download an appropriate version from the [JRE download website](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Finally, Terrier assumes that java.exe is on the path, so you should use the System applet in the control panel, to ensure that your [Java\\bin folder is in your PATH environment variable](http://www.oracle.com/technetwork/java/javase/install-windows-189425.html#Environment).
+In order to be able to use Terrier on Windows you simply have to extract the contents of the downloaded .zip file into a directory of your choice. Terrier requires Java version 1.8 or higher. If your system does not meet this requirement you can download an appropriate version from the [JRE download website](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Finally, Terrier assumes that java.exe is on the path, so you should use the System applet in the control panel, to ensure that your [Java\\bin folder is in your PATH environment variable](http://www.oracle.com/technetwork/java/javase/install-windows-189425.html#Environment).
 
 **The following instructions are equally applicable to Windows, with the exception that the script filenames are suffixed by .bat**.
 
 Using Terrier
 -------------
 
-Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` commandline script. While in Terrier's home directory, type `bin/terrier` to see the available commands:
+Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` command-line script. While in Terrier's directory, type `bin/terrier` to see the available commands:
 
 	$ bin/terrier 
 	Terrier version 5.1-SNAPSHOT
@@ -52,17 +52,18 @@ Terrier has a number of in-built commands. All of these can be accessed through 
 		batchindexing	allows a static collection of documents to be indexed
 		batchretrieval	performs a batch retrieval "run" over a set of queries
 		help		provides a list of available commands
-		interactive	runs an interactive querying session on the commandline
+		interactive	runs an interactive querying session on the command-line
 	
 	All possible commands:
 		batchevaluate	evaluate all run result files in the results directory
 		batchindexing	allows a static collection of documents to be indexed
 		batchretrieval	performs a batch retrieval "run" over a set of queries
 		help		provides a list of available commands
+		help-aliases	provides a list of all available commands and their aliases
 		http		runs a simple JSP webserver, to serve results
 		indexstats	display the statistics of an index
 		indexutil	utilities for displaying the content of an index
-		interactive	runs an interactive querying session on the commandline
+		interactive	runs an interactive querying session on the command-line
 		inverted2direct	makes a direct index from a disk index with only an inverted index
 		jforests	runs the Jforests LambdaMART LTR implementation
 		recompress	allows an inverted index to be recompressed, changing compression
@@ -79,7 +80,7 @@ This allows you to easily index, retrieve, and evaluate results on TREC collecti
 
 ### Interactive Terrier
 
-This allows you to to do interactive retrieval. This is a quick way to test Terrier. If you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive`. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` file. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](javadoc/org/terrier/applications/InteractiveQuerying.html) class.
+This allows you to to do interactive retrieval. This is a quick way to test Terrier. If you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive` command. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` command. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](javadoc/org/terrier/applications/InteractiveQuerying.html) class.
 
 ### Desktop Terrier
 
@@ -95,7 +96,7 @@ This guide will provide step-by-step instructions for using Terrier to index a T
 1. Go to the Terrier folder.
 
 ```shell
-    cd terrier-project-5.0
+    cd terrier-project-5.1
 ```
 
 2. Setup Terrier for using a TREC test collection by calling
@@ -124,7 +125,7 @@ This will result in the creation of a `collection.spec` file in the `etc` direct
 
 3. *If necessary*, check/modify the `collection.spec` file. This might be required if the collection directory contained files that you do not want to index (READMEs, etc).
 
-4. Now we are ready to begin the indexing of the collection. This is achieved using the batchindexing command called from the `terrier` script, as follows:
+4. Now we are ready to begin the indexing of the collection. This is achieved using the `batchindexing` command called from the `terrier` script, as follows:
 
 ```
 $bin/terrier batchindexing
@@ -187,51 +188,54 @@ In responding to the query `compressed`, Terrier found document 11196 was estima
 
 Information retrieval has a history of evaluating search effectiveness automatically, using many queries with associated relevance assessments, in a *batch* manner. In order to perform batch retrieval using an existing index, follow the steps described below.
 
-1. First of all we have to do some configuration. Much of Terrier's functionality is controlled by properties. You can pre-set these in the `etc/terrier.properties` file, or specify each on the command line. Some commonly used properties have shortcuts on the commandline. To perform retrieval and evaluate the results of a batch of queries, we need to know:
+1. First of all we have to do some configuration. Much of Terrier's functionality is controlled by properties. You can pre-set these in the `etc/terrier.properties` file, or specify each on the command line. Some commonly used properties have short options to set these on the command-line. To perform retrieval and evaluate the results of a batch of queries, we need to know:
 
-   a.  The location of the queries (also known as topic files) - specified using the `trec.topics` property, or the `-t` option to batchretrieve.
+   a.  The location of the queries (also known as topic files) - specified using the `trec.topics` property, or the short `-t` command-line option to `batchretrieve`.
 
-   b.  The weighting model (e.g. [TF\_IDF](javadoc/org/terrier/matching/models/TF_IDF.html)) to use - specified using `trec.model` property or the `-w` option to batchretrieve. The default weighting model for Terrier 5 is [DPH](javadoc/org/terrier/matching/models/DPH.html).
+   b.  The weighting model (e.g. [TF\_IDF](javadoc/org/terrier/matching/models/TF_IDF.html)) to use - specified using `trec.model` property or the `-w` option to batchretrieve. The default weighting model for Terrier is [DPH](javadoc/org/terrier/matching/models/DPH.html).
 
-   c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to batchevaluate.
+   c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to `batchevaluate`.
 
-2. Let's do a retrieval run. The `batchretrieve` command tells Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having `trec.topics` property set in the `terrier.properties` file, we specify it on the command line using the -t option, as well as the InL2 weighting model using `-w` (all other configuration remains using Terrier’s default settings):
+2. Let's do a retrieval run. The `batchretrieve` command instructs Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having the `trec.topics` property set in the `terrier.properties` file, we specify it on the command line using the -t option (all other configuration will remain using Terrier's default settings):
 
 ```
-    $bin/terrier batchretrieve -t share/vaswani_npl/query-text.trec -w InL2
+    $bin/terrier batchretrieve -t share/vaswani_npl/query-text.trec
     ...
     16:14:43.440 [main] INFO  o.t.matching.PostingListManager - Query 93 with 10 terms has 10 posting lists
     16:14:43.444 [main] INFO  o.t.a.batchquerying.TRECQuerying - Time to process query: 0.006
-    16:14:43.461 [main] INFO  o.t.a.batchquerying.TRECQuerying - Settings of Terrier written to var/results/InL2c1_0.res.settings
-    16:14:43.461 [main] INFO  o.t.a.batchquerying.TRECQuerying - Finished topics, executed 93 queries in 0.866 seconds, results written tovar/results/InL2c1_0.res
+    16:14:43.461 [main] INFO  o.t.a.batchquerying.TRECQuerying - Settings of Terrier written to var/results/DPH_0.res.settings
+    16:14:43.461 [main] INFO  o.t.a.batchquerying.TRECQuerying - Finished topics, executed 93 queries in 0.866 seconds, results written to var/results/DPH_0.res
     Time elapsed: 0.987 seconds.
 ```
 
-This will result in a `.res` file in the `var/results` directory called `InL2c1_0.res`. We call each `.res` file a *run*.
+This will result in a `.res` file in the `var/results` directory called `DPH_0.res`. We call each `.res` file a *run*, and contains Terrier's answers to each of the 93 queries.
 
-You can also configure more options on the command line, including arbitrary properties using the `-D` option to any Terrier command, e.g.:
+You can also configure more options on the command line, including arbitrary properties using the `-D` option to any Terrier command. So the following two commands are equivalent:
 
+    $bin/terrier batchretrieve -w BM25 -c c:0.4 -t share/vaswani_npl/query-text.trec
     $bin/terrier batchretrieve -Dtrec.model=BM25 -c c:0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
 
-So what are these? The `batchretrieve` command instructs Terrier to perform retrieval, while `-Dtrec.model=BM25`  tells Terrier to use the BM25 weighting model --  BM25 is a classical Okapi model firstly defined by Stephen Robertson, while InL2 is a Divergence From Randomness weighting model (to learn more, see [the description of the DFR framework](dfr_description.md)).  `-c c:0.4` tells Terrier the parameter for the weighting model. Note - if you do not specify `c:0.4`, then the default parameter will be used for that weighting model.
+We have instructed Terrier to perform retrieval using the BM25 weighting model -- BM25 is a classical Okapi model firstly defined by Stephen Robertson, instead of the default DPH, which is a Divergence From Randomness weighting model (to learn more, see [the description of the DFR framework](dfr_description.md)).  `-c c:0.4` instructs Terrier to use the value 0.4 as the parameter value for the weighting model. Note - if you do not specify `c:0.4`, then the default parameter value will be used for that weighting model.
 
-3. Now we will evaluate the obtained results by using the `batchevaluate` option of trec\_terrier:
+3. Now we will evaluate the obtained results by using the `batchevaluate` command:
 
 ```
     $bin/terrier batchevaluate -q share/vaswani_npl/qrels
-    16:27:28.527 [main] INFO  o.t.evaluation.TrecEvalEvaluation - Evaluating result file: var/results/InL2c1.0_0.res
-    Average Precision: 0.2948
+    16:27:28.527 [main] INFO  o.t.evaluation.TrecEvalEvaluation - Evaluating result file: var/results/DPH_0.res
+    Average Precision: 0.2836
 ```
 
-Terrier will look at the `var/results` directory, evaluate each .res file and save the output in a .eval file named the same as the corresponding .res file.
+Terrier will look at the `var/results` directory, evaluate each .res file and save the output in a .eval file named exactly the same as the corresponding .res file.
 
-4. We can change the retrieval approach used by Terrier to perform retrieval. For instance, query expansion (QE) can enabled by using the `-q` parameter in addition to `-r`.
+4. We can change the retrieval approach used by Terrier to perform retrieval. For instance, query expansion (QE) can enabled by using the `-q` option.
 
 ```shell
 bin/terrier batchretrieve -q
 ```
 
-See [the guide for configuring retrieval](configure_retrieval.md) for more information about QE. Note that your index must have a direct index structure to support QE, which is not built by default with single-pass indexing (see [Configuring Indexing](configure_indexing.md) for more information). Afterwards we can run the evaluation again by using batchevaluate comand.
+See [the guide for configuring retrieval](configure_retrieval.md) for more information about QE. Note that your index must have a direct index structure to support QE, which is not built by default with single-pass indexing (see [Configuring Indexing](configure_indexing.md) for more information). Query expansion has various configurable properties - see [Configuring Retrieval](configure_retrieval.md#query-expansion) for more details.
+
+Afterwards we can run the evaluation again by using `batchevaluate` comand.
 
 ```shell
 bin/terrier batchevaluate -q share/vaswani_npl/qrels
@@ -239,9 +243,9 @@ bin/terrier batchevaluate -q share/vaswani_npl/qrels
 
 5. Now we can look at all the Mean Average Precision (MAP) values of the runs by inspecting the `.eval` files in `var/results`:
 
-The obtained MAP for the InL2 should be 0.2948.
+The obtained MAP for DPH should be 0.2836.
 The obtained MAP for BM25 should be 0.2992.
-The obtained MAP for the run using InL2 with query expansion should be 0.3020.
+The obtained MAP for DPH with query expansion should be 0.2992.
 
 ### Interacting with Terrier
 
@@ -249,7 +253,7 @@ You can interact with your index using a Web-based querying interface. Firstly, 
 
     $bin/terrier http
 
-You can then enter queries and view results at <http://localhost:8080> (If your running Terrier on another machine, replace localhost with the hostname of the remote machine). Terrier can provide more information in the search results -- for more information on configuring the Web interface, please see [Using Web-based results](terrier_http.md).
+You can then enter queries and view results at <http://localhost:8080> (If you are running Terrier on another machine, replace localhost with the hostname of the remote machine). Terrier can provide more information in the search results -- for more information on configuring the Web interface, please see [Using Web-based results](terrier_http.md).
 
 
 ------------------------------------------------------------------------
