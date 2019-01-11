@@ -46,13 +46,15 @@ Single-line topic files have a simpler format, without the additional descriptio
 1. a few query terms
 2. some different query terms
 
-Support for single-line topic files is provided by the SingleLineTRECQuery class. To use a topics file in this format, you must firstly set `trec.topics.parser=SingleLineTRECQuery`.
+Support for single-line topic files is provided by the SingleLineTRECQuery class. To use a topics file in this format, you must firstly set `trec.topics.parser=SingleLineTRECQuery`. The `batchretrieval` command has a handy `-s` command line argument:
+
+	bin/terrier batchretrieve -s
 
 
 
 ## Weighting Models and Parameters
 
-Next, we need to specify which of the available weighting models we will use for assigning scores to the retrieved documents. We do this by specifying the name of the corresponding model class in the property `trec.model`. E.g. `trec.model=PL2`.
+Next, we need to specify which of the available weighting models we will use for assigning scores to the retrieved documents. We do this by specifying the name of the corresponding model class in the property `trec.model`. E.g. `trec.model=PL2`, or using the `-w` option to the `batchretreve` command, e.g. `bin/terrier batchretrieve -w PL2`.
 
 Terrier provides implementations of many weighting models (see [org.terrier.matching.models](javadoc/org/terrier/matching/models/package-summary.html) for the full list). In particular, some of the notable weighting models implemented include many from the [Divergence from Randomness (DFR) framework](dfr_description.md), among others:
 
@@ -96,12 +98,6 @@ To process the queries, ensure the topics are specified in the `trec.topics` pro
 
 where the option `-r` specifies that we want to perform retrieval, and the option `-c c:1.0` specifies the parameter value for the term frequency normalisation.
 
-To process queries using a specific weighting model, we can *override* the `trec.model` property on the command line:
-
-    bin/terrier batchretrieval -Dtrec.model=DLH13
-
--D tells TrecTerrier that we wish to override a property.
-
 Field-Based Weighting Models
 ----------------------------
 
@@ -121,7 +117,7 @@ To use a field-based model, you have to index using fields. See [Configuring Ind
 
 Different field-based models have different parameters, as controlled by various properties. These generally include weights for each field, namely `w.0`, `w.1`, etc. Per-field normalisation models, such as BM25F and PL2F also require the normalisation parameters for each field, namely `c.0`, `c.1`, and so on. To run with a field-based model:
 
-    bin/terrier batchretrieval -Dtrec.model=PL2F -Dc.0=1.0 -Dc.1=2.3 -Dc.3=40 -Dw.0=4 -Dw.1=2 -Dw.3=25
+    bin/terrier batchretrieval -w PL2F -Dc.0=1.0 -Dc.1=2.3 -Dc.3=40 -Dw.0=4 -Dw.1=2 -Dw.3=25
 
 For improved efficiency of field-based weighting models, it is recommended that you manually alter the `data.properties` file of your index to change the DocumentIndex implementation in use, by updating it to read `index.document.class=org.terrier.structures.FSAFieldDocumentIndex`.
 
