@@ -62,7 +62,7 @@ DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier
 Example Using .GOV corpus - Named Page Retrieval
 ------------------------------------------------
 
-In the following, we give an example of effective retrieval using learning to rank, using the topics and qrels from the named page tasks of the TREC 2002-2004 Web tracks. Other possible invocations of the Fat framework are . Firstly, we setup the Terrier environment. We use simple variables in the form of a Unix Bash shell script, but this could be easily ported to a Windows environment.
+In the following, we give an example of effective retrieval using learning to rank, using the topics and qrels from the named page tasks of the TREC 2002-2004 Web tracks. Other possible invocations of the Fat framework are listed at the bottom of the page. Firstly, we setup the Terrier environment. We use simple variables in the form of a Unix Bash shell script, but this could be easily ported to a Windows environment.
 
     #available from http://ir.dcs.gla.ac.uk/test_collections/access_to_data.html
     CORPUS=/extra/Collections/TREC/GOV/
@@ -122,7 +122,7 @@ DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier
 DSM:org.terrier.matching.dsms.MRFDependenceScoreModifier
 ```
 
-Next, we want to retrieve results for the training topics. In this, we are going to be calculating results with multiple features, as listed in the `etc/features.list` file, so we use a series of Matching classes: [FatFull](javadoc/org/terrier/matching/daat/FatFull.html) to make a [FatResultSet](javadoc/org/terrier/matching/FatResultSet.html) (i.e. a ResultSet with extra posting information), and [FatFeaturedScoringMatching](javadoc/org/terrier/matching/FatFeaturedScoringMatching.html) to add the additional features, and return a FeaturedResultSet. We then add the document label from the qrels using LabelDecorator, and write the results in a LETOR-compatible results file using Normalised2LETOROutputFormat:
+Next, we want to retrieve results for the training topics. In this, we are going to be calculating results with multiple features, as listed in the `etc/features.list` file, so we use a series of Matching classes: [FatFull](javadoc/org/terrier/matching/daat/FatFull.html) with DPH to make a [FatResultSet](javadoc/org/terrier/matching/FatResultSet.html) (i.e. a ResultSet scored by DPH, but with extra posting information), and [FatFeaturedScoringMatching](javadoc/org/terrier/matching/FatFeaturedScoringMatching.html) to add the additional features, and return a FeaturedResultSet. We then add the document label from the qrels using LabelDecorator, and write the results in a LETOR-compatible results file using Normalised2LETOROutputFormat:
 
 ```
     bin/terrier batchretrieval -t $TR_TOPICS -w DPH -c labels:on -F Normalised2LETOROutputFormat -o tr.letor -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list -Dlearning.labels.file=$TR_QRELS  -Dproximity.dependency.type=SD
@@ -185,7 +185,7 @@ Lets a have a look at what was output into `tr.letor`:
     0 qid:NP1 1:0.6440567566141826 2:0.0 3:0.85986678612829 4:0.0 5:0.22902810555674746 6:0.21370705023195802 7:0.3992684087689166 #docid = 921940 docno = G34-15-0261249
 ```
 
-The header reports the name of the features. "score"”" means the model used to generate the sample, i.e. the first pass retrieval, in our case DPH. After the header, for each retrieved document for each query, there is a single line in the output. The label obtained from the qrels file is the first entry on each row.
+The header reports the name of the features. "score" means the model used to generate the sample, i.e. the first pass retrieval, in our case DPH. After the header, for each retrieved document for each query, there is a single line in the output. The label obtained from the qrels file is the first entry on each row.
 
 We repeat the retrieval step for the validation queries, this time from the 2003 TREC task:
 
