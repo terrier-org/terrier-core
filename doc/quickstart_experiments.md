@@ -20,7 +20,7 @@ After having downloaded Terrier, copy the file to the directory where you want t
 
     tar -zxvf terrier-project-5.1-bin.tar.gz
 
-This will result in the creation of a `terrier-project` directory in your current directory. Next we will have to make sure that you have the correct Java version available on the system. Type:
+This will result in the creation of a `terrier-project` directory in your current directory. Next we make sure that you have the correct Java version available on the system. Type:
 
     echo $JAVA_HOME
 
@@ -105,7 +105,7 @@ This guide will provide step-by-step instructions for using Terrier to index a T
   bin/trec_setup.sh <absolute-path-to-collection-files>
 ```
 
-In our example we are using a collection called VASWANI_NPL located at `share/vaswani_npl/`. It follows the format of a traditional [TREC](https://trec.nist.gov/) test collection, with a corpus file, topics, and relevance assessments (qrels), and using the same format.
+In our example we are using a collection called VASWANI_NPL located at `share/vaswani_npl/`. It follows the format of a traditional [TREC](https://trec.nist.gov/) test collection, with a corpus file, topics, and relevance assessments (qrels), all using the same TREC format.
 
     $head share/vaswani_npl/corpus/doc-text.trec
     <DOC>
@@ -125,7 +125,7 @@ This will result in the creation of a `collection.spec` file in the `etc` direct
 
 3. *If necessary*, check/modify the `collection.spec` file. This might be required if the collection directory contained files that you do not want to index (READMEs, etc).
 
-4. Now we are ready to begin the indexing of the collection. This is achieved using the `batchindexing` command called from the `terrier` script, as follows:
+4. Now we are ready to begin the indexing of the collection. This is achieved using the `batchindexing` command of the `terrier` script, as follows:
 
 ```
 $bin/terrier batchindexing
@@ -147,7 +147,7 @@ $bin/terrier batchindexing
 
 With Terrier's default settings, the resulting index will be created in the `var/index` folder within the Terrier installation folder.
 
-**Note:** If you do not need the direct index structure for e.g. for query expansion, then you can use `bin/terrier batchindexing -j` for the faster single-pass indexing.
+**Note:** If you do not need the direct index structure, e.g. for query expansion, then you can use `bin/terrier batchindexing -j` for the faster single-pass indexing.
 
 Once indexing completes, you can verify your index by obtaining its statistics, using the `indexstats` command of Terrier.
 
@@ -158,11 +158,11 @@ Once indexing completes, you can verify your index by obtaining its statistics, 
     16:21:45.088 [main] INFO  org.terrier.applications.TrecTerrier - number of tokens: 271581
     16:21:45.089 [main] INFO  org.terrier.applications.TrecTerrier - number of pointers: 224573
 
-This displays the number of documents, number of tokens, number of terms, etc.
+This displays the number of documents, number of tokens, number of terms, found in the created index.
 
 ### Querying
 
-Firstly, lets see if we can get search results from our index. We can use the `bin/terrier interactive` command to query the index for results.
+Firstly, let's see if we can obtain search results from our index. We can use the `bin/terrier interactive` command to query the index for results.
 
     $bin/terrier interactive
     16:30:07.139 [main] INFO  o.t.structures.CompressingMetaIndex - Structure meta reading lookup file into memory
@@ -182,13 +182,13 @@ Firstly, lets see if we can get search results from our index. We can use the `b
     ...
     Please enter your query: exit
 
-In responding to the query `compressed`, Terrier found document 11196 was estimated to be most relevant, scoring 6.96. 11196 was recorded from the DOCNO tag of the corresponding document.
+In responding to the query `compressed`, Terrier estimated document 11196 to be most relevant, scoring 6.96. 11196 was recorded from the DOCNO tag of the corresponding document.
 
 ### Batch Retrieval
 
 Information retrieval has a history of evaluating search effectiveness automatically, using many queries with associated relevance assessments, in a *batch* manner. In order to perform batch retrieval using an existing index, follow the steps described below.
 
-1. First of all we have to do some configuration. Much of Terrier's functionality is controlled by properties. You can pre-set these in the `etc/terrier.properties` file, or specify each on the command line. Some commonly used properties have short options to set these on the command-line. To perform retrieval and evaluate the results of a batch of queries, we need to know:
+1. First of all we have to do some configuration. Much of Terrier's functionality is controlled by properties. You can pre-set these in the `etc/terrier.properties` file, or specify each on the command-line. Some commonly used properties have short options to set these on the command-line (use `bin/terrier help <command>` to see these). To perform retrieval and evaluate the results of a batch of queries, we need to know:
 
    a.  The location of the queries (also known as topic files) - specified using the `trec.topics` property, or the short `-t` command-line option to `batchretrieve`.
 
@@ -196,7 +196,7 @@ Information retrieval has a history of evaluating search effectiveness automatic
 
    c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to `batchevaluate`.
 
-2. Let's do a retrieval run. The `batchretrieve` command instructs Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having the `trec.topics` property set in the `terrier.properties` file, we specify it on the command line using the -t option (all other configuration will remain using Terrier's default settings):
+2. Let's do a retrieval run. The `batchretrieve` command instructs Terrier to do a batch retrieval run, i.e. retrieving the documents estimated to be the most relevant for each query in the topics file. However, instead of having the `trec.topics` property set in the `terrier.properties` file, we specify it on the command-line using the -t option (all other configuration will remain using Terrier's default settings):
 
 ```
     $bin/terrier batchretrieve -t share/vaswani_npl/query-text.trec
@@ -210,7 +210,7 @@ Information retrieval has a history of evaluating search effectiveness automatic
 
 This will result in a `.res` file in the `var/results` directory called `DPH_0.res`. We call each `.res` file a *run*, and contains Terrier's answers to each of the 93 queries.
 
-You can also configure more options on the command line, including arbitrary properties using the `-D` option to any Terrier command. So the following two commands are equivalent:
+You can also configure more options on the command-line, including arbitrary properties using the `-D` option to any Terrier command. So the following two commands are equivalent:
 
     $bin/terrier batchretrieve -w BM25 -c c:0.4 -t share/vaswani_npl/query-text.trec
     $bin/terrier batchretrieve -Dtrec.model=BM25 -c c:0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
