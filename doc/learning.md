@@ -19,7 +19,7 @@ At the top is an optional comment header giving the names of the features. Then,
 Fat Component
 -------------
 
-What is "Fat" about? Fat is a method of allowing many features to be computed within one run of Terrier. In particular, computing every feature for every posting of every query term is very expensive, and in practice, unnecessary. (Indeed learning to rank becomes slower and less accurate as the number of documents per query increases). Instead, Liu [1] suggest ranking a *sample* of documents using a simple weighting model (e.g. BM25) is sufficient, before computing the features on the documents in the sample.
+What is "Fat" about? Fat is a method for allowing many features to be computed within one run of Terrier. In particular, computing every feature for every posting of every query term is very expensive, and in practice, unnecessary. Instead, Liu [1] suggests ranking a *sample* of documents using a simple weighting model (e.g. BM25) is sufficient, before computing the features on the documents in the sample.
 
 However, once the sample has been identified, the posting lists have been iterated, and it is no longer possible to compute the other weighting model features. The Fat component [2] addresses this problem, by storing copies of the postings for every document that makes the top k retrieved documents. These can then be later used to calculate other features.
 
@@ -32,7 +32,7 @@ In the following, we firstly define the classes related to Fat within the learni
 Fat Classes
 -----------
 
--   `daat.FatFull`: A DAAT exhaustive matching strategy based on daat.Full, however the postings for each document that enters the CandidateResultSet has its postings stored. In particular, the Posting.asWritablePosting() method is used to obtain a copy of a given posting, "breaking it out" of its IterablePosting iterator. Returns a FatResultSet.
+-   `daat.FatFull`: A DAAT exhaustive matching strategy based on `daat.Full`, however the postings for each document that enters the CandidateResultSet has its postings stored. In particular, the Posting.asWritablePosting() method is used to obtain a copy of a given posting, "breaking it out" of its IterablePosting iterator. Returns a FatResultSet.
 
 -   `FatResultSet`: A ResultSet which is fat, i.e. it has copies of all necessary statistics to compute other weighting models on the documents it contains. These statistics include the lengths of documents, the EntryStatistics of each term, the CollectionStatistics of the index, etc. There are various implementations: FatQueryResultSet, and FatCandidateResultSet. All FatResultSets are Writable, and hence can be serialized to disk for later use.
 
@@ -40,9 +40,9 @@ Fat Classes
 
 -   `FatRescoringMatching`: Takes a FatResultSet obtained from a parent Matching class and re-scores the documents contained within it based upon a predetermined weighting model. This differs from FatScoringMatching in that it returns the original FatResultSet rather than a new QueryResultSet.
 
--   `FatFeaturedScoringMatching`: Permits many features to be calculated using a FatResultSet. In particular, takes a FatResultSet, and returns a FeaturedResultSet, which has each of a predefined number of features. Features can be one of three types:
+-   `FatFeaturedScoringMatching`: Permits many features to be calculated using a FatResultSet. In particular, takes a FatResultSet, and returns a FeaturedResultSet, where each document has calculated of a predefined number of features. Features can be one of three types:
 
-    1.  a query-dependent weighting model (denoted by a WMODEL prefix, and actually computed using FatScoringMatching).
+    1.  a query-dependent weighting model (denoted by a WMODEL prefix, and actually computed using FatScoringMatching) calculated for all query terms in the query. More advanced formulations of WMODEL are discussed in the (separate advanced guide)[learning_advanced.md].
 
     2.  a query-independent weighting model (typically a feature) loaded by [StaticFeature](javadoc/org/terrier/matching/models/StaticFeature.html) (NB: Terrier supports the loading of query independent features from a [variety of input file formats](javadoc/org/terrier/matching/models/StaticScoreModifierWeightingModel.html), however no methods of generating such features are provided out-of-the-box.) and
 
@@ -84,7 +84,7 @@ Firstly, we setup Terrier. This also generates configuration files for learning 
     bin/trec_setup.sh $CORPUS
 ```
 
-Next, we need to create an index, with fields and blocks enabled. For brevity, we set the appropriate properties on the the command line:
+Next, we need to create an index, with fields and blocks enabled. For brevity, we set the appropriate properties on the command line:
 
 ```
     bin/terrier batchindexing -j -b -DFieldTags.process=TITLE,ELSE
@@ -108,7 +108,7 @@ Next, we need to create an index, with fields and blocks enabled. For brevity, w
     Time elapsed: 3990.343 seconds.
 ```
 
-Next, we wish to configure retrieval. We will use the Fat framework to retrieve 1000 documents using the DPH weighting model, and then calculate several additional query dependent and query independent features. Lets edit the file `etc/features.list`, to set the list of features we will use (lines starting with `#` are comments):
+Next, we wish to configure retrieval. We will use the Fat framework to retrieve 1000 documents using the DPH weighting model, and then calculate several additional query dependent and query independent features. Let's edit the file `etc/features.list`, to set the list of features we will use (lines starting with `#` are comments):
 
 ```
 #BM25 calculated on each field.
@@ -122,7 +122,7 @@ DSM:org.terrier.matching.dsms.DFRDependenceScoreModifier
 DSM:org.terrier.matching.dsms.MRFDependenceScoreModifier
 ```
 
-Next, we want to retrieve results for the training topics. In this, we are going to be calculating results with multiple features, as listed in the `etc/features.list` file, so we use a series of Matching classes: [FatFull](javadoc/org/terrier/matching/daat/FatFull.html) with DPH to make a [FatResultSet](javadoc/org/terrier/matching/FatResultSet.html) (i.e. a ResultSet scored by DPH, but with extra posting information), and [FatFeaturedScoringMatching](javadoc/org/terrier/matching/FatFeaturedScoringMatching.html) to add the additional features, and return a FeaturedResultSet. We then add the document label from the qrels using LabelDecorator, and write the results in a LETOR-compatible results file using Normalised2LETOROutputFormat:
+Next, we want to retrieve results for the training topics. In doing so, we are going to be identifying our candidate documents, and then calculating multiple features for each document (as listed in the `etc/features.list` file), so we use a series of Matching classes: [FatFull](javadoc/org/terrier/matching/daat/FatFull.html) with DPH to make a [FatResultSet](javadoc/org/terrier/matching/FatResultSet.html) (i.e. a ResultSet scored by DPH, but with extra posting information), and [FatFeaturedScoringMatching](javadoc/org/terrier/matching/FatFeaturedScoringMatching.html) to add the additional features, and return a FeaturedResultSet. We then add the document relevance labels from the qrels using LabelDecorator, and write the results in a LETOR-compatible results file using Normalised2LETOROutputFormat:
 
 ```
     bin/terrier batchretrieval -t $TR_TOPICS -w DPH -c labels:on -F Normalised2LETOROutputFormat -o tr.letor -Dtrec.matching=FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list -Dlearning.labels.file=$TR_QRELS  -Dproximity.dependency.type=SD
@@ -185,7 +185,7 @@ Lets a have a look at what was output into `tr.letor`:
     0 qid:NP1 1:0.6440567566141826 2:0.0 3:0.85986678612829 4:0.0 5:0.22902810555674746 6:0.21370705023195802 7:0.3992684087689166 #docid = 921940 docno = G34-15-0261249
 ```
 
-The header reports the name of the features. "score" means the model used to generate the sample, i.e. the first pass retrieval, in our case DPH. After the header, for each retrieved document for each query, there is a single line in the output. The label obtained from the qrels file is the first entry on each row.
+The first 7 lines is a header of comments which contains the name of each of the features. For instance, "score" denotes that the first feature is the weighting model scores that were used to generate the sample -- i.e. the first pass retrieval, in our case DPH. After the header, for each retrieved document for each query, there is a single line in the output. The label obtained from the qrels file is the first entry on each row. The remainder are featureId:featureValue pairs. The docno and docids are denoted after a comment mark.
 
 We repeat the retrieval step for the validation queries, this time from the 2003 TREC task:
 
@@ -201,7 +201,7 @@ To obtain a learned model, we use the [Jforests learning to rank technique](http
     bin/terrier jforests --config-file etc/jforests.properties --cmd=train --ranking --folder var/results/ --train-file var/results/tr.bin --validation-file var/results/va.bin --output-model ensemble.txt
 ```
 
-Once the learned model (from Jforests, this is an XML file which takes the form of a gradient boosted regression tree) is obtained in `ensemble.txt`, we can use this to apply the learned model. The configuration for Terrier is similar to retrieval for the training topics, but we additionally use [JforestsModelMatching](javadoc/org/terrier/matching/JforestsModelMatching.html) for application of the learned model, and output the final results using the default, trec\_eval compatible [TRECDocnoOutputFormat](javadoc/org/terrier/structures/outputformat/TRECDocnoOutputFormat.html):
+Once the learned model (from Jforests, this is an XML file which takes the form of a gradient boosted regression tree) is obtained in `ensemble.txt`, we can use this to apply the learned model. The configuration for Terrier is similar to retrieval for the training topics, but we additionally use [JforestsModelMatching](javadoc/org/terrier/matching/JforestsModelMatching.html) for the application of the learned model, and to output the final results using the default, trec\_eval compatible [TRECDocnoOutputFormat](javadoc/org/terrier/structures/outputformat/TRECDocnoOutputFormat.html):
 
 ```
     bin/terrier batchretrieval -w DPH -t $TE_TOPICS -o te.res -Dtrec.matching=JforestsModelMatching,FatFeaturedScoringMatching,org.terrier.matching.daat.FatFull -Dfat.featured.scoring.matching.features=FILE -Dfat.featured.scoring.matching.features.file=$PWD/etc/features.list -Dfat.matching.learned.jforest.model=$PWD/ensemble.txt -Dfat.matching.learned.jforest.statistics=$PWD/var/results/jforests-feature-stats.txt -Dproximity.dependency.type=SD
@@ -214,7 +214,7 @@ Finally, for comparison, we additionally make a simple DPH run:
     bin/terrier batchretrieval -w DPH -t $TE_TOPICS
 ```
 
-On evaluating the two runs using trec\_eval for Mean Reciprocal Rank, we find a marked increase in effectiveness, despite the deployment of no Web-specific features (such as anchor text, URL or link analysis features).
+On evaluating the two runs using trec\_eval for Mean Reciprocal Rank, we note a marked increase in effectiveness, despite the deployment of no Web-specific features (such as anchor text, URL or link analysis features).
 
 ```
     bin/terrier trec_eval -m recip_rank $TE_QRELS var/results/DPH_0.res
@@ -226,7 +226,7 @@ On evaluating the two runs using trec\_eval for Mean Reciprocal Rank, we find a 
 Other possible usages
 ---------------------
 
-In the following, we give typical configurations for using the learning/fat components of Terrier.
+In the following, we give typical configurations for using the learning/Fat components of Terrier.
 
 ### From inverted index -> LETOR file with many features
 
@@ -236,7 +236,7 @@ In the following, we give typical configurations for using the learning/fat comp
 
 ### From inverted index -> Fat result file -> LETOR file with many features
 
-You can save intermediate FatResultSets, to that can go back and compute different sets of features without retrieval from the inverted index.
+You can save intermediate FatResultSets, so that you can go back and compute different sets of features without retrieval from the inverted index.
 
 ```
     bin/terrier batchretrieval -Dtrec.matching=org.terrier.matching.daat.FatFull -F WritableOutputFormat
