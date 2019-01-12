@@ -1,20 +1,20 @@
 Learning to Rank with Terrier
 =============================
 
-Since version 4.0, Terrier supports the deployment of many retrieval features, and integration with learning to rank techniques. This page explains how to configure Terrier to enable learning and application of a learned model, while a worked example using the TREC .GOV corpus is provided below.
+Since version 4.0, Terrier supports the deployment of many retrieval features, and integration with learning to rank techniques. This page explains how to configure Terrier to enable learning and the application of a learned model. A worked example using the TREC .GOV corpus is also provided below.
 
 Introduction
 ------------
 
 Learning to rank is the ability to (a) use multiple features in a uniform way during ranking, and (b) to learn an appropriate method to combine those features. For learning, Terrier has the ability to calculate multiple features, be they query-dependent (c.f. multiple weighting models, such as BM25, PL2 etc), or be they query-independent (c.f. Document Length).
 
-If you wish to use Terrier with a learning-to-rank technique, you must generate a LETOR-formatted file – which can be done using Terrier's Normalised2LETOROutputFormat class – to provide as to a learning-to-rank technique such as Jforests. A LETOR formatted file looks as follows:
+If you wish to use Terrier with a learning to rank technique, you must generate a LETOR-formatted file – which can be done using Terrier's Normalised2LETOROutputFormat class – to provide to a learning to rank technique such as Jforests. A LETOR formatted file looks as follows:
 
     #1: featureName
     #2: featureName
     0 qid:1 1:2.9 2:9.4 # docid=clueweb09-00-01492
 
-At the top is an optional comment header giving the names of the features. Then, each line has a "label", i.e. derived from relevance assessments such as TREC qrel files, the query Id, and featureId-featureValue pairs. Finally, each line can have the docno.
+At the top is an optional comment header giving the names of the features. Then, each line has a "label", i.e. derived from relevance assessments such as TREC qrel files, the query Id, and featureId:featureValue pairs. Finally, each line can have the docno.
 
 Fat Component
 -------------
@@ -78,7 +78,7 @@ In the following, we give an example of effective retrieval using learning to ra
 
 In each of the following, we provide the exact commands to be copied & pasted into a terminal.
 
-Firstly, we setup Terrier. This also generates configuration files for learning-to-rank, namely `features.list` and `jforests.properties` in the `etc/` folder.
+Firstly, we setup Terrier. This also generates configuration files for learning to rank, namely `features.list` and `jforests.properties` in the `etc/` folder.
 
 ```shell
     bin/trec_setup.sh $CORPUS

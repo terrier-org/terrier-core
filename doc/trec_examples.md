@@ -13,7 +13,7 @@ Terrier can index all known TREC test collections. We refer readers to the [Terr
 
 -   [WT10G](http://ir.dcs.gla.ac.uk/wiki/Terrier/WT10G)
 
--   [DOTGOV](http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV) – see also the [learning-to-rank](learning.md) documentation page.
+-   [DOTGOV](http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV) – see also the [learning to rank](learning.md) documentation page.
 
 -   [DOTGOV2](http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV2)
 

@@ -314,7 +314,7 @@ Additionally various bugs fixes and other small improvements are also included. 
 
 The release of Terrier 4.0 was supported by the following projects and funding bodies
 
--   [SMART: Search engine for MultimediA enviRonment generated contenT](http://www.smartfp7.eu/) - EU FP7 Project, Grant Number 287583. Funded the development of the new learning-to-rank and pluggable compression technologies in the Terrier 4.0 release.
+-   [SMART: Search engine for MultimediA enviRonment generated contenT](http://www.smartfp7.eu/) - EU FP7 Project, Grant Number 287583. Funded the development of the new learning to rank and pluggable compression technologies in the Terrier 4.0 release.
 
 -   [ReDites: Real-time Detection, Tracking, Monitoring and Interpretation of Events in Social Media](http://demeter.inf.ed.ac.uk/redites/) - EPSRC Project, Grant Number EP/L010690/1. Funded the development of the new real-time indexing and search technologies in the Terrier 4.0 release.
 

@@ -61,7 +61,7 @@ If you have a more complex document weighting strategy that cannot be handled as
 
 Learning to Rank
 ----------------
-Terrier support the application of learning-to-rank techniques within Terrier's ranking process. This is described separately in the [learning-to-rank documentation](learning.md).
+Terrier support the application of learning to rank techniques within Terrier's ranking process. This is described separately in the [learning to rank documentation](learning.md).
 
 Using Terrier Indices in your own code
 --------------------------------------
