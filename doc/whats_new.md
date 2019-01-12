@@ -1,7 +1,9 @@
 What's New in Terrier
 =====================
 
-Terrier 5.x - unreleased
+Terrier 5.1 - 14/01/2019
+------------------------
+Minor update with bug-fixes, improving features introduced in 5.0. New features include enhancements to the query language, including fuzzy term matching.
 
 ### Indexing
  - [TR-517](http://terrier.org/issues/browse/TR-517) org.terrier.indexing TRECCollection classes etc are in the wrong module (Nicola Tonellotto, ISTI-CNR)
@@ -12,6 +14,7 @@ Terrier 5.x - unreleased
  - [TR-538](http://terrier.org/issues/browse/TR-538) TRECWebCollection doesnt parse malformed HTTP headers (Ian Soboroff, NIST)
  - [TR-542](http://terrier.org/issues/browse/TR-542) TwitterJSONCollection missing constructor
  - [TR-551](http://terrier.org/issues/browse/TR-551) Allow docnos to be overridden for SimpleFileCollection
+ - [TR-553](http://terrier.org/issues/browse/TR-553) Transition to a more generic JSON document reader for tweets
 
 ### Retrieval
  - [TR-512](http://terrier.org/issues/browse/TR-512) Set approximate stats for ngram statistics
@@ -19,7 +22,6 @@ Terrier 5.x - unreleased
  - [TR-514](http://terrier.org/issues/browse/TR-514) Prefix/levenshtein matching in the matchopql
  - [TR-515](http://terrier.org/issues/browse/TR-515) #base64 support in matchopql
  - [TR-519](http://terrier.org/issues/browse/TR-519) getId() should return EOL in (AND|Field|Block|BlockField)IterablePosting after EOL (Nicola Tonellotto, ISTI-CNR)
- - [TR-522](http://terrier.org/issues/browse/TR-522) batch retrieval from a remote index doesnt create valid run files
  - [TR-527](http://terrier.org/issues/browse/TR-527) ANDIterablePosting and descendents should support next(int)
  - [TR-528](http://terrier.org/issues/browse/TR-528) Each MatchingOp can have more than one tag
  - [TR-529](http://terrier.org/issues/browse/TR-529) Clone support for matchops 
@@ -34,9 +36,11 @@ Terrier 5.x - unreleased
  - [TR-544](http://terrier.org/issues/browse/TR-544) SimpleDecorate swallows Exceptions
  - [TR-545](http://terrier.org/issues/browse/TR-545) Proximity shouldn't encapsulate terms with fields set
  - [TR-547](http://terrier.org/issues/browse/TR-547) JSON output format for REST API
+ - [TR-552](http://terrier.org/issues/browse/TR-552) batch retrieval from a remote index doesnt create valid run files
+ 
 
 ### Other
- - [TR-522](http://terrier.org/issues/browse/TR-522) wrong paths in .bat files (Artur Cieslewicz, Poznan University of Medical Sciences)
+ - [TR-522](http://terrier.org/issues/browse/TR-522), [TR-549](http://terrier.org/issues/browse/TR-549) wrong paths in .bat files (Artur Cieslewicz, Poznan University of Medical Sciences)
  - [TR-523](http://terrier.org/issues/browse/TR-523) -I option to bin/terrier doesn't work
  - [TR-524](http://terrier.org/issues/browse/TR-524) Terrier Aether downloads "too many" dependencies
  - [TR-525](http://terrier.org/issues/browse/TR-525) switch from jcabi-aether to maven-resolver to reduce dependencies on Spring/hibernate
