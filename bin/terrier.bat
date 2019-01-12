@@ -13,10 +13,10 @@ REM IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 REM implied. See the License for the specific language governing
 REM rights and limitations under the License.
 REM
-REM The Original Code is anyclass.bat
+REM The Original Code is terrier.bat
 REM
 REM The Initial Developer of the Original Code is the University of Glasgow.
-REM Portions created by The Initial Developer are Copyright (C) 2004-2008
+REM Portions created by The Initial Developer are Copyright (C) 2004-2019
 REM the initial Developer. All Rights Reserved.
 REM
 REM Contributor(s):
@@ -62,7 +62,7 @@ REM -- Build up class path
 REM ------------------------
 call "%BIN%\lcp.bat" %CLASSPATH%
 call "%BIN%\lcp.bat" "%TERRIER_ETC%\logback.xml"
-FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\modules\*\target\terrier-project-*-jar-with-dependencies.jar') DO call "%BIN%\lcp.bat" "%TERRIER_HOME%\modules\assemblies\target\%%G"
+FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\modules\assemblies\target\terrier-project-*-jar-with-dependencies.jar') DO call "%BIN%\lcp.bat" "%TERRIER_HOME%\modules\assemblies\target\%%G"
 
 
 :dorun
@@ -70,6 +70,6 @@ FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\modules\*\target\terrier-projec
 REM ------------------------
 REM -- Run AnyclassLauncher
 REM ------------------------
-java -Xmx512M -Dlogback.configurationFile="%TERRIER_ETC%\logback.xml" -Dterrier.home="%TERRIER_HOME%" -Dterrier.etc="%TERRIER_ETC%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% %LOGGING_OPTIONS% %JAVA_OPTIONS% %TERRIER_OPTIONS% org.terrier.applications.AnyclassLauncher %*
+java -Xmx512M -Dlogback.configurationFile="%TERRIER_ETC%\logback.xml" -Dterrier.home="%TERRIER_HOME%" -Dterrier.etc="%TERRIER_ETC%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% %LOGGING_OPTIONS% %JAVA_OPTIONS% %TERRIER_OPTIONS% org.terrier.applications.CLITool %*
 
 if "Windows_NT"=="%OS%" endlocal
