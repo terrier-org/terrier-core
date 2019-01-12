@@ -61,6 +61,9 @@ Table of Contents
 >[Learning to Rank with Terrier](learning.md)  
 >A guide to using multiple retrieval features with learning to rank techniques to enhance search effectiveness.
 
+>[Advanced Learning to Rank using Tagged Query Terms](learning_advanced.md)  
+>A discussion of how query terms can be tagged to allow different retrieval features.
+
 >[Pluggable Compression](compression.md)  
 >A guide to configuring byte-level compression schemes to reduce the size of Terrier’s index structures.
 
