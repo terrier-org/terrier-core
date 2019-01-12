@@ -38,6 +38,11 @@ public class ShowDocumentCommand extends CLIParsedCLITool {
 		@SuppressWarnings("deprecation")
 		IndexRef ref = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 		Index index = IndexFactory.of(ref);
+		if (index == null)
+		{
+			System.err.println("No such index: " + ref.toString());
+			return 1;
+		}
 		PostingIndex<?> di = index.hasIndexStructure("direct") ? index.getDirectIndex() : null;
 		DocumentIndex doi = index.getDocumentIndex();
 		MetaIndex meta = index.getMetaIndex();
@@ -112,6 +117,7 @@ public class ShowDocumentCommand extends CLIParsedCLITool {
 			
 		}
 		IndexUtil.close(di);
+		index.close();
 		return 0;
 	}
 
