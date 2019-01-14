@@ -21,10 +21,10 @@ Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
 indexer.index(new Collection[]{ coll });
 ```
 
-This is in effect the same as what the `bin/terrier batchindexing` command performs when running Terrier from the command line. Once the indexer has completed, the IndexOnDisk is available to be opened for reading. 
+This is in effect the same as what the `bin/terrier batchindexing` command performs when running Terrier from the command line. Once the indexer has completed, the IndexOnDisk is available to be opened for reading. As of Terrier 5, we refer to an index using an `IndexRef` object, which we pass to IndexFactory to open the index.  
 
 ```java
-Index index = IndexOnDisk.createIndex("/path/to/an/index", "data");
+Index index = IndexFactory.of(IndexRef.of("/path/to/an/index/data.properties));
 System.out.println("We have indexed " + index.getCollectionStatistics().getNumberOfDocuments() + " documents");
 ```
 
