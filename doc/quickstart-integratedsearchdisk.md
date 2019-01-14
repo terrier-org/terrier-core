@@ -21,13 +21,14 @@ Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
 indexer.index(new Collection[]{ coll });
 ```
 
-Once the indexer has completed, the IndexOnDisk is available to be opened for reading.
+This is in effect the same as what the `bin/terrier batchindexing` command performs when running Terrier from the command line. 
+
+Once the indexer has completed, the IndexOnDisk is available to be opened for reading. As of Terrier 5, we refer to an index using an `IndexRef` object, which we pass to IndexFactory to open the index.
 
 ```java
-Index index = IndexOnDisk.createIndex("/path/to/an/index", "data");
+Index index = IndexFactory.of(IndexRef.of("/path/to/an/index/data.properties));
 System.out.println("We have indexed " + index.getCollectionStatistics().getNumberOfDocuments() + " documents");
 ```
-
 
 To search our index, we need to use a querying Manager, which does the work of scoring each document for your query. Your query is stored in a SearchRequest object that the Manager can generate for you. We also need to specify which scoring function to use when ranking documents via the setControl() method (in this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25)).
 
@@ -76,17 +77,17 @@ Once you have your project setup with Maven, its time to add Terrier to your pro
 <dependency>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-core</artifactId>
-	<version>5.0</version>
+	<version>5.1</version>
 </dependency>
 
 <dependency>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-batch-indexers</artifactId>
-	<version>5.0</version>
+	<version>5.1</version>
 </dependency>
 ```
 
-Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependencies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). At this point you should be ready to start coding!
+Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependencies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). Note that Terrier uses [SLF4J](https://slf4j.org/) to facilitate the application of different loggers during operation, and as such Terrier expects to find a valid logging package and associated configuration file on the classpath. If your project does not already include a logging package, then you will need to also declare one of these as a dependency, e.g. [logback](https://logback.qos.ch/).  At this point you should be ready to start coding!
 
 Making an Index
 ----------------------------------------
@@ -108,15 +109,33 @@ There are a variety of different Terrier Document implementations provided out-o
 </html>
 ```
 
-Say we had a directory of HTML documents to index, location at `/path/to/corpus`, this could be achieved using:
+We can convert this to a Terrier Document using the FileDocument class as follows:
+
+```java
+Document document = new FileDocument(Files.openFileReader("test.html"), new HashMap(), Tokeniser.getTokeniser());
+```
+However, if we do so the stored text String will read:
+
+```java
+"<html><head></head><body><p>This is a sample HTML document</p></body></html>"
+```
+
+On the other hand, if we instead convert this to a Terrier Document using the TaggedDocument class the stored text string will read:
+```java
+"This is a sample HTML document"
+```
+
+This is because TaggedDocument (by default) only stores text contained within the tags, not the tags themselves. In practice, we recommend that you use a Document implementation that stores only the text that you are interested in searching for within each document, as this will often result in better search effectiveness, consume less memory and make searches faster.
+
+Of course, manually reading individual documents is not helpful if you need to index large numbers of documents. For this reason Terrier supports `Collections`. Collections, as their name suggests, represents collections of documents. They provide a convenient way to convert sets of text documents (e.g. in files on disk or held in a database) into Terrier documents for indexing. For example, if we had a directory of HTML documents to index, location at `/path/to/corpus`, this could be achieved using:
 
 ```java
 Collection coll = new SimpleFileCollection(Arrays.asList("/path/to/corpus"), true);
-Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
-indexer.index(new Collection[]{ coll });
 ```
 
-Here we are using a BasicIndexer. There are other indexers, and each has some configurables. Further information about indexers can be found in the [configuration of indexing documentation](configure_indexing.md).
+Here we are leveraging SimpleFileCollection, which is a basic collection class that reads a set of files in one or more directories. In practice, a Collection class is using one of more underlying Terrier Document classes to load the text documents as well as parse them to extract the text of interest. For example, SimpleFileCollection dynamically selects a Terrier Document class to use based on the file extension of each file. For instance, FileDocument is used for reading documents ending in .txt or .text, while TaggedDocument is used to parse .xml or .htm files. 
+
+
 
 
 ### Giving Each Document A Meaningful Identifier
@@ -141,6 +160,19 @@ In this case, we are specifying that each document will have a key called 'filen
 ### Indexing the Documents
 
 Now that we know how to convert files into a Collection of Documents, the next step it to create an index and add those documents to it. The index is a storage structure that contains the documents that are to be made available for search. Indices extend the Index class in Terrier. There are three categories of index currently supported in Terrier, namely: IndexOnDisk, IncrementalIndex and MemoryIndex. For this quickstart we will be focusing on the IndexOnDisk.
+
+An IndexOnDisk is an immutable index structure, meaning that one we create the index initially, we cannot add more documents to it later. To create an IndexOnDisk, we typically use an `Indexer`. This is a class that is designed to convert a set of Terrier Documents into an index. if you recall our discussion on Terrier Collections above, then it will come as no surprise that most Indexers take as input a Terrier Collection and produce an index. The most common type of indexer is the BasicIndexer. There are other indexers, and each has some configurables. Further information about indexers can be found in the [configuration of indexing documentation](configure_indexing.md). An example of using the BasicIndexer with SimpleFileCollection is shown below:
+
+```java
+Collection coll = new SimpleFileCollection(Arrays.asList("/path/to/corpus"), true);
+Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
+indexer.index(new Collection[]{ coll });
+```
+
+This is in effect the same as what the `bin/terrier batchindexing -C SimpleFileCollection` command performs when running Terrier from the command line.
+
+> **Troubleshooting Tips**:
+> *  You may see a warning about terrier.properties not being found. Terrier by default always checks to see if there is a properties file named terrier.properties in a default location ($TERRIER_HOME/etc/terrier.properties), and pre-loads configuration information from it. This warning indicates that it could not find one. This is usually not a critical error, as Terrier will try to select resonable defaults for most properties. However, it should be noted that if you are using more advanced collections (e.g. TRECCollection), then those collections may expect some properties to be set. Please check the java documentation for a class before using it. 
 
 ### Indexing Example
 
@@ -187,8 +219,30 @@ If you are running an application that depends on Terrier, you may wish to set t
 
 Issuing Searches
 ----------------------------------------
+### Configuring the Query Process
+The first thing we need to prepare before running a search is to configure the querying process itself. Since Terrier 5.0 the exact steps that Terrier performs during retrieval were made configurable via the `querying.processes` property. This enables us to specify how the query should be parsed, whether any pre-processing on the query should be performed, and so on. If you were using Terrier out-of-the-box, then these properties would be loaded automatically from the terrier.properties file as discussed above. However, as you may not have a Terrier `etc` folder with a terrier.properties file in it, then we instead need to set this via the ApplicationSetup properties:
+
+```java
+ApplicationSetup.setProperty("querying.processes", "terrierql:TerrierQLParser,"
+				+ "parsecontrols:TerrierQLToControls,"
+				+ "parseql:TerrierQLToMatchingQueryTerms,"
+				+ "matchopql:MatchingOpQLParser,"
+				+ "applypipeline:ApplyTermPipeline,"
+				+ "localmatching:LocalManager$ApplyLocalMatching,"
+				+ "filters:LocalManager$PostFilterProcess");
+```
+
+This specifies the processes Terrier should run when performing retrieval, and the order in which they should be run. The above setup represents a configuration for a basic search, where:
+1. TerrierQLParser is Terrier's built in query parser
+2. TerrierQLToControls applies any current-query-only controls detected in query
+3. TerrierQLToMatchingQueryTerms extracts query terms to match from the query
+4. ApplyTermPipeline applies the term processing pipeline to the parsed query (e.g. stopword removal or stemming)
+5. LocalManager$ApplyLocalMatching tells the local manager to perform the matching process
+6. LocalManager$PostFilterProcess applies any post filters on the search results as discussed in the next section
+
+
 ### Configuring Search Result Enhancement/Transformations
-Before you start setting up searches and running them, it is important to enable any enhancements or transformations that we want Terrier to apply to the search results that will be generated. There are a variety of enhancements/transformations that Terrier can apply out-of-the-box, such as re-ranking the results based on user-defined features or generating query-biased document snippets.
+It is also important to enable any enhancements or transformations that we want Terrier to apply to the search results that will be generated. This occurs during the `LocalManager$PostFilterProcess` step of the querying process. There are a variety of enhancements/transformations that Terrier can apply out-of-the-box, such as re-ranking the results based on user-defined features or generating query-biased document snippets.
 
 For this quickstart guide, we will cover enabling one very common type of search result enhancement, which is known as *decoration*. The goal of decoration is to copy metadata about each individual document into the search results returned, such as the 'docno' identifier that we configured earlier. Decorate (or more precisely the `org.terrier.querying.SimpleDecorate` class) belongs to a group of functions in Terrier known as post filters. To enable decorate functionality, we need to update the Terrier configuration that is stored in the static ApplicationSetup class. In particular, there is a parameter that needs to be set: `querying.postfilters`. Simply, this parameter specifies the 'what' and 'when' any post filters should be applied. It contains a  a comma delimited list of `name:class` pairs, where `name` is a short identifier for a post filter and `class` is the full classname. The order of the class names defines the order in which they are executed. Hence, we can enable the `org.terrier.querying.SimpleDecorate` post filter class by setting the Terrier configuration as follows:
 
@@ -221,9 +275,18 @@ In this case we have created a new SearchRequest for the query 'sample query'. T
 srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
 ```
 
-In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate':
+In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match family of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate', as well as enable each of the steps in the querying pipeline:
 
 ```java
+// Enable querying processes
+srq.setControl("terrierql", "on");
+srq.setControl("parsecontrols", "on");
+srq.setControl("parseql", "on");
+srq.setControl("applypipeline", "on");
+srq.setControl("localmatching", "on");
+srq.setControl("filters", "on");
+
+// Enable post filters
 srq.setControl("decorate", "on");
 ```
 
@@ -274,11 +337,20 @@ public class IndexingAndRetrievalExample {
 
 		Index index = Index.createIndex("/path/to/my/index", "data");
 
+		// Set up the querying process
+		ApplicationSetup.setProperty("querying.processes", "terrierql:TerrierQLParser,"
+		+ "parsecontrols:TerrierQLToControls,"
+		+ "parseql:TerrierQLToMatchingQueryTerms,"
+		+ "matchopql:MatchingOpQLParser,"
+		+ "applypipeline:ApplyTermPipeline,"
+		+ "localmatching:LocalManager$ApplyLocalMatching,"
+		+ "filters:LocalManager$PostFilterProcess");
+
         // Enable the decorate enhancement
 		ApplicationSetup.setProperty("querying.postfilters", "decorate:org.terrier.querying.SimpleDecorate");
 
         // Create a new manager run queries
-		Manager queryingManager = ManagerFactory.from(memIndex.getIndexRef());
+		Manager queryingManager = ManagerFactory.from(index.getIndexRef());
 
 		// Create a search request
 		SearchRequest srq = queryingManager.newSearchRequestFromQuery("search for document");
@@ -286,7 +358,15 @@ public class IndexingAndRetrievalExample {
 		// Specify the model to use when searching
 		srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
 
-		// Turn on decoration for this search request
+		// Enable querying processes
+		srq.setControl("terrierql", "on");
+		srq.setControl("parsecontrols", "on");
+		srq.setControl("parseql", "on");
+		srq.setControl("applypipeline", "on");
+		srq.setControl("localmatching", "on");
+		srq.setControl("filters", "on");
+
+		// Enable post filters
 		srq.setControl("decorate", "on");
 
 		// Run the search
