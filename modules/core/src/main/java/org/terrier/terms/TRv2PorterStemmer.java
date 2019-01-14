@@ -30,7 +30,7 @@ package org.terrier.terms;
  * All comments were made by Porter, but few ones due to some implementation
  * choices. For Porter's implementation in Java, see PorterStemmer
  * <br>
- * Porter says "It may be be regarded as cononical, in that it follows the
+ * Porter says "It may be be regarded as canonical, in that it follows the
  * algorithm presented in Porter, 1980, An algorithm for suffix stripping, 
  * Program, Vol. 14, no. 3, pp 130-137, only differing from it at the 
  * points marked --DEPARTURE-- below. The algorithm as described in the 
@@ -61,7 +61,7 @@ public class TRv2PorterStemmer extends StemmerTermPipeline {
 	}
 	
 	/** 
-	 * cons(i) is TRUE <=> b[i] is a consonant. 
+	 * cons(i) is TRUE &lt;=&gt; b[i] is a consonant. 
 	 */
 	protected boolean cons(int i) {
 		switch (b[i]) {
@@ -144,12 +144,12 @@ public class TRv2PorterStemmer extends StemmerTermPipeline {
 	
 	/** Measures the number of consonant sequences between k0 and j. 
 	 * If c is a consonant sequence and v a vowel sequence, and 
-	 * <..> indicates arbitrary presence:
+	 * &lt;..&gt; indicates arbitrary presence:
 	 * <ul> 
-	 * <li><c><v> gives 0</li>
-	 * <li><c>vc<v> gives 1</li>
-	 * <li><c>vcvc<v> gives 2</li>
-	 * <li><c>vcvcvc<v> gives 3</li>
+	 * <li>&lt;c&gt;&lt;v&gt; gives 0</li>
+	 * <li>&lt;c&gt;vc&lt;v&gt; gives 1</li>
+	 * <li>&lt;c&gt;vcvc&lt;v&gt; gives 2</li>
+	 * <li>&lt;c&gt;vcvcvc&lt;v&gt; gives 3</li>
 	 * </ul>
 	 */
 	protected final int m() {
@@ -558,8 +558,8 @@ public class TRv2PorterStemmer extends StemmerTermPipeline {
 	}
 	
 	/** 
-	 * Removes a final -e if m() > 1, 
-	 * and changes -ll to -l if m() > 1.
+	 * Removes a final -e if m() &gt; 1, 
+	 * and changes -ll to -l if m() &gt; 1.
 	 */
 	protected final void step5() {
 		j = k;

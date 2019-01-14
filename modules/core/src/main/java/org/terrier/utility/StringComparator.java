@@ -41,10 +41,10 @@ import java.util.Comparator;
  * <ul>
  * <li>Split strings on non word characters</li>
  * <li>For each field, left-most first:</li>
- * 	<ul>
+ * 	<ol>
  * 	<li>Compare as number if both field contains only numbers, return if not equal</li>
  * 	<li>Compare as string if both fields do not contain only numbers, return if not equal</li>
- * 	</ul>
+ * 	</ol>
  * </ul>
  * @author Vassilis Plachouras, Craig Macdonald
   */

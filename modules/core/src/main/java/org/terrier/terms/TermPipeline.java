@@ -28,7 +28,7 @@ package org.terrier.terms;
  * Models the concept of a component in a pipeline of term processors. 
  * Classes that implement this interface could be stemming algorithms, 
  * stopwords removers, or acronym expanders just to mention few examples.
- * @author Craig Macdonald <craigm{a.}dcs.gla.ac.uk>
+ * @author Craig Macdonald
   */
 public interface TermPipeline
 {

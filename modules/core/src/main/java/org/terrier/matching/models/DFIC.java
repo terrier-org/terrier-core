@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * IRRA at TREC 2012: Index Term Weighting based on Divergence From Independence Model. Dincer, Kocabas &amp; Karaoglan,
  * NIST Special Publication, Proc. of  the 20th Text Retrieval Conference, TREC'12, Gaitersburg, MD, USA, 2012. 
  * <p>
- * @author Bekir Taner Dincer & Craig Macdonald
+ * @author Bekir Taner Dincer &amp; Craig Macdonald
  * @since 3.5
  */
 

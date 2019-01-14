@@ -39,7 +39,7 @@ import org.terrier.structures.collections.FSOrderedMapFile;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.Files;
 
-/** Instance of a Lexicon<String> where a FSOrderedMapFile is always used as a backing store.
+/** Instance of a Lexicon&lt;String&gt; where a FSOrderedMapFile is always used as a backing store.
  * <p><b>Index Properties</b>:
  * <ul>
  * <li><tt>index.STRUCTURENAME.bsearchshortcut</tt> - depicts if the String lookups can be sped up using a binary search shortcut. Possible 

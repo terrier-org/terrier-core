@@ -30,7 +30,7 @@ import java.io.IOException;
 
 /** Used by {@link ExtensibleSinglePassIndexer} for 
  * delegating the flushing of memory.
- * @author Jonathon Hare <jsh2{a.}ecs.soton.ac.uk>
+ * @author Jonathon Hare [jsh2{a.}ecs.soton.ac.uk]
  * @since 3.5
  */
 public interface SinglePassIndexerFlushDelegate {

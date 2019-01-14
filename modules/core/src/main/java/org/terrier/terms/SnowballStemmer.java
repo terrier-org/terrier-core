@@ -32,7 +32,7 @@ import org.tartarus.snowball.SnowballProgram;
 import org.terrier.utility.ApplicationSetup;
 
   /** Classic Snowball stemmer implmented by Snowball.
-  * @author Craig Macdonald <craigm{a.}dcs.gla.ac.uk>
+  * @author Craig Macdonald
     */
 abstract public class SnowballStemmer extends StemmerTermPipeline {
 	/** The actual Snowball object that does the stemming */

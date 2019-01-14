@@ -45,7 +45,7 @@ import org.terrier.utility.ApplicationSetup;
 * <li><tt>learning.labels.file</tt> - the filename of the qrels file containing the labels
 * <li><tt>learning.labels.default</tt> - default feature label, if a document has not label in the specified file. Defaults to -1.</li>
 * </ul>
-* </p>
+* 
 * @author Rodrygo Santos, Craig Macdonald
 * @since 4.0
 */ 

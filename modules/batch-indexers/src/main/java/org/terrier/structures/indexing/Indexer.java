@@ -62,9 +62,9 @@ import org.terrier.utility.FieldScore;
  * <li><tt>ignore.empty.documents</tt> - Assign empty documents with docids. Default true</li>
  * <li><tt>indexing.max.docs.per.builder</tt> - Maximum number of documents in an index before a new index is created, and merged later.
  * <li><tt>indexing.builder.boundary.docnos</tt> - Docnos of documents that force the index being created to be completed, and a new index to be commenced. An alternative to <tt>indexing.max.docs.per.builder</tt>
- * <li><tt>indexer.meta.forward.keys</tt> - comma delimited list of {@link Document} properties to index as document metadata in the {@link MetaIndex}. Defaults to "docno", which permits docid->docno lookups.. Examples are "docno,url" or "docno,url,content"</li>
+ * <li><tt>indexer.meta.forward.keys</tt> - comma delimited list of {@link Document} properties to index as document metadata in the {@link MetaIndex}. Defaults to "docno", which permits docid-&gt;docno lookups.. Examples are "docno,url" or "docno,url,content"</li>
  * <li><tt>indexer.meta.forward.keylens</tt> - comma delimited list of the length of the values to record in the {@link MetaIndex}. Defaults to 20.</li>
- * <li><tt>indexer.meta.reverse.keys</tt> - comma delimited list of {@link Document} properties to permit lookups for (i.e. docno->docid). Defaults to empty (none are enabled).</li>
+ * <li><tt>indexer.meta.reverse.keys</tt> - comma delimited list of {@link Document} properties to permit lookups for (i.e. docno-&gt;docid). Defaults to empty (none are enabled).</li>
  * </ul>
  * @author Craig Macdonald
   */
@@ -215,7 +215,7 @@ public abstract class Indexer
 	 */
 	protected abstract TermPipeline getEndOfPipeline();
 
-	/** mapping: field name -> field id, returns 0 for no mapping */	
+	/** mapping: field name -&gt; field id, returns 0 for no mapping */	
 	protected TObjectIntHashMap<String> fieldNames = new TObjectIntHashMap<String>(0);
 	/** the number of fields */
 	protected int numFields = 0;
@@ -245,7 +245,7 @@ public abstract class Indexer
 		MAX_DOCS_PER_BUILDER = Integer.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "18000000"));
 	}
 
-	/** loads a mapping of field name -> field id */
+	/** loads a mapping of field name -&gt; field id */
 	protected void load_field_ids()
 	{
 		FieldScore.init();

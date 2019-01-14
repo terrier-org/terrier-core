@@ -47,7 +47,7 @@ import org.terrier.structures.postings.WritablePosting;
  * <li><tt>WMODELuw8:</tt> defines a weighting model for all matching #uw8 proxity op (query dependent). </li>
  * <li><tt>WMODEL$tag:</tt> defines a weighting model for all the matching op tagged "tag" - see #tag() in the MatchOp ql (query dependent). </li>
  * <li><tt>QI:</tt> defined a weighting model called once for each matching document, i.e. a query independent feature.</li>
- * <li><tt>DSM:</tt> applies a document score modifier.</li>.
+ * <li><tt>DSM:</tt> applies a document score modifier.</li>
  * <li><tt>SAMPLE</tt> the scoring method used by the parent {@link Matching} class becomes a feature.</li>
  * </ul>
  * 
@@ -59,10 +59,11 @@ import org.terrier.structures.postings.WritablePosting;
  * to load the feature list from a file.</li>
  * <li><tt>fat.featured.scoring.matching.features.file</tt> - a filename containing a newline delimited list of feature.</li>
  * </ul>
- * 
+ * <p>
+ * <b>See also:</b> "About Learning Models with Multiple Query Dependent Features. Craig Macdonald, Rodrygo L.T. Santos, Iadh Ounis and Ben He. Transactions on Information Systems. 31(3). 2013. <a href="http://www.dcs.gla.ac.uk/~craigm/publications/macdonald13multquerydf.pdf">[PDF]</a>
  * @author Craig Macdonald
  * @since 4.0
- * @see "About Learning Models with Multiple Query Dependent Features. Craig Macdonald, Rodrygo L.T. Santos, Iadh Ounis and Ben He. Transactions on Information Systems. 31(3). 2013. <a href="http://www.dcs.gla.ac.uk/~craigm/publications/macdonald13multquerydf.pdf">[PDF]</a>"
+ * 
  */
 public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 

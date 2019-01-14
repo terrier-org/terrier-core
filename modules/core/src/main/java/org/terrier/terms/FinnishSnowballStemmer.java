@@ -27,7 +27,7 @@
 package org.terrier.terms;
 
 /** Finnish stemmer implmented by Snowball.
-  * @author Craig Macdonald <craigm{a.}dcs.gla.ac.uk>
+  * @author Craig Macdonald
     */
 public class FinnishSnowballStemmer extends SnowballStemmer
 {
