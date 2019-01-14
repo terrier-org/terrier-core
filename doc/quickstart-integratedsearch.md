@@ -72,17 +72,17 @@ Once you have your project setup with Maven, its time to add Terrier to your pro
 <dependency>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-core</artifactId>
-	<version>5.0</version>
+	<version>5.1</version>
 </dependency>
 
 <dependency>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-realtime</artifactId>
-	<version>5.0</version>
+	<version>5.1</version>
 </dependency>
 ```
 
-Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependencies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). Note that Terrier uses [SLF4J] (https://slf4j.org/) to facilitate the application of different loggers during operation, and as such Terrier expects to find a valid logging package and associated configuration file on the classpath. If your project does not already include a logging package, then you will need to also declare one of these as a dependency, e.g. [logback] (https://logback.qos.ch/).  At this point you should be ready to start coding!
+Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependencies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). Note that Terrier uses [SLF4J](https://slf4j.org/) to facilitate the application of different loggers during operation, and as such Terrier expects to find a valid logging package and associated configuration file on the classpath. If your project does not already include a logging package, then you will need to also declare one of these as a dependency, e.g. [logback](https://logback.qos.ch/).  At this point you should be ready to start coding!
 
 Making an Index
 ----------------------------------------
@@ -214,7 +214,7 @@ public class IndexingExample {
 Issuing Searches
 ----------------------------------------
 ### Configuring the Query Process
-The first thing we need to prepare before running a search is to configure the querying process itself. Since Terrier 5.0 the exact steps that Terrier performs during retrieval were made configurable via the `querying.processes` property. This enables us to specify how the query should be parsed, whether any pre-processing on the query should be performed, and so on. If you were using Terrier out-of-the-box, then these properties would be loaded automatically from the terrier.properties file. However, as you may not have a Terrier `etc` folder with a terrier.property file in it, then we instead need to set this via the ApplicationSetup properties:
+The first thing we need to prepare before running a search is to configure the querying process itself. Since Terrier 5.0 the exact steps that Terrier performs during retrieval were made configurable via the `querying.processes` property. This enables us to specify how the query should be parsed, whether any pre-processing on the query should be performed, and so on. If you were using Terrier out-of-the-box, then these properties would be loaded automatically from the terrier.properties file. However, as you may not have a Terrier `etc` folder with a terrier.properties file in it, then we instead need to set this via the ApplicationSetup properties:
 
 ```java
 ApplicationSetup.setProperty("querying.processes", "terrierql:TerrierQLParser,"
