@@ -61,10 +61,13 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 	
 	@Test public void itWorksBlocksFeatures() throws Exception {
 		Index index = IndexTestUtils.makeIndexBlocks(new String[]{"doc1"}, new String[]{"token1 token2 token3"});		
+//		String path = ((IndexOnDisk)index).getPath();
+//		String prefix = ((IndexOnDisk)index).getPrefix();
 		int port = new Random().nextInt(65536-1024)+1024;
 		System.err.println("itWorksBlocksFeatures: Index is " + index.getIndexRef().toString());
 		String uri = "http://127.0.0.1:"+port+"/";		
 		HttpServer server = makeServer(index, uri);
+		SearchResource.reinit();
 		index.close();
 		
 		ApplicationSetup.setProperty("fat.featured.scoring.matching.features", "WMODEL:BM25;WMODEL:PL2;DSM:"+DFRDependenceScoreModifier.class.getSimpleName());
@@ -77,15 +80,20 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 		restManager.runSearchRequest(srq);
 		assertEquals(1, srq.getResults().size());
 		assertEquals("doc1", srq.getResults().get(0).getMetadata("docno"));		
-		server.shutdown();
+		server.shutdown().get();
+		//IndexUtil.deleteIndex(path, prefix);
 	}
 	
 	@Test public void itWorks() throws Exception {
 		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"token1 token2 token3"});
+//		String path = ((IndexOnDisk)index).getPath();
+//		String prefix = ((IndexOnDisk)index).getPrefix();
+		
 		int port = new Random().nextInt(65536-1024)+1024;
 		String uri = "http://127.0.0.1:"+port+"/";
 		System.err.println("itWorks: Index is " + index.getIndexRef().toString());
 		HttpServer server = makeServer(index, uri);
+		SearchResource.reinit();
 		index.close();
 		
 		Manager restManager = ManagerFactory.from(IndexRef.of(uri));
@@ -95,7 +103,8 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 		restManager.runSearchRequest(srq);
 		assertEquals(1, srq.getResults().size());
 		assertEquals("doc1", srq.getResults().get(0).getMetadata("docno"));		
-		server.shutdown();		
+		server.shutdown().get();	
+		//IndexUtil.deleteIndex(path, prefix);
 	}
 	
 	@Test public void testTRECQuerying() throws Exception {
@@ -104,6 +113,7 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 		System.err.println("testTRECQuerying: Index is " + index.getIndexRef().toString());
 		String uri = "http://127.0.0.1:"+port+"/";		
 		HttpServer server = makeServer(index, uri);
+		SearchResource.reinit();
 		index.close();
 		
 		//write topics
@@ -137,6 +147,7 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 		}
 		br.close();
 		server.shutdown().get();
+		//IndexUtil.deleteIndex(path, prefix);
 	}
 
 	protected HttpServer makeServer(Index index, String uri) {

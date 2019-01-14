@@ -49,6 +49,8 @@ import org.terrier.structures.outputformat.OutputFormat;
 import org.terrier.structures.outputformat.TRECDocnoOutputFormat;
 import org.terrier.utility.ApplicationSetup;
 
+import com.google.common.annotations.VisibleForTesting;
+
 @Path("/search")
 public class SearchResource {
 
@@ -57,6 +59,13 @@ public class SearchResource {
 	@SuppressWarnings("deprecation")
 	static IndexRef indexRef = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 	static Manager m = ManagerFactory.from(indexRef);
+	
+	@VisibleForTesting @SuppressWarnings("deprecation")
+	public static void reinit()
+	{
+		indexRef = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+		m = ManagerFactory.from(indexRef);
+	}
 	
 	@GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -70,6 +79,7 @@ public class SearchResource {
     	@PathParam("format")@DefaultValue(DEFAULT_FORMAT) String format
     	) 
 	{
+		System.err.println("Querying " + indexRef.toString() + " for query " + query);
 		if (format == null)
 			format = DEFAULT_FORMAT;
 		
