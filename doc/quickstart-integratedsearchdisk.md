@@ -21,13 +21,14 @@ Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
 indexer.index(new Collection[]{ coll });
 ```
 
-This is in effect the same as what the `bin/terrier batchindexing` command performs when running Terrier from the command line. Once the indexer has completed, the IndexOnDisk is available to be opened for reading. As of Terrier 5, we refer to an index using an `IndexRef` object, which we pass to IndexFactory to open the index.  
+This is in effect the same as what the `bin/terrier batchindexing` command performs when running Terrier from the command line. 
+
+Once the indexer has completed, the IndexOnDisk is available to be opened for reading. As of Terrier 5, we refer to an index using an `IndexRef` object, which we pass to IndexFactory to open the index.
 
 ```java
 Index index = IndexFactory.of(IndexRef.of("/path/to/an/index/data.properties));
 System.out.println("We have indexed " + index.getCollectionStatistics().getNumberOfDocuments() + " documents");
 ```
-
 
 To search our index, we need to use a querying Manager, which does the work of scoring each document for your query. Your query is stored in a SearchRequest object that the Manager can generate for you. We also need to specify which scoring function to use when ranking documents via the setControl() method (in this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25)).
 
@@ -124,7 +125,7 @@ On the other hand, if we instead convert this to a Terrier Document using the Ta
 "This is a sample HTML document"
 ```
 
-since TaggedDocument (by default) only stores text contained within the tags, not the tags themselves. In practice, we recommend that you use a Document implementation that stores only the text that you are interested in searching for within each document, as this will often result in better search effectiveness, consume less memory and make searches faster.
+This is because TaggedDocument (by default) only stores text contained within the tags, not the tags themselves. In practice, we recommend that you use a Document implementation that stores only the text that you are interested in searching for within each document, as this will often result in better search effectiveness, consume less memory and make searches faster.
 
 Of course, manually reading individual documents is not helpful if you need to index large numbers of documents. For this reason Terrier supports `Collections`. Collections, as their name suggests, represents collections of documents. They provide a convenient way to convert sets of text documents (e.g. in files on disk or held in a database) into Terrier documents for indexing. For example, if we had a directory of HTML documents to index, location at `/path/to/corpus`, this could be achieved using:
 
@@ -168,7 +169,7 @@ Indexer indexer = new BasicIndexer("/path/to/an/index", "data");
 indexer.index(new Collection[]{ coll });
 ```
 
-This is in effect the same as what the `bin/terrier batchindexing` command performs when running Terrier from the command line.
+This is in effect the same as what the `bin/terrier batchindexing -C SimpleFileCollection` command performs when running Terrier from the command line.
 
 > **Troubleshooting Tips**:
 > *  You may see a warning about terrier.properties not being found. Terrier by default always checks to see if there is a properties file named terrier.properties in a default location ($TERRIER_HOME/etc/terrier.properties), and pre-loads configuration information from it. This warning indicates that it could not find one. This is usually not a critical error, as Terrier will try to select resonable defaults for most properties. However, it should be noted that if you are using more advanced collections (e.g. TRECCollection), then those collections may expect some properties to be set. Please check the java documentation for a class before using it. 
