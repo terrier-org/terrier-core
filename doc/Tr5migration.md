@@ -55,7 +55,7 @@ Please enter your query: compressed chicken #combine(0.1 #uw1(compressed chicken
 Using Extensions of Terrier
 ---------------------------
 
-Terrier now supports loading in additional Maven dependencies. You can specify these using the `terrier.mvn.coords` property. For instance, if you have a number of your own custom Terrier weighting models installed in your local Maven repository, you could use these during retrieval by loading:
+Terrier now supports loading in additional Maven dependencies. You can specify these using the `terrier.mvn.coords` property. For instance, if you have a number of your own custom Terrier weighting models installed in your local Maven repository, you could use these during retrieval by specifying:
 
 ```
 terrier.mvn.coords=com.org:myWmodels:5.0
