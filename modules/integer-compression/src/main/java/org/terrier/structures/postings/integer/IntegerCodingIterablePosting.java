@@ -104,7 +104,7 @@ public class IntegerCodingIterablePosting implements IterablePosting, FieldPosti
 	 * @param documentIndex the document index
 	 * @param chunkSize the size of the chunk
 	 * @param fieldCount the number of fields (0 if the posting list has no fields)
-	 * @param hasBlocks has this posting list posting positions? (0: no, 1:has positions, >1:has blocks)
+	 * @param hasBlocks has this posting list posting positions? (0: no, 1:has positions, &gt;1:has blocks)
 	 * @param idsCodec the IntegerCodec to use to decode docIds
 	 * @param tfsCodec the IntegerCodec to use to decode term frequencies
 	 * @param fieldsCodec the IntegerCodec to use to decode field frequencies (if any, null otherwise)

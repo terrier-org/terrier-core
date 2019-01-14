@@ -30,7 +30,7 @@ import org.terrier.matching.ResultSet;
   * is called for each result in the resultset. According to the return of <tt>filter()</tt>
   * the result can then be included, discarded, or (un)boosted in the resultset. Possible
   * return values for <tt>filter</tt> are FILTER_OK, FILTER_REMOVE, FILTER_ADJUSTED
-  * Which PostFilters are run, and when is controlled by two properties, as mentioned below.<br/>
+  * Which PostFilters are run, and when is controlled by two properties, as mentioned below.<br>
   * <B>Properties</B>
   * <ul>
   * <li><tt>querying.postfilters</tt> : A comma separated list of control to PostFilter

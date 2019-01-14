@@ -86,7 +86,7 @@ public class WeightingModelLibrary {
 	}
 
 	/**
-	 * Returns a concave tf as described in Singhal et al., 1999. AT&T at TREC-7.
+	 * Returns a concave tf as described in Singhal et al., 1999. AT&amp;T at TREC-7.
 	 * In Proceedings of the Seventh Text REtrieval Conference (TREC-7), pages 239-252.
 	 * @param tf the term frequency to modify
 	 * @return a concave tf
@@ -129,7 +129,7 @@ public class WeightingModelLibrary {
 
 	/**
 	 * Returns a concave pivot length normalized tf as described in Singhal et al., 1999.
-	 * AT&T at TREC-7.
+	 * AT&amp;T at TREC-7.
 	 * In Proceedings of the Seventh Text REtrieval Conference (TREC-7), pages 239-252.
 	 * @param tf the term frequency to modify
 	 * @param s the slope

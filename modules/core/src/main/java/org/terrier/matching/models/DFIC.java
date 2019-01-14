@@ -36,10 +36,10 @@ import org.slf4j.LoggerFactory;
  * For more information: 
  * <p>
  * A Nonparametric Term Weighting Method for Information Retrieval Based on Measuring the Divergence from Independence. 
- * Kocabas, Dincer & Karaoglan, International Journal of Information Retrieval, (to appear), 2013. 
+ * Kocabas, Dincer &amp; Karaoglan, International Journal of Information Retrieval, (to appear), 2013. 
  * doi: 10.1007/s10791-013-9225-4.
  * <p>
- * IRRA at TREC 2012: Index Term Weighting based on Divergence From Independence Model. Dincer, Kocabas & Karaoglan,
+ * IRRA at TREC 2012: Index Term Weighting based on Divergence From Independence Model. Dincer, Kocabas &amp; Karaoglan,
  * NIST Special Publication, Proc. of  the 20th Text Retrieval Conference, TREC'12, Gaitersburg, MD, USA, 2012. 
  * <p>
  * @author Bekir Taner Dincer & Craig Macdonald

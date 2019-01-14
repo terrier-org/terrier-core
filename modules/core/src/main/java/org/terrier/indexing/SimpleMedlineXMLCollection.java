@@ -37,10 +37,12 @@ import org.terrier.utility.Files;
 /** Initial implementation of a class that generates a Collection with Documents from a 
   * series of XML files in the Medline format. It process a limited number of documents 
   * in an XML file to avoid OutOfMemory problem in case the XML file is too large.<p>
-  * <b>Properties:</b>&lt;ul&gt;
+  * <b>Properties:</b>
+  * <ul>
   * <li><tt>lowercase</tt> - lower case all terms obtained. Highly recommended.</li>
   * <li><tt>indexing.simplexmlcollection.reformxml</tt> - will try to reform broken &amp;AMP; entities.</li>
   * <li><tt>xml.doc.buffer.size</tt> - The maximum number of documents to process per interation.</li>
+  * </ul>
   * @author Ben He
   */
 public class SimpleMedlineXMLCollection extends SimpleXMLCollection

@@ -95,7 +95,7 @@ public interface BitOut extends Closeable {
 	 * Writes and integer x into the stream using skewed-golomb coding.
 	 *  Consider a bucket-vector <code>v = &lt;b, 2b, 4b, ... , 2^i b, ...&gt; </code> 
 	 * an integer <code>x</code> is coded as <code>unary(k+1)</code> where <code>k</code> is the index
-	 * <code>sum(i=0)(k) v_i < x &lt;= sum(i=0)(k+1)</code> <br>, so <code>k = log(x/b + 1)</code>
+	 * <code>sum(i=0)(k) v_i &gt; x &lt;= sum(i=0)(k+1)</code> <br>, so <code>k = log(x/b + 1)</code>
 	 * <code>sum_i = b(2^n -1)</code> (geometric progression)
 	 * and the remainder with <code>log(v_k)</code> bits in binary
 	 * if <code> lower = ceil(x/b) -&gt; lower = 2^i * b -&gt; i = log(ceil(x/b)) + 1</code>

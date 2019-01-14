@@ -49,11 +49,11 @@ import org.terrier.utility.ArrayUtils;
  * amounts of RAM to store.
  * 
  * <p><b>Properties</b></p>
- * <ul><li>indexer.meta.forward.keys</tt> - key names to store in the meta index</li>
- * <li>indexer.meta.forward.keylens</tt> - max key lengths for keys to store (this is ignored unless metaindex.crop is set)</li>
- * <li>metaindex.compressed.crop.long</tt> - should the content to store be cropped down to the length specified in indexer.meta.forward.keylens?</li>
- * 
- * structure
+ * <ul>
+ * <li><tt>indexer.meta.forward.keys</tt> - key names to store in the meta index</li>
+ * <li><tt>indexer.meta.forward.keylens</tt> - max key lengths for keys to store (this is ignored unless metaindex.crop is set)</li>
+ * <li><tt>metaindex.compressed.crop.long</tt> - should the content to store be cropped down to the length specified in indexer.meta.forward.keylens?</li>
+ * </ul>
  * @author Richard McCreadie, Stuart Mackie
  * @since 4.0
  *

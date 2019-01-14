@@ -127,7 +127,7 @@ public class MemoryDocumentIndexMap extends MemoryDocumentIndex {
 
 	
 	/**
-	 * Document index iterator, iterates over DocumentIndexEntry only, not Entry<index, DocumentIndexEntry>.
+	 * Document index iterator, iterates over DocumentIndexEntry only.
 	 */
 	public class DocumentMapIterator2 implements Iterator<DocumentIndexEntry> {
 		private int index = 0;

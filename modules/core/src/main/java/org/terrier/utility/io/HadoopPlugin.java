@@ -46,8 +46,8 @@ import org.terrier.utility.Files.FSCapability;
   * <li>Configure Terrier such that the Hadoop file systems can be accessed by Terrier.</li>
   * <li>Provide a means to access the Hadoop map-reduce cluster, using <a href="http://hadoop.apache.org/core/docs/current/hod.html">Hadoop on Demand (HOD)</a> if necessary.</li>
   * </ol>
-  * <p><h3>Configuring Terrier to access HDFS</h3>
-  * Terrier can access a Hadoop Distributed File System (HDFS), allowing collections and indices to be placed there.
+  * <h3>Configuring Terrier to access HDFS</h3>
+  * <p>Terrier can access a Hadoop Distributed File System (HDFS), allowing collections and indices to be placed there.
   * To do so, ensure that your Hadoop <tt>conf/</tt> is on your CLASSPATH, and that the Hadoop plugin is loaded by Terrier,
   * by setting <tt>terrier.plugins=org.terrier.utility.io.HadoopPlugin</tt> in your <tt>terrier.properties</tt> file.
   * </p>

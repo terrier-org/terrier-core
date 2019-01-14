@@ -49,15 +49,15 @@ import edu.uci.ics.crawler4j.url.WebURL;
  * Terrier index.
  * 
  * This class auto-configures by overriding variables normally loaded from the
- * terrier.properties file as follows:
+ * <tt>terrier.properties</tt> file as follows:
  * <ul>
- * <li>TaggedDocument.abstracts</tt> = title,content</li>
- * <li>TaggedDocument.abstracts.tags</tt> = title,ELSE</li>
- * <li>TaggedDocument.abstracts.lengths</tt> = 140,5000</li>
- * <li>WebCrawlerTags.process</tt> = p,title</li>
- * <li>WebCrawlerTags.skip</tt> = ""</li>
- * <li>WebCrawlerTags.casesensitive</tt> = false</li>
- * <li>trec.model</tt> = DirichletLM</li>
+ * <li><tt>TaggedDocument.abstracts</tt> = title,content</li>
+ * <li><tt>TaggedDocument.abstracts.tags</tt> = title,ELSE</li>
+ * <li><tt>TaggedDocument.abstracts.lengths</tt> = 140,5000</li>
+ * <li><tt>WebCrawlerTags.process</tt> = p,title</li>
+ * <li><tt>WebCrawlerTags.skip</tt> = ""</li>
+ * <li><tt>WebCrawlerTags.casesensitive</tt> = false</li>
+ * <li><tt>trec.model</tt> = DirichletLM</li>
  * </ul>
  * 
  * @author Richard McCreadie

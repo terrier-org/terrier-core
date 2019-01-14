@@ -55,11 +55,11 @@ public interface UpdatableIndex {
 	public boolean removeDocument(int docid);
 	
 	/** Adds specified content contents to the named document id.
-	 *  Returns true if supported & successful. */
+	 *  @return true if supported &amp; successful. */
 	public boolean addToDocument(int docid, Document doc) throws Exception;
 	
 	/** Adds relevant terms to the named document id.
-	 * Returns true if supported & successful. */
+	 * @return true if supported &amp; successful. */
 	public boolean addToDocument(int docid, DocumentPostingList docContents) throws Exception;
 	
 	

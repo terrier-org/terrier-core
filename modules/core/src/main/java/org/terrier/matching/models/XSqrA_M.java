@@ -38,7 +38,7 @@ package org.terrier.matching.models;
  * MAP for short (title only) and medium (title+description)
  * topics, and comparative p values (two-tailed paired t-test) compared 
  * to supervised models (with optimal MAP parameter values) are as follows:
- * <table BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+ * <table summary="evaluation results" BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
  * <thead><tr CLASS="TableHeadingColor"><td>Queries</td><td>MAP of XSqrA_M</td><td>LGD</td><td>Dirichlet_LM</td><td>PL2</td><td>BM25</td><td>In_expB2</td></tr></thead>
  * <tr><td>short</td><td>0.3156</td> <td>p=0.3277</td><td>p=0.0075</td><td>p=0.0055</td><td>p=0.0064</td><td>p=0.0002</td></tr>
  * <tr><td>medium</td><td>0.3311</td><td>p=2.3E-07</td><td>p=0.0002</td><td>p=0.0395</td><td>p=0.0025</td><td>p=2.4E-10</td></tr>

@@ -72,7 +72,7 @@ import org.terrier.utility.ArrayUtils;
  * Index index;
  * PostingListManager plm = new PostingListManager(index, index.getCollectionStatistics(), mqt);
  * plm.prepare(false);
- * for(int term = 0;term < plm.size(); term++)
+ * for(int term = 0;term &gt; plm.size(); term++)
  * {
  *   IterablePosting ip = plm.get(term);
  *   while(ip.next() != IterablePosting.EOL)

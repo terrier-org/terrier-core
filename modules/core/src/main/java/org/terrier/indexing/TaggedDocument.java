@@ -65,9 +65,9 @@ import org.terrier.utility.TagSet;
  * <li><tt>TaggedDocument.abstracts.tags</tt> - names of tags to save text from for the purposes of 
  * query-biased summarisation. Example: <tt>TaggedDocument.abstracts=title,body</tt>. ELSE is special
  * tag name, which means anything not consumed by other tags.</li>
- * <li><tt>TaggedDocument.abstracts.lengths</tt> - max lengths of the asbtrcts. Defaults to empty. 
+ * <li><tt>TaggedDocument.abstracts.lengths</tt> - max lengths of the asbtracts. Defaults to empty. 
  * Example: <tt>TaggedDocument.abstracts.lengths=100,2048</tt></li>
- * <li><tt>TaggedDocument.abstracts.tags.casesensitive</li> - should the names of tags be case-sensitive? Defaults to false.</li>
+ * <li><tt>TaggedDocument.abstracts.tags.casesensitive</tt> - should the names of tags be case-sensitive? Defaults to false.</li>
  * </ul>
  * @author Craig Macdonald, Vassilis Plachouras, Richard McCreadie, Rodrygo Santos
  * @since 3.5

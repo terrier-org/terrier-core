@@ -46,7 +46,7 @@ import org.terrier.utility.FieldScore;
  * to enable some extra hooks.
  * 
  * @author Roi Blanco
- * @author Jonathon Hare <jsh2{a.}ecs.soton.ac.uk>
+ * @author Jonathon Hare [jsh2{a.}ecs.soton.ac.uk]
  */
 public abstract class ExtensibleSinglePassIndexer extends BasicSinglePassIndexer {
 

@@ -797,7 +797,7 @@ public class TRECQuerying extends AbstractQuerying {
 	 * relevant documents, scores them, and outputs the results to the result
 	 * file.
 	 * <p>
-	 * <b>Queries</b><br />
+	 * <b>Queries</b><br>
 	 * Queries are parsed from file, specified by the <tt>trec.topics</tt> property
 	 * (comma delimited)
 	 * 

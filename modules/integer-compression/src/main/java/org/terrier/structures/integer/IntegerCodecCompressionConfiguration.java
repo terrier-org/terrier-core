@@ -50,7 +50,7 @@ import org.terrier.utility.ArrayUtils;
 /** 
  * <b>Properties:</b>
  * <ul>
- * <li><tt>compression.<STRUCTURENAME>.integer.<TYPE>.codec</tt> - the compression codec to use 
+ * <li><tt>compression."STRUCTURENAME".integer."TYPE".codec</tt> - the compression codec to use 
  * for the structure STRUCTURENAME for posting payload type TYPE - see {@link IntegerCodec}.</li>
  * </ul>
  * For instance, to full compress everything in the inverted index using Frame of Reference (FOR), 

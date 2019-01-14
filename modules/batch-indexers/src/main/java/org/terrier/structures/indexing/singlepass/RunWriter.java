@@ -35,7 +35,7 @@ import org.terrier.compression.bit.MemorySBOS;
 import org.terrier.utility.Files;
 /**
  * This class writes a run to disk. The data written depends on the specific subclass.
- * This one, writes the Nt, TF and the <docid, tf> sequence.
+ * This one, writes the Nt, TF and the &lt;docid, tf&gt; sequence.
  * It also writes the max frequency of a term in the run (useful for allocating memory during the merging phase).
  * @author Roi Blanco
  */

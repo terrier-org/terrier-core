@@ -42,16 +42,16 @@ import org.terrier.utility.ApplicationSetup;
  * for search.
  * 
  * This class auto-configures by overriding variables normally loaded from the
- * terrier.properties file as follows:
+ * <tt>terrier.properties</tt> file as follows:
  * <ul>
- * <li>indexer.meta.forward.keys</tt> = title,URL,time,content</li>
- * <li>indexer.meta.forward.keylens</tt> = 140,120,64,5000</li>
- * <li>querying.postfilters.controls</tt> = decorate:org.terrier.querying.Decorate</li>
- * <li>querying.postfilters.order</tt> = org.terrier.querying.Decorate</li>
- * <li>metaindex.crop</tt> = true</li>
- * <li>ignore.low.idf.terms</tt> = false</li>
- * <li>querying.default.controls</tt> = start,end,decorate:on,summaries:content,emphasis:title;content</li>
- * <li>trec.model</tt> = DirichletLM</li>
+ * <li><tt>indexer.meta.forward.keys</tt> = title,URL,time,content</li>
+ * <li><tt>indexer.meta.forward.keylens</tt> = 140,120,64,5000</li>
+ * <li><tt>querying.postfilters.controls</tt> = decorate:org.terrier.querying.Decorate</li>
+ * <li><tt>querying.postfilters.order</tt> = org.terrier.querying.Decorate</li>
+ * <li><tt>metaindex.crop</tt> = true</li>
+ * <li><tt>ignore.low.idf.terms</tt> = false</li>
+ * <li><tt>querying.default.controls</tt> = start,end,decorate:on,summaries:content,emphasis:title;content</li>
+ * <li><tt>trec.model</tt> = DirichletLM</li>
  * </ul>
  *
  * @author Richard McCreadie

@@ -50,7 +50,7 @@ public class MemoryPostings {
 	protected Map<String, Posting> postings = new HashMap<String, Posting>();
 	/** The number of documents for any term in this run */
 	protected int maxSize = 1;
-	/** Number of pointers (<term,document> tuples in memory in this run. */
+	/** Number of pointers ([term,document] tuples in memory in this run. */
 	protected long numPointers = 0;
 	
 	protected long keyBytes = 0;

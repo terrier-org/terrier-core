@@ -52,7 +52,7 @@ import org.terrier.utility.ApplicationSetup;
 import com.google.common.collect.Lists;
 
 /** CLITool is an abstract class for all classes that are Terrier commands.
- * These can generally be easily run through the <tt>bin/terrier</tt command
+ * These can generally be easily run through the <tt>bin/terrier</tt> command
  * script.
  * 
  * To advertise a new functionality, list the class in the 

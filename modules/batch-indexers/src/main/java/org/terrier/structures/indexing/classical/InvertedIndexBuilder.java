@@ -128,7 +128,7 @@ public class InvertedIndexBuilder {
 	protected String structureName = null;
 	
 	/** The number of pointers to be processed in an interation. This directly corresponds to the
-	  * property <tt>invertedfile.processpointers</tt>. If this property is set and > 0, then each
+	  * property <tt>invertedfile.processpointers</tt>. If this property is set and &gt; 0, then each
 	  * iteration of the inverted index creation will be done to a set number of pointers, not a set
 	  * number of terms, overriding <tt>invertedfile.processterms</tt>. Default is 20000000. */
 	protected long numberOfPointersPerIteration = Long.parseLong(
@@ -736,7 +736,6 @@ public class InvertedIndexBuilder {
 	/** 
 	 * get LexiconOutputStream
 	 * @param _structureName
-	 * @return LexiconOutputStream<String>
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")

@@ -129,7 +129,7 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 	 * @param chunkSize the chunk size (in term of number of posting)
 	 * @param fieldsCount the number of fields, if any. 0 otherwise
 	 * @param hasBlocks 0:no blocks, 1:positions, 2:blocks of any size!=1
-	 * @param maxBlocks 0:no limit, >0 limited.
+	 * @param maxBlocks 0:no limit, &gt;0 limited.
 	 * @param idsCodec the IntegerCodec to use to compress ids 
 	 * @param tfsCodec the IntegerCodec to use to compress tfs
 	 * @param fieldsCodec the IntegerCodec to use to compress fields (null if there are no fields)
@@ -156,7 +156,7 @@ public class IntegerCodingPostingOutputStream extends AbstractPostingOutputStrea
 	 * @param chunkSize the chunk size (in term of number of posting)
 	 * @param fieldsCount the number of fields, if any. 0 otherwise
 	 * @param hasBlocks 0:no blocks, 1:positions, 2:blocks of any size!=1
-	 * @param maxBlocks 0:no limit, >0 limited.
+	 * @param maxBlocks 0:no limit, &gt;0 limited.
 	 * @param idsCodec the IntegerCodec to use to compress ids 
 	 * @param tfsCodec the IntegerCodec to use to compress tfs
 	 * @param fieldsCodec the IntegerCodec to use to compress fields (null if there are no fields)

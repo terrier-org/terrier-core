@@ -32,7 +32,7 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.Index;
 import org.terrier.utility.ApplicationSetup;
 
-/** Implements Markov Random Fields. See Metzler & Croft, SIGIR 2005.
+/** Implements Markov Random Fields. See Metzler &amp; Croft, SIGIR 2005.
  * Note that this implementation does not utilise the frequency of a
  * tuple in the collection - instead, this is assumed to be a constant,
  * as per the implementation in the Ivory retrieval system.

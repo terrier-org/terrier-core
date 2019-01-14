@@ -58,9 +58,10 @@ import org.terrier.utility.ApplicationSetup;
 /**
   * This class is responsible for handling/co-ordinating the main high-level
   * operations of a query. These are:
+  * <ul>
   * <li>Processing (Term Pipeline, Control finding, term aggregation, Matching) @see org.terrier.querying.Process</li>
   * <li>Post-filtering @see org.terrier.querying.PostFilter </li>
-  * &lt;/ul&gt;
+  * </ul>
   * Example usage:
   * <pre>
   * IndexRef indexRef = IndexRef.of("/path/to/data.properties");

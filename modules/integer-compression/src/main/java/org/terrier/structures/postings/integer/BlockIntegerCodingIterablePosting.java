@@ -65,7 +65,7 @@ public class BlockIntegerCodingIterablePosting extends
 	 * @param numberOfEntries the number of postings
 	 * @param documentIndex the document index
 	 * @param chunkSize the size of the chunk
-	 * @param hasBlocks has this posting list posting positions? (0: no, 1:has positions, >1:has blocks)
+	 * @param hasBlocks has this posting list posting positions? (0: no, 1:has positions, &gt;1:has blocks)
 	 * @param idsCodec the IntegerCodec to use to decode docIds
 	 * @param tfsCodec the IntegerCodec to use to decode term frequencies
 	 * @param blocksCodec the IntegerCodec to use to decode blocks (if any, null otherwise)

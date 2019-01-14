@@ -46,9 +46,10 @@ import org.terrier.utility.StaTools;
  * on the frequency from each field, before using a linear combination
  * of term frequencies to garner the final frequency.
  * <p><b>Properties:</b></p>
- * &lt;ul&gt;
+ * <ul>
  * <li>w.fieldId (starting at 0)</li>
  * <li>c.fieldId (starting at 0)</li>
+ * </ul>
  * @author Craig Macdonald
  * @since 3.0
  */

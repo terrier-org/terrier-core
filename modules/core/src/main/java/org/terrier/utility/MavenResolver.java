@@ -69,7 +69,7 @@ import org.terrier.utility.ApplicationSetup.TerrierApplicationPlugin;
  * <ul>
  * <li><tt>terrier.mvn.coords</tt> - SBT-like expression of dependency. E.g.
  * <tt>com.harium.database:sqlite:1.0.5</tt></li>
- * <ul>
+ * </ul>
  * 
  * @since 5.0
  */

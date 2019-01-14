@@ -42,7 +42,7 @@ package org.terrier.matching.models;
  * exception of PL2.
  * MAP for long topics, and comparative p values (two-tailed paired t-test) 
  * compared to supervised models (with optimal MAP parameter values) are as follows:
- * <table BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+ * <table summary="Evaluation results" BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
  * <thead><tr CLASS="TableHeadingColor"><td>Queries</td><td>MAP of JS_KLs</td><td>LGD</td><td>Dirichlet_LM</td><td>PL2</td><td>BM25</td><td>In_expB2</td></tr></thead>
  * <tr><td>long</td><td>0.3178</td> <td>(&gt;) p=1.7E-17</td><td>(&gt;) p=0.0544</td><td>(&lt;) p=0.3155</td><td>(&gt;) p=0.7866</td><td>(&gt;) p=5151</td></tr>
  * </table>

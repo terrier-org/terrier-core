@@ -43,7 +43,7 @@ import java.util.Map;
   * <P><B>NB:</B>Controls (name, value String tuples) are used to control the retrieval process. You may 
   * want to set controls in your application code. However, default controls can be set using 
   * the <tt>querying.default.controls</tt> property in the terrier.properties file.
-  * <p><b>Context Objects (name, value object tuples) are used to pass arbitrary information to classes
+  * <p><b>Context Objects</b> (name, value object tuples) are used to pass arbitrary information to classes
   * within Terrier.
   */
 public interface SearchRequest extends Serializable

@@ -488,7 +488,7 @@ public class BlockIndexer extends Indexer {
 	 * This adds a document to the direct and document indexes, as well 
 	 * as it's terms to the lexicon. Handled internally by the methods 
 	 * indexFieldDocument and indexNoFieldDocument.
-	 * @param docProperties Map<String,String> properties of the document
+	 * @param docProperties Map&lt;String,String&gt; properties of the document
 	 * @param _termsInDocument DocumentPostingList the terms in the document.
 	 * 
 	 */

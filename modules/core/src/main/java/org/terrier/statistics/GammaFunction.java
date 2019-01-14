@@ -102,7 +102,7 @@ public abstract class GammaFunction implements Serializable {
 		System.out.println(getGammaFunction().compute_log(Double.parseDouble(args[0])));
 	}
 	
-	/** Compute factorial of n, for 0 &lt; n &lt 21.
+	/** Compute factorial of n, for 0 &lt; n &lt; 21.
 	 * @param n number to compute for
 	 * @return factorial of n
 	 */

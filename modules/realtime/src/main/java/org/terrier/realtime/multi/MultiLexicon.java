@@ -54,7 +54,9 @@ import org.terrier.utility.StaTools;
  * </ul>
  * 
  * <p><b>Properties</b></p>
- * <ul><li>MultiLexicon.approxNumEntries</tt> - do we try and approximate the number of lexicon entries (saves a lot of time but is inaccurate), default is true.</li></ul>
+ * <ul>
+ * <li><tt>MultiLexicon.approxNumEntries</tt> - do we try and approximate the number of lexicon entries (saves a lot of time but is inaccurate), default is true.</li>
+ * </ul>
  * 
  * @author Richard McCreadie, Stuart Mackie
  * @since 4.0

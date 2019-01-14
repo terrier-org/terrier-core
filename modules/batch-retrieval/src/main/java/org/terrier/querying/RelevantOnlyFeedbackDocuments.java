@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-/** Select only feedback documents which have relevance &tg; 0
+/** Select only feedback documents which have relevance &gt; 0
   * @author Craig Macdonald
   * @since 3.0
   */

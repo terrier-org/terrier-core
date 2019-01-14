@@ -34,7 +34,7 @@ package org.terrier.matching.models;
  * The retrieval performance of this weighting model has been empirically verified to be similar to that reported
  * below. This model is formulated such that all scores are &gt; 0. 
  * <p>A Study of Smoothing Methods for Language Models Applied to Information Retrieval. 
- * Zhai & Lafferty, ACM Transactions on Information Systems, Vol. 22, No. 2, April 2004, Pages 179--214.
+ * Zhai &amp; Lafferty, ACM Transactions on Information Systems, Vol. 22, No. 2, April 2004, Pages 179--214.
  * <p>
  * @author Craig Macdonald
  * @since 3.0

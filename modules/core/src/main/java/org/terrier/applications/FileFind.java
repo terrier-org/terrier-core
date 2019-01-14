@@ -34,7 +34,7 @@ import java.util.List;
  * those directories, displaying only absolute 
  * filenames on Standard Output. Used by trec_setup.bat 
  * (on Windows) as Windows doesn't have a find file 
- * equivalent like find in Unix.<br/>
+ * equivalent like find in Unix.<br>
  * <pre>java org.terrier.applications.FileFind c:\</pre>
  * @author Craig Macdonald
  */
