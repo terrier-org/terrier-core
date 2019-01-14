@@ -227,12 +227,12 @@ ApplicationSetup.setProperty("querying.processes", "terrierql:TerrierQLParser,"
 ```
 
 This specifies the processes Terrier should run when performing retrieval, and the order in which they should be run. The above setup represents a configuration for a basic search, where:
-1) TerrierQLParser is Terrier's built in query parser
-2) TerrierQLToControls applies any current-query-only controls detected in query
-3) TerrierQLToMatchingQueryTerms extracts query terms to match from the query
-4) ApplyTermPipeline applies the term processing pipeline to the parsed query (e.g. stopword removal or stemming)
-5) LocalManager$ApplyLocalMatching tells the local manager to perform the matching process
-6) LocalManager$PostFilterProcess applies any post filters on the search results as discussed in the next section
+1. TerrierQLParser is Terrier's built in query parser
+2. TerrierQLToControls applies any current-query-only controls detected in query
+3. TerrierQLToMatchingQueryTerms extracts query terms to match from the query
+4. ApplyTermPipeline applies the term processing pipeline to the parsed query (e.g. stopword removal or stemming)
+5. LocalManager$ApplyLocalMatching tells the local manager to perform the matching process
+6. LocalManager$PostFilterProcess applies any post filters on the search results as discussed in the next section
 
 ### Configuring Search Result Enhancement/Transformations
 Next, it is important to enable any enhancements or transformations that we want Terrier to apply to the search results that will be generated. This occurs during the `LocalManager$PostFilterProcess` step of the querying process. There are a variety of enhancements/transformations that Terrier can apply out-of-the-box, such as re-ranking the results based on user-defined features or generating query-biased document snippets.
@@ -268,7 +268,7 @@ In this case we have created a new SearchRequest for the query 'sample query'. T
 srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 ```
 
-In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate', as well as enable each of the steps in the querying pipeline:
+In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match family of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate', as well as enable each of the steps in the querying pipeline:
 
 ```java
 // Enable querying processes
