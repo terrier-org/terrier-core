@@ -46,7 +46,7 @@ import org.terrier.utility.ApplicationSetup;
  * save on GC costs during indexing.</li>
  * <li><tt>stopwords.encoding</tt> - encoding of the file containing the stopwords
  * and if that is not set, onto the default system encoding.</li></ul>
- * @author Craig Macdonald <craigm{a.}dcs.gla.ac.uk> 
+ * @author Craig Macdonald
   */
 public class Stopwords implements TermPipeline
 {

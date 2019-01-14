@@ -57,8 +57,7 @@ import org.terrier.utility.io.CountingInputStream;
  * and the maximum length of the tags given in <tt>indexer.meta.forward.keylens</tt>.
  * 
  * <p><b>Properties</b>:
- * <ul> You also need to 
- * add the keys to indexer.meta.forward.keys and give them lengths (indexer.meta.forward.keylens)
+ * <ul> 
  * <li><tt>trec.document.class</tt> the {@link Document} class to parse individual documents (defaults to {@link TaggedDocument}).</li> 
  * <li><tt>trec.encoding</tt> - encoding to use to open all files. Leave unset for System default encoding.</li>
  * <li><tt>(tagset).propertytags</tt> - list of tags to add to the meta index rather than to index. Tags are assumed to be IN ORDER after the docid.</li>

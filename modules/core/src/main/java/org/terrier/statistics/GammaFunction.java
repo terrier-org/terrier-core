@@ -38,8 +38,9 @@ import org.terrier.utility.ApplicationSetup;
  * compute_log() anyway.
  * 
  * <p><b>Properties:</b></p>
- * &lt;ul&gt;
+ * <ul>
  * <li><tt>gamma.function</tt> - class name of the Gamma function implementation.
+ * </ul>
  * Defaults to use WikipediaLanczosGammaFunction 
  * @since 3.0
  * @author Craig Macdonald */

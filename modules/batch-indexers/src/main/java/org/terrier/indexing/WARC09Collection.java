@@ -54,7 +54,7 @@ import org.terrier.utility.FixedSizeInputStream;
  * <ul>
  * <li><tt>trec.document.class</tt> the {@link Document} class to parse individual documents (defaults to {@link TaggedDocument}).</li>
  * </ul>
- * </p>
+ * 
  * 
  * @author Craig Macdonald
  */

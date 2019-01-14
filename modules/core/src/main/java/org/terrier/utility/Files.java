@@ -71,7 +71,7 @@ import org.terrier.utility.io.WrappedIOException;
   * </p>
   * <br><br><b>Additional Compression Support</b>
   * <p>
-  * Support for additional stream compression & decompression can be plugged in by calling addFilterInputStreamMapping().
+  * Support for additional stream compression &amp; decompression can be plugged in by calling addFilterInputStreamMapping().
   * </p>
   * <br><br><b>File Caching</b>
   * <p>Terrier can cache files which will see heavy IO activity. In particular, files mentioned in the <tt>files.to.cache</tt> property

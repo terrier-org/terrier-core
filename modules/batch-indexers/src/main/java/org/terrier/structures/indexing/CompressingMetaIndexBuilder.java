@@ -58,6 +58,7 @@ import org.terrier.utility.RuntimeMemoryChecker;
  * <li><tt>metaindex.compressed.max.index.in-mem.mb</tt> - maximum size that a meta index .zdata file will be kept in memory. Defaults to 100(mb).</li>
  * <li><tt>metaindex.compressed.reverse.allow.duplicates</tt> - set this property to true to suppress errors when a reverse meta value is not unique. Default false.</li>
  * <li><tt>metaindex.compressed.crop.long</tt> - set this property to suppress errors with overlong Document metadata, while will instead be cropped.</li>
+ * </ul>
  * @since 3.0
  * @author Craig Macdonald &amp; Vassilis Plachouras 
  */

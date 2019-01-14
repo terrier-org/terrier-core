@@ -51,11 +51,11 @@ import org.slf4j.LoggerFactory;
  * it loads the properties file specified by the system property
  * <tt>terrier.setup</tt>. If this is not specified, then the default value is 
  * the value of the <tt>terrier.home</tt> system property, appended by <tt>etc/terrier.properties</tt>.
- * <BR/>
+ * <br>
  * eg <tt>java -Dterrier.home=$TERRIER_HOME -Dterrier.setup=$TERRIER_HOME/etc/terrier.properties TrecTerrier </tt>
  * </p><p>
  * <b>System Properties used:</b>
- * <table><tr><td>
+ * <table summary="system properties"><tr><td>
  * <tt>terrier.setup</tt></td><td>Specifies where the terrier.properties file can be found.
  * </td></tr>
  * <tr><td><tt>terrier.home</tt></td><td>Specified where Terrier has been installed, if the terrier.properties
@@ -64,10 +64,10 @@ import org.slf4j.LoggerFactory;
  * </td><tr><td><tt>file.separator</tt></td><td>What separates directory names in this platform. Set automatically by Java</td></tr>
  * <tr><td><tt>line.separator</tt></td><td>What separates lines in a file on this platform. Set automatically by Java</td>
  * </table>
- * </p><p>
+ * <p>
  * In essence, for Terrier to function properly, you need to specify one of the following on the command line:
  * <ul><li><tt>terrier.setup</tt> pointing to a terrier.properties file containing a <tt>terrier.home</tt> value.
- * </li>OR<li><tt>terrier.home</tt>, and Terrier will use a properties file at etc/terrier.properties, if it finds one.</li></ul>
+ * </li><li>OR<tt>terrier.home</tt>, and Terrier will use a properties file at etc/terrier.properties, if it finds one.</li></ul>
  * </p>
  * <p>Any property defined in the properties file can be overridden as follows:</p>
  * <ul>

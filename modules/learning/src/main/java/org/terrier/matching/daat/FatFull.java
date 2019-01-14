@@ -44,10 +44,10 @@ import org.terrier.structures.postings.WritablePosting;
  * A subclass of {@link Full} that creates a {@link FatResultSet}. This class 
  * is a key component of the Fat framework,
  * as described by Macdonald et al., TOIS 2013.
+ * <p><b>See also:</b> About Learning Models with Multiple Query Dependent Features. Craig Macdonald, Rodrygo L.T. Santos, Iadh Ounis and Ben He. Transactions on Information Systems. 31(3). 2013. <a href="http://www.dcs.gla.ac.uk/~craigm/publications/macdonald13multquerydf.pdf">[PDF]</a>"
  * 
  * @author Eric Sutherland, Craig Macdonald
  * @since 4.0
- * @see "About Learning Models with Multiple Query Dependent Features. Craig Macdonald, Rodrygo L.T. Santos, Iadh Ounis and Ben He. Transactions on Information Systems. 31(3). 2013. <a href="http://www.dcs.gla.ac.uk/~craigm/publications/macdonald13multquerydf.pdf">[PDF]</a>"
  */
 public class FatFull extends Full {
 

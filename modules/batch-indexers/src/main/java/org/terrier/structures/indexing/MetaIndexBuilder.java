@@ -31,7 +31,7 @@ import java.util.Map;
  * with a document, e.g. an external document identifier (e.g. docnos), a URL, or the title
  * or abstracts of a document.
  * <p>
- * Lookups in the resulting <{@link org.terrier.structures.MetaIndex} are supported in two manners - either by docid, or for specified key
+ * Lookups in the resulting {@link org.terrier.structures.MetaIndex} are supported in two manners - either by docid, or for specified key
  * types, by value. In the latter scenario, metadata values are assumed to be unique.
  * <p>
  * Typical usage during indexing:
