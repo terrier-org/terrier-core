@@ -62,6 +62,7 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 	@Test public void itWorksBlocksFeatures() throws Exception {
 		Index index = IndexTestUtils.makeIndexBlocks(new String[]{"doc1"}, new String[]{"token1 token2 token3"});		
 		int port = new Random().nextInt(65536-1024)+1024;
+		System.err.println("itWorksBlocksFeatures: Index is " + index.getIndexRef().toString());
 		String uri = "http://127.0.0.1:"+port+"/";		
 		HttpServer server = makeServer(index, uri);
 		index.close();
@@ -82,7 +83,8 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 	@Test public void itWorks() throws Exception {
 		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"token1 token2 token3"});
 		int port = new Random().nextInt(65536-1024)+1024;
-		String uri = "http://127.0.0.1:"+port+"/";		
+		String uri = "http://127.0.0.1:"+port+"/";
+		System.err.println("itWorks: Index is " + index.getIndexRef().toString());
 		HttpServer server = makeServer(index, uri);
 		index.close();
 		
@@ -99,6 +101,7 @@ public class TestClientAndServer extends ApplicationSetupBasedTest {
 	@Test public void testTRECQuerying() throws Exception {
 		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"token1 token2 token3"});
 		int port = new Random().nextInt(65536-1024)+1024;
+		System.err.println("testTRECQuerying: Index is " + index.getIndexRef().toString());
 		String uri = "http://127.0.0.1:"+port+"/";		
 		HttpServer server = makeServer(index, uri);
 		index.close();
