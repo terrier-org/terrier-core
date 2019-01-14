@@ -191,7 +191,12 @@ public class LocalManager implements Manager
 			this.typeName = _typeName;
 			this.load_module_controls();
 			//System.err.println(Arrays.deepToString(Class_Controls));
-		}		
+		}
+		
+		final int getSize()
+		{
+			return Class_Order.length;
+		}
 		
 		List<K> getActive(Map<String,String> controls) {
 			List<K> classes = new ArrayList<>();
@@ -222,7 +227,7 @@ public class LocalManager implements Manager
 		/** parses the controls hashtable, looking for references to controls, and returns the appropriate
 		  * postfilters to be run. */
 		Iterator<K> getActiveIterator(Map<String,String> controls) {
-			//TODO this implementation should check if controls have bene updated since the iterator was created.
+			//TODO this implementation should check if controls have been updated since the iterator was created.
 			return getActive(controls).iterator();
 		}
 		
@@ -808,6 +813,14 @@ public class LocalManager implements Manager
 		boolean hasTerrierQLquery = rq.getQuery() != null;
 		boolean hasResultSet = rq.getResultSet() != null;
 		logger.debug(rq.getControls().toString());
+		
+		if (processModuleManager.getSize() == 0)
+		{
+			RuntimeException e = new IllegalArgumentException("Property querying.processes was not set - you need to have some Process classes defined");
+			logger.error("No Process classes were available for the Manager. Matching will likely fail. Do you have a terrier.properties file with querying.processes property configured?", e);
+			throw e;	
+		}
+		
 		Iterator<Process> iter = processModuleManager.getActiveIterator(rq.getControls());
 		List<String> processesDone = new ArrayList<String>();
 		int ran = 0;
