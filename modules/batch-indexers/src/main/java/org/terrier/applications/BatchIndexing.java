@@ -46,6 +46,12 @@ public abstract class BatchIndexing {
 		protected Options getOptions()
 		{
 			Options options = super.getOptions();
+			options.addOption(Option.builder("C")
+					.argName("collection")
+					.longOpt("collection")
+					.desc("specify the collection class to use. This overrides the trec.collection.class property")
+					.hasArg()
+					.build());
 			options.addOption(Option.builder("j")
 					.argName("singlepass")
 					.longOpt("singlepass")
@@ -85,6 +91,11 @@ public abstract class BatchIndexing {
 		public int run(CommandLine line) throws Exception {
 			
 			BatchIndexing indexing;
+			if (line.hasOption("C"))
+			{
+				ApplicationSetup.setProperty("trec.collection.class", line.getOptionValue("C"));
+			}
+			
 			if (line.hasOption("parallel"))
 			{
 				indexing = new ThreadedBatchIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX, line.hasOption("singlepass"));

@@ -17,7 +17,7 @@ By default, Terrier uses [TRECCollection](javadoc/org/terrier/indexing/TRECColle
     <DOC>
     ...
 
-For corpora in other formats, you will need to change the Collection object being used, by setting the property `trec.collection.class`. Here are some options:
+For corpora in other formats, you will need to change the Collection object being used, by setting the property `trec.collection.class`, or using the `-C` command line option of the `batchindexing` command. Here are some options:
 
 -   [TRECCollection](javadoc/org/terrier/indexing/TRECCollection.html) - Parses TREC formatted corpora, delimited by the `<DOC></DOC>` tags.
 
