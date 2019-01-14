@@ -72,17 +72,17 @@ Once you have your project setup with Maven, its time to add Terrier to your pro
 <dependency>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-core</artifactId>
-	<version>5.0</version>
+	<version>5.1</version>
 </dependency>
 
 <dependency>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-realtime</artifactId>
-	<version>5.0</version>
+	<version>5.1</version>
 </dependency>
 ```
 
-Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependencies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). At this point you should be ready to start coding!
+Save the pom.xml file and then trigger the building of your project. How you do this will depend on whether you are using the command line or an IDE. During the build process, Terrier along with all of its dependencies will be downloaded and compiled. If you are using an IDE, then Terrier and its dependencies should also be automatically added to your [Java classpath](https://docs.oracle.com/javase/tutorial/essential/environment/paths.html). Note that Terrier uses [SLF4J](https://slf4j.org/) to facilitate the application of different loggers during operation, and as such Terrier expects to find a valid logging package and associated configuration file on the classpath. If your project does not already include a logging package, then you will need to also declare one of these as a dependency, e.g. [logback](https://logback.qos.ch/).  At this point you should be ready to start coding!
 
 Making an Index
 ----------------------------------------
@@ -163,6 +163,9 @@ Once we have an index, new documents can be easily added using the `indexDocumen
 memIndex.indexDocument(document);
 ```
 
+> **Troubleshooting Tips**:
+> *  You may see a warning about terrier.properties not being found. Terrier by default always checks to see if there is a properties file named terrier.properties in a default location, and pre-loads configuration information from it. This warning indicates that it could not find one. This is not a critical error, as Terrier will try to select resonable defaults for most properties.
+
 ### Indexing Example
 
 ```java
@@ -210,8 +213,29 @@ public class IndexingExample {
 
 Issuing Searches
 ----------------------------------------
+### Configuring the Query Process
+The first thing we need to prepare before running a search is to configure the querying process itself. Since Terrier 5.0 the exact steps that Terrier performs during retrieval were made configurable via the `querying.processes` property. This enables us to specify how the query should be parsed, whether any pre-processing on the query should be performed, and so on. If you were using Terrier out-of-the-box, then these properties would be loaded automatically from the terrier.properties file. However, as you may not have a Terrier `etc` folder with a terrier.properties file in it, then we instead need to set this via the ApplicationSetup properties:
+
+```java
+ApplicationSetup.setProperty("querying.processes", "terrierql:TerrierQLParser,"
+				+ "parsecontrols:TerrierQLToControls,"
+				+ "parseql:TerrierQLToMatchingQueryTerms,"
+				+ "matchopql:MatchingOpQLParser,"
+				+ "applypipeline:ApplyTermPipeline,"
+				+ "localmatching:LocalManager$ApplyLocalMatching,"
+				+ "filters:LocalManager$PostFilterProcess");
+```
+
+This specifies the processes Terrier should run when performing retrieval, and the order in which they should be run. The above setup represents a configuration for a basic search, where:
+1. TerrierQLParser is Terrier's built in query parser
+2. TerrierQLToControls applies any current-query-only controls detected in query
+3. TerrierQLToMatchingQueryTerms extracts query terms to match from the query
+4. ApplyTermPipeline applies the term processing pipeline to the parsed query (e.g. stopword removal or stemming)
+5. LocalManager$ApplyLocalMatching tells the local manager to perform the matching process
+6. LocalManager$PostFilterProcess applies any post filters on the search results as discussed in the next section
+
 ### Configuring Search Result Enhancement/Transformations
-Before you start setting up searches and running them, it is important to enable any enhancements or transformations that we want Terrier to apply to the search results that will be generated. There are a variety of enhancements/transformations that Terrier can apply out-of-the-box, such as re-ranking the results based on user-defined features or generating query-biased document snippets.
+Next, it is important to enable any enhancements or transformations that we want Terrier to apply to the search results that will be generated. This occurs during the `LocalManager$PostFilterProcess` step of the querying process. There are a variety of enhancements/transformations that Terrier can apply out-of-the-box, such as re-ranking the results based on user-defined features or generating query-biased document snippets.
 
 For this quickstart guide, we will cover enabling one very common type of search result enhancement, which is known as *decoration*. The goal of decoration is to copy metadata about each individual document into the search results returned, such as the 'docno' identifier that we configured earlier. Decorate (or more precisely the `org.terrier.querying.SimpleDecorate` class) belongs to a group of functions in Terrier known as post filters. To enable decorate functionality, we need to update the Terrier configuration that is stored in the static ApplicationSetup class. In particular, there is a parameter that needs to be set: `querying.postfilters`. Simply, this parameter specifies the 'what' and 'when' any post filters should be applied. It contains a  a comma delimited list of `name:class` pairs, where `name` is a short identifier for a post filter and `class` is the full classname. The order of the class names defines the order in which they are executed. Hence, we can enable the `org.terrier.querying.SimpleDecorate` post filter class by setting the Terrier configuration as follows:
 
@@ -223,13 +247,12 @@ In this case, we have specified that org.terrier.querying.SimpleDecorate is a po
 > **Troubleshooting Tips**:
 > *  ApplicationSetup.setProperty() must be called before the a Manager is obtained, i.e. before `ManagerFactor.from(indexref)` is called.
 
-
 ### Using a Search Manager
 
-Within Terrier, searches are performed using a Manager class. This class performs the nuts and bolts of actually matching your query against the documents that were indexed. If you are running multiple queries, you need to only create a single manager and use it multiple times. There is only one Manager implementation in Terrier, which you can instantiate as follows:
+Within Terrier, searches are performed using a Manager class. This class performs the nuts and bolts of actually matching your query against the documents that were indexed. If you are running multiple queries, you need to only create a single manager and use it multiple times. There are multiple Manager implementations in Terrier (based on whether you are using a local or remote index). In this example, we will be using a LocalManager, which enables querying over a localy stored memory or on-disk index. The fact that we will be using a LocalManager will be inferred from the reference to the index by a ManagerFactory class:
 
 ```java
-Manager queryingManager = new Manager(memIndex.getIndexRef());
+Manager queryingManager = ManagerFactory.from(memIndex.getIndexRef());
 ```
 
 This creates a new querying manager with a default configuration and sets the index to be searched (to our 'memindex' in this case). The next step in the process is to create a SearchRequest, which contains both our query as well as some other information about how we want the search to be processed. The Manager can generate a SearchRequest for you with default settings as shown below:
@@ -245,9 +268,18 @@ In this case we have created a new SearchRequest for the query 'sample query'. T
 srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 ```
 
-In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match familty of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate':
+In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match family of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate', as well as enable each of the steps in the querying pipeline:
 
 ```java
+// Enable querying processes
+srq.setControl("terrierql", "on");
+srq.setControl("parsecontrols", "on");
+srq.setControl("parseql", "on");
+srq.setControl("applypipeline", "on");
+srq.setControl("localmatching", "on");
+srq.setControl("filters", "on");
+
+// Enable post filters
 srq.setControl("decorate", "on");
 ```
 
@@ -274,13 +306,18 @@ The output of a search in Terrier is a ScoredDocList. The ScoredDocList contains
 ### Indexing and Retrieval Example
 ```java
 import java.io.File;
-import java.io.FileReader;
+import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Iterator;
+
 import org.terrier.indexing.Document;
 import org.terrier.indexing.TaggedDocument;
 import org.terrier.indexing.tokenisation.Tokeniser;
-import org.terrier.matching.ResultSet;
+import org.terrier.querying.LocalManager;
 import org.terrier.querying.Manager;
+import org.terrier.querying.ManagerFactory;
+import org.terrier.querying.ScoredDoc;
+import org.terrier.querying.ScoredDocList;
 import org.terrier.querying.SearchRequest;
 import org.terrier.realtime.memory.MemoryIndex;
 import org.terrier.utility.ApplicationSetup;
@@ -316,6 +353,15 @@ public class IndexingAndRetrievalExample {
 						memIndex.indexDocument(document);
 				}
 
+				// Set up the querying process
+				ApplicationSetup.setProperty("querying.processes", "terrierql:TerrierQLParser,"
+				+ "parsecontrols:TerrierQLToControls,"
+				+ "parseql:TerrierQLToMatchingQueryTerms,"
+				+ "matchopql:MatchingOpQLParser,"
+				+ "applypipeline:ApplyTermPipeline,"
+				+ "localmatching:LocalManager$ApplyLocalMatching,"
+				+ "filters:LocalManager$PostFilterProcess");
+
 				// Enable the decorate enhancement
 				ApplicationSetup.setProperty("querying.postfilters", "org.terrier.querying.SimpleDecorate");
 
@@ -328,7 +374,15 @@ public class IndexingAndRetrievalExample {
 				// Specify the model to use when searching
 				srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 
-				// Turn on decoration for this search request
+				// Enable querying processes
+				srq.setControl("terrierql", "on");
+				srq.setControl("parsecontrols", "on");
+				srq.setControl("parseql", "on");
+				srq.setControl("applypipeline", "on");
+				srq.setControl("localmatching", "on");
+				srq.setControl("filters", "on");
+
+				// Enable post filters
 				srq.setControl("decorate", "on");
 
 				// Run the search
