@@ -57,7 +57,7 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
  
 	/** Creates a new output stream, writing a BitOutputStream to the specified file. The number of binary bits
 	  * for fields must also be specified.
-	  * @param filename Location of the file to write to
+	  * @param os stream to write to
 	  */
 	public DirectInvertedOutputStream(OutputStream os) throws IOException
 	{
