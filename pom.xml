@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-platform</artifactId>
-	<version>5.1-SNAPSHOT</version>
+	<version>5.1</version>
 	<name>Terrier Information Retrieval Platform</name>
 	<description>Terrier IR platform</description>
 	<url>http://terrier.org</url>
@@ -285,6 +285,7 @@
 						</executions>
 					</plugin>
 
+					<!-- if this doesnt work on mac, do "export GPG_TTY=$(tty)" -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
