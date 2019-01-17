@@ -303,15 +303,15 @@ public class QueryExpansion implements MQTRewritingProcess {
 			return;
 		}
 		if(logger.isDebugEnabled()){
-			logger.info("query length after expansion: " + queryTerms.size());
-			logger.info("Expanded query: ");
+			logger.debug("query length after expansion: " + queryTerms.size());
+			logger.debug("Expanded query: ");
 		}
 		final String[] newQueryTerms = queryTerms.getTerms();
 		StringBuilder newQuery = new StringBuilder();
 		for (int i = 0; i < newQueryTerms.length; i++){
 			try{
 				if(logger.isDebugEnabled()){
-					logger.info((i + 1) + ": " + newQueryTerms[i] +
+					logger.debug((i + 1) + ": " + newQueryTerms[i] +
 						", normalisedFrequency: " + Rounding.toString(queryTerms.getTermWeight(newQueryTerms[i]), 4));
 				}
 				newQuery.append(newQueryTerms[i]);
