@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>terrier-platform</artifactId>
 		<groupId>org.terrier</groupId>
-		<version>5.1-SNAPSHOT</version>
+		<version>5.1</version>
 		<relativePath>../../</relativePath>
 	</parent>
 
@@ -113,7 +113,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.0.1</version>
 				<inherited>false</inherited>
 				<executions>
 					<execution>
@@ -122,6 +122,8 @@
 							<goal>javadoc</goal>
 						</goals>
 						<configuration>
+							<failOnError>false</failOnError>
+                                                        <failOnWarnings>false</failOnWarnings>
 							<includeDependencySources>true</includeDependencySources>
 							<dependencySourceExcludes>
 								<dependencySourceExclude>ch.qos.logback:*</dependencySourceExclude>
