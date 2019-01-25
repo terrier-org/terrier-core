@@ -68,6 +68,8 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 			System.err.println("No qrels specified in property trec.qrels or on command line (-q)");
 			return 1;
 		}
+		if (line.hasOption('p'))
+			evaluation_per_query = true;
 		if (line.hasOption('j'))
 			use_jtrec_eval = false;
 		if (use_jtrec_eval && TrecEvalEvaluation.isPlatformSupported()) {
