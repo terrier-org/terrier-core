@@ -53,6 +53,14 @@ public class FeaturedQueryResultSet extends QueryResultSet implements FeaturedRe
 		super.scores = resultSet.getScores();
 		super.occurrences = resultSet.getOccurrences();
 		
+		if (resultSet instanceof QueryResultSet)
+		{
+			for (String key : resultSet.getMetaKeys())
+			{
+				this.addMetaItems(key, resultSet.getMetaItems(key));
+			}
+		}
+		
 		features = new LinkedHashMap<String, double[]>();
 	}
 
