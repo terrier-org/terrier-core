@@ -363,7 +363,7 @@ public class TRECQuerying extends AbstractQuerying {
 	{
 		this.createManager();
 		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
-		this.querySource = this.getQueryParser();
+		this.querySource = getQueryParser(this.getTopicsParser());
 		this.printer = getOutputFormat();
 		this.resultsCache = getResultsCache();
 	}
@@ -764,13 +764,13 @@ public class TRECQuerying extends AbstractQuerying {
 	 * 
 	 * @return The query parser that is being used.
 	 */
-	protected QuerySource getQueryParser() {
+	public static QuerySource getQueryParser(String parserName) {
 		String[] topicsFiles = null;
 		QuerySource rtr = null;
 		try {
 			Class<? extends QuerySource> queryingClass = ApplicationSetup.getClass(
-					getTopicsParser().indexOf('.') > 0 ? getTopicsParser()
-							: "org.terrier.structures." + getTopicsParser())
+					parserName.indexOf('.') > 0 ? parserName
+							: "org.terrier.structures." + parserName)
 					.asSubclass(QuerySource.class);
 
 			if ((topicsFiles = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("trec.topics", ""))).length > 0) {
@@ -785,7 +785,7 @@ public class TRECQuerying extends AbstractQuerying {
 			// } catch (ClassNotFoundException cnfe) {
 
 		} catch (Exception e) {
-			logger.error("Error instantiating topic file QuerySource called " + getTopicsParser(), e);
+			logger.error("Error instantiating topic file QuerySource called " + parserName, e);
 		}
 		return rtr;
 	}
