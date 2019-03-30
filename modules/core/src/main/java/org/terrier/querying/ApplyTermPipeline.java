@@ -25,6 +25,8 @@
  */
 package org.terrier.querying;
 
+import java.util.Iterator;
+
 import gnu.trove.TIntArrayList;
 
 import org.terrier.matching.MatchingQueryTerms;
@@ -112,18 +114,44 @@ public class ApplyTermPipeline implements Process {
 			
 		};
 		
-		MatchingQueryTerms mqt = q.getMatchingQueryTerms();		
+		MatchingQueryTerms mqt = q.getMatchingQueryTerms();
+		String lastTerm = null;
+		boolean dups = false;
 		for(MatchingTerm t : mqt)
 		{
 			i++;
 			boolean OK = visitor.visit(t.getKey());
 			if (! OK)
 				toDel.add(i);
+			else
+			{
+				dups = dups || (t.getKey().toString().equals(lastTerm));
+				lastTerm = t.getKey().toString();
+			}
 		}
 		toDel.reverse();
 		for(int removeIndex : toDel.toNativeArray())
 		{
 			mqt.remove(removeIndex);
+		}
+		
+		if (! dups)
+			return;
+		
+		MatchingTerm prev = null;
+		Iterator<MatchingTerm> iter = mqt.iterator();
+		while(iter.hasNext())
+		{
+			MatchingTerm t = iter.next();
+			if (prev != null 
+					&& t.getKey().toString().equals(prev.getKey().toString())  // this and the previous have the same string
+					&& t.getValue().equals(prev.getValue()) // this previous word has the same models, tags and requirements
+					)
+			{
+				prev.getValue().setWeight(prev.getValue().getWeight() + t.getValue().getWeight());
+				iter.remove();
+			}
+			prev = t;
 		}
 	}
 

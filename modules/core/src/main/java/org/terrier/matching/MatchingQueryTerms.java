@@ -233,6 +233,18 @@ implements Serializable,Cloneable
 			return "{ req=" + this.required + ", w=" + this.weight + ", stats=" + this.stats + ", models=" + this.termModels.toString() + " tags="+tags+"}";
 		}
 
+		@Override
+		public boolean equals(Object _o) {
+			if (! (_o instanceof QueryTermProperties))
+				return false;
+			QueryTermProperties o = (QueryTermProperties) _o;
+			//we only check requirements, weighting models and tags
+			return  (o.getRequired() == this.getRequired()) 
+					&& o.termModels.equals(this.termModels)
+					&& o.tags.equals(this.tags);
+
+		}
+
 		
 		
 	}
