@@ -33,6 +33,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.Files;
 
 import com.google.common.collect.Sets;
 
@@ -58,6 +59,7 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 		Evaluation te = null;
 		String evaluationFilename = null;
 		boolean use_jtrec_eval = true;
+		boolean overwrite = false;
 		boolean evaluation_per_query = false;
 		
 		String qrels = ApplicationSetup.getProperty("trec.qrels", null);
@@ -68,6 +70,8 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 			System.err.println("No qrels specified in property trec.qrels or on command line (-q)");
 			return 1;
 		}
+		if (line.hasOption('f'))
+			overwrite = true;
 		if (line.hasOption('p'))
 			evaluation_per_query = true;
 		if (line.hasOption('j'))
@@ -108,11 +112,19 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 						0,
 						resultFilename.lastIndexOf('.'))
 						+ ".eval";
-				te.evaluate(resultFilename);
-				if (evaluation_per_query)
-					te.writeEvaluationResultOfEachQuery(evaluationResultFilename);
+				if (Files.exists(evaluationResultFilename) && ! overwrite)
+				{
+					System.err.println("Skipping overwriting the existing .eval file" 
+						+ evaluationResultFilename + " - use -f to force re-evaluation.");
+				}
 				else
-					te.writeEvaluationResult(evaluationResultFilename);
+				{
+					te.evaluate(resultFilename);
+					if (evaluation_per_query)
+						te.writeEvaluationResultOfEachQuery(evaluationResultFilename);
+					else
+						te.writeEvaluationResult(evaluationResultFilename);
+				}
 			}
 		}
 		return 0;
@@ -130,6 +142,11 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 				.argName("perquery")
 				.longOpt("perquery")
 				.desc("report results on a per-query basis")
+				.build());
+		options.addOption(Option.builder("f")
+				.argName("force")
+				.longOpt("force")
+				.desc("force the re-evaluation of .res file that have already been evaluated")
 				.build());
 		options.addOption(Option.builder("q")
 				.argName("qrels")
