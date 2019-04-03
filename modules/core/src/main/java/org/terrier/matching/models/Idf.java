@@ -114,7 +114,7 @@ public final class Idf implements Serializable, Cloneable{
 	 * @return the normalised idf of d
 	 */
 	public double idfN(double d) {
-		return (WeightingModelLibrary.log(numberOfDocuments, d) / log(numberOfDocuments));
+		return (WeightingModelLibrary.log(numberOfDocuments, d) / WeightingModelLibrary.log(numberOfDocuments));
 	}
 	/**
 	 * Set number of documents
@@ -130,7 +130,7 @@ public final class Idf implements Serializable, Cloneable{
 	 * @return the normalised idf of d
 	 */
 	public double idfN(int d) {
-		return (WeightingModelLibrary.log(numberOfDocuments, (double)d) / log(numberOfDocuments));
+		return (WeightingModelLibrary.log(numberOfDocuments, (double)d) / WeightingModelLibrary.log(numberOfDocuments));
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public final class Idf implements Serializable, Cloneable{
 	 * @return the normalised INQUERY idf of d
 	 */
 	public double idfNENQUIRY(double d) {
-		return (WeightingModelLibrary.log(numberOfDocuments + 1.0D, d + 0.5D) / log(numberOfDocuments+1.0D));
+		return (WeightingModelLibrary.log(numberOfDocuments + 1.0D, d + 0.5D) / WeightingModelLibrary.log(numberOfDocuments+1.0D));
 	}
 
 	/**
