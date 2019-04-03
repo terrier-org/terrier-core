@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -88,6 +89,10 @@ public abstract class MultiDocumentFileCollection implements Collection {
 	MultiDocumentFileCollection(List<String> _FilesToProcess)
 	{
 		FilesToProcess = _FilesToProcess;
+		if (new HashSet<>(FilesToProcess).size() < FilesToProcess.size())
+		{
+			logger.warn("There are duplicate files to index. Your indexing setup may be invalid.");
+		}
 		loadDocumentClass();
 		try{
 			openNextFile();
