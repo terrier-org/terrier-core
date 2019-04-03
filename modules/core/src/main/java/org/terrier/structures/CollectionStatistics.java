@@ -236,6 +236,20 @@ public class CollectionStatistics implements Serializable,Writable {
 			System.out.println("size of vocabulary: " +  i.getCollectionStatistics().getNumberOfUniqueTerms());
 			System.out.println("number of tokens: " +  i.getCollectionStatistics().getNumberOfTokens());
 			System.out.println("number of pointers: " +  i.getCollectionStatistics().getNumberOfPointers());
+			System.out.println("number of fields: " +  i.getCollectionStatistics().getNumberOfFields());
+			
+			Boolean blocks = null;
+			for(String structureName : new String[]{"direct", "inverted"})
+			{
+				int num = i.getIntIndexProperty("index." + structureName + ".blocks", -1);
+				if (num != -1)
+				{
+					blocks = num > 0;
+					break;
+				}
+			}
+			System.out.println("blocks: " + ( blocks == null ? "unknown" : blocks.toString() ));
+			
 			try {
 				i.close();
 			} catch (IOException e) {}
