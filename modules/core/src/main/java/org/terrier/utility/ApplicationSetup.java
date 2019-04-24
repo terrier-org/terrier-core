@@ -577,7 +577,12 @@ public class ApplicationSetup {
 			if (pluginName.length() == 0)
 				continue;
 			try{
-				TerrierApplicationPlugin plugin = Class.forName(pluginName).asSubclass(TerrierApplicationPlugin.class).newInstance();
+				
+				TerrierApplicationPlugin plugin = (
+						clzLoader == null 
+							? Class.forName(pluginName) 
+							: getClass(pluginName) )
+						.asSubclass(TerrierApplicationPlugin.class).newInstance();
 				plugin.initialise();
 				loadedPlugins.add(plugin);
 			} catch (Exception e) {

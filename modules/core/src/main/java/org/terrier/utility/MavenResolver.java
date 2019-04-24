@@ -232,6 +232,7 @@ public class MavenResolver implements TerrierApplicationPlugin {
 		// new
 		// Exception("not an exception: CL replaced here").printStackTrace();
 		Thread.currentThread().setContextClassLoader(newCl);
+		ApplicationSetup.clzLoader = newCl;
 	}
 
 	// replacement for scala require implicit
