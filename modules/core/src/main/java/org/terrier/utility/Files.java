@@ -80,7 +80,7 @@ import org.terrier.utility.io.WrappedIOException;
   */
 public class Files
 {
-	/** constants declaring which capabilites a file system has */
+	/** constants declaring which capabilities a file system has */
 	public interface FSCapability {
 		/** FS can read files */
 		/* byte 0 */ byte READ = 1;
@@ -216,7 +216,23 @@ public class Files
 		addFilterInputStreamMapping(".+\\.bgz", BlockCompressedInputStream.class, BlockCompressedOutputStream.class);
 		addFilterInputStreamMapping(".+\\.BGZ$", BlockCompressedInputStream.class, BlockCompressedOutputStream.class);
 		
-		// new BlockCompressedInputStream(new File(filename));
+		final String[] mappings = ApplicationSetup.getProperty("files.mappings","").split("\\s*,\\s*");
+		for (String mapping : mappings)
+		{
+			String[] parts = mapping.split(":");
+			try{
+				Class<? extends InputStream> inClz = parts[1].length() > 0 && ! parts[1].equals("null")
+						? ApplicationSetup.getClass(parts[1]).asSubclass(InputStream.class)
+						: null;
+				Class<? extends OutputStream> outClz = parts[2].length() > 0 && ! parts[2].equals("null")
+						? ApplicationSetup.getClass(parts[2]).asSubclass(OutputStream.class)
+						: null;
+				addFilterInputStreamMapping(".+\\."+parts[0], inClz, outClz); 
+			} catch (Exception e) {
+				System.err.println("Could not record mapping for " + parts[0] + " to " + parts[1] + " and/or " + parts[2] + " : " + e);
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/** Cache to the temporary directory specified by <tt>java.io.tmpdir</tt> System property. */
@@ -313,6 +329,8 @@ public class Files
 			if (regex.matcher(filename).matches())
 			{
 				Class<? extends InputStream> filterClass = inputStreamMap.get(regex);
+				if (filterClass == null)
+					throw new IOException("Decompression of file type of "+filename +" not supported");
 				try{
 					rtr = filterClass.getConstructor(InputStream.class).newInstance(rtr);
 				} catch (Exception e) {
@@ -341,7 +359,9 @@ public class Files
 		{
 			if (regex.matcher(filename).matches())
 			{
-				Class<? extends OutputStream> filterClass = outputStreamMap.get(regex);				
+				Class<? extends OutputStream> filterClass = outputStreamMap.get(regex);
+				if (filterClass == null)
+					throw new IOException("Compression of file type of "+filename +" not supported");
 				try{
 					//System.err.println(filterClass.getName());
 					if (filterClass.getName().endsWith("BlockCompressedOutputStream")) {
@@ -355,7 +375,7 @@ public class Files
 		return rtr;
 	}
 
-	/** Returns a RandomAccessFile implementation accessing the specificed file */
+	/** Returns a RandomAccessFile implementation accessing the specified file */
 	public static RandomDataInput openFileRandom(String filename) throws IOException
 	{
 		filename = transform(filename);
