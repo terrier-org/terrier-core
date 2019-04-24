@@ -90,6 +90,7 @@ public abstract class BatchIndexing {
 		@Override
 		public int run(CommandLine line) throws Exception {
 			
+			final long starttime = System.currentTimeMillis();
 			BatchIndexing indexing;
 			if (line.hasOption("C"))
 			{
@@ -110,7 +111,10 @@ public abstract class BatchIndexing {
 						: new TRECIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 			}
 			indexing.blocks = line.hasOption("blocks");
-			indexing.index();			
+			indexing.index();	
+			final long endtime = System.currentTimeMillis();
+			final long seconds = (endtime - starttime) / 1000l;
+			System.err.println("Total time elaped: " + seconds + " seconds");
 			return 0;
 		}
 		
