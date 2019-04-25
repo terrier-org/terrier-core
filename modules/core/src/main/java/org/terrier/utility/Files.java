@@ -216,10 +216,17 @@ public class Files
 		addFilterInputStreamMapping(".+\\.bgz", BlockCompressedInputStream.class, BlockCompressedOutputStream.class);
 		addFilterInputStreamMapping(".+\\.BGZ$", BlockCompressedInputStream.class, BlockCompressedOutputStream.class);
 		
-		final String[] mappings = ApplicationSetup.getProperty("files.mappings","").split("\\s*,\\s*");
-		for (String mapping : mappings)
+		String mappingValue = ApplicationSetup.getProperty("files.mappings", null);
+		if (mappingValue == null || mappingValue.length() == 0)
+			return;
+		for (String mapping : mappingValue.split("\\s*,\\s*"))
 		{
 			String[] parts = mapping.split(":");
+			if (parts.length != 3)
+			{
+				System.err.println("Invalid mapping: " + mapping);
+				continue;
+			}
 			try{
 				Class<? extends InputStream> inClz = parts[1].length() > 0 && ! parts[1].equals("null")
 						? ApplicationSetup.getClass(parts[1]).asSubclass(InputStream.class)
