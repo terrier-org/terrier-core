@@ -26,8 +26,10 @@
 package org.terrier.utility;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeTrue;
 
 import java.util.Properties;
+import java.io.File;
 
 import org.junit.Test;
 import org.terrier.tests.ApplicationSetupBasedTest;
@@ -43,6 +45,8 @@ public class TestMavenResolution extends ApplicationSetupBasedTest {
 	
 	@Test public void testImportSingleIndirectWithClassifier() throws Exception
 	{
+		//this test fails on Alpine linux on Docker.
+		assumeTrue(! new File("/etc/alpine-release").exists());
 		new MavenResolver().initialise("org.nd4j:nd4j-native-platform:0.8.0,org.nd4j:nd4j-native:0.8.0");
 		Class<?> clz = Thread.currentThread().getContextClassLoader().loadClass("org.nd4j.linalg.factory.Nd4j");
 		assertNotNull(clz);
