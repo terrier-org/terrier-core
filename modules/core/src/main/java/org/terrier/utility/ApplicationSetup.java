@@ -372,6 +372,7 @@ public class ApplicationSetup {
 		} catch (java.io.FileNotFoundException fnfe) {
 			System.out.println("WARNING: The file terrier.properties was not found at location "+propertiesFile);
 			System.out.println(" Assuming the value of terrier.home from the corresponding system property.");
+			//new Exception().printStackTrace();
 		} catch (java.io.IOException ioe) {
 			System.err.println(
 				"Input/Output Exception during initialization of ");
@@ -396,6 +397,7 @@ public class ApplicationSetup {
 		}
 		if (!commonPropertiesLoaded)
 			loadCommonProperties();
+		System.setProperty("terrier.applicationsetup.loaded", "true");
 	}
 	
 	public static Class<?> getClass(String name) throws ClassNotFoundException {
@@ -426,6 +428,7 @@ public class ApplicationSetup {
 		}
 		appProperties.putAll(properties);
 		loadCommonProperties();
+		System.setProperty("terrier.applicationsetup.loaded", "true");
 		System.err.println("TERRIER_HOME="+TERRIER_HOME);
 		System.err.println("TERRIER_ETC="+TERRIER_ETC);
 	}
