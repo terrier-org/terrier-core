@@ -231,6 +231,11 @@ public class CollectionStatistics implements Serializable,Writable {
 		public int run(String[] args) {
 			Index.setIndexLoadingProfileAsRetrieval(false);
 			Index i = IndexFactory.of(IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
+			if (i == null)
+			{
+				System.err.println("Index not found at " + ApplicationSetup.TERRIER_INDEX_PATH +","+ ApplicationSetup.TERRIER_INDEX_PREFIX);
+				return 1;
+			}
 			System.out.println("Collection statistics:");
 			System.out.println("number of indexed documents: " + i.getCollectionStatistics().getNumberOfDocuments());
 			System.out.println("size of vocabulary: " +  i.getCollectionStatistics().getNumberOfUniqueTerms());
