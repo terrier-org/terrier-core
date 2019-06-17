@@ -34,8 +34,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +61,7 @@ import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 import org.terrier.utility.Rounding;
+import org.terrier.utility.TerrierTimer;
 /**
  * Builds an inverted index. It optionally saves term-field information as well. 
  * <p><b>Algorithm:</b>
@@ -76,8 +80,9 @@ import org.terrier.utility.Rounding;
  * is to read a small enough number of terms into memory such that the occurrences of all those terms from
  * the direct file can fit in memory. On the other hand, the less terms that are read implies more iterations,
  * which is I/O expensive, as the entire direct file has to be read for every iteration.<br>
- * The two strategies are:
+ * The three strategies are:
  * <ul>
+ * <li>Read until an assumed amount of memory is consumed. The amount to consume is upto 80% of the free memory at startup.</li>
  * <li>Read a fixed number of terms on each iterations - this corresponds to the property
  *  <tt>invertedfile.processterms</tt></li>
  * <li>Read a fixed number of occurrences (pointers) on each iteration. The number of pointers can be determined
@@ -102,22 +107,6 @@ public class InvertedIndexBuilder {
 	/** The logger used */
 	protected static final Logger logger = LoggerFactory.getLogger(InvertedIndexBuilder.class);
 	
-	/**
-	 * A tuple containing a integer (termid) and a long pointer
-	 * @author Richard McCreadie
-	 *
-	 */
-	protected static class IntLongTuple
-	{
-		final int Terms;
-		final long Pointers;
-		IntLongTuple(int a, long b)
-		{
-			Terms = a;
-			Pointers = b;
-		}
-	}
-	
 	protected int fieldCount = 0;
 
 	/** Indicates whether field information is used. */
@@ -134,12 +123,14 @@ public class InvertedIndexBuilder {
 	protected long numberOfPointersPerIteration = Long.parseLong(
 		ApplicationSetup.getProperty("invertedfile.processpointers", "20000000"));
 	
+	
 	/**
 	 * The underlying bit file.
 	 */
-	//protected BitOut file;
 	protected AbstractPostingOutputStream file;
-	protected  CompressionConfiguration compressionConfig;
+	protected CompressionConfiguration compressionConfig;
+	
+	protected String lexScanClassName;
 
 	/**
 	 * contructor
@@ -159,9 +150,21 @@ public class InvertedIndexBuilder {
 			logger.error("creating PostingOutputStream for writing the inverted file : ", ioe);
 		}
 		lexiconOutputStream = LexiconOutputStream.class;
+	    
 	}
 
-
+	protected LexiconScanner getLexScanner(Iterator<Map.Entry<String,LexiconEntry>> lexStream) throws Exception
+	{
+		lexScanClassName = ApplicationSetup.getProperty("invertedfile.lexiconscanner", "pointers");
+		switch(lexScanClassName) {
+		case "pointers": return new PointerThresholdLexiconScanner(lexStream); 
+		case "terms": return new TermCountLexiconScanner(lexStream);
+		case "mem" : return new BasicMemSizeLexiconScanner(lexStream);
+		default: 
+			if (! lexScanClassName.contains(".")) lexScanClassName = "org.terrier.structures.indexing.classical."+lexScanClassName;
+			return ApplicationSetup.getClass(lexScanClassName).asSubclass(LexiconScanner.class).getConstructor(Iterator.class).newInstance(lexStream);
+		}
+	}
 
 	/**
 	 * Closes the underlying bit file.
@@ -179,31 +182,33 @@ public class InvertedIndexBuilder {
 	 */
 	@SuppressWarnings("unchecked")
 	public void createInvertedIndex() {
-		try {
-			Runtime r = Runtime.getRuntime();
-			logger.debug("creating inverted index");
-			final String LexiconFilename = index.getPath() + "/" + index.getPrefix() + ".lexicon";
-			
-			//final int _numberOfDocuments = index.getCollectionStatistics().getNumberOfDocuments();
 		
-			long assumedNumberOfPointers = Long.parseLong(index.getIndexProperty("num.Pointers", "0"));				
-			long _numberOfTokens = 0;
-			long _numberOfPointers = 0;
-			int _numberOfUniqueTerms = index.getCollectionStatistics().getNumberOfUniqueTerms();
-			
-			fieldCount = index.getIntIndexProperty("index.direct.fields.count", 0);
-			this.useFieldInformation = fieldCount > 0;
+		long assumedNumberOfPointers = Long.parseLong(index.getIndexProperty("num.Pointers", "0"));
+		TerrierTimer tt = new TerrierTimer("Inverting the direct index", assumedNumberOfPointers);
+		Runtime r = Runtime.getRuntime();
+		logger.debug("creating inverted index");
+		final String LexiconFilename = index.getPath() + "/" + index.getPrefix() + ".lexicon";
+		
+		
+		long _numberOfTokens = 0;
+		long _numberOfPointers = 0;
+		int _numberOfUniqueTerms = index.getCollectionStatistics().getNumberOfUniqueTerms();
+		
+		fieldCount = index.getIntIndexProperty("index.direct.fields.count", 0);
+		this.useFieldInformation = fieldCount > 0;
+		try {
 			Iterator<Map.Entry<String,LexiconEntry>> lexiconStream = 
 				(Iterator<Map.Entry<String,LexiconEntry>>)index.getIndexStructureInputStream("lexicon");
 		
+			LexiconScanner lexScanner = getLexScanner(lexiconStream);
+			
 			//A temporary file for storing the updated lexicon file, after
 			// creating the inverted file
 			DataOutputStream dos = new DataOutputStream(Files.writeFileStream(LexiconFilename.concat(".tmp2")));
 
 			//if the set number of terms to process is higher than the
 			// available,
-			if (processTerms > _numberOfUniqueTerms)
-				processTerms = (int) _numberOfUniqueTerms;
+
 			long startProcessingLexicon = 0;
 			long startTraversingDirectFile = 0;
 			long startWritingInvertedFile = 0;
@@ -211,30 +216,7 @@ public class InvertedIndexBuilder {
 			
 			int i=0; int iterationCounter = 0;
 			// generate a message guessing iteration counts
-			String iteration_message_suffix = null;
-			if (numberOfPointersPerIteration > 0 || processTerms ==0)
-			{
-				if (assumedNumberOfPointers > 0)
-				{
-					iteration_message_suffix = " of "
-						+ ((assumedNumberOfPointers % numberOfPointersPerIteration ==0 )
-							? (assumedNumberOfPointers/numberOfPointersPerIteration)
-							: 1+(assumedNumberOfPointers/numberOfPointersPerIteration))
-						+ " iterations";
-				}
-				else
-				{
-					iteration_message_suffix = "";
-				}
-			}
-			else
-			{
-				iteration_message_suffix = " of "
-					+ ((_numberOfUniqueTerms % processTerms ==0 ) 
-						? (_numberOfUniqueTerms/processTerms)
-						: 1+(_numberOfUniqueTerms/processTerms))
-					+ " iterations";
-			}
+
 
 			if (numberOfPointersPerIteration == 0)
 			{
@@ -244,66 +226,24 @@ public class InvertedIndexBuilder {
 			while(i<_numberOfUniqueTerms)
 			{
 				iterationCounter++;
-				TIntIntHashMap codesHashMap = null;
-				TIntArrayList[][] tmpStorage = null;
-				IntLongTuple results = null;
 				
-				logger.info("Iteration "+iterationCounter+iteration_message_suffix);
+				logger.info("Iteration "+iterationCounter);
 				
-				//traverse the lexicon looking to determine the first N() terms
-				//this can be done two ways: for the first X terms
-				//OR for the first Y pointers
-				//ie either N=X, or N=fn(Y)
-				
+				//traverse the lexicon looking to determine terms to process in this iteration				
 				startProcessingLexicon = System.currentTimeMillis();
 				
-				if (numberOfPointersPerIteration > 0)
-				{//we've been configured to run with a given number of pointers
-					if (logger.isDebugEnabled())
-						logger.debug("Scanning lexicon for "+ numberOfPointersPerIteration + " pointers");
+				final LexiconScanResult scanResult = lexScanner.scanLexicon();
+				numberOfPointersThisIteration = scanResult.pointers;
 				
-					/* this is less speed efficient, as we have no way to guess how many
-					 * terms it will take to fill the given number of pointers. 
-					 * The advantage is that memory consumption is more directly correlated
-					 * to number of pointers than number of terms, so when indexing tricky
-					 * collections, it is easier to find a number of pointers that can fit
-					 * in memory */
-					 
-					codesHashMap = new TIntIntHashMap();
-					ArrayList<TIntArrayList[]> tmpStorageStorage = new ArrayList<TIntArrayList[]>();
-					results = scanLexiconForPointers(
-						numberOfPointersPerIteration, 
-						lexiconStream,
-						codesHashMap,
-						tmpStorageStorage);
-					tmpStorage = (TIntArrayList[][]) tmpStorageStorage.toArray(
-						new TIntArrayList[0][0]);
-					
-				}
-				else//we're running with a given number of terms
-				{
-					if (logger.isDebugEnabled())
-						logger.debug("Scanning lexicon for " + processTerms+" terms");
-					tmpStorage = new TIntArrayList[processTerms][];
-					codesHashMap = new TIntIntHashMap(processTerms);
-					results = scanLexiconForTerms(
-						processTerms,
-						lexiconStream,
-						codesHashMap,
-						tmpStorage);
-				}
+				_numberOfPointers += scanResult.pointers;//no of pointers to process on this iteration
+				logger.debug("Selected " + scanResult.terms + " terms, " + scanResult.pointers + " pointers for this iteration");
 				
-				processTerms = results.Terms;//no of terms to process on this iteration
-				numberOfPointersThisIteration = results.Pointers;
-				_numberOfPointers += results.Pointers;//no of pointers to process on this iteration
-				logger.debug("Selected " + results.Terms + " terms, " + results.Pointers + " pointers for this iteration");
-				
-				if (results.Terms == 0)
+				if (scanResult.terms == 0)
 				{
 					logger.warn("No terms found this iteration - presuming end of iteration cycle (perhaps some lexicon terms are empty)");
 					break;
 				}
-				i += processTerms;
+				i += scanResult.terms;
 				
 				if (logger.isDebugEnabled())
 					logger.debug("time to process part of lexicon: " + ((System.currentTimeMillis()- startProcessingLexicon) / 1000D));
@@ -313,7 +253,7 @@ public class InvertedIndexBuilder {
 				
 				//Scan the direct file looking for those terms
 				startTraversingDirectFile = System.currentTimeMillis();
-				traverseDirectFile(codesHashMap, tmpStorage);
+				traverseDirectFile(scanResult.codesHashMap, scanResult.tmpStorage);
 				if (logger.isDebugEnabled())
 					logger.debug("time to traverse direct file: " + ((System.currentTimeMillis() - startTraversingDirectFile) / 1000D));
 				
@@ -321,10 +261,15 @@ public class InvertedIndexBuilder {
 	
 				//write the inverted file for this part of the lexicon, ie processTerms number of terms
 				startWritingInvertedFile = System.currentTimeMillis();
-				_numberOfTokens += writeInvertedFilePart(dos, tmpStorage, processTerms);
+				long[] rtr = writeInvertedFilePart(dos, scanResult.tmpStorage, scanResult.terms);
+				_numberOfTokens += rtr[0];
 				if (logger.isDebugEnabled())
+				{
 					logger.debug("time to write inverted file: "
 					 + ((System.currentTimeMillis()- startWritingInvertedFile) / 1000D));
+					logger.debug("temporary memory used: "
+							 + FileUtils.byteCountToDisplaySize(rtr[1]));
+				}
 				
 							
 				displayMemoryUsage(r);
@@ -339,10 +284,9 @@ public class InvertedIndexBuilder {
 							+ numberOfPointersThisIteration);	
 				}
 				
-				
-				tmpStorage  = null; 
-				codesHashMap.clear(); 
-				codesHashMap = null;
+				scanResult.codesHashMap.clear();
+				scanResult.tmpStorage = null;
+				tt.setDone(_numberOfPointers);
 			}
 			
 			
@@ -352,11 +296,6 @@ public class InvertedIndexBuilder {
 			IndexUtil.close(lexiconStream);
 			dos.close();
 			
-//			this.numberOfDocuments = _numberOfDocuments;
-//			this.numberOfTokens = _numberOfTokens;
-//			this.numberOfUniqueTerms = _numberOfUniqueTerms;
-//			this.numberOfPointers = _numberOfPointers;
-
 			//finalising the lexicon file with the updated information
 			//on the frequencies and the offsets
 			//reading the original lexicon
@@ -392,10 +331,13 @@ public class InvertedIndexBuilder {
 			index.setIndexProperty("num.Tokens", ""+_numberOfTokens);
 			index.setIndexProperty("num.Pointers", ""+_numberOfPointers);
 			index.flush();
+			tt.finished();
 			System.gc();
 			
-		} catch (IOException ioe) {
-			logger.error("IOException occured during creating the inverted file. Stack trace follows.", ioe);
+		} catch (Exception ioe) {
+			logger.error("Exception occured during creating the inverted file. Stack trace follows.", ioe);
+		} finally {
+			tt.finished();
 		}
 	}
 	
@@ -408,101 +350,200 @@ public class InvertedIndexBuilder {
 		return tmpArray;
 	}
 	
-	/** Iterates through the lexicon, until it has reached the given number of pointers
-	  * @param PointersToProcess Number of pointers to stop reading the lexicon after
-	  * @param lexiconStream the lexicon input stream to read 
-	  * @param codesHashMap
-	  * @param tmpStorageStorage
-	  * @return IntLongTuple number of terms, number of pointers
-	  */
-	protected IntLongTuple scanLexiconForPointers(
-		final long PointersToProcess, 
-		final Iterator<Map.Entry<String,LexiconEntry>> lexiconStream, 
-		final TIntIntHashMap codesHashMap,
-		final ArrayList<TIntArrayList[]> tmpStorageStorage)
-		throws IOException
+	
+	class LexiconScanResult 
 	{
-		int _processTerms = 0;	
-		long numberOfPointersThisIteration = 0;
-		int j=0; //counter of loop iterations
-		while(numberOfPointersThisIteration < PointersToProcess) {
+		int terms;
+		long pointers;
+		TIntIntHashMap codesHashMap;
+		TIntArrayList[][] tmpStorage;
 		
-			if (! lexiconStream.hasNext())
-				break;
-			
-			Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
-			LexiconEntry le = lee.getValue();
-			
-			_processTerms++;			
-			numberOfPointersThisIteration += le.getDocumentFrequency();		
-			tmpStorageStorage.add(createPointerForTerm(le));
-			
-			//the class TIntIntHashMap return zero when you look up for a
-			//the value of a key that does not exist in the hash map.
-			//For this reason, the values that will be inserted in the 
-			//hash map are increased by one. 
-			codesHashMap.put(le.getTermId(), j + 1);
-			
-			//increment counter
-			j++;
+		LexiconScanResult(int terms, long pointers,
+				TIntIntHashMap codesHashMap, TIntArrayList[][] tmpStorage) {
+			super();
+			this.terms = terms;
+			this.pointers = pointers;
+			this.codesHashMap = codesHashMap;
+			this.tmpStorage = tmpStorage;
 		}
-		if (logger.isDebugEnabled())
-			logger.debug(
-					numberOfPointersThisIteration + " pointers == "+
-					_processTerms +" terms");
-		return new IntLongTuple(_processTerms, numberOfPointersThisIteration);
+		
+		LexiconScanResult(int terms, long pointers,
+				TIntIntHashMap codesHashMap, List<TIntArrayList[]> tmpStorageStorage) {
+			this(terms, pointers, codesHashMap, (TIntArrayList[][]) tmpStorageStorage.toArray(
+					new TIntArrayList[0][0]));
+		}
+		
+		@Override
+		public String toString()
+		{
+			return terms + " terms" + " " + pointers;
+		}
+
 	}
 	
-	
-	/** Iterates through the lexicon, until it has reached the given number of terms
-	  * @param _processTerms Number of terms to stop reading the lexicon after
-	  * @param lexiconStream the lexicon input stream to read 
-	  * @param codesHashMap mapping of termids to which offset in the storage array for terms to be processed this iteration
-	  * @param tmpStorage place to put postings for this iteration
-	  * @return IntLongTuple number of terms, number of pointers
-	  */
-	protected IntLongTuple scanLexiconForTerms(
-		final int _processTerms, 
-		final Iterator<Map.Entry<String,LexiconEntry>> lexiconStream, 
-		final TIntIntHashMap codesHashMap,
-		TIntArrayList[][] tmpStorage)
-		throws IOException
+	abstract class LexiconScanner
 	{
-		int j = 0; 
+		Iterator<Map.Entry<String,LexiconEntry>> lexiconStream;
+		LexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexIn){
+			this.lexiconStream = lexIn;
+		}
 		
-		long numberOfPointersThisIteration = 0;
-		for (; j < _processTerms; j++) {
+		abstract LexiconScanResult scanLexicon();
+	}
+	
+	class BasicMemSizeLexiconScanner extends LexiconScanner
+	{
+		final Runtime runtime = Runtime.getRuntime();
+		long memThreshold;
 		
-			if (! lexiconStream.hasNext())
-				break;
-		
-			Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
-			LexiconEntry le = lee.getValue();
-		
-			TIntArrayList[] tmpArray = new TIntArrayList[2 + fieldCount];
-			final int tmpNT = le.getDocumentFrequency();
-			for (int i=0;i<2+fieldCount;i++)
+		public BasicMemSizeLexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexiconStream)
+		{
+			super(lexiconStream);
+			
+			long free;
+			if (runtime.maxMemory() == Long.MAX_VALUE)
 			{
-				tmpArray[i] = new TIntArrayList(tmpNT);
+				free = runtime.freeMemory() - ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS;
 			}
-			
-			numberOfPointersThisIteration += tmpNT;
-			
-			tmpStorage[j] = tmpArray;
-			
-			
-			//the class TIntIntHashMap return zero when you look up for a
-			//the value of a key that does not exist in the hash map.
-			//For this reason, the values that will be inserted in the 
-			//hash map are increased by one. 
-			codesHashMap.put(le.getTermId(), j + 1);
+			else
+			{
+				long localAllocated =  runtime.totalMemory()-runtime.freeMemory();
+				logger.debug("Memory: already allocated in use is"  + FileUtils.byteCountToDisplaySize(localAllocated));
+				free = runtime.maxMemory() - localAllocated - ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS;
+			}
+			//we need at least 5MB free
+			assert free > 5 * 1024*1024;
+			memThreshold = (long) (0.8f * free);
+			logger.info("Memory threshold is " + FileUtils.byteCountToDisplaySize(memThreshold));
 		}
-		if (logger.isDebugEnabled())
-			logger.debug(
-				numberOfPointersThisIteration + " pointers == "+
-				j +" terms");
-		return new IntLongTuple(j, numberOfPointersThisIteration);
+		
+		
+		
+		@Override
+		LexiconScanResult scanLexicon() {
+			
+			long projectedPointerCount = (int) (memThreshold / ((long) (2l + fieldCount) * Integer.BYTES));
+			logger.debug("Scanning lexicon for "+ memThreshold + " memory -- upto " + projectedPointerCount + " pointers");
+			long numberOfPointersThisIteration = 0;
+			TIntIntHashMap codesHashMap = new TIntIntHashMap();
+			List<TIntArrayList[]> tmpStorageStorage = new ArrayList<TIntArrayList[]>();
+			
+			int j=0;
+			while (lexiconStream.hasNext())
+			{
+				Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
+				LexiconEntry le = lee.getValue();
+				//the class TIntIntHashMap return zero when you look up for a
+				//the value of a key that does not exist in the hash map.
+				//For this reason, the values that will be inserted in the 
+				//hash map are increased by one. 
+				codesHashMap.put(le.getTermId(), j + 1);
+				tmpStorageStorage.add(createPointerForTerm(le));
+				numberOfPointersThisIteration += le.getDocumentFrequency();				
+				j++;
+				if (numberOfPointersThisIteration > projectedPointerCount)
+					break;
+			}
+			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
+			if (logger.isDebugEnabled())
+				logger.debug(memThreshold + " " + memThreshold + " reached with " + rtr);
+			return rtr;
+		}
 	}
+	
+	class PointerThresholdLexiconScanner extends LexiconScanner
+	{
+
+		public PointerThresholdLexiconScanner(
+				Iterator<Entry<String, LexiconEntry>> lexIn) {
+			super(lexIn);
+		}
+		
+		long PointersToProcess = numberOfPointersPerIteration;
+
+		@Override
+		LexiconScanResult scanLexicon() {
+			
+			logger.debug("Scanning lexicon for "+ PointersToProcess + " pointers");
+			TIntIntHashMap codesHashMap = new TIntIntHashMap();
+			ArrayList<TIntArrayList[]> tmpStorageStorage = new ArrayList<TIntArrayList[]>();
+			
+			int _processTerms = 0;	
+			long numberOfPointersThisIteration = 0;
+			int j=0; //counter of loop iterations
+			while(numberOfPointersThisIteration < PointersToProcess) {
+			
+				if (! lexiconStream.hasNext())
+					break;
+				
+				Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
+				LexiconEntry le = lee.getValue();
+				
+				_processTerms++;			
+				numberOfPointersThisIteration += le.getDocumentFrequency();		
+				tmpStorageStorage.add(createPointerForTerm(le));
+				
+				//the class TIntIntHashMap return zero when you look up for a
+				//the value of a key that does not exist in the hash map.
+				//For this reason, the values that will be inserted in the 
+				//hash map are increased by one. 
+				codesHashMap.put(le.getTermId(), j + 1);
+				
+				//increment counter
+				j++;
+			}
+			LexiconScanResult rtr = new LexiconScanResult(_processTerms, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
+			logger.debug(rtr.toString());					
+			return rtr;
+		}
+		
+	}
+	
+	class TermCountLexiconScanner extends LexiconScanner
+	{
+		public TermCountLexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexiconStream)
+		{
+			super(lexiconStream);
+		}
+		
+		int _processTerms = processTerms;
+		
+		@Override
+		LexiconScanResult scanLexicon() {
+			
+			TIntIntHashMap codesHashMap = new TIntIntHashMap();
+			TIntArrayList[][] tmpStorage = new TIntArrayList[_processTerms][];
+			
+			logger.debug("Scanning lexicon for "+ _processTerms + " terms");
+
+			long numberOfPointersThisIteration = 0;
+			int j=0;
+			for (; j < _processTerms; j++) {
+				
+				if (! lexiconStream.hasNext())
+					break;
+			
+				Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
+				LexiconEntry le = lee.getValue();				
+				numberOfPointersThisIteration += le.getDocumentFrequency();
+				
+				tmpStorage[j] = createPointerForTerm(le);
+				
+				
+				//the class TIntIntHashMap return zero when you look up for a
+				//the value of a key that does not exist in the hash map.
+				//For this reason, the values that will be inserted in the 
+				//hash map are increased by one. 
+				codesHashMap.put(le.getTermId(), j + 1);
+			}
+			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorage);
+			logger.debug(rtr.toString());
+			return rtr;
+			
+		}
+		
+	}
+
 
 	/**
 	 * Traverses the direct index and creates the inverted index entries 
@@ -521,7 +562,11 @@ public class InvertedIndexBuilder {
 		int docid = 0; //a document counter;
 		final boolean _useFieldInformation = this.useFieldInformation;
 		
+		assert codesHashMap.size() > 0;
+		//int minTermId = StaTools.min(codesHashMap.keys()) +1;
+		
 		IterablePosting ip = null;
+		
 		while((ip = directInputStream.getNextPostings()) != null)
 		{
 			docid += directInputStream.getEntriesSkipped();
@@ -531,7 +576,10 @@ public class InvertedIndexBuilder {
 			int termid;
 			FieldPosting fp = _useFieldInformation ? (FieldPosting) ip : null;
 			
-			//System.err.println("docid="+docid + " " + directInputStream.getCurrentPointer().toString());
+			//use skipping to possibly avoid DF decompression
+//			termid = ip.next(minTermId-1);
+//			if (termid == IterablePosting.EOL)
+//				continue;
 			
 			while( (termid = ip.next()) != IterablePosting.EOL)
 			{
@@ -569,8 +617,8 @@ public class InvertedIndexBuilder {
 	 *  This data is consumed by this method - once this method has been called, all
 	 *  the data in tmpStorage will be destroyed.
 	 * @param _processTerms The number of terms being processed in this iteration.
-	 * @return the number of tokens processed in this iteration */
-	protected long writeInvertedFilePart(
+	 * @return the number of tokens processed in this iteration and the number of temporary bytes of RAM required */
+	protected long[] writeInvertedFilePart(
 			final DataOutputStream dos, 
 			TIntArrayList[][] tmpStorage, 
 			final int _processTerms)
@@ -583,7 +631,7 @@ public class InvertedIndexBuilder {
 			int frequency; long numTokens = 0;
 			
 			//InMemoryIterablePosting mip = new InMemoryIterablePosting();
-			
+			long size = 0;
 			for (int j = 0; j < _processTerms; j++) {
 				
 				frequency = 0; //the term frequency
@@ -597,7 +645,8 @@ public class InvertedIndexBuilder {
 					tmpFields[k] = tmpStorage[j][k+2].toNativeArray();
 				}
 				tmpStorage[j] = null;
-								
+				size += ids.length * (2 + fieldCount) * 4;
+				
 				p.setOffset(file.getOffset());
 				p.setNumberOfEntries(ids.length);
 				p.write(dos);
@@ -615,98 +664,10 @@ public class InvertedIndexBuilder {
 
 				numTokens += frequency;				
 			}
-			return numTokens;
+			return new long[]{numTokens, size};
 		}
 	
 	
-//	protected long writeInvertedFilePart(
-//		final DataOutputStream dos, 
-//		TIntArrayList[][] tmpStorage, 
-//		final int _processTerms)
-//		throws IOException
-//	{
-//		BitIndexPointer p = new SimpleBitIndexPointer();
-//		//write to the inverted file. We should note that the lexicon 
-//		//should be updated with the start bit and byte offset for this
-//		//set of postings.
-//		int frequency; long numTokens = 0;
-//		for (int j = 0; j < _processTerms; j++) {
-//
-//			
-//			frequency = 0; //the term frequency
-//			
-//			final int[][] tmpMatrix = new int[2+fieldCount][]; 
-//			for(int k=0;k<2+fieldCount;k++)
-//			{
-//				tmpMatrix[k] = tmpStorage[j][k].toNativeArray();
-//			}
-//			tmpStorage[j] = null;
-//			
-//			final int[] tmpMatrix0 = tmpMatrix[0];
-//			final int[] tmpMatrix1 = tmpMatrix[1];
-//			
-//			p.setOffset(file.getByteOffset(), file.getBitOffset());
-//			p.setNumberOfEntries(tmpMatrix0.length);
-//			p.write(dos);
-//
-//			//THIS IS ALWAYS AN ERROR
-//			/*
-//			if (tmpMatrix[0].length == 0)
-//			{
-//				logger.error("Term had no postings - is this right?");
-//				//This term has no postings
-//				continue;
-//			}*/
-//			
-//			//write the first entry
-//			int docid;
-//			file.writeGamma((docid = tmpMatrix0[0]) + 1);
-//			int termfreq = tmpMatrix1[0];
-//			frequency += termfreq;
-//			file.writeUnary(termfreq);
-//			
-//			if (useFieldInformation)
-//			{
-//				for(int fi = 0; fi < fieldCount;fi++)
-//				{
-//					file.writeUnary(tmpMatrix[2+fi][0]+1);
-//				}
-//				for (int k = 1; k < tmpMatrix0.length; k++) {
-//					file.writeGamma(tmpMatrix0[k] - docid);
-//					docid = tmpMatrix0[k];
-//					termfreq	 = tmpMatrix1[k];
-//					frequency += termfreq;
-//					file.writeUnary(termfreq);
-//					for(int fi = 0; fi < fieldCount;fi++)
-//					{
-//						file.writeUnary(tmpMatrix[2+fi][k]+1);
-//					}
-//				}
-//			}
-//			else
-//			{
-//				for (int k = 1; k < tmpMatrix0.length; k++) {
-//					file.writeGamma(tmpMatrix0[k] - docid);
-//					docid = tmpMatrix0[k];
-//					termfreq = tmpMatrix1[k];
-//					frequency += termfreq;
-//					file.writeUnary(termfreq);
-//				}
-//			}
-//			
-//			//long endOffset = file.getByteOffset();
-//			//byte endBitOffset = file.getBitOffset();
-//			//endBitOffset--;
-//			//if (endBitOffset < 0 && endOffset > 0) {
-//			//	endBitOffset = 7;
-//			//	endOffset--;
-//			//}
-//			numTokens += frequency;
-//			//dos.writeInt(frequency);
-//			
-//		}
-//		return numTokens;
-//	}
 	
 	/**
 	 * The number of terms for which the inverted file 
