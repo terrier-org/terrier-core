@@ -1,6 +1,29 @@
 What's New in Terrier
 =====================
 
+Terrier 5.2 - xx/xx/2019
+------------------------
+Minor update with bug-fixes.
+
+### Indexing
+ - [#20](https://github.com/terrier-org/terrier-core/issues/20) batchindexing should report total time taken
+ - [#19](https://github.com/terrier-org/terrier-core/issues/19) MultiFileCollection should warn for duplicate files in collection.spec
+ - [#23](https://github.com/terrier-org/terrier-core/issues/23) indexstats should report fields, blocks
+
+### Retrieval
+ - bump jtreceval for Apline Docker container compatibility
+ - Ensure that different words with identical stems are correctly conflated
+ - make the query parser factory method static
+ - LabelSet should work if given a non-featured result set, particularly copying of metadata
+ - [#21](https://github.com/terrier-org/terrier-core/issues/21)  batchevaluate should not override existing .eval files
+
+### Other
+ - [#30](https://github.com/terrier-org/terrier-core/issues/30) testImportSingleIndirectWithClassifier fails on Alpine linux
+ - [#27](https://github.com/terrier-org/terrier-core/issues/27) Files could obtain compression filter stream mappings from a property. This allows TREC Disk 1, 2, 4 & 5 to be indexed without recompression - see http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1%262
+ - [#26](https://github.com/terrier-org/terrier-core/issues/26) Cannot load a TerrierApplicationPlugin from a Maven module
+ - [#25](https://github.com/terrier-org/terrier-core/issues/25) bump fastutil to 8.2.2
+
+
 Terrier 5.1 - 14/01/2019
 ------------------------
 Minor update with bug-fixes, improving features introduced in 5.0. New features include enhancements to the query language, including fuzzy term matching.
@@ -24,7 +47,7 @@ Minor update with bug-fixes, improving features introduced in 5.0. New features 
  - [TR-519](http://terrier.org/issues/browse/TR-519) getId() should return EOL in (AND|Field|Block|BlockField)IterablePosting after EOL (Nicola Tonellotto, ISTI-CNR)
  - [TR-527](http://terrier.org/issues/browse/TR-527) ANDIterablePosting and descendents should support next(int)
  - [TR-528](http://terrier.org/issues/browse/TR-528) Each MatchingOp can have more than one tag
- - [TR-529](http://terrier.org/issues/browse/TR-529) Clone support for matchops 
+ - [TR-529](http://terrier.org/issues/browse/TR-529) Clone support for matchops
  - [TR-530](http://terrier.org/issues/browse/TR-530) Refactor FatScoringMatching and FatFeaturedScoringMatching to make easier subclasses
  - [TR-532](http://terrier.org/issues/browse/TR-532) interactive query formulation errors results in interactive ending
  - [TR-533](http://terrier.org/issues/browse/TR-533) control values are lowercased
