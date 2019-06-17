@@ -4,7 +4,7 @@ Configuring Terrier
 Configuring Overview
 --------------------
 
-Terrier is configured overall by a few files, all in the `etc/` directory. The most central files are `terrier.properties` and `terrier-log.xml`. In `terrier.properties`, you can specify any of the various properties that are defined in Terrier. The [Properties](properties.md) documentation page lists the most used properties that you need to configure Terrier, while the [javadoc](javadoc/) for any class lists the properties that directly affect the class. The default `terrier.properties` file is given below:
+Terrier is configured overall by a few files, all in the `etc/` directory. The most central files are `terrier.properties` and `terrier-log.xml`. In `terrier.properties`, you can specify any of the various properties that are defined in Terrier. Often, the [javadoc](javadoc/) for any class lists the properties that directly affect the class. The default `terrier.properties` file is given below:
 
     #default controls for query expansion
 	querying.processes=terrierql:TerrierQLParser,parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,matchopql:MatchingOpQLParser,applypipeline:ApplyTermPipeline,localmatching:LocalManager$ApplyLocalMatching,qe:QueryExpansion,filters:LocalManager$PostFilterProcess
