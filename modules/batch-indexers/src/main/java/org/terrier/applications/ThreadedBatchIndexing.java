@@ -132,13 +132,34 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					return thisPrefix;
 				}	
 			};
-			BinaryOperator<String> merger = new BinaryOperator<String>()
-			{
-				@Override
-				public String apply(String t, String u) {
+			BinaryOperator<String> merger = (String t, String u) -> {
+				try {			
+					if (t == null && u == null)
+						return null;
+					if (t == null)
+						return u;
+					if (u == null)
+						return t;
 					Index.setIndexLoadingProfileAsRetrieval(false);
 					IndexOnDisk src1 = IndexOnDisk.createIndex(path, t);
 					IndexOnDisk src2 = IndexOnDisk.createIndex(path, u);
+					int doc1 = src1.getCollectionStatistics().getNumberOfDocuments();
+					int doc2 = src2.getCollectionStatistics().getNumberOfDocuments();
+					if (doc1 > 0 && doc2 == 0)
+					{
+						logger.warn("Unusually, index " + u + " did not contain any documents");
+						IndexUtil.deleteIndex(path, u);
+						return t;
+					} else if (doc1 == 0 && doc2 > 0 ) {
+						logger.warn("Unusually, index " + t + " did not contain any documents");
+						IndexUtil.deleteIndex(path, t);
+						return u;
+					} else if (doc1 == 0 && doc2 == 0) {
+						logger.warn("Very unusually, index " + t + " and index " + u + " did not contain any documents");
+						IndexUtil.deleteIndex(path, t);
+						IndexUtil.deleteIndex(path, u);
+						return null;
+					}
 					String thisPrefix = prefix + "_merge"+mergeCounter.getAndIncrement();
 					IndexOnDisk newIndex = IndexOnDisk.createNewIndex(path, thisPrefix);
 					if (blocks)
@@ -146,25 +167,28 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					else
 						new StructureMerger(src1, src2, newIndex).mergeStructures();
 					
-					try {
-						src1.close();
-						src2.close();
-						newIndex.close();
-						//TODO: could index deletion occur in parallel
-						IndexUtil.deleteIndex(path, t);
-						IndexUtil.deleteIndex(path, u);
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
+					src1.close();
+					src2.close();
+					newIndex.close();
+					//TODO: could index deletion occur in parallel
+					IndexUtil.deleteIndex(path, t);
+					IndexUtil.deleteIndex(path, u);
 					return thisPrefix;
-				}	
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+					
 			};
 			
 			ForkJoinPool forkPool = this.maxThreads == -1 
 					? ForkJoinPool.commonPool()
 					: new ForkJoinPool(this.maxThreads);
 			String tmpPrefix = forkPool.submit(() -> partitioned.parallelStream().map(indexer).reduce(merger).get()).get();
-			
+			if (tmpPrefix == null)
+			{
+				logger.warn("No index created -- all partitions were empty");
+				return;
+			}
 			IndexUtil.renameIndex(path, tmpPrefix, path, prefix);
 			logger.info("Parallel indexing completed after " 
 				+ (System.currentTimeMillis() - starttime)/1000 + " seconds, using " 
