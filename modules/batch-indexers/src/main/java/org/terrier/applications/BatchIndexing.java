@@ -58,7 +58,7 @@ public abstract class BatchIndexing {
 					.desc("use the single-pass indexer")
 					.build());
 			options.addOption(Option.builder("p")
-					.argName("threads")
+					.argName("parallel")
 					.longOpt("parallel")
 					.optionalArg(true)
 					.desc("use multiple threads for the indexer, and optionally specify the number of threads")
