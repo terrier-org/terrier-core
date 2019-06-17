@@ -30,6 +30,14 @@
 			<excludes>
 				<exclude>assemblies/target/terrier-project-*-bin.tar.gz</exclude>
 				<exclude>assemblies/target/terrier-project-*-bin.zip</exclude>
+				<exclude>assemblies/target/terrier-project-*-*-bin.tar.gz</exclude>
+                                <exclude>assemblies/target/terrier-project-*-*-bin.zip</exclude>
+                                <exclude>assemblies/target/terrier-project-*-src.tar.gz</exclude>
+                                <exclude>assemblies/target/terrier-project-*-src.zip</exclude>
+                                <exclude>assemblies/target/terrier-project-*-*-src.tar.gz</exclude>
+                                <exclude>assemblies/target/terrier-project-*-*-src.zip</exclude>
+				<exclude>assemblies/bin/target/*</exclude>
+				
 				<exclude>*/target/classes</exclude>
 				<exclude>*/target/test-classes</exclude>
 				<exclude>*/target/javadoc-bundle-options</exclude>
