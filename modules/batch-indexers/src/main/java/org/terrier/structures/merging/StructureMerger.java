@@ -631,6 +631,7 @@ public class StructureMerger {
 		final boolean bothInverted = srcIndex1.hasIndexStructure("inverted") && srcIndex2.hasIndexStructure("inverted");
 		final boolean bothDirect = srcIndex1.hasIndexStructure("direct") && srcIndex2.hasIndexStructure("direct");
 		final boolean bothLexicon = srcIndex1.hasIndexStructure("lexicon") && srcIndex2.hasIndexStructure("lexicon");
+		final boolean bothDocument = srcIndex1.hasIndexStructure("document") && srcIndex2.hasIndexStructure("document");
 		final long t1 = System.currentTimeMillis();
 		keepTermCodeMap = bothDirect;
 		long t2 = 0;
@@ -662,12 +663,16 @@ public class StructureMerger {
 		}
 		t3 = System.currentTimeMillis();
 
-		if (! bothDirect || ApplicationSetup.getProperty("merge.direct","true").equals("false"))
+		if ((! bothDirect || ApplicationSetup.getProperty("merge.direct","true").equals("false")) && bothDocument)
 		{	
 			mergeDocumentIndexFiles();
 			t4 = System.currentTimeMillis();
 			logger.info("merged documentindex files in " + ((t4-t3)/1000.0d));
 		} 
+		else if (! bothDocument) {
+			t2 = System.currentTimeMillis();
+			throw new IllegalArgumentException("No document - no merging of document or meta structures took place");
+		}
 		else 
 		{
 			mergeDirectFiles();	
