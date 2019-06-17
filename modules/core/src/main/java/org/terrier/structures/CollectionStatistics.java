@@ -31,8 +31,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.hadoop.io.Writable;
-import org.terrier.applications.CLITool;
+import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.querying.IndexRef;
 import org.terrier.utility.ApplicationSetup;
 
@@ -223,12 +224,12 @@ public class CollectionStatistics implements Serializable,Writable {
 		}
 	}
 	
-	public static class Command extends CLITool
+	public static class Command extends CLIParsedCLITool
 	{
 
 		@SuppressWarnings("deprecation")
 		@Override
-		public int run(String[] args) {
+		public int run(CommandLine line) throws Exception {
 			Index.setIndexLoadingProfileAsRetrieval(false);
 			Index i = IndexFactory.of(IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
 			if (i == null)
@@ -270,6 +271,8 @@ public class CollectionStatistics implements Serializable,Writable {
 		public String helpsummary() {
 			return "display the statistics of an index";
 		}
+
+		
 		
 	}
 
