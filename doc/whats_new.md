@@ -3,12 +3,13 @@ What's New in Terrier
 
 Terrier 5.2 - xx/xx/2019
 ------------------------
-Minor update with bug-fixes.
+Minor update with bug-fixes and improvements. In particular, the classical indexer has been shown some love, and inverted index building should be faster by default.
 
 ### Indexing
  - [#20](https://github.com/terrier-org/terrier-core/issues/20) batchindexing should report total time taken
  - [#19](https://github.com/terrier-org/terrier-core/issues/19) MultiFileCollection should warn for duplicate files in collection.spec
  - [#23](https://github.com/terrier-org/terrier-core/issues/23) indexstats should report fields, blocks
+ - [#32](https://github.com/terrier-org/terrier-core/issues/32) (Block)InvertedIndexBuilder should try to use memory more aggressively
 
 ### Retrieval
  - bump jtreceval for Apline Docker container compatibility

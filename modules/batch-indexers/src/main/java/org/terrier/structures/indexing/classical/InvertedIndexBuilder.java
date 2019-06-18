@@ -408,7 +408,7 @@ public class InvertedIndexBuilder {
 			else
 			{
 				long localAllocated =  runtime.totalMemory()-runtime.freeMemory();
-				logger.debug("Memory: already allocated in use is"  + FileUtils.byteCountToDisplaySize(localAllocated));
+				logger.debug("Memory: already allocated in use is " + FileUtils.byteCountToDisplaySize(localAllocated));
 				free = runtime.maxMemory() - localAllocated - ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS;
 			}
 			//we need at least 5MB free
@@ -427,7 +427,7 @@ public class InvertedIndexBuilder {
 			long numberOfPointersThisIteration = 0;
 			TIntIntHashMap codesHashMap = new TIntIntHashMap();
 			List<TIntArrayList[]> tmpStorageStorage = new ArrayList<TIntArrayList[]>();
-			
+			long cumulativeSize = 0;
 			int j=0;
 			while (lexiconStream.hasNext())
 			{
@@ -441,12 +441,17 @@ public class InvertedIndexBuilder {
 				tmpStorageStorage.add(createPointerForTerm(le));
 				numberOfPointersThisIteration += le.getDocumentFrequency();				
 				j++;
+				cumulativeSize += 
+						le.getDocumentFrequency() * (2l + fieldCount) * Integer.BYTES;  //pointer storage
+				
 				if (numberOfPointersThisIteration > projectedPointerCount)
 					break;
 			}
 			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
 			if (logger.isDebugEnabled())
-				logger.debug(memThreshold + " " + memThreshold + " reached with " + rtr);
+				logger.debug(memThreshold + " " + FileUtils.byteCountToDisplaySize(memThreshold) 
+						+ " reached with " + rtr + ", actually required " 
+						+ FileUtils.byteCountToDisplaySize(cumulativeSize));
 			return rtr;
 		}
 	}

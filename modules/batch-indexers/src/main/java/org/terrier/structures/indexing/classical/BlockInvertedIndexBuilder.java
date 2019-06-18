@@ -328,8 +328,9 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
 			
 			logger.debug(
-					memThreshold + " " + memThreshold + " reached for "+
-					rtr.toString() + " and " + blocks + " blocks");
+					memThreshold + " " + FileUtils.byteCountToDisplaySize(memThreshold) + " reached at "
+					+ FileUtils.byteCountToDisplaySize(cumulativeSize) +" for "
+					+ rtr.toString() + " and " + blocks + " blocks");
 			return rtr;
 		}
 		
@@ -391,18 +392,6 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 						for(int fi = 0; fi < fieldCount; fi++)
 							tmpMatrix[2+fi].add(tff[fi]);
 					}
-//					blockfreq = blockfreqs[k];
-//					tmpMatrix[fieldCount+2].add(blockfreq);
-//					blockidstart = 0;
-//					if (k > 0) {
-//						for (int l = 0; l < k; l++)
-//							blockidstart += blockfreqs[l];
-//					}
-//					blockidend = blockidstart + blockfreq;
-//
-//					for (int l = blockidstart; l < blockidend; l++) {
-//						tmpMatrix[fieldCount+3].add(blockids[l]);
-//					}
 					int[] positions = bp.getPositions();
 					tmpMatrix[fieldCount+2].add(positions.length);
 					for(int pos : positions)
@@ -481,97 +470,4 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			}
 			return new long[]{numTokens,size};
 		}
-	
-	
-//	@Override
-//	protected long writeInvertedFilePart(final DataOutputStream dos,
-//			TIntArrayList[][] tmpStorage, final int processTerms)
-//			throws IOException
-//	{
-//		// write to the inverted file. We should note that the lexicon
-//		// file should be updated as well with the term frequency and
-//		// the startOffset pointer
-//		
-//		int frequency;
-//		long numTokens = 0;
-//		BitIndexPointer p = new SimpleBitIndexPointer();
-//		
-//		for (int j = 0; j < processTerms; j++) {
-//			frequency = 0; // the term frequency
-//			
-//			final int[][] tmpMatrix = new int[4+fieldCount][];
-//			for(int k=0;k<4+fieldCount;k++)
-//			{
-//				tmpMatrix[k] = tmpStorage[j][k].toNativeArray();
-//			}
-//			tmpStorage[j] = null;
-//			final int[] tmpMatrix_docids = tmpMatrix[0];
-//			final int[] tmpMatrix_freqs = tmpMatrix[1];
-//			final int[] tmpMatrix_blockFreq = tmpMatrix[2+fieldCount];
-//			final int[] tmpMatrix_blockIds = tmpMatrix[3+fieldCount];
-//			
-//			p.setOffset(file.getByteOffset(), file.getBitOffset());
-//			p.setNumberOfEntries(tmpMatrix_docids.length);
-//			p.write(dos);
-//
-//			// write the first entry
-//			int docid = tmpMatrix_docids[0];
-//			file.writeGamma(docid + 1);
-//			int termfreq = tmpMatrix_freqs[0];
-//			frequency += termfreq;
-//			file.writeUnary(termfreq);
-//			
-//			if (fieldCount > 0)
-//			{	
-//				for(int fi = 0; fi < fieldCount;fi++)
-//				{
-//					file.writeUnary(tmpMatrix[2+fi][0]+1);
-//				}
-//			}
-//			
-//			int blockfreq = tmpMatrix_blockFreq[0];
-//			file.writeUnary(blockfreq + 1);
-//			int blockid;
-//			if (blockfreq != 0)
-//			{
-//				blockid = tmpMatrix_blockIds[0];
-//				file.writeGamma(blockid + 1);
-//				for (int l = 1; l < blockfreq; l++) {
-//					file.writeGamma(tmpMatrix_blockIds[l] - blockid);
-//					blockid = tmpMatrix_blockIds[l];
-//				}
-//			}
-//			int blockindex = blockfreq;
-//			for (int k = 1; k < tmpMatrix_docids.length; k++) {
-//				file.writeGamma(tmpMatrix_docids[k] - docid);
-//				docid = tmpMatrix_docids[k];
-//				termfreq = tmpMatrix_freqs[k];
-//				frequency += termfreq;
-//				file.writeUnary(termfreq);
-//				if (fieldCount > 0)
-//				{
-//					for(int fi = 0; fi < fieldCount;fi++)
-//					{
-//						file.writeUnary(tmpMatrix[2+fi][k]+1);
-//					}
-//				}
-//				blockfreq = tmpMatrix_blockFreq[k];
-//				file.writeUnary(blockfreq + 1);
-//				if (blockfreq == 0)
-//					continue;
-//				blockid = tmpMatrix_blockIds[blockindex];
-//				file.writeGamma(blockid + 1);
-//				blockindex++;
-//				for (int l = 1; l < blockfreq; l++) {
-//					file.writeGamma(tmpMatrix_blockIds[blockindex] - blockid);
-//					blockid = tmpMatrix_blockIds[blockindex];
-//					blockindex++;
-//				}
-//			}
-//			numTokens += frequency;
-//			
-//		}
-//		return numTokens;
-//	}
-
 }

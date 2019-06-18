@@ -51,6 +51,8 @@ import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.MemoryChecker;
+import org.terrier.utility.RuntimeMemoryChecker;
 import org.terrier.utility.TermCodes;
 /**
  * Builds temporary lexicons during indexing a collection and
@@ -61,7 +63,7 @@ public class LexiconBuilder
 {
 
 	/** class to be used as a lexiconoutpustream. set by this and child classes */
-	@SuppressWarnings({ "rawtypes" }) //TODO : this is complicated to fix
+	@SuppressWarnings({ "rawtypes" }) //this would be a complicated fix
 	protected Class<? extends LexiconOutputStream> lexiconOutputStream = null;
 
 	//protected Class<? extends LexiconMap> LexiconMapClass = null;
@@ -79,8 +81,8 @@ public class LexiconBuilder
 	
 	/** The number of documents for which a temporary lexicon is created. 
 	 * Corresponds to property <tt>bundle.size</tt>, default value 2000. */
-	protected static final int DocumentsPerLexicon = Integer.parseInt(ApplicationSetup.getProperty("bundle.size", "2000"));
-	/** The linkedlist in which the temporary lexicon structure names are stored.
+	protected static final int DocumentsPerLexicon = Integer.parseInt(ApplicationSetup.getProperty("bundle.size", "100000"));
+	/** The list in which the temporary lexicon structure names are stored.
 	  * These are merged into a single Lexicon by the merge() method. 
 	  * LinkedList is best List implementation for this, as all operations
 	  * are either append element, or remove first element - making LinkedList
@@ -237,6 +239,7 @@ public class LexiconBuilder
 	
 	protected String defaultStructureName;
 	protected FixedSizeWriteableFactory<LexiconEntry> valueFactory;
+	protected MemoryChecker memCheck = new RuntimeMemoryChecker();
 	
 	/**
 	 * constructor
@@ -367,14 +370,14 @@ public class LexiconBuilder
 	{
 		TempLex.insert(terms);
 		DocCount++;
-		if((DocCount % DocumentsPerLexicon) == 0)
+		if( (DocCount % 10 == 0 && memCheck.checkMemory())
+			|| DocCount > DocumentsPerLexicon)
 		{
 			if (logger.isDebugEnabled())
 				logger.debug("flushing lexicon");
 			writeTemporaryLexicon();
 			TempLexCount++;
 			TempLex.clear();
-			//try{ TempLex = (LexiconMap)LexiconMapClass.newInstance(); } catch (Exception e) {logger.error(e);}
 		}
 	}
 
