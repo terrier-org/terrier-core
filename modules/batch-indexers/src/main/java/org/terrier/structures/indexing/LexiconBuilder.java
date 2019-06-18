@@ -168,15 +168,8 @@ public class LexiconBuilder
 	
 	protected static class NullCollectionStatisticsCounter implements CollectionStatisticsCounter
 	{
-
-		public void count(LexiconEntry value) {
-			
-		}
-
-		public void close() throws IOException {
-			
-		}
-		
+		public void count(LexiconEntry value) {}
+		public void close() throws IOException {}		
 	}
 	
 	/** counts global statistics in the non-fields case */
@@ -320,6 +313,9 @@ public class LexiconBuilder
 		this.index.addIndexStructure(defaultStructureName+"-valuefactory", lexiconEntryFactoryValueClass+"$Factory", valueFactoryParamTypes, valueFactoryParamValues);
 		valueFactory = (FixedSizeWriteableFactory<LexiconEntry>)this.index.getIndexStructure(defaultStructureName+"-valuefactory");
 		lexiconOutputStream = LexiconOutputStream.class;
+		
+		logger.info("LexiconBuilder active - flushing every " 
+			+ DocumentsPerLexicon + " documents, or when memory threshold hit");
 	}
 
 	/** Returns the number of terms in the final lexicon. Only updated once finishDirectIndexBuild() has executed */
@@ -370,11 +366,16 @@ public class LexiconBuilder
 	{
 		TempLex.insert(terms);
 		DocCount++;
-		if( (DocCount % 10 == 0 && memCheck.checkMemory())
-			|| DocCount > DocumentsPerLexicon)
+		String reason = null;
+		if (DocCount % 10 == 0 && memCheck.checkMemory()) {
+			reason = "memory threshold hit";
+		} else if (DocCount % DocumentsPerLexicon == 0) {
+			reason = "doc count exceeded";
+		}
+		if (reason != null)
 		{
 			if (logger.isDebugEnabled())
-				logger.debug("flushing lexicon");
+				logger.debug("flushing lexicon because of " + reason);
 			writeTemporaryLexicon();
 			TempLexCount++;
 			TempLex.clear();
@@ -385,7 +386,7 @@ public class LexiconBuilder
 	public void flush()
 	{
 		if (logger.isDebugEnabled())
-			logger.debug("flushing lexicon");
+			logger.debug("flushing lexicon (forced)");
 		writeTemporaryLexicon();
 		TempLexCount++;
 		TempLex.clear();
@@ -398,7 +399,6 @@ public class LexiconBuilder
 	public void finishedInvertedIndexBuild() {
 		optimiseLexicon();
 	}
-	
 	
 	
 	/** 
@@ -417,23 +417,13 @@ public class LexiconBuilder
 		//merges the temporary lexicons
 		if (tempLexFiles.size() > 0)
 		{
-			//Set<String> tempDirectories = new HashSet<String>();
-			//for(String tmpLex : tempLexFiles)
-			//{
-			//	tempDirectories.add(Files.getParent(tmpLex));
-			//}
 			try{
 				merge(tempLexFiles);
-				
 				//creates the offsets and hash file
 				optimiseLexicon();
 			} catch(IOException ioe){
 				logger.error("Indexing failed to merge temporary lexicons to disk : ", ioe);
 			}
-			//for (String tmpDir : tempDirectories)
-			//{
-			//	Files.delete(tmpDir);
-			//}
 		}	
 		else
 			logger.warn("No temporary lexicons to merge, skipping");
