@@ -155,7 +155,7 @@ public class InvertedIndexBuilder {
 
 	protected LexiconScanner getLexScanner(Iterator<Map.Entry<String,LexiconEntry>> lexStream) throws Exception
 	{
-		lexScanClassName = ApplicationSetup.getProperty("invertedfile.lexiconscanner", "pointers");
+		lexScanClassName = ApplicationSetup.getProperty("invertedfile.lexiconscanner", "mem");
 		switch(lexScanClassName) {
 		case "pointers": return new PointerThresholdLexiconScanner(lexStream); 
 		case "terms": return new TermCountLexiconScanner(lexStream);
