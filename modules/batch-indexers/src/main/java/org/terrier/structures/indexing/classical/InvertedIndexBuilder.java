@@ -468,9 +468,13 @@ public class InvertedIndexBuilder {
 			}
 			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
 			if (logger.isDebugEnabled())
-				logger.debug(FileUtils.byteCountToDisplaySize(memThreshold) 
-						+ " reached with " + rtr + ", actually required " 
-						+ FileUtils.byteCountToDisplaySize(cumulativeSize));
+				if (lexiconStream.hasNext())
+					logger.debug(FileUtils.byteCountToDisplaySize(memThreshold) 
+							+ " reached with " + rtr + ", actually required " 
+							+ FileUtils.byteCountToDisplaySize(cumulativeSize));
+				else
+					logger.debug("All of lexicon consumed using "+ numberOfPointersThisIteration + " pointers");
+					
 			return rtr;
 		}
 
