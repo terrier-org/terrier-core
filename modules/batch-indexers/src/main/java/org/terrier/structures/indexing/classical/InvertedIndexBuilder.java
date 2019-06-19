@@ -473,7 +473,7 @@ public class InvertedIndexBuilder {
 							+ " reached with " + rtr + ", actually required " 
 							+ FileUtils.byteCountToDisplaySize(cumulativeSize));
 				else
-					logger.debug("All of lexicon consumed using "+ numberOfPointersThisIteration + " pointers");
+					logger.debug("All of lexicon consumed using "+ numberOfPointersThisIteration + " pointers, under memory threshold");
 					
 			return rtr;
 		}
