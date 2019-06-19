@@ -85,7 +85,7 @@ public class RuntimeMemoryChecker implements MemoryChecker
 	     final double memoryAllocated = (runtime.maxMemory() == Long.MAX_VALUE )
 	         ? 1.0d
 	         : (double)(runtime.totalMemory()) / (double)(runtime.maxMemory());
-	     logger.debug("Memory Check Free: "+memoryFree/1000000+"M, heap allocated "+(memoryAllocated*100)+"%");
+	     logger.trace("Memory Check Free: "+memoryFree/1000000+"M, heap allocated "+(memoryAllocated*100)+"%");
 	     if(memoryAllocated > MEMORY_HEAP_USAGE_MIN_THRESHOLD && memoryFree < MEMORY_RESERVED)
 	     {
 	         logger.debug("Free memory ("+memoryFree/1000000+"M) below threshold ("+MEMORY_RESERVED/1000000+"M)");
