@@ -41,6 +41,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.terrier.structures.BitIndexPointer;
+import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.FSOMapFileLexicon;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.LexiconEntry;
@@ -118,16 +119,17 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 		lexiconOutputStream = LexiconOutputStream.class;
 	}
 	
-	protected LexiconScanner getLexScanner(Iterator<Map.Entry<String,LexiconEntry>> lexStream) throws Exception
+	@Override
+	protected LexiconScanner getLexScanner(Iterator<Map.Entry<String,LexiconEntry>> lexStream, CollectionStatistics stats) throws Exception
 	{
-		lexScanClassName = ApplicationSetup.getProperty("invertedfile.lexiconscanner", "pointers");
+		lexScanClassName = ApplicationSetup.getProperty("invertedfile.lexiconscanner", DEFAULT_LEX_SCANNER_PROP_VALUE);
 		switch(lexScanClassName) {
-		case "pointers": return new PointerThresholdLexiconScanner(lexStream); 
-		case "terms": return new TermCountLexiconScanner(lexStream);
-		case "mem" : return new BlockMemSizeLexiconScanner(lexStream);
+		case "pointers": return new PointerThresholdLexiconScanner(lexStream, stats); 
+		case "terms": return new TermCountLexiconScanner(lexStream, stats);
+		case "mem" : return new BlockMemSizeLexiconScanner(lexStream, stats);
 		default: 
 			if (! lexScanClassName.contains(".")) lexScanClassName = "org.terrier.structures.indexing.classical."+lexScanClassName;
-			return ApplicationSetup.getClass(lexScanClassName).asSubclass(LexiconScanner.class).getConstructor(Iterator.class).newInstance(lexStream);
+			return ApplicationSetup.getClass(lexScanClassName).asSubclass(LexiconScanner.class).getConstructor(Iterator.class, CollectionStatistics.class).newInstance(lexStream, stats);
 		}
 	}
 
@@ -162,7 +164,10 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			int numberOfUniqueTerms = index.getCollectionStatistics().getNumberOfUniqueTerms();
 			Iterator<Map.Entry<String, LexiconEntry>> lexiconStream = (Iterator<Map.Entry<String, LexiconEntry>>)this.index.getIndexStructureInputStream("lexicon");
 
-			LexiconScanner lexScanner = getLexScanner(lexiconStream);
+			LexiconScanner lexScanner = getLexScanner(lexiconStream, index.getCollectionStatistics());
+			logger.info(lexScanner.toString());
+			String iterationcount = "of " + lexScanner.estimatedIterations();
+
 			
 			// A temporary file for storing the updated
 			// lexicon file, after creating the inverted file
@@ -179,7 +184,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			while (i < numberOfUniqueTerms) {
 				iterationCounter++;
 
-				logger.info("Iteration " + iterationCounter); //+ iteration_message_suffix);
+				logger.info("Iteration " + iterationCounter + " " +iterationcount); //+ iteration_message_suffix);
 
 				// traverse the lexicon looking to determine the number of terms to process
 				startProcessingLexicon = System.currentTimeMillis();
@@ -290,8 +295,22 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 	class BlockMemSizeLexiconScanner extends BasicMemSizeLexiconScanner {
 
 		BlockMemSizeLexiconScanner(
-				Iterator<Entry<String, LexiconEntry>> lexiconStream) {
-			super(lexiconStream);
+				Iterator<Entry<String, LexiconEntry>> lexiconStream, CollectionStatistics stats) {
+			super(lexiconStream, stats);
+		}
+		
+		@Override
+		public String toString() {
+			return this.getClass().getSimpleName() + ": lexicon scanning until approx " + FileUtils.byteCountToDisplaySize(memThreshold) +" of memory, including positions, is consumed";
+		}
+		
+		@Override
+		String estimatedIterations() {
+			final long pointers = this.collStats.getNumberOfPointers();
+			final long tokens = this.collStats.getNumberOfTokens();
+			final long projected_size = pointers * (3+ fieldCount) * Integer.BYTES //pointers
+					+ tokens * Integer.BYTES;
+			return (int)Math.ceil((double)projected_size / (double)memThreshold) + " (estimated) iterations";
 		}
 		
 		@Override
@@ -313,7 +332,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			
 				numberOfPointersThisIteration += le.getDocumentFrequency();
 				cumulativeSize += 
-						le.getDocumentFrequency() * (2 + fieldCount) * Integer.BYTES +  //pointer storage
+						le.getDocumentFrequency() * (3 + fieldCount) * Integer.BYTES +  //pointer storage
 						le.getFrequency() * Integer.BYTES; //block storage
 				blocks += le.getFrequency();
 				//the class TIntIntHashMap return zero when you look up for a

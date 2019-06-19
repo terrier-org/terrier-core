@@ -297,10 +297,7 @@ public class LexiconBuilder
 		this.defaultStructureName = _structureName;
 		this.termCodes = _termCodes;
 		this.TempLex = lexiconMap;
-		//TemporaryLexiconDirectory = indexPath + ApplicationSetup.FILE_SEPARATOR + indexPrefix + "_";
-		//LexiconMapClass = lexiconMap;	
 		lexiconEntryFactoryValueClass = _lexiconEntryClass;
-		
 	
 		this.index.addIndexStructure(
 				defaultStructureName+"-keyfactory", 
@@ -330,7 +327,6 @@ public class LexiconBuilder
 	  * @deprecated */
 	public void addTemporaryLexicon(String structureName) {
 		tempLexFiles.addLast(structureName);
-		//filename = ApplicationSetup.makeAbsolute(filename, TemporaryLexiconDirectory);
 	}
 
 	/** Writes the current contents of TempLex temporary lexicon binary tree down to
@@ -343,9 +339,6 @@ public class LexiconBuilder
 			LexiconOutputStream<String> los = getLexOutputStream(tmpLexName);
 			TempLex.storeToStream(los, termCodes);
 			los.close();
-			/* An alternative but deprecated method to store the temporary lexicons is: 
-			 * TempLex.storeToFile(tmpLexName); */
-			//tempLexFiles.addLast(TempLexDirCount+""+TempLexCount);
 			tempLexFiles.addLast(tmpLexName);
 		}catch(IOException ioe){
 			logger.error("Indexing failed to write a lexicon to disk : ", ioe);

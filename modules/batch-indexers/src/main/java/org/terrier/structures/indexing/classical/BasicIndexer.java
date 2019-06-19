@@ -73,7 +73,7 @@ import org.terrier.utility.TermCodes;
 public class BasicIndexer extends Indexer
 {
 	
-	/** 
+	/**
 	 * This class implements an end of a TermPipeline that adds the
 	 * term to the DocumentTree. This TermProcessor does NOT have field
 	 * support.
@@ -160,6 +160,10 @@ public class BasicIndexer extends Indexer
 	/** The compression configuration for the inverted index */
 	protected CompressionConfiguration compressionInvertedConfig;
 	
+	//how many instances are being used by the code calling this class in parallel
+	protected int externalParalllism = 1;
+
+	
 	/** Protected do-nothing constructor for use by child classes. Classes which
 	  * use this method must call init() */
 	protected BasicIndexer(long a, long b, long c) {
@@ -182,6 +186,15 @@ public class BasicIndexer extends Indexer
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
 	}
 
+	/** how many indexers are running in this and other threads? */
+	public int getExternalParalllism() {
+		return externalParalllism;
+	}
+
+	/** set how many indexers are running in this and other threads? */
+	public void setExternalParalllism(int externalParalllism) {
+		this.externalParalllism = externalParalllism;
+	}
 
 	/** 
 	 * Returns the end of the term pipeline, which corresponds to 
@@ -432,9 +445,8 @@ public class BasicIndexer extends Indexer
 
 
 		//generate the inverted index
-		logger.info("Started building the inverted index...");
 		invertedIndexBuilder = new InvertedIndexBuilder(currentIndex, "inverted", compressionInvertedConfig);
-		
+		invertedIndexBuilder.setExternalParalllism(this.externalParalllism);
 		invertedIndexBuilder.createInvertedIndex();
 		finishedInvertedIndexBuild();
 		

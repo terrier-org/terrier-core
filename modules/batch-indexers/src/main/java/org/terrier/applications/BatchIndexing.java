@@ -125,6 +125,16 @@ public abstract class BatchIndexing {
 	protected final String path;
 	protected final String prefix;
 	protected boolean blocks = ApplicationSetup.BLOCK_INDEXING;
+	//how many instances are being used by the code calling this class in parallel
+	protected int externalParalllism = 1;
+
+	public int getExternalParalllism() {
+		return externalParalllism;
+	}
+
+	public void setExternalParalllism(int externalParalllism) {
+		this.externalParalllism = externalParalllism;
+	}
 
 	public BatchIndexing(String _path, String _prefix) {
 		super();

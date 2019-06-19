@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.BitIndexPointer;
+import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.FSOMapFileLexicon;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
 import org.terrier.structures.IndexOnDisk;
@@ -99,6 +100,8 @@ import org.terrier.utility.TerrierTimer;
  * @author Craig Macdonald &amp; Vassilis Plachouras
   */
 public class InvertedIndexBuilder {
+	
+	protected static final String DEFAULT_LEX_SCANNER_PROP_VALUE = "mem";
 
 	/** class to be used as a lexiconoutpustream. set by this and child classes */
 	protected Class<?> lexiconOutputStream = null;
@@ -123,6 +126,16 @@ public class InvertedIndexBuilder {
 	protected long numberOfPointersPerIteration = Long.parseLong(
 		ApplicationSetup.getProperty("invertedfile.processpointers", "20000000"));
 	
+	//how many instances are being used by the code calling this class in parallel
+	protected int externalParalllism = 1;
+
+	public int getExternalParalllism() {
+		return externalParalllism;
+	}
+
+	public void setExternalParalllism(int externalParalllism) {
+		this.externalParalllism = externalParalllism;
+	}
 	
 	/**
 	 * The underlying bit file.
@@ -153,16 +166,16 @@ public class InvertedIndexBuilder {
 	    
 	}
 
-	protected LexiconScanner getLexScanner(Iterator<Map.Entry<String,LexiconEntry>> lexStream) throws Exception
+	protected LexiconScanner getLexScanner(Iterator<Map.Entry<String,LexiconEntry>> lexStream, CollectionStatistics stats) throws Exception
 	{
-		lexScanClassName = ApplicationSetup.getProperty("invertedfile.lexiconscanner", "pointers");
+		lexScanClassName = ApplicationSetup.getProperty("invertedfile.lexiconscanner", DEFAULT_LEX_SCANNER_PROP_VALUE);
 		switch(lexScanClassName) {
-		case "pointers": return new PointerThresholdLexiconScanner(lexStream); 
-		case "terms": return new TermCountLexiconScanner(lexStream);
-		case "mem" : return new BasicMemSizeLexiconScanner(lexStream);
+		case "pointers": return new PointerThresholdLexiconScanner(lexStream, stats); 
+		case "terms": return new TermCountLexiconScanner(lexStream, stats);
+		case "mem" : return new BasicMemSizeLexiconScanner(lexStream, stats);
 		default: 
 			if (! lexScanClassName.contains(".")) lexScanClassName = "org.terrier.structures.indexing.classical."+lexScanClassName;
-			return ApplicationSetup.getClass(lexScanClassName).asSubclass(LexiconScanner.class).getConstructor(Iterator.class).newInstance(lexStream);
+			return ApplicationSetup.getClass(lexScanClassName).asSubclass(LexiconScanner.class).getConstructor(Iterator.class, CollectionStatistics.class).newInstance(lexStream, stats);
 		}
 	}
 
@@ -200,7 +213,9 @@ public class InvertedIndexBuilder {
 			Iterator<Map.Entry<String,LexiconEntry>> lexiconStream = 
 				(Iterator<Map.Entry<String,LexiconEntry>>)index.getIndexStructureInputStream("lexicon");
 		
-			LexiconScanner lexScanner = getLexScanner(lexiconStream);
+			LexiconScanner lexScanner = getLexScanner(lexiconStream, index.getCollectionStatistics());
+			logger.info(lexScanner.toString());
+			String iterationcount = "of " + lexScanner.estimatedIterations();
 			
 			//A temporary file for storing the updated lexicon file, after
 			// creating the inverted file
@@ -218,16 +233,11 @@ public class InvertedIndexBuilder {
 			// generate a message guessing iteration counts
 
 
-			if (numberOfPointersPerIteration == 0)
-			{
-				logger.warn("Using old-fashioned number of terms strategy. Please consider setting invertedfile.processpointers for forward compatible use");
-			}
-		
 			while(i<_numberOfUniqueTerms)
 			{
 				iterationCounter++;
 				
-				logger.info("Iteration "+iterationCounter);
+				logger.info("Iteration "+iterationCounter + " " +iterationcount);
 				
 				//traverse the lexicon looking to determine terms to process in this iteration				
 				startProcessingLexicon = System.currentTimeMillis();
@@ -384,21 +394,26 @@ public class InvertedIndexBuilder {
 	abstract class LexiconScanner
 	{
 		Iterator<Map.Entry<String,LexiconEntry>> lexiconStream;
-		LexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexIn){
+		CollectionStatistics collStats;
+		LexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexIn, CollectionStatistics stats){
 			this.lexiconStream = lexIn;
+			this.collStats = stats;
 		}
 		
 		abstract LexiconScanResult scanLexicon();
+		
+		abstract String estimatedIterations();
 	}
 	
 	class BasicMemSizeLexiconScanner extends LexiconScanner
 	{
 		final Runtime runtime = Runtime.getRuntime();
 		long memThreshold;
+		long projectedPointerCount;
 		
-		public BasicMemSizeLexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexiconStream)
+		public BasicMemSizeLexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexiconStream, CollectionStatistics stats)
 		{
-			super(lexiconStream);
+			super(lexiconStream, stats);
 			
 			long free;
 			if (runtime.maxMemory() == Long.MAX_VALUE)
@@ -411,19 +426,23 @@ public class InvertedIndexBuilder {
 				logger.debug("Memory: already allocated in use is " + FileUtils.byteCountToDisplaySize(localAllocated));
 				free = runtime.maxMemory() - localAllocated - ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS;
 			}
-			//we need at least 5MB free
+			free = free / getExternalParalllism();
+			//we need _at least_ 5MB free
 			assert free > 5 * 1024*1024;
 			memThreshold = (long) (0.8f * free);
-			logger.info("Memory threshold is " + FileUtils.byteCountToDisplaySize(memThreshold));
+			logger.debug("Memory threshold is " + FileUtils.byteCountToDisplaySize(memThreshold));
+			projectedPointerCount = (int) (memThreshold / ((long) (2l + fieldCount) * Integer.BYTES));
 		}
 		
-		
+		@Override
+		public String toString() {
+			return this.getClass().getSimpleName() + ": lexicon scanning until approx " + FileUtils.byteCountToDisplaySize(memThreshold) +" of memory is consumed";
+		}
 		
 		@Override
 		LexiconScanResult scanLexicon() {
 			
-			long projectedPointerCount = (int) (memThreshold / ((long) (2l + fieldCount) * Integer.BYTES));
-			logger.debug("Scanning lexicon for "+ memThreshold + " memory -- upto " + projectedPointerCount + " pointers");
+			logger.debug("Scanning lexicon for "+ FileUtils.byteCountToDisplaySize(memThreshold) + " memory -- upto " + projectedPointerCount + " pointers");
 			long numberOfPointersThisIteration = 0;
 			TIntIntHashMap codesHashMap = new TIntIntHashMap();
 			List<TIntArrayList[]> tmpStorageStorage = new ArrayList<TIntArrayList[]>();
@@ -449,10 +468,15 @@ public class InvertedIndexBuilder {
 			}
 			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
 			if (logger.isDebugEnabled())
-				logger.debug(memThreshold + " " + FileUtils.byteCountToDisplaySize(memThreshold) 
+				logger.debug(FileUtils.byteCountToDisplaySize(memThreshold) 
 						+ " reached with " + rtr + ", actually required " 
 						+ FileUtils.byteCountToDisplaySize(cumulativeSize));
 			return rtr;
+		}
+
+		@Override
+		String estimatedIterations() {
+			return (int)Math.ceil((double) this.collStats.getNumberOfPointers() / (double) projectedPointerCount) + " (estimated) iterations";
 		}
 	}
 	
@@ -460,11 +484,17 @@ public class InvertedIndexBuilder {
 	{
 
 		public PointerThresholdLexiconScanner(
-				Iterator<Entry<String, LexiconEntry>> lexIn) {
-			super(lexIn);
+				Iterator<Entry<String, LexiconEntry>> lexIn,
+				CollectionStatistics stats) {
+			super(lexIn, stats);
 		}
 		
 		long PointersToProcess = numberOfPointersPerIteration;
+		
+		@Override
+		public String toString() {
+			return this.getClass().getSimpleName() + ": lexicon scanning for " + PointersToProcess  + "pointers";
+		}
 
 		@Override
 		LexiconScanResult scanLexicon() {
@@ -502,16 +532,26 @@ public class InvertedIndexBuilder {
 			return rtr;
 		}
 		
+		@Override
+		String estimatedIterations() {
+			return (int)Math.ceil((double) this.collStats.getNumberOfPointers() / (double) PointersToProcess) + " iterations";
+		}
+		
 	}
 	
 	class TermCountLexiconScanner extends LexiconScanner
 	{
-		public TermCountLexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexiconStream)
+		public TermCountLexiconScanner(Iterator<Map.Entry<String,LexiconEntry>> lexiconStream, CollectionStatistics stats)
 		{
-			super(lexiconStream);
+			super(lexiconStream, stats);
 		}
 		
 		int _processTerms = processTerms;
+		
+		@Override
+		public String toString() {
+			return this.getClass().getSimpleName() + ": lexicon scanning for " + processTerms + " terms";
+		}
 		
 		@Override
 		LexiconScanResult scanLexicon() {
@@ -545,6 +585,11 @@ public class InvertedIndexBuilder {
 			logger.debug(rtr.toString());
 			return rtr;
 			
+		}
+		
+		@Override
+		String estimatedIterations() {
+			return (int)Math.ceil((double) this.collStats.getNumberOfUniqueTerms() / (double) _processTerms) + " iterations";
 		}
 		
 	}
