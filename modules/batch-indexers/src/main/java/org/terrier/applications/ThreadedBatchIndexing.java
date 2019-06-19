@@ -102,7 +102,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 			final AtomicInteger indexCounter = new AtomicInteger();
 			final AtomicInteger mergeCounter = new AtomicInteger();			
 			
-			final int threadCount = ForkJoinPool.commonPool().getParallelism();
+			final int threadCount = this.maxThreads == -1 ? ForkJoinPool.commonPool().getParallelism() : this.maxThreads;
 			logger.info("Started " + this.getClass().getSimpleName() + " with parallelism " + threadCount);
 			if (singlePass)
 			{
@@ -127,6 +127,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					BatchIndexing indexing = singlePass 
 							? new TRECIndexingSinglePass(path, thisPrefix, c)
 							: new TRECIndexing(path, thisPrefix, c);
+					indexing.setExternalParalllism(threadCount);
 					indexing.blocks = blocks;
 					indexing.index();
 					return thisPrefix;
