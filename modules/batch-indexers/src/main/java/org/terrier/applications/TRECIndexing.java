@@ -124,6 +124,7 @@ public class TRECIndexing extends BatchIndexing {
 		} catch (Exception e){
 			logger.error("Indexer class named "+ indexerName + "problem", e);
 		}
+		_indexer.setExternalParalllism(this.externalParalllism);
 		return _indexer;
 	}
 

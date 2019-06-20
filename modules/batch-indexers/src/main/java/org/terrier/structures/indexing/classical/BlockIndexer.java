@@ -537,7 +537,8 @@ public class BlockIndexer extends Indexer {
 
 		logger.info("Started building the block inverted index...");
 		invertedIndexBuilder = new BlockInvertedIndexBuilder(currentIndex, "inverted", compressionInvertedConfig);
-		invertedIndexBuilder.createInvertedIndex();
+		invertedIndexBuilder.setExternalParalllism(externalParalllism);
+		invertedIndexBuilder.createInvertedIndex();		
 		this.finishedInvertedIndexBuild();
 		try{
 			currentIndex.flush();

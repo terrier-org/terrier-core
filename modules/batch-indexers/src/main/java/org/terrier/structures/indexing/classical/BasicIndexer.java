@@ -160,10 +160,6 @@ public class BasicIndexer extends Indexer
 	/** The compression configuration for the inverted index */
 	protected CompressionConfiguration compressionInvertedConfig;
 	
-	//how many instances are being used by the code calling this class in parallel
-	protected int externalParalllism = 1;
-
-	
 	/** Protected do-nothing constructor for use by child classes. Classes which
 	  * use this method must call init() */
 	protected BasicIndexer(long a, long b, long c) {
@@ -186,15 +182,7 @@ public class BasicIndexer extends Indexer
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
 	}
 
-	/** how many indexers are running in this and other threads? */
-	public int getExternalParalllism() {
-		return externalParalllism;
-	}
-
-	/** set how many indexers are running in this and other threads? */
-	public void setExternalParalllism(int externalParalllism) {
-		this.externalParalllism = externalParalllism;
-	}
+	
 
 	/** 
 	 * Returns the end of the term pipeline, which corresponds to 
@@ -337,22 +325,7 @@ public class BasicIndexer extends Indexer
 		/*end of all the collections has been reached */
 		/* flush the index buffers */
 		compressionDirectConfig.writeIndexProperties(currentIndex, "document-inputstream");
-//		currentIndex.addIndexStructure(
-//				"direct", 
-//				compressionDirectConfig.getStructureClass().getName(), 
-//				"org.terrier.structures.Index,java.lang.String,java.lang.Class", 
-//				"index,structureName,"+ 
-//					compressionDirectConfig.getPostingIteratorClass().getName() );
-//		currentIndex.addIndexStructureInputStream(
-//				"direct",
-//				compressionDirectConfig.getStructureInputStreamClass().getName(), 
-//				"org.terrier.structures.Index,java.lang.String,java.util.Iterator,java.lang.Class",
-//				"index,structureName,document-inputstream,"+ 
-//					compressionDirectConfig.getPostingIteratorClass().getName() );
-//		currentIndex.setIndexProperty("index.direct.fields.count", ""+FieldScore.FIELDS_COUNT );
-//		currentIndex.setIndexProperty("index.direct.fields.names", ArrayUtils.join(FieldScore.FIELD_NAMES, ","));
-		
-		//directIndexBuilder.finishedCollections();
+
 		directIndexBuilder.close();
 		docIndexBuilder.finishedCollections();
 		

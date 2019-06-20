@@ -220,6 +220,20 @@ public abstract class Indexer
 	/** the number of fields */
 	protected int numFields = 0;
 	
+	/** how many instances are being used by the code calling this class in parallel */
+	protected int externalParalllism = 1;
+	
+	/** how many indexers are running in this and other threads? */
+	public int getExternalParalllism() {
+		return externalParalllism;
+	}
+
+	/** set how many indexers are running in this and other threads? */
+	public void setExternalParalllism(int externalParalllism) {
+		this.externalParalllism = externalParalllism;
+		load_indexer_properties();
+	}
+	
 	
 	protected MetaIndexBuilder createMetaIndexBuilder()
 	{
@@ -242,7 +256,11 @@ public abstract class Indexer
 	{
 		IndexEmptyDocuments = !ApplicationSetup.IGNORE_EMPTY_DOCUMENTS;
 		MAX_TOKENS_IN_DOCUMENT = Integer.parseInt(ApplicationSetup.getProperty("indexing.max.tokens", "0"));
-		MAX_DOCS_PER_BUILDER = Integer.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "18000000"));
+		String buildMax = ApplicationSetup.getProperty("indexing.max.docs.per.builder", null);
+		if (buildMax == null)
+			MAX_DOCS_PER_BUILDER = 18000000 / externalParalllism;
+		else
+			MAX_DOCS_PER_BUILDER = Integer.parseInt(buildMax);
 	}
 
 	/** loads a mapping of field name -&gt; field id */

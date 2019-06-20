@@ -426,6 +426,7 @@ public class InvertedIndexBuilder {
 				logger.debug("Memory: already allocated in use is " + FileUtils.byteCountToDisplaySize(localAllocated));
 				free = runtime.maxMemory() - localAllocated - ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS;
 			}
+			logger.debug("Memory: free is " +  FileUtils.byteCountToDisplaySize(free) + " / " + getExternalParalllism() + " threads");
 			free = free / getExternalParalllism();
 			//we need _at least_ 5MB free
 			assert free > 5 * 1024*1024;
