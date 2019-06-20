@@ -468,7 +468,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 					tmpFields[k] = tmpStorage[j][k+2].toNativeArray();
 				}
 				tmpStorage[j] = null;
-				size += ids.length * (2 + fieldCount + (2*tmpMatrix_blockIds.length)) * 4;
+				size += ids.length * (3 + fieldCount) * Integer.BYTES + tmpMatrix_blockIds.length * Integer.BYTES;
 								
 				p.setOffset(file.getOffset());
 				p.setNumberOfEntries(ids.length);

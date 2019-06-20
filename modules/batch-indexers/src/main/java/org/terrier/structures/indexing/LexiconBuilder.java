@@ -372,6 +372,7 @@ public class LexiconBuilder
 			writeTemporaryLexicon();
 			TempLexCount++;
 			TempLex.clear();
+			memCheck.reset();
 		}
 	}
 
