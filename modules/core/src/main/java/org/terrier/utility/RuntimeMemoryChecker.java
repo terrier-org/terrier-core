@@ -76,7 +76,8 @@ public class RuntimeMemoryChecker implements MemoryChecker
 		logger.debug("memory.reserved=" + MEMORY_RESERVED + " memory.heap.usage="+MEMORY_HEAP_USAGE_MIN_THRESHOLD);
 	}
 	
-	/** Returns true if memory is running low */
+	/** Returns true if memory is running low. If this returns true, it will continue to do so until reset() is 
+     * called, which the client code should do once memory has been freed. */
 	public boolean checkMemory()
 	{
 	     long memoryFree = runtime.freeMemory();
