@@ -25,7 +25,6 @@
  */
 package org.terrier.applications;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -162,7 +161,9 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 						IndexUtil.deleteIndex(path, u);
 						return null;
 					}
+					
 					String thisPrefix = prefix + "_merge"+mergeCounter.getAndIncrement();
+					logger.debug("Target prefix for this merge is " + thisPrefix);
 					IndexOnDisk newIndex = IndexOnDisk.createNewIndex(path, thisPrefix);
 					if (blocks)
 						new BlockStructureMerger(src1, src2, newIndex).mergeStructures();
@@ -177,7 +178,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					IndexUtil.deleteIndex(path, u);
 					logger.debug("New index from " + t+ " and "+ u + " is " + thisPrefix);
 					return thisPrefix;
-				} catch (IOException e) {
+				} catch (Throwable e) {
 					throw new RuntimeException(e);
 				}
 					
