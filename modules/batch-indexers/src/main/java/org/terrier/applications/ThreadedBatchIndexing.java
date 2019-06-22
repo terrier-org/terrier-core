@@ -134,6 +134,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 				}	
 			};
 			BinaryOperator<String> merger = (String t, String u) -> {
+				logger.debug("Reduce " + t+ " " + u);
 				try {			
 					if (t == null && u == null)
 						return null;
@@ -174,6 +175,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					//TODO: could index deletion occur in parallel
 					IndexUtil.deleteIndex(path, t);
 					IndexUtil.deleteIndex(path, u);
+					logger.debug("New index from " + t+ " and "+ u + " is " + thisPrefix);
 					return thisPrefix;
 				} catch (IOException e) {
 					throw new RuntimeException(e);
