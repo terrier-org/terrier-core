@@ -394,6 +394,8 @@ public class StructureMerger {
 			logger.error("IOException while merging lexicons and inverted files.", ioe);
 		} catch (Throwable t) {
 			logger.error("Problem while merging lexicons and inverted files.", t);
+			t.printStackTrace();
+			throw new RuntimeException(t);
 		}
 	}
 
