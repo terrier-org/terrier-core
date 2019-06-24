@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +62,8 @@ import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 import org.terrier.utility.Rounding;
 import org.terrier.utility.TerrierTimer;
+
+import com.jakewharton.byteunits.BinaryByteUnit;
 /**
  * Builds an inverted index. It optionally saves term-field information as well. 
  * <p><b>Algorithm:</b>
@@ -278,7 +279,7 @@ public class InvertedIndexBuilder {
 					logger.debug("time to write inverted file: "
 					 + ((System.currentTimeMillis()- startWritingInvertedFile) / 1000D));
 					logger.debug("temporary memory used: "
-							 + FileUtils.byteCountToDisplaySize(rtr[1]));
+							 + BinaryByteUnit.format(rtr[1]));
 				}
 				
 							
@@ -423,27 +424,27 @@ public class InvertedIndexBuilder {
 			else
 			{
 				long localAllocated =  runtime.totalMemory()-runtime.freeMemory();
-				logger.debug("Memory: already allocated in use is " + FileUtils.byteCountToDisplaySize(localAllocated));
+				logger.debug("Memory: already allocated in use is " + BinaryByteUnit.format(localAllocated));
 				free = runtime.maxMemory() - localAllocated - ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS;
 			}
-			logger.debug("Memory: free is " +  FileUtils.byteCountToDisplaySize(free) + " / " + getExternalParalllism() + " threads");
+			logger.debug("Memory: free is " +  BinaryByteUnit.format(free) + " / " + getExternalParalllism() + " threads");
 			free = free / getExternalParalllism();
 			//we need _at least_ 5MB free
 			assert free > 5 * 1024*1024;
 			memThreshold = (long) (0.8f * free);
-			logger.debug("Memory threshold is " + FileUtils.byteCountToDisplaySize(memThreshold));
+			logger.debug("Memory threshold is " + BinaryByteUnit.format(memThreshold));
 			projectedPointerCount = (int) (memThreshold / ((long) (2l + fieldCount) * Integer.BYTES));
 		}
 		
 		@Override
 		public String toString() {
-			return this.getClass().getSimpleName() + ": lexicon scanning until approx " + FileUtils.byteCountToDisplaySize(memThreshold) +" of memory is consumed";
+			return this.getClass().getSimpleName() + ": lexicon scanning until approx " + BinaryByteUnit.format(memThreshold) +" of memory is consumed";
 		}
 		
 		@Override
 		LexiconScanResult scanLexicon() {
 			
-			logger.debug("Scanning lexicon for "+ FileUtils.byteCountToDisplaySize(memThreshold) + " memory -- upto " + projectedPointerCount + " pointers");
+			logger.debug("Scanning lexicon for "+ BinaryByteUnit.format(memThreshold) + " memory -- upto " + projectedPointerCount + " pointers");
 			long numberOfPointersThisIteration = 0;
 			TIntIntHashMap codesHashMap = new TIntIntHashMap();
 			List<TIntArrayList[]> tmpStorageStorage = new ArrayList<TIntArrayList[]>();
@@ -470,9 +471,9 @@ public class InvertedIndexBuilder {
 			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
 			if (logger.isDebugEnabled())
 				if (lexiconStream.hasNext())
-					logger.debug(FileUtils.byteCountToDisplaySize(memThreshold) 
+					logger.debug(BinaryByteUnit.format(memThreshold) 
 							+ " reached with " + rtr + ", actually required " 
-							+ FileUtils.byteCountToDisplaySize(cumulativeSize));
+							+ BinaryByteUnit.format(cumulativeSize));
 				else
 					logger.debug("All of lexicon consumed using "+ numberOfPointersThisIteration + " pointers, under memory threshold");
 					
@@ -741,8 +742,8 @@ public class InvertedIndexBuilder {
 	public static void displayMemoryUsage(Runtime r)
 	{
 		if (logger.isDebugEnabled())
-			logger.debug("free: "+ (r.freeMemory() /1024) + "kb; total: "+(r.totalMemory()/1024)
-					+"kb; max: "+(r.maxMemory()/1024)+"kb; "+
+			logger.debug("free: "+ BinaryByteUnit.format(r.freeMemory()) + "; total: "+BinaryByteUnit.format(r.totalMemory())
+					+"; max: "+BinaryByteUnit.format(r.maxMemory())+"; "+
 					Rounding.toString((100.0d*r.freeMemory() / r.totalMemory()),1)+"% free; "+
 					Rounding.toString((100.0d*r.totalMemory() / r.maxMemory()),1)+"% allocated; "
 		);

@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.FSOMapFileLexicon;
@@ -57,6 +56,8 @@ import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 import org.terrier.utility.TerrierTimer;
+
+import com.jakewharton.byteunits.BinaryByteUnit;
 
 /**
  * Builds an inverted index saving term-block information. It optionally saves
@@ -220,7 +221,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 				logger.info("time to write inverted file: "
 					 + ((System.currentTimeMillis()- startWritingInvertedFile) / 1000D));
 				logger.info("temporary memory used: "
-						 + FileUtils.byteCountToDisplaySize(rtr[1]));
+						 + BinaryByteUnit.format(rtr[1]));
 				
 				InvertedIndexBuilder.displayMemoryUsage(r);
 
@@ -301,7 +302,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 		
 		@Override
 		public String toString() {
-			return this.getClass().getSimpleName() + ": lexicon scanning until approx " + FileUtils.byteCountToDisplaySize(memThreshold) +" of memory, including positions, is consumed";
+			return this.getClass().getSimpleName() + ": lexicon scanning until approx " + BinaryByteUnit.format(memThreshold) +" of memory, including positions, is consumed";
 		}
 		
 		@Override
@@ -347,8 +348,8 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
 			
 			logger.debug(
-					memThreshold + " " + FileUtils.byteCountToDisplaySize(memThreshold) + " reached at "
-					+ FileUtils.byteCountToDisplaySize(cumulativeSize) +" for "
+					memThreshold + " " + BinaryByteUnit.format(memThreshold) + " reached at "
+					+ BinaryByteUnit.format(cumulativeSize) +" for "
 					+ rtr.toString() + " and " + blocks + " blocks");
 			return rtr;
 		}
