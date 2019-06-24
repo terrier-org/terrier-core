@@ -219,6 +219,8 @@ public abstract class Indexer
 	protected TObjectIntHashMap<String> fieldNames = new TObjectIntHashMap<String>(0);
 	/** the number of fields */
 	protected int numFields = 0;
+	/** is block indexing */
+	protected boolean blocks = false;
 	
 	/** how many instances are being used by the code calling this class in parallel */
 	protected int externalParalllism = 1;
@@ -368,7 +370,7 @@ public abstract class Indexer
 		//merge the data structures
 		if (counter > 1) { 
 			logger.info("merging data structures");
-			merge(path, oldIndexPrefix, 1, counter);	
+			merge(path, oldIndexPrefix, 1, counter, this.blocks);	
 		}
 		else
 		{
@@ -392,7 +394,7 @@ public abstract class Indexer
 	  * @param lowest lowest subfix of prefix
 	  * @param highest highest subfix of prefix 
 	  */
-	public static void merge(String mpath, String mprefix, int lowest, int highest)
+	public static void merge(String mpath, String mprefix, int lowest, int highest, boolean blocks)
 	{
 		//we define the counterMerged in order to
 		//ensure that the merged data structures will
@@ -402,22 +404,23 @@ public abstract class Indexer
 		for (int i=lowest; i<=highest; i++) {
 				llist.add(new String[]{mpath,mprefix+ "_" + i});
 		}
-		merge(mpath, mprefix, llist, highest+1);
+		merge(mpath, mprefix, llist, highest+1, blocks);
 	}
 
 	/** Merge two indices.
 	  * @param index1 Path/Prefix of source index 1
-	  * @param index2 Path/Prefix of source index 2
-	  * @param outputIndex Path/Prefix of destination index 
+	 * @param index2 Path/Prefix of source index 2
+	 * @param outputIndex Path/Prefix of destination index 
+	 * @param blocks TODO
 	  */
-	protected static void mergeTwoIndices(String[] index1, String[] index2, String[] outputIndex){
+	protected static void mergeTwoIndices(String[] index1, String[] index2, String[] outputIndex, boolean blocks){
 		StructureMerger sMerger = null;
 		IndexOnDisk src1 = Index.createIndex(index1[0], index1[1]);
 		IndexOnDisk src2 = Index.createIndex(index2[0], index2[1]);
 		IndexOnDisk dst = Index.createNewIndex(outputIndex[0], outputIndex[1]);
 		logger.info("Merging "+ src1+ " ("+src1.getCollectionStatistics().getNumberOfDocuments()+" docs) & "
 				+ src2 +" ("+src2.getCollectionStatistics().getNumberOfDocuments()+" docs) to " + dst);
-		if (ApplicationSetup.BLOCK_INDEXING) 
+		if (blocks) 
 			sMerger = new BlockStructureMerger(src1, src2, dst);
 		else 
 			sMerger = new StructureMerger(src1, src2, dst);
@@ -445,7 +448,7 @@ public abstract class Indexer
 	  * @param mprefix Prefix of target index
 	  * @param counterMerged - number of indices to merge
 	  */
-	public static void merge(String mpath, String mprefix, LinkedList<String[]> llist, int counterMerged)
+	public static void merge(String mpath, String mprefix, LinkedList<String[]> llist, int counterMerged, boolean blocks)
 	{
 		while (llist.size() > 1) {
 			LinkedList<String[]> tmpList = new LinkedList<String[]>();
@@ -457,7 +460,7 @@ public abstract class Indexer
 				String[] filename2 = (i==llist.size())?(tmpList.removeLast()):llist.get(i);
 				String[] outputFilename = new String[]{mpath,mprefix  + "_" + (counterMerged++)};
 				//logger.info("Merging "+ filename1 + " and " + filename2 + " to " + outputFilename);
-				mergeTwoIndices(filename1, filename2, outputFilename);
+				mergeTwoIndices(filename1, filename2, outputFilename, blocks);
 				tmpList.add(outputFilename);
 			}
 			llist = tmpList; tmpList = null;
@@ -505,11 +508,11 @@ public abstract class Indexer
 		{
 			merge(
 				ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX,
-				Integer.parseInt(args[1]), Integer.parseInt(args[2])
+				Integer.parseInt(args[1]), Integer.parseInt(args[2]), Boolean.parseBoolean(args[3])
 			);
 			return;
 		}
-		logger.error("Usage: org.terrier.indexing.Indexer --merge [lowid] [highid]");
+		logger.error("Usage: org.terrier.indexing.Indexer --merge [lowid] [highid] [blocks:true/false]");
 	}
 	
 }

@@ -269,6 +269,7 @@ public class BlockSinglePassIndexer extends BasicSinglePassIndexer{
 		invertedIndexInputStreamClass = BitPostingIndexInputStream.class.getName();
 		basicInvertedIndexPostingIteratorClass = BlockIterablePosting.class.getName();
 		fieldInvertedIndexPostingIteratorClass = BlockFieldIterablePosting.class.getName();
+		super.blocks = true;
 	}
 	
 	protected void createFieldRunMerger(String[][] files) throws IOException{

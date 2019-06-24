@@ -180,6 +180,7 @@ public class BasicIndexer extends Indexer
 			init();
 		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, 0, 0);
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
+		super.blocks = false;
 	}
 
 	

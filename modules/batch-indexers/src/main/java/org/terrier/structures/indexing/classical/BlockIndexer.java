@@ -296,6 +296,7 @@ public class BlockIndexer extends Indexer {
 				blockSize = 2;
 		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, blockSize, MAX_BLOCKS);
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, blockSize, MAX_BLOCKS);
+		super.blocks = true;
 	}
 
 	/** 
