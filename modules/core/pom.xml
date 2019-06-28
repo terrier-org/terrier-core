@@ -11,7 +11,13 @@
 
 	<artifactId>terrier-core</artifactId>
 
+	<properties>
+		<jetty.version>9.3.24.v20180605</jetty.version>
+	</properties>
+
 	<dependencies>
+
+
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -137,6 +143,11 @@
 					<groupId>javax.servlet</groupId>
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
+
+				<exclusion>
+					<groupId>javax.servlet.jsp</groupId>
+					<artifactId>jsp-api</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>com.sun.jersey</groupId>
 					<artifactId>jersey-core</artifactId>
@@ -178,24 +189,36 @@
 			<version>1.7.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-annotations</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
-			<version>9.3.24.v20180605</version>
+			<version>${jetty.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>9.3.24.v20180605</version>
+			<version>${jetty.version}</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>apache-jsp</artifactId>
-			<version>9.3.24.v20180605</version>
+			<version>${jetty.version}</version>
 		</dependency>
 
 		<dependency>

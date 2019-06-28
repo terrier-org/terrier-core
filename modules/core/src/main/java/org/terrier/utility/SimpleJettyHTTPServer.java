@@ -25,8 +25,17 @@
  */
 package org.terrier.utility;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.tomcat.InstanceManager;
+import org.apache.tomcat.SimpleInstanceManager;
+import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
+import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
+import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -38,6 +47,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.terrier.applications.CLITool;
+import org.terrier.applications.CLITool.CLIParsedCLITool;
 
 
 /** Class to make a simple Jetty servlet. Two arguments: port name, and webapps root path.
@@ -71,6 +81,22 @@ public class SimpleJettyHTTPServer {
         webAppContext.setContextPath("/");
         webAppContext.setResourceBase(webappRoot);
         
+        // see http://bengreen.eu/fancyhtml/quickreference/jettyjsp9error.html        
+        webAppContext.setAttribute("javax.servlet.context.tempdir", getScratchDir());
+        webAppContext.setAttribute(
+				"org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
+				".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$");
+		
+		/*
+		 * Configure the application to support the compilation of JSP files.
+		 * We need a new class loader and some stuff so that Jetty can call the
+		 * onStartup() methods as required.
+		 */
+        webAppContext.setAttribute("org.eclipse.jetty.containerInitializers", jspInitializers());
+        webAppContext.setAttribute(InstanceManager.class.getName(), new SimpleInstanceManager());
+        webAppContext.addBean(new ServletContainerInitializersStarter(webAppContext), true);
+        webAppContext.setClassLoader(ApplicationSetup.clzLoader);
+		
         
         ResourceHandler imageHandler = new ResourceHandler();
         imageHandler.setResourceBase(ApplicationSetup.TERRIER_SHARE + "/images/");
@@ -88,6 +114,28 @@ public class SimpleJettyHTTPServer {
         webserver.setHandler(handlers);
        
 	}
+	
+	// see http://bengreen.eu/fancyhtml/quickreference/jettyjsp9error.html
+	private static File getScratchDir() throws IOException {
+		File tempDir = new File(System.getProperty("java.io.tmpdir"));
+		File scratchDir = new File(tempDir.toString(), "embedded-jetty-jsp");
+
+		if (!scratchDir.exists()) {
+			if (!scratchDir.mkdirs()) {
+				throw new IOException("Unable to create scratch directory: " + scratchDir);
+			}
+		}
+		return scratchDir;
+	}
+
+	// see http://bengreen.eu/fancyhtml/quickreference/jettyjsp9error.html
+	private static List<ContainerInitializer> jspInitializers() {
+		JettyJasperInitializer sci = new JettyJasperInitializer();
+		ContainerInitializer initializer = new ContainerInitializer(sci, null);
+		List<ContainerInitializer> initializers = new ArrayList<ContainerInitializer>();
+		initializers.add(initializer);
+		return initializers;
+	}
 
 	/**
 	 * start webserver
@@ -104,7 +152,7 @@ public class SimpleJettyHTTPServer {
 	    webserver.stop();
 	}
 	
-	public static class Command extends CLITool
+	public static class Command extends CLIParsedCLITool
 	{
 
 		@Override
@@ -123,7 +171,8 @@ public class SimpleJettyHTTPServer {
 		}
 
 		@Override
-		public int run(String[] args) throws Exception {
+		public int run(CommandLine line) throws Exception {
+			String[] args = line.getArgs();
 			if (args.length != 2)
 			{
 				System.err.println(help());
