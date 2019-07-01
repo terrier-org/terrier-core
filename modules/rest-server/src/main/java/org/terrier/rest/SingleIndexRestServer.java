@@ -62,6 +62,7 @@ public class SingleIndexRestServer extends CLIParsedCLITool {
                 + "%sapplication.wadl\nHit enter to stop it...", uri));
         System.in.read();
         server.shutdown();
+		System.out.println("Shutdown");
         return 0;
 	}
 
