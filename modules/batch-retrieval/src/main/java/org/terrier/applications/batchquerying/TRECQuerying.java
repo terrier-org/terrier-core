@@ -60,6 +60,7 @@ import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexFactory;
+import org.terrier.structures.IndexUtil;
 import org.terrier.structures.cache.NullQueryResultCache;
 import org.terrier.structures.cache.QueryResultCache;
 import org.terrier.structures.outputformat.NullOutputFormat;
@@ -259,6 +260,7 @@ public class TRECQuerying extends AbstractQuerying {
 			
 			tq.intialise();
 			tq.processQueries();
+			IndexUtil.close(tq);//some implementations are Closeable
 			return 0;
 		}
 		

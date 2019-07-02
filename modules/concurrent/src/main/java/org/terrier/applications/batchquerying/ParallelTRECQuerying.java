@@ -25,6 +25,7 @@
  */
 package org.terrier.applications.batchquerying;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -50,7 +52,7 @@ import org.terrier.structures.outputformat.NullOutputFormat;
 import org.terrier.structures.outputformat.OutputFormat;
 
 /** An instance of TRECQuerying that will invoke multiple threads concurrently */
-public class ParallelTRECQuerying extends TRECQuerying {
+public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 
 	public static class Command extends TRECQuerying.Command
 	{
@@ -147,6 +149,7 @@ public class ParallelTRECQuerying extends TRECQuerying {
 	protected void processQueryAndWrite(final String queryId, final String query,
 			final double cParameter, final boolean c_set) 
 	{
+		@SuppressWarnings("resource")
 		final ParallelTRECQuerying me = this;
 		runningQueries.add(pool.submit(new Runnable() {
 			
@@ -185,6 +188,16 @@ public class ParallelTRECQuerying extends TRECQuerying {
 		return super.processQueries(c, c_set);		
 	}
 	
+	@Override
+	public void close() {
+		pool.shutdown();
+		try { 
+			pool.awaitTermination(1, TimeUnit.MINUTES);
+		} catch (InterruptedException ie){}
+	}
+
+
+
 	static class SynchronizedOutputFormat implements OutputFormat
 	{
 		OutputFormat parent;
