@@ -203,6 +203,7 @@ public class ParallelTRECQuerying extends TRECQuerying {
 	public static void main(String[] args)
 	{
 		TRECQuerying me = new ParallelTRECQuerying();
+		me.intialise();
 		me.processQueries();
 		me.close();
 	}
