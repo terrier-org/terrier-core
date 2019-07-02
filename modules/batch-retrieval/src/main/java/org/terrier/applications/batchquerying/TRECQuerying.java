@@ -182,6 +182,10 @@ public class TRECQuerying extends AbstractQuerying {
 			super(TRECQuerying.class);
 		}
 
+		protected Command(Class<? extends TRECQuerying> clz) {
+			super(clz);
+		}
+
 		@Override
 		protected Options getOptions()
 		{
@@ -202,7 +206,7 @@ public class TRECQuerying extends AbstractQuerying {
 					.longOpt("output")
 					.hasArg()
 					.desc("specify the filename of the run will be generated")
-					.build());			
+					.build());
 			options.addOption(Option.builder("s")
 					.argName("singleline")
 					.longOpt("singleline")
@@ -213,7 +217,7 @@ public class TRECQuerying extends AbstractQuerying {
 					.longOpt("topics")
 					.hasArg()
 					.desc("specify the location of the topics file")
-					.build());			
+					.build());		
 			return options;
 		}
 
