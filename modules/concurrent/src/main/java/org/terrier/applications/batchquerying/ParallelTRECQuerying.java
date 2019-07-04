@@ -66,6 +66,11 @@ public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 		}
 
 		@Override
+		public String helpsummary() {
+			return "performs a parallelised batch retrieval \"run\" over a set of queries";
+		}
+
+		@Override
 		public Set<String> commandaliases() {
 			Set<String> rtr = new HashSet<>();
 			for (String cmd : super.commandaliases())
