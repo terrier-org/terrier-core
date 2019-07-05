@@ -110,7 +110,8 @@ public abstract class BatchIndexing {
 						? new TRECIndexingSinglePass(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX)
 						: new TRECIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 			}
-			indexing.blocks = line.hasOption("blocks");
+			if (line.hasOption("blocks"))
+				indexing.blocks = true;
 			indexing.index();	
 			final long endtime = System.currentTimeMillis();
 			final long seconds = (endtime - starttime) / 1000l;
