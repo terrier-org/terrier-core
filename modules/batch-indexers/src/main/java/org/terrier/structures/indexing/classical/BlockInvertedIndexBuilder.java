@@ -42,11 +42,13 @@ import java.util.Map.Entry;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.FSOMapFileLexicon;
+import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.SimpleBitIndexPointer;
+import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.postings.ArrayOfBlockFieldIterablePosting;
 import org.terrier.structures.postings.ArrayOfBlockIterablePosting;
@@ -54,6 +56,7 @@ import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.FieldScore;
 import org.terrier.utility.Files;
 import org.terrier.utility.TerrierTimer;
 
@@ -109,7 +112,7 @@ import com.jakewharton.byteunits.BinaryByteUnit;
 public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 
 	protected String finalLexiconClass = "org.terrier.structures.Lexicon";
-
+	
 	/**
 	 * constructor
 	 * @param index
@@ -150,7 +153,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 		
 		long assumedNumberOfPointers = Long.parseLong(index.getIndexProperty("num.Pointers", "0"));
 		TerrierTimer tt = new TerrierTimer("Inverting the direct index", assumedNumberOfPointers);
-		
+		tt.start();
 		try {
 			Runtime r = Runtime.getRuntime();
 			logger.info("creating block inverted index");
@@ -333,7 +336,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			
 				numberOfPointersThisIteration += le.getDocumentFrequency();
 				cumulativeSize += 
-						le.getDocumentFrequency() * (3 + fieldCount) * Integer.BYTES +  //pointer storage
+						le.getDocumentFrequency() * (3 + fieldCount) * Integer.BYTES +  //pointer storage: 3 is docid, tf, blockfreq
 						le.getFrequency() * Integer.BYTES; //block storage
 				blocks += le.getFrequency();
 				//the class TIntIntHashMap return zero when you look up for a
@@ -490,4 +493,19 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			}
 			return new long[]{numTokens,size};
 		}
+	
+	/** Use this main method to recover the creation of an inverted index, should it fail */
+	public static void main(String[] args) throws Exception {
+		IndexOnDisk indx = Index.createIndex();
+		String structureName = "inverted";
+		new BlockInvertedIndexBuilder(
+				indx, 
+				structureName, 
+				CompressionFactory.getCompressionConfiguration(
+						structureName, FieldScore.FIELD_NAMES, ApplicationSetup.BLOCK_SIZE, ApplicationSetup.MAX_BLOCKS)
+			).createInvertedIndex();
+		indx.flush();
+		indx.close();
+	}
+
 }
