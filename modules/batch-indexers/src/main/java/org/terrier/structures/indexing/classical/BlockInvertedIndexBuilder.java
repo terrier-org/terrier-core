@@ -30,6 +30,9 @@ package org.terrier.structures.indexing.classical;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntIntHashMap;
 
+import objectexplorer.ObjectGraphMeasurer;
+import objectexplorer.ObjectGraphMeasurer.Footprint;
+
 import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -111,7 +114,8 @@ import com.jakewharton.byteunits.BinaryByteUnit;
   */
 public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 
-	protected String finalLexiconClass = "org.terrier.structures.Lexicon";
+	protected static final int tintint_overhead = 5;
+	protected static final float tintlist_overhead = 1.12f;
 	
 	/**
 	 * constructor
@@ -291,8 +295,8 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 		TIntArrayList[] tmpArray = new TIntArrayList[4+fieldCount];
 		final int tmpNT = le.getDocumentFrequency();
 		for(int i = 0; i < fieldCount+3; i++)
-			tmpArray[i] = new TIntArrayList(tmpNT);
-		tmpArray[fieldCount+3] = new TIntArrayList(le.getFrequency());
+			tmpArray[i] = new TIntArrayList(tmpNT+1);
+		tmpArray[fieldCount+3] = new TIntArrayList(le.getFrequency()+1);
 		return tmpArray;
 	}
 
@@ -312,8 +316,9 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 		String estimatedIterations() {
 			final long pointers = this.collStats.getNumberOfPointers();
 			final long tokens = this.collStats.getNumberOfTokens();
-			final long projected_size = pointers * (3+ fieldCount) * Integer.BYTES //pointers
+			long projected_size = pointers * (3+ fieldCount) * Integer.BYTES //pointers
 					+ tokens * Integer.BYTES;
+			projected_size = (long) (projected_size * tintlist_overhead); 
 			return (int)Math.ceil((double)projected_size / (double)memThreshold) + " (estimated) iterations";
 		}
 		
@@ -323,8 +328,9 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			TIntIntHashMap codesHashMap = new TIntIntHashMap();
 			ArrayList<TIntArrayList[]> tmpStorageStorage = new ArrayList<TIntArrayList[]>();
 			long numberOfPointersThisIteration = 0;
-			long cumulativeSize = 0;
-			long blocks = 0;
+			long cumulativePointersSize = 0;
+			long cumulativeTermsSize = 0;			
+			long numberOfBlocksThisIteration = 0;
 			
 			int j=0;
 			while (lexiconStream.hasNext())
@@ -335,25 +341,42 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 				tmpStorageStorage.add(createPointerForTerm(le));
 			
 				numberOfPointersThisIteration += le.getDocumentFrequency();
-				cumulativeSize += 
-						le.getDocumentFrequency() * (3 + fieldCount) * Integer.BYTES +  //pointer storage: 3 is docid, tf, blockfreq
-						le.getFrequency() * Integer.BYTES; //block storage
-				blocks += le.getFrequency();
+				cumulativePointersSize += 
+						(16 + Integer.BYTES + 16 + 2* Integer.BYTES)* (3 + fieldCount)  //array and tintarraylist overheads
+						+ le.getDocumentFrequency() * (3 + fieldCount) * Integer.BYTES  //pointer storage: 3 is docid, tf, blockfreq
+						+ le.getFrequency() * Integer.BYTES; //block storage
+				cumulativeTermsSize += 
+						(2 * Integer.BYTES + 1); //codesHashMap: two ints and one byte for every entry
+						numberOfBlocksThisIteration += le.getFrequency();
+
 				//the class TIntIntHashMap return zero when you look up for a
 				//the value of a key that does not exist in the hash map.
 				//For this reason, the values that will be inserted in the 
 				//hash map are increased by one. 
 				codesHashMap.put(le.getTermId(), j + 1);
 				j++;
-				if (cumulativeSize > memThreshold)
+
+				//we account for 5times overhead on the tintinthashmap, and
+				//12% overhead on the tintlist_overhead.
+				if ((tintlist_overhead * cumulativePointersSize + tintint_overhead * cumulativeTermsSize) > memThreshold)
 					break;
 			}
 			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
 			
 			logger.debug(
-					memThreshold + " " + BinaryByteUnit.format(memThreshold) + " reached at "
-					+ BinaryByteUnit.format(cumulativeSize) +" for "
-					+ rtr.toString() + " and " + blocks + " blocks");
+					BinaryByteUnit.format(memThreshold) + " reached at "
+					+ BinaryByteUnit.format(cumulativePointersSize) +" * "+tintlist_overhead+" for tmpStorageStorage, "
+					+ BinaryByteUnit.format(cumulativeTermsSize) +" * "+ tintint_overhead +" for codesHashMap "
+					+ " given "
+					+ rtr.toString() + " and " + numberOfBlocksThisIteration + " blocks");
+			if (logger.isTraceEnabled())
+			{
+				Footprint footprint1 = ObjectGraphMeasurer.measure(tmpStorageStorage);
+				logger.trace("tmpStorageStorage type usage is " + footprint1.toString());
+				Footprint footprint2 = ObjectGraphMeasurer.measure(codesHashMap);
+				logger.trace("codesHashMap type usage is " + footprint2.toString());
+			}
+
 			return rtr;
 		}
 		
