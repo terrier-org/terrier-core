@@ -42,7 +42,7 @@ Fat Classes
 
 -   `FatFeaturedScoringMatching`: Permits many features to be calculated using a FatResultSet. In particular, takes a FatResultSet, and returns a FeaturedResultSet, where each document has calculated of a predefined number of features. Features can be one of three types:
 
-    1.  a query-dependent weighting model (denoted by a WMODEL prefix, and actually computed using FatScoringMatching) calculated for all query terms in the query. More advanced formulations of WMODEL are discussed in the (separate advanced guide)[learning_advanced.md].
+    1.  a query-dependent weighting model (denoted by a WMODEL prefix, and actually computed using FatScoringMatching) calculated for all query terms in the query. More advanced formulations of WMODEL are discussed in the [separate advanced guide](learning_advanced.md).
 
     2.  a query-independent weighting model (typically a feature) loaded by [StaticFeature](javadoc/org/terrier/matching/models/StaticFeature.html) (NB: Terrier supports the loading of query independent features from a [variety of input file formats](javadoc/org/terrier/matching/models/StaticScoreModifierWeightingModel.html), however no methods of generating such features are provided out-of-the-box.) and
 
