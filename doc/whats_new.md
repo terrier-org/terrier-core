@@ -1,7 +1,7 @@
 What's New in Terrier
 =====================
 
-Terrier 5.2 - xx/06/2019
+Terrier 5.2 - xx/07/2019
 ------------------------
 Minor update with bug-fixes and improvements. In particular, the classical indexer has been shown some love, and inverted index building should be faster by default, courtesy of changes that improve its usage of available memory. Some improvements were identified in support of activities surrounding the [SIGIR 2019 Open-Source IR Replicability Challenge](https://osirrc.github.io/osirrc2019/) (OSIRRC). A [OSIRRC Docker image](https://github.com/osirrc/terrier-docker) is now available, supporting Robust04, GOV2, and Core18 test collections.
 
@@ -18,10 +18,12 @@ Minor update with bug-fixes and improvements. In particular, the classical index
  - make the query parser factory method static
  - LabelSet should work if given a non-featured result set, particularly copying of metadata
  - [#21](https://github.com/terrier-org/terrier-core/issues/21)  batchevaluate should not override existing .eval files
+ - [TR-566](http://terrier.org/issues/browse/TR-566) Batchretrieve using -m (MatchingOp) doesnt work. Redha ELtaani (Université du Québec à Montréal - Canada). 
+ 
 
 ### Other
  - [#30](https://github.com/terrier-org/terrier-core/issues/30) testImportSingleIndirectWithClassifier fails on Alpine linux
- - [#27](https://github.com/terrier-org/terrier-core/issues/27) Files could obtain compression filter stream mappings from a property. This allows TREC Disk 1, 2, 4 & 5 to be indexed without recompression - see http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1%262
+ - [#27](https://github.com/terrier-org/terrier-core/issues/27) Files could obtain compression filter stream mappings from a property. This allows TREC Disk 1, 2, 4 & 5 to be indexed without recompression - see [http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1%262](http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1%262)
  - [#26](https://github.com/terrier-org/terrier-core/issues/26) Cannot load a TerrierApplicationPlugin from a Maven module
  - [#25](https://github.com/terrier-org/terrier-core/issues/25) bump fastutil to 8.2.2
 

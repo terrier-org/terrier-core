@@ -346,12 +346,14 @@ public class TRECQuerying extends AbstractQuerying {
 	public TRECQuerying() {
 		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.loadIndex();
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 	}
 	
 	public TRECQuerying(boolean qe) {
 		this();
 		if (qe)
 			super.controls.put("qe", "on");
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 	}
 
 	/**
@@ -363,12 +365,12 @@ public class TRECQuerying extends AbstractQuerying {
 	public TRECQuerying(IndexRef _indexref) {
 		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.indexref = _indexref;
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 	}
 	
 	public void intialise()
 	{
-		this.createManager();
-		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
+		this.createManager();		
 		this.querySource = getQueryParser(this.getTopicsParser());
 		this.printer = getOutputFormat();
 		this.resultsCache = getResultsCache();
