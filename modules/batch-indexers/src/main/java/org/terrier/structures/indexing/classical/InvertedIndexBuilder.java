@@ -126,6 +126,9 @@ public class InvertedIndexBuilder {
 	  * number of terms, overriding <tt>invertedfile.processterms</tt>. Default is 20000000. */
 	protected long numberOfPointersPerIteration = Long.parseLong(
 		ApplicationSetup.getProperty("invertedfile.processpointers", "20000000"));
+
+	protected float heapusage = Float.parseFloat(
+		ApplicationSetup.getProperty("invertedfile.heapusage", "0.8"));
 	
 	//how many instances are being used by the code calling this class in parallel
 	protected int externalParalllism = 1;
@@ -387,7 +390,7 @@ public class InvertedIndexBuilder {
 		@Override
 		public String toString()
 		{
-			return terms + " terms" + " " + pointers;
+			return terms + " terms" + " " + pointers + " pointers";
 		}
 
 	}
@@ -431,7 +434,7 @@ public class InvertedIndexBuilder {
 			free = free / getExternalParalllism();
 			//we need _at least_ 5MB free
 			assert free > 5 * 1024*1024;
-			memThreshold = (long) (0.8f * free);
+			memThreshold = (long) (heapusage * free);
 			logger.debug("Memory threshold is " + BinaryByteUnit.format(memThreshold));
 			projectedPointerCount = (int) (memThreshold / ((long) (2l + fieldCount) * Integer.BYTES));
 		}

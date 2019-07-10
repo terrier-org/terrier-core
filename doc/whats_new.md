@@ -3,7 +3,7 @@ What's New in Terrier
 
 Terrier 5.2 - xx/06/2019
 ------------------------
-Minor update with bug-fixes and improvements. In particular, the classical indexer has been shown some love, and inverted index building should be faster by default, courtesy of changes that improve its usage of available memory. Some improvements were identified in support of activities surrounding the [SIGIR 2019 Open-Source IR Replicability Challenge](https://osirrc.github.io/osirrc2019/) (OSIRRC). A [https://github.com/osirrc/terrier-docker](OSIRRC Docker image) is now available, supporting Robust04, GOV2, and Core18 test collections.
+Minor update with bug-fixes and improvements. In particular, the classical indexer has been shown some love, and inverted index building should be faster by default, courtesy of changes that improve its usage of available memory. Some improvements were identified in support of activities surrounding the [SIGIR 2019 Open-Source IR Replicability Challenge](https://osirrc.github.io/osirrc2019/) (OSIRRC). A [OSIRRC Docker image](https://github.com/osirrc/terrier-docker) is now available, supporting Robust04, GOV2, and Core18 test collections.
 
 ### Indexing
  - [#20](https://github.com/terrier-org/terrier-core/issues/20) batchindexing should report total time taken
@@ -13,7 +13,7 @@ Minor update with bug-fixes and improvements. In particular, the classical index
  - [#33](https://github.com/terrier-org/terrier-core/issues/33) Classical indexer should create less temporary lexicons
 
 ### Retrieval
- - bump jtreceval for Apline Docker container compatibility
+ - bump jtreceval for Alpine Docker container compatibility
  - Ensure that different words with identical stems are correctly conflated
  - make the query parser factory method static
  - LabelSet should work if given a non-featured result set, particularly copying of metadata
