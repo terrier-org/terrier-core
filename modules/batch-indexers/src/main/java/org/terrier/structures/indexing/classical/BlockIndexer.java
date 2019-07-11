@@ -296,6 +296,7 @@ public class BlockIndexer extends Indexer {
 				blockSize = 2;
 		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, blockSize, MAX_BLOCKS);
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, blockSize, MAX_BLOCKS);
+		super.blocks = true;
 	}
 
 	/** 
@@ -537,7 +538,8 @@ public class BlockIndexer extends Indexer {
 
 		logger.info("Started building the block inverted index...");
 		invertedIndexBuilder = new BlockInvertedIndexBuilder(currentIndex, "inverted", compressionInvertedConfig);
-		invertedIndexBuilder.createInvertedIndex();
+		invertedIndexBuilder.setExternalParalllism(externalParalllism);
+		invertedIndexBuilder.createInvertedIndex();		
 		this.finishedInvertedIndexBuild();
 		try{
 			currentIndex.flush();

@@ -28,10 +28,9 @@ package org.terrier.structures.concurrent;
 import java.io.PrintWriter;
 import java.util.Properties;
 
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.terrier.applications.batchquerying.ParallelTRECQuerying;
-import org.terrier.applications.batchquerying.TRECQuerying;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.tests.BatchEndToEndTest;
 import org.terrier.utility.ApplicationSetup;
@@ -69,10 +68,11 @@ public class TestVaswaniParallelTRECQuerying extends BatchEndToEndTest {
 	protected int doRetrieval(String[] topicSet, String[] trecTerrierArgs)
 			throws Exception {
 		ApplicationSetup.setProperty("trec.topics", topicSet[0]);
-		TRECQuerying tq = new ParallelTRECQuerying();
+		ParallelTRECQuerying tq = new ParallelTRECQuerying();
 		System.err.println("Using ParallelTRECQuerying");
 		tq.intialise();
 		tq.processQueries();
+		tq.close();
 		return 7;
 	}
 	

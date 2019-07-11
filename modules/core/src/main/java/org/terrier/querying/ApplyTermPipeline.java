@@ -52,9 +52,9 @@ public class ApplyTermPipeline implements Process {
 	/** load in the term pipeline */
 	protected void load_pipeline()
 	{
-		final String[] pipes = ApplicationSetup.getProperty(
-				info = "termpipelines", "Stopwords,PorterStemmer").trim()
-				.split("\\s*,\\s*");
+		final String tp = ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer").trim();
+		final String[] pipes = tp.split("\\s*,\\s*");
+		info = "termpipelines=" + tp;
 		synchronized (this) {
 			tpa = new BaseTermPipelineAccessor(pipes);
 		}		

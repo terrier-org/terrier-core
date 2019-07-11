@@ -11,7 +11,13 @@
 
 	<artifactId>terrier-core</artifactId>
 
+	<properties>
+		<jetty.version>9.3.24.v20180605</jetty.version>
+	</properties>
+
 	<dependencies>
+
+
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -24,6 +30,12 @@
 			<artifactId>jline</artifactId>
 			<version>2.6</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jakewharton.byteunits</groupId>
+			<artifactId>byteunits</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 
 
@@ -85,7 +97,7 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.5</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
@@ -131,6 +143,11 @@
 					<groupId>javax.servlet</groupId>
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
+
+				<exclusion>
+					<groupId>javax.servlet.jsp</groupId>
+					<artifactId>jsp-api</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>com.sun.jersey</groupId>
 					<artifactId>jersey-core</artifactId>
@@ -172,24 +189,36 @@
 			<version>1.7.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-annotations</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
-			<version>9.3.24.v20180605</version>
+			<version>${jetty.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>9.3.24.v20180605</version>
+			<version>${jetty.version}</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>apache-jsp</artifactId>
-			<version>9.3.24.v20180605</version>
+			<version>${jetty.version}</version>
 		</dependency>
 
 		<dependency>
@@ -258,14 +287,14 @@
 			<version>2.8.11</version>
 			<type>jar</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.8.11.1</version>
 			<type>jar</type>
 		</dependency>
-			
+
 	</dependencies>
 
 	<profiles>

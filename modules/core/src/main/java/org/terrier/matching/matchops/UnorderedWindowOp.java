@@ -89,10 +89,14 @@ public class UnorderedWindowOp extends ANDQueryOp {
 			List<IterablePosting> postings, List<EntryStatistics> pointers)
 			throws IOException {
 		assert postings.size() <= distance;
-		return new ProximityIterablePosting(
+		try{
+			return new ProximityIterablePosting(
 				postings.toArray(new IterablePosting[postings.size()]),
 				pointers.toArray(new EntryStatistics[pointers.size()]), 
 				distance);
+		} catch (ClassCastException cce) {
+			throw new IOException("This index does not support blocks", cce);
+		}
 	}
 
 }

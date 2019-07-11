@@ -25,15 +25,23 @@
  */
 package org.terrier.applications.batchquerying;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.terrier.applications.AbstractQuerying;
 import org.terrier.querying.IndexRef;
 import org.terrier.querying.SearchRequest;
 import org.terrier.querying.ThreadSafeManager;
@@ -44,9 +52,60 @@ import org.terrier.structures.outputformat.NullOutputFormat;
 import org.terrier.structures.outputformat.OutputFormat;
 
 /** An instance of TRECQuerying that will invoke multiple threads concurrently */
-public class ParallelTRECQuerying extends TRECQuerying {
+public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 
-	final ExecutorService pool;
+	public static class Command extends TRECQuerying.Command
+	{
+		public Command() {
+			super(ParallelTRECQuerying.class);
+		}
+
+		@Override
+		public String commandname() {
+			return "p" + super.commandname();
+		}
+
+		@Override
+		public String helpsummary() {
+			return "performs a parallelised batch retrieval \"run\" over a set of queries";
+		}
+
+		@Override
+		public Set<String> commandaliases() {
+			Set<String> rtr = new HashSet<>();
+			for (String cmd : super.commandaliases())
+			{
+				rtr.add('p'+cmd);
+			}
+			return rtr;
+		}
+
+		@Override
+		public int run(CommandLine line, AbstractQuerying q) throws Exception {
+			
+			if (line.hasOption("parallelism"))
+			{
+				int threads = Integer.parseInt(line.getOptionValue("parallelism"));
+				((ParallelTRECQuerying)q).pool = Executors.newFixedThreadPool(threads);
+			}			
+			return super.run(line, q);
+		}
+
+		@Override
+		protected Options getOptions() {
+			Options rtr = super.getOptions();
+			rtr.addOption(Option.builder("p")
+					.argName("parallelism")
+					.hasArg()
+					.desc("specify the level of parallelism")
+					.build());
+			return rtr;
+		}
+			
+	}
+	
+	
+	ExecutorService pool;
 	
 	//First line is valid for multiple processors machine. If the machine has only one, it only launches one thread
 	//final static int NUM_PROC = Runtime.getRuntime().availableProcessors();
@@ -60,7 +119,7 @@ public class ParallelTRECQuerying extends TRECQuerying {
 		if (! (super.printer instanceof NullOutputFormat))
 			super.printer = new SynchronizedOutputFormat(super.printer);
 	}
-	
+
 	public ParallelTRECQuerying(IndexRef i) {
 		super(i);
 		pool = Executors.newFixedThreadPool(NUM_PROC);
@@ -95,6 +154,7 @@ public class ParallelTRECQuerying extends TRECQuerying {
 	protected void processQueryAndWrite(final String queryId, final String query,
 			final double cParameter, final boolean c_set) 
 	{
+		@SuppressWarnings("resource")
 		final ParallelTRECQuerying me = this;
 		runningQueries.add(pool.submit(new Runnable() {
 			
@@ -133,6 +193,16 @@ public class ParallelTRECQuerying extends TRECQuerying {
 		return super.processQueries(c, c_set);		
 	}
 	
+	@Override
+	public void close() {
+		pool.shutdown();
+		try { 
+			pool.awaitTermination(1, TimeUnit.MINUTES);
+		} catch (InterruptedException ie){}
+	}
+
+
+
 	static class SynchronizedOutputFormat implements OutputFormat
 	{
 		OutputFormat parent;
@@ -151,6 +221,7 @@ public class ParallelTRECQuerying extends TRECQuerying {
 	public static void main(String[] args)
 	{
 		TRECQuerying me = new ParallelTRECQuerying();
+		me.intialise();
 		me.processQueries();
 		me.close();
 	}

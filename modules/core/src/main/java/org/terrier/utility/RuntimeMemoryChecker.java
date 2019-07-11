@@ -28,6 +28,7 @@ package org.terrier.utility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.jakewharton.byteunits.BinaryByteUnit;
 
 
 /** A memory checker that uses the Java Runtime instance to check the amount of available memory.
@@ -68,15 +69,16 @@ public class RuntimeMemoryChecker implements MemoryChecker
 	{
 		MEMORY_RESERVED = _reserved;
 		if (MEMORY_RESERVED < 100000)
-			throw new IllegalArgumentException("memory.reserved should be expressed in bytes - " + MEMORY_RESERVED + " is too litle reserved for during indexing");
+			throw new IllegalArgumentException("memory.reserved (expressed in bytes) - " + BinaryByteUnit.format(MEMORY_RESERVED) + " is too litle reserved for during indexing");
 		
 		MEMORY_HEAP_USAGE_MIN_THRESHOLD = _threshold;
 		if (MEMORY_HEAP_USAGE_MIN_THRESHOLD > 1)
 			throw new IllegalArgumentException("memory.heap.usage should be expressed as a float, not a percentage: " + MEMORY_HEAP_USAGE_MIN_THRESHOLD + " is too big!");
-		logger.debug("memory.reserved=" + MEMORY_RESERVED + " memory.heap.usage="+MEMORY_HEAP_USAGE_MIN_THRESHOLD);
+		logger.debug("memory.reserved=" +  BinaryByteUnit.format(MEMORY_RESERVED) + " memory.heap.usage="+MEMORY_HEAP_USAGE_MIN_THRESHOLD);
 	}
 	
-	/** Returns true if memory is running low */
+	/** Returns true if memory is running low. If this returns true, it will continue to do so until reset() is 
+     * called, which the client code should do once memory has been freed. */
 	public boolean checkMemory()
 	{
 	     long memoryFree = runtime.freeMemory();
@@ -85,10 +87,10 @@ public class RuntimeMemoryChecker implements MemoryChecker
 	     final double memoryAllocated = (runtime.maxMemory() == Long.MAX_VALUE )
 	         ? 1.0d
 	         : (double)(runtime.totalMemory()) / (double)(runtime.maxMemory());
-	     logger.debug("Memory Check Free: "+memoryFree/1000000+"M, heap allocated "+(memoryAllocated*100)+"%");
+	     //logger.trace("Memory Check Free: "+ BinaryByteUnit.format(memoryFree)+", heap allocated "+(memoryAllocated*100)+"%");
 	     if(memoryAllocated > MEMORY_HEAP_USAGE_MIN_THRESHOLD && memoryFree < MEMORY_RESERVED)
 	     {
-	         logger.debug("Free memory ("+memoryFree/1000000+"M) below threshold ("+MEMORY_RESERVED/1000000+"M)");
+	         logger.debug("Free memory ("+BinaryByteUnit.format(memoryFree)+") below threshold ("+BinaryByteUnit.format(MEMORY_RESERVED)+"M)");
 	         lowMemory = true;
 	     }
 		return lowMemory;
@@ -106,7 +108,7 @@ public class RuntimeMemoryChecker implements MemoryChecker
         String rtr = "Memory Check Free: "+memoryFree/1000000+"M, heap allocated "+(memoryAllocated*100)+"%";
         if(memoryAllocated > MEMORY_HEAP_USAGE_MIN_THRESHOLD && memoryFree < MEMORY_RESERVED)
         {
-            rtr += "; Free memory ("+memoryFree/1000000+"M) below threshold ("+MEMORY_RESERVED/1000000+"M)";
+            rtr += "; Free memory ("+BinaryByteUnit.format(memoryFree)+") below threshold ("+BinaryByteUnit.format(MEMORY_RESERVED)+")";
         }
 		return rtr;
 	}

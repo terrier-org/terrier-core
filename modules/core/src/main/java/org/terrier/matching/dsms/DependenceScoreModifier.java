@@ -184,6 +184,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 	
 			
 			
+			
 			if (dependency.equals("FD")) {
 				doDependency(index, es, ips, set, phraseTermWeights, false);
 				plm.close();
@@ -195,6 +196,10 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 				System.err.println("WARNING: proximity.dependency.type not set. Set it to either FD or SD");
 				return false;
 			}
+		} catch (ClassCastException e) {
+			System.err.println("Error in " + this.getClass().getName() + " "
+					+ e + " -- does your index have blocks (positions) enabled?");
+			e.printStackTrace();
 		} catch (Exception e) {
 			System.err.println("Error in " + this.getClass().getName() + " "
 					+ e);

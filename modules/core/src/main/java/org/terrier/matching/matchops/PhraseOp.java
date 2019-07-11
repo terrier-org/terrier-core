@@ -77,9 +77,13 @@ public class PhraseOp extends ANDQueryOp {
 	protected IterablePosting createFinalPostingIterator(
 			List<IterablePosting> postings, List<EntryStatistics> pointers)
 			throws IOException {
-		return new PhraseIterablePosting(
+		try{
+			return new PhraseIterablePosting(
 				postings.toArray(new IterablePosting[postings.size()]), 
 				pointers.toArray(new EntryStatistics[pointers.size()]), false);
+		} catch (ClassCastException cce) {
+			throw new IOException("This index does not support blocks", cce);
+		}
 	}
 
 }

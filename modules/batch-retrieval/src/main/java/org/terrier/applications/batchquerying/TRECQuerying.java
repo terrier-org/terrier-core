@@ -60,6 +60,7 @@ import org.terrier.querying.Request;
 import org.terrier.querying.SearchRequest;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexFactory;
+import org.terrier.structures.IndexUtil;
 import org.terrier.structures.cache.NullQueryResultCache;
 import org.terrier.structures.cache.QueryResultCache;
 import org.terrier.structures.outputformat.NullOutputFormat;
@@ -182,6 +183,10 @@ public class TRECQuerying extends AbstractQuerying {
 			super(TRECQuerying.class);
 		}
 
+		protected Command(Class<? extends TRECQuerying> clz) {
+			super(clz);
+		}
+
 		@Override
 		protected Options getOptions()
 		{
@@ -202,7 +207,7 @@ public class TRECQuerying extends AbstractQuerying {
 					.longOpt("output")
 					.hasArg()
 					.desc("specify the filename of the run will be generated")
-					.build());			
+					.build());
 			options.addOption(Option.builder("s")
 					.argName("singleline")
 					.longOpt("singleline")
@@ -213,7 +218,7 @@ public class TRECQuerying extends AbstractQuerying {
 					.longOpt("topics")
 					.hasArg()
 					.desc("specify the location of the topics file")
-					.build());			
+					.build());		
 			return options;
 		}
 
@@ -255,6 +260,7 @@ public class TRECQuerying extends AbstractQuerying {
 			
 			tq.intialise();
 			tq.processQueries();
+			IndexUtil.close(tq);//some implementations are Closeable
 			return 0;
 		}
 		
@@ -340,12 +346,14 @@ public class TRECQuerying extends AbstractQuerying {
 	public TRECQuerying() {
 		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.loadIndex();
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 	}
 	
 	public TRECQuerying(boolean qe) {
 		this();
 		if (qe)
 			super.controls.put("qe", "on");
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 	}
 
 	/**
@@ -357,12 +365,12 @@ public class TRECQuerying extends AbstractQuerying {
 	public TRECQuerying(IndexRef _indexref) {
 		super(BATCHRETRIEVE_PROP_PREFIX);
 		this.indexref = _indexref;
+		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 	}
 	
 	public void intialise()
 	{
-		this.createManager();
-		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
+		this.createManager();		
 		this.querySource = getQueryParser(this.getTopicsParser());
 		this.printer = getOutputFormat();
 		this.resultsCache = getResultsCache();

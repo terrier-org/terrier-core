@@ -73,7 +73,7 @@ import org.terrier.utility.TermCodes;
 public class BasicIndexer extends Indexer
 {
 	
-	/** 
+	/**
 	 * This class implements an end of a TermPipeline that adds the
 	 * term to the DocumentTree. This TermProcessor does NOT have field
 	 * support.
@@ -180,8 +180,10 @@ public class BasicIndexer extends Indexer
 			init();
 		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", FieldScore.FIELD_NAMES, 0, 0);
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
+		super.blocks = false;
 	}
 
+	
 
 	/** 
 	 * Returns the end of the term pipeline, which corresponds to 
@@ -324,22 +326,7 @@ public class BasicIndexer extends Indexer
 		/*end of all the collections has been reached */
 		/* flush the index buffers */
 		compressionDirectConfig.writeIndexProperties(currentIndex, "document-inputstream");
-//		currentIndex.addIndexStructure(
-//				"direct", 
-//				compressionDirectConfig.getStructureClass().getName(), 
-//				"org.terrier.structures.Index,java.lang.String,java.lang.Class", 
-//				"index,structureName,"+ 
-//					compressionDirectConfig.getPostingIteratorClass().getName() );
-//		currentIndex.addIndexStructureInputStream(
-//				"direct",
-//				compressionDirectConfig.getStructureInputStreamClass().getName(), 
-//				"org.terrier.structures.Index,java.lang.String,java.util.Iterator,java.lang.Class",
-//				"index,structureName,document-inputstream,"+ 
-//					compressionDirectConfig.getPostingIteratorClass().getName() );
-//		currentIndex.setIndexProperty("index.direct.fields.count", ""+FieldScore.FIELDS_COUNT );
-//		currentIndex.setIndexProperty("index.direct.fields.names", ArrayUtils.join(FieldScore.FIELD_NAMES, ","));
-		
-		//directIndexBuilder.finishedCollections();
+
 		directIndexBuilder.close();
 		docIndexBuilder.finishedCollections();
 		
@@ -432,9 +419,8 @@ public class BasicIndexer extends Indexer
 
 
 		//generate the inverted index
-		logger.info("Started building the inverted index...");
 		invertedIndexBuilder = new InvertedIndexBuilder(currentIndex, "inverted", compressionInvertedConfig);
-		
+		invertedIndexBuilder.setExternalParalllism(this.externalParalllism);
 		invertedIndexBuilder.createInvertedIndex();
 		finishedInvertedIndexBuild();
 		

@@ -200,7 +200,8 @@ public class StructureMerger {
 			//creating a new map between new and old term codes
 			if (keepTermCodeMap)
 				termcodeHashmap = new TIntIntHashMap();
-
+			
+			logger.debug("Opening src lexicons");
 			//setting the input streams
 			Iterator<Map.Entry<String,LexiconEntry>> lexInStream1 = 
 				(Iterator<Map.Entry<String,LexiconEntry>>)srcIndex1.getIndexStructureInputStream("lexicon");
@@ -217,6 +218,7 @@ public class StructureMerger {
 			FixedSizeWriteableFactory<LexiconEntry> lvf = 
 				(FixedSizeWriteableFactory<LexiconEntry>)srcIndex1.getIndexStructure("lexicon-valuefactory");
 				
+			logger.debug("Opening new target lexicon");
 			//setting the output stream
 			LexiconOutputStream<String> lexOutStream = 
 				new FSOMapFileLexiconOutputStream(destIndex, "lexicon", (Class <FixedSizeWriteableFactory<LexiconEntry>>) lvf.getClass());
@@ -225,20 +227,22 @@ public class StructureMerger {
 					 ? (int)srcIndex1.getCollectionStatistics().getNumberOfUniqueTerms()
 					 : 0;
 			
+			logger.debug("Opening src inv files");
 			PostingIndex<Pointer> inverted1 = (PostingIndex<Pointer>) srcIndex1.getInvertedIndex();
 			PostingIndex<Pointer> inverted2 = (PostingIndex<Pointer>) srcIndex2.getInvertedIndex();
 			
+			logger.debug("Opening new target inv file");
 			AbstractPostingOutputStream invOS = null;
 			try{
 				invOS = compressionInvertedConfig.getPostingOutputStream(((IndexOnDisk) destIndex).getPath() + ApplicationSetup.FILE_SEPARATOR +  
 						((IndexOnDisk) destIndex).getPrefix() + ".inverted"+ compressionInvertedConfig.getStructureFileExtension());
 				
 			} catch (Exception e) {
-				logger.error("Couldn't create specified DirectInvertedOutputStream", e);
+				logger.error("Couldn't create specified AbstractPostingOutputStream", e);
 				lexOutStream.close();
 				return;
 			}
-
+			logger.debug("Starting pass through inv & lexicon files");
 
 			boolean hasMore1 = false;
 			boolean hasMore2 = false;
@@ -321,6 +325,7 @@ public class StructureMerger {
 			}
 			
 			if (hasMore1) {
+				logger.debug("Now processing trailing terms from lex1");
 				lee2 = null;
 				while (hasMore1) {
 					//write to inverted file as well.
@@ -337,6 +342,7 @@ public class StructureMerger {
 				}
 			} else if (hasMore2) {
 				lee1 = null;
+				logger.debug("Now processing trailing terms from lex2");
 				while (hasMore2) {
 					//write to inverted file as well.
 					BitIndexPointer newPointer = invOS.writePostings(
@@ -353,6 +359,8 @@ public class StructureMerger {
 						lee2 = lexInStream2.next();
 				}		
 			}
+			logger.debug("Closing structures");
+
 			IndexUtil.close(lexInStream1);
 			IndexUtil.close(lexInStream2);
 			
@@ -384,6 +392,10 @@ public class StructureMerger {
 								
 		} catch(IOException ioe) {
 			logger.error("IOException while merging lexicons and inverted files.", ioe);
+		} catch (Throwable t) {
+			logger.error("Problem while merging lexicons and inverted files.", t);
+			t.printStackTrace();
+			throw new RuntimeException(t);
 		}
 	}
 

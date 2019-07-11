@@ -137,7 +137,7 @@ if (indexref == null)
 			ApplicationSetup.TERRIER_INDEX_PREFIX);
 	application.setAttribute("terrier.jsp.index", indexref);
 }	
-IManager queryingManager = (IManager)application.getAttribute("terrier.jsp.manager");
+Manager queryingManager = (Manager)application.getAttribute("terrier.jsp.manager");
 if (queryingManager == null)
 {
 	queryingManager = ManagerFactory.from(indexref);
@@ -151,7 +151,7 @@ srq.setControl("decorate", "on");
 srq.setControl("end", String.valueOf(iStart + NUM_RESULTS_PER_PAGE -1));
 srq.addMatchingModel(defaultMatching, defaultModel);
 queryingManager.runSearchRequest(srq);
-ResultSet rs = srq.getResultSet();
+ResultSet rs = ((Request)srq).getResultSet();
 int firstDisplayRank = iStart +1;
 int lastDisplayRank = 1+ Math.min(rs.getExactResultSize() -1, iStart + NUM_RESULTS_PER_PAGE);
 int possibleRanks = rs.getExactResultSize();

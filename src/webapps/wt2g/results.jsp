@@ -108,7 +108,7 @@ protected static void displayResults(ResultSet rs, int iStart, javax.servlet.jsp
 		j = key2metaoffset.get("docno");
 		out.print("<font size=\"2\"> - </font><span class=\"results_docno\"><font size=\"2\" color=\"#0E774A\">"+meta[j][i]+"</font></span>");
 		String date = "";
-		if (! key2metaoffset.contains("crawldate"))
+		if (key2metaoffset.contains("crawldate"))
 		{
 			j = key2metaoffset.get("crawldate");
 			date = meta[j][i];
@@ -202,7 +202,7 @@ if (indexref == null)
 			ApplicationSetup.TERRIER_INDEX_PREFIX);
 	application.setAttribute("terrier.jsp.index", indexref);
 }	
-IManager queryingManager = (IManager)application.getAttribute("terrier.jsp.manager");
+Manager queryingManager = (Manager)application.getAttribute("terrier.jsp.manager");
 if (queryingManager == null)
 {
 	queryingManager = ManagerFactory.from(indexref);
@@ -215,7 +215,7 @@ srq.setControl("decorate", "on");
 srq.setControl("end", String.valueOf(iStart + NUM_RESULTS_PER_PAGE -1));
 srq.addMatchingModel(defaultMatching, model);
 queryingManager.runSearchRequest(srq);
-ResultSet rs = srq.getResultSet();
+ResultSet rs = ((Request)srq).getResultSet();
 int firstDisplayRank = iStart +1;
 int lastDisplayRank = 1+ Math.min(rs.getExactResultSize() -1, iStart + NUM_RESULTS_PER_PAGE);
 int possibleRanks = rs.getExactResultSize();

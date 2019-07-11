@@ -82,6 +82,7 @@ import org.terrier.structures.collections.TestFSOrderedMapFile;
 import org.terrier.structures.indexing.TestIndexing;
 import org.terrier.structures.indexing.TestIndexingFatalErrors;
 import org.terrier.structures.indexing.singlepass.TestInverted2DirectIndexBuilder;
+import org.terrier.structures.merging.TestMerger;
 import org.terrier.structures.postings.TestFieldORIterablePosting;
 import org.terrier.structures.postings.TestFieldOnlyIterablePosting;
 import org.terrier.structures.postings.TestORIterablePosting;
@@ -210,6 +211,9 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	//.structures.indexing
 	TestIndexing.class,
 	TestIndexingFatalErrors.class,
+	
+	//structures.indexing.merging
+	TestMerger.class,
 	
 	//.structures.indexing.sp.hadoop
 	TestInverted2DirectIndexBuilder.class,

@@ -170,7 +170,7 @@ termpipelines=Stopwords,PorterStemmer
 #####################################################
 
 #default control of processes for manager
-querying.processes=querying.processes=terrierql:TerrierQLParser,parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,matchopql:MatchingOpQLParser,applypipeline:ApplyTermPipeline,localmatching:LocalManager$ApplyLocalMatching,qe:QueryExpansion,labels:org.terrier.learning.LabelDecorator,filters:LocalManager$PostFilterProcess
+querying.processes=terrierql:TerrierQLParser,parsecontrols:TerrierQLToControls,parseql:TerrierQLToMatchingQueryTerms,matchopql:MatchingOpQLParser,applypipeline:ApplyTermPipeline,localmatching:LocalManager$ApplyLocalMatching,qe:QueryExpansion,labels:org.terrier.learning.LabelDecorator,filters:LocalManager$PostFilterProcess
 #default controls for the web-based interface. SimpleDecorate
 #is the simplest metadata decorator. For more control, see Decorate.
 querying.postfilters=decorate:SimpleDecorate,site:SiteFilter,scope:Scope

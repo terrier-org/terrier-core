@@ -25,7 +25,6 @@
  */
 package org.terrier.applications;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -102,7 +101,7 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 			final AtomicInteger indexCounter = new AtomicInteger();
 			final AtomicInteger mergeCounter = new AtomicInteger();			
 			
-			final int threadCount = ForkJoinPool.commonPool().getParallelism();
+			final int threadCount = this.maxThreads == -1 ? ForkJoinPool.commonPool().getParallelism() : this.maxThreads;
 			logger.info("Started " + this.getClass().getSimpleName() + " with parallelism " + threadCount);
 			if (singlePass)
 			{
@@ -127,12 +126,14 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					BatchIndexing indexing = singlePass 
 							? new TRECIndexingSinglePass(path, thisPrefix, c)
 							: new TRECIndexing(path, thisPrefix, c);
+					indexing.setExternalParalllism(threadCount);
 					indexing.blocks = blocks;
 					indexing.index();
 					return thisPrefix;
 				}	
 			};
 			BinaryOperator<String> merger = (String t, String u) -> {
+				logger.debug("Reduce " + t+ " " + u);
 				try {			
 					if (t == null && u == null)
 						return null;
@@ -160,7 +161,9 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 						IndexUtil.deleteIndex(path, u);
 						return null;
 					}
+					
 					String thisPrefix = prefix + "_merge"+mergeCounter.getAndIncrement();
+					logger.debug("Target prefix for this merge is " + thisPrefix);
 					IndexOnDisk newIndex = IndexOnDisk.createNewIndex(path, thisPrefix);
 					if (blocks)
 						new BlockStructureMerger(src1, src2, newIndex).mergeStructures();
@@ -173,8 +176,9 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 					//TODO: could index deletion occur in parallel
 					IndexUtil.deleteIndex(path, t);
 					IndexUtil.deleteIndex(path, u);
+					logger.debug("New index from " + t+ " and "+ u + " is " + thisPrefix);
 					return thisPrefix;
-				} catch (IOException e) {
+				} catch (Throwable e) {
 					throw new RuntimeException(e);
 				}
 					

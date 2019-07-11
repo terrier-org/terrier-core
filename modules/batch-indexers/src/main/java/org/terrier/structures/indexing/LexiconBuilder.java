@@ -51,6 +51,8 @@ import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.MemoryChecker;
+import org.terrier.utility.RuntimeMemoryChecker;
 import org.terrier.utility.TermCodes;
 /**
  * Builds temporary lexicons during indexing a collection and
@@ -61,7 +63,7 @@ public class LexiconBuilder
 {
 
 	/** class to be used as a lexiconoutpustream. set by this and child classes */
-	@SuppressWarnings({ "rawtypes" }) //TODO : this is complicated to fix
+	@SuppressWarnings({ "rawtypes" }) //this would be a complicated fix
 	protected Class<? extends LexiconOutputStream> lexiconOutputStream = null;
 
 	//protected Class<? extends LexiconMap> LexiconMapClass = null;
@@ -79,8 +81,8 @@ public class LexiconBuilder
 	
 	/** The number of documents for which a temporary lexicon is created. 
 	 * Corresponds to property <tt>bundle.size</tt>, default value 2000. */
-	protected static final int DocumentsPerLexicon = Integer.parseInt(ApplicationSetup.getProperty("bundle.size", "2000"));
-	/** The linkedlist in which the temporary lexicon structure names are stored.
+	protected static final int DocumentsPerLexicon = Integer.parseInt(ApplicationSetup.getProperty("bundle.size", "100000"));
+	/** The list in which the temporary lexicon structure names are stored.
 	  * These are merged into a single Lexicon by the merge() method. 
 	  * LinkedList is best List implementation for this, as all operations
 	  * are either append element, or remove first element - making LinkedList
@@ -166,15 +168,8 @@ public class LexiconBuilder
 	
 	protected static class NullCollectionStatisticsCounter implements CollectionStatisticsCounter
 	{
-
-		public void count(LexiconEntry value) {
-			
-		}
-
-		public void close() throws IOException {
-			
-		}
-		
+		public void count(LexiconEntry value) {}
+		public void close() throws IOException {}		
 	}
 	
 	/** counts global statistics in the non-fields case */
@@ -237,6 +232,7 @@ public class LexiconBuilder
 	
 	protected String defaultStructureName;
 	protected FixedSizeWriteableFactory<LexiconEntry> valueFactory;
+	protected MemoryChecker memCheck = new RuntimeMemoryChecker();
 	
 	/**
 	 * constructor
@@ -301,10 +297,7 @@ public class LexiconBuilder
 		this.defaultStructureName = _structureName;
 		this.termCodes = _termCodes;
 		this.TempLex = lexiconMap;
-		//TemporaryLexiconDirectory = indexPath + ApplicationSetup.FILE_SEPARATOR + indexPrefix + "_";
-		//LexiconMapClass = lexiconMap;	
 		lexiconEntryFactoryValueClass = _lexiconEntryClass;
-		
 	
 		this.index.addIndexStructure(
 				defaultStructureName+"-keyfactory", 
@@ -317,6 +310,9 @@ public class LexiconBuilder
 		this.index.addIndexStructure(defaultStructureName+"-valuefactory", lexiconEntryFactoryValueClass+"$Factory", valueFactoryParamTypes, valueFactoryParamValues);
 		valueFactory = (FixedSizeWriteableFactory<LexiconEntry>)this.index.getIndexStructure(defaultStructureName+"-valuefactory");
 		lexiconOutputStream = LexiconOutputStream.class;
+		
+		logger.info("LexiconBuilder active - flushing every " 
+			+ DocumentsPerLexicon + " documents, or when memory threshold hit");
 	}
 
 	/** Returns the number of terms in the final lexicon. Only updated once finishDirectIndexBuild() has executed */
@@ -331,7 +327,6 @@ public class LexiconBuilder
 	  * @deprecated */
 	public void addTemporaryLexicon(String structureName) {
 		tempLexFiles.addLast(structureName);
-		//filename = ApplicationSetup.makeAbsolute(filename, TemporaryLexiconDirectory);
 	}
 
 	/** Writes the current contents of TempLex temporary lexicon binary tree down to
@@ -344,9 +339,6 @@ public class LexiconBuilder
 			LexiconOutputStream<String> los = getLexOutputStream(tmpLexName);
 			TempLex.storeToStream(los, termCodes);
 			los.close();
-			/* An alternative but deprecated method to store the temporary lexicons is: 
-			 * TempLex.storeToFile(tmpLexName); */
-			//tempLexFiles.addLast(TempLexDirCount+""+TempLexCount);
 			tempLexFiles.addLast(tmpLexName);
 		}catch(IOException ioe){
 			logger.error("Indexing failed to write a lexicon to disk : ", ioe);
@@ -367,14 +359,20 @@ public class LexiconBuilder
 	{
 		TempLex.insert(terms);
 		DocCount++;
-		if((DocCount % DocumentsPerLexicon) == 0)
+		String reason = null;
+		if (DocCount % 10 == 0 && memCheck.checkMemory()) {
+			reason = "memory threshold hit";
+		} else if (DocCount % DocumentsPerLexicon == 0) {
+			reason = "doc count exceeded";
+		}
+		if (reason != null)
 		{
 			if (logger.isDebugEnabled())
-				logger.debug("flushing lexicon");
+				logger.debug("flushing lexicon because of " + reason);
 			writeTemporaryLexicon();
 			TempLexCount++;
 			TempLex.clear();
-			//try{ TempLex = (LexiconMap)LexiconMapClass.newInstance(); } catch (Exception e) {logger.error(e);}
+			memCheck.reset();
 		}
 	}
 
@@ -382,7 +380,7 @@ public class LexiconBuilder
 	public void flush()
 	{
 		if (logger.isDebugEnabled())
-			logger.debug("flushing lexicon");
+			logger.debug("flushing lexicon (forced)");
 		writeTemporaryLexicon();
 		TempLexCount++;
 		TempLex.clear();
@@ -395,7 +393,6 @@ public class LexiconBuilder
 	public void finishedInvertedIndexBuild() {
 		optimiseLexicon();
 	}
-	
 	
 	
 	/** 
@@ -414,23 +411,13 @@ public class LexiconBuilder
 		//merges the temporary lexicons
 		if (tempLexFiles.size() > 0)
 		{
-			//Set<String> tempDirectories = new HashSet<String>();
-			//for(String tmpLex : tempLexFiles)
-			//{
-			//	tempDirectories.add(Files.getParent(tmpLex));
-			//}
 			try{
 				merge(tempLexFiles);
-				
 				//creates the offsets and hash file
 				optimiseLexicon();
 			} catch(IOException ioe){
 				logger.error("Indexing failed to merge temporary lexicons to disk : ", ioe);
 			}
-			//for (String tmpDir : tempDirectories)
-			//{
-			//	Files.delete(tmpDir);
-			//}
 		}	
 		else
 			logger.warn("No temporary lexicons to merge, skipping");

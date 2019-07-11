@@ -49,7 +49,7 @@ import org.terrier.structures.Index;
 * Additionally, the Request holds all the controls set for this query.
 * @author Craig Macdonald, Dyaa Albakour
 */
-public class Request implements SearchRequest
+public class Request implements SearchRequest, Cloneable
 {
 	private static final long serialVersionUID = 1L;
 	/** does the query have any terms. Used by Manager.runMatching() to short circuit the
@@ -350,6 +350,20 @@ public class Request implements SearchRequest
 	@Override
 	public Object getContextObject(String key){
 		return this.contextObjects.get(key);
+	}
+
+	@Override
+	public Request clone() throws CloneNotSupportedException {
+		Request rtr = (Request) super.clone();
+		rtr.Control = new HashMap<>(this.Control);
+		rtr.contextObjects = new HashMap<>(this.contextObjects);
+		if (q != null)
+			rtr.q = (Query) this.q.clone();
+		if (resultSet != null)
+			rtr.resultSet = resultSet.getResultSet(0, resultSet.getResultSize());
+		if (matchingTerms != null)
+			rtr.matchingTerms = matchingTerms.clone();
+		return rtr;
 	}
 	
 }
