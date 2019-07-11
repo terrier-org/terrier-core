@@ -221,7 +221,7 @@ public class QueryExpansion implements MQTRewritingProcess {
 				rtr = next;
 			}
 			catch (Exception e) {
-				logger.error("Errory during GetExpansionTerms", e);
+				logger.error("Error during GetExpansionTerms", e);
 				return null;
 			}
 		}
