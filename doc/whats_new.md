@@ -17,8 +17,9 @@ Minor update with bug-fixes and improvements. In particular, the classical index
  - Ensure that different words with identical stems are correctly conflated
  - make the query parser factory method static
  - LabelSet should work if given a non-featured result set, particularly copying of metadata
- - [#21](https://github.com/terrier-org/terrier-core/issues/21)  batchevaluate should not override existing .eval files
- - [TR-566](http://terrier.org/issues/browse/TR-566) Batchretrieve using -m (MatchingOp) doesnt work. Redha ELtaani (Université du Québec à Montréal - Canada). 
+ - [#21](https://github.com/terrier-org/terrier-core/issues/21) batchevaluate should not override existing .eval files
+ - [#40](https://github.com/terrier-org/terrier-core/issues/40) IndexUtil.getFieldId() doesnt work for single-pass indices. Identified with Xiao Wang, University of Glasgow
+ - [TR-566](http://terrier.org/issues/browse/TR-566) Batchretrieve using -m (MatchingOp) doesnt work. Reported by Redha ELtaani (Université du Québec à Montréal - Canada). 
  
 
 ### Other

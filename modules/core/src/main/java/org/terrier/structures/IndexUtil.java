@@ -453,7 +453,7 @@ public class IndexUtil {
 	public static int getFieldId(Index index, String structureName, String fieldName) {
 		if (fieldName == null)
 			return -1;
-		String[] fieldNames = ArrayUtils.parseCommaDelimitedString(index.getIndexProperty("index.direct.fields.names", ""));
+		String[] fieldNames = ArrayUtils.parseCommaDelimitedString(index.getIndexProperty("index."+structureName+".fields.names", ""));
 		int i=-1;
 		for(String f : fieldNames)
 		{
