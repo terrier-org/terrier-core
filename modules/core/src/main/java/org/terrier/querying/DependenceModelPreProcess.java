@@ -77,7 +77,12 @@ public class DependenceModelPreProcess implements MQTRewritingProcess{
 			name = "org.terrier.matching.models.dependence." + name;
 		WeightingModel rtr = null;
 		try{
-			rtr = ApplicationSetup.getClass(name).asSubclass(WeightingModel.class).getConstructor(Integer.TYPE).newInstance(ngramLength);
+			Class<? extends WeightingModel> clz = ApplicationSetup.getClass(name).asSubclass(WeightingModel.class);
+			//TODO: this is a hack - we should have an interface for specific dependence models
+			if (clz.getPackage().toString().contains("dependence"))
+				rtr = clz.getConstructor(Integer.TYPE).newInstance(ngramLength);
+			else
+				rtr = clz.newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
