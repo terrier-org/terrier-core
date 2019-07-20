@@ -42,11 +42,17 @@ import org.terrier.utility.TerrierTimer;
 /** Base abstract class for query independent features loaded from file.
  * For types of file are supported:
  * <ul>
- * <li>oos/ois: an {@link java.io.ObjectOutputStream} file of float[] or double[] array</li>
- * <li>docid2score: a text file containing [docid] [score]</li>
- * <li>listofscores: a text file containing one score per line</li>
+ * <li>oos/ois: an {@link java.io.ObjectOutputStream} file of float[] or double[] array.</li>
+ * <li>docid2score: a text file containing [docid] [score]. An optional parameter after the filename specifies the column of interest.</li>
+ * <li>listofscores: a text file containing one score per line. An optional parameter after the filename specifies the column of interest.</li>
  * <li>tmap: a {@link TIntDoubleHashMap} saved in an {@link java.io.ObjectOutputStream} file</li>
  * </ul>
+ * <b>Examples, in a feature.list file:</b>
+ * <pre>
+ * QI:StaticFeature(OOS,/path/to/index/data.inlinks.oos.gz)
+ * QI:StaticFeature(docid2score,/path/to/index/data.pagerank.txt.gz)
+ * QI:StaticFeature(listofscores,/path/to/index/data.pagerank.txt.gz,2) #examine columns 2 (starting from 1)
+ * </pre>
  * @since 4.0 
  * @author Craig Macdonald
  */
