@@ -128,6 +128,19 @@ public class QueryExpansion implements MQTRewritingProcess {
 	@Override
 	public boolean expandQuery(MatchingQueryTerms query, Request rq) throws IOException 
 	{
+		//get the query expansion model to use
+		String qeModel = q.getControl("qemodel");
+		if (qeModel == null || qeModel.length() ==0)
+		{
+			logger.warn("qemodel control not set for QueryExpansion"+
+					" post process. Using default model Bo1");
+			qeModel = "Bo1";
+		}
+		setQueryExpansionModel(getQueryExpansionModel(qeModel));
+		if(logger.isDebugEnabled()){
+			logger.info("query expansion model: " + QEModel.getInfo());
+		}
+		
 		// the number of term to re-weight (i.e. to do relevance feedback) is
 		// the maximum between the system setting and the actual query length.
 		// if the query length is larger than the system setting, it does not
@@ -277,18 +290,7 @@ public class QueryExpansion implements MQTRewritingProcess {
 			return;
 		}
 		logger.debug("Starting query expansion post-processing.");
-		//get the query expansion model to use
-		String qeModel = q.getControl("qemodel");
-		if (qeModel == null || qeModel.length() ==0)
-		{
-			logger.warn("qemodel control not set for QueryExpansion"+
-					" post process. Using default model Bo1");
-			qeModel = "Bo1";
-		}
-		setQueryExpansionModel(getQueryExpansionModel(qeModel));
-		if(logger.isDebugEnabled()){
-			logger.info("query expansion model: " + QEModel.getInfo());
-		}
+		
 		MatchingQueryTerms queryTerms = q.getMatchingQueryTerms();
 		if (queryTerms == null)
 		{
