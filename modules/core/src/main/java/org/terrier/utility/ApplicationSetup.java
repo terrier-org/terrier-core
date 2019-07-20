@@ -626,6 +626,8 @@ public class ApplicationSetup {
 			return null;
 		if(filename.length() == 0)
 			return filename;
+		if(filename.equals("-")) //stdout and stdin are absolute
+			return filename;
 		if (filename.matches("^\\w+:.*"))
 			return filename;
 		if ( new File(filename).isAbsolute() )

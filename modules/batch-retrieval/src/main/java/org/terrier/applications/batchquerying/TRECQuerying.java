@@ -893,6 +893,11 @@ public class TRECQuerying extends AbstractQuerying {
 	public void printSettings(final SearchRequest default_q,
 			final String[] topicsFiles, final String otherComments) {
 		try {
+			if (resultsFilename.equals("-"))
+			{
+				logger.info("Skipping writing of Terrier settings as stdout is the results file");
+				return;
+			}
 			OutputStream bos = Files.writeFileStream(resultsFilename.replaceFirst("\\.res(\\.\\w+)?$", ".res") + ".settings");
 			ApplicationSetup.getUsedProperties().store(
 					bos,

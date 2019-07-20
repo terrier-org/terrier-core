@@ -58,6 +58,7 @@ import org.terrier.utility.io.LocalFileSystem;
 import org.terrier.utility.io.ResourceFileSystem;
 import org.terrier.utility.io.RandomDataInput;
 import org.terrier.utility.io.RandomDataOutput;
+import org.terrier.utility.io.StdInOutFileSystem;
 import org.terrier.utility.io.WrappedIOException;
 
 /** Utililty class for opening readers/writers and input/output streams to files. Handles gzipped and bzipped files
@@ -170,6 +171,8 @@ public class Files
 		addFileSystemCapability(new LocalFileSystem());
 		addFileSystemCapability(new HTTPFileSystem());
 		addFileSystemCapability(new ResourceFileSystem());
+		addFileSystemCapability(new StdInOutFileSystem());
+		
 		intialise_transformations();
 		initialise_mappings();
 		initialise_static_cache();		
@@ -287,6 +290,9 @@ public class Files
 	  */
 	protected static FileSystem getFileSystem(String filename)
 	{
+		if ("-".equals(filename))
+			return fileSystems.get(StdInOutFileSystem.SCHEME);
+
 		//check to see if filename is in a URI form
 		if (! filename.matches("^\\w+:.*$"))
 			return fileSystems.get(DEFAULT_SCHEME);
