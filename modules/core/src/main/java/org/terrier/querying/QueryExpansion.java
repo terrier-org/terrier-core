@@ -129,7 +129,7 @@ public class QueryExpansion implements MQTRewritingProcess {
 	public boolean expandQuery(MatchingQueryTerms query, Request rq) throws IOException 
 	{
 		//get the query expansion model to use
-		String qeModel = q.getControl("qemodel");
+		String qeModel = rq.getControl("qemodel");
 		if (qeModel == null || qeModel.length() ==0)
 		{
 			logger.warn("qemodel control not set for QueryExpansion"+
