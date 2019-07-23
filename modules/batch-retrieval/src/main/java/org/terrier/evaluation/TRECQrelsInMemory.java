@@ -23,6 +23,7 @@
  * Contributor(s):
  * Ben He <ben{a.}dcs.gla.ac.uk> 
  * Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk>
+ * Craig Macdonald
  */
 package org.terrier.evaluation;
 import org.terrier.utility.ArrayUtils;
@@ -33,8 +34,11 @@ import gnu.trove.TIntObjectHashMap;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +47,7 @@ import org.terrier.utility.ApplicationSetup;
 /**
  * Loads the relevance assessments in memory, for performing
  * evaluation of runs.
- * @author Ben He &amp; Vassilis Plachouras
+ * @author Ben He &amp; Vassilis Plachouras &amp; Craig Macdonald
   */
 public class TRECQrelsInMemory{
 	protected static final Logger logger = LoggerFactory.getLogger(TRECQrelsInMemory.class);
@@ -52,6 +56,9 @@ public class TRECQrelsInMemory{
 	 * relevant documents with respect to a query.
 	 */  
 	public QrelsHashSet[] qrelsPerQuery;
+
+	/** fast mapping from query id to qrels object */
+	Map<String,QrelsHashSet> qid2qrels = new HashMap<>();
 	
 	/**
 	 * An array with the qrels files.
@@ -177,7 +184,7 @@ public class TRECQrelsInMemory{
 	}
 	
 	/**
-	 * 	 * A default constructor that creates an instance of the class
+	 * A default constructor that creates an instance of the class
 	 * and loads in memory the relevance assessments from the files
 	 * that are specified in the file specified by the property
 	 * TREC_QRELS.
@@ -204,13 +211,10 @@ public class TRECQrelsInMemory{
 	 * given query.
 	 */
 	public THashSet<String> getNonRelevantDocuments(String queryid){
-		THashSet<String> relDocnos = null;
-		for (int i = 0; i < this.getNumberOfQueries(); i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid)){
-				relDocnos = (THashSet<String>)qrelsPerQuery[i].nonRelDocnos.clone();
-			}
-		}
-		return relDocnos;
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set == null)
+			return null;
+		return (THashSet<String>) set.nonRelDocnos.clone();
 	}
 	/**
 	 * Get all the pooled non-relevant documents.
@@ -243,13 +247,10 @@ public class TRECQrelsInMemory{
 	 * given query.
 	 */
 	public THashSet<String> getRelevantDocuments(String queryid){
-		THashSet<String> relDocnos = null;
-		for (int i = 0; i < this.getNumberOfQueries(); i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid)){
-				relDocnos = qrelsPerQuery[i].getAllRelevantDocuments();
-			}
-		}
-		return relDocnos;
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set == null)
+			return null;
+		return set.getAllRelevantDocuments();
 	}
 	/**
 	 * Get the pooled relevant documents for the given query.
@@ -258,13 +259,10 @@ public class TRECQrelsInMemory{
 	 * given query.
 	 */
 	public THashSet<String> getRelevantDocuments(String queryid, int grade){
-		THashSet<String> relDocnos = null;
-		for (int i = 0; i < this.getNumberOfQueries(); i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid)){
-				relDocnos = qrelsPerQuery[i].getRelevantDocuments(grade);
-			}
-		}
-		return relDocnos;
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set == null)
+			return null;
+		return set.getRelevantDocuments(grade);
 	}
 	/**
 	 * Get the pooled relevant documents for the given query.
@@ -274,16 +272,15 @@ public class TRECQrelsInMemory{
 	 */
 	public THashSet<String> getRelevantDocuments(String queryid, int grades[]){
 		THashSet<String> docnoSet = new THashSet<String>();
-		for (int i = 0; i < this.getNumberOfQueries(); i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid)){
-				for (int j=0; j<grades.length; j++){
-					String[] docnos = qrelsPerQuery[i].getRelevantDocumentsToArray(grades[j]);
-					if (docnos!=null){
-						int N = docnos.length;
-						for (int k=0; k<N; k++)
-							docnoSet.add(docnos[k]);
-					}
-				}
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set == null)
+			return docnoSet;
+		for (int j=0; j<grades.length; j++){
+			String[] docnos = set.getRelevantDocumentsToArray(grades[j]);
+			if (docnos!=null){
+				int N = docnos.length;
+				for (int k=0; k<N; k++)
+					docnoSet.add(docnos[k]);
 			}
 		}
 		return docnoSet;
@@ -305,13 +302,10 @@ public class TRECQrelsInMemory{
 	 * for the given query.
 	 */
 	public String[] getNonRelevantDocumentsToArray(String queryid){
-		String[] nonRelDocnos = null;
-		for (int i = 0; i < this.getNumberOfQueries(); i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid)){
-				nonRelDocnos = (String[])qrelsPerQuery[i].nonRelDocnos.toArray(new String[qrelsPerQuery[i].nonRelDocnos.size()]);
-			}
-		}
-		return nonRelDocnos;
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set != null)
+			return set.nonRelDocnos.toArray(new String[set.nonRelDocnos.size()]);
+		return null;
 	}
 	/**
 	 * Get the pooled relevant documents for a given query.
@@ -320,13 +314,10 @@ public class TRECQrelsInMemory{
 	 * for the given query.
 	 */
 	public String[] getRelevantDocumentsToArray(String queryid){
-		String[] relDocnos = null;
-		for (int i = 0; i < this.getNumberOfQueries(); i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid)){
-				relDocnos = qrelsPerQuery[i].getAllRelevantDocumentsToArray();
-			}
-		}
-		return relDocnos;
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set != null)
+			return set.getAllRelevantDocumentsToArray();
+		return null;
 	}
 	/**
 	 * Get the pooled relevant documents for a given query.
@@ -335,13 +326,10 @@ public class TRECQrelsInMemory{
 	 * for the given query.
 	 */
 	public String[] getRelevantDocumentsToArray(String queryid, int grade){
-		String[] relDocnos = null;
-		for (int i = 0; i < this.getNumberOfQueries(); i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid)){
-				relDocnos = qrelsPerQuery[i].getRelevantDocumentsToArray(grade);
-			}
-		}
-		return relDocnos;
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set != null)
+			return set.getRelevantDocumentsToArray(grade);
+		return null;
 	}
 	
 	/** 
@@ -360,11 +348,9 @@ public class TRECQrelsInMemory{
 	 * @return int The number of relevant documents for the given query.
 	 */
 	public int getNumberOfRelevant(String queryid){
-		for (int i = 0; i < this.getNumberOfQueries(); i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid)){
-				return qrelsPerQuery[i].getAllRelevantDocuments().size();
-			}
-		}
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set != null)
+			return set.getAllRelevantDocuments().size();
 		return 0;
 	}
 	
@@ -373,7 +359,7 @@ public class TRECQrelsInMemory{
 	 * specified in the array fqrels.
 	 */
 	protected void loadQrelsFile(){
-		Vector<QrelsHashSet> vector = new Vector<QrelsHashSet>();
+		List<QrelsHashSet> vector = new ArrayList<QrelsHashSet>();
 		int linenumber = 0; String file = null;
 		try{
 			int qrelsCounter = 0;
@@ -412,7 +398,7 @@ public class TRECQrelsInMemory{
 						preQueryid = queryid;
 					}
 					else{
-						vector.addElement((QrelsHashSet)qrelsHashSet.clone());
+						vector.add((QrelsHashSet)qrelsHashSet.clone());
 						qrelsHashSet = new QrelsHashSet(queryid);
 						if (relevant)
 							qrelsHashSet.insertRelDocno(docno, relGrade);
@@ -428,17 +414,20 @@ public class TRECQrelsInMemory{
                         qrelsHashSet.insertNonRelDocno(docno);
 				}
 			}
-			vector.addElement((QrelsHashSet)qrelsHashSet.clone());
+			vector.add((QrelsHashSet)qrelsHashSet.clone());
 			br.close();
 		}
 		catch(Exception t){
 			logger.error("Problem parsing qrels file "+ file + " line " + linenumber, t);
 			throw new Error(t);
 		}
-		this.qrelsPerQuery = (QrelsHashSet[])vector.toArray(new QrelsHashSet[vector.size()]);
+		this.qrelsPerQuery = vector.toArray(new QrelsHashSet[vector.size()]);
 		this.totalNumberOfRelevantDocs = 0;
-		for (int i = 0; i < qrelsPerQuery.length; i++)
-			this.totalNumberOfRelevantDocs += qrelsPerQuery[i].getAllRelevantDocuments().size();
+		for(QrelsHashSet querySet : this.qrelsPerQuery)
+		{
+			this.qid2qrels.put(querySet.queryid, querySet);
+			this.totalNumberOfRelevantDocs += querySet.getAllRelevantDocuments().size();
+		}
 	}
 	
 	public static String parseTRECQueryNo(String queryid)
@@ -469,11 +458,7 @@ public class TRECQrelsInMemory{
 	 *         otherwise it returns false.
 	 */
 	public boolean queryExistInQrels(String queryid){
-		for (int i = 0; i < this.qrelsPerQuery.length; i++){
-			if (qrelsPerQuery[i].queryid.equalsIgnoreCase(queryid))
-				return true;
-		}
-		return false;
+		return qid2qrels.containsKey(queryid);
 	}
 	
 	/**
@@ -485,9 +470,9 @@ public class TRECQrelsInMemory{
 	 */
 	public boolean isRelevant(String queryid, String docno){
 		boolean relevant = false;
-		for (int i = 0; i < qrelsPerQuery.length; i++)
-			if (qrelsPerQuery[i].queryid.equals(queryid))
-				relevant = qrelsPerQuery[i].isRelevant(docno);
+		QrelsHashSet set = qid2qrels.get(queryid);
+		if (set != null)
+			relevant = set.isRelevant(docno);
 		return relevant;
 	}
 	
@@ -500,23 +485,11 @@ public class TRECQrelsInMemory{
 	 */
 	public int getGrade(String qid, String docno, int def) {
 		int grade = def;
-		for (int i = 0; i < qrelsPerQuery.length; i++) {
-			if (qrelsPerQuery[i].queryid.equals(qid)) {
-				grade = qrelsPerQuery[i].getGrade(docno, def);
-			}
-		}
+		QrelsHashSet set = qid2qrels.get(qid);
+		if (set != null)
+			grade = set.getGrade(docno, def);
 		return grade;
 	}
-	
-//	public int[] getGrades(String qid, int def) {
-//		for (int i = 0; i < qrelsPerQuery.length; i++) {
-//			if (qrelsPerQuery[i].queryid.equals(qid)) {
-//				return qrelsPerQuery[i].getGrades();
-//			}
-//		}
-//		
-//		return new int[] { def };
-//	}
 	
 	/**
      * Models the set of relevant documents for one query.
@@ -594,10 +567,6 @@ public class TRECQrelsInMemory{
             	}
             	return def;
             }
-            
-//            public int[] getGrades() {
-//            	return relGrade.toArray();
-//            }
             
             
             /**
