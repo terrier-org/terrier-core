@@ -46,9 +46,11 @@ import org.terrier.matching.FatUtils;
 import org.terrier.matching.FeaturedScoringMatching;
 import org.terrier.matching.Matching;
 import org.terrier.matching.MatchingQueryTerms;
+import org.terrier.matching.PostingListManager;
 import org.terrier.matching.ResultSet;
 import org.terrier.matching.daat.FatFull;
 import org.terrier.matching.matchops.PhraseOp;
+import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.matching.matchops.UnorderedWindowOp;
 import org.terrier.matching.models.TF_IDF;
 import org.terrier.matching.models.Tf;
@@ -60,6 +62,69 @@ import org.terrier.utility.ApplicationSetup;
 
 public class TestFatFeaturedScoringMatching extends ApplicationSetupBasedTest {
 
+	
+	@Test public void singleDocumentSingleTermDifferentTags() throws Exception
+	{
+		ApplicationSetup.setProperty("termpipelines", "");
+		ApplicationSetup.setProperty("ignore.low.idf.terms", "false");
+		Index index = IndexTestUtils.makeIndex(
+				new String[]{"doc1"}, 
+				new String[]{"term1 term2 term2"});
+		
+		
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		
+		mqt.add(QTPBuilder.of(new SingleTermOp("term1")).setTag(BaseMatching.NONMATCHING_TAG).build());
+		mqt.add(QTPBuilder.of(new SingleTermOp("term2")).setTag(BaseMatching.BASE_MATCHING_TAG).build());
+		
+		mqt.setDefaultTermWeightingModel(new Tf());
+		
+		PostingListManager plm = new PostingListManager(index, index.getCollectionStatistics(), mqt);
+		assertEquals(1, plm.getMatchingTerms().length);
+		assertEquals(1, plm.getNonMatchingTerms().length);
+		plm.close();
+		
+		Matching m = new FatFull(index);
+		ResultSet r1 = m.match("test", mqt);
+		FatResultSet fr1 = (FatResultSet)r1;
+		
+		for (FatResultSet frInput : new FatResultSet[]{fr1, FatUtils.recreate(fr1)})
+		{
+			assertEquals(1, frInput.getResultSize());
+			assertEquals(0, frInput.getDocids()[0]);
+			assertEquals(2, frInput.getScores()[0], 0d);
+			
+			assertNotNull(frInput.getPostings());
+			assertNotNull(frInput.getPostings()[0]);
+			assertNotNull(frInput.getPostings()[0][0]);
+			
+			assertEquals(0, frInput.getPostings()[0][0].getId());
+			assertEquals(1, frInput.getPostings()[0][0].getFrequency());
+			assertEquals(3, frInput.getPostings()[0][0].getDocumentLength());
+			
+			assertNotNull(frInput.getPostings()[0][1]);
+			
+			assertEquals(0, frInput.getPostings()[0][1].getId());
+			assertEquals(2, frInput.getPostings()[0][1].getFrequency());
+			assertEquals(3, frInput.getPostings()[0][1].getDocumentLength());
+			
+			
+			FatFeaturedScoringMatching ffsm = new FatFeaturedScoringMatching(null, null, 
+					new String[]{"SAMPLE", "WMODEL$firstkeep:Tf"}
+			);
+			ResultSet r2 = ffsm.doMatch("test", mqt, fr1);
+			
+			assertEquals(1, r2.getResultSize());
+			assertEquals(0, r2.getDocids()[0]);
+			assertEquals(r1.getScores()[0], r2.getScores()[0], 0.0d);
+			
+			FeaturedResultSet featRes = (FeaturedResultSet)r2;
+			final double[] tfs = featRes.getFeatureScores("WMODEL$firstkeep:Tf");
+			assertEquals(1, tfs.length);
+			assertEquals(1, tfs[0], 0.0d);
+		}
+	}
+	
 	@Test public void singleDocumentSingleTerm() throws Exception
 	{
 		ApplicationSetup.setProperty("termpipelines", "");

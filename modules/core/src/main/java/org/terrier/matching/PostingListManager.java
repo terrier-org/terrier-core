@@ -340,7 +340,7 @@ public class PostingListManager implements Closeable
 				{
 					matchOnTerms.add(termPostings.size() -1);
 				}
-				else if (me.getTags().size() > 1 && me.getTags().contains(additionalTag))
+				else if (me.getTags().size() > 0 && me.getTags().contains(additionalTag))
 				{
 					nonMatchOnTerms.add(termPostings.size() -1);
 				}

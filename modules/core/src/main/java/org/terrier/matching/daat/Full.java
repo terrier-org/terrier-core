@@ -154,7 +154,7 @@ public class Full extends BaseMatching
             			//these are postings that we need to keep/score, but which wont change the threshold
             			//often these might be so FAT can score them later
             			if (plm.getPosting(i).next(currentDocId) != IterablePosting.EOL)
-            				assignScore(i, currentCandidate);
+            				assignNotScore(i, currentCandidate);
             		}
 	            	//System.err.println("New document " + currentCandidate.getDocId() + " with score " + currentCandidate.getScore() + " passes threshold of " + threshold);
 	        		candidateResultList.add(currentCandidate);
@@ -193,6 +193,11 @@ public class Full extends BaseMatching
 		return new CandidateResult(currentDocId);
 	}
 	
+	protected void assignNotScore(final int i, final CandidateResult cc) throws IOException {
+        cc.updateOccurrence((i < 16) ? (short)(1 << i) : 0);
+
+	}
+	
 	/** assign the score for this posting to this candidate result.
 	 * @param i which query term index this represents
 	 * @param cc the candidate result object for this document
@@ -201,7 +206,7 @@ public class Full extends BaseMatching
 	protected void assignScore(final int i, CandidateResult cc) throws IOException
     {
         cc.updateScore(plm.score(i));
-        cc.updateOccurrence((i < 16) ? (short)(1 << i) : 0);
+        assignNotScore(i, cc);
     }
 	
 	/** returns the docid of the lowest posting */

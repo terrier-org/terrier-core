@@ -99,12 +99,17 @@ public class FatFull extends Full {
 		
 		return new FatCandidateResultSet(candidateResultList, super.collectionStatistics, queryTerms, entryStats, keyFreqs, tags);
 	}
-
+	
 	@Override
 	protected void assignScore(final int i, final CandidateResult cc) throws IOException {
-		
 		//update the score as normal
 		cc.updateScore(plm.score(i));
+		assignNotScore(i, cc);
+	}
+	
+	@Override
+	protected void assignNotScore(final int i, final CandidateResult cc) throws IOException {
+	
         cc.updateOccurrence((i < 16) ? (short)(1 << i) : 0);
         
         //get a deep copy of the posting
