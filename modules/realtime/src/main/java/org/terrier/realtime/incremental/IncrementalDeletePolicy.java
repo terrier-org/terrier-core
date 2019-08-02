@@ -70,10 +70,22 @@ public class IncrementalDeletePolicy {
 			synchronized (indices) {
 				int numDeleted = 0;
 				for (Integer i : indicesToDelete) {
-					indices.remove(i-numDeleted);
+					Index index = indices.remove(i-numDeleted);
+ 					if (index instanceof IndexOnDisk) {
+ 						deleteIndex((IndexOnDisk)index);
+					}
 					numDeleted++;
 				}
 			}
 		}
+	}
+	
+	public void deleteIndex(IndexOnDisk index) {
+ 		
+ 		for (File f : new File(index.getPath()).listFiles()) {
+ 			if (f.isFile() && f.getName().startsWith(index.getPrefix())) {
+ 				f.delete();
+ 			}
+ 		}
 	}
 }
