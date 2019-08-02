@@ -64,7 +64,7 @@ public abstract class MemoryFields extends MemoryIndex {
 
     /** {@inheritDoc} */
     @Override
-    public void collectProperties(Index memory, Index index, CompressionConfiguration compressionConfig) {
+    public void collectProperties(Index memory, Index index, CompressionConfiguration compressionConfigInverted, CompressionConfiguration compressionConfigDirect) {
 
         /*
          * index
@@ -106,6 +106,7 @@ public abstract class MemoryFields extends MemoryIndex {
          */
 
         compressionConfig.writeIndexProperties(index, "lexicon-entry-inputstream");
+        if (compressionConfigDirect!=null) compressionConfigDirect.writeIndexProperties(index, "document-inputstream");
         //index.addIndexStructure("inverted", "org.terrier.structures.InvertedIndex", new String[] { "org.terrier.structures.Index", "java.lang.String", "org.terrier.structures.DocumentIndex", "java.lang.Class" }, new String[] { "index", "structureName", "document", "org.terrier.structures.postings.FieldIterablePosting" });
         //index.addIndexStructureInputStream("inverted", "org.terrier.structures.InvertedIndexInputStream", new String[] { "org.terrier.structures.Index", "java.lang.String", "java.util.Iterator", "java.lang.Class" }, new String[] { "index", "structureName", "lexicon-entry-inputstream", "org.terrier.structures.postings.FieldIterablePosting" });
         index.getProperties().put("index.inverted.fields.count", String.valueOf(fieldtags.length));
