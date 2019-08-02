@@ -151,9 +151,10 @@ public class Full extends BaseMatching
             		((negRequiredBitPattern == 0) || (negRequiredBitPattern > 0 && (currentCandidate.getOccurrence() & negRequiredBitPattern) == 0)))
             	{     
             		for(int i : nonMatchingTerms) { 
+            			//System.err.println("docid=" + currentDocId + " i=" + i);
             			//these are postings that we need to keep/score, but which wont change the threshold
             			//often these might be so FAT can score them later
-            			if (plm.getPosting(i).next(currentDocId) != IterablePosting.EOL)
+            			if (plm.getPosting(i).next(currentDocId) == currentDocId)
             				assignNotScore(i, currentCandidate);
             		}
 	            	//System.err.println("New document " + currentCandidate.getDocId() + " with score " + currentCandidate.getScore() + " passes threshold of " + threshold);

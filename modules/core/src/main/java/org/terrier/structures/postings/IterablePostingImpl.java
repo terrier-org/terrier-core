@@ -37,11 +37,15 @@ public abstract class IterablePostingImpl implements IterablePosting {
 	 * This implementation of next(int) which uses next() 
 	 */
 	public int next(int target) throws IOException {
-		do
+		while (this.getId() < target)
 		{
 			if (this.next() == EOL)
 				return EOL;
-		} while(this.getId() < target);
+		}
+//		do
+//		{
+//			
+//		} while(this.getId() < target);
 		return this.getId();
 	}
 	
