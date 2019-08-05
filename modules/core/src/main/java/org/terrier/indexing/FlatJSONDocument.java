@@ -132,7 +132,7 @@ public class FlatJSONDocument implements Document {
     
     @Override
     public boolean endOfDocument() {
-    	return remainingTokens>0;
+    	return remainingTokens<=0;
     	
     }
 
