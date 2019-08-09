@@ -132,6 +132,7 @@ public class FatScoringMatching extends AbstractScoringMatching {
 		WeightingModel[] wms = new WeightingModel[numTerms];
 		//initialise the weighting models
 		String c = ApplicationSetup.getProperty("fat.scoring.matching.model.c", null);
+		int validTerms = 0;
 		if (c != null)
 			this.wm.setParameter(Double.parseDouble(c));
 		for(int ti=0;ti<numTerms;ti++)
@@ -142,11 +143,11 @@ public class FatScoringMatching extends AbstractScoringMatching {
 				okToScore[ti] = filterTerm.test(Pair.of(fInputRS.getQueryTerms()[ti],fInputRS.getTags()[ti]));
 			if (! okToScore[ti])
 			{
-				System.err.println("Term: "+fInputRS.getQueryTerms()[ti]+" not scored for wm " + wm.getInfo());
+				System.err.println("Term: "+fInputRS.getQueryTerms()[ti]+"$"+fInputRS.getTags()[ti]+" not scored for wm " + wm.getInfo());
 				continue;
 			}
 			if (DEBUG)
-				System.err.println("Term: " + fInputRS.getQueryTerms()[ti] + " qtw="+keyFreqs[ti] + " es="+entryStats[ti] + " scored for wm " + wm.getInfo());
+				System.err.println("Term: " + fInputRS.getQueryTerms()[ti]+"$"+fInputRS.getTags()[ti] + " qtw="+keyFreqs[ti] + " es="+entryStats[ti] + " scored for wm " + wm.getInfo());
 			
 			if (wm != null)
 				wms[ti] = (WeightingModel) wm.clone();
@@ -156,8 +157,10 @@ public class FatScoringMatching extends AbstractScoringMatching {
 			wms[ti].setCollectionStatistics(collStats);
 			wms[ti].setKeyFrequency(keyFreqs[ti]);
 			wms[ti].prepare();
-			
+			validTerms++;			
 		}
+		if (validTerms == 0)
+			System.err.println("WARN: No terms were valid for " + this.getClass().getSimpleName() + " with " + wm.getInfo());
 		//rescore the documents
 		int gt0 = 0;
 		

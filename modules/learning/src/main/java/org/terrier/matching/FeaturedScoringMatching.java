@@ -126,7 +126,19 @@ public abstract class FeaturedScoringMatching extends FilterMatching {
 				}
 				if (! dsmName.contains("."))
 					dsmName = DocumentScoreModifier.class.getPackage().getName() + '.' + dsmName;
-				final DocumentScoreModifier dsm = ApplicationSetup.getClass(dsmName).asSubclass(DocumentScoreModifier.class).newInstance();
+				DocumentScoreModifier dsm = null;
+				if (dsmName.indexOf("(") > 0) {
+					String params = dsmName.substring(dsmName.indexOf("(")+1, dsmName.indexOf(")"));
+					String[] parameters = params.split("\\s*,\\s*");
+					
+					dsm = ApplicationSetup.getClass(dsmName.substring(0,dsmName.indexOf("(")))
+							.asSubclass(DocumentScoreModifier.class)
+							.getConstructor(new Class[]{String[].class})
+							.newInstance(new Object[]{parameters});
+				}
+				else{
+					dsm = ApplicationSetup.getClass(dsmName).asSubclass(DocumentScoreModifier.class).newInstance();
+				}
 				_childrenDsms.add(dsm);
 				_childrenDsmNames.add(featureNames[i]);
 			}

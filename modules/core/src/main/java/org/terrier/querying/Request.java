@@ -353,8 +353,10 @@ public class Request implements SearchRequest, Cloneable
 	}
 
 	@Override
-	public Request clone() throws CloneNotSupportedException {
-		Request rtr = (Request) super.clone();
+	public Request clone() {
+		Request rtr = null;
+		try{
+		rtr = (Request) super.clone(); } catch (Exception e){}
 		rtr.Control = new HashMap<>(this.Control);
 		rtr.contextObjects = new HashMap<>(this.contextObjects);
 		if (q != null)

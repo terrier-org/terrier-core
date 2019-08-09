@@ -133,8 +133,9 @@ public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 		if (dsms.length > 0)
 		{
 			final Index fatIndex = FatUtils.makeIndex(fat);
-			final MatchingQueryTerms mqtLocal = new MatchingQueryTerms(queryNumber);
+			final MatchingQueryTerms mqtLocal = queryTerms.clone(); //new MatchingQueryTerms(queryNumber);
 			mqtLocal.setDefaultTermWeightingModel(queryTerms.defaultWeightingModel);
+			mqtLocal.clear();
 			int ti = 0;
 			for(String t : fat.getQueryTerms())
 			{

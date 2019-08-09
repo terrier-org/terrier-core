@@ -470,6 +470,10 @@ implements Serializable,Cloneable
 		
 	}
 
+	private boolean superAdd(MatchingTerm e) {
+		return super.add(e);
+	}
+
 	/**
 	 * Returns the associated weight of the given query term.
 	 * @param term String the query term for which the weight is returned.
@@ -635,7 +639,7 @@ implements Serializable,Cloneable
 		//clone query term properties
 		for (Map.Entry<Operator, QueryTermProperties> e : this)
 		{
-			newMQT.add(new MatchingTerm(e.getKey().clone(), e.getValue().clone()));
+			newMQT.superAdd(new MatchingTerm(e.getKey().clone(), e.getValue().clone()));
 		}
 		for (DocumentScoreModifier dsm : docScoreModifiers)
 		{
@@ -646,7 +650,8 @@ implements Serializable,Cloneable
 			newMQT.query = (Query)this.query.clone();
 		if (this.defaultWeightingModel != null)
 			newMQT.defaultWeightingModel = this.defaultWeightingModel.clone();
-		//newMQT.matchOnTags = new HashSet<>(this.matchOnTags);
+		//dont clone to avoid recursive cloning 
+		newMQT.rq = this.rq;
 		newMQT.queryId = this.queryId;
 		return newMQT;
 	}

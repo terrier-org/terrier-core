@@ -75,8 +75,8 @@ public class ScoringMatching extends AbstractScoringMatching {
 		final int docCount = docids.length;
 		scores = new double[docCount];
 		org.terrier.sorting.HeapSort.heapSort(docids, scores, docCount);
-	
-		System.err.println("ScoringMatching running for " + wm.getInfo());
+
+		System.err.println("ScoringMatching running for " + wm.getInfo() + ' '+ queryNumber);
 		
 		//this smells like a hack
 		if (super.wm != null)
@@ -93,12 +93,13 @@ public class ScoringMatching extends AbstractScoringMatching {
 				okToScore = filterTerm.test(Pair.of(term.getKey().toString(),term.getValue().getTags()));
 			if (! okToScore)
 			{
-				System.err.println("Term: "+term.getKey().toString()+" not scored for wm " + wm.getInfo());
+				System.err.println("Term: "+term.getKey().toString()+"$"+term.getValue().getTags()+" not scored for wm " + wm.getInfo() + ' '+ queryNumber);
 				iter.remove();
 				continue;
 			}			
 		}
-			
+		if(queryTerms.size() ==0)
+			System.err.println("Warn no terms being scored for " + queryNumber);
 		PostingListManager plm = new PostingListManager(index, this.cs, queryTerms, true, null, null);
 		
 		plm.prepare(true);
