@@ -302,9 +302,6 @@ public class TRECQuerying extends AbstractQuerying {
 	 */
 	protected String mModel = ApplicationSetup.getProperty("trec.matching", null);
 
-	/** The object that encapsulates the data structures used by Terrier. */
-	protected IndexRef indexref;
-
 	/** The number of results to output. Set by property <tt>trec.output.format.length</tt>.  */
 	protected static int RESULTS_LENGTH = Integer.parseInt(ApplicationSetup
 			.getProperty("trec.output.format.length", "1000"));
@@ -348,13 +345,6 @@ public class TRECQuerying extends AbstractQuerying {
 		this.loadIndex();
 		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 	}
-	
-	public TRECQuerying(boolean qe) {
-		this();
-		if (qe)
-			super.controls.put("qe", "on");
-		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
-	}
 
 	/**
 	 * TRECQuerying constructor initialises the specified inverted index, the
@@ -363,8 +353,7 @@ public class TRECQuerying extends AbstractQuerying {
 	 * @param _indexref The specified index reference.
 	 */
 	public TRECQuerying(IndexRef _indexref) {
-		super(BATCHRETRIEVE_PROP_PREFIX);
-		this.indexref = _indexref;
+		super(BATCHRETRIEVE_PROP_PREFIX, _indexref);
 		super.matchopQl = Boolean.parseBoolean(ApplicationSetup.getProperty("trec.topics.matchopql", "false"));
 	}
 	
@@ -906,6 +895,7 @@ public class TRECQuerying extends AbstractQuerying {
 			if (topicsFiles != null)
 				for (String f : topicsFiles)
 					pw.println("# topicfile: " + f);
+			pw.println("# indexref:" + this.indexref.toString());
 			Map<String, String> defaultcontrols = new HashMap<>(default_q.getControls());
 			defaultcontrols.putAll(super.controls);
 			for (Map.Entry<String,String> kv : defaultcontrols.entrySet())

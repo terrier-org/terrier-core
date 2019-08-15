@@ -31,20 +31,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import jline.TerminalFactory;
-import jline.console.ConsoleReader;
-import jline.console.completer.StringsCompleter;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.querying.IndexRef;
 import org.terrier.querying.ScoredDoc;
 import org.terrier.querying.SearchRequest;
 import org.terrier.querying.parser.QueryParserException;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
+
+import jline.TerminalFactory;
+import jline.console.ConsoleReader;
+import jline.console.completer.StringsCompleter;
 /**
  * This class performs interactive querying at the command line. It asks
  * for a query on Standard Input, and then displays the document IDs that
@@ -78,9 +79,9 @@ public class InteractiveQuerying extends AbstractQuerying {
 	protected boolean printDocid = Boolean.parseBoolean(ApplicationSetup.getProperty("interactive.output.docids", "false"));
 	
 	/** A default constructor initialises the index, and the Manager. */
-	public InteractiveQuerying() {
-		super(INTERACTIVE_COMMAND);
-		createManager();		
+	public InteractiveQuerying(IndexRef iRef) {
+		super(INTERACTIVE_COMMAND, iRef);
+		createManager();
 	}
 
 	/**

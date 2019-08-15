@@ -55,21 +55,24 @@ public class AbstractQuerying {
 //	protected String 
 //	
 
-	public AbstractQuerying(String _appName) {
-		super();
+	public AbstractQuerying(String _appName, IndexRef iRef) {
+		this.indexref = iRef;
 		this.appName = _appName;
 		String wModel = ApplicationSetup.getProperty(appName +".model", null);
 		if (wModel != null)
 			controls.put(SearchRequest.CONTROL_WMODEL, wModel);
 	}
 
-	/**
-	* Create a querying manager. This method should be overriden if
-	* another matching model is required.
-	*/
 	@SuppressWarnings("deprecation")
+	public AbstractQuerying(String _appName) {
+		this(_appName, IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));	
+	}
+
+	/**
+	* Create a querying manager.
+	*/
 	protected void createManager() {
-		queryingManager = ManagerFactory.from(IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
+		queryingManager = ManagerFactory.from(indexref);
 	}
 	
 	/**
@@ -90,6 +93,10 @@ public class AbstractQuerying {
 		matchingCount++;
 		queryingManager.runSearchRequest(srq);
 		return srq;
+	}
+
+	public Map<String,String> controls() {
+		return controls;
 	}
 	
 	public static abstract class AbstractQueryingCommand extends CLIParsedCLITool
@@ -134,7 +141,16 @@ public class AbstractQuerying {
 		
 		@Override
 		public final int run(CommandLine line) throws Exception {
-			AbstractQuerying aq = baseQuerying.newInstance();
+			
+			AbstractQuerying aq = null;
+			if (line.hasOption("I"))
+			{
+				String indexLocation = line.getOptionValue("I");
+				aq = baseQuerying.getConstructor(IndexRef.class).newInstance(IndexRef.of(indexLocation));
+			} else {
+				aq = baseQuerying.newInstance();
+			}
+			
 			if (line.hasOption("c"))
 			{
 				String[] controlCVs = line.getOptionValues("c");

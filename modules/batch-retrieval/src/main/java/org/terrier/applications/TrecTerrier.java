@@ -413,7 +413,9 @@ public class TrecTerrier {
 			//if no value is given, then we use a default value
 			if (docids)
 				ApplicationSetup.setProperty("trec.querying.outputformat", TRECDocidOutputFormat.class.getName());
-			TRECQuerying trecQuerying = new TRECQuerying(queryexpand);
+			TRECQuerying trecQuerying = new TRECQuerying();
+			if (queryexpand)
+				trecQuerying.controls().put("qe", "on");
 			trecQuerying.intialise();
 			trecQuerying.processQueries(c, isParameterValueSpecified);
 			trecQuerying.close();

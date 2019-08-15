@@ -41,6 +41,7 @@ public class ManagerFactory {
 	/** Load a manager suitable to retrieve from the specified index reference */
 	public static Manager from(IndexRef ref)
 	{
+		assert ref != null;
 		Iterable<Builder> iter = ServiceLoader.load(Builder.class, IndexRef.class.getClassLoader());
 		boolean any = false;
 		for(Builder b : iter)
