@@ -75,8 +75,9 @@ public class SingleTermOp extends Operator {
 	public void setTerm(String newTerm) {
 		queryTerm = newTerm;
 	}
-	public void setField(String newField) {
+	public SingleTermOp setField(String newField) {
 		field = newField;
+		return this;
 	}
 	
 	@Override
