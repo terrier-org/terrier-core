@@ -42,7 +42,7 @@ public class TestCollectionStatistics {
 	
 	@Test public void testWritable() throws Exception
 	{
-		CollectionStatistics cs1 = new CollectionStatistics(5, 6, 7, 8, new long[]{2});
+		CollectionStatistics cs1 = new CollectionStatistics(5, 6, 7, 8, new long[]{2}, new String[]{"TITLE", "ELSE"});
 		
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

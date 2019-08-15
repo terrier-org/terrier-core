@@ -52,7 +52,7 @@ public abstract class MemoryFields extends MemoryIndex {
         long[] fieldTokens = new long[fieldtags.length];
         for (int i = 0; i < fieldtags.length; i++)
             fieldTokens[i] = 0;
-        stats = new MemoryCollectionStatistics(0, 0, 0, 0, fieldTokens);
+        stats = new MemoryCollectionStatistics(0, 0, 0, 0, fieldTokens, fieldtags);
         load_pipeline();
         pipeline = pipeline_first;
     }

@@ -65,7 +65,7 @@ public abstract class Index implements Closeable, Flushable {
 		private static final long serialVersionUID = 1L;
 
 		public UpdatingCollectionStatistics(Index index) {
-			super(0, 0, 0, 0, new long[0]);
+			super(0, 0, 0, 0, new long[0], new String[0]);
 		}
 
 		@Override

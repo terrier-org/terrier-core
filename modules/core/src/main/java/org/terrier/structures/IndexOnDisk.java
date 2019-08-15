@@ -39,6 +39,7 @@ import java.util.HashMap;
 
 import org.terrier.Version;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
 import org.terrier.utility.restructure.Terrier4;
 import org.terrier.utility.restructure.Terrier5;
@@ -500,13 +501,14 @@ public class IndexOnDisk extends Index {
 		// create collection statistics
 		structureCache.put(
 				"collectionstatistics",
-				new CollectionStatistics(Integer.parseInt(properties
-						.getProperty("num.Documents", "0")), Integer
-						.parseInt(properties.getProperty("num.Terms", "0")),
-						Long.parseLong(properties
-								.getProperty("num.Tokens", "0")), Long
-								.parseLong(properties.getProperty(
-										"num.Pointers", "0")), tokensF));
+				new CollectionStatistics(
+						Integer.parseInt(properties.getProperty("num.Documents", "0")), 
+						Integer.parseInt(properties.getProperty("num.Terms", "0")),
+						Long.parseLong(properties.getProperty("num.Tokens", "0")), 
+						Long.parseLong(properties.getProperty("num.Pointers", "0")), 
+						tokensF, 
+						ArrayUtils.parseCommaDelimitedString(properties.getProperty("index.inverted.fields.names", ""))
+						));
 	}
 
 	/**

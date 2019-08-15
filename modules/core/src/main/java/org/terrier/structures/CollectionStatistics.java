@@ -59,6 +59,8 @@ public class CollectionStatistics implements Serializable,Writable {
 	/** Average length of each field */
 	protected double[] avgFieldLengths;
 	
+	protected String[] fieldNames;
+	
 	/** The total number of documents in the collection.*/
 	protected int numberOfDocuments;
 	
@@ -88,7 +90,7 @@ public class CollectionStatistics implements Serializable,Writable {
 	 * @param numPointers
 	 * @param _fieldTokens
 	 */
-	public CollectionStatistics(int numDocs, int numTerms, long numTokens, long numPointers, long[] _fieldTokens)
+	public CollectionStatistics(int numDocs, int numTerms, long numTokens, long numPointers, long[] _fieldTokens, String[] fieldNames)
 	{
 		numberOfDocuments = numDocs;
 		numberOfUniqueTerms = numTerms;
@@ -97,6 +99,7 @@ public class CollectionStatistics implements Serializable,Writable {
 		numberOfFields = _fieldTokens.length;
 		fieldTokens = _fieldTokens;
 		avgFieldLengths = new double[numberOfFields];
+		this.fieldNames = fieldNames;
 		relcaluateAverageLengths();
 	}
 	
@@ -124,6 +127,7 @@ public class CollectionStatistics implements Serializable,Writable {
 			"Number of documents: " + getNumberOfDocuments() + "\n" + 
 			"Number of terms: " + getNumberOfUniqueTerms() + "\n"  + 
 			"Number of fields: " + getNumberOfFields() + "\n" + 
+			"Field names: " + Arrays.toString(getFieldNames())  + "\n" + 
 			"Number of tokens: " + getNumberOfTokens() + "\n";		
 	}
 	
@@ -181,6 +185,11 @@ public class CollectionStatistics implements Serializable,Writable {
 		return avgFieldLengths;
 	}
 	
+	public String[] getFieldNames()
+	{
+		return fieldNames;
+	}
+	
 	/** Increment the statistics by the specified amount */
 	public void addStatistics(CollectionStatistics cs)
 	{
@@ -204,9 +213,11 @@ public class CollectionStatistics implements Serializable,Writable {
 		numberOfFields = in.readInt();
 		fieldTokens = new long[numberOfFields];
 		avgFieldLengths = new double[numberOfFields];
+		fieldNames = new String[numberOfFields];
 		for(int fi=0;fi<numberOfFields;fi++)
 		{
 			fieldTokens[fi] = in.readLong();
+			fieldNames[fi] = in.readUTF();
 		}
 		relcaluateAverageLengths();
 	}
@@ -221,6 +232,7 @@ public class CollectionStatistics implements Serializable,Writable {
 		for(int fi=0;fi<numberOfFields;fi++)
 		{
 			out.writeLong(fieldTokens[fi]);
+			out.writeUTF(fieldNames[fi]);
 		}
 	}
 	
@@ -243,6 +255,7 @@ public class CollectionStatistics implements Serializable,Writable {
 			System.out.println("number of tokens: " +  i.getCollectionStatistics().getNumberOfTokens());
 			System.out.println("number of pointers: " +  i.getCollectionStatistics().getNumberOfPointers());
 			System.out.println("number of fields: " +  i.getCollectionStatistics().getNumberOfFields());
+			System.out.println("field names: " +  Arrays.toString(i.getCollectionStatistics().getFieldNames()));
 			
 			Boolean blocks = null;
 			for(String structureName : new String[]{"direct", "inverted"})

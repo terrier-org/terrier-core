@@ -163,7 +163,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		document = new MemoryDocumentIndex();
 		inverted = new MemoryInvertedIndex(lexicon, document);
 		metadata = new MemoryMetaIndex();
-		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] { 0 });
+		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] { 0 }, new String[0]);
 		load_pipeline(); // For term processing (stemming, stop-words).
 
 		if (enableDirect) direct = new MemoryDirectIndex(document);
@@ -872,7 +872,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		//document = new MemoryDocumentIndexMap();
 		lexicon = new MemoryLexicon();
 		inverted = new MemoryInvertedIndex(lexicon, superIndex.getDocumentIndex());
-		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] {});
+		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[0], new String[0]);
 		load_pipeline(); // For term processing (stemming, stop-words).
 		
 		logger.info("reading out inverted..");
@@ -991,7 +991,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		logger.info("updating stats..");
 
 		//WARNING: number of unique terms and the number of pointers are set to 0 (should they be the same value?)
-		stats = new MemoryCollectionStatistics(numberOfDocuments, numTerms, numberTokens, 0, new long[] {});
+		stats = new MemoryCollectionStatistics(numberOfDocuments, numTerms, numberTokens, 0, new long[0], new String[0]);
 		
 		//Meta - We can just use the original meta index as we do lookups based on docid
 		//       this is covered by the following methods

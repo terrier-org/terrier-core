@@ -156,7 +156,7 @@ public class TestMatchOpSemantic extends ApplicationSetupBasedTest {
 		
 		Index index = IndexTestUtils.makeIndexBlocks(new String[]{"doc1"}, new String[]{"aa ab"});
 		int numdocs = 10000;
-		IndexUtil.forceStructure(index, "collectionstatistics", new CollectionStatistics(numdocs, 50, 20000, 100, new long[0]));
+		IndexUtil.forceStructure(index, "collectionstatistics", new CollectionStatistics(numdocs, 50, 20000, 100, new long[0], new String[0]));
 		
 		Operator[] ops = new Operator[]{
 				 new PhraseOp(new String[]{"aa", "bb"}),

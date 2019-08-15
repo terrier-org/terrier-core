@@ -26,6 +26,7 @@
 package org.terrier.matching.matchops;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -110,7 +111,8 @@ public class SingleTermOp extends Operator {
 		{
 			int fieldId = IndexUtil.getFieldId(index, "inverted", field);
 			if (fieldId == -1)
-				throw new IOException("Unknown field " + field);
+				throw new IOException("Unknown field " + field + " - known fields are " + 
+					Arrays.toString(index.getCollectionStatistics().getFieldNames()));
 			postingList = new FieldOnlyIterablePosting(postingList, fieldId);
 			//TODO do we correct field stats
 		}

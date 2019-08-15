@@ -55,14 +55,14 @@ public class MultiStats extends CollectionStatistics {
 		}
 
 		return new MultiStats(numDocs, numTerms, numTokens, numPointers,
-				fieldTokens);
+				fieldTokens, stats[0].getFieldNames());
 	}
 
 	/*
 	 * Private constructor.
 	 */
 	private MultiStats(int numDocs, int numTerms, long numTokens,
-			long numPointers, long[] fieldTokens) {
-		super(numDocs, numTerms, numTokens, numPointers, fieldTokens);
+			long numPointers, long[] fieldTokens, String[] fieldNames) {
+		super(numDocs, numTerms, numTokens, numPointers, fieldTokens, fieldNames);
 	}
 }

@@ -92,6 +92,11 @@ public abstract class CLITool {
 					.hasArgs()
 					.desc("specify property name=value")
 					.build());
+			options.addOption(Option.builder("P")
+					.argName("package")
+					.hasArgs()
+					.desc("specify Maven packages to import group:artifact:version")
+					.build());
 			options.addOption(Option.builder("I")
 					.argName("indexref")
 					.hasArg(true)
@@ -140,12 +145,37 @@ public abstract class CLITool {
 			}
 			
 			Properties props = null;
+			boolean dirtyAppSetup = false;
 			if (line.hasOption("D"))
 			{
 				props = line.getOptionProperties("D");
 				props.forEach( (k,v) -> org.terrier.utility.ApplicationSetup.setProperty((String)k, (String)v));
-				ApplicationSetup.loadCommonProperties();
+				dirtyAppSetup = true;
 			}
+			if (line.hasOption("P"))
+			{
+				String[] packages = line.getOptionValues("P");
+				StringBuilder propBuilder = new StringBuilder();
+				String defaultProp = org.terrier.utility.ApplicationSetup.getProperty("terrier.mvn.coords", null);
+				if (defaultProp != null)
+				{
+					propBuilder.append(propBuilder);
+					propBuilder.append(',');
+				}
+				for(String p : packages)
+				{
+					propBuilder.append(p);
+					propBuilder.append(',');
+				}
+				propBuilder.setLength(propBuilder.length()-1);
+				org.terrier.utility.ApplicationSetup.setProperty("terrier.mvn.coords", propBuilder.toString());
+				dirtyAppSetup = true;
+			}
+			
+			
+			if (dirtyAppSetup)
+				ApplicationSetup.loadCommonProperties();
+			
 			if (line.hasOption("I"))
 			{
 				String indexLocation = line.getOptionValue("I");
