@@ -115,7 +115,19 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 			
 			List<List<String>> partitioned = CollectionFactory.splitCollectionSpecFileList(ApplicationSetup.COLLECTION_SPEC, threadCount);
 			logger.info("Partitioned collection.spec into "+ partitioned.size() + " partitions");
-			
+			if (partitioned.size() == 1)
+			{
+				Collection c = loadCollection(partitioned.get(0));
+				BatchIndexing indexing = singlePass 
+						? new TRECIndexingSinglePass(path, prefix, c)
+						: new TRECIndexing(path, prefix, c);
+				indexing.setExternalParalllism(1);
+				indexing.blocks = blocks;
+				indexing.index();
+				logger.info("Final index is at "+path+" " + prefix);
+				return;
+			}
+
 			IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
 			Function<List<String>,String> indexer = new Function<List<String>,String>()
 			{
