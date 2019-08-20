@@ -353,7 +353,7 @@ public abstract class CLITool {
 		}
 		Class<?> clz = getClassName(commandname);
 		try{
-			if (clz.isAssignableFrom(CLITool.class))
+			if (CLITool.class.isAssignableFrom(clz))
 			{
 				clz.asSubclass(CLITool.class).newInstance().run(args);
 			}
