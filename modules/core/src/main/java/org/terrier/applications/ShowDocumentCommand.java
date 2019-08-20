@@ -88,6 +88,7 @@ public class ShowDocumentCommand extends CLIParsedCLITool {
 				}
 			}
 			DocumentIndexEntry die = doi.getDocumentEntry(docid);
+			System.err.println("Docid: " + docid);
 			System.err.println("Document Length: " + die.getDocumentLength());
 			if (die instanceof FieldDocumentIndexEntry)
 				System.err.println("Field Lengths: " + ArrayUtils.join(((FieldDocumentIndexEntry)die).getFieldLengths(), ","));

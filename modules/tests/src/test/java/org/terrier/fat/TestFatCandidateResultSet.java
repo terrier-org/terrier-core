@@ -59,7 +59,7 @@ public class TestFatCandidateResultSet {
 		l.add(result);
 		final FatCandidateResultSet input = new FatCandidateResultSet(
 				l, 
-				new CollectionStatistics(5, 5, 5, 5, new long[0]),
+				new CollectionStatistics(5, 5, 5, 5, new long[0], new String[0]),
 				new String[]{"a"}, 
 				new EntryStatistics[]{new BasicLexiconEntry(5, 20, 25)},
 				new double[]{10},
