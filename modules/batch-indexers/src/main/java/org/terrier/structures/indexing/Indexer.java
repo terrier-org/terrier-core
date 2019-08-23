@@ -310,7 +310,7 @@ public abstract class Indexer
 					continue;
 				if (className.indexOf(".") < 0 )
 					className = PIPELINE_NAMESPACE + className;
-				Class<? extends TermPipeline> pipeClass = ApplicationSetup.getClass(className).asSubclass(TermPipeline.class);//TODO: This used to use this class' classloader
+				Class<? extends TermPipeline> pipeClass = ApplicationSetup.getClass(className).asSubclass(TermPipeline.class);
 				tmp = pipeClass.getConstructor(new Class[]{TermPipeline.class}).newInstance(new Object[] {next});
 				next = tmp;
 			}catch (Exception e){
