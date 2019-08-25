@@ -635,6 +635,11 @@ public class StructureMerger {
 	protected void createLexidFile() {
 		LexiconBuilder.optimise(destIndex, "lexicon");
 	}
+
+	public void setReverseMeta(boolean value)
+	{
+		this.MetaReverse = value;
+	}
 	
 	/**
 	 * Merges the structures created by terrier.
@@ -711,6 +716,11 @@ public class StructureMerger {
 		@Override
 		public String helpsummary() {
 			return "merges 2 disk indices";
+		}
+
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
 		}
 
 		@Override

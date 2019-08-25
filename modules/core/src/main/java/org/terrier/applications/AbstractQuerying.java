@@ -175,6 +175,11 @@ public class AbstractQuerying {
 			//System.err.println(aq.controls.toString());
 			return run(line, aq);
 		}
+
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 	}
 
 }

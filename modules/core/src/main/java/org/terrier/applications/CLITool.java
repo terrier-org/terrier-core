@@ -64,6 +64,7 @@ import com.google.common.collect.Lists;
 
 public abstract class CLITool {
 	
+	public static final String PLATFORM_MODULE = "platform";
 	static boolean DEBUG = Boolean.parseBoolean(System.getProperty("org.terrier.desktop.CLITool.debug", "false"));
 	
 	//we use strings of classnames here so that no dependency arises
@@ -212,6 +213,11 @@ public abstract class CLITool {
 		public String helpsummary() {
 			return "provides a list of all available commands and their aliases";
 		}
+
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 		
 		@Override
 		public Set<String> commandaliases() {
@@ -240,7 +246,7 @@ public abstract class CLITool {
 				String name = tool.commandname();
 				if (name.length() <= 5)
 					name += '\t';
-				System.err.println("\t" + name + "\t" + tool.helpsummary());
+				System.err.println("\t" + name + "\t" + tool.sourcepackage() +  "\t" + tool.helpsummary());
 			}
 			
 		}
@@ -286,6 +292,10 @@ public abstract class CLITool {
 			return "provides a list of available commands";
 		}
 		
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 	}
 	
 	public void setConfiguration(Object o){}
@@ -300,6 +310,10 @@ public abstract class CLITool {
 	/** What commandname should this command respond to */
 	public String commandname() {
 		return this.getClass().getName();
+	}
+
+	public String sourcepackage() {
+		return "unknown";
 	}
 	
 	/** Return a long message about how to use this command */

@@ -25,14 +25,15 @@
  */
 package org.terrier.rest;
 
+import java.io.IOException;
+import java.net.URI;
+
 import org.apache.commons.cli.CommandLine;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.terrier.applications.CLITool;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
-
-import java.io.IOException;
-import java.net.URI;
 
 /**
  * Loads the default index and exports via a REST service at http://localhost:8080/
@@ -41,7 +42,12 @@ public class SingleIndexRestServer extends CLIParsedCLITool {
     @Override
 	public String commandname() {
 		return "rest-singleindex";
-	}
+    }
+    
+    @Override
+    public String sourcepackage() {
+        return CLITool.PLATFORM_MODULE;
+    }
 
 	@Override
 	public String helpsummary() {

@@ -88,6 +88,11 @@ public abstract class BatchIndexing {
 		}
 
 		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
+
+		@Override
 		public int run(CommandLine line) throws Exception {
 			
 			final long starttime = System.currentTimeMillis();
