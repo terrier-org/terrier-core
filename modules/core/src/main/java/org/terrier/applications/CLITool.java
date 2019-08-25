@@ -190,9 +190,9 @@ public abstract class CLITool {
 		
 	}
 	
-	public static class HelpAliasCLITool extends CLITool {
+	public static class HelpAliasCLITool extends CLIParsedCLITool {
 		@Override
-		public int run(String[] args) {
+		public int run(CommandLine line) {
 			System.err.println("All possible commands & aliases:");
 			displayCommandAndAliases(getServiceIterator(false));
 			
@@ -236,7 +236,7 @@ public abstract class CLITool {
 		}
 	}
 	
-	public static class HelpCLITool extends CLITool {
+	public static class HelpCLITool extends CLIParsedCLITool {
 		
 		protected void displayCommandSummaries(Iterable<CLITool> commandIter) {
 			
@@ -252,7 +252,8 @@ public abstract class CLITool {
 		}
 
 		@Override
-		public int run(String[] args) {
+		public int run(CommandLine line) {
+			String[] args = line.getArgs();
 			System.err.println("Terrier version " + Version.VERSION);
 			if (args.length == 1 && args[0].equals("no-command-specified")) {
 				System.err.println("No command specified. You must specify a command.");
