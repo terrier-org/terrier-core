@@ -294,7 +294,7 @@ public class TRv2PorterStemmer extends StemmerTermPipeline {
 	/** 
 	 * Maps double suffices to single ones. So -ization ( = -ize plus
 	 * -ation) maps to -ize etc. note that the string before the suffix must give
-	 * m() > 0. 
+	 * m() &gt; 0. 
 	 */
 	protected final void step2() {
 		switch (b[k - 1]) {
