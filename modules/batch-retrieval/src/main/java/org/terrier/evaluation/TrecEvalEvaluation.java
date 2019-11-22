@@ -73,6 +73,11 @@ public class TrecEvalEvaluation implements Evaluation {
 			new trec_eval().run(args);
 			return 0;
 		}
+
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 		
 	}
 	

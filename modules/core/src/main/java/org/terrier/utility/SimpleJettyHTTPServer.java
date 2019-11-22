@@ -181,6 +181,11 @@ public class SimpleJettyHTTPServer {
 			new SimpleJettyHTTPServer(null, Integer.parseInt(args[0]), args[1]).start();
 			return 0;
 		}
+
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 		
 	}
 	/**

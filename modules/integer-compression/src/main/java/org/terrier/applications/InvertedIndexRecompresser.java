@@ -120,6 +120,11 @@ public class InvertedIndexRecompresser extends CLITool {
 	}
 
 	@Override
+	public String sourcepackage() {
+		return CLITool.PLATFORM_MODULE;
+	}
+
+	@Override
 	public String helpsummary() {
 		return "allows an inverted index to be recompressed, changing compression";
 	}

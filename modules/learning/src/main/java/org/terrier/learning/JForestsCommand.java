@@ -46,6 +46,11 @@ public class JForestsCommand extends CLITool {
 	}
 
 	@Override
+	public String sourcepackage() {
+		return CLITool.PLATFORM_MODULE;
+	}
+
+	@Override
 	public String help() {
 		return "For information on running jforests, see https://github.com/yasserg/jforests or http://terrier.org/docs/current/learning.html"; 
 	}

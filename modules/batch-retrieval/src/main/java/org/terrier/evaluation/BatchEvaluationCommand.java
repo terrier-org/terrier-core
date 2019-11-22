@@ -28,14 +28,15 @@ package org.terrier.evaluation;
 import java.io.File;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.terrier.applications.CLITool;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
-
-import com.google.common.collect.Sets;
 
 public class BatchEvaluationCommand extends CLIParsedCLITool {
 
@@ -52,6 +53,11 @@ public class BatchEvaluationCommand extends CLIParsedCLITool {
 	@Override
 	public Set<String> commandaliases() {
 		return Sets.newHashSet("be");
+	}
+
+	@Override
+	public String sourcepackage() {
+		return CLITool.PLATFORM_MODULE;
 	}
 
 	@Override

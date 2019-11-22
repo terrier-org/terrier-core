@@ -65,6 +65,7 @@ import com.google.common.collect.Lists;
 
 public abstract class CLITool {
 	
+	public static final String PLATFORM_MODULE = "platform";
 	static boolean DEBUG = Boolean.parseBoolean(System.getProperty("org.terrier.desktop.CLITool.debug", "false"));
 	
 	//we use strings of classnames here so that no dependency arises
@@ -96,7 +97,7 @@ public abstract class CLITool {
 			options.addOption(Option.builder("P")
 					.argName("package")
 					.hasArgs()
-					.desc("specify Maven packages to import group:artifact:version")
+					.desc("specify Maven packages to import, in format group:artifact:version")
 					.build());
 			options.addOption(Option.builder("I")
 					.argName("indexref")
@@ -201,9 +202,9 @@ public abstract class CLITool {
 		
 	}
 	
-	public static class HelpAliasCLITool extends CLITool {
+	public static class HelpAliasCLITool extends CLIParsedCLITool {
 		@Override
-		public int run(String[] args) {
+		public int run(CommandLine line) {
 			System.err.println("All possible commands & aliases:");
 			displayCommandAndAliases(getServiceIterator(false));
 			
@@ -224,6 +225,11 @@ public abstract class CLITool {
 		public String helpsummary() {
 			return "provides a list of all available commands and their aliases";
 		}
+
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 		
 		@Override
 		public Set<String> commandaliases() {
@@ -242,7 +248,7 @@ public abstract class CLITool {
 		}
 	}
 	
-	public static class HelpCLITool extends CLITool {
+	public static class HelpCLITool extends CLIParsedCLITool {
 		
 		protected void displayCommandSummaries(Iterable<CLITool> commandIter) {
 			
@@ -252,13 +258,14 @@ public abstract class CLITool {
 				String name = tool.commandname();
 				if (name.length() <= 5)
 					name += '\t';
-				System.err.println("\t" + name + "\t" + tool.helpsummary());
+				System.err.println("\t" + name + "\t" + tool.sourcepackage() +  "\t" + tool.helpsummary());
 			}
 			
 		}
 
 		@Override
-		public int run(String[] args) {
+		public int run(CommandLine line) {
+			String[] args = line.getArgs();
 			System.err.println("Terrier version " + Version.VERSION);
 			if (args.length == 1 && args[0].equals("no-command-specified")) {
 				System.err.println("No command specified. You must specify a command.");
@@ -298,6 +305,10 @@ public abstract class CLITool {
 			return "provides a list of available commands";
 		}
 		
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 	}
 	
 	public void setConfiguration(Object o){}
@@ -312,6 +323,10 @@ public abstract class CLITool {
 	/** What commandname should this command respond to */
 	public String commandname() {
 		return this.getClass().getName();
+	}
+
+	public String sourcepackage() {
+		return "unknown";
 	}
 	
 	/** Return a long message about how to use this command */

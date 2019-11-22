@@ -33,6 +33,7 @@ import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.hadoop.io.Writable;
+import org.terrier.applications.CLITool;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.querying.IndexRef;
 import org.terrier.utility.ApplicationSetup;
@@ -247,7 +248,7 @@ public class CollectionStatistics implements Serializable,Writable {
 			Index i = IndexFactory.of(iR);
 			if (i == null)
 			{
-				System.err.println("Index not found at " + ApplicationSetup.TERRIER_INDEX_PATH +","+ ApplicationSetup.TERRIER_INDEX_PREFIX);
+				System.err.println("Index not found at " + iR);
 				return 1;
 			}
 			System.out.println("Collection statistics:");
@@ -286,7 +287,10 @@ public class CollectionStatistics implements Serializable,Writable {
 			return "display the statistics of an index";
 		}
 
-		
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 		
 	}
 

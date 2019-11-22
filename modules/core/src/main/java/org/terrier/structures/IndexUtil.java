@@ -36,27 +36,36 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.google.gson.Gson;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.hadoop.io.Writable;
 import org.terrier.applications.CLITool;
+import org.terrier.applications.CLITool.CLIParsedCLITool;
+import org.terrier.querying.IndexRef;
 import org.terrier.structures.postings.IterablePosting;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
 
-/** Class with handy utilities for use on an Index.
- * @since 3.0 */
+/**
+ * Class with handy utilities for use on an Index.
+ * 
+ * @since 3.0
+ */
 public class IndexUtil {
 
-	public static class Command extends CLITool
-	{
+	public static class Command extends CLIParsedCLITool {
+
+		@Override
+		public String sourcepackage() {
+			return CLITool.PLATFORM_MODULE;
+		}
 
 		@Override
 		public String commandname() {
 			return "indexutil";
-		}
-
-		@Override
-		public String help() {
-			return MAIN_USAGE;
 		}
 
 		@Override
@@ -65,77 +74,79 @@ public class IndexUtil {
 		}
 
 		@Override
-		@SuppressWarnings("unchecked")
-		public int run(String[] args) throws Exception {
-			Index.setIndexLoadingProfileAsRetrieval(false);
-			if (args.length < 2)
-			{
-				System.err.println(MAIN_USAGE);
-				return 1;
+		@SuppressWarnings({ "unchecked" })
+		// public int run(String[] args) throws Exception {
+		public int run(CommandLine line) throws Exception {
+			String[] args = line.getArgs();
+
+			IndexRef iRef = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+			if (line.hasOption("I")) {
+				String indexLocation = line.getOptionValue("I");
+				iRef = IndexRef.of(indexLocation);
 			}
-			final String cmd = args[0].trim();
-			final String structureName = args[1].trim();
-			
-			//load the index
-			final Index index = Index.createIndex();
-			if (index == null)
-			{
-				System.err.println("Index not found: " + Index.getLastIndexLoadError());
+
+			Index.setIndexLoadingProfileAsRetrieval(false);
+
+			// load the index
+			final Index index = IndexFactory.of(iRef);
+			if (index == null) {
+				System.err.println("Index for ref "+iRef+" not found: " + Index.getLastIndexLoadError());
 				return 2;
 			}
-			
-			//command loop
-			if (cmd.equals("--printbitfile"))
-			{
-				PostingIndexInputStream bpiis = (PostingIndexInputStream) index.getIndexStructureInputStream(structureName);
+
+			// command loop
+			if (line.hasOption("printpostingfile")) {
+				String structureName = "inverted";
+				if (line.hasOption("s"))
+					structureName = line.getOptionValue("s"); 
+				PostingIndexInputStream bpiis = (PostingIndexInputStream) index
+						.getIndexStructureInputStream(structureName);
 				bpiis.print();
 				bpiis.close();
-			}
-			else if (cmd.equals("--printterm"))
-			{
-				IndexUtil.forceStructure(index, "document", new DocumentIndex() {	
+			} else if (line.hasOption("printterm")) {
+				IndexUtil.forceStructure(index, "document", new DocumentIndex() {
 					@Override
 					public int getNumberOfDocuments() {
 						return index.getCollectionStatistics().getNumberOfDocuments();
 					}
-					
+
 					@Override
 					public int getDocumentLength(int docid) throws IOException {
 						return 0;
 					}
-					
+
 					@Override
 					public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
 						return null;
 					}
 				});
-				Lexicon<String> lex = index.getLexicon();
+				String structureName = "lexicon";
+				if (line.hasOption("s"))
+					structureName = line.getOptionValue("s"); 
+				Lexicon<String> lex = (Lexicon<String>) index.getIndexStructure(structureName);
 				PostingIndex<?> inv = (PostingIndex<?>) index.getInvertedIndex();
 				LexiconEntry le = lex.getLexiconEntry(args[1]);
 				IterablePosting ip = inv.getPostings(le);
-				while(ip.next() != IterablePosting.EOL)
-				{
+				while (ip.next() != IterablePosting.EOL) {
 					System.out.print(ip.toString());
 					System.out.println(" ");
 				}
 				ip.close();
 				lex.close();
 				close(inv);
-			}
-			else if (cmd.equals("--printPosting"))
-			{
+			} else if (line.hasOption("--printPosting")) {
 				IndexUtil.forceStructure(index, "document", new DocumentIndex() {
-					
+
 					@Override
 					public int getNumberOfDocuments() {
 						return index.getCollectionStatistics().getNumberOfDocuments();
 					}
-					
+
 					@Override
 					public int getDocumentLength(int docid) throws IOException {
 						return 0;
 					}
-					
+
 					@Override
 					public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
 						return null;
@@ -147,74 +158,95 @@ public class IndexUtil {
 				IterablePosting ip = inv.getPostings(le);
 				int targetId = Integer.parseInt(args[2]);
 				int foundId = ip.next(targetId);
-				if (foundId == targetId)
-				{
+				if (foundId == targetId) {
 					System.out.println(ip.toString());
-				}
-				else
-				{
-					System.err.println("Docid " + targetId + " not found for term " + args[1] + " (nearest was " + foundId+")");
+				} else {
+					System.err.println(
+							"Docid " + targetId + " not found for term " + args[1] + " (nearest was " + foundId + ")");
 				}
 				ip.close();
 				lex.close();
 				close(inv);
-			}
-			else if (cmd.equals("--printbitentry"))
-			{
+			} else if (line.hasOption("--printbitentry")) {
+				String structureName = "inverted";
+				if (line.hasOption("s"))
+					structureName = line.getOptionValue("s"); 
 				List<BitIndexPointer> pointerList = (List<BitIndexPointer>) index.getIndexStructure(args[2]);
 				PostingIndex<?> bpi = (PostingIndex<?>) index.getIndexStructure(structureName);
-				//for every docid on cmdline
-				for(int argC=3;argC<args.length;argC++)
-				{
-					BitIndexPointer pointer = pointerList.get(Integer.parseInt(args[argC]));
+				// for every docid on cmdline
+				for (String arg: args) {
+					BitIndexPointer pointer = pointerList.get(Integer.parseInt(arg));
 					if (pointer.getNumberOfEntries() == 0)
 						continue;
-					System.out.print(args[argC] + " ");
+					System.out.print(arg + " ");
 					IterablePosting ip = bpi.getPostings(pointer);
-					while(ip.next() != IterablePosting.EOL)
-					{
+					while (ip.next() != IterablePosting.EOL) {
 						System.out.print(ip.toString());
 						System.out.print(" ");
 					}
 					System.out.println();
 				}
-			}
-			else if (cmd.equals("--printlex"))
-			{
+			} else if (line.hasOption("--printlex")) {
+				String structureName = "lexicon";
+				if (line.hasOption("s"))
+					structureName = line.getOptionValue("s"); 
 				LexiconUtil.printLexicon(index, structureName);
-			}
-			else if (cmd.equals("--printdocument"))
-			{
+			} else if (line.hasOption("--printdocument")) {
+				String structureName = "document";
+				if (line.hasOption("s"))
+					structureName = line.getOptionValue("s"); 
 				printDocumentIndex(index, structureName);
-			}
-			else if (cmd.equals("--printlist"))
-			{
-				Iterator<? extends Writable> in = (Iterator<? extends Writable>) index.getIndexStructureInputStream(structureName);
-				while(in.hasNext())
-				{
+			} else if (line.hasOption("--printlist")) {
+				String structureName = "document";
+				if (line.hasOption("s"))
+					structureName = line.getOptionValue("s"); 
+				Iterator<? extends Writable> in = (Iterator<? extends Writable>) index
+						.getIndexStructureInputStream(structureName);
+				while (in.hasNext()) {
 					System.out.println(in.next().toString());
 				}
 				IndexUtil.close(in);
-			}
-			else if (cmd.equals("--printlistentry"))
-			{
+			} else if (line.hasOption("--printlistentry")) {
+				String structureName = "document";
+				if (line.hasOption("s"))
+					structureName = line.getOptionValue("s"); 
 				List<? extends Writable> list = (List<? extends Writable>) index.getIndexStructure(structureName);
-				for(int argC=2;argC<args.length;argC++)
-				{
+				for (int argC = 2; argC < args.length; argC++) {
 					System.out.println(list.get(Integer.parseInt(args[argC])).toString());
 				}
 				IndexUtil.close(list);
-			}
-			else if (cmd.equals("--printmeta"))
-			{
-				printMetaIndex(index, structureName);
-			}
-			else
-			{
+			} else if (line.hasOption("--printmeta")) {
+				boolean json = line.hasOption("j");
+				String structureName = "meta";
+				if (line.hasOption("s"))
+					structureName = line.getOptionValue("s"); 
+
+				if (json)
+					printMetaIndexJson(index, structureName);
+				else
+					printMetaIndex(index, structureName);
+			} else {
 				System.err.println(MAIN_USAGE);
 			}
 			index.close();
 			return 0;
+		}
+
+		@Override
+		protected Options getOptions() {
+			Options opts = super.getOptions();
+			opts.addOption(Option.builder("printmeta").build());
+			opts.addOption(Option.builder("printlex").build());
+			opts.addOption(Option.builder("printlist").build());
+			opts.addOption(Option.builder("printlistentry").build());
+			opts.addOption(Option.builder("printbitentry").build());
+			opts.addOption(Option.builder("printposting").build());
+			opts.addOption(Option.builder("printpostingfile").build());
+			opts.addOption(Option.builder("printterm").build());
+			opts.addOption(Option.builder("s").longOpt("structure").build());
+			opts.addOption(Option.builder("j").longOpt("json").build());
+
+			return opts;
 		}
 		
 	}
@@ -446,6 +478,27 @@ public class IndexUtil {
 		while(inputStream.hasNext())
 		{
 			System.out.println(ArrayUtils.join(inputStream.next(), ", "));
+		}
+		IndexUtil.close(inputStream);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void printMetaIndexJson(Index index, String structureName) throws IOException
+	{
+		//this is expensive
+		final String[] keys = index.getMetaIndex().getKeys();
+		final int K = keys.length;
+		Iterator<String[]> inputStream = (Iterator<String[]>)index.getIndexStructureInputStream(structureName);
+		while(inputStream.hasNext())
+		{
+			System.out.print("{");
+			String[] values = inputStream.next();
+			for (int i=0;i<K;i++)
+			{
+				System.out.print(" " + keys[i] + ": " + new Gson().toJson(values[i]) );
+			}
+			System.out.println("}");
+			
 		}
 		IndexUtil.close(inputStream);
 	}

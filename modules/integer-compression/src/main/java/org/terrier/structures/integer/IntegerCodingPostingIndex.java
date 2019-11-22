@@ -57,8 +57,8 @@ import org.terrier.utility.io.WrappedIOException;
  * This expects in the data.properties file some information, such as
  * 
  * index.structureName.fields.count=the number of fields in the postings, if any
- * index.structureName.blocks=0 (no blocks) or 1 (positions) or >1 (blocks of any size)
- * index.structureName.blocks.max=0 (no limit) or >1 (position information limited) -- default is ApplicationSetup.MAX_BLOCKS
+ * index.structureName.blocks=0 (no blocks) or 1 (positions) or &gt;1 (blocks of any size)
+ * index.structureName.blocks.max=0 (no limit) or &gt;1 (position information limited) -- default is ApplicationSetup.MAX_BLOCKS
  * index.structureName.compression.integer.chunk-size=the maximum number of posting in a chunk
  * index.structureName.compression.integer.ids.codec=the {@link IntegerCodec} implementation to use for docIds
  * index.structureName.compression.integer.tfs.codec=the {@link IntegerCodec} implementation to use for tfs

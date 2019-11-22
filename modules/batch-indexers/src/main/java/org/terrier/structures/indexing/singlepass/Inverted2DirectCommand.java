@@ -27,14 +27,15 @@ package org.terrier.structures.indexing.singlepass;
 
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.terrier.applications.CLITool;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
-
-import com.google.common.collect.Sets;
 
 public class Inverted2DirectCommand extends CLIParsedCLITool {
 
@@ -51,6 +52,11 @@ public class Inverted2DirectCommand extends CLIParsedCLITool {
 	@Override
 	public String commandname() {
 		return "inverted2direct";
+	}
+
+	@Override
+	public String sourcepackage() {
+		return CLITool.PLATFORM_MODULE;
 	}
 
 	@Override

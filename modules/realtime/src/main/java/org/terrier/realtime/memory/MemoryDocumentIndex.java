@@ -124,7 +124,7 @@ public class MemoryDocumentIndex implements DocumentIndex,Serializable {
 	}
 	
 	/**
-	 * Document index iterator, iterates over DocumentIndexEntry only, not Entry<index, DocumentIndexEntry>.
+	 * Document index iterator, iterates over DocumentIndexEntry only, not Entry&lt;index, DocumentIndexEntry&gt;.
 	 */
 	public class DocumentIterator2 implements Iterator<DocumentIndexEntry> {
 		private int index = 0;

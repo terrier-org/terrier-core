@@ -31,11 +31,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
 
 import org.terrier.matching.MatchingQueryTerms.MatchingTerm;
 import org.terrier.matching.dsms.DocumentScoreModifier;
@@ -46,8 +49,6 @@ import org.terrier.querying.Request;
 import org.terrier.querying.parser.Query;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.collections.MapEntry;
-
-import com.google.common.collect.Lists;
 /**
  * Models a query used for matching documents. It is created
  * by creating an instance of this class, and then passing it as
@@ -659,9 +660,19 @@ implements Serializable,Cloneable
 	/** Remove a term from the list of terms to be matched
 	 * @since 3.6 
 	 */
-	public void removeTerm(Operator term)
+	public boolean removeTerm(Operator term)
 	{
-		this.remove(term);
+		Iterator<MatchingTerm> i = this.iterator();
+		boolean rtr = false;
+		while(i.hasNext())
+		{
+			if (i.next().getKey().equals(term))
+			{
+				rtr = true;
+				i.remove();
+			}
+		}
+		return rtr;
 	}
 	
 	/* 

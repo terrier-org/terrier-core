@@ -159,6 +159,11 @@ public class ShowDocumentCommand extends CLIParsedCLITool {
 	public String helpsummary() {
 		return "displays the contents of a document";
 	}
+
+	@Override
+	public String sourcepackage() {
+		return CLITool.PLATFORM_MODULE;
+	}
 	
 	String getContentsNoBlocksFreq(IterablePosting ip, Lexicon<String> lex) throws Exception {
 		StringBuilder rtr = new StringBuilder();

@@ -787,7 +787,7 @@ public class InvertedIndexBuilder {
 			"inverted",
 			CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0)
 		).createInvertedIndex();
-		index.flush()
+		index.flush();
 		index.close();
 	}
 
