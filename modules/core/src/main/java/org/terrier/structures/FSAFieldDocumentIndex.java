@@ -54,11 +54,20 @@ public class FSAFieldDocumentIndex
 			throws IOException 
 	{
 		logger.debug("Loading document + field lengths for " + structureName + " structure into memory. NB: The following stacktrace IS NOT AN Exception", new Exception("THIS IS **NOT** AN EXCEPTION"));
-		docLengths = new int[this.size()];
-		fieldLengths = new int[this.size()][];
+		final long fieldCount = index.getCollectionStatistics().getNumberOfFields();
+		final int numEntries = this.size();
+		final long size = ( (long) numEntries * (long) Integer.BYTES)
+			+ (numEntries * (12l + ((long) Integer.BYTES * fieldCount)));
+		logger.info("Document index requires "+ size +" remaining stack is " + freeMem());
+		if (freeMem() < size)
+		{
+			logger.warn("Insufficient memory to load document index - use TERRIER_HEAP_MEM env var to increase available stack space");
+		}
+		docLengths = new int[numEntries];
+		fieldLengths = new int[numEntries][];
 		int i=0;
 		Iterator<DocumentIndexEntry> iter = new FSADocumentIndexIterator(index, structureName);
-		TerrierTimer tt = new TerrierTimer("Loading "+structureName+ " document + field lengths", this.size());tt.start();
+		TerrierTimer tt = new TerrierTimer("Loading "+structureName+ " document + field lengths", numEntries);tt.start();
 		while(iter.hasNext())
 		{
 			FieldDocumentIndexEntry fdie = (FieldDocumentIndexEntry)iter.next();
