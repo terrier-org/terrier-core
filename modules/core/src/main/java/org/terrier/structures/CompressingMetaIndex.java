@@ -64,6 +64,8 @@ import org.terrier.utility.TerrierTimer;
 import org.terrier.utility.io.RandomDataInput;
 import org.terrier.utility.io.RandomDataInputMemory;
 
+import com.jakewharton.byteunits.BinaryByteUnit;
+
 /** A {@link MetaIndex} implementation that compresses contents. 
  * Values have maximum lengths, but overall value blobs are 
  * compressed using java.util.zip.Inflater.
@@ -111,6 +113,7 @@ public class CompressingMetaIndex implements MetaIndex {
 		}
 	}
 	
+	@ConcurrentReadable
 	static class ChannelByteAccessor implements ByteAccessor
 	{
 		final RandomAccessFile dataSource;
@@ -167,6 +170,7 @@ public class CompressingMetaIndex implements MetaIndex {
         int getLength(int docid) throws IOException;
     }
 	
+	@ConcurrentReadable
 	static class ArrayDocid2OffsetLookup implements Docid2OffsetLookup
     {
         protected final long[] docid2offsets;
@@ -195,6 +199,31 @@ public class CompressingMetaIndex implements MetaIndex {
         public void close()
         {}
     }
+	
+	@ConcurrentReadable
+	static class SynchronizedDocid2OffsetLookup implements Docid2OffsetLookup
+	{
+		Docid2OffsetLookup parent;
+		SynchronizedDocid2OffsetLookup(Docid2OffsetLookup _parent)
+		{
+			this.parent = _parent;
+		}
+		
+		@Override
+		public void close() throws IOException {
+			parent.close();
+		}
+		
+		@Override
+		public synchronized long getOffset(int docid) throws IOException {
+			return parent.getOffset(docid);
+		}
+		
+		@Override
+		public synchronized int getLength(int docid) throws IOException {
+			return parent.getLength(docid);
+		}		
+	}
 	
 	static class OnDiskDocid2OffsetLookup implements Docid2OffsetLookup
     {
@@ -630,8 +659,10 @@ public class CompressingMetaIndex implements MetaIndex {
 		}
 		else if (fileSource.equals("file"))
 		{
+			long size = Files.length(dataFilename);
 			logger.warn("Structure "+ structureName + " reading data file directly from disk (SLOW) - try index."
-					+structureName+".data-source=fileinmem in the index properties file");
+					+structureName+".data-source=fileinmem in the index properties file. " 
+					+ BinaryByteUnit.format(size) +" of memory would be required.");
 			//logger.debug("Metadata will be read directly from disk");
 			RandomDataInput rfi = Files.openFileRandom(dataFilename);
 			dataSource = (rfi instanceof RandomAccessFile)
