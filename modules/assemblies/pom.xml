@@ -113,7 +113,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>3.1.0</version>
 				<inherited>false</inherited>
 				<executions>
 					<execution>
@@ -132,6 +132,7 @@
 							<reportOutputDirectory>${project.parent.basedir}/doc/</reportOutputDirectory>
 							<destDir>javadoc</destDir>
 							<author>true</author>
+							<source>8</source>
 							<bottom><![CDATA[ <a href='${project.parent.Url}'>${project.parent.Name}</a> ${project.version}. Copyright &#169; 2004-${year}, <a href='http://www.gla.ac.uk/'>University of Glasgow</a> ]]></bottom>
 							<doctitle>${project.parent.Name} ${project.version} API</doctitle>
 							<use>true</use>

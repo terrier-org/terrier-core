@@ -245,7 +245,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.0.1</version>
+						<version>3.1.0</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -262,6 +262,7 @@
 									<doctitle>${project.parent.Name} ${project.version} API</doctitle>
 									<use>true</use>
 									<version>true</version>
+                                    <source>8</source>
 									<windowtitle>${project.parent.Name} ${project.version} API</windowtitle>
 									<failOnError>false</failOnError>
 									<failOnWarnings>false</failOnWarnings>
