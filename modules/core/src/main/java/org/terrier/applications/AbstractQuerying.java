@@ -142,14 +142,8 @@ public class AbstractQuerying {
 		@Override
 		public final int run(CommandLine line) throws Exception {
 			
-			AbstractQuerying aq = null;
-			if (line.hasOption("I"))
-			{
-				String indexLocation = line.getOptionValue("I");
-				aq = baseQuerying.getConstructor(IndexRef.class).newInstance(IndexRef.of(indexLocation));
-			} else {
-				aq = baseQuerying.newInstance();
-			}
+			IndexRef iR = getIndexRef(line);	
+			AbstractQuerying aq = baseQuerying.getConstructor(IndexRef.class).newInstance(iR);
 			
 			if (line.hasOption("c"))
 			{

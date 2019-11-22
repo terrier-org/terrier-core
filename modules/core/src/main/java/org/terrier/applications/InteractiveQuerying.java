@@ -84,6 +84,7 @@ public class InteractiveQuerying extends AbstractQuerying {
 		createManager();
 	}
 
+	@Deprecated
 	public InteractiveQuerying() { 
 		super(INTERACTIVE_COMMAND);  //super-class will make a decision about the index
 		createManager();

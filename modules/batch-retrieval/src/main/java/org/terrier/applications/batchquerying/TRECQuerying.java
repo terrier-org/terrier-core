@@ -179,6 +179,8 @@ public class TRECQuerying extends AbstractQuerying {
 	
 	public static class Command extends AbstractQueryingCommand
 	{
+
+		@Deprecated
 		public Command() {
 			super(TRECQuerying.class);
 		}
@@ -755,6 +757,11 @@ public class TRECQuerying extends AbstractQuerying {
 	public String processQueries(double c) {
 		return processQueries(c, true);
 	}
+
+	/** Get the configured query parser that is being used. */
+	/*public QuerySource getQueryParser() {
+		return getQueryParser(this.getTopicsParser());
+	}*/
 
 	/**
 	 * Get the query parser that is being used.

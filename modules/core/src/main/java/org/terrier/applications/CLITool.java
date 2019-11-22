@@ -46,6 +46,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
+import org.terrier.querying.IndexRef;
 import org.terrier.Version;
 import org.terrier.utility.ApplicationSetup;
 
@@ -103,6 +104,17 @@ public abstract class CLITool {
 					.desc("override the default indexref (location)")
 					.build());
 			return options;
+		}
+
+		protected IndexRef getIndexRef(CommandLine line) {
+			IndexRef iR = null;
+            if (line.hasOption("I")) {
+                String indexLocation = line.getOptionValue("I");
+                iR = IndexRef.of(indexLocation);
+            } else {
+                iR = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+            }
+			return iR;
 		}
 		
 		@Override
