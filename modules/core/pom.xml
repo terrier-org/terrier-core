@@ -12,7 +12,7 @@
 	<artifactId>terrier-core</artifactId>
 
 	<properties>
-		<jetty.version>9.3.24.v20180605</jetty.version>
+		<jetty.version>9.4.24.v20191120</jetty.version>
 	</properties>
 
 	<dependencies>
