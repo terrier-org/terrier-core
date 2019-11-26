@@ -97,6 +97,7 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 		}
 
 		public TIntArrayList getPl_doc() {
+			pl_termids.sort(); // We need to sort the term ids before iterating, or compression will break them on write
 			return pl_termids;
 		}
 
