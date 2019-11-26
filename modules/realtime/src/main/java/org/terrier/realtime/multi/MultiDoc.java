@@ -50,6 +50,7 @@ public class MultiDoc implements DocumentIndex {
 	public MultiDoc(DocumentIndex[] docs, int[] offsets) {
 		this.docs = docs;
 		this.offsets = offsets;
+
 	}
 
 	/** {@inheritDoc} */

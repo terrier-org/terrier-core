@@ -65,6 +65,9 @@ public class MultiIndex extends Index {
 	 */
 	protected List<Index> indices;
 	
+	protected boolean blocks;
+	protected boolean fields;
+	
 	/**
 	 * Selective Matching policy, a policy for accessing only subsets of the indices within this multi-index.
 	 */
@@ -73,12 +76,14 @@ public class MultiIndex extends Index {
 	/**
 	 * Constructor.
 	 */
-	public MultiIndex(Index[] indices) {
+	public MultiIndex(Index[] indices, boolean blocks, boolean fields) {
 		super(0l, 0l, 0l);
 		ArrayList<Index> in = new ArrayList<Index>(indices.length);
 		for (Index i : indices)
 			in.add(i);
 		this.indices = in;
+		this.blocks = blocks;
+		this.fields = fields;
 		
 		// Selective Matching Policy
 		String policy = ApplicationSetup.getProperty("multiindex.selectivematching", "all");
@@ -145,7 +150,7 @@ public class MultiIndex extends Index {
 		i++;
 		}
 
-		return new MultiInverted((PostingIndex<Pointer>[]) postings, offsets);
+		return new MultiInverted((PostingIndex<Pointer>[]) postings, offsets, blocks, fields);
 	}
 
 	/** {@inheritDoc} */
@@ -209,7 +214,7 @@ public class MultiIndex extends Index {
 			i++;
 		}
 
-		return new MultiDirect((PostingIndex<Pointer>[]) postings, offsets);
+		return new MultiDirect((PostingIndex<Pointer>[]) postings, offsets, blocks, fields);
 	}
 
 	/** Not implemented. */

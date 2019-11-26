@@ -54,7 +54,6 @@ public class MultiDirectIterablePostingWithOffset implements IterablePosting {
 
 	@Override
 	public int getId() {
-		//System.err.println("PostingWrapper: Local ID="+posting.getId());
 		return posting.getId()+idoffset;
 
 	}
@@ -98,6 +97,14 @@ public class MultiDirectIterablePostingWithOffset implements IterablePosting {
 	@Override
 	public boolean endOfPostings() {
 		return posting.endOfPostings();
+	}
+	
+	public static MultiDirectIterablePostingWithOffset of(IterablePosting ip, int idoffset, boolean blocks, boolean fields) {
+		if (fields)
+			throw new UnsupportedOperationException("fields not implemented yet");
+		if (blocks)
+			return new BlockMultiDirectIterablePostingWithOffset(ip, idoffset);
+		return new MultiDirectIterablePostingWithOffset(ip, idoffset);
 	}
 	
 }
