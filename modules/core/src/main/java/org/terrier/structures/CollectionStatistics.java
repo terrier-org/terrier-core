@@ -243,18 +243,12 @@ public class CollectionStatistics implements Serializable,Writable {
 		@SuppressWarnings("deprecation")
 		@Override
 		public int run(CommandLine line) throws Exception {
+			IndexRef iR = getIndexRef(line);
 			Index.setIndexLoadingProfileAsRetrieval(false);
-			IndexRef iRef = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
-			if (line.hasOption("I"))
-			{
-				String indexLocation = line.getOptionValue("I");
-				iRef = IndexRef.of(indexLocation);
-			}
-			Index i = IndexFactory.of(iRef);
-			
+			Index i = IndexFactory.of(iR);
 			if (i == null)
 			{
-				System.err.println("Index not found at " + iRef);
+				System.err.println("Index not found at " + iR);
 				return 1;
 			}
 			System.out.println("Collection statistics:");

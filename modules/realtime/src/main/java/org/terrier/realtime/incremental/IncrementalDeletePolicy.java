@@ -27,10 +27,13 @@
 
 package org.terrier.realtime.incremental;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
+import org.terrier.structures.IndexUtil;
 
 /** This class represents a policy for deleting index shards during a flush.
  * This is useful if you want to want to discard older index shards to avoid
@@ -70,10 +73,29 @@ public class IncrementalDeletePolicy {
 			synchronized (indices) {
 				int numDeleted = 0;
 				for (Integer i : indicesToDelete) {
-					indices.remove(i-numDeleted);
+					Index index = indices.remove(i-numDeleted);
+					if (index instanceof IndexOnDisk) {
+						
+						deleteIndex((IndexOnDisk)index);
+					}
 					numDeleted++;
 				}
 			}
 		}
+	}
+	
+	public void deleteIndex(IndexOnDisk index) {
+		
+		String path = index.getPath();
+		String prefix = index.getPrefix();
+		
+		try {
+			IndexUtil.deleteIndex(path, prefix);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 }

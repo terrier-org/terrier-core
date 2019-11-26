@@ -43,6 +43,23 @@ public class FSADocumentIndex extends FSArrayFile<DocumentIndexEntry> implements
 	protected int lastDocid = -1;
 	protected DocumentIndexEntry lastEntry = null;
 	protected int[] docLengths;
+
+	static long freeMem()
+	{
+		Runtime runtime = Runtime.getRuntime();
+		long free;
+		if (runtime.maxMemory() == Long.MAX_VALUE)
+		{
+			free = runtime.freeMemory();
+		}
+		else
+		{
+			long localAllocated =  runtime.totalMemory()-runtime.freeMemory();
+			//logger.debug("Memory: already allocated in use is " + BinaryByteUnit.format(localAllocated));
+			free = runtime.maxMemory() - localAllocated;
+		}
+		return free;
+	}
 		
 	/**
 	 * Construct an instance of the class with
@@ -70,10 +87,17 @@ public class FSADocumentIndex extends FSArrayFile<DocumentIndexEntry> implements
 	protected void initialise(IndexOnDisk index, String structureName) throws IOException
 	{
 		logger.debug("Loading document lengths for " + structureName + " structure into memory. NB: The following stacktrace IS NOT AN Exception", new Exception("THIS IS **NOT** AN EXCEPTION"));
-		docLengths = new int[this.size()];
+		int numEntries = this.size();
+		long size = (long) numEntries * (long) Integer.BYTES;
+		logger.info("Document index requires "+ size +" remaining stack is " + freeMem());
+		if (freeMem() < size)
+		{
+			logger.warn("Insufficient memory to load document index - use TERRIER_HEAP_MEM env var to increase available stack space");
+		}
+		docLengths = new int[numEntries];
 		int i=0;
 		Iterator<DocumentIndexEntry> iter = new FSADocumentIndexIterator(index, structureName);
-		TerrierTimer tt = new TerrierTimer("Loading "+structureName+ " document lengths", this.size());tt.start();
+		TerrierTimer tt = new TerrierTimer("Loading "+structureName+ " document lengths", numEntries);tt.start();
 		while(iter.hasNext())
 		{
 			docLengths[i++] = iter.next().getDocumentLength();

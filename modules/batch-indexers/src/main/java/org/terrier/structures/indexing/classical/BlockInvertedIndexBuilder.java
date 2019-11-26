@@ -113,9 +113,6 @@ import com.jakewharton.byteunits.BinaryByteUnit;
  * @author Douglas Johnson &amp; Vassilis Plachouras &amp; Craig Macdonald
   */
 public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
-
-	protected static final int tintint_overhead = 5;
-	protected static final float tintlist_overhead = 1.12f;
 	
 	/**
 	 * constructor
@@ -348,7 +345,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 				cumulativeTermsSize += 
 						(2 * Integer.BYTES + 1); //codesHashMap: two ints and one byte for every entry
 						numberOfBlocksThisIteration += le.getFrequency();
-
+ 
 				//the class TIntIntHashMap return zero when you look up for a
 				//the value of a key that does not exist in the hash map.
 				//For this reason, the values that will be inserted in the 

@@ -26,9 +26,6 @@
  */
 package org.terrier.structures.indexing.classical;
 
-import gnu.trove.TIntArrayList;
-import gnu.trove.TIntIntHashMap;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -38,20 +35,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.jakewharton.byteunits.BinaryByteUnit;
+
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.querying.IndexRef;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.FSOMapFileLexicon;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.SimpleBitIndexPointer;
+import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.postings.ArrayOfBasicIterablePosting;
 import org.terrier.structures.postings.ArrayOfFieldIterablePosting;
@@ -59,11 +61,13 @@ import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.utility.FieldScore;
 import org.terrier.utility.Files;
 import org.terrier.utility.Rounding;
 import org.terrier.utility.TerrierTimer;
 
-import com.jakewharton.byteunits.BinaryByteUnit;
+import gnu.trove.TIntArrayList;
+import gnu.trove.TIntIntHashMap;
 /**
  * Builds an inverted index. It optionally saves term-field information as well. 
  * <p><b>Algorithm:</b>
@@ -102,6 +106,9 @@ import com.jakewharton.byteunits.BinaryByteUnit;
   */
 public class InvertedIndexBuilder {
 	
+	protected static final int tintint_overhead = 5;
+	protected static final float tintlist_overhead = 1.12f;
+
 	protected static final String DEFAULT_LEX_SCANNER_PROP_VALUE = "mem";
 
 	/** class to be used as a lexiconoutpustream. set by this and child classes */
@@ -436,7 +443,10 @@ public class InvertedIndexBuilder {
 			assert free > 5 * 1024*1024;
 			memThreshold = (long) (heapusage * free);
 			logger.debug("Memory threshold is " + BinaryByteUnit.format(memThreshold));
-			projectedPointerCount = (int) (memThreshold / ((long) (2l + fieldCount) * Integer.BYTES));
+			projectedPointerCount = (int) (memThreshold / tintlist_overhead * (
+				(16l + Integer.BYTES + 16l + 2l* Integer.BYTES)* (2l + fieldCount) +
+				(long) (2l + fieldCount) * Integer.BYTES)
+				);
 		}
 		
 		@Override
@@ -465,8 +475,9 @@ public class InvertedIndexBuilder {
 				tmpStorageStorage.add(createPointerForTerm(le));
 				numberOfPointersThisIteration += le.getDocumentFrequency();				
 				j++;
-				cumulativeSize += 
-						le.getDocumentFrequency() * (2l + fieldCount) * Integer.BYTES;  //pointer storage
+				cumulativeSize += tintlist_overhead * (
+						(16 + Integer.BYTES + 16 + 2* Integer.BYTES)* (2 + fieldCount) + //array and tintarraylist overheads
+						le.getDocumentFrequency() * (2l + fieldCount) * Integer.BYTES);  //pointer storage
 				
 				if (numberOfPointersThisIteration > projectedPointerCount)
 					break;
@@ -765,6 +776,19 @@ public class InvertedIndexBuilder {
 				index.getPath(), index.getPrefix(), 
 				_structureName, 
 				(FixedSizeWriteableFactory<Text>)index.getIndexStructure("lexicon-keyfactory"));
+	}
+
+	/** utility method that allows creation of an inverted index from a direct index */
+	public static void main(String[] args) throws Exception
+	{
+		IndexOnDisk index = (IndexOnDisk) IndexFactory.of(IndexRef.of(args[0]));
+		new InvertedIndexBuilder(
+			index, 
+			"inverted",
+			CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0)
+		).createInvertedIndex();
+		index.flush();
+		index.close();
 	}
 
 }
