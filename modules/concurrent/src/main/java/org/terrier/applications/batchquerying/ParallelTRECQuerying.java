@@ -147,22 +147,20 @@ public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 		this.queryingManager = new ThreadSafeManager(index);
 	}
 
-	final void _processQueryAndWrite(final String queryId, final String query,
-			final double cParameter, final boolean c_set) 
+	final void _processQueryAndWrite(final String queryId, final String query) 
 	{
-		super.processQueryAndWrite(queryId, query, cParameter, c_set);
+		super.processQueryAndWrite(queryId, query);
 	}
 
 	@Override
-	protected void processQueryAndWrite(final String queryId, final String query,
-			final double cParameter, final boolean c_set) 
+	protected void processQueryAndWrite(final String queryId, final String query) 
 	{
 		@SuppressWarnings("resource")
 		final ParallelTRECQuerying me = this;
 		runningQueries.add(pool.submit(new Runnable() {
 			
 			public void run() {
-				me._processQueryAndWrite(queryId, query, cParameter, c_set);
+				me._processQueryAndWrite(queryId, query);
 			}
 		}));
 	}
@@ -191,9 +189,9 @@ public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 	}
 
 	@Override
-	public String processQueries(double c, boolean c_set) {
+	public String processQueries() {
 		//completionService = new ExecutorCompletionService<Object>(pool);
-		return super.processQueries(c, c_set);		
+		return super.processQueries();		
 	}
 	
 	@Override

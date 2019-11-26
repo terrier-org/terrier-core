@@ -583,49 +583,13 @@ public class TRECQuerying extends AbstractQuerying {
 	 * @param query
 	 *            the query to process.
 	 */
-	public SearchRequest processQuery(String queryId, String query) {
-		return processQuery(queryId, query, 1.0, false);
-	}
-
-	/**
-	 * According to the given parameters, it sets up the correct matching class
-	 * and performs retrieval for the given query.
-	 * 
-	 * @param queryId
-	 *            the identifier of the query to process.
-	 * @param query
-	 *            the query to process.
-	 * @param cParameter
-	 *            double the value of the parameter to use.
-	 */
-	@Deprecated
-	public SearchRequest processQuery(String queryId, String query,
-			double cParameter) {
-		return processQuery(queryId, query, cParameter, true);
-	}
-
-	/**
-	 * According to the given parameters, it sets up the correct matching class
-	 * and performs retrieval for the given query.
-	 * 
-	 * @param queryId
-	 *            the identifier of the query to process.
-	 * @param query
-	 *            the query to process.
-	 * @param cParameter
-	 *            double the value of the parameter to use.
-	 * @param c_set
-	 *            A boolean variable indicating if cParameter has been
-	 *            specified.
-	 */
-	protected void processQueryAndWrite(String queryId, String query,
-			double cParameter, boolean c_set) {
+	protected void processQueryAndWrite(String queryId, String query) {
 		if (query == null || query.trim().length() == 0)
 		{
 			logger.warn("Ignoring empty query " + queryId);
 			return;
 		}
-		SearchRequest srq = processQuery(queryId, query, cParameter, c_set);
+		SearchRequest srq = processQuery(queryId, query);
 
 		synchronized (this) {
 			if (resultFile == null) {
@@ -660,13 +624,8 @@ public class TRECQuerying extends AbstractQuerying {
 	 *            the identifier of the query to process.
 	 * @param query
 	 *            the query to process.
-	 * @param cParameter
-	 *            double the value of the parameter to use.
-	 * @param c_set
-	 *            boolean specifies whether the parameter c is set.
 	 */
-	public SearchRequest processQuery(String queryId, String query,
-			double cParameter, boolean c_set) {
+	public SearchRequest processQuery(String queryId, String query) {
 
 		if (removeQueryPeriods && query.indexOf(".") > -1) {
 			logger.warn("Removed . from query");
@@ -686,17 +645,6 @@ public class TRECQuerying extends AbstractQuerying {
 		this.controls.forEach((k,v) -> srq.setControl(k, v));
 				
 		initSearchRequestModification(queryId, srq);
-		String c = null;
-		if (c_set) {
-			srq.setControl("c", Double.toString(cParameter));
-		} else if ((c = ApplicationSetup.getProperty("trec.c", null)) != null) {
-			srq.setControl("c", c);
-		}
-		c = null;
-		if ((c = srq.getControl("c")).length() > 0) {
-			c_set = true;
-		}
-		srq.setControl("c_set", "" + c_set);
 
 		if (mModel != null)
 			srq.setControl(CONTROL_MATCHING, mModel);
@@ -736,25 +684,6 @@ public class TRECQuerying extends AbstractQuerying {
 	 * 
 	 * @return String the filename that the results have been written to
 	 */
-	public String processQueries() {
-		return processQueries(1.0d, false);
-	}
-
-	/**
-	 * Performs the matching using the specified weighting model from the setup
-	 * and possibly a combination of evidence mechanism. It parses the file with
-	 * the queries, creates the file of results, and for each query, gets the
-	 * relevant documents, scores them, and outputs the results to the result
-	 * file. It the term frequency normalisation parameter equal to the given
-	 * value.
-	 * 
-	 * @param c
-	 *            double the value of the term frequency parameter to use.
-	 * @return String the filename that the results have been written to
-	 */
-	public String processQueries(double c) {
-		return processQueries(c, true);
-	}
 
 	/**
 	 * Get the query parser that is being used.
@@ -798,15 +727,17 @@ public class TRECQuerying extends AbstractQuerying {
 	 * Queries are parsed from file, specified by the <tt>trec.topics</tt> property
 	 * (comma delimited)
 	 * 
-	 * @param c
-	 *            the value of c.
-	 * @param c_set
-	 *            specifies whether a value for c has been specified.
 	 * @return String the filename that the results have been written to
 	 */
-	public String processQueries(double c, boolean c_set) {
-		matchingCount = 0;
+
+	public String processQueries() {
 		querySource.reset();
+		return processQueries(querySource);
+	}
+
+	public String processQueries(QuerySource _qs) {
+		matchingCount = 0;
+		
 		this.startingBatchOfQueries();
 		final long startTime = System.currentTimeMillis();
 		boolean doneSomeMethods = false;
@@ -818,27 +749,25 @@ public class TRECQuerying extends AbstractQuerying {
 		defaultQEModel = ApplicationSetup.getProperty("trec.qe.model", Bo1.class.getName());
 		
 		// iterating through the queries
-		while (querySource.hasNext()) {
-			String query = querySource.next();
-			
-			String qid = querySource.getQueryId();
+		while (_qs.hasNext()) {
+			String query = _qs.next();
+			String qid = _qs.getQueryId();
 			// process the query
 			long processingStart = System.currentTimeMillis();
-			processQueryAndWrite(qid, query, c, c_set);
+			processQueryAndWrite(qid, query);
 			long processingEnd = System.currentTimeMillis();
 			if (logger.isInfoEnabled())
 				logger.info("Time to process query "+qid+": "
 					+ ((processingEnd - processingStart) / 1000.0D));
 			doneSomeTopics = true;
 		}
-		querySource.reset();
 		this.finishedQueries();
 		// after finishing with a batch of queries, close the result
 		// file
 		doneSomeMethods = true;
 		if (DUMP_SETTINGS && doneSomeTopics)
 			printSettings(queryingManager.newSearchRequest(""),
-					querySource.getInfo(),
+			_qs.getInfo(),
 					"# run started at: " + startTime
 							+ "\n# run finished at "
 							+ System.currentTimeMillis() 

@@ -417,7 +417,7 @@ public class TrecTerrier {
 			if (queryexpand)
 				trecQuerying.controls().put("qe", "on");
 			trecQuerying.intialise();
-			trecQuerying.processQueries(c, isParameterValueSpecified);
+			trecQuerying.processQueries();
 			trecQuerying.close();
 		} else if (printdocid) {
 			Index.setIndexLoadingProfileAsRetrieval(false);
