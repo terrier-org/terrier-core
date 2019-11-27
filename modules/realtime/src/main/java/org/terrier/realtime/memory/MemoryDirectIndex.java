@@ -27,6 +27,7 @@
 package org.terrier.realtime.memory;
 
 import gnu.trove.TIntArrayList;
+import gnu.trove.TIntIntHashMap;
 import gnu.trove.TIntObjectHashMap;
 
 import java.io.IOException;
@@ -45,6 +46,10 @@ import org.terrier.structures.postings.IterablePosting;
  * This is a DirectIndex structure that is held fully in memory, it 
  * is based upon the MemoryInverted class. It does not currently support
  * blocks or fields.
+ * 
+ * 
+ * In v5.2 it was updated to change the way that termids and frequencies were stored, such that
+ * we can generate an ordered list of termids. This means that it will take more memory (+50%) and
  * @author Richard McCreadie
  * @since 4.0
  *
@@ -70,59 +75,77 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 	 */
 	public class DocumentPostingList {
 		private TIntArrayList pl_termids;
-		private TIntArrayList pl_termfrequencies;
+		private TIntIntHashMap termIds2frequencies;
 
 		public DocumentPostingList() {
 			pl_termids = new TIntArrayList();
-			pl_termfrequencies = new TIntArrayList();
+			termIds2frequencies = new TIntIntHashMap();
 		}
 		
-		public DocumentPostingList(int[] docids, int[] docfreqs) {
+		public DocumentPostingList(int[] termids, int[] termfreqs) {
 			pl_termids = new TIntArrayList();
-			pl_termfrequencies = new TIntArrayList();
-			pl_termids.add(docids);
-			pl_termfrequencies.add(docfreqs);
+			termIds2frequencies = new TIntIntHashMap();
+			pl_termids.add(termids);
+			
+			for (int i =0; i<termids.length; i++) { 
+				termIds2frequencies.put(termids[i], termfreqs[i]);
+			}
+
 		}
 
-		public DocumentPostingList(int docid, int docfreq) {
+		public DocumentPostingList(int termid, int tf) {
 			pl_termids = new TIntArrayList();
-			pl_termfrequencies = new TIntArrayList();
-			pl_termids.add(docid);
-			pl_termfrequencies.add(docfreq);
+			termIds2frequencies = new TIntIntHashMap();
+			pl_termids.add(termid);
+			termIds2frequencies.put(termid, tf);
 		}
 
-		public void add(int docid, int docfreq) {
-			pl_termids.add(docid);
-			pl_termfrequencies.add(docfreq);
+		public void add(int termid, int tf) {
+			pl_termids.add(termid);
+			termIds2frequencies.put(termid, tf);
 		}
 
-		public TIntArrayList getPl_doc() {
-			pl_termids.sort(); // We need to sort the term ids before iterating, or compression will break them on write
+		public TIntArrayList getPl_termids() {
+			pl_termids.sort(); // these need to be sorted otherwise we will encounter errors when writing the direct index to disk (cf. delta compression) 
 			return pl_termids;
 		}
 
 		public TIntArrayList getPl_freq() {
-			return pl_termfrequencies;
+			
+			TIntArrayList frequencies = new TIntArrayList(pl_termids.size());
+			for (int i =0; i<pl_termids.size(); i++) { 
+				frequencies.add(termIds2frequencies.get(pl_termids.get(i)));
+			}
+			
+			return frequencies;
 		}
+		
+		
 	}
 
 	/**
 	 * Add posting to direct file.
 	 */
-	public void add(int ptr, int docid, int freq) {
+	public void add(int ptr, int termid, int freq) {
 		if (postings.containsKey(ptr))
-			postings.get(ptr).add(docid, freq);
+			postings.get(ptr).add(termid, freq);
 		else
-			postings.put(ptr, new DocumentPostingList(docid, freq));
+			postings.put(ptr, new DocumentPostingList(termid, freq));
 	}
 
+	
+	
+	
 	/** {@inheritDoc} */
 	public IterablePosting getPostings(Pointer pointer) throws IOException {
 		DocumentPostingList pl = postings.get(((MemoryPointer)pointer).getPointer());
 		if (pl==null) {
 			pl = new DocumentPostingList();
 		}
-		return new MemoryIterablePosting(doi, pl.getPl_doc(), pl.getPl_freq());
+		
+		TIntArrayList termidsSorted = pl.getPl_termids(); // this does a sort of the termids
+		TIntArrayList frequencies = pl.getPl_freq(); // this is the same order as the termids (so the sort in the previous call affects this)
+		return new MemoryDirectIterablePosting(termidsSorted, frequencies);
 	}
 	
 	public IterablePosting getPostings(int pointer) throws IOException {
@@ -130,7 +153,11 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 		if (pl==null) {
 			pl = new DocumentPostingList();
 		}
-		return new MemoryIterablePosting(doi, pl.getPl_doc(), pl.getPl_freq());
+		
+		
+		TIntArrayList termidsSorted = pl.getPl_termids(); // this does a sort of the termids
+		TIntArrayList frequencies = pl.getPl_freq(); // this is the same order as the termids (so the sort in the previous call affects this)
+		return new MemoryDirectIterablePosting(termidsSorted, frequencies);
 	}
 
 	/** {@inheritDoc} */
