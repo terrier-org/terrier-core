@@ -1,4 +1,3 @@
-
 package main;
 
 /*
@@ -30,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.terrier.realtime.incremental.TestIncremental;
+import org.terrier.realtime.memory.TestMemoryDirect;
 import org.terrier.realtime.memory.TestMemoryIndex;
 import org.terrier.realtime.memory.TestMemoryIndexer;
 import org.terrier.realtime.memory.TestMemoryInvertedIndex;
@@ -51,6 +51,7 @@ import org.terrier.realtime.multi.TestMultiIndex;
         TestMemoryLexicon.class,
         TestMemoryMetaIndex.class,
         TestMultiIndex.class,
-        TestIncremental.class
+        TestIncremental.class,
+        TestMemoryDirect.class
 })
 public class RealtimeTestSuite{}
