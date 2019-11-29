@@ -2,13 +2,46 @@ package org.terrier.realtime.memory;
 
 import static org.junit.Assert.*;
 
-import org.junit.Test;
-import org.terrier.structures.postings.IterablePosting;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.junit.Test;
+import org.terrier.indexing.IndexTestUtils;
+import org.terrier.structures.DocumentIndexEntry;
+import org.terrier.structures.LexiconEntry;
+import org.terrier.structures.postings.IterablePosting;
+import org.terrier.structures.postings.PostingUtil;
+import org.terrier.utility.ApplicationSetup;
+
+import gnu.trove.TIntHashSet;
+
+/**
+ * Unit tests for the Memory Direct Index Structures 
+ * @author richardm
+ *
+ */
 public class TestMemoryDirect {
 
 	@Test
-	public void test_MemoryDirectPostingIteration() throws Exception {
+	public void testDocumentContentAccess() throws Exception {
+		String[] DOCS = new String[]{"hello there fox", "the lazy fox"};
+		String[] DOCNOS = new String[]{"doc1", "doc2"};
+		
+		ApplicationSetup.setProperty("termpipelines", "");
+		MemoryIndex index = new MemoryIndex();
+		for (int i =0; i<DOCS.length; i++) {
+			Map<String,String> docProperties = new HashMap<String,String>();
+			docProperties.put("docno", DOCNOS[i]);
+			index.indexDocument(IndexTestUtils.makeDocumentFromText(DOCS[i], docProperties));
+		}
+		
+		
+		checkDocContents(0, index, new String[]{"hello", "there", "fox"});
+		checkDocContents(1, index, new String[]{"the", "lazy", "fox"});
+	}
+	
+	@Test
+	public void testMemoryDirectPostingIteration() throws Exception {
 		
 		MemoryDirectIndex mdi = new MemoryDirectIndex(null);
 		
@@ -58,5 +91,22 @@ public class TestMemoryDirect {
 			}
 		}
 	}
+	
+	public void checkDocContents(int docid, MemoryIndex index, String[] terms) throws Exception {
+        assertNotNull(index.getDirectIndex());
+        DocumentIndexEntry die = index.getDocumentIndex().getDocumentEntry(docid);
+        assertNotNull(die);
+        IterablePosting ip = ((MemoryDirectIndex)index.getDirectIndex()).getPostings(docid);
+        assertNotNull(ip);
+        TIntHashSet id1 = new TIntHashSet( PostingUtil.getIds(ip) );
+        assertEquals(terms.length, id1.size());
+        for(String t : terms)
+        {
+            LexiconEntry le = index.getLexicon().getLexiconEntry(t);
+            assertNotNull("LexiconEntry for term " + t + " not found", le);
+            assertTrue("Term " + t + " is missing in document " +docid, id1.contains(le.getTermId()));
+        }
+    }
+
 	
 }
