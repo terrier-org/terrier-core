@@ -44,13 +44,15 @@ public class MultiInverted implements PostingIndex<Pointer> {
 
 	private PostingIndex<Pointer>[] postings;
 	private int[] offsets;
+	private boolean blocks;
 
 	/**
 	 * Constructor.
 	 */
-	public MultiInverted(PostingIndex<Pointer>[] postings, int[] offsets) {
+	public MultiInverted(PostingIndex<Pointer>[] postings, int[] offsets, boolean blocks) {
 		this.postings = postings;
 		this.offsets = offsets;
+		this.blocks = blocks;
 	}
 
 	/** {@inheritDoc} */
@@ -66,6 +68,8 @@ public class MultiInverted implements PostingIndex<Pointer> {
 				constituentIPs[i] = p.getPostings(pointer);
 			i++;
 		}
+		if (blocks)
+			return new BlockMultiIterablePosting(constituentIPs, offsets);
 		return new MultiIterablePosting(constituentIPs, offsets);
 	}
 

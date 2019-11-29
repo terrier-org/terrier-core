@@ -150,7 +150,7 @@ public class MultiIndex extends Index {
 		i++;
 		}
 
-		return new MultiInverted((PostingIndex<Pointer>[]) postings, offsets);
+		return new MultiInverted((PostingIndex<Pointer>[]) postings, offsets, blocks);
 	}
 
 	/** {@inheritDoc} */
