@@ -74,7 +74,7 @@ public class IndexUtil {
 		}
 
 		@Override
-		@SuppressWarnings({ "unchecked" })
+		@SuppressWarnings({ "unchecked", "deprecation" })
 		// public int run(String[] args) throws Exception {
 		public int run(CommandLine line) throws Exception {
 			String[] args = line.getArgs();
