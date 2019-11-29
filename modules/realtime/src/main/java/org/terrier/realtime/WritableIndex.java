@@ -48,6 +48,6 @@ public interface WritableIndex {
 	/**
 	 * Write the index properties to the .properties file.
 	 */
-	public void collectProperties(Index memory, Index newIndex, CompressionConfiguration compressionConfig);
+	public void collectProperties(Index memory, Index newIndex, CompressionConfiguration compressionInvertedConfig, CompressionConfiguration compressionDirectConfig);
 	
 }

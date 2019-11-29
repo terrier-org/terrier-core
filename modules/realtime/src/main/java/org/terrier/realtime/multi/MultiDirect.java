@@ -45,17 +45,12 @@ public class MultiDirect implements PostingIndex<Pointer> {
 	private PostingIndex<Pointer>[] postings;
 	private int[] offsets;
 
-	private boolean blocks;
-	private boolean fields;
-	
 	/**
 	 * Constructor.
 	 */
-	public MultiDirect(PostingIndex<Pointer>[] postings, int[] offsets,  boolean blocks, boolean fields) {
+	public MultiDirect(PostingIndex<Pointer>[] postings, int[] offsets) {
 		this.postings = postings;
 		this.offsets = offsets;
-		this.blocks = blocks;
-		this.fields = fields;
 	}
 
 	/** {@inheritDoc} */
@@ -71,7 +66,7 @@ public class MultiDirect implements PostingIndex<Pointer> {
 		
 		//System.err.println("Direct: Pointer="+_multiPointer.pointerToString()+" Shard="+die.getDocumentIndexShardIndex()+" Offset="+termidoffset);
 		
-		return MultiDirectIterablePostingWithOffset.of(postings[die.getDocumentIndexShardIndex()].getPostings(die.innerDocumentIndexEntry), termidoffset, blocks, fields);
+		return new MultiDirectIterablePostingWithOffset(postings[die.getDocumentIndexShardIndex()].getPostings(die.innerDocumentIndexEntry), termidoffset);
 	}
 
 	/** Not implemented. */

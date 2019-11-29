@@ -27,9 +27,7 @@
 
 package org.terrier.realtime.multi;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
@@ -40,8 +38,6 @@ import org.terrier.structures.Index;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndex;
-import org.terrier.structures.postings.BlockPosting;
-import org.terrier.structures.postings.IterablePosting;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
 
@@ -50,6 +46,7 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 	/*
 	 * Test MultiIndex.
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void test_MultiIndex() throws Exception {
 		ApplicationSetup.setProperty("termpipelines", "");
@@ -59,49 +56,17 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 		Index i1 = IndexTestUtils.makeIndex(new String[]{"0"},new String[]{"one two three"});
 		Index i2 = IndexTestUtils.makeIndex(new String[]{"1"},new String[]{"two three four"});
 		Index i3 = IndexTestUtils.makeIndex(new String[]{"2"},new String[]{"three four five"});
-		MultiIndex mindex = new MultiIndex(new Index[]{i1,i2,i3}, false, false); 
+		MultiIndex mindex = new MultiIndex(new Index[]{i1,i2,i3}); 
 		assertNotNull(mindex);
-		Lexicon<String> lexicon = mindex.getLexicon();
+		Lexicon<String> lexicon = (Lexicon<String>) mindex.getIndexStructure("lexicon");
 		assertNotNull(lexicon);
-		PostingIndex<?> inverted = mindex.getInvertedIndex();
+		PostingIndex<?> inverted = (PostingIndex<?>) mindex.getIndexStructure("inverted");
 		assertNotNull(inverted);
-		MetaIndex metaindex = mindex.getMetaIndex();
+		MetaIndex metaindex = (MetaIndex) mindex.getIndexStructure("meta");
 		assertNotNull(metaindex);
-		DocumentIndex docindex =  mindex.getDocumentIndex();
+		DocumentIndex docindex = (DocumentIndex) mindex.getIndexStructure("document");
 		assertNotNull(docindex);
-		CollectionStatistics stats = mindex.getCollectionStatistics();
-		assertNotNull(stats);
-	}
-	
-	@Test
-	public void test_MultiIndexBlocks() throws Exception {
-		ApplicationSetup.setProperty("termpipelines", "");
-		ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
-		ApplicationSetup.setProperty("indexer.meta.forward.keylens", "100");
-		ApplicationSetup.setProperty("indexer.meta.reverse.keys", "filename");
-		Index i1 = IndexTestUtils.makeIndexBlocks(new String[]{"0"},new String[]{"one two three"});
-		Index i2 = IndexTestUtils.makeIndexBlocks(new String[]{"1"},new String[]{"two three four"});
-		Index i3 = IndexTestUtils.makeIndexBlocks(new String[]{"2"},new String[]{"three four five"});
-		MultiIndex mindex = new MultiIndex(new Index[]{i1,i2,i3}, true, false); 
-		assertNotNull(mindex);
-		Lexicon<String> lexicon = mindex.getLexicon();
-		assertNotNull(lexicon);
-		PostingIndex<?> inverted = mindex.getInvertedIndex();
-		assertNotNull(inverted);
-		
-		IterablePosting ip = inverted.getPostings(lexicon.getLexiconEntry("two"));
-		assertNotNull(ip);
-		assertTrue(ip instanceof BlockPosting);
-		assertEquals(0, ip.next());
-		assertEquals(1, ip.getFrequency());
-		assertEquals(1, ((BlockPosting)ip).getPositions()[0]);
-		
-		
-		MetaIndex metaindex = mindex.getMetaIndex();
-		assertNotNull(metaindex);
-		DocumentIndex docindex =  mindex.getDocumentIndex();
-		assertNotNull(docindex);
-		CollectionStatistics stats = mindex.getCollectionStatistics();
+		CollectionStatistics stats = (CollectionStatistics) mindex.getIndexStructure("collectionstatistics");
 		assertNotNull(stats);
 	}
 	
@@ -116,7 +81,7 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 		Index disk = IndexTestUtils.makeIndex(new String[]{"A","B"},new String[]{"one two three","three four five"});
 		Index disk1 = IndexTestUtils.makeIndex(new String[]{"A"},new String[]{"one two three"});
 		Index disk2 = IndexTestUtils.makeIndex(new String[]{"B"},new String[]{"three four five"});
-		Index multi = new MultiIndex(new Index[]{disk1,disk2}, false, false);
+		Index multi = new MultiIndex(new Index[]{disk1,disk2});
 		assertNotNull(multi);
 		TestUtils.compareIndices(disk,multi);
 		TestUtils.compareProperties(disk,multi);
