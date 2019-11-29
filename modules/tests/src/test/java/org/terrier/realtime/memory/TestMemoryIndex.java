@@ -67,7 +67,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 
 	
 	@Test
-	public void test_DocumentContentUpdates() throws Exception {
+	public void testDocumentContentUpdates() throws Exception {
 		ApplicationSetup.setProperty("termpipelines", "");
 		MemoryIndex index = new MemoryIndex();
 		Lexicon<String> lex = index.getLexicon();
@@ -153,7 +153,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void test_IndexInMemory() throws Exception {
+	public void testIndexInMemory() throws Exception {
 		MemoryIndex index = new MemoryIndex();
 		assertNotNull(index);
 
@@ -198,7 +198,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	 * Verify in-memory index against test data.
 	 */
 	@Test
-	public void test_verify1() throws Exception {
+	public void testVerify1() throws Exception {
 		MemoryIndex index = TestUtils.memory(collection);
 		assertNotNull(index);
 		/*
@@ -355,7 +355,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	 * Verify in-memory retrieval against test data.
 	 */
 	@Test
-	public void test_verify2() throws Exception {
+	public void testVerify2() throws Exception {
 		MemoryIndex index = TestUtils.memory(collection);
 		assertNotNull(index);
 		ResultSet res;
@@ -390,7 +390,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	 * Test incremental indexing.
 	 */
 	@Test
-	public void test_incremental() throws Exception {
+	public void testIncremental() throws Exception {
 		ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
 		ApplicationSetup.setProperty("indexer.meta.reverse.keys", "filename");
 		ApplicationSetup.setProperty("termpipelines", "");
@@ -417,7 +417,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	 * Write in-memory index to disk, then load it from disk.
 	 */
 	@Test
-	public void test_todisk() throws Exception {
+	public void testToDisk() throws Exception {
 		MemoryIndex mem = TestUtils.memory(collection);
 		assertNotNull(mem);
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memory");
@@ -431,7 +431,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	 * Comparison of memory and disk indices.
 	 */
 	@Test
-	public void test_compare1() throws Exception {
+	public void testCompare1() throws Exception {
 		MemoryIndex mem = TestUtils.memory(collection);
 		assertNotNull(mem);
 		Index disk = IndexTestUtils.makeIndex(docids, documents);
@@ -448,7 +448,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	 * Comparison of memory and memory->disk indices.
 	 */
 	@Test
-	public void test_compare2() throws Exception {
+	public void testCompare2() throws Exception {
 		MemoryIndex mem = TestUtils.memory(collection);
 		assertNotNull(mem);
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memory");
@@ -467,7 +467,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	 * Comparison of disk and memory->disk indices.
 	 */
 	@Test
-	public void test_compare3() throws Exception {
+	public void testCompare3() throws Exception {
 		MemoryIndex mem = TestUtils.memory(collection);
 		assertNotNull(mem);
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memory");
@@ -485,7 +485,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	}
 	
 	@Test
-	public void test_compareDirect() throws Exception {
+	public void testCompareDirect() throws Exception {
 		MemoryIndex mem = TestUtils.memory(collection);
 		assertNotNull(mem);
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memory");
