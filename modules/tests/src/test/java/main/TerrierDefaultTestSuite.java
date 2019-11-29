@@ -28,7 +28,10 @@ package main;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.terrier.applications.TestBatchIndexingBlocks;
 import org.terrier.applications.TestCLITool;
+import org.terrier.applications.TestDirectQuerySource;
+import org.terrier.applications.TestShowDocumentCommand;
 import org.terrier.compression.bit.TestCompressedBitFiles;
 import org.terrier.compression.bit.TestCompressedBitFilesDelta;
 import org.terrier.compression.bit.TestCompressedBitFilesGolomb;
@@ -124,6 +127,9 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	
 	//.applications
 	TestCLITool.class,
+	TestDirectQuerySource.class,
+	TestShowDocumentCommand.class,
+	TestBatchIndexingBlocks.class,
 	
 	//.compression
 	TestCompressedBitFiles.class,
