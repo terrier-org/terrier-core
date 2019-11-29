@@ -93,9 +93,9 @@ public class MultiIterablePosting extends IterablePostingImpl implements
 	public void setId(int id) {
 	}
 
-	/** Not implemented. */
+	/** {@inheritDoc} */
 	public WritablePosting asWritablePosting() {
-		return null;
+		return children[currentChild].asWritablePosting();
 	}
 
 	/** Not implemented. */
