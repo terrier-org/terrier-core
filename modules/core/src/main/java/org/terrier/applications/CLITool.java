@@ -107,6 +107,7 @@ public abstract class CLITool {
 			return options;
 		}
 
+		@SuppressWarnings("deprecation")
 		protected IndexRef getIndexRef(CommandLine line) {
 			IndexRef iR = null;
             if (line.hasOption("I")) {
