@@ -72,7 +72,6 @@ import org.terrier.terms.SkipTermPipeline;
 import org.terrier.terms.TermPipeline;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
-import org.terrier.utility.FieldScore;
 
 /**
  * An index held in fully memory. This is an updatable index, i.e. it supports
@@ -86,23 +85,7 @@ import org.terrier.utility.FieldScore;
  */
 public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	
-	public static class Loader implements IndexFactory.IndexLoader
-	{
-		@Override
-		public boolean supports(IndexRef ref) {
-			return ref.size() == 1 && ref.toString().equals("#memory");
-		}
 
-		@Override
-		public Index load(IndexRef ref) {
-			return new MemoryIndex();
-		}
-
-		@Override
-		public Class<? extends Index> indexImplementor(IndexRef ref) {
-			return MemoryIndex.class;
-		}
-	}
 	
 	protected static final Logger logger = LoggerFactory.getLogger(MemoryIndex.class);
 
@@ -130,6 +113,24 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
     protected CompressionConfiguration compressionInvertedConfig;
     protected CompressionConfiguration compressionDirectConfig;
     
+    
+	public static class Loader implements IndexFactory.IndexLoader
+	{
+		@Override
+		public boolean supports(IndexRef ref) {
+			return ref.size() == 1 && ref.toString().equals("#memory");
+		}
+
+		@Override
+		public Index load(IndexRef ref) {
+			return new MemoryIndex();
+		}
+
+		@Override
+		public Class<? extends Index> indexImplementor(IndexRef ref) {
+			return MemoryIndex.class;
+		}
+	}
     
     public MemoryIndex(MemoryLexicon tmplex, MemoryDocumentIndexMap document, MemoryInvertedIndex inverted, MemoryMetaIndex metadata, MemoryCollectionStatistics stats) {
     	this();
@@ -609,7 +610,10 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	/**
 	 * Collect index properties.
 	 */
-	public void collectProperties(Index memory, Index newIndex, CompressionConfiguration compressionConfigInverted, CompressionConfiguration compressionConfigDirect) {
+	public void collectProperties(Index memory,
+			Index newIndex,
+			CompressionConfiguration compressionInv,
+			CompressionConfiguration compressionDir) {
 
 		/*
 		 * index
@@ -708,8 +712,8 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		/*
 		 * index.inverted
 		 */
-		compressionConfigInverted.writeIndexProperties(newIndex, "lexicon-entry-inputstream");
-		compressionConfigDirect.writeIndexProperties(newIndex, "document-inputstream");
+		compressionInv.writeIndexProperties(newIndex, "lexicon-entry-inputstream");
+		compressionDir.writeIndexProperties(newIndex, "document-inputstream");
 		
 		
 		
