@@ -43,7 +43,7 @@ import org.terrier.structures.postings.IterablePosting;
 public class MultiDirect implements PostingIndex<Pointer> {
 
 	private PostingIndex<Pointer>[] postings;
-	private int[] offsets;
+	private MultiLexicon lex;
 
 	private boolean blocks;
 	private boolean fields;
@@ -51,27 +51,20 @@ public class MultiDirect implements PostingIndex<Pointer> {
 	/**
 	 * Constructor.
 	 */
-	public MultiDirect(PostingIndex<Pointer>[] postings, int[] offsets,  boolean blocks, boolean fields) {
+	public MultiDirect(PostingIndex<Pointer>[] postings,  MultiLexicon lex,  boolean blocks, boolean fields) {
 		this.postings = postings;
-		this.offsets = offsets;
 		this.blocks = blocks;
 		this.fields = fields;
+		this.lex = lex;
 	}
 
 	/** {@inheritDoc} */
 	public IterablePosting getPostings(Pointer _multiPointer)
 			throws IOException {
 		MultiDocumentEntry die = (MultiDocumentEntry) _multiPointer;
-		
-		int termidoffset = 0;
-		for (int i =0; i<die.getDocumentIndexShardIndex(); i++) {
-			termidoffset=termidoffset+offsets[i];
-			
-		}
-		
-		//System.err.println("Direct: Pointer="+_multiPointer.pointerToString()+" Shard="+die.getDocumentIndexShardIndex()+" Offset="+termidoffset);
-		
-		return MultiDirectIterablePostingWithOffset.of(postings[die.getDocumentIndexShardIndex()].getPostings(die.innerDocumentIndexEntry), termidoffset, blocks, fields);
+		int shard = die.getDocumentIndexShardIndex();
+		return MultiDirectIterablePosting.of(
+				postings[shard].getPostings(die.innerDocumentIndexEntry), lex, shard, blocks, fields);
 	}
 
 	/** Not implemented. */

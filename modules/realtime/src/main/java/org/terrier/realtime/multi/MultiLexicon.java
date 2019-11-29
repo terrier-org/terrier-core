@@ -35,6 +35,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.collections4.map.LRUMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.utility.ApplicationSetup;
@@ -63,6 +65,7 @@ import org.terrier.utility.StaTools;
  */
 public class MultiLexicon extends Lexicon<String> {
 
+	LRUMap<Integer, String> hash2term = new LRUMap<>(1000);
 	private Lexicon<String>[] lexicons;
 	private int[] numTerms;
 	private ArrayList<String> uniqueTerms;
@@ -93,6 +96,23 @@ public class MultiLexicon extends Lexicon<String> {
 		return lexicons[index];
 	}
 	
+	public static int hashCode(String term) {
+		int hash = term.hashCode();
+		//System.err.println(hash);
+		char first= term.charAt(0);
+		byte prefix = 0;
+		if (first <= '~')
+			prefix = (byte)first;
+		//System.err.println("prefix of "+term+ " is " +  prefix);
+		return (hash & 0xFF00) | prefix; 
+	}
+	
+	public static char hashCodePrefix(int hashcode) {
+		byte prefix = (byte) (hashcode & 0x00FF);
+		//System.err.println("prefix of "+hashcode+ "is " +  prefix);
+		return (char)prefix;
+	}
+	
 	
 	/** {@inheritDoc} */
 	public int numberOfEntries() {
@@ -116,46 +136,62 @@ public class MultiLexicon extends Lexicon<String> {
 			}
 			i++;
 		}
-		return found ? new MultiLexiconEntry(les) : null;
+		if (! found)
+			return null;
+		int hashcode = hashCode(term);
+		this.hash2term.putIfAbsent(hashcode, term);
+		return new MultiLexiconEntry(les, hashcode);
+	}
+	
+	int computeGlobalTermIdFromLocal(int localtermid, int shard) {
+		String term = lexicons[shard].getLexiconEntry(localtermid).getKey();
+		int hashcode = hashCode(term);
+		this.hash2term.putIfAbsent(hashcode, term);
+		return hashcode;
 	}
 
 	/** {@inheritDoc} */
 	public Entry<String, LexiconEntry> getLexiconEntry(int termid) {
-		// re-written by richardm on 2/1/2012, changed implementation to expect global termids, as per the MultiDirectIterablePostingWithOffset class
-		int localtermid = termid;
-		int shard = 0;
 		
-		int offset=0;
-		for (int i =0; i<numTerms.length; i++) {
-			offset+=numTerms[i];
-			if (termid<offset) {
-				shard=i;
-				localtermid=termid-(offset-numTerms[i]);
-				break;
+		//global termid -> String
+		String t = globalTermId2Term(termid);
+		if (t == null)
+			return null;
+		
+		return Pair.of(t,getLexiconEntry(t));
+	}
+	
+	String globalTermId2Term(int hashcode) {
+		
+		String rtr = this.hash2term.get(hashcode);
+		if (rtr != null)
+			return rtr;
+		
+		char prefix = hashCodePrefix(hashcode);
+		for(Lexicon<String> lex : lexicons)
+		{
+			Iterator<Entry<String,LexiconEntry>> iter = lex.getLexiconEntryRange(String.valueOf(prefix), String.valueOf(prefix+1));
+			while(iter.hasNext())
+			{
+				Entry<String,LexiconEntry> lee = iter.next();
+				if (hashCode(lee.getKey()) == hashcode)
+				{
+					hash2term.put(hashcode, lee.getKey());
+					return lee.getKey();
+				}
 			}
 		}
-		
-		//System.err.println("Lexicon: Local ID="+localtermid+" Shard="+shard);
-		
-		return getLexiconEntry(localtermid, shard);
-		
-		/*if (approximateNumberofEntries)
-			return null;
-		String term = uniqueTerms.get(termid);
-		return new org.terrier.structures.collections.MapEntry<String, LexiconEntry>(
-				term, getLexiconEntry(uniqueTerms.get(termid)));*/
-		
-		
+		return null;
 	}
 	
 	/** This is an extra lexicon entry method for fast lookups of LexiconEntry's
 	 * by term id. */
-	public Entry<String, LexiconEntry> getLexiconEntry(int termid, int shard) {
-		//System.err.println("Looking up "+termid+" in shard "+shard+" (contains="+numTerms[shard]+")");
-		String term = lexicons[shard].getLexiconEntry(termid).getKey();
-		return new org.terrier.structures.collections.MapEntry<String, LexiconEntry>(
-				term, getLexiconEntry(term));
-	}
+//	public Entry<String, LexiconEntry> getLexiconEntry(int termid, int shard) {
+//		//System.err.println("Looking up "+termid+" in shard "+shard+" (contains="+numTerms[shard]+")");
+//		String term = lexicons[shard].getLexiconEntry(termid).getKey();
+//		return new org.terrier.structures.collections.MapEntry<String, LexiconEntry>(
+//				term, getLexiconEntry(term));
+//	}
 
 
 	/** This is an invalid method since a lexicon entry can appear in any number of
