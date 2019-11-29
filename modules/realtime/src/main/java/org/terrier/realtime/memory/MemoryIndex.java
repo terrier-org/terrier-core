@@ -85,23 +85,7 @@ import org.terrier.utility.ArrayUtils;
  */
 public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	
-	public static class Loader implements IndexFactory.IndexLoader
-	{
-		@Override
-		public boolean supports(IndexRef ref) {
-			return ref.size() == 1 && ref.toString().equals("#memory");
-		}
 
-		@Override
-		public Index load(IndexRef ref) {
-			return new MemoryIndex();
-		}
-
-		@Override
-		public Class<? extends Index> indexImplementor(IndexRef ref) {
-			return MemoryIndex.class;
-		}
-	}
 	
 	protected static final Logger logger = LoggerFactory.getLogger(MemoryIndex.class);
 
@@ -121,15 +105,32 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
     public final static String[]     fieldtags = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("FieldTags.process", ""));
     public TObjectIntHashMap<String> fieldIDs;
 	
-    // Direct
-    public final static boolean      enableDirect    = (ApplicationSetup.getProperty("direct.indexing", "").equals("")) ? false : true;
     
     /** A lock that stops multiple indexing operations from happening at once **/
     protected Object indexingLock = new Object();
     
     // Compression code for writing
-    protected CompressionConfiguration compressionConfig;
+    protected CompressionConfiguration compressionInvertedConfig;
+    protected CompressionConfiguration compressionDirectConfig;
     
+    
+	public static class Loader implements IndexFactory.IndexLoader
+	{
+		@Override
+		public boolean supports(IndexRef ref) {
+			return ref.size() == 1 && ref.toString().equals("#memory");
+		}
+
+		@Override
+		public Index load(IndexRef ref) {
+			return new MemoryIndex();
+		}
+
+		@Override
+		public Class<? extends Index> indexImplementor(IndexRef ref) {
+			return MemoryIndex.class;
+		}
+	}
     
     public MemoryIndex(MemoryLexicon tmplex, MemoryDocumentIndexMap document, MemoryInvertedIndex inverted, MemoryMetaIndex metadata, MemoryCollectionStatistics stats) {
     	this();
@@ -163,10 +164,10 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		document = new MemoryDocumentIndex();
 		inverted = new MemoryInvertedIndex(lexicon, document);
 		metadata = new MemoryMetaIndex();
-		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] { 0 }, new String[0]);
+		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] { 0 }, fieldtags);
 		load_pipeline(); // For term processing (stemming, stop-words).
 
-		if (enableDirect) direct = new MemoryDirectIndex(document);
+		direct = new MemoryDirectIndex(document);
 		
 		logger.info("***REALTIME*** MemoryIndex (NEW)");
 	}
@@ -183,7 +184,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 			return getDocumentIndex();
 		if (structureName.equalsIgnoreCase("collectionstatistics"))
 			return getCollectionStatistics();
-		if (structureName.equalsIgnoreCase("direct") && enableDirect)
+		if (structureName.equalsIgnoreCase("direct"))
 			return direct;
 		else
 			return null;
@@ -216,8 +217,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 
 	/** Not implemented. */
 	public PostingIndex<?> getDirectIndex() {
-		if (enableDirect) return direct;
-		return null;
+		return direct;
 	}
 
 	/** {@inheritDoc} */
@@ -230,7 +230,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 			return metadata.iterator();
 		if (structureName.equalsIgnoreCase("document"))
 			return document.iterator();
-		if (structureName.equalsIgnoreCase("direct") && enableDirect)
+		if (structureName.equalsIgnoreCase("direct"))
 			return direct.iterator();
 		else
 			return null;
@@ -287,12 +287,10 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 					tf));
 
 			// Add document posting to inverted file.
-			inverted.add(termid, stats.getNumberOfDocuments(),
+			inverted.add(termid, docid,
 					tf);
 			
-			if (enableDirect) {
-				direct.add(docid, termid, tf);
-			}
+			direct.add(docid, termid, tf);
 		}
 
 		// Update collection statistics.
@@ -458,10 +456,16 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		logger.info("***REALTIME*** MemoryIndex write path: " + path
 				+ " prefix: " + prefix);
 
-		compressionConfig = CompressionFactory.getCompressionConfiguration("inverted", new String[0], 0,0);
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", new String[0], 0,0);
+		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", new String[0], 0, 0);
+		
+		if (stats.getNumberOfDocuments()==0) {
+			logger.info("***REALTIME*** MemoryIndex write aborted, index has no documents in it yet!");
+			return this;
+		}
 		
 		// FIXME: increase visibility using logger.debug
-
+		
 		
 		
 		// Make a new index to flush memory to.
@@ -474,8 +478,6 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		Iterator<String[]> metaIter = (Iterator<String[]>) this
 				.getIndexStructureInputStream("meta");
 
-		Iterator<DocumentIndexEntry> docIter = (Iterator<DocumentIndexEntry>) this
-				.getIndexStructureInputStream("document");
 
 		String temp = "";
 		for (String a : ((MetaIndex)this.getIndexStructure("meta")).getKeys()) temp = temp+" "+a;
@@ -488,19 +490,38 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 				ArrayUtils.parseCommaDelimitedString(ApplicationSetup
 						.getProperty("indexer.meta.reverse.keys", "")));
 
+		
+		/*
+		 * Direct Index and Document Structure
+		 */
+		
+		AbstractPostingOutputStream directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
+				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
+		
 		DocumentIndexBuilder docOut = new DocumentIndexBuilder(newIndex,
 				"document");
-
-		System.out.println(this.getCollectionStatistics().getNumberOfDocuments());
-		while (docIter.hasNext()) {
+		
+		PostingIndexInputStream postingIterator = direct.iterator();
+		
+		int docid =0;
+		while (postingIterator.hasNext()) {
+			IterablePosting directPosting = postingIterator.next();
 			
+			BitIndexPointer pointer = directIndexBuilder.writePostings(directPosting);
 			
-			docOut.addEntryToBuffer(docIter.next());
+			DocumentIndexEntry die = document.getDocumentEntry(docid);
+			die.setBitIndexPointer(pointer);
+			docOut.addEntryToBuffer(die);
+			docid++;
 		}
+		
+		directIndexBuilder.close();
+		docOut.close();
+		
 		while(metaIter.hasNext()){
 			metaOut.writeDocumentEntry(metaIter.next());
 		}
-		docOut.close();
+		
 		metaOut.close();
 
 		/*
@@ -521,8 +542,8 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		BasicLexiconEntry.Factory lexiconEntryFactory = new BasicLexiconEntry.Factory();
 
 		
-		AbstractPostingOutputStream invOut = compressionConfig.getPostingOutputStream(
-				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "inverted" + compressionConfig.getStructureFileExtension());
+		AbstractPostingOutputStream invOut = compressionInvertedConfig.getPostingOutputStream(
+				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "inverted" + compressionInvertedConfig.getStructureFileExtension());
 		
 
 		// write lexicon & inverted
@@ -555,6 +576,10 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		IndexUtil.close(piis);
 		IndexUtil.close(invOut);
 
+		
+		
+
+		
 		/*
 		 * Index properties.
 		 */
@@ -563,7 +588,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		newIndex.flush();
 
 		// setting index properties appropriately
-		collectProperties(this, newIndex, compressionConfig);
+		collectProperties(this, newIndex, compressionInvertedConfig,compressionDirectConfig);
 
 		/*
 		 * Tidy up.
@@ -585,7 +610,10 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	/**
 	 * Collect index properties.
 	 */
-	public void collectProperties(Index memory, Index newIndex, CompressionConfiguration compressionConfig) {
+	public void collectProperties(Index memory,
+			Index newIndex,
+			CompressionConfiguration compressionInv,
+			CompressionConfiguration compressionDir) {
 
 		/*
 		 * index
@@ -684,7 +712,11 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		/*
 		 * index.inverted
 		 */
-		compressionConfig.writeIndexProperties(newIndex, "lexicon-entry-inputstream");
+		compressionInv.writeIndexProperties(newIndex, "lexicon-entry-inputstream");
+		compressionDir.writeIndexProperties(newIndex, "document-inputstream");
+		
+		
+		
 		/*newIndex.addIndexStructure(
 				// structureName,className,paramTypes,paramValues
 				"inverted",
@@ -725,6 +757,13 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 				new String[] { "org.terrier.structures.IndexOnDisk",
 						"java.lang.String" }, new String[] { "index",
 						"structureName" });
+		
+		/*
+		 * Term Pipeline
+		 */
+		newIndex.getProperties().put("termpipelines",
+				ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer").trim());
+		
 	}
 
 	/** {@inheritDoc} */
@@ -872,7 +911,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		//document = new MemoryDocumentIndexMap();
 		lexicon = new MemoryLexicon();
 		inverted = new MemoryInvertedIndex(lexicon, superIndex.getDocumentIndex());
-		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[0], new String[0]);
+		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] {}, fieldtags);
 		load_pipeline(); // For term processing (stemming, stop-words).
 		
 		logger.info("reading out inverted..");
@@ -991,7 +1030,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		logger.info("updating stats..");
 
 		//WARNING: number of unique terms and the number of pointers are set to 0 (should they be the same value?)
-		stats = new MemoryCollectionStatistics(numberOfDocuments, numTerms, numberTokens, 0, new long[0], new String[0]);
+		stats = new MemoryCollectionStatistics(numberOfDocuments, numTerms, numberTokens, 0, new long[] {}, fieldtags);
 		
 		//Meta - We can just use the original meta index as we do lookups based on docid
 		//       this is covered by the following methods

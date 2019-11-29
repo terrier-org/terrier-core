@@ -114,8 +114,9 @@ public class MemoryDocumentIndex implements DocumentIndex,Serializable {
 
 		public Entry<Integer, DocumentIndexEntry> next() {
 			BasicDocumentIndexEntry die = new BasicDocumentIndexEntry();
-			die.setDocumentLength(docLengths.get(index++));
+			die.setDocumentLength(docLengths.get(index));
 			Entry<Integer, DocumentIndexEntry> e = new MapEntry<Integer, DocumentIndexEntry>(index, die);
+			index++;
 			return e;
 		}
 
@@ -124,7 +125,7 @@ public class MemoryDocumentIndex implements DocumentIndex,Serializable {
 	}
 	
 	/**
-	 * Document index iterator, iterates over DocumentIndexEntry only, not Entry&lt;index, DocumentIndexEntry&gt;.
+	 * Document index iterator, iterates over DocumentIndexEntry only, not Entry<index, DocumentIndexEntry>.
 	 */
 	public class DocumentIterator2 implements Iterator<DocumentIndexEntry> {
 		private int index = 0;
@@ -136,7 +137,8 @@ public class MemoryDocumentIndex implements DocumentIndex,Serializable {
 
 		public DocumentIndexEntry next() {
 			BasicDocumentIndexEntry die = new BasicDocumentIndexEntry();
-			die.setDocumentLength(docLengths.get(index++));
+			die.setDocumentLength(docLengths.get(index));
+			index++;
 			return die;
 		}
 

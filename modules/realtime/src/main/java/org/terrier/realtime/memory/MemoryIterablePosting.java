@@ -99,7 +99,7 @@ public class MemoryIterablePosting extends IterablePostingImpl {
 
 	/** {@inheritDoc} */
 	public boolean endOfPostings() {
-		if ((pl_doc == null) || (index >= pl_doc.size()) || pl_doc.size()==0)
+		if ((pl_doc == null) || (index >= pl_doc.size()-1) || pl_doc.size()==0)
 			return true;
 		else
 			return false;

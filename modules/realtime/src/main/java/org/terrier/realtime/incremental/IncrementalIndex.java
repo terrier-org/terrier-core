@@ -240,7 +240,7 @@ public class IncrementalIndex extends org.terrier.realtime.multi.MultiIndex impl
 	protected IncrementalIndex(Index[] indices) {
 
 		// Pass indices up to MultiIndex.
-		super(indices, false, false);
+		super(indices);
 
 		// Get policy from terrier.properties.
 		String policy;
