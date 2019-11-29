@@ -65,13 +65,13 @@ public class MultiIndex extends Index {
 	 */
 	protected List<Index> indices;
 	
-	protected boolean blocks;
-	protected boolean fields;
-	
 	/**
 	 * Selective Matching policy, a policy for accessing only subsets of the indices within this multi-index.
 	 */
 	protected IncrementalSelectiveMatching selectiveMatchingPolicy;
+	
+	protected boolean blocks;
+	protected boolean fields;
 
 	/**
 	 * Constructor.
@@ -150,7 +150,7 @@ public class MultiIndex extends Index {
 		i++;
 		}
 
-		return new MultiInverted((PostingIndex<Pointer>[]) postings, offsets, blocks, fields);
+		return new MultiInverted((PostingIndex<Pointer>[]) postings, offsets);
 	}
 
 	/** {@inheritDoc} */

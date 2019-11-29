@@ -44,10 +44,10 @@ public class MultiDirect implements PostingIndex<Pointer> {
 
 	private PostingIndex<Pointer>[] postings;
 	private MultiLexicon lex;
-
-	private boolean blocks;
-	private boolean fields;
 	
+	boolean blocks;
+	boolean fields;
+
 	/**
 	 * Constructor.
 	 */

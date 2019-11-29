@@ -43,9 +43,9 @@ import org.terrier.structures.postings.WritablePosting;
 public class MultiIterablePosting extends IterablePostingImpl implements
 		IterablePosting {
 
-	protected IterablePosting[] children;
-	protected int[] offsets;
-	protected int currentChild = 0;
+	private IterablePosting[] children;
+	private int[] offsets;
+	public int currentChild = 0;
 
 	/**
 	 * Constructor.
@@ -100,14 +100,6 @@ public class MultiIterablePosting extends IterablePostingImpl implements
 
 	/** Not implemented. */
 	public void close() throws IOException {
-	}
-	
-	public static MultiIterablePosting of(IterablePosting[] ips, int[] offsets, boolean blocks, boolean fields) {
-		if (fields)
-			throw new UnsupportedOperationException("fields not implemented yet");
-		if (blocks)
-			return new BlockMultiIterablePosting(ips, offsets);
-		return new MultiIterablePosting(ips, offsets);
 	}
 
 }

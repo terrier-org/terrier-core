@@ -27,13 +27,12 @@
 
 package org.terrier.realtime.multi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import gnu.trove.TIntHashSet;
 
 import java.io.IOException;
 import java.util.Set;
+
 
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
@@ -48,6 +47,7 @@ import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.PostingUtil;
+
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
 
@@ -58,6 +58,7 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 	/*
 	 * Test MultiIndex.
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void test_MultiIndex() throws Exception {
 		ApplicationSetup.setProperty("termpipelines", "");
@@ -69,7 +70,7 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 		Index i3 = IndexTestUtils.makeIndex(new String[]{"2"},new String[]{"three four five"});
 		MultiIndex mindex = new MultiIndex(new Index[]{i1,i2,i3}, false, false); 
 		assertNotNull(mindex);
-		Lexicon<String> lexicon = mindex.getLexicon();
+		Lexicon<String> lexicon = (Lexicon<String>) mindex.getIndexStructure("lexicon");
 		assertNotNull(lexicon);
 		
 		LexiconEntry le = lexicon.getLexiconEntry("three");
@@ -81,10 +82,11 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 		
 		PostingIndex<?> inverted = mindex.getInvertedIndex();
 		assertNotNull(inverted);
-		MetaIndex metaindex = mindex.getMetaIndex();
+		MetaIndex metaindex = (MetaIndex) mindex.getIndexStructure("meta");
 		assertNotNull(metaindex);
-		DocumentIndex docindex =  mindex.getDocumentIndex();
+		DocumentIndex docindex = (DocumentIndex) mindex.getIndexStructure("document");
 		assertNotNull(docindex);
+
 		CollectionStatistics stats = mindex.getCollectionStatistics();
 		assertNotNull(stats);
 		

@@ -58,7 +58,6 @@ public class MultiDirectIterablePosting implements IterablePosting {
 	@Override
 	public int getId() {
 		return lex.computeGlobalTermIdFromLocal(posting.getId(), shard);
-
 	}
 
 	@Override
@@ -102,6 +101,7 @@ public class MultiDirectIterablePosting implements IterablePosting {
 		return posting.endOfPostings();
 	}
 	
+<<<<<<< HEAD:modules/realtime/src/main/java/org/terrier/realtime/multi/MultiDirectIterablePosting.java
 	public static MultiDirectIterablePosting of(IterablePosting ip, MultiLexicon lex, int shard, boolean blocks, boolean fields) {
 		if (fields)
 			throw new UnsupportedOperationException("fields not implemented yet");
@@ -110,4 +110,6 @@ public class MultiDirectIterablePosting implements IterablePosting {
 		return new MultiDirectIterablePosting(ip, lex, shard);
 	}
 	
+=======
+>>>>>>> 515f273cb80f9bd0023d62e8fb424382a82a0e88:modules/realtime/src/main/java/org/terrier/realtime/multi/MultiDirectIterablePostingWithOffset.java
 }
