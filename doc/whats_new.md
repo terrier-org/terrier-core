@@ -1,13 +1,14 @@
 What's New in Terrier
 =====================
 
-Terrier 5.2 - xx/07/2019
+Terrier 5.2 - xx/12/2019
 ------------------------
 Minor update with bug-fixes and improvements. In particular, the classical indexer has been shown some love, and inverted index building should be faster by default, courtesy of changes that improve its usage of available memory. Some improvements were identified in support of activities surrounding the [SIGIR 2019 Open-Source IR Replicability Challenge](https://osirrc.github.io/osirrc2019/) (OSIRRC). A [OSIRRC Docker image](https://github.com/osirrc/terrier-docker) is now available, supporting Robust04, GOV2, and Core18 test collections.
 
 ### Indexing
- - [#20](https://github.com/terrier-org/terrier-core/issues/20) batchindexing should report total time taken
+ - added -C command to batchindexing command to specify Collection class.
  - [#19](https://github.com/terrier-org/terrier-core/issues/19) MultiFileCollection should warn for duplicate files in collection.spec
+ - [#20](https://github.com/terrier-org/terrier-core/issues/20) batchindexing should report total time taken
  - [#23](https://github.com/terrier-org/terrier-core/issues/23) indexstats should report fields, blocks
  - [#32](https://github.com/terrier-org/terrier-core/issues/32) (Block)InvertedIndexBuilder should try to use memory more aggressively
  - [#33](https://github.com/terrier-org/terrier-core/issues/33) Classical indexer should create less temporary lexicons
@@ -16,17 +17,34 @@ Minor update with bug-fixes and improvements. In particular, the classical index
  - bump jtreceval for Alpine Docker container compatibility
  - Ensure that different words with identical stems are correctly conflated
  - make the query parser factory method static
+ - make BM25 k_1 value configurable
+ - Support DirectIndex in MultiIndex
+ - support non ngram wmodels for dependence proximity
  - LabelSet should work if given a non-featured result set, particularly copying of metadata
- - [#21](https://github.com/terrier-org/terrier-core/issues/21) batchevaluate should not override existing .eval files
+ - [#28](https://github.com/terrier-org/terrier-core/issues/28)  batchretrieval - Read topics from stdin, write results to stdout
+ - [#35](https://github.com/terrier-org/terrier-core/issues/35) batchretrieve should accept a -p argument to use ParallelTRECQuerying
+ - [#36](https://github.com/terrier-org/terrier-core/issues/36) ParallelTRECQuerying misses TRECQuerying.init() call
  - [#40](https://github.com/terrier-org/terrier-core/issues/40) IndexUtil.getFieldId() doesnt work for single-pass indices. Identified with Xiao Wang, University of Glasgow
- - [TR-566](http://terrier.org/issues/browse/TR-566) Batchretrieve using -m (MatchingOp) doesnt work. Reported by Redha ELtaani (Université du Québec à Montréal - Canada). 
- 
+ - [#42](https://github.com/terrier-org/terrier-core/issues/42) firstkeep tagged terms are not scored by Fat as expected. Identified with Xiao Wang, University of Glasgow
+ - [#47](https://github.com/terrier-org/terrier-core/issues/47) document index should error/warn if not enough memory to load.
+ - [#53](https://github.com/terrier-org/terrier-core/issues/53) MultiIndex support for blocks...
+ - [#56](https://github.com/terrier-org/terrier-core/issues/56) MultiIndex doesn't assign global termids
+ - [TR-566](http://terrier.org/issues/browse/TR-566) Batchretrieve using -m (MatchingOp) doesnt work. Reported by Redha ELtaani (Université du Québec à Montréal - Canada).
+
 
 ### Other
- - [#30](https://github.com/terrier-org/terrier-core/issues/30) testImportSingleIndirectWithClassifier fails on Alpine linux
- - [#27](https://github.com/terrier-org/terrier-core/issues/27) Files could obtain compression filter stream mappings from a property. This allows TREC Disk 1, 2, 4 & 5 to be indexed without recompression - see [http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1%262](http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1%262)
- - [#26](https://github.com/terrier-org/terrier-core/issues/26) Cannot load a TerrierApplicationPlugin from a Maven module
- - [#25](https://github.com/terrier-org/terrier-core/issues/25) bump fastutil to 8.2.2
+- Show which component that a command comes from
+- Include the realtime test suite during testing phase.
+- [#21](https://github.com/terrier-org/terrier-core/issues/21) batchevaluate should not override existing .eval files
+- [#25](https://github.com/terrier-org/terrier-core/issues/25) bump fastutil to 8.2.2
+- [#26](https://github.com/terrier-org/terrier-core/issues/26) Cannot load a TerrierApplicationPlugin from a Maven module
+- [#27](https://github.com/terrier-org/terrier-core/issues/27) Files could obtain compression filter stream mappings from a property. This allows TREC Disk 1, 2, 4 & 5 to be indexed without recompression - see [http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1%262](http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1%262)
+- [#30](https://github.com/terrier-org/terrier-core/issues/30) testImportSingleIndirectWithClassifier fails on Alpine linux
+- [#34](https://github.com/terrier-org/terrier-core/issues/34) JSP web-based UIs not working
+- [#39](https://github.com/terrier-org/terrier-core/issues/39) better documentation of StaticFeature listofscores required. Reported by Xi Wang, University of Glasgow
+- [#41](https://github.com/terrier-org/terrier-core/issues/41) TRECQrelsInMemory.getGrade() is inefficient
+- [#50](https://github.com/terrier-org/terrier-core/issues/50) Terrier build issues: Java 11. Reported by Jimmy Lin, University of Waterloo
+- [TR-562](http://terrier.org/issues/browse/TR-562) There is a link to the removed Properties documentation page
 
 
 Terrier 5.1 - 14/01/2019
@@ -65,7 +83,7 @@ Minor update with bug-fixes, improving features introduced in 5.0. New features 
  - [TR-545](http://terrier.org/issues/browse/TR-545) Proximity shouldn't encapsulate terms with fields set
  - [TR-547](http://terrier.org/issues/browse/TR-547) JSON output format for REST API
  - [TR-552](http://terrier.org/issues/browse/TR-552) batch retrieval from a remote index doesnt create valid run files
- 
+
 
 ### Other
  - [TR-522](http://terrier.org/issues/browse/TR-522), [TR-549](http://terrier.org/issues/browse/TR-549) wrong paths in .bat files (Artur Cieslewicz, Poznan University of Medical Sciences)
@@ -105,10 +123,10 @@ More information can be found in the [documentation on migration to Terrier 5](T
  - [TR-508](http://terrier.org/issues/browse/TR-508) Querying (interactive, batchretrieval) commands should have common base class
  - [TR-510](http://terrier.org/issues/browse/TR-510) bump jtreceval for Windows versions
  - [TR-511](http://terrier.org/issues/browse/TR-511) RESTful server and client
- 
+
 ### Other
  - [TR-445](http://terrier.org/issues/browse/TR-445) Infrastructure support for non-String lexicons
- - [TR-480](http://terrier.org/issues/browse/TR-480) Resolve additional Terrier "plugins" from Maven repositories. Ramification of this change is that Class.forName() should be replaced by ApplicationSetup.getClass(). 
+ - [TR-480](http://terrier.org/issues/browse/TR-480) Resolve additional Terrier "plugins" from Maven repositories. Ramification of this change is that Class.forName() should be replaced by ApplicationSetup.getClass().
  - [TR-483](http://terrier.org/issues/browse/TR-483) pom.xml should not specify javac
  - [TR-491](http://terrier.org/issues/browse/TR-491) Split out MapReduce indexer from core, upgrade Hadoop
  - [TR-494](http://terrier.org/issues/browse/TR-494) bump jtreceval to print error message from bin/trec_terrier.sh -e
