@@ -259,6 +259,8 @@ public abstract class CLITool {
 				String name = tool.commandname();
 				if (name.length() <= 5)
 					name += '\t';
+				if (name.length() < 16)
+					name += '\t';
 				System.err.println("\t" + name + "\t" + tool.sourcepackage() +  "\t" + tool.helpsummary());
 			}
 			
