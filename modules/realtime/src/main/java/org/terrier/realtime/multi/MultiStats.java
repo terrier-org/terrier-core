@@ -46,6 +46,7 @@ public class MultiStats extends CollectionStatistics {
 		int numDocs = 0, numTerms = 0;
 		long numTokens = 0, numPointers = 0;
 		long[] fieldTokens = new long[] { 0 };
+		String[] fieldNames = {};
 		for (CollectionStatistics stat : stats) {
 			numDocs += stat.getNumberOfDocuments();
 			numTokens += stat.getNumberOfTokens();
@@ -55,7 +56,7 @@ public class MultiStats extends CollectionStatistics {
 		}
 
 		return new MultiStats(numDocs, numTerms, numTokens, numPointers,
-				fieldTokens, stats[0].getFieldNames());
+				fieldTokens, fieldNames);
 	}
 
 	/*

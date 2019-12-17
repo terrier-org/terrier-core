@@ -28,6 +28,7 @@ package org.terrier.realtime.multi;
 
 import java.io.IOException;
 
+import org.terrier.structures.postings.BasicPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.WritablePosting;
 
@@ -42,20 +43,21 @@ import org.terrier.structures.postings.WritablePosting;
  * @since 4.0
  *
  */
-public class MultiDirectIterablePostingWithOffset implements IterablePosting {
+public class MultiDirectIterablePosting implements IterablePosting {
 
 	IterablePosting posting;
-	int idoffset;
+	MultiLexicon lex;
+	int shard;
 	
-	public MultiDirectIterablePostingWithOffset(IterablePosting posting, int idoffset) {
+	public MultiDirectIterablePosting(IterablePosting posting, MultiLexicon lex, int shard) {
 		this.posting = posting;
-		this.idoffset = idoffset;
+		this.shard = shard;
+		this.lex = lex;
 	}
 
 	@Override
 	public int getId() {
-		return posting.getId()+idoffset;
-
+		return lex.computeGlobalTermIdFromLocal(posting.getId(), shard);
 	}
 
 	@Override
@@ -76,7 +78,7 @@ public class MultiDirectIterablePostingWithOffset implements IterablePosting {
 
 	@Override
 	public WritablePosting asWritablePosting() {
-		return posting.asWritablePosting();
+		return new BasicPostingImpl(this.getId(), this.getFrequency());
 	}
 
 	@Override
@@ -99,12 +101,12 @@ public class MultiDirectIterablePostingWithOffset implements IterablePosting {
 		return posting.endOfPostings();
 	}
 	
-	public static MultiDirectIterablePostingWithOffset of(IterablePosting ip, int idoffset, boolean blocks, boolean fields) {
+	public static MultiDirectIterablePosting of(IterablePosting ip, MultiLexicon lex, int shard, boolean blocks, boolean fields) {
 		if (fields)
 			throw new UnsupportedOperationException("fields not implemented yet");
 		if (blocks)
-			return new BlockMultiDirectIterablePostingWithOffset(ip, idoffset);
-		return new MultiDirectIterablePostingWithOffset(ip, idoffset);
+			return new BlockMultiDirectIterablePosting(ip, lex, shard);
+		return new MultiDirectIterablePosting(ip, lex, shard);
 	}
 	
 }

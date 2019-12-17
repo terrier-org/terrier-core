@@ -36,7 +36,6 @@ import org.apache.hadoop.io.Writable;
 import org.terrier.applications.CLITool;
 import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.querying.IndexRef;
-import org.terrier.utility.ApplicationSetup;
 
 /**
  * This class provides basic statistics for the indexed
@@ -240,7 +239,6 @@ public class CollectionStatistics implements Serializable,Writable {
 	public static class Command extends CLIParsedCLITool
 	{
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public int run(CommandLine line) throws Exception {
 			IndexRef iR = getIndexRef(line);

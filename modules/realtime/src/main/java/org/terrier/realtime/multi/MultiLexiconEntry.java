@@ -46,13 +46,15 @@ import org.terrier.structures.Pointer;
 public class MultiLexiconEntry extends LexiconEntry {
 
 	int maxtf = Integer.MAX_VALUE;
+	int hashcode;
 	private LexiconEntry[] children;
 
 	/**
 	 * Constructor.
 	 */
-	public MultiLexiconEntry(LexiconEntry[] le) {
+	public MultiLexiconEntry(LexiconEntry[] le, int hashcode) {
 		this.children = le;
+		this.hashcode = hashcode;
 	}
 
 	/**
@@ -91,7 +93,7 @@ public class MultiLexiconEntry extends LexiconEntry {
 
 	/** Not implemented. */
 	public int getTermId() {
-		return -1;
+		return hashcode;
 	}
 
 	/** Not implemented. */

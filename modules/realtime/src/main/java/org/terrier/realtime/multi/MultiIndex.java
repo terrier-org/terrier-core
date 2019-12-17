@@ -65,13 +65,13 @@ public class MultiIndex extends Index {
 	 */
 	protected List<Index> indices;
 	
-	protected boolean blocks;
-	protected boolean fields;
-	
 	/**
 	 * Selective Matching policy, a policy for accessing only subsets of the indices within this multi-index.
 	 */
 	protected IncrementalSelectiveMatching selectiveMatchingPolicy;
+	
+	protected boolean blocks;
+	protected boolean fields;
 
 	/**
 	 * Constructor.
@@ -150,7 +150,7 @@ public class MultiIndex extends Index {
 		i++;
 		}
 
-		return new MultiInverted((PostingIndex<Pointer>[]) postings, offsets, blocks, fields);
+		return new MultiInverted((PostingIndex<Pointer>[]) postings, offsets, blocks);
 	}
 
 	/** {@inheritDoc} */
@@ -204,17 +204,15 @@ public class MultiIndex extends Index {
 	@SuppressWarnings("unchecked")
 	public PostingIndex<?> getDirectIndex() {
 		int ondisk = indices.size();
-		int[] offsets = new int[ondisk];
 		PostingIndex<?>[] postings = new PostingIndex[ondisk];
 
 		int i = 0;
 		for (Index index : selectiveMatchingPolicy.getSelectedIndices(indices)) {
 			postings[i] = index.getDirectIndex();
-			offsets[i] = index.getCollectionStatistics().getNumberOfUniqueTerms();
 			i++;
 		}
 
-		return new MultiDirect((PostingIndex<Pointer>[]) postings, offsets, blocks, fields);
+		return new MultiDirect((PostingIndex<Pointer>[]) postings, (MultiLexicon) this.getLexicon(), blocks, fields);
 	}
 
 	/** Not implemented. */

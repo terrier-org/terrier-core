@@ -27,9 +27,12 @@
 
 package org.terrier.realtime.multi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import gnu.trove.TIntHashSet;
+
+import java.io.IOException;
+import java.util.Set;
+
 
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
@@ -38,18 +41,24 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.Index;
 import org.terrier.structures.Lexicon;
+import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.IterablePosting;
+import org.terrier.structures.postings.PostingUtil;
+
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
+
+import com.google.common.collect.Sets;
 
 public class TestMultiIndex extends ApplicationSetupBasedTest {
 
 	/*
 	 * Test MultiIndex.
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void test_MultiIndex() throws Exception {
 		ApplicationSetup.setProperty("termpipelines", "");
@@ -61,16 +70,50 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 		Index i3 = IndexTestUtils.makeIndex(new String[]{"2"},new String[]{"three four five"});
 		MultiIndex mindex = new MultiIndex(new Index[]{i1,i2,i3}, false, false); 
 		assertNotNull(mindex);
-		Lexicon<String> lexicon = mindex.getLexicon();
+		Lexicon<String> lexicon = (Lexicon<String>) mindex.getIndexStructure("lexicon");
 		assertNotNull(lexicon);
+		
+		LexiconEntry le = lexicon.getLexiconEntry("three");
+		assertNotNull(le);
+		assertEquals(3, le.getFrequency());
+		assertEquals(1, le.getMaxFrequencyInDocuments());
+		assertEquals(3, le.getDocumentFrequency());
+		
+		
 		PostingIndex<?> inverted = mindex.getInvertedIndex();
 		assertNotNull(inverted);
-		MetaIndex metaindex = mindex.getMetaIndex();
+		MetaIndex metaindex = (MetaIndex) mindex.getIndexStructure("meta");
 		assertNotNull(metaindex);
-		DocumentIndex docindex =  mindex.getDocumentIndex();
+		DocumentIndex docindex = (DocumentIndex) mindex.getIndexStructure("document");
 		assertNotNull(docindex);
+
 		CollectionStatistics stats = mindex.getCollectionStatistics();
 		assertNotNull(stats);
+		
+		PostingIndex<?> direct =  mindex.getDirectIndex();
+		assertNotNull(direct);
+		
+		checkDoc(direct.getPostings(docindex.getDocumentEntry(0)), lexicon, Sets.newHashSet("one", "two", "three"));
+		checkDoc(direct.getPostings(docindex.getDocumentEntry(1)), lexicon, Sets.newHashSet("two", "three", "four"));
+		checkDoc(direct.getPostings(docindex.getDocumentEntry(2)), lexicon, Sets.newHashSet("three", "four", "five"));
+		
+	}
+	
+	private void checkDoc(IterablePosting ip, Lexicon<String> lexicon, Set<String> terms) throws IOException {
+		TIntHashSet ids = new TIntHashSet(PostingUtil.getIds(ip));
+		for(String t : terms)
+		{
+			LexiconEntry le = lexicon.getLexiconEntry(t);
+			assertTrue(ids.contains(le.getTermId()));
+		}
+		
+		for(int id : ids.toArray())
+		{
+			String t = lexicon.getLexiconEntry(id).getKey();
+			assertTrue(terms.contains(t));
+			terms.remove(t);
+		}
+		assertEquals(0, terms.size());
 	}
 	
 	@Test

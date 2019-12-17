@@ -107,6 +107,7 @@ public abstract class CLITool {
 			return options;
 		}
 
+		@SuppressWarnings("deprecation")
 		protected IndexRef getIndexRef(CommandLine line) {
 			IndexRef iR = null;
             if (line.hasOption("I")) {
@@ -257,6 +258,8 @@ public abstract class CLITool {
 			for(CLITool tool : list) {
 				String name = tool.commandname();
 				if (name.length() <= 5)
+					name += '\t';
+				if (name.length() < 16)
 					name += '\t';
 				System.err.println("\t" + name + "\t" + tool.sourcepackage() +  "\t" + tool.helpsummary());
 			}

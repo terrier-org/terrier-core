@@ -140,8 +140,8 @@ public class MemoryFieldsIndex extends MemoryFields {
 
     	IndexOnDisk index = Index.createNewIndex(path, prefix);
 
-        compressionConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldtags, 0,0);
-        
+        compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldtags, 0,0);
+        compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", fieldtags, 0, 0);
         /*
          * Meta-data & document index.
          */
@@ -186,8 +186,8 @@ public class MemoryFieldsIndex extends MemoryFields {
         FieldLexiconEntry.Factory leFactory = new FieldLexiconEntry.Factory(fieldtags.length);
 
         PostingIndexInputStream invIN = (PostingIndexInputStream) this.getIndexStructureInputStream("inverted");
-        AbstractPostingOutputStream invOut = compressionConfig.getPostingOutputStream(
-				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "inverted" + compressionConfig.getStructureFileExtension());
+        AbstractPostingOutputStream invOut = compressionInvertedConfig.getPostingOutputStream(
+				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "inverted" + compressionInvertedConfig.getStructureFileExtension());
 
         while (lexIN.hasNext()) {
 
@@ -214,7 +214,7 @@ public class MemoryFieldsIndex extends MemoryFields {
          */
 
         index.flush();
-        collectProperties(this,index,compressionConfig);
+        collectProperties(this,index,compressionInvertedConfig, compressionDirectConfig);
         LexiconBuilder.optimise(index, "lexicon");
         index.flush();
 
