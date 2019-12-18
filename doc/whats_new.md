@@ -6,7 +6,8 @@ Terrier 5.2 - xx/12/2019
 Minor update with bug-fixes and improvements. In particular, the classical indexer has been shown some love, and inverted index building should be faster by default, courtesy of changes that improve its usage of available memory. Some improvements were identified in support of activities surrounding the [SIGIR 2019 Open-Source IR Replicability Challenge](https://osirrc.github.io/osirrc2019/) (OSIRRC). A [OSIRRC Docker image](https://github.com/osirrc/terrier-docker) is now available, supporting Robust04, GOV2, and Core18 test collections.
 
 ### Indexing
- - added -C command to batchindexing command to specify Collection class.
+ - Added -C command to batchindexing command to specify Collection class.
+ - Added Direct Index support for the memory/incremental/multi structures (i.e. those with a MemoryIndex component)
  - [#19](https://github.com/terrier-org/terrier-core/issues/19) MultiFileCollection should warn for duplicate files in collection.spec
  - [#20](https://github.com/terrier-org/terrier-core/issues/20) batchindexing should report total time taken
  - [#23](https://github.com/terrier-org/terrier-core/issues/23) indexstats should report fields, blocks
@@ -18,7 +19,8 @@ Minor update with bug-fixes and improvements. In particular, the classical index
  - Ensure that different words with identical stems are correctly conflated
  - make the query parser factory method static
  - make BM25 k_1 value configurable
- - Support DirectIndex in MultiIndex
+ - Support DirectIndex operations in memory/incremental/multi indices
+ - Added a Lexicon iteration implementation for Multi-Index structures
  - support non ngram wmodels for dependence proximity
  - LabelSet should work if given a non-featured result set, particularly copying of metadata
  - [#28](https://github.com/terrier-org/terrier-core/issues/28)  batchretrieval - Read topics from stdin, write results to stdout
@@ -34,7 +36,9 @@ Minor update with bug-fixes and improvements. In particular, the classical index
 
 ### Other
 - Show which component that a command comes from
-- Include the realtime test suite during testing phase.
+- Include the Realtime test suite during testing phase.
+- Fixed issues with flushing incremental index shards to disk (MemoryPostingList iterator order bug)
+- Added Unit Tests for read and write MemoryDirect structures.
 - [#21](https://github.com/terrier-org/terrier-core/issues/21) batchevaluate should not override existing .eval files
 - [#25](https://github.com/terrier-org/terrier-core/issues/25) bump fastutil to 8.2.2
 - [#26](https://github.com/terrier-org/terrier-core/issues/26) Cannot load a TerrierApplicationPlugin from a Maven module
