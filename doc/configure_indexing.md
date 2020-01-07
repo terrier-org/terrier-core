@@ -4,7 +4,7 @@ Configuring Indexing in Terrier
 Indexing Overview
 -----------------
 
-The indexing process in Terrier is described [here](http://terrier.org/docs/current/basicComponents.md)
+The indexing process in Terrier is described [here](basicComponents.md)
 
 Firstly, a [Collection](javadoc/org/terrier/indexing/TRECCollection.html) object extracts the raw content of each individual document (from a collection of documents) and hands it in to a [Document](javadoc/org/terrier/indexing/Document.html) object. The Document object then removes any unwanted content (e.g., from a particular document tag) and gives the resulting text to a [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) object. Finally, the Tokeniser converts the text into a stream of tokens that represent the content of the document.
 
