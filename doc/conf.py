@@ -32,7 +32,7 @@ release = '5.2'
 # ones.
 extensions = [
 'recommonmark',
-'javasphinx'
+#'javasphinx'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
