@@ -1,4 +1,4 @@
-Documentation for Terrier v5.0
+Documentation for Terrier v5.2
 =============================
 
 Welcome to the documentation for the Terrier IR platform v5.0. If you are a new user, we recommend that you begin with a quickstart guide from those listed below. The quickstart guides will introduce you to core concepts when using Terrier within different scenarios. If you are looking to find out about a particular function or component of Terrier, scroll down this page to the main Table of Contents.
