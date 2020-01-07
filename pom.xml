@@ -92,7 +92,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.codehaus.mojo</groupId>
 										<artifactId>build-helper-maven-plugin</artifactId>
-										<versionRange>[1.0,)</versionRange>
+										<version>3.0.0</version>
 										<goals>
 											<goal>parse-version</goal>
 											<goal>add-source</goal>
