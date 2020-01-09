@@ -7,6 +7,7 @@ Future Features
 ---------------
 
 -   Better exception handling. Some retrieval errors should result in a query being aborted, rather than trying to blindly continue running the query with the index is an invalid state.
+-   See also out [Github issue tracker](https://github.com/terrier-org/terrier-core/issues)
 
 Known Issues
 ------------
