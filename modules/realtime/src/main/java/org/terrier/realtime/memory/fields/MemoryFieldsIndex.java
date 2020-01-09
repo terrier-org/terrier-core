@@ -17,7 +17,7 @@
  *
  * The Original Code is MemoryFieldsIndex.java.
  *
- * The Original Code is Copyright (C) 2004-2020 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2019 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -49,6 +49,7 @@ import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.indexing.DocumentPostingList;
 import org.terrier.structures.indexing.FieldDocumentPostingList;
 import org.terrier.structures.indexing.LexiconBuilder;
+import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.seralization.FixedSizeTextFactory;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
@@ -159,22 +160,32 @@ public class MemoryFieldsIndex extends MemoryFields {
 				ArrayUtils.parseCommaDelimitedString(ApplicationSetup
 						.getProperty("indexer.meta.reverse.keys", "")));
 
-		DocumentIndexBuilder docOut = new DocumentIndexBuilder(index,
+        AbstractPostingOutputStream directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
+				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
+        
+        DocumentIndexBuilder docOut = new DocumentIndexBuilder(index,
 				"document");
-
-		//System.out.println(this.getCollectionStatistics().getNumberOfDocuments());
-		while (docIter.hasNext()) {
+		
+		PostingIndexInputStream postingIterator = direct.iterator();
+		
+		int docid =0;
+		while (postingIterator.hasNext()) {
+			IterablePosting directPosting = postingIterator.next();
 			
+			BitIndexPointer pointer = directIndexBuilder.writePostings(directPosting);
 			
-			DocumentIndexEntry die = docIter.next();
-			//System.err.println(die.getDocumentLength()+" "+die.getClass().getName());
+			DocumentIndexEntry die = document.getDocumentEntry(docid);
+			die.setBitIndexPointer(pointer);
 			docOut.addEntryToBuffer(die);
+			docid++;
 		}
+		
+		directIndexBuilder.close();
+		docOut.close();
 		while(metaIter.hasNext()){
 			metaOut.writeDocumentEntry(metaIter.next());
 		}
-		docOut.finishedCollections();
-		docOut.close();
+
 		metaOut.close();
 
         /*
