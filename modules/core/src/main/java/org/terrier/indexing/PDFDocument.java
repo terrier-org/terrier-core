@@ -32,10 +32,11 @@ import java.io.StringWriter;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.pdfbox.exceptions.CryptographyException;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
+import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.indexing.tokenisation.Tokeniser;
@@ -114,8 +115,9 @@ public class PDFDocument extends FileDocument
 
             if( pdfDocument.isEncrypted() )
             {
-                //Just try using the default password and move on
-                pdfDocument.decrypt( "" );
+				//just try to open it with default password
+                pdfDocument = PDDocument.load(is, "");
+				pdfDocument.setAllSecurityToBeRemoved(true);
             }
 
             //create a writer where to append the text content.
@@ -149,7 +151,7 @@ public class PDFDocument extends FileDocument
 				setProperty("title", new java.io.File(super.filename).getName() );
 			}
 		}
-		catch( CryptographyException e )
+		catch( InvalidPasswordException e )
         {
             throw new RuntimeException( "Error decrypting PDF document: " + e );
         }
