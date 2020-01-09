@@ -20,9 +20,9 @@ Package-specific Citations
 
 In addition, if you are developing upon one or more of the following Terrier packages then please cite the associated paper as well:
 
--   [org.terrier.learning](javadoc/org/terrier/learning/package-summary.html): Craig Macdonald, Rodrygo L.T. Santos, Iadh Ounis and Ben He. About Learning Models with Multiple Query Dependent Features. Transactions on Information Systems. 31(3):1-39. 2013. <span>\[</span>[PDF](http://www.dcs.gla.ac.uk/~craigm/publications/macdonald13multquerydf.pdf)<span>\]</span> <span>\[</span>[Bibtex](http://dl.acm.org/citation.cfm?id=2493176)<span>\]</span>
+-   [org.terrier.learning](http://terrier.org/docs/v5.2/javadoc/org/terrier/learning/package-summary.html): Craig Macdonald, Rodrygo L.T. Santos, Iadh Ounis and Ben He. About Learning Models with Multiple Query Dependent Features. Transactions on Information Systems. 31(3):1-39. 2013. <span>\[</span>[PDF](http://www.dcs.gla.ac.uk/~craigm/publications/macdonald13multquerydf.pdf)<span>\]</span> <span>\[</span>[Bibtex](http://dl.acm.org/citation.cfm?id=2493176)<span>\]</span>
 
--   [org.terrier.compression](javadoc/org/terrier/compression/package-summary.html): Matteo Catena, Craig Macdonald, Iadh Ounis: On Inverted Index Compression for Search Engine Efficiency. In: Proc. ECIR ’14 (2014) <span>\[</span>[PDF](http://www.dcs.gla.ac.uk/~craigm/publications/catena14compression.pdf)<span>\]</span> <span>\[</span>[Bibtex](http://link.springer.com/chapter/10.1007%2F978-3-319-06028-6_30#)<span>\]</span>
+-   [org.terrier.compression](http://terrier.org/docs/v5.2/javadoc/org/terrier/compression/package-summary.html): Matteo Catena, Craig Macdonald, Iadh Ounis: On Inverted Index Compression for Search Engine Efficiency. In: Proc. ECIR ’14 (2014) <span>\[</span>[PDF](http://www.dcs.gla.ac.uk/~craigm/publications/catena14compression.pdf)<span>\]</span> <span>\[</span>[Bibtex](http://link.springer.com/chapter/10.1007%2F978-3-319-06028-6_30#)<span>\]</span>
 
 And link to the [Terrier Website](http://terrier.org/) from your homepage!
 
