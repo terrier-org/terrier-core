@@ -43,11 +43,11 @@ import org.terrier.compression.integer.codec.GammaCodec;
 import org.terrier.compression.integer.codec.IntegerCodec;
 import org.terrier.compression.integer.codec.UnaryCodec;
 import org.terrier.structures.BitIndexPointer;
-import org.terrier.structures.bit.PostingTestUtils;
 import org.terrier.structures.integer.IntegerCodingPostingOutputStream;
 import org.terrier.structures.postings.BasicPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.Posting;
+import org.terrier.structures.postings.PostingTestUtils;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
 import org.terrier.structures.postings.integer.IntegerCodingIterablePosting;
 @SuppressWarnings({"rawtypes", "unchecked",  "deprecation"})

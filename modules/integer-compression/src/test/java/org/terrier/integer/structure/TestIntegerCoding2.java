@@ -50,11 +50,11 @@ import org.terrier.compression.integer.codec.LemireCodec;
 import org.terrier.compression.integer.codec.UnaryCodec;
 import org.terrier.compression.integer.codec.VIntCodec;
 import org.terrier.structures.BitIndexPointer;
-import org.terrier.structures.bit.PostingTestUtils;
 import org.terrier.structures.integer.IntegerCodingPostingOutputStream;
 import org.terrier.structures.postings.BlockFieldPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.Posting;
+import org.terrier.structures.postings.PostingTestUtils;
 import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
 import org.terrier.structures.postings.integer.IntegerCodingIterablePosting;
 

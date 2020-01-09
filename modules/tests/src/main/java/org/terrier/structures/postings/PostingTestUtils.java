@@ -17,18 +17,17 @@
  *
  * The Original Code is PostingTestUtils.java
  *
- * The Original Code is Copyright (C) 2004-2020 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2019 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
-package org.terrier.structures.bit;
+package org.terrier.structures.postings;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,6 +42,11 @@ import org.terrier.compression.bit.BitIn;
 import org.terrier.structures.BitFilePosition;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.Skipable;
+import org.terrier.structures.bit.BlockDirectInvertedOutputStream;
+import org.terrier.structures.bit.BlockFieldDirectInvertedOutputStream;
+import org.terrier.structures.bit.DirectInvertedDocidOnlyOuptutStream;
+import org.terrier.structures.bit.DirectInvertedOutputStream;
+import org.terrier.structures.bit.FieldDirectInvertedOutputStream;
 import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.IterablePosting;
@@ -50,6 +54,24 @@ import org.terrier.structures.postings.Posting;
 
 public class PostingTestUtils {
 
+	public static void testPostingIds(IterablePosting ip, int[] ids) throws Exception {
+		if (ids.length == 0)
+		{
+			if (ip == null)
+				return;
+			assertEquals(IterablePosting.EOL, ip.next());
+			return;
+		}
+		int i=0;
+		while(i < ids.length)
+		{
+			assertEquals(ids[i], ip.next());
+			assertEquals(ids[i], ip.getId());
+			i++;
+		}
+		assertEquals(IterablePosting.EOL, ip.next());
+	}
+	
 	public static void assertEqualsBitFilePosition(BitIndexPointer expected, BitFilePosition actual)
 	{
 		assertEquals(expected.getOffset(), actual.getOffset());
