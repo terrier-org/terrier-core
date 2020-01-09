@@ -41,7 +41,7 @@ Except for the special-purpose collections (SimpleFileCollection, SimpleXMLColle
 
 -   [PDFDocument](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/PDFDocument.html), [MSExcelDocument](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/MSExcelDocument.html), and [MSWordDocument](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/MSWordDocument.html) - Model PDF, MS Excel (.xls), MS Powerpoint (.ppt), and MS Word (.doc) documents, respectively.
 
-Finally, all Document implementations can specify their own [Tokeniser](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) implementation. By default, Terrier uses the [EnglishTokeniser](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html). When [indexing non-English corpora](languages.html), a different Tokeniser implementation can be specified by the `tokeniser` property.
+Finally, all Document implementations can specify their own [Tokeniser](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) implementation. By default, Terrier uses the [EnglishTokeniser](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/tokenisation/EnglishTokeniser.html). When [indexing non-English corpora](languages.md), a different Tokeniser implementation can be specified by the `tokeniser` property.
 
 ### Basic indexing setup
 
