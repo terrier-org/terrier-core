@@ -115,7 +115,7 @@ See [org.terrier.querying.Manager](http://terrier.org/docs/v5.2/javadoc/org/terr
 --|--
 **Trec Terrier** | An application that enables indexing and querying of TREC collections. See [org.terrier.applications.TrecTerrier](http://terrier.org/docs/v5.2/javadoc/org/terrier/applications/TrecTerrier.html) for more details.
 **Desktop Terrier** | An application that allows for indexing and retrieval of local user content. See https://github.com/terrier-org/terrier-desktop for more details.
-**HTTP Terrier** | An application that allows for retrieval of documents from a browser. See src/webapps/results.jsp for more details, or the [relevant documentation](terrier_http.html).
+**HTTP Terrier** | An application that allows for retrieval of documents from a browser. See src/webapps/results.jsp for more details, or the [relevant documentation](terrier_http.md).
 
 ----------------------------------
 > Webpage: <http://terrier.org>  
