@@ -15,7 +15,7 @@ Some examples of Terrier's query language are the following:
  - `term1^2.3` -- the weight of term1 is multiplied by 2.3.
  - `+term1 +term2`  -- retrieves documents that contain both term1 and term2.
  - `+term1 -term2` -- retrieves documents that contain term1 and do not contain term2.
- - `title:term1` -- retrieves documents that contain term1 in the title field ([Field indexing](configure_indexing.html#fields) must be configured to record the title field). NB: The semantics of this query language changed in Terrier 5.0.
+ - `title:term1` -- retrieves documents that contain term1 in the title field ([Field indexing](configure_indexing.md) must be configured to record the title field). NB: The semantics of this query language changed in Terrier 5.0.
  - `+title:term1` -- retrieves documents that contain term1 in the title field. As above, field indexing must be enabled.
  - `title:(term1 term2)^2.3` -- retrieves documents that contain term1 or term2 in the title field, and boost their weights by 2.3. Field indexing must be enabled.
  - `term1 -title:term2` -- retrieves documents that contain term1, but must not contain term2 in the title field.
@@ -24,7 +24,7 @@ Some examples of Terrier's query language are the following:
 
 Combinations of the different constructs are possible as well. For example, the query `term1 term2 -"term1 term2"` would retrieve all the documents that contain at least one of the terms term1 and term2, but not the documents where the phrase "term1 term2" appears.
 
-Note that in some configurations, the Terrier query language may not be available by default. In particular, if batch processing queries from a file using a class that extends [TRECQuery](javadoc/org/terrier/applications/batchquerying/TRECQuery.html), then the queries are pre-processed by a tokeniser that may remove the query language characters (e.g. brackets and colons). To use the Terrier query language in this case, you should use [SingleLineTRECQuery](javadoc/org/terrier/applications/batchquerying/SingleLineTRECQuery.html) and set `SingleLineTRECQuery.tokenise` to false in the `terrier.properties` file.
+Note that in some configurations, the Terrier query language may not be available by default. In particular, if batch processing queries from a file using a class that extends [TRECQuery](http://terrier.org/docs/v5.2/javadoc/org/terrier/applications/batchquerying/TRECQuery.html), then the queries are pre-processed by a tokeniser that may remove the query language characters (e.g. brackets and colons). To use the Terrier query language in this case, you should use [SingleLineTRECQuery](http://terrier.org/docs/v5.2/javadoc/org/terrier/applications/batchquerying/SingleLineTRECQuery.html) and set `SingleLineTRECQuery.tokenise` to false in the `terrier.properties` file.
 
 Matching Op Query Language
 --------------------------
@@ -37,7 +37,7 @@ The semantic operators will be familiar to those who have used Indri or Galago:
  - `#band(op1 op2)` -- scores a term containing both operators. The frequency of each matching document is 1.
  - `#syn(op1 op2)` -- scores documents containing either op1 or op2. The frequency of each matching document is the sum of the frequencies of the constituent words.
  - `#prefix(term1)` -- scores documents containing terms prefixed by term1.
- - `#fuzzy(term1)` -- scores documents containing terms that fuzzily match term1. See [FuzzyTermOp](javadoc/org/terrier/matching/matchops/FuzzyTermOp.html) for more information.
+ - `#fuzzy(term1)` -- scores documents containing terms that fuzzily match term1. See [FuzzyTermOp](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/matchops/FuzzyTermOp.html) for more information.
  - `#uw8(op1 op2)` -- the #uwN operator scores documents op1 or op2 within unordered windows of N tokens -- in this case windows of 8 tokens in size.
  - `#1(op1 op2)` -- the #1 operator scores documents op1 or op2 appearing adjacently.
  - `#band(op1 op2)` -- the #band operator scores documents that contain both op1 and op2. 
@@ -77,7 +77,7 @@ where `-m` defines that matchingop query language will be used, and `-s` defines
 
 Each top-level match operator must resolve to an expression that can be defined as posting list during Matching. The PostingListManager is responsible for opening the correct postings from the inverted index for each matching operator.
 
-Some match operators may require a particular type of input posting. For instance, a `#uwN` operator requires that each input operator generates postings that implements BlockPosting (i.e. an index created with position information). Moreover, each match operator may return a different type of posting - for instance, the IterablePosting created by a `#uwN` operator does not return the position information, although that from a `#1` does.
+Some match operators may require a particular type of input posting. For instance, a `#uwN` operator requires that each input operator generates postings thatÂ implements BlockPosting (i.e. an index created with position information). Moreover, each match operator may return a different type of posting - for instance, the IterablePosting created by a `#uwN` operator does not return the position information, although that from a `#1` does.
 
 |Operator|Class|Type|Input Posting Type|Output Posting Type|
 |------|-------|----|-------|-----|

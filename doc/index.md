@@ -105,7 +105,7 @@ Table of Contents
 
 ### Other Resources
 
->[Terrier API Javadoc](javadoc/index.html)  
+>[Terrier API Javadoc](http://terrier.org/docs/v5.2/javadoc/index.html)  
 >API documentation of each class in Terrier.
 
 >[Description of DFR](dfr_description.md)  

@@ -31,11 +31,11 @@ The graphic below gives an overview of the interaction between the main componen
 
 ![Image of indexing architecture](images/indexing_architecture.png)
 
--   A corpus will be represented in the form of a [Collection](javadoc/org/terrier/indexing/Collection.html) object. Raw text data will be represented in the form of a [Document](javadoc/org/terrier/indexing/Document.html) object. Document implementations usually are provided with an instance of a [Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) class that breaks pieces of text into single indexing tokens.
+-   A corpus will be represented in the form of a [Collection](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/Collection.html) object. Raw text data will be represented in the form of a [Document](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/Document.html) object. Document implementations usually are provided with an instance of a [Tokeniser](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) class that breaks pieces of text into single indexing tokens.
 
--   The indexer is responsible for managing the indexing process. It iterates over the documents of the collection and sends each term found through a [TermPipeline](javadoc/org/terrier/terms/TermPipeline.html) component.
+-   The indexer is responsible for managing the indexing process. It iterates over the documents of the collection and sends each term found through a [TermPipeline](http://terrier.org/docs/v5.2/javadoc/org/terrier/terms/TermPipeline.html) component.
 
--   A TermPipeline can transform terms or remove terms that should not be indexed. An example for a TermPipeline chain is `termpipelines=Stopwords,PorterStemmer`, which removes terms from the document using the [Stopwords](javadoc/org/terrier/terms/Stopwords.html) object, and then applies Porter's Stemming algorithm for English to the terms ([PorterStemmer](javadoc/org/terrier/terms/PorterStemmer.html)).
+-   A TermPipeline can transform terms or remove terms that should not be indexed. An example for a TermPipeline chain is `termpipelines=Stopwords,PorterStemmer`, which removes terms from the document using the [Stopwords](http://terrier.org/docs/v5.2/javadoc/org/terrier/terms/Stopwords.html) object, and then applies Porter's Stemming algorithm for English to the terms ([PorterStemmer](http://terrier.org/docs/v5.2/javadoc/org/terrier/terms/PorterStemmer.html)).
 
 -   Once terms have been processed through the TermPipeline, they are aggregated and the following data structures are created by their corresponding DocumentBuilders: DirectIndex, DocumentIndex, Lexicon, and InvertedIndex.
 
@@ -69,23 +69,23 @@ Here we provide a listing and brief description of Terrier's components.
 
 |**Name** | **Description** |
 |--|--|
-|**Collection** | This component encapsulates the most fundamental concept to indexing with Terrier - a Collection i.e. a set of documents. See [org.terrier.indexing.Collection](javadoc/org/terrier/indexing/Collection.html) for more details.|
-|**Document** | This component encapsulates the concept of a document. It is essentially an Iterator over terms in a document. See [org.terrier.indexing.Document](javadoc/org/terrier/indexing/Document.html) for more details.|
-|**Tokeniser** | Used by Document objects to break sequences of text (e.g. sentences) into a stream of words to index. See [org.terrier.indexing.tokenisation.Tokeniser](javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) for more details.|
-|**TermPipeline** | Models the concept of a component in a pipeline of term processors. Classes that implement this interface could be stemming algorithms, stopwords removers, or acronym expansion just to mention few examples. See [org.terrier.terms.TermPipeline](javadoc/org/terrier/terms/TermPipeline.html) for more details.|
-|**Indexer** | The component responsible for managing the indexing process. It instantiates TermPipelines and Builders. See [org.terrier.structures.indexing.Indexer](javadoc/org/terrier/structures/indexing/Indexer.html) for more details.|
-|**Builders** | Builders are responsible for writing an index to disk. See [org.terrier.structures.indexing package](javadoc/org/terrier/structures/indexing/package-summary.html) for more details.|
+|**Collection** | This component encapsulates the most fundamental concept to indexing with Terrier - a Collection i.e. a set of documents. See [org.terrier.indexing.Collection](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/Collection.html) for more details.|
+|**Document** | This component encapsulates the concept of a document. It is essentially an Iterator over terms in a document. See [org.terrier.indexing.Document](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/Document.html) for more details.|
+|**Tokeniser** | Used by Document objects to break sequences of text (e.g. sentences) into a stream of words to index. See [org.terrier.indexing.tokenisation.Tokeniser](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/tokenisation/Tokeniser.html) for more details.|
+|**TermPipeline** | Models the concept of a component in a pipeline of term processors. Classes that implement this interface could be stemming algorithms, stopwords removers, or acronym expansion just to mention few examples. See [org.terrier.terms.TermPipeline](http://terrier.org/docs/v5.2/javadoc/org/terrier/terms/TermPipeline.html) for more details.|
+|**Indexer** | The component responsible for managing the indexing process. It instantiates TermPipelines and Builders. See [org.terrier.structures.indexing.Indexer](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/indexing/Indexer.html) for more details.|
+|**Builders** | Builders are responsible for writing an index to disk. See [org.terrier.structures.indexing package](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/indexing/package-summary.html) for more details.|
 
 ### Data Structures
 
 |**Name** | **Description**
 |--|--|
 |**BitFile** | A highly compressed I/O layer using gamma and unary encodings. See the org.terrier.compression packages for more details.|
-|**Direct Index** | The direct index stores the identifiers of terms that appear in each document and the corresponding frequencies. It is used for automatic query expansion, but can also be used for user profiling activities. See [org.terrier.structures.bit.DirectIndex](javadoc/org/terrier/structures/bit/DirectIndex.html) for more details.|
-|**Document Index** | The document index stores information about each document for example the document length and identifier, and a pointer to the corresponding entry in the direct index. See [org.terrier.structures.DocumentIndex](javadoc/org/terrier/structures/DocumentIndex.html) for more details.|
-|**Inverted Index** | The inverted index stores the posting lists, i.e. the identifiers of the documents and their corresponding term frequencies. Moreover it is capable of storing the position of terms within a document. See [org.terrier.structures.bit.InvertedIndex](javadoc/org/terrier/structures/bit/InvertedIndex.html) for more details.|
-|**Lexicon** | The lexicon stores the collection vocabulary and the corresponding document and term frequencies. See [org.terrier.structures.Lexicon](javadoc/org/terrier/structures/Lexicon.html) for more details.
-|**Meta Index** | The Meta Index stores additional (meta) information about each document, for example its unique textual identifier (docno) or URL. See [org.terrier.structures.MetaIndex](javadoc/org/terrier/structures/MetaIndex.html) for more details.|
+|**Direct Index** | The direct index stores the identifiers of terms that appear in each document and the corresponding frequencies. It is used for automatic query expansion, but can also be used for user profiling activities. See [org.terrier.structures.bit.DirectIndex](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/bit/DirectIndex.html) for more details.|
+|**Document Index** | The document index stores information about each document for example the document length and identifier, and a pointer to the corresponding entry in the direct index. See [org.terrier.structures.DocumentIndex](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/DocumentIndex.html) for more details.|
+|**Inverted Index** | The inverted index stores the posting lists, i.e. the identifiers of the documents and their corresponding term frequencies. Moreover it is capable of storing the position of terms within a document. See [org.terrier.structures.bit.InvertedIndex](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/bit/InvertedIndex.html) for more details.|
+|**Lexicon** | The lexicon stores the collection vocabulary and the corresponding document and term frequencies. See [org.terrier.structures.Lexicon](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/Lexicon.html) for more details.
+|**Meta Index** | The Meta Index stores additional (meta) information about each document, for example its unique textual identifier (docno) or URL. See [org.terrier.structures.MetaIndex](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/MetaIndex.html) for more details.|
 
 ### Retrieval
 
@@ -99,23 +99,23 @@ Here we provide a listing and brief description of Terrier's components.
 
 -   Post-filtering
 
-See [org.terrier.querying.Manager](javadoc/org/terrier/querying/Manager.html) for more details.
+See [org.terrier.querying.Manager](http://terrier.org/docs/v5.2/javadoc/org/terrier/querying/Manager.html) for more details.
 
-**Matching** The matching component is responsible for determining which documents match a specific query and for scoring documents with respect to a query. See [org.terrier.matching.Matching](javadoc/org/terrier/matching/Matching.html) for more details.
+**Matching** The matching component is responsible for determining which documents match a specific query and for scoring documents with respect to a query. See [org.terrier.matching.Matching](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/Matching.html) for more details.
 
-**Query** The query component models a query, that consists of sub-queries and query terms. See [org.terrier.querying.parser.Query](javadoc/org/terrier/querying/parser/Query.html) for more details.
+**Query** The query component models a query, that consists of sub-queries and query terms. See [org.terrier.querying.parser.Query](http://terrier.org/docs/v5.2/javadoc/org/terrier/querying/parser/Query.html) for more details.
 
-**WeightingModel** The Weighting model represents the retrieval model that is used to weight the terms of a document. See [org.terrier.matching.models.WeightingModel](javadoc/org/terrier/matching/models/WeightingModel.html) for more details.
+**WeightingModel** The Weighting model represents the retrieval model that is used to weight the terms of a document. See [org.terrier.matching.models.WeightingModel](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/WeightingModel.html) for more details.
 
-**Document Score Modifiers** Responsible for query dependent modification document scores. See [org.terrier.matching.dsms package](javadoc/org/terrier/matching/dsms/package-summary.html) for more details.
+**Document Score Modifiers** Responsible for query dependent modification document scores. See [org.terrier.matching.dsms package](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/dsms/package-summary.html) for more details.
 
 ### Applications
 
 **Name** | **Description**
 --|--
-**Trec Terrier** | An application that enables indexing and querying of TREC collections. See [org.terrier.applications.TrecTerrier](javadoc/org/terrier/applications/TrecTerrier.html) for more details.
+**Trec Terrier** | An application that enables indexing and querying of TREC collections. See [org.terrier.applications.TrecTerrier](http://terrier.org/docs/v5.2/javadoc/org/terrier/applications/TrecTerrier.html) for more details.
 **Desktop Terrier** | An application that allows for indexing and retrieval of local user content. See https://github.com/terrier-org/terrier-desktop for more details.
-**HTTP Terrier** | An application that allows for retrieval of documents from a browser. See src/webapps/results.jsp for more details, or the [relevant documentation](terrier_http.html).
+**HTTP Terrier** | An application that allows for retrieval of documents from a browser. See src/webapps/results.jsp for more details, or the [relevant documentation](terrier_http.md).
 
 ----------------------------------
 > Webpage: <http://terrier.org>  

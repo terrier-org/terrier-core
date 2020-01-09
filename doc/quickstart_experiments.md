@@ -6,7 +6,7 @@ If you are interested in using Terrier straight-away in order to index and retri
 Terrier Requirements
 --------------------
 
-Terrier’s single requirement consists of an installed Java JRE 1.8.0 or higher. You can download the JRE, or the JDK (if you want to [develop with Terrier](terrier_develop.md), or run the [web-based interface](terrier_http.md)), from the [Java website](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+Terrierâ€™s single requirement consists of an installed Java JRE 1.8.0 or higher. You can download the JRE, or the JDK (if you want to [develop with Terrier](terrier_develop.md), or run the [web-based interface](terrier_http.md)), from the [Java website](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
 Download Terrier
 ----------------
@@ -80,7 +80,7 @@ This allows you to easily index, retrieve, and evaluate results on TREC collecti
 
 ### Interactive Terrier
 
-This allows you to to do interactive retrieval. This is a quick way to test Terrier. If you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive` command. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` command. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](javadoc/org/terrier/applications/InteractiveQuerying.html) class.
+This allows you to to do interactive retrieval. This is a quick way to test Terrier. If you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive` command. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` command. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](http://terrier.org/docs/v5.2/javadoc/org/terrier/applications/InteractiveQuerying.html) class.
 
 ### Desktop Terrier
 
@@ -196,7 +196,7 @@ Information retrieval has a history of evaluating search effectiveness automatic
 
    a.  The location of the queries (also known as topic files) - specified using the `trec.topics` property, or the short `-t` command-line option to `batchretrieve`.
 
-   b.  The weighting model (e.g. [TF\_IDF](javadoc/org/terrier/matching/models/TF_IDF.html)) to use - specified using `trec.model` property or the `-w` option to batchretrieve. The default weighting model for Terrier is [DPH](javadoc/org/terrier/matching/models/DPH.html).
+   b.  The weighting model (e.g. [TF\_IDF](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/TF_IDF.html)) to use - specified using `trec.model` property or the `-w` option to batchretrieve. The default weighting model for Terrier is [DPH](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/DPH.html).
 
    c.  The corresponding relevance assessments file (or qrels) for the topics - specified by `trec.qrels` or `-q` option to `batchevaluate`.
 

@@ -56,41 +56,41 @@ Support for single-line topic files is provided by the SingleLineTRECQuery class
 
 Next, we need to specify which of the available weighting models we will use for assigning scores to the retrieved documents. We do this by specifying the name of the corresponding model class in the property `trec.model`. E.g. `trec.model=PL2`, or using the `-w` option to the `batchretreve` command, e.g. `bin/terrier batchretrieve -w PL2`.
 
-Terrier provides implementations of many weighting models (see [org.terrier.matching.models](javadoc/org/terrier/matching/models/package-summary.html) for the full list). In particular, some of the notable weighting models implemented include many from the [Divergence from Randomness (DFR) framework](dfr_description.md), among others:
+Terrier provides implementations of many weighting models (see [org.terrier.matching.models](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/package-summary.html) for the full list). In particular, some of the notable weighting models implemented include many from the [Divergence from Randomness (DFR) framework](dfr_description.md), among others:
 
--   [BB2](javadoc/org/terrier/matching/models/BB2.html) (DFR): Bose-Einstein model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation .
+-   [BB2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/BB2.html) (DFR): Bose-Einstein model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation .
 
--   [BM25](javadoc/org/terrier/matching/models/BM25.html): The BM25 probabilistic model.
+-   [BM25](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/BM25.html): The BM25 probabilistic model.
 
--   [DFR\_BM25](javadoc/org/terrier/matching/models/DFR_BM25.html) (DFR): The DFR version of BM25 .
+-   [DFR\_BM25](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/DFR_BM25.html) (DFR): The DFR version of BM25 .
 
--   [DLH](javadoc/org/terrier/matching/models/DLH.html) (DFR): The DLH hyper-geometric DFR model (parameter free).
+-   [DLH](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/DLH.html) (DFR): The DLH hyper-geometric DFR model (parameter free).
 
--   [DLH13](javadoc/org/terrier/matching/models/DLH13.html) (DFR): An improved version of DLH (parameter free).
+-   [DLH13](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/DLH13.html) (DFR): An improved version of DLH (parameter free).
 
--   [DPH](javadoc/org/terrier/matching/models/DPH.html) (DFR): A different hyper-geometric DFR model using Popper’s normalization (parameter free) .
+-   [DPH](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/DPH.html) (DFR): A different hyper-geometric DFR model using Popper’s normalization (parameter free) .
 
--   [DFRee](javadoc/org/terrier/matching/models/DFRee.html) (DFR): Another hyper-geometric models which takes an average of two information measures.
+-   [DFRee](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/DFRee.html) (DFR): Another hyper-geometric models which takes an average of two information measures.
 
--   [Hiemstra\_LM](javadoc/org/terrier/matching/models/Hiemstra_LM.html): Hiemstra’s language model.
+-   [Hiemstra\_LM](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/Hiemstra_LM.html): Hiemstra’s language model.
 
--   [IFB2](javadoc/org/terrier/matching/models/IFB2.html) (DFR): Inverse Term Frequency model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation .
+-   [IFB2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/IFB2.html) (DFR): Inverse Term Frequency model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation .
 
--   [In\_expB2](javadoc/org/terrier/matching/models/In_expB2.html) (DFR): Inverse expected document frequency model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation .
+-   [In\_expB2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/In_expB2.html) (DFR): Inverse expected document frequency model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation .
 
--   [In\_expC2](javadoc/org/terrier/matching/models/In_expC2.html) (DFR): Inverse expected document frequency model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation with natural logarithm .
+-   [In\_expC2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/In_expC2.html) (DFR): Inverse expected document frequency model for randomness, the ratio of two Bernoulli’s processes for first normalisation, and Normalisation 2 for term frequency normalisation with natural logarithm .
 
--   [InL2](javadoc/org/terrier/matching/models/InL2.html) (DFR): Inverse document frequency model for randomness, Laplace succession for first normalisation, and Normalisation 2 for term frequency normalisation .
+-   [InL2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/InL2.html) (DFR): Inverse document frequency model for randomness, Laplace succession for first normalisation, and Normalisation 2 for term frequency normalisation .
 
--   [LemurTF\_IDF](javadoc/org/terrier/matching/models/LemurTF_IDF.html): Lemur’s version of the tf\*idf weighting function.
+-   [LemurTF\_IDF](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/LemurTF_IDF.html): Lemur’s version of the tf\*idf weighting function.
 
--   [LGD](javadoc/org/terrier/matching/models/LGD.html) (DFR): A log-logistic DFR model , .
+-   [LGD](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/LGD.html) (DFR): A log-logistic DFR model , .
 
--   [PL2](javadoc/org/terrier/matching/models/PL2.html) (DFR): Poisson estimation for randomness, Laplace succession for first normalisation, and Normalisation 2 for term frequency normalisation .
+-   [PL2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/PL2.html) (DFR): Poisson estimation for randomness, Laplace succession for first normalisation, and Normalisation 2 for term frequency normalisation .
 
--   [TF\_IDF](javadoc/org/terrier/matching/models/TF_IDF.html): The tf\*idf weighting function, where tf is given by Robertson’s tf and idf is given by the standard Sparck Jones’ idf.
+-   [TF\_IDF](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/TF_IDF.html): The tf\*idf weighting function, where tf is given by Robertson’s tf and idf is given by the standard Sparck Jones’ idf.
 
--   [DFRWeightingModel](javadoc/org/terrier/matching/models/DFRWeightingModel.html): This class provides an alternative way of specifying an arbitrary DFR weighting model, by mixing the used components . For usage, see [Extending Retrieval](extend_retrieval.md) and background material in [Description of DFR](dfr_description.md).
+-   [DFRWeightingModel](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/DFRWeightingModel.html): This class provides an alternative way of specifying an arbitrary DFR weighting model, by mixing the used components . For usage, see [Extending Retrieval](extend_retrieval.md) and background material in [Description of DFR](dfr_description.md).
 
 To process the queries, ensure the topics are specified in the `trec.topics` property, then type the following:
 
@@ -103,15 +103,15 @@ Field-Based Weighting Models
 
 Since version 3.0, Terrier has support for field-based weighting models. In particular, field-based models take into account not just the presence of a term in a field, but the actual frequency of the occurrence in that field. For instance, for a document where the query term occurs once in the body of the text, then there is only a small chance that the document is really related to that term. However, if the term occurs in the title of the document, then this chance is greatly increased. Terrier provides several field-based weighting models:
 
--   [PL2F](javadoc/org/terrier/matching/models/PL2F.html): this is a per-field normalisation model, which is based on PL2 .
+-   [PL2F](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/PL2F.html): this is a per-field normalisation model, which is based on PL2 .
 
--   [BM25F](javadoc/org/terrier/matching/models/BM25F.html): this is a per-field normalisation model, which is based on BM25.
+-   [BM25F](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/BM25F.html): this is a per-field normalisation model, which is based on BM25.
 
--   [ML2](javadoc/org/terrier/matching/models/ML2.html): this is multinomial field-based model .
+-   [ML2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/ML2.html): this is multinomial field-based model .
 
--   [MDL2](javadoc/org/terrier/matching/models/MDL2.html): this is another multinomial field-based model, where the multinomial is replaced by an approximation .
+-   [MDL2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/MDL2.html): this is another multinomial field-based model, where the multinomial is replaced by an approximation .
 
--   Arbitrary per-field normalisation weighting models can be generated using [PerFieldNormWeightingModel](javadoc/org/terrier/matching/models/PerFieldNormWeightingModel.html) in a similar manner to DFRWeightingModel.
+-   Arbitrary per-field normalisation weighting models can be generated using [PerFieldNormWeightingModel](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/PerFieldNormWeightingModel.html) in a similar manner to DFRWeightingModel.
 
 To use a field-based model, you have to index using fields. See [Configuring Indexing](configure_indexing.md) for more details on how to configure fields during indexing.
 
@@ -128,9 +128,9 @@ Since version 3.0, Terrier includes two dependence models. Such models highly we
 
 Two dependence models are included:
 
--   [DFRDependenceScoreModifier](javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html) - this implements a Divergence from Randomness based dependence model.
+-   [DFRDependenceScoreModifier](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html) - this implements a Divergence from Randomness based dependence model.
 
--   [MRFDependenceScoreModifier](javadoc/org/terrier/matching/dsms/MRFDependenceScoreModifier.html) - this implements the Markov Random Field dependence model.
+-   [MRFDependenceScoreModifier](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/dsms/MRFDependenceScoreModifier.html) - this implements the Markov Random Field dependence model.
 
 To enable the dependence models, use the `matching.dsms` property. E.g. :
 
@@ -141,18 +141,18 @@ The dependence models have various parameters to set. For more information, see 
 Document Prior Features
 -----------------------
 
-Terrier can easily integrate a query-independent document feature (or prior) into your retrieval model. The simplest way to do this is using [SimpleStaticScoreModifier](javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html). For instance, say you generate a feature for all documents in the collection (e.g. using link analysis). You should export your file in one of the formats supported by SimpleStaticScoreModifier, e.g. feature value for each document, one per line. You can then add the feature as:
+Terrier can easily integrate a query-independent document feature (or prior) into your retrieval model. The simplest way to do this is using [SimpleStaticScoreModifier](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html). For instance, say you generate a feature for all documents in the collection (e.g. using link analysis). You should export your file in one of the formats supported by SimpleStaticScoreModifier, e.g. feature value for each document, one per line. You can then add the feature as:
 
     bin/terrier batchretrieval -Dmatching.dsms=SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
 
-The property `ssa.w` controls the weight of your feature. For more information on the type of files supported, see [SimpleStaticScoreModifier](javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html). Finally, Terrier can support multiple DSMs, using them in a comma-delimited manner:
+The property `ssa.w` controls the weight of your feature. For more information on the type of files supported, see [SimpleStaticScoreModifier](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html). Finally, Terrier can support multiple DSMs, using them in a comma-delimited manner:
 
     bin/terrier batchretrieval -Dmatching.dsms=DFRDependenceScoreModifier,SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
 
 Query Expansion
 ---------------
 
-Terrier also offers a query expansion functionality. For a brief description of the query expansion module, you may view the [query expansion section of the DFR Framework description](dfr_description.md#queryexpansion). The term weighting model used for expanding the queries with the most informative terms of the top-ranked documents is specified by the property `trec.qe.model`, the default value is [Bo1](javadoc/org/terrier/matching/models/queryexpansion/Bo1.html), which refers to the class implemnting the term weighting model to be used for query expansion. Terrier has other query expansion models, including [Bo2](javadoc/org/terrier/matching/models/queryexpansion/Bo2.html) and [KL](javadoc/org/terrier/matching/models/queryexpansion/KL.html) - see [org.terrier.matching.models.queryexpansion](javadoc/org/terrier/matching/models/queryexpansion/package-summary.html) for the full list.
+Terrier also offers a query expansion functionality. For a brief description of the query expansion module, you may view the [query expansion section of the DFR Framework description](dfr_description.md#queryexpansion). The term weighting model used for expanding the queries with the most informative terms of the top-ranked documents is specified by the property `trec.qe.model`, the default value is [Bo1](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/queryexpansion/Bo1.html), which refers to the class implemnting the term weighting model to be used for query expansion. Terrier has other query expansion models, including [Bo2](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/queryexpansion/Bo2.html) and [KL](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/queryexpansion/KL.html) - see [org.terrier.matching.models.queryexpansion](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/queryexpansion/package-summary.html) for the full list.
 
 In addition, there are two parameters that can be set for applying query expansion. The first one is the number of terms to expand a query with, specified by the property `expansion.terms` - default value `10`. Moreover, the number of top-ranked documents from which these terms are extracted is specified by the property `expansion.documents`, the default value of which is 3.
 
@@ -160,7 +160,7 @@ To retrieve from an indexed test collection, using query expansion, with the ter
 
     bin/terrier batchretrieval -q -c c:1.0
 
-Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format qrels file. To use feedback documents in query expansion, change the [FeedbackSelector](javadoc/org/terrier/querying/FeedbackSelector.html), as follows:
+Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format qrels file. To use feedback documents in query expansion, change the [FeedbackSelector](http://terrier.org/docs/v5.2/javadoc/org/terrier/querying/FeedbackSelector.html), as follows:
 
     bin/terrier batchretrieval -q -Dqe.feedback.selector=RelevantOnlyFeedbackDocuments,RelevanceFeedbackSelector -Dqe.feedback.filename=/path/to/feedback/qrels
 
@@ -176,7 +176,7 @@ The results are saved in the directory var/results in a file named as follows:
 
     "weighting scheme" c "value of c"_counter.res
 
-For example, if we have used the weighting scheme PL2 with c=1.28 and the counter was 2, then the filename of the results would be `PL2c1.28_3.res`. If you wish to override the filename of the generated result file, use the `trec.results.file` property. Alternatively, if multiple instances of Terrier are writing files at same time, the use of the counter can fail due to a race condition. Instead, set `trec.querycounter.type=random`. Output files by TRECQuerying are always in the TREC-format. If you desire an alternative format, you can implement another [org.terrier.structures.outputformat.OutputFormat](javadoc/org/terrier/structures/outputformat/OutputFormat.html), then get TRECQuerying to use this with the property `trec.querying.outputformat`.
+For example, if we have used the weighting scheme PL2 with c=1.28 and the counter was 2, then the filename of the results would be `PL2c1.28_3.res`. If you wish to override the filename of the generated result file, use the `trec.results.file` property. Alternatively, if multiple instances of Terrier are writing files at same time, the use of the counter can fail due to a race condition. Instead, set `trec.querycounter.type=random`. Output files by TRECQuerying are always in the TREC-format. If you desire an alternative format, you can implement another [org.terrier.structures.outputformat.OutputFormat](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/outputformat/OutputFormat.html), then get TRECQuerying to use this with the property `trec.querying.outputformat`.
 
 For each query, Terrier returns a maximum number of 1000 documents by default. We can change the maximum number of returned documents per query by changing `matching.retrieved_set_size`. For example, if we want to retrieve 10000 documents for each given query, we need to set `matching.retrieved_set_size` to 10000. In addition, if the `end` control is set in the property `querying.default.controls`, then amend this to 9999 as well (from Terrier 3.5, this is removed from the default configuration). TRECQuerying can also limit this number, according to the `trec.output.format.length` property (default 1000) also.
 
