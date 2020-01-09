@@ -10,7 +10,7 @@ The Document typically provides the extracted text as input to a tokeniser, whic
 Index Data Structures
 ---------------------
 
-As discussed in [Configuring Indexing](configure_indexing.md), Terrier has different indexing implementations. In the following, we describe how the generic indexing infrastructure. Details on the implementation of the classical two-pass and single-pass indexing can be at (indexer details)[indexer_details.md]. Details are on the [Hadoop MapReduce indexing are described elsewhere](hadoop_indexing.md). In-memory and incremental indices are described under [real-time indexing](realtime_indices.md).
+As discussed in [Configuring Indexing](configure_indexing.md), Terrier has different indexing implementations. In the following, we describe how the generic indexing infrastructure. Details on the implementation of the classical two-pass and single-pass indexing can be at (indexer details)[indexer_details.md]. In-memory and incremental indices are described under [real-time indexing](realtime_indices.md).
 
 Each indexer creates several data structures, and creates a differing [Index](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/Index.html) implementation (summarised in the table below):
 
