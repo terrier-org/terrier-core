@@ -17,7 +17,7 @@
  *
  * The Original Code is BlockShakSmallMaxBlockSize.java.
  *
- * The Original Code is Copyright (C) 2017-2018 the University of Glasgow.
+ * The Original Code is Copyright (C) 2017-2020 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
