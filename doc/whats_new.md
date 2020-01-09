@@ -1,7 +1,7 @@
 What's New in Terrier
 =====================
 
-Terrier 5.2 - xx/12/2019
+Terrier 5.2 - 9/01/2020
 ------------------------
 Minor update with bug-fixes and improvements. In particular, the classical indexer has been shown some love, and inverted index building should be faster by default, courtesy of changes that improve its usage of available memory. Some improvements were identified in support of activities surrounding the [SIGIR 2019 Open-Source IR Replicability Challenge](https://osirrc.github.io/osirrc2019/) (OSIRRC). A [OSIRRC Docker image](https://github.com/osirrc/terrier-docker) is now available, supporting Robust04, GOV2, and Core18 test collections.
 
@@ -39,6 +39,7 @@ Minor update with bug-fixes and improvements. In particular, the classical index
 - Include the Realtime test suite during testing phase.
 - Fixed issues with flushing incremental index shards to disk (MemoryPostingList iterator order bug)
 - Added Unit Tests for read and write MemoryDirect structures.
+- Security fixes suggested by Dependabot
 - [#21](https://github.com/terrier-org/terrier-core/issues/21) batchevaluate should not override existing .eval files
 - [#25](https://github.com/terrier-org/terrier-core/issues/25) bump fastutil to 8.2.2
 - [#26](https://github.com/terrier-org/terrier-core/issues/26) Cannot load a TerrierApplicationPlugin from a Maven module
