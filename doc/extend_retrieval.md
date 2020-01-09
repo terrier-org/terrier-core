@@ -119,7 +119,7 @@ while (postings.next() != IterablePosting.EOL) {
 }
 ```
 
-Moreover, if you're not comfortable with using Java, you can dump the indices of a collection using the --print\* options of the indexutil command. See the javadoc of [IndexUtils](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/IndexUtils.html) for more information.
+Moreover, if you're not comfortable with using Java, you can dump the indices of a collection using the --print\* options of the indexutil command. See the javadoc of [IndexUtil](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/IndexUtil.html) for more information.
 
 ### Example Querying Code
 
