@@ -25,8 +25,6 @@ As noted above, to use the Web-based interface, document snippets/abstracts/meta
 
 -   [TaggedDocument](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/TaggedDocument.html): First `N` characters from the content of each specified tag within the document.
 
--   [TRECDocument](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/TRECDocument.html) (extends [TaggedDocument](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/TaggedDocument.html)): First `N` characters from the content of each specified tag within the document.
-
 To configure Terrier's indexing process to store one or more document abstracts, the appropriate properties specified in either [FileDocument](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/FileDocument.html) or [TaggedDocument](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/TaggedDocument.html) must be set. Which document class to use is determined by the Collection to be indexed. For example, [TRECCollection](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/TRECCollection.html) and [WARC018Collection](http://terrier.org/docs/v5.2/javadoc/org/terrier/indexing/WARC018Collection.html) use the TaggedDocument class by default.
 
 During indexing, Terrier stores each abstract generated as document properties in the [MetaIndex](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/MetaIndex.html). Note that this can cause the MetaIndex to become quite large! To configure this, the abstract names should be added to `indexer.meta.forward.keys` and the abstract lengths should be added to `indexer.meta.forward.keylens`.
