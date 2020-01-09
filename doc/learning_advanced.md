@@ -24,7 +24,7 @@ In constructing features using such a feature list, the following features would
 2. `WMODELp1:pBiL` and `WMODELuw8:pBiL` would calculate the pBiL weighting model for only the #1 and #uw8 query operators, respectively;
 3. `WMODEL$sdm:pBiL2` would the pBiL2 weighting model only for the terms tagged with `sdm`.
 
-We believe that this advanced functionality allows very expressive feature definitions. Note that any query term expressed in a feature will need to be matched in the first retrieval phase. If you do not wish such terms to be scored in the first phase, you are advised to set the weighting model to [Null](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/Null), which will prevent it affecting the retrieved document set.
+We believe that this advanced functionality allows very expressive feature definitions. Note that any query term expressed in a feature will need to be matched in the first retrieval phase. If you do not wish such terms to be scored in the first phase, you are advised to set the weighting model to [Null](http://terrier.org/docs/v5.2/javadoc/org/terrier/matching/models/Null.html), which will prevent it affecting the retrieved document set.
 
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
