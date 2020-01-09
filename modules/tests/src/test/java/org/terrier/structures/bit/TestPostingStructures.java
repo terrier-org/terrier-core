@@ -39,6 +39,7 @@ import org.terrier.structures.postings.BlockPostingImpl;
 import org.terrier.structures.postings.FieldPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.Posting;
+import org.terrier.structures.postings.PostingTestUtils;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
 import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
 import org.terrier.structures.postings.bit.BlockIterablePosting;

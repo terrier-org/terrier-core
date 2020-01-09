@@ -39,6 +39,7 @@ import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.postings.BasicPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.Posting;
+import org.terrier.structures.postings.PostingTestUtils;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
 import org.terrier.structures.postings.bit.BasicIterablePostingDocidOnly;
 import org.terrier.tests.ApplicationSetupBasedTest;
