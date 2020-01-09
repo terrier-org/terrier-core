@@ -12,6 +12,7 @@ Known Issues
 ------------
 
 -   The real-time index structures do not currently support block indexing
+-   The real-time fields index does not correctly write direct index structures
 
 Deprecations, Scheduled Refactorings
 ------------------------------------
