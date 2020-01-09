@@ -17,7 +17,7 @@
  *
  * The Original Code is BM25.java.
  *
- * The Original Code is Copyright (C) 2004-2019 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2020 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -26,7 +26,7 @@
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk>
  */
 package org.terrier.matching.models;
-
+import org.terrier.utility.ApplicationSetup;
 
 /**
  * This class implements the Okapi BM25 weighting model. The
@@ -40,7 +40,7 @@ public class BM25 extends WeightingModel {
 	private static final long serialVersionUID = 1L;
 
 	/** The constant k_1.*/
-	private double k_1 = 1.2d;
+	private double k_1 = Double.parseDouble(ApplicationSetup.getProperty("bm25.k_1", "1.2d"));
 	
 	/** The constant k_3.*/
 	private double k_3 = 8d;

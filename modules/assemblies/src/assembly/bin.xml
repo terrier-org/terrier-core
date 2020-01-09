@@ -38,14 +38,14 @@
                                 <exclude>assemblies/target/terrier-project-*-*-src.zip</exclude>
 				<exclude>assemblies/bin/target/*</exclude>
 				
-				<exclude>*/target/classes</exclude>
-				<exclude>*/target/test-classes</exclude>
-				<exclude>*/target/javadoc-bundle-options</exclude>
-				<exclude>*/target/site</exclude>
-				<exclude>*/target/generated-sources</exclude>
-				<exclude>*/target/generated-test-sources</exclude>
-				<exclude>*/target/maven-archiver</exclude>
-				<exclude>*/target/maven-status</exclude>
+				<exclude>**/target/classes/**</exclude>
+				<exclude>**/target/test-classes/**</exclude>
+				<exclude>**/target/javadoc-bundle-options/**</exclude>
+				<exclude>**/target/site/**</exclude>
+				<exclude>**/target/generated-sources/**</exclude>
+				<exclude>**/target/generated-test-sources/**</exclude>
+				<exclude>**/target/maven-archiver/**</exclude>
+				<exclude>**/target/maven-status/**</exclude>
 				<exclude>*/Users/</exclude> <!-- prevents those annoying javadoc directories -->
 			</excludes>
 		</fileSet>

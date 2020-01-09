@@ -17,7 +17,7 @@
  *
  * The Original Code is CLITool.java.
  *
- * The Original Code is Copyright (C) 2017-2018 the University of Glasgow.
+ * The Original Code is Copyright (C) 2017-2020 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
@@ -258,6 +258,8 @@ public abstract class CLITool {
 			for(CLITool tool : list) {
 				String name = tool.commandname();
 				if (name.length() <= 5)
+					name += '\t';
+				if (name.length() < 16)
 					name += '\t';
 				System.err.println("\t" + name + "\t" + tool.sourcepackage() +  "\t" + tool.helpsummary());
 			}
