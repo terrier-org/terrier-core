@@ -198,7 +198,7 @@ public class TestCompressedBitFilesDelta  {
 			}
 			byteOffset = bo.getByteOffset();
 			bitOffset = bo.getBitOffset();
-			System.err.println(IDS.length + "@{"+byteOffset+","+bitOffset+"}");
+			//System.err.println(IDS.length + "@{"+byteOffset+","+bitOffset+"}");
 			//bo.writeUnary(10);
 			bo.close();
 			bytes = baos.toByteArray();

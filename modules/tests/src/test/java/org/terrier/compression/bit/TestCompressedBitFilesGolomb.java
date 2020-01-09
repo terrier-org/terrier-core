@@ -185,7 +185,7 @@ public class TestCompressedBitFilesGolomb  {
 			}
 			byteOffset = bo.getByteOffset();
 			bitOffset = bo.getBitOffset();
-			System.err.println(IDS.length + "@{"+byteOffset+","+bitOffset+"}");
+			//System.err.println(IDS.length + "@{"+byteOffset+","+bitOffset+"}");
 			//bo.writeUnary(10);
 			bo.close();
 			bytes = baos.toByteArray();
@@ -264,7 +264,7 @@ public class TestCompressedBitFilesGolomb  {
 			for(int j=0;j<testNumbers.length;j++)
 			{
 				in = new DebuggingBitIn( getBitIn() );
-				System.err.println(j);
+				//System.err.println(j);
 				in.skipBytes(startOffsets[j].getOffset());
 				//skipping bytes resets the bitoffset
 				assertEquals((byte)0, in.getBitOffset());
@@ -289,7 +289,7 @@ public class TestCompressedBitFilesGolomb  {
 			for(int j=0;j<testNumbers.length;j++)
 			{
 				in = getBitIn();
-				System.err.println(j);
+				//System.err.println(j);
 				
 				in.skipBits((int)startOffsets[j].getOffset() * 8 + startOffsets[j].getOffsetBits());
 				assertEquals(startOffsets[j].getOffset(), in.getByteOffset());
