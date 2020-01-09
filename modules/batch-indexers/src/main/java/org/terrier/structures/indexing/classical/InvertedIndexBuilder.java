@@ -436,7 +436,8 @@ public class InvertedIndexBuilder {
 			assert free > 5 * 1024*1024;
 			memThreshold = (long) (heapusage * free);
 			logger.debug("Memory threshold is " + BinaryByteUnit.format(memThreshold));
-			projectedPointerCount = (int) (memThreshold / ((long) (2l + fieldCount) * Integer.BYTES));
+			projectedPointerCount = (long) (memThreshold / ((long) (2l + fieldCount) * Integer.BYTES));
+			logger.debug("projectedPointerCount " + projectedPointerCount); 
 		}
 		
 		@Override
