@@ -95,6 +95,7 @@ DocumentIndex doi = index.getDocumentIndex();
 Lexicon<String> lex = index.getLexicon();
 int docid = 10; //docids are 0-based
 IterablePosting postings = di.getPostings(doi.getDocumentEntry(docid));
+//NB: postings will be null if the document is empty
 while (postings.next() != IterablePosting.EOL) {
 	Map.Entry<String,LexiconEntry> lee = lex.getLexiconEntry(postings.getId());
 	System.out.print(lee.getKey() + " with frequency " + postings.getFrequency());
