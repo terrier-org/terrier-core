@@ -42,6 +42,12 @@ public class TestMavenResolution extends ApplicationSetupBasedTest {
 		assertNotNull(Thread.currentThread().getContextClassLoader().loadClass("com.harium.database.sqlite.module.SQLiteDatabaseModule"));
 		//Class.forName("com.harium.database.sqlite.module.SQLiteDatabaseModule");
 	}
+
+	@Test public void testImportSingleWithoutVersion() throws Exception
+	{
+		new MavenResolver().initialise("org.apache.commons:commons-rng-simple");
+		assertNotNull(Thread.currentThread().getContextClassLoader().loadClass("org.apache.commons.rng.simple.RandomSource"));
+	}
 	
 	@Test public void testImportSingleIndirectWithClassifier() throws Exception
 	{
