@@ -102,9 +102,7 @@ while (postings.next() != IterablePosting.EOL) {
 }
 ```
 
-**What documents does term Z occur in, and at what position?**
-
-We assume that the index contains positional information.
+**What documents does term "Z" occur in, and at what position?**
 
 ```java
 Index index = Index.createIndex();
@@ -113,6 +111,15 @@ MetaIndex meta = index.getMetaIndex();
 Lexicon<String> lex = index.getLexicon();
 LexiconEntry le = lex.getLexiconEntry( "Z" );
 IterablePosting postings = inv.getPostings((BitIndexPointer) le);
+while (postings.next() != IterablePosting.EOL) {
+	String docno = meta.getItem("docno", postings.getId());
+	System.out.println(docno + " with frequency " + postings.getFrequency());
+}
+```
+
+If we assume that the index contains positional information, the loop above would change as follows:
+
+```java
 while (postings.next() != IterablePosting.EOL) {
 	String docno = meta.getItem("docno", postings.getId());
 	int[] positions = ((BlockPosting)postings).getPositions();
