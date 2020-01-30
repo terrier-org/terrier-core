@@ -129,6 +129,30 @@ while (postings.next() != IterablePosting.EOL) {
 
 Moreover, if you're not comfortable with using Java, you can dump the indices of a collection using the --print\* options of the indexutil command. See the javadoc of [IndexUtil](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/IndexUtil.html) for more information.
 
+
+**What are the PL2 weighting model scores of documents that "Y" occurs in?**
+
+Use of a [WeightingModel](http://terrier.org/docs/current/javadoc/org/terrier/matching/models/WeightingModel.html) class needs some setup, namely the EntryStatistics of the term (obtained from the Lexicon), as well as the CollectionStatistics (obtained from the index).
+
+```java
+Index index = Index.createIndex();
+PostingIndex<?> inv = index.getInvertedIndex();
+MetaIndex meta = index.getMetaIndex();
+Lexicon<String> lex = index.getLexicon();
+LexiconEntry le = lex.getLexiconEntry( "Y" );
+WeightingModel wmodel = new PL2();
+wmodel.setCollectionStatistics(index.getCollectionStatistics());
+wmodel.setEntryStatistics(le);
+wmodel.setKeyFrequency(1);
+wmodel.prepare()
+IterablePosting postings = inv.getPostings((BitIndexPointer) le);
+while (postings.next() != IterablePosting.EOL) {
+	String docno = meta.getItem("docno", postings.getId());
+	System.out.println(docno + " with score " + wmodel.score(postings));
+}
+```
+
+
 ### Example Querying Code
 
 Below, you can find a example sample of using the querying functionalities of Terrier.
