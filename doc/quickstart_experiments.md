@@ -45,7 +45,7 @@ Using Terrier
 Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` command-line script. While in Terrier's directory, type `bin/terrier` to see the available commands:
 
 	$ bin/terrier 
-	Terrier version 5.1-SNAPSHOT
+	Terrier version 5.2
 	No command specified. You must specify a command.
 	Popular commands:
 		batchevaluate	evaluate all run result files in the results directory
