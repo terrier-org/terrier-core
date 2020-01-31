@@ -20,7 +20,7 @@ After having downloaded Terrier, copy the file to the directory where you want t
 
     tar -zxvf terrier-project-5.2-bin.tar.gz
 
-This will result in the creation of a `terrier-project` directory in your current directory. Terrier will use the java command in your $PATH, if there is one, or otherwise will resort to looking in $JAVA_HOME.
+This will result in the creation of a `terrier-project` directory in your current directory. Terrier will use the java command in your $PATH, if there is one, or otherwise will resort to looking in $JAVA_HOME. To check that java is in your path, type:
 
     java -version
     
