@@ -92,7 +92,8 @@
 									<pluginExecutionFilter>
 										<groupId>org.codehaus.mojo</groupId>
 										<artifactId>build-helper-maven-plugin</artifactId>
-										<version>3.0.0</version>
+										<!--  see https://stackoverflow.com/questions/47692731/cannot-parse-lifecycle-mapping-metadata-for-maven-project-cause-unrecognised -->
+										<versionRange>[1.0.0,)</versionRange>
 										<goals>
 											<goal>parse-version</goal>
 											<goal>add-source</goal>
