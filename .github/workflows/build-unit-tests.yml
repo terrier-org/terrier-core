@@ -9,11 +9,11 @@ jobs:
     strategy:
       matrix:
         java: [ 'openjdk11', 'openjdk13' ]
-    name: Java ${{ matrix.java }} sample
+    name: Build with Maven on ${{ matrix.java }}
     steps:
       - uses: actions/checkout@v2
       - name: Set openjdk
-        uses: actions/setup-java@v1
+        uses: joschi/setup-jdk@v1
         with:
           java-version: ${{ matrix.java }}
       - name: Build with Maven
