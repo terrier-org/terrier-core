@@ -316,8 +316,11 @@ public class MavenResolver implements TerrierApplicationPlugin {
 	
 	public static List<RemoteRepository> newRepositories( RepositorySystem system, RepositorySystemSession session )
     {
+		System.setProperty("https.protocols", "SSLv3,TLSv1,TLSv1.1,TLSv1.2");
         return new ArrayList<RemoteRepository>( Arrays.asList( 
-        		newCentralRepository()) );
+				newCentralRepository(),
+				new RemoteRepository.Builder( "jitpack", "default", "http://jitpack.io").build()
+				));
     }
 
     private static RemoteRepository newCentralRepository()
