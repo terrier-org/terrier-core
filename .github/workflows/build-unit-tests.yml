@@ -10,11 +10,11 @@ jobs:
       matrix:
         java: [ 'openjdk11', 'openjdk13' ]
     name: Java ${{ matrix.java }} sample
-        steps:
-    - uses: actions/checkout@v2
-    - name: Set openjdk
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set openjdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
