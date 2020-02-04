@@ -62,9 +62,11 @@ public class QueryParser
         
         try{
         	rtr = new TerrierQLParser(query).parse();
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new QueryParserException("Failed to process '"+query+"'",e);
-        }
+		} catch (TokenMgrError tme) {
+			throw new QueryParserException("Failed to process '"+query+"'",tme);
+		}
 		if (rtr == null)
 		{
 			throw new QueryParserException("Failed to process '"+query+"'");
