@@ -6,12 +6,15 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
-    steps:
+    strategy:
+      matrix:
+        java: [ 'openjdk11', 'openjdk13' ]
+    name: Java ${{ matrix.java }} sample
+        steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+    - name: Set openjdk
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: ${{ matrix.java }}
     - name: Build with Maven
       run: mvn -B package --file pom.xml
