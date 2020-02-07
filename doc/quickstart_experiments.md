@@ -100,7 +100,7 @@ This guide will provide step-by-step instructions for using Terrier to index a T
 1. Go to the Terrier folder.
 
 ```shell
-    cd terrier-project-5.1
+    cd terrier-project-5.2
 ```
 
 2. Setup Terrier for using a TREC test collection by calling
