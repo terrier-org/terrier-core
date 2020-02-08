@@ -42,6 +42,7 @@ import org.terrier.applications.CLITool;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.BasicDocumentIndexEntry;
 import org.terrier.structures.BitIndexPointer;
+import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
 import org.terrier.structures.FieldDocumentIndexEntry;
@@ -85,6 +86,32 @@ import org.terrier.utility.ArrayUtils;
  * @author Vassilis Plachouras and Craig Macdonald
   */
 public class StructureMerger {
+	
+	static class NullDocumentIndex implements DocumentIndex {
+		
+		int numDocs;
+		public NullDocumentIndex(int _numDocs) {
+			numDocs = _numDocs;
+		}
+
+		@Override
+		public DocumentIndexEntry getDocumentEntry(int docid)
+				throws IOException {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int getDocumentLength(int docid) throws IOException {
+			assert docid < numDocs;
+			return 0;
+		}
+
+		@Override
+		public int getNumberOfDocuments() {
+			return numDocs;
+		}
+		
+	}
 	
 	/** the logger used */
 	protected static final Logger logger = LoggerFactory.getLogger(StructureMerger.class);	
@@ -228,6 +255,8 @@ public class StructureMerger {
 					 : 0;
 			
 			logger.debug("Opening src inv files");
+			IndexUtil.forceStructure(srcIndex1, "document", new NullDocumentIndex(srcIndex1.getCollectionStatistics().getNumberOfDocuments()));
+			IndexUtil.forceStructure(srcIndex2, "document", new NullDocumentIndex(srcIndex2.getCollectionStatistics().getNumberOfDocuments()));
 			PostingIndex<Pointer> inverted1 = (PostingIndex<Pointer>) srcIndex1.getInvertedIndex();
 			PostingIndex<Pointer> inverted2 = (PostingIndex<Pointer>) srcIndex2.getInvertedIndex();
 			
