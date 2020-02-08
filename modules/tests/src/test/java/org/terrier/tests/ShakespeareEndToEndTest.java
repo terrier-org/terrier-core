@@ -30,12 +30,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import gnu.trove.TIntHashSet;
-import gnu.trove.TIntObjectHashMap;
-import gnu.trove.TObjectIntHashMap;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -64,7 +60,12 @@ import org.terrier.structures.postings.PostingUtil;
 import org.terrier.structures.restructure.Tr4BasicLexiconEntry;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.FieldScore;
+import org.terrier.utility.Files;
 import org.terrier.utility.StaTools;
+
+import gnu.trove.TIntHashSet;
+import gnu.trove.TIntObjectHashMap;
+import gnu.trove.TObjectIntHashMap;
 
 public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest 
 {
@@ -457,11 +458,8 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 					if (numberOfTerms > 0)
 						assertTrue("Got too big a termid ("+ip.getId()+") from direct index input stream, numTerms=" + numberOfTerms, ip.getId() < maxTermId);
 				}
-			}
-			
+			}	
 		}
-			
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -563,8 +561,10 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 
 	@Override
 	protected void makeCollectionSpec(PrintWriter p) throws Exception {
-		p.println(System.getProperty("user.dir") + "/../../share/tests/shakespeare/shakespeare-merchant.trec.1");
-		p.println(System.getProperty("user.dir") + "/../../share/tests/shakespeare/shakespeare-merchant.trec.2");
+		//p.println(System.getProperty("user.dir") + "/../../share/tests/shakespeare/shakespeare-merchant.trec.1");
+		//p.println(System.getProperty("user.dir") + "/../../share/tests/shakespeare/shakespeare-merchant.trec.2");
+		p.println("resource:/tests/shakespeare/shakespeare-merchant.trec.1");
+		p.println("resource:/tests/shakespeare/shakespeare-merchant.trec.2");
 		p.close();
 	}
 
@@ -580,7 +580,8 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 	{
 		//TODO: add a line count cache to reduce disk IO
 		int count = 0;
-		BufferedReader br = new BufferedReader(new FileReader(filename));
+		BufferedReader br = Files.openFileReader(filename);
+		//BufferedReader br = new BufferedReader(new FileReader(filename));
 		String line = null;
 		while( (line = br.readLine()) != null)
 		{

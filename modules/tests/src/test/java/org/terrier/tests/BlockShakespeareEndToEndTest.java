@@ -35,7 +35,7 @@ import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.IterablePosting;
 
 public class BlockShakespeareEndToEndTest extends BasicShakespeareEndToEndTest {
-	public static final String PHRASE_TOPICS = System.getProperty("user.dir") + "/../../share/tests/shakespeare/test.shakespeare-merchant.phrase.topics";	
+	public static final String PHRASE_TOPICS = "resource:/tests/shakespeare/test.shakespeare-merchant.phrase.topics";	
 	
 	@SuppressWarnings("unchecked")
 	static class BlockBatchEndToEndTestEventChecks extends BatchEndToEndTestEventHooks
