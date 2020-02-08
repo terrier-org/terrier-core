@@ -84,17 +84,7 @@ public class TestQueryParser {
 		assertEquals("a", q.toString());
 	}
 
-	@Test public void testSingleTermQueryUTF() throws Exception
-	{
-		String word = "\u0917\u0941\u091C\u094D\u091C\u0930\u094B\u0902";
-		Query q = QueryParser.parseQuery(word);
-		List<Query> terms = new ArrayList<Query>();
-		q.getTerms(terms);
-		assertEquals(1, terms.size());
-		assertEquals(word, ((SingleTermQuery)terms.get(0)).getTerm());
-		if (checkParseTree) assertEquals("SingleTermQuery("+word+")", q.parseTree());
-		assertEquals(word, q.toString());
-	}
+	
 	
 	@Test public void testSingleTermQueryWeighted() throws Exception
 	{
@@ -149,8 +139,20 @@ public class TestQueryParser {
 		if (checkParseTree) assertEquals("MultiTermQuery(SingleTermQuery(a),SingleTermQuery(b))", q.parseTree());
 		assertEquals("a b", q.toString());
 	}
+	
+	@Ignore @Test public void testSingleTermQueryUTF() throws Exception
+	{
+		String word = "\u0917\u0941\u091C\u094D\u091C\u0930\u094B\u0902";
+		Query q = QueryParser.parseQuery(word);
+		List<Query> terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		assertEquals(1, terms.size());
+		assertEquals(word, ((SingleTermQuery)terms.get(0)).getTerm());
+		if (checkParseTree) assertEquals("SingleTermQuery("+word+")", q.parseTree());
+		assertEquals(word, q.toString());
+	}
 
-	@Test public void testTwoTermQueryUTF() throws Exception
+	@Ignore @Test public void testTwoTermQueryUTF() throws Exception
 	{
 
 		String word1 = "\u0917\u0941\u091C\u094D\u091C\u0930\u094B\u0902";
