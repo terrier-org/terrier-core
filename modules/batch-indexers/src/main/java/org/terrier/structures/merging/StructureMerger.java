@@ -87,7 +87,7 @@ import org.terrier.utility.ArrayUtils;
   */
 public class StructureMerger {
 	
-	static class NullDocumentIndex implements DocumentIndex {
+	public static class NullDocumentIndex implements DocumentIndex {
 		
 		int numDocs;
 		public NullDocumentIndex(int _numDocs) {

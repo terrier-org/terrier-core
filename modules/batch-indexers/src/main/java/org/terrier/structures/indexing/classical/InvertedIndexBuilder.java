@@ -55,6 +55,7 @@ import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.SimpleBitIndexPointer;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
+import org.terrier.structures.merging.StructureMerger;
 import org.terrier.structures.postings.ArrayOfBasicIterablePosting;
 import org.terrier.structures.postings.ArrayOfFieldIterablePosting;
 import org.terrier.structures.postings.FieldPosting;
@@ -629,7 +630,14 @@ public class InvertedIndexBuilder {
 		throws IOException 
 	{
 		//scan the direct file
+		
+		//dont load a document index for the direct
+		IndexUtil.forceStructure(index, "document", new StructureMerger.NullDocumentIndex(index.getCollectionStatistics().getNumberOfDocuments()));
 		PostingIndexInputStream directInputStream = (PostingIndexInputStream)index.getIndexStructureInputStream("direct");
+		
+		//but restore previous functionality
+		IndexUtil.forceReloadStructure(index, "document");
+		
 		int docid = 0; //a document counter;
 		final boolean _useFieldInformation = this.useFieldInformation;
 		
