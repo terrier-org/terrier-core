@@ -64,13 +64,13 @@ public class QueryParser
         	rtr = new TerrierQLParser(query).parse();
         } catch (Exception e) {
             throw new QueryParserException("Failed to process '"+query+"'",e);
-		} catch (TokenMgrError tme) {
-			throw new QueryParserException("Failed to process '"+query+"'",tme);
-		}
-		if (rtr == null)
-		{
-			throw new QueryParserException("Failed to process '"+query+"'");
-		}
+        } catch (TokenMgrError tme) {
+        	throw new QueryParserException("Failed to process '"+query+"'",tme);
+        }
+	if (rtr == null)
+	{
+		throw new QueryParserException("Failed to process '"+query+"'");
+	}
         return rtr;
     }
 }
