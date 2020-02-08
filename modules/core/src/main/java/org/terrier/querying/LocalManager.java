@@ -427,12 +427,8 @@ public class LocalManager implements Manager
 			//TODO some exception handling here for not found models
 			Model wmodel = getWeightingModel(rq);
 			
-			/* craigm 05/09/2006: only set the parameter of the weighting model
-			 * if it was explicitly set if c_set control is set to true. Otherwise
-			 * allow the weighting model to assume it's default value.
-			 * This changes previous behaviour. TODO: some consideration for
-			 * non TREC applications */
-			if (rq.getControl("c_set").equals("true"))
+			/** changed functionality for terrier 5.2 batchretrieve, #79 */
+			if (rq.getControl("c") != null && rq.getControl("c").length() > 0)
 			{
 				wmodel.setParameter(Double.parseDouble(rq.getControl("c")));
 			}

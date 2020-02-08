@@ -56,6 +56,11 @@ public class TestQueryParser {
 		assertEquals(0, terms.size());
 	}
 	
+	@Test(expected = QueryParserException.class) 
+	public void testException() throws Exception
+	{
+		QueryParser.parseQuery("a'");
+	}
 
 	@Test public void testControls() throws Exception
 	{

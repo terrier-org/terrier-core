@@ -86,6 +86,7 @@ public class TestManager extends ApplicationSetupBasedTest {
 	
 	public static class myModel extends BM25
 	{
+		public static final double CHECK_PARAM = 0.43d; 
 		private static final long serialVersionUID = 1L;
 
 		public myModel(){}
@@ -94,6 +95,7 @@ public class TestManager extends ApplicationSetupBasedTest {
 		public double score(double tf, double docLength) {
 			assertNotNull(super.rq);
 			assertNotNull(super.rq.getIndex());
+			assertEquals(CHECK_PARAM, this.getParameter(), 0d);
 			return super.score(tf, docLength);
 		}
 	};
@@ -111,6 +113,7 @@ public class TestManager extends ApplicationSetupBasedTest {
 		assertNotNull( rq.getIndex() );
 		srq.setControl(SearchRequest.CONTROL_MATCHING, org.terrier.matching.daat.Full.class.getName());
 		srq.setControl(SearchRequest.CONTROL_WMODEL, myModel.class.getName());
+		srq.setControl("c", String.valueOf(myModel.CHECK_PARAM));
 		m.runSearchRequest(srq);
 		
 		srq.setControl(SearchRequest.CONTROL_MATCHING, org.terrier.matching.taat.Full.class.getName());

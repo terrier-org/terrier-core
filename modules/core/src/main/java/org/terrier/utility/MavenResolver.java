@@ -53,6 +53,9 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
@@ -68,7 +71,9 @@ import org.terrier.utility.ApplicationSetup.TerrierApplicationPlugin;
  * <b>Properties</b>
  * <ul>
  * <li><tt>terrier.mvn.coords</tt> - SBT-like expression of dependency. E.g.
- * <tt>com.harium.database:sqlite:1.0.5</tt></li>
+ * <tt>com.harium.database:sqlite:1.0.5</tt>
+ * or <tt>com.harium.database:sqlite</tt></li>.
+ * </li>
  * </ul>
  * 
  * @since 5.0
@@ -81,11 +86,6 @@ public class MavenResolver implements TerrierApplicationPlugin {
 			"terrier-batch-indexers", "terrier-batch-retrieval",
 			"terrier-learning", "terrier-tests", "terrier-logging",
 			"terrier-integer-compression", "terrier-website-search"));
-
-	// TODO consider using the aether client directly, rather than the jcabi
-	// wrapper, which imports other classes.
-	// see
-	// https://github.com/liferay/liferay-blade-cli/blob/28556e7e8560dd27d4a5153cb93196ca059ac081/com.liferay.blade.cli/src/com/liferay/blade/cli/aether/AetherClient.java
 
 	volatile static String initCoords = null;
 	final static Object lock = new Object();
@@ -115,23 +115,15 @@ public class MavenResolver implements TerrierApplicationPlugin {
 		}
 	}
 
-
 	private static final String USER_HOME = System.getProperty("user.home");
 	private static final File USER_MAVEN_CONFIGURATION_HOME = new File(
 			USER_HOME, ".m2");
 
 	@Override
 	public void initialise() throws Exception {
-		String requestedCoords = ApplicationSetup.getProperty(
-				"terrier.mvn.coords",
-				ApplicationSetup.getProperty("terrier.ivy.coords", null));
+		String requestedCoords = ApplicationSetup.getProperty("terrier.mvn.coords", null);
 		if (requestedCoords == null)
 			return;
-		if (requestedCoords.equals(ApplicationSetup.getProperty(
-				"terrier.ivy.coords", null))) {
-			System.err
-					.println("WARNING to CRAIG: stop relying on terrier.ivy.coords");
-		}
 		// prevent more than one thread initing concurrently
 		synchronized (lock) {
 			if (initCoords != null && initCoords.equals(requestedCoords))
@@ -142,16 +134,12 @@ public class MavenResolver implements TerrierApplicationPlugin {
 	}
 
 	public void initialise(String coordinates) throws Exception {
-		// File local = new File("/tmp/local-repository");
-		
-//		Collection<RemoteRepository> remotes = Arrays
-//				.asList(new RemoteRepository("maven-central", "default",
-//						"http://repo1.maven.org/maven2/"));
 
 		RepositorySystem system = newRepositorySystem();
 		RepositorySystemSession session = newRepositorySystemSession(system);
+		final List<RemoteRepository> repos = newRepositories( system, session );
 
-		List<Artifact> deps = extractMavenCoordinates(coordinates);
+		List<Artifact> deps = extractMavenCoordinates(coordinates, system, session, repos);
 		Collection<File> foundDepFiles = new ArrayList<>();
 		DependencyFilter df = new DependencyFilter() {
 
@@ -192,12 +180,9 @@ public class MavenResolver implements TerrierApplicationPlugin {
 			}
 
 		};
-		
 		DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter( JavaScopes.COMPILE );
-		final List<RemoteRepository> repos = newRepositories( system, session );
 		
 		for (Artifact art : deps) {
-			
 			//first, resolve the artifact
 			ArtifactRequest ar = new ArtifactRequest();
 			ar.setArtifact( art );
@@ -244,22 +229,23 @@ public class MavenResolver implements TerrierApplicationPlugin {
 
 	/**
 	 * Extracts maven coordinates from a comma-delimited string. Coordinates
-	 * should be provided in the format `groupId:artifactId:version` or
-	 * `groupId/artifactId:version`.
+	 * should be provided in the format `groupId:artifactId[:version]` or
+	 * `groupId/artifactId[:version]`. If the version is not provided, the
+	 * latest version will be resolved.
 	 * 
 	 * @param coordinates
 	 *            Comma-delimited string of maven coordinates
 	 * @return Sequence of Maven coordinates
 	 */
-	List<Artifact> extractMavenCoordinates(String coordinates) {
+	List<Artifact> extractMavenCoordinates(String coordinates, RepositorySystem repoSystem, RepositorySystemSession session, List<RemoteRepository> repos) {
 		return Arrays
 				.asList(coordinates.split(","))
 				.stream()
 				.map(p -> {
 					String[] splits = p.replace("/", ":").split(":");
-					require(splits.length == 3,
+					require(splits.length == 3 || splits.length == 2 || splits.length == 4,
 							"Provided Maven Coordinates must be in the form "
-									+ "'groupId:artifactId:version'. The coordinate provided is: "
+									+ "'groupId:artifactId[:version[:classifier]]'. The coordinate provided is: "
 									+ p);
 					require(splits[0] != null && splits[0].trim().length() > 0,
 							"The groupId cannot be null or "
@@ -269,11 +255,21 @@ public class MavenResolver implements TerrierApplicationPlugin {
 							"The artifactId cannot be null or "
 									+ "be whitespace. The artifactId provided is: "
 									+ splits[1]);
-					require(splits[2] != null && splits[2].trim().length() > 0,
-							"The version cannot be null or "
-									+ "be whitespace. The version provided is: "
-									+ splits[2]);
-					return new DefaultArtifact(p); //new MavenCoordinate(splits[0], splits[1], splits[2]);
+					if (splits.length == 2) //version is missing
+					{
+						Artifact artifact = new DefaultArtifact(p + ":(0,]");
+						VersionRangeRequest request = new VersionRangeRequest(artifact, repos, null);
+						try{
+							VersionRangeResult versionResult = repoSystem.resolveVersionRange(session, request);
+							if (versionResult.getHighestVersion() == null){
+								throw new RuntimeException("Could not find a latest version for " + p);
+							}
+							p += ":" + versionResult.getHighestVersion().toString();
+						} catch (VersionRangeResolutionException re) {
+							throw new RuntimeException("Problem resolving latest version for " + p);
+						}
+					}
+					return new DefaultArtifact(p);
 				}).collect(Collectors.toList());
 	}
 	
