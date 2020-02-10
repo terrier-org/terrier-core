@@ -571,7 +571,7 @@ public class InvertedIndexBuilder {
 		
 		@Override
 		public String toString() {
-			return this.getClass().getSimpleName() + ": lexicon scanning for " + PointersToProcess  + "pointers";
+			return this.getClass().getSimpleName() + ": lexicon scanning for " + PointersToProcess  + " pointers";
 		}
 
 		@Override
