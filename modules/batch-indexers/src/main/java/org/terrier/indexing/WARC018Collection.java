@@ -235,7 +235,7 @@ public class WARC018Collection extends MultiDocumentFileCollection implements Co
 	}
 
 	
-	int readLineByteCount;
+	protected int readLineByteCount;
 	
 	/** read a line from the currently open InputStream is */
 	protected String readLine() throws IOException
@@ -278,7 +278,7 @@ public class WARC018Collection extends MultiDocumentFileCollection implements Co
 		return s.toString();
 	}
 
-	final static String parseDate(String date)
+	protected final static String parseDate(String date)
 	{
 		if (date == null)
 			return "";
