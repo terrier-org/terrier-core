@@ -567,7 +567,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 				new FileDocument("doc2", new ByteArrayInputStream(
 						"turing knuth knuth turing".getBytes()),
 						new EnglishTokeniser()) };
-		collection = new CollectionDocumentList(docs1, "filename");
+		collection = new CollectionDocumentList(docs1);
 		docs2 = new Document[] {
 				new FileDocument("doc3", new ByteArrayInputStream(
 						"foo bar".getBytes()), new EnglishTokeniser()),

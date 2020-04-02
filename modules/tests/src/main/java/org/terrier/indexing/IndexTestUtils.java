@@ -104,7 +104,7 @@ public class IndexTestUtils {
 			docProperties.put("docno", docnos[i]);
 			sourceDocs[i] = new FileDocument(new ByteArrayInputStream(documents[i].getBytes()), docProperties, new EnglishTokeniser());
 		}
-		Collection col = new CollectionDocumentList(sourceDocs, "filename");
+		Collection col = new CollectionDocumentList(sourceDocs);
 		return col;
 	}
 	
@@ -142,7 +142,7 @@ public class IndexTestUtils {
 			docProperties.put("docno", docnos[i]);
 			sourceDocs[i] = new TaggedDocument(new ByteArrayInputStream(documents[i].getBytes()), docProperties, new EnglishTokeniser());
 		}
-		Collection col = new CollectionDocumentList(sourceDocs, "filename");
+		Collection col = new CollectionDocumentList(sourceDocs);
 		indexer.index(new Collection[]{col});		
 		Index index = Index.createIndex(path, prefix);
 		assertNotNull(index);

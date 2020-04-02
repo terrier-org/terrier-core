@@ -405,7 +405,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		docs1 = new Document[] {
 				new TaggedDocument(new ByteArrayInputStream("<TITLE>curry</TITLE><CONTENT>church turing knuth</CONTENT>".getBytes()), doc1Props, new EnglishTokeniser()),
 				new TaggedDocument(new ByteArrayInputStream("<TITLE>turing</TITLE><CONTENT>knuth knuth turing</CONTENT>".getBytes()), doc2Props, new EnglishTokeniser()) };
-		collection = new CollectionDocumentList(docs1, "filename");
+		collection = new CollectionDocumentList(docs1);
 		ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
 		ApplicationSetup.setProperty("indexer.meta.forward.keylens", "10");
 	}

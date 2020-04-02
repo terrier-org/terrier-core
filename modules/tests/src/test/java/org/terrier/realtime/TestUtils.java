@@ -83,7 +83,7 @@ public class TestUtils {
 			docProperties.put("filename", docnos[i]);
 			sourceDocs[i] = new FileDocument(new ByteArrayInputStream(documents[i].getBytes()), docProperties, new EnglishTokeniser());
 		}
-		Collection col = new CollectionDocumentList(sourceDocs, "filename");
+		Collection col = new CollectionDocumentList(sourceDocs);
 		indexer.index(new Collection[]{col});		
 		Index index = Index.createIndex();
 		assertEquals(sourceDocs.length, index.getCollectionStatistics().getNumberOfDocuments());
