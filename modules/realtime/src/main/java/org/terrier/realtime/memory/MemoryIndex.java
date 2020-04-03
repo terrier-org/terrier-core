@@ -72,6 +72,7 @@ import org.terrier.terms.SkipTermPipeline;
 import org.terrier.terms.TermPipeline;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
+import org.terrier.utility.FieldScore;
 
 /**
  * An index held in fully memory. This is an updatable index, i.e. it supports
@@ -100,9 +101,9 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	protected MemoryDirectIndex direct;
 	
     // Blocks and fields.
-    public final static boolean      blocks    = (ApplicationSetup.getProperty("block.indexing", "").equals("")) ? false : true;
-    public final static boolean      fields    = (ApplicationSetup.getProperty("FieldTags.process", "").equals("")) ? false : true;
-    public final static String[]     fieldtags = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("FieldTags.process", ""));
+    protected boolean      blocks    = (ApplicationSetup.getProperty("block.indexing", "").equals("")) ? false : true;
+    protected boolean      fields    = FieldScore.USE_FIELD_INFORMATION;
+    protected String[]     fieldtags = FieldScore.FIELD_NAMES;
     public TObjectIntHashMap<String> fieldIDs;
 	
     

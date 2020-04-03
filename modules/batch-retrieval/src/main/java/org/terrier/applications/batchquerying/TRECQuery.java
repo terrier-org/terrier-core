@@ -81,11 +81,11 @@ public class TRECQuery implements QuerySource {
 	 *		identifiers as strings.
 	 * @return boolean true if some queries were successfully extracted.
 	 */
-	public boolean extractQuery(String[] queryfilenames, Vector<String> vecStringQueries, Vector<String> vecStringIds)
+	public boolean extractQuery(String[] queryfilenames, TagSet t, Vector<String> vecStringQueries, Vector<String> vecStringIds)
 	{
 		boolean rtn = false;
 		for (int i=0;i<queryfilenames.length;i++) {
-			if (extractQuery(queryfilenames[i], vecStringQueries, vecStringIds))
+			if (extractQuery(queryfilenames[i], t, vecStringQueries, vecStringIds))
 				rtn = true;
 		}
 		return rtn;
@@ -99,7 +99,7 @@ public class TRECQuery implements QuerySource {
 	 *		identifiers as strings.
 	 * @return boolean true if some queries were successfully extracted.
 	 */
-	public boolean extractQuery(String queryfilename, Vector<String> vecStringQueries, Vector<String> vecStringIds)
+	public boolean extractQuery(String queryfilename, TagSet t, Vector<String> vecStringQueries, Vector<String> vecStringIds)
 	{
 		boolean gotSome = false;
 		try {
@@ -110,7 +110,7 @@ public class TRECQuery implements QuerySource {
 			} else {
 				br = Files.openFileReader(queryfilename,desiredEncoding);
 				TRECFullTokenizer queryTokenizer = new TRECFullTokenizer(
-							new TagSet(TagSet.TREC_QUERY_TAGS),
+							t,
 							new TagSet(TagSet.EMPTY_TAGS),
 							br);
 				queryTokenizer.setIgnoreMissingClosingTags(true);
@@ -178,67 +178,32 @@ public class TRECQuery implements QuerySource {
 		return gotSome;
 	}
 	
+	public TRECQuery(String[] queryfilenames, String docTag, String idTag, String[] whitelist, String[] blacklist) {
+		TagSet.TagSetFactory fact = TagSet.factory().setDocTag(docTag).setIdTag(idTag);
+		if (whitelist != null)
+			fact.setWhitelist(whitelist);
+		if (blacklist != null)
+			fact.setBlacklist(blacklist);
+		TagSet tags = fact.build();
+		Vector<String> vecStringQueries = new Vector<String>();
+		Vector<String> vecStringQueryIDs = new Vector<String>();
+		if (this.extractQuery(queryfilenames, tags, vecStringQueries, vecStringQueryIDs))
+			this.topicFiles = queryfilenames;
+		if (topicFiles == null)
+			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
+				+ " Check you have the correct topic files specified, and that tags are correct.");
+
+		this.queries = vecStringQueries.toArray(new String[0]);
+		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
+		this.index = 0;
+	}
 	
 	/** 
 	 * Constructs an instance of TRECQuery,
 	 * that reads and stores all the queries from
 	 * the files defined in the trec.topics property. */
 	public TRECQuery() {
-		//this(ApplicationSetup.getProperty("trec.topics", null));
-		try {
-			String files[] = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("trec.topics", ""));
-			assert files.length > 0;
-			Vector<String> vecStringQueries = new Vector<String>();
-			Vector<String> vecStringQueryIDs = new Vector<String>();
-			Vector<String> vecStringFiles = new Vector<String>();
-			for (int i=0; i<files.length;i++) {
-				if (this.extractQuery(files[i], vecStringQueries, vecStringQueryIDs)) {
-					vecStringFiles.add(files[i]);
-				}
-			}
-						
-			this.topicFiles = vecStringQueries.toArray(new String[0]);
-			this.queries = vecStringQueries.toArray(new String[0]);
-			this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
-			this.index = 0;
-		} catch (Exception ioe) {
-			logger.error("Problem getting trec.topics property:", ioe);
-			return;
-		}
-		
-	}
-	
-	/** 
-	 * Constructs an instance of TRECQuery that
-	 * reads and stores all the queries from a 
-	 * the specified query file.
-	 * @param queryfile File the file containing the queries.
-	 */
-	public TRECQuery(File queryfile){
-		this(queryfile.getName());
-	}
-	
-	/** 
-	 * Constructs an instance of TRECQuery that
-	 * reads and stores all the queries from 
-	 * the specified query files.
-	 * @param queryfiles File the file containing the queries.
-	 */
-	public TRECQuery(File[] queryfiles){
-		Vector<String> vecStringQueries = new Vector<String>();
-		Vector<String> vecStringQueryIDs = new Vector<String>();
-		String[] files = new String[queryfiles.length];
-		for (int i=0;i<queryfiles.length;i++)
-			files[i] = queryfiles[i].getName();
-		if (this.extractQuery(files, vecStringQueries, vecStringQueryIDs))
-			this.topicFiles = files;
-		if (topicFiles == null)
-			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
-				+ " Check you have the correct topic files specified, and that TrecQueryTags properties are correct.");
-
-		this.queries = vecStringQueries.toArray(new String[0]);
-		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
-		this.index = 0;
+		this(ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("trec.topics", "")));
 	}
 	
 	/** 
@@ -249,18 +214,7 @@ public class TRECQuery implements QuerySource {
 	 *		all the queries.
 	 */	
 	public TRECQuery(String queryfilename){
-		Vector<String> vecStringQueries = new Vector<String>();
-		Vector<String> vecStringQueryIDs = new Vector<String>();
-		if (this.extractQuery(queryfilename, vecStringQueries, vecStringQueryIDs))
-			this.topicFiles = new String[]{queryfilename};
-		
-		if (topicFiles == null)
-			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
-				+ " Check you have the correct topic files specified, and that TrecQueryTags properties are correct.");
-		
-		this.queries = vecStringQueries.toArray(new String[0]);
-		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
-		this.index = 0;
+		this(new String[]{queryfilename});
 	}
 	
 	/** 
@@ -271,9 +225,13 @@ public class TRECQuery implements QuerySource {
 	 *		all the queries.
 	 */	
 	public TRECQuery(String[] queryfilenames){
+		assert queryfilenames != null;
+		assert queryfilenames.length > 0;
+		
 		Vector<String> vecStringQueries = new Vector<String>();
 		Vector<String> vecStringQueryIDs = new Vector<String>();
-		if (this.extractQuery(queryfilenames, vecStringQueries, vecStringQueryIDs))
+		TagSet tags = new TagSet(TagSet.TREC_QUERY_TAGS);
+		if (this.extractQuery(queryfilenames, tags, vecStringQueries, vecStringQueryIDs))
 			this.topicFiles = queryfilenames;
 		if (topicFiles == null)
 			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."

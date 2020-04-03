@@ -41,13 +41,17 @@ public abstract class TestQuerySource extends ApplicationSetupBasedTest {
 		super();
 	}
 
-	protected QuerySource processString(String fileContents) throws Exception
-	{
+	protected String writeFile(String fileContents) throws Exception {
 		File tmpFile = tmpfolder.newFile("tmpQueries.trec");
 		PrintWriter pw = new PrintWriter(Files.writeFileWriter(tmpFile));
 		pw.print(fileContents);
 		pw.close();
-		QuerySource rtr = getQuerySource(tmpFile.toString());
+		return tmpFile.toString();
+	}
+
+	protected QuerySource processString(String fileContents) throws Exception
+	{
+		QuerySource rtr = getQuerySource(writeFile(fileContents));
 		assertNotNull(rtr);
 		return rtr;
 	}

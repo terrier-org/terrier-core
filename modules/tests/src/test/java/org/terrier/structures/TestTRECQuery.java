@@ -117,6 +117,19 @@ public class TestTRECQuery extends TestQuerySource {
 		
 		assertFalse(source.hasNext());
 	}
+
+	@Test public void testSpecifics() throws Exception {
+		String fileContents  = "<start> <id>111</id> <middle> hello <skip>world </start>";
+		String fileName = super.writeFile(fileContents);
+		QuerySource tq = new TRECQuery(
+			new String[]{fileName}, 
+			"start", "id", 
+			new String[]{"middle"}, new String[]{"skip"});
+		assertTrue(tq.hasNext());
+		assertEquals("hello", tq.next());
+		assertEquals("111", tq.getQueryId());
+		assertFalse(tq.hasNext());
+	} 
 	
 	@Test public void testOneLongQID() throws Exception {
 		QuerySource source = processString("<top>\n<num> Number: 4444\n<title> defination Gravitational\n</top>");

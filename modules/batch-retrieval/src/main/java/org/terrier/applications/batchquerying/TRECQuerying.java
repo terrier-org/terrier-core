@@ -703,7 +703,7 @@ public class TRECQuerying extends AbstractQuerying {
 		try {
 			Class<? extends QuerySource> queryingClass = ApplicationSetup.getClass(
 					parserName.indexOf('.') > 0 ? parserName
-							: "org.terrier.structures." + parserName)
+							: "org.terrier.applications.batchquerying." + parserName)
 					.asSubclass(QuerySource.class);
 
 			if ((topicsFiles = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("trec.topics", ""))).length > 0) {

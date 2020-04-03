@@ -37,6 +37,7 @@ import org.terrier.indexing.tokenisation.Tokeniser;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
+import org.terrier.utility.TagSet;
 
 /** This class can be used to extract batch queries from a simpler format than the regular SGML TREC format.
   * In particular, this class reads queries, one per line, verbatim from the specified file(s).
@@ -69,11 +70,6 @@ public class SingleLineTRECQuery extends TRECQuery
 		super();
 	}
 
-	/** Reads queries from the specified file */
-	public SingleLineTRECQuery(File queryfile){
-		super(queryfile);
-	}
-
 	/** Reads queries from the specified filename */
 	public SingleLineTRECQuery(String queryfilename){
 		super(queryfilename);
@@ -87,7 +83,7 @@ public class SingleLineTRECQuery extends TRECQuery
 	/** Extracts queries from the specified filename, adding their contents to vecStringQueries and the
 	  * corresponding query ids to vecStringIds. 
 	  * @return true if some queries were successfully read */
-	public boolean extractQuery(String queryfilename, Vector<String> vecStringQueries, Vector<String> vecStringIds)
+	public boolean extractQuery(String queryfilename, TagSet ignore, Vector<String> vecStringQueries, Vector<String> vecStringIds)
 	{		
 		boolean gotSome = false;
 		final boolean QueryLineHasQueryID = Boolean.parseBoolean(ApplicationSetup.getProperty("SingleLineTRECQuery.queryid.exists","true"));
