@@ -77,7 +77,7 @@ public abstract class MultiDocumentFileCollection implements Collection {
 	/** The index in the FilesToProcess of the currently processed file.*/
 	protected int FileNumber = 0;
 	/** Encoding to be used to open all files. */
-	protected String desiredEncoding = ApplicationSetup.getProperty("trec.encoding", Charset.defaultCharset().name());
+	protected String desiredEncoding = ApplicationSetup.getProperty("trec.encoding", null);
 	/** Class to use for all documents parsed by this class */
 	protected Class<? extends Document> documentClass;
 	/** Tokeniser to use for all documents parsed by this class */
@@ -93,12 +93,14 @@ public abstract class MultiDocumentFileCollection implements Collection {
 		{
 			logger.warn("There are duplicate files to index. Your indexing setup may be invalid.");
 		}
+		checkEncoding();
 		loadDocumentClass();
 		try{
 			openNextFile();
 		} catch (IOException ioe) {
 			logger.error("Problem opening first file ", ioe);
 		}
+		
 	}
 	
 	
@@ -118,9 +120,22 @@ public abstract class MultiDocumentFileCollection implements Collection {
     	   openNewFile();
        } catch(Exception e) {
     	   logger.error("", e);
-       }
-       loadDocumentClass();
+	   }
+	   checkEncoding();
+	   loadDocumentClass();
    }
+   
+	protected void checkEncoding() {
+		if (desiredEncoding == null)
+		{
+			String defaultEncoding = Charset.defaultCharset().name();
+			if (! defaultEncoding.equals("UTF-8")
+			{
+				logger.warn("trec.encoding is not set; resorting to platform default ("+defaultEncoding+"). Indexing may be platform dependent. Recommend trec.encoding=UTF-8");
+			}
+			desiredEncoding = defaultEncoding;
+		}
+	}
    
    /** Loads the class that will supply all documents for this Collection.
 	 * Set by property <tt>trec.document.class</tt>

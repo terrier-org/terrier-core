@@ -60,7 +60,7 @@ public class TRECQuery implements QuerySource {
 		Boolean.parseBoolean(ApplicationSetup.getProperty("trecquery.ignore.desc.narr.name.tokens","true"));
 
 	/** Encoding to be used to open all files. */
-	protected static String desiredEncoding = ApplicationSetup.getProperty("trec.encoding", Charset.defaultCharset().name());
+	protected String desiredEncoding = ApplicationSetup.getProperty("trec.encoding", null);
 
 	/** The topic files used in this object */
 	protected String[] topicFiles;
@@ -187,6 +187,7 @@ public class TRECQuery implements QuerySource {
 		TagSet tags = fact.build();
 		Vector<String> vecStringQueries = new Vector<String>();
 		Vector<String> vecStringQueryIDs = new Vector<String>();
+		checkEncoding();
 		if (this.extractQuery(queryfilenames, tags, vecStringQueries, vecStringQueryIDs))
 			this.topicFiles = queryfilenames;
 		if (topicFiles == null)
@@ -231,6 +232,7 @@ public class TRECQuery implements QuerySource {
 		Vector<String> vecStringQueries = new Vector<String>();
 		Vector<String> vecStringQueryIDs = new Vector<String>();
 		TagSet tags = new TagSet(TagSet.TREC_QUERY_TAGS);
+		checkEncoding();
 		if (this.extractQuery(queryfilenames, tags, vecStringQueries, vecStringQueryIDs))
 			this.topicFiles = queryfilenames;
 		if (topicFiles == null)
@@ -240,6 +242,18 @@ public class TRECQuery implements QuerySource {
 		this.queries = vecStringQueries.toArray(new String[0]);
 		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
 		this.index = 0;
+	}
+
+	protected void checkEncoding() {
+		if (desiredEncoding == null)
+		{
+			String defaultEncoding = Charset.defaultCharset().name();
+			if (! defaultEncoding.equals("UTF-8")
+			{
+				logger.warn("trec.encoding is not set; resorting to platform default ("+defaultEncoding+"). Retrieval may be platform dependent. Recommend trec.encoding=UTF-8");
+			}
+			desiredEncoding = defaultEncoding;
+		}
 	}
 	
 	/** 
