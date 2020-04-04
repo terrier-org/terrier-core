@@ -17,13 +17,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- this only needed while trecterrier still exists -->
-                <dependency>
-                        <groupId>org.terrier</groupId>
-                        <artifactId>terrier-batch-indexers</artifactId>
-                        <version>${project.version}</version>
-                </dependency>
-
  		<dependency>
                         <groupId>uk.ac.gla.dcs.terrierteam</groupId>
                         <artifactId>jtreceval</artifactId>

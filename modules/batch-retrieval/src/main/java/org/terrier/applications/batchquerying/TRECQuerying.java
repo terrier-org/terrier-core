@@ -179,8 +179,6 @@ public class TRECQuerying extends AbstractQuerying {
 	
 	public static class Command extends AbstractQueryingCommand
 	{
-
-		@Deprecated
 		public Command() {
 			super(TRECQuerying.class);
 		}
