@@ -314,21 +314,6 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		assertArrayEquals(new int[] { 1, 0 }, docids);
 	}
 
-	
-
-	/*
-	 * Write in-memory index to disk, then load it from disk.
-	 */
-	@Test
-	public void test_todisk() throws Exception {
-		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
-		assertNotNull(mem);
-		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
-		Index mem2disk = Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
-				"memoryFields");
-		assertNotNull(mem2disk);
-	}
-
 	/*
 	 * Comparison of memory and disk indices.
 	 */
@@ -344,6 +329,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", disk, mem);
 		TestUtils.compareRetrieval("knuth", disk, mem);
 		TestUtils.compareRetrieval("turing", disk, mem);
+		disk.close();
 	}
 
 	/*
@@ -363,6 +349,8 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", mem, mem2disk);
 		TestUtils.compareRetrieval("knuth", mem, mem2disk);
 		TestUtils.compareRetrieval("turing", mem, mem2disk);
+		mem2disk.close();
+		IndexUtil.delete(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 	}
 
 	/*
@@ -384,6 +372,9 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", disk, mem2disk);
 		TestUtils.compareRetrieval("knuth", disk, mem2disk);
 		TestUtils.compareRetrieval("turing", disk, mem2disk);
+		disk.close();
+		mem2disk.close();
+		IndexUtil.delete(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 	}
 
 	/*
