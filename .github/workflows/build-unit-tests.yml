@@ -4,14 +4,31 @@ on: [push]
 
 jobs:
   build:
+    strategy:
+      matrix:
+        java: [8, 11, 13]
+        os: ['ubuntu-latest', 'macOs-latest', 'windows-latest']
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+
+    - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: ${{ matrix.java }}
+        architecture: ${{ matrix.architecture }}
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+
+    - name: Run on Windows
+      if: matrix.os == 'windows-latest'
+      run: |
+        bin\terrier.bat
+      
+    - name: Run on Linux/MacOs
+      if: matrix.os == 'ubuntu-latest' || matrix.os == 'macOs-latest'
+      run: |
+        bin\terrier
