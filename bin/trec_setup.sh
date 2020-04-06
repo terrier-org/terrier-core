@@ -88,7 +88,7 @@ else
 	CLASSPATH=$CLASSPATH:$JAR:$TERRIER_HOME/etc/logback.xml
 fi
 
-echo $CLASSPATH
+#echo $CLASSPATH
 
 
 $JAVA_HOME/bin/java $JAVA_OPTIONS -cp $CLASSPATH \
@@ -100,5 +100,6 @@ $JAVA_HOME/bin/java $JAVA_OPTIONS -cp $CLASSPATH \
 #updating the address_collection file
 find $1 -type f | sort >> $TERRIER_ETC/collection.spec
 tail $TERRIER_ETC/collection.spec
-echo "Updated collection.spec file. Please check that it contains"
+LINES=`wc -l $TERRIER_ETC/collection.spec| awk '{print $1}'`
+echo "Updated collection.spec file ($LINES lines). Please check that it contains"
 echo "all and only all the files to be indexed, or create it manually."

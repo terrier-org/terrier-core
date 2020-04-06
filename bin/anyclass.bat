@@ -33,7 +33,6 @@ SET SCRIPT=%~f0
 rem BIN contains the path of the BIN folder
 SET BIN=%~dp0
 
-set COLLECTIONPATH=%~f1
 
 REM --------------------------
 REM Load a settings batch file if it exists
@@ -43,7 +42,7 @@ CALL "%BIN%\terrier-env.bat" "%BIN%\.."
 
 :defaultvars
 REM --------------------------
-REM Derive TERRIER_HOME, TERRIER_ETC, TERRIER_LIB
+REM Derive TERRIER_HOME, TERRIER_ETC
 REM --------------------------
 
 if defined TERRIER_HOME goto terrier_etc
@@ -64,11 +63,24 @@ call "%BIN%\lcp.bat" %CLASSPATH%
 call "%BIN%\lcp.bat" "%TERRIER_ETC%\logback.xml"
 FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\modules\assemblies\target\terrier-project-*-jar-with-dependencies.jar') DO call "%BIN%\lcp.bat" "%TERRIER_HOME%\modules\assemblies\target\%%G"
 
+REM ------------------------
+REM -- Build up memory 
+REM ------------------------
+SET JAVA_MEM=""
+if defined TERRIER_HEAP_MEM SET JAVA_MEM=-Xmx%TERRIER_HEAP_MEM%
+
+
+REM ------------------------
+REM -- Build up memory 
+REM ------------------------
+SET JAVA=java
+if defined JAVA_HOME SET JAVA=%JAVA_HOME%\bin\java
+
 :dorun
 
 REM ------------------------
 REM -- Run AnyclassLauncher
 REM ------------------------
-java -Xmx512M -Dlogback.configurationFile="%TERRIER_ETC%\logback.xml" -Dterrier.home="%TERRIER_HOME%" -Dterrier.etc="%TERRIER_ETC%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% %LOGGING_OPTIONS% %JAVA_OPTIONS% %TERRIER_OPTIONS% org.terrier.applications.AnyclassLauncher %*
+%JAVA% %JAVA_MEM% -Dlogback.configurationFile="%TERRIER_ETC%\logback.xml" -Dterrier.home="%TERRIER_HOME%" -Dterrier.etc="%TERRIER_ETC%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% %LOGGING_OPTIONS% %JAVA_OPTIONS% %TERRIER_OPTIONS% org.terrier.applications.AnyclassLauncher %*
 
 if "Windows_NT"=="%OS%" endlocal

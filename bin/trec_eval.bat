@@ -42,8 +42,6 @@ CALL "%BIN%\terrier-env.bat" "%BIN%\.."
 
 :defaultvars
 
-set COLLECTIONPATH=%~f1
-
 REM --------------------------
 REM Derive TERRIER_HOME, then call anyclass.bat
 REM --------------------------
@@ -54,7 +52,7 @@ SET TERRIER_HOME=%FQ%
 echo Set TERRIER_HOME to be %TERRIER_HOME%
 
 :run_anyclass
-%TERRIER_HOME%\bin\anyclass.bat uk.ac.gla.terrier.jtreceval.trec_eval %* 
+%TERRIER_HOME%\bin\terrier.bat uk.ac.gla.terrier.jtreceval.trec_eval %* 
 
 if "Windows_NT"=="%OS%" endlocal
 

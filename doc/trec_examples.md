@@ -35,7 +35,7 @@ Here we give an example of using Terrier to index WT2G - a standard [TREC](http:
     cd terrier
 
     #get terrier setup for using a trec collection
-    bin/trec_setup.sh /local/collections/WT2G/
+    bin/trec_setup /local/collections/WT2G/
 
     #rebuild the collection.spec file correctly
     find /local/collections/WT2G/ -type f | sort |grep -v info > etc/collection.spec
@@ -75,7 +75,7 @@ This guide will provide a step-by-step example on how to use Terrier for indexin
 
 In the Terrier folder, use trec\_setup.sh to generate a collection.spec for indexing the collection:
 
-    $ ./bin/trec_setup.sh /local/collections/Blogs06/
+    $ ./bin/trec_setup /local/collections/Blogs06/
     $ find /local/collections/Blogs06/ -type f  | grep 'permalinks-' | sort > etc/collection.spec
 
 This will result in the creation of a `collection.spec` file, in the `etc` directory, containing a list of the files in the `/local/collections/Blog06/` directory. At this stage, you should check the `etc/collection.spec`, to ensure that it only contains files that should be indexed, and that they are sorted (ie `20051206/permalinks-000.gz` is the first file).
@@ -161,8 +161,6 @@ We can now evaluate the retrieval performance of the generated run using the qre
     Time elapsed: 3.177 seconds.
 
 Note that more evaluation measures are stored in the file `var/results/PL2c1.0_0.eval`.
-
-[]()
 
 Common TREC Settings
 --------------------

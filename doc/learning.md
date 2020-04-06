@@ -81,7 +81,7 @@ In each of the following, we provide the exact commands to be copied & pasted in
 Firstly, we setup Terrier. This also generates configuration files for learning to rank, namely `features.list` and `jforests.properties` in the `etc/` folder.
 
 ```shell
-    bin/trec_setup.sh $CORPUS
+    bin/trec_setup $CORPUS
 ```
 
 Next, we need to create an index, with fields and blocks enabled. For brevity, we set the appropriate properties on the command line:

@@ -85,6 +85,12 @@ else
 	CLASSPATH=$CLASSPATH:$JAR:$TERRIER_ETC/logback.xml
 fi
 
+JAVA_MEM=""
+if [ -n "$TERRIER_HEAP_MEM" ];
+then
+    JAVA_MEM=-Xmx$TERRIER_HEAP_MEM
+fi
+
 if [ ! -n "$TERRIER_HEAP_MEM" ];
 then
     TERRIER_HEAP_MEM=1024M
@@ -117,7 +123,7 @@ do
 done
 
 
-$JAVA_HOME/bin/java -Xmx$TERRIER_HEAP_MEM $JAVA_OPTIONS $TERRIER_OPTIONS \
+$JAVA_HOME/bin/java $JAVA_MEM $JAVA_OPTIONS $TERRIER_OPTIONS \
 	 -Dterrier.etc=$TERRIER_ETC \
 	 -Dterrier.home=$TERRIER_HOME \
      -Dterrier.setup=$TERRIER_ETC/terrier.properties \

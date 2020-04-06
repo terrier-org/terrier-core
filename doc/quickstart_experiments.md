@@ -42,7 +42,7 @@ In order to be able to use Terrier on Windows you simply have to extract the con
 Using Terrier
 -------------
 
-Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` command-line script. While in Terrier's directory, type `bin/terrier` to see the available commands:
+Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` command-line script. While in Terrier's directory, type `bin/terrier` to see the available commands (`bin\terrier.bat` on Windows):
 
 	$ bin/terrier 
 	Terrier version 5.2
@@ -103,10 +103,10 @@ This guide will provide step-by-step instructions for using Terrier to index a T
     cd terrier-project-5.2
 ```
 
-2. Setup Terrier for using a TREC test collection by calling
+2. Setup Terrier for using a TREC test collection by using the `trec_setup` script (`trec_setup.bat` on Windows)
 
 ```shell
-  bin/trec_setup.sh <absolute-path-to-collection-files>
+  bin/trec_setup <absolute-path-to-collection-files>
 ```
 
 In our example we are using a collection called VASWANI_NPL located at `share/vaswani_npl/`. It follows the format of a traditional [TREC](https://trec.nist.gov/) test collection, with a corpus file, topics, and relevance assessments (qrels), all using the same TREC format.
@@ -122,7 +122,7 @@ In our example we are using a collection called VASWANI_NPL located at `share/va
 To setup for this corpus, run:
 
 ```shell
-bin/trec_setup.sh share/vaswani_npl/corpus/
+bin/trec_setup share/vaswani_npl/corpus/
 ```
 
 This will result in the creation of a `collection.spec` file in the `etc` directory. This file contains a list of the document files contained in the specified corpus directory.
