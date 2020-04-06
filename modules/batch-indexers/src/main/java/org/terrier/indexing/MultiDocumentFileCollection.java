@@ -129,7 +129,7 @@ public abstract class MultiDocumentFileCollection implements Collection {
 		if (desiredEncoding == null)
 		{
 			String defaultEncoding = Charset.defaultCharset().name();
-			if (! defaultEncoding.equals("UTF-8")
+			if (! defaultEncoding.equals("UTF-8"))
 			{
 				logger.warn("trec.encoding is not set; resorting to platform default ("+defaultEncoding+"). Indexing may be platform dependent. Recommend trec.encoding=UTF-8");
 			}
