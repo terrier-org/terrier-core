@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.models.WeightingModel;
+import org.terrier.matching.models.WeightingModelLibrary;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Index;
@@ -44,6 +45,7 @@ import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.postings.FieldOnlyIterablePosting;
 import org.terrier.structures.postings.IterablePosting;
+
 
 /** This class implements a single indexing token as a matching op.
  * @since 5.0
@@ -109,6 +111,9 @@ public class SingleTermOp extends Operator {
 		IterablePosting postingList = invertedIndex.getPostings((Pointer) t);
 		if (field != null)
 		{
+			//check that we have fields in this index
+			WeightingModelLibrary.checkForFields(index.getCollectionStatistics());
+			//check that we have the correct field in this index.
 			int fieldId = IndexUtil.getFieldId(index, "inverted", field);
 			if (fieldId == -1)
 				throw new IOException("Unknown field " + field + " - known fields are " + 
