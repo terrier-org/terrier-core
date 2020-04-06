@@ -32,4 +32,4 @@ jobs:
     - name: Run on Linux/MacOs
       if: matrix.os == 'ubuntu-latest' || matrix.os == 'macOs-latest'
       run: |
-        bin\terrier
+        bin/terrier
