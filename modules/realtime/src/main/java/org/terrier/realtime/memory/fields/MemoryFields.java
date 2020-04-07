@@ -61,71 +61,7 @@ public abstract class MemoryFields extends MemoryIndex {
     public FieldDocumentIndex getDocumentIndex() {
         return (FieldDocumentIndex) document;
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public void collectProperties(Index memory, Index index, CompressionConfiguration compressionConfigInverted, CompressionConfiguration compressionConfigDirect) {
-
-        /*
-         * index
-         */
-        index.getProperties().put("index.terrier.version", ApplicationSetup.TERRIER_VERSION);
-        index.getProperties().put("index.created", String.valueOf(System.currentTimeMillis()));
-
-        /*
-         * num.{Documents,Pointers,Terms,Tokens} max.term.length
-         */
-        index.getProperties().put("num.Documents", String.valueOf(this.getCollectionStatistics().getNumberOfDocuments()));
-        index.getProperties().put("num.Pointers", String.valueOf(this.getCollectionStatistics().getNumberOfPointers()));
-        index.getProperties().put("num.Terms", String.valueOf(this.getCollectionStatistics().getNumberOfUniqueTerms()));
-        index.getProperties().put("num.Tokens", String.valueOf(this.getCollectionStatistics().getNumberOfTokens()));
-        index.getProperties().put("max.term.length", String.valueOf(ApplicationSetup.MAX_TERM_LENGTH));
-
-        /*
-         * index.lexicon
-         * structureName,className,paramTypes,paramValues
-         */
-
-        index.addIndexStructure("lexicon", "org.terrier.structures.FSOMapFileLexicon", new String[] { "java.lang.String", "org.terrier.structures.IndexOnDisk" }, new String[] { "structureName", "index" });
-        index.addIndexStructure("lexicon-keyfactory", "org.terrier.structures.seralization.FixedSizeTextFactory", new String[] { "java.lang.String" }, new String[] { "${max.term.length}" });
-        index.addIndexStructure("lexicon-valuefactory", "org.terrier.structures.FieldLexiconEntry$Factory", new String[] { "java.lang.String" }, new String[] { "${index.inverted.fields.count}" });
-        index.addIndexStructureInputStream("lexicon", "org.terrier.structures.FSOMapFileLexicon$MapFileLexiconIterator", new String[] { "java.lang.String", "org.terrier.structures.IndexOnDisk" }, new String[] { "structureName", "index" });
-        index.addIndexStructureInputStream("lexicon-entry", "org.terrier.structures.FSOMapFileLexicon$MapFileLexiconEntryIterator", new String[] { "java.lang.String", "org.terrier.structures.IndexOnDisk" }, new String[] { "structureName", "index" });
-
-        /*
-         * index.document
-         * structureName,className,paramTypes,paramValues
-         */
-        
-        index.addIndexStructure("document", "org.terrier.structures.FSAFieldDocumentIndex", new String[] { "org.terrier.structures.IndexOnDisk", "java.lang.String" }, new String[] { "index", "structureName" });
-        index.addIndexStructure("document-factory", "org.terrier.structures.FieldDocumentIndexEntry$Factory", new String[] { "java.lang.String" }, new String[] { "${index.inverted.fields.count}" });
-        index.addIndexStructureInputStream("document", "org.terrier.structures.FSADocumentIndex$FSADocumentIndexIterator", new String[] { "org.terrier.structures.IndexOnDisk", "java.lang.String" }, new String[] { "index", "structureName" });
-        /*
-         * index.inverted
-         * structureName,className,paramTypes,paramValues
-         */
-
-        compressionConfigInverted.writeIndexProperties(index, "lexicon-entry-inputstream");
-		compressionConfigDirect.writeIndexProperties(index, "document-inputstream");
-        //index.addIndexStructure("inverted", "org.terrier.structures.InvertedIndex", new String[] { "org.terrier.structures.Index", "java.lang.String", "org.terrier.structures.DocumentIndex", "java.lang.Class" }, new String[] { "index", "structureName", "document", "org.terrier.structures.postings.FieldIterablePosting" });
-        //index.addIndexStructureInputStream("inverted", "org.terrier.structures.InvertedIndexInputStream", new String[] { "org.terrier.structures.Index", "java.lang.String", "java.util.Iterator", "java.lang.Class" }, new String[] { "index", "structureName", "lexicon-entry-inputstream", "org.terrier.structures.postings.FieldIterablePosting" });
-        index.getProperties().put("index.inverted.fields.count", String.valueOf(fieldtags.length));
-        index.getProperties().put("index.inverted.fields.names", String.join(",",fieldtags));
-
-        /*
-         * index.meta
-         * structureName,className,paramTypes,paramValues
-         */
-
-        index.addIndexStructure("meta", "org.terrier.structures.CompressingMetaIndex", new String[] { "org.terrier.structures.IndexOnDisk", "java.lang.String" }, new String[] { "index", "structureName" });
-        index.addIndexStructureInputStream("meta", "org.terrier.structures.CompressingMetaIndex$InputStream", new String[] { "org.terrier.structures.IndexOnDisk", "java.lang.String" }, new String[] { "index", "structureName" });
-       
-        
-        /*for (Object o : index.getProperties().keySet()) {
-        	System.err.println(o.toString()+" "+index.getProperties().getProperty((String)o));
-        }*/
-    }
-
+    
     /*
      * Term pipeline.
      */
@@ -134,7 +70,7 @@ public abstract class MemoryFields extends MemoryIndex {
     protected FieldDocumentPostingList fdpl;
     protected Set<String>              docFields;
 
-   protected TermPipeline getEndOfPipeline() {
+    protected TermPipeline getEndOfPipeline() {
         return new TermProcessor();
     }
 

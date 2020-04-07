@@ -54,6 +54,7 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
@@ -482,6 +483,9 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", disk, mem2disk);
 		TestUtils.compareRetrieval("knuth", disk, mem2disk);
 		TestUtils.compareRetrieval("turing", disk, mem2disk);
+		disk.close();
+		mem2disk.close();
+		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memory");
 	}
 	
 	@Test

@@ -76,7 +76,8 @@ public class MemoryDocumentIndexFields extends MemoryDocumentIndex implements Fi
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        fdie.setFieldLengths(getFieldLengths(docid));
+		fdie.setFieldLengths(getFieldLengths(docid));
+		fdie.setOffset(docid, (byte)0);
         return fdie;
     }
     

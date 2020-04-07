@@ -52,13 +52,19 @@ import org.terrier.realtime.TestUtils;
 import org.terrier.realtime.memory.*;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
+import org.terrier.structures.DocumentIndexEntry;
+import org.terrier.structures.FieldDocumentIndexEntry;
+import org.terrier.structures.FieldDocumentIndex;
+import org.terrier.structures.postings.*;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndex;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
+
 
 /** Unit tests for IndexInMemory. */
 public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
@@ -107,6 +113,9 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		Iterator<DocumentIndex> document_iterator = (Iterator<DocumentIndex>) index
 				.getIndexStructureInputStream("document");
 		assertNotNull(document_iterator);
+
+		PostingIndex<?> direct = (PostingIndex<?>) index.getIndexStructure("direct");
+		assertNotNull(direct);
 	}
 
 	/*
@@ -277,6 +286,14 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		assertEquals(4, cs.getNumberOfUniqueTerms());
 		assertEquals(6l, cs.getNumberOfPointers());
 		assertEquals(4.0d, cs.getAverageDocumentLength(), 0.0d);
+
+		PostingIndex<?> direct = (PostingIndex<?>) index.getIndexStructure("direct");
+		assertNotNull(direct);
+		DocumentIndexEntry doie = index.getDocumentIndex().getDocumentEntry(0);
+		assertNotNull(doie);
+		assertTrue(doie instanceof FieldDocumentIndexEntry);
+		IterablePosting ip = direct.getPostings(doie);
+		assertTrue(ip instanceof FieldPosting);
 	}
 
 	/*
@@ -350,7 +367,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("knuth", mem, mem2disk);
 		TestUtils.compareRetrieval("turing", mem, mem2disk);
 		mem2disk.close();
-		IndexUtil.delete(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
+		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 	}
 
 	/*
@@ -374,7 +391,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("turing", disk, mem2disk);
 		disk.close();
 		mem2disk.close();
-		IndexUtil.delete(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
+		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 	}
 
 	/*

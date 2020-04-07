@@ -97,17 +97,22 @@ public class TestMemoryDirect {
 	public void checkDocContents(int docid, MemoryIndex index, String[] terms) throws Exception {
         assertNotNull(index.getDirectIndex());
         DocumentIndexEntry die = index.getDocumentIndex().getDocumentEntry(docid);
-        assertNotNull(die);
-        IterablePosting ip = ((MemoryDirectIndex)index.getDirectIndex()).getPostings(docid);
-        assertNotNull(ip);
-        TIntHashSet id1 = new TIntHashSet( PostingUtil.getIds(ip) );
-        assertEquals(terms.length, id1.size());
-        for(String t : terms)
-        {
-            LexiconEntry le = index.getLexicon().getLexiconEntry(t);
-            assertNotNull("LexiconEntry for term " + t + " not found", le);
-            assertTrue("Term " + t + " is missing in document " +docid, id1.contains(le.getTermId()));
-        }
+		assertNotNull(die);
+		for(IterablePosting ip : new IterablePosting[]{
+			((MemoryDirectIndex)index.getDirectIndex()).getPostings(docid),
+			index.getDirectIndex().getPostings(die)
+		})
+		{
+			assertNotNull(ip);
+			TIntHashSet id1 = new TIntHashSet( PostingUtil.getIds(ip) );
+			assertEquals(terms.length, id1.size());
+			for(String t : terms)
+			{
+				LexiconEntry le = index.getLexicon().getLexiconEntry(t);
+				assertNotNull("LexiconEntry for term " + t + " not found", le);
+				assertTrue("Term " + t + " is missing in document " +docid, id1.contains(le.getTermId()));
+			}
+		}
     }
 
 	

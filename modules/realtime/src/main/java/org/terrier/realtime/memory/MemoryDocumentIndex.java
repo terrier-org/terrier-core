@@ -72,6 +72,7 @@ public class MemoryDocumentIndex implements DocumentIndex,Serializable {
 	/** {@inheritDoc} */
 	public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
 		BasicDocumentIndexEntry die = new BasicDocumentIndexEntry();
+		die.setOffset(docid, (byte)0);
 		die.setDocumentLength(docLengths.get(docid));
 		return die;
 	}

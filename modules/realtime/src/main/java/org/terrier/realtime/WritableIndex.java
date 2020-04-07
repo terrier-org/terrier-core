@@ -44,10 +44,5 @@ public interface WritableIndex {
 	 * Write all of the index structures to disk at the specified location
 	 */
 	public Index write(String path, String prefix) throws IOException;
-	
-	/**
-	 * Write the index properties to the .properties file.
-	 */
-	public void collectProperties(Index memory, Index newIndex, CompressionConfiguration compressionInvertedConfig, CompressionConfiguration compressionDirectConfig);
-	
+		
 }

@@ -251,6 +251,15 @@ public class TestUtils {
 		assertEquals(docindex1.getNumberOfDocuments(),docindex2.getNumberOfDocuments());
 		for (int i=0;i<docindex1.getNumberOfDocuments();i++)
 			assertEquals(docindex1.getDocumentLength(i),docindex2.getDocumentLength(i));
+
+		if (index1.hasIndexStructure("direct"))
+		{
+			assertTrue("index2 does not have direct index", index2.hasIndexStructure("direct"));
+			PostingIndex<?> pi1 = index1.getDirectIndex();
+			PostingIndex<?> pi2 = index2.getDirectIndex();			
+			assertNotNull(pi1);
+			assertNotNull("index2 does not have direct index", pi2);
+		}
 	}
 	
 	/*

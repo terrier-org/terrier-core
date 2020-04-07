@@ -42,6 +42,7 @@ import org.terrier.indexing.Document;
 import org.terrier.querying.IndexRef;
 import org.terrier.realtime.UpdatableIndex;
 import org.terrier.realtime.WritableIndex;
+import org.terrier.structures.indexing.DiskIndexWriter;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.BitIndexPointer;
@@ -256,7 +257,20 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		}
 	}
 	
-	
+	public boolean hasIndexStructure(String structureName) {
+		switch (structureName) {
+			case "direct": return true;
+			case "inverted": return true;
+			case "lexicon": return true;
+			case "document": return true;
+			case "meta": return true;
+			case "direct-inputstream": return true;
+			case "inverted-inputstream": return true;
+			case "lexicon-inputstream": return true;
+			case "document-inputstream": return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Index a new document.
@@ -288,9 +302,9 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 					tf));
 
 			// Add document posting to inverted file.
-			inverted.add(termid, docid,
-					tf);
+			inverted.add(termid, docid, tf);
 			
+			//Add posting to direct index
 			direct.add(docid, termid, tf);
 		}
 
@@ -453,318 +467,24 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	public Index write(String path, String prefix) throws IOException {
 
 		synchronized(indexingLock) {
-		
-		logger.info("***REALTIME*** MemoryIndex write path: " + path
-				+ " prefix: " + prefix);
-
-		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", new String[0], 0,0);
-		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", new String[0], 0, 0);
-		
-		if (stats.getNumberOfDocuments()==0) {
-			logger.info("***REALTIME*** MemoryIndex write aborted, index has no documents in it yet!");
-			return this;
-		}
-		
-		// FIXME: increase visibility using logger.debug
-		
-		
-		
-		// Make a new index to flush memory to.
-		IndexOnDisk newIndex = Index.createNewIndex(path, prefix);
-
-		/*
-		 * document index & meta index
-		 */
-
-		Iterator<String[]> metaIter = (Iterator<String[]>) this
-				.getIndexStructureInputStream("meta");
-
-
-		String temp = "";
-		for (String a : ((MetaIndex)this.getIndexStructure("meta")).getKeys()) temp = temp+" "+a;
-		//logger.info("Meta Keys: "+temp);
-		
-		CompressingMetaIndexBuilder metaOut = new CompressingMetaIndexBuilder(
-				newIndex, ((MetaIndex)this.getIndexStructure("meta")).getKeys(),
-				ArrayUtils.parseCommaDelimitedInts(ApplicationSetup
-						.getProperty("indexer.meta.forward.keylens", "")),
-				ArrayUtils.parseCommaDelimitedString(ApplicationSetup
-						.getProperty("indexer.meta.reverse.keys", "")));
-
-		
-		/*
-		 * Direct Index and Document Structure
-		 */
-		
-		AbstractPostingOutputStream directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
-				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
-		
-		DocumentIndexBuilder docOut = new DocumentIndexBuilder(newIndex,
-				"document");
-		
-		PostingIndexInputStream postingIterator = direct.iterator();
-		
-		int docid =0;
-		while (postingIterator.hasNext()) {
-			IterablePosting directPosting = postingIterator.next();
+			logger.info("***REALTIME*** MemoryIndex write path: " + path
+					+ " prefix: " + prefix);
 			
-			BitIndexPointer pointer = directIndexBuilder.writePostings(directPosting);
-			
-			DocumentIndexEntry die = document.getDocumentEntry(docid);
-			die.setBitIndexPointer(pointer);
-			docOut.addEntryToBuffer(die);
-			docid++;
-		}
-		
-		directIndexBuilder.close();
-		docOut.close();
-		
-		while(metaIter.hasNext()){
-			metaOut.writeDocumentEntry(metaIter.next());
-		}
-		
-		metaOut.close();
+			if (stats.getNumberOfDocuments()==0) {
+				logger.info("***REALTIME*** MemoryIndex write aborted, index has no documents in it yet!");
+				return this;
+			}
 
-		/*
-		 * inverted index and lexicon
-		 */
+			Index newIndex = makeDiskIndexWriter(path, prefix).write(this);
 
-		PostingIndexInputStream piis = (PostingIndexInputStream) this
-				.getIndexStructureInputStream("inverted");
-
-		Iterator<Entry<String, LexiconEntry>> lexIn = (Iterator<Entry<String, LexiconEntry>>) this
-				.getIndexStructureInputStream("lexicon");
-
-		FSOMapFileLexiconOutputStream lexOut = new FSOMapFileLexiconOutputStream(
-				newIndex, "lexicon", new FixedSizeTextFactory(
-						ApplicationSetup.MAX_TERM_LENGTH),
-				BasicLexiconEntry.Factory.class);
-
-		BasicLexiconEntry.Factory lexiconEntryFactory = new BasicLexiconEntry.Factory();
-
-		
-		AbstractPostingOutputStream invOut = compressionInvertedConfig.getPostingOutputStream(
-				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "inverted" + compressionInvertedConfig.getStructureFileExtension());
-		
-
-		// write lexicon & inverted
-		while (lexIn.hasNext()) {
-
-			// get the next term from the mem:lexicon
-			Entry<String, LexiconEntry> lexTermEntry = lexIn.next();
-
-			// get its corresponding posting list from the mem: inverted index
-			IterablePosting postings = piis.next();
-
-			// write the posting to disk, and get the pointer for these
-			BitIndexPointer newPointer = invOut.writePostings(postings);
-
-			// make new lexicon entry
-			LexiconEntry newLe = lexiconEntryFactory.newInstance();
-
-			// populate its statistics
-			newLe.add(lexTermEntry.getValue());
-			newLe.setTermId(lexTermEntry.getValue().getTermId());
-
-			// populate its pointer
-			newLe.setPointer(newPointer);
-
-			// write out to disk
-			lexOut.writeNextEntry(lexTermEntry.getKey(), newLe);
-		}
-		IndexUtil.close(lexIn);
-		IndexUtil.close(lexOut);
-		IndexUtil.close(piis);
-		IndexUtil.close(invOut);
-
-		
-		
-
-		
-		/*
-		 * Index properties.
-		 */
-
-		// write out index properties to file
-		newIndex.flush();
-
-		// setting index properties appropriately
-		collectProperties(this, newIndex, compressionInvertedConfig,compressionDirectConfig);
-
-		/*
-		 * Tidy up.
-		 */
-
-		// optimise lexicon
-		LexiconBuilder.optimise(newIndex, "lexicon");
-
-		// final write
-		newIndex.flush();
-
-		// FIXME: why?
-		logger.debug("***REALTIME*** MemoryIndex write END");
-		return newIndex;
-		
+			// FIXME: why?
+			logger.debug("***REALTIME*** MemoryIndex write END");
+			return newIndex;
 		}
 	}
 
-	/**
-	 * Collect index properties.
-	 */
-	public void collectProperties(Index memory,
-			Index newIndex,
-			CompressionConfiguration compressionInv,
-			CompressionConfiguration compressionDir) {
-
-		/*
-		 * index
-		 */
-		newIndex.getProperties().put("index.terrier.version",
-				ApplicationSetup.TERRIER_VERSION);
-		newIndex.getProperties().put("index.created",
-				String.valueOf(System.currentTimeMillis()));
-
-		/*
-		 * num.{Documents,Pointers,Terms,Tokens} max.term.length
-		 */
-		newIndex.getProperties().put(
-				"num.Documents",
-				String.valueOf(memory.getCollectionStatistics()
-						.getNumberOfDocuments()));
-		newIndex.getProperties().put(
-				"num.Pointers",
-				String.valueOf(memory.getCollectionStatistics()
-						.getNumberOfPointers()));
-		newIndex.getProperties().put(
-				"num.Terms",
-				String.valueOf(memory.getCollectionStatistics()
-						.getNumberOfUniqueTerms()));
-		newIndex.getProperties().put(
-				"num.Tokens",
-				String.valueOf(memory.getCollectionStatistics()
-						.getNumberOfTokens()));
-		newIndex.getProperties().put("max.term.length",
-				String.valueOf(ApplicationSetup.MAX_TERM_LENGTH));
-
-		/*
-		 * index.lexicon
-		 */
-		newIndex.addIndexStructure(
-				// structureName,className,paramTypes,paramValues
-				"lexicon", "org.terrier.structures.FSOMapFileLexicon",
-				new String[] { "java.lang.String",
-						"org.terrier.structures.IndexOnDisk" }, new String[] {
-						"structureName", "index" });
-		newIndex.addIndexStructure(
-				// structureName,className,paramTypes,paramValues
-				"lexicon-keyfactory",
-				"org.terrier.structures.seralization.FixedSizeTextFactory",
-				new String[] { "java.lang.String" },
-				new String[] { "${max.term.length}" });
-		newIndex.addIndexStructureInputStream(
-				// structureName,className,paramTypes,paramValues
-				"lexicon",
-				"org.terrier.structures.FSOMapFileLexicon$MapFileLexiconIterator",
-				new String[] { "java.lang.String",
-						"org.terrier.structures.IndexOnDisk" }, new String[] {
-						"structureName", "index" });
-		newIndex.addIndexStructureInputStream(
-				// structureName,className,paramTypes,paramValues
-				"lexicon-entry",
-				"org.terrier.structures.FSOMapFileLexicon$MapFileLexiconEntryIterator",
-				new String[] { "java.lang.String",
-						"org.terrier.structures.IndexOnDisk" }, new String[] {
-						"structureName", "index" });
-
-		// newIndex.getProperties().put("index.lexicon.bsearchshortcut","charmap");
-		// newIndex.getProperties().put("index.lexicon.termids","aligned");
-
-		/*
-		 * index.document
-		 */
-		newIndex.addIndexStructure(
-				// structureName,className,paramTypes,paramValues
-				"document", "org.terrier.structures.FSADocumentIndex",
-				new String[] { "org.terrier.structures.IndexOnDisk",
-						"java.lang.String" }, new String[] { "index",
-						"structureName" });
-		
-		if(memory.getDocumentIndex() instanceof MemoryDocumentIndexMap)
-			newIndex.addIndexStructure(
-					// structureName,className,paramTypes,paramValues
-					"document-factory",
-					"org.terrier.structures.NonIncrementalDocumentIndexEntry$Factory",
-					new String[] {}, new String[] {});
-		else
-			newIndex.addIndexStructure(
-					// structureName,className,paramTypes,paramValues
-					"document-factory",
-					"org.terrier.structures.BasicDocumentIndexEntry$Factory",
-					new String[] {}, new String[] {});
-		
-		newIndex.addIndexStructureInputStream(
-				// structureName,className,paramTypes,paramValues
-				"document",
-				"org.terrier.structures.FSADocumentIndex$FSADocumentIndexIterator",
-				new String[] { "org.terrier.structures.IndexOnDisk",
-						"java.lang.String" }, new String[] { "index",
-						"structureName" });
-
-		/*
-		 * index.inverted
-		 */
-		compressionInv.writeIndexProperties(newIndex, "lexicon-entry-inputstream");
-		compressionDir.writeIndexProperties(newIndex, "document-inputstream");
-		
-		
-		
-		/*newIndex.addIndexStructure(
-				// structureName,className,paramTypes,paramValues
-				"inverted",
-				"org.terrier.structures.BitPostingIndex",
-				new String[] { "org.terrier.structures.Index",
-						"java.lang.String",
-						"org.terrier.structures.DocumentIndex",
-						"java.lang.Class" },
-				new String[] { "index", "structureName", "document",
-						"org.terrier.structures.postings.BasicIterablePosting" });
-		newIndex.addIndexStructureInputStream(
-				// structureName,className,paramTypes,paramValues
-				"inverted",
-				"org.terrier.structures.InvertedIndexInputStream",
-				new String[] { "org.terrier.structures.Index",
-						"java.lang.String", "java.util.Iterator",
-						"java.lang.Class" },
-				new String[] { "index", "structureName",
-						"lexicon-entry-inputstream",
-						"org.terrier.structures.postings.BasicIterablePosting" });
-
-		newIndex.getProperties().put("index.inverted.fields.count", "0");
-		newIndex.getProperties().put("index.inverted.fields.names", "");*/
-
-		/*
-		 * index.meta
-		 */
-		newIndex.addIndexStructure(
-				// structureName,className,paramTypes,paramValues
-				"meta", "org.terrier.structures.CompressingMetaIndex",
-				new String[] { "org.terrier.structures.IndexOnDisk",
-						"java.lang.String" }, new String[] { "index",
-						"structureName" });
-		newIndex.addIndexStructureInputStream(
-				// structureName,className,paramTypes,paramValues
-				"meta",
-				"org.terrier.structures.CompressingMetaIndex$InputStream",
-				new String[] { "org.terrier.structures.IndexOnDisk",
-						"java.lang.String" }, new String[] { "index",
-						"structureName" });
-		
-		/*
-		 * Term Pipeline
-		 */
-		newIndex.getProperties().put("termpipelines",
-				ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer").trim());
-		
+	protected DiskIndexWriter makeDiskIndexWriter(String path, String prefix) {
+		return new DiskIndexWriter(path, prefix).withDirect();
 	}
 
 	/** {@inheritDoc} */
