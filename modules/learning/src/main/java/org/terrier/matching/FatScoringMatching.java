@@ -53,10 +53,8 @@ public class FatScoringMatching extends AbstractScoringMatching {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(FatScoringMatching.class);
 
-Ø
 	/** check for weighting models giving NaN scores */
 	static final boolean DEBUG = true;
-	
 	
 	protected static final boolean SCORE_ONLY_FROM_MQT = Boolean.parseBoolean(ApplicationSetup.getProperty("fat.scoring.only.mqt", "false"));
 	
