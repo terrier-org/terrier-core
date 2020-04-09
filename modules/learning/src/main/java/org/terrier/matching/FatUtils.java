@@ -155,7 +155,7 @@ public class FatUtils {
             	frs.setKeyFrequencies(new double[0]);
             	frs.setQueryTerms(new String[0]);
 				
-				System.err.println("No found terms for this query");
+				logger.warn("No found terms for this query");
 				return;
 			}
 			
@@ -294,7 +294,7 @@ public class FatUtils {
                 frs.setKeyFrequencies(new double[0]);
                 frs.setQueryTerms(new String[0]);
 				
-				System.err.println("No found terms for this query");
+				logger.warn("No found terms for this query");
 				return;
 			}
 			
@@ -318,7 +318,7 @@ public class FatUtils {
 					postingClass[j] = ApplicationSetup.getClass(in.readUTF()).asSubclass(WritablePosting.class);
 				Class<? extends EntryStatistics> statisticsClass = ApplicationSetup.getClass(in.readUTF()).asSubclass(EntryStatistics.class);
 				keyFrequencies[j] = in.readDouble();
-				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
+				logger.debug(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
 					" es="+statisticsClass.getSimpleName() /*+
 					" es.isAssignableFrom(FieldEntryStatistics.class)="+statisticsClass.isAssignableFrom(FieldEntryStatistics.class) + 
 					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass)*/);
@@ -450,7 +450,7 @@ public class FatUtils {
                 frs.setKeyFrequencies(new double[0]);
                 frs.setQueryTerms(new String[0]);
 				
-				System.err.println("No found terms for this query");
+				logger.warn("No found terms for this query");
 				return;
 			}
 			
@@ -477,7 +477,7 @@ public class FatUtils {
 					postingClass[j] = ApplicationSetup.getClass(in.readUTF()).asSubclass(WritablePosting.class);
 				Class<? extends EntryStatistics> statisticsClass = ApplicationSetup.getClass(in.readUTF()).asSubclass(EntryStatistics.class);
 				keyFrequencies[j] = in.readDouble();
-				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
+				logger.debug(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
 					" es="+statisticsClass.getSimpleName() /*+
 					" es.isAssignableFrom(FieldEntryStatistics.class)="+statisticsClass.isAssignableFrom(FieldEntryStatistics.class) + 
 					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass)*/);
@@ -618,7 +618,7 @@ public class FatUtils {
                 frs.setKeyFrequencies(new double[0]);
                 frs.setQueryTerms(new String[0]);
 				
-				System.err.println("No found terms for this query");
+				logger.warn("No found terms for this query");
 				return;
 			}
 			
@@ -651,7 +651,7 @@ public class FatUtils {
 					postingClass[j] = ApplicationSetup.getClass(in.readUTF()).asSubclass(WritablePosting.class);
 				Class<? extends EntryStatistics> statisticsClass = ApplicationSetup.getClass(in.readUTF()).asSubclass(EntryStatistics.class);
 				keyFrequencies[j] = in.readDouble();
-				System.err.println(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
+				logger.debug(queryTerms[j] + " f=" +fields[j]  + " b="+blocks[j] +" postings="+postingClass[j] + 
 					" es="+statisticsClass.getSimpleName() /*+
 					" es.isAssignableFrom(FieldEntryStatistics.class)="+statisticsClass.isAssignableFrom(FieldEntryStatistics.class) + 
 					" FieldEntryStatistics.class.isAssignableFrom(es)="+FieldEntryStatistics.class.isAssignableFrom(statisticsClass)*/);

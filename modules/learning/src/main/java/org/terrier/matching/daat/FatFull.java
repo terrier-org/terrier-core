@@ -125,7 +125,6 @@ public class FatFull extends Full {
         	final int[] fieldLengths =  ((FieldPosting)p).getFieldLengths();
         	final int[] newFieldLengths = new int[fieldCount];
         	System.arraycopy(fieldLengths, 0, newFieldLengths, 0, fieldCount);
-        	//System.err.println(fieldLengths);
         	assert fieldLengths.length == super.collectionStatistics.getNumberOfFields() 
         		: " posting "+p +" for docid " + p.getId() + " has wrong number of fields for length";
         	((FieldPosting)wp).setFieldLengths(newFieldLengths);
