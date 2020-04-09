@@ -48,7 +48,7 @@ REM --------------------------
 if defined TERRIER_HOME goto terrier_etc
 CALL "%BIN%\fq.bat" "%BIN%\.."
 SET TERRIER_HOME=%FQ%
-echo Set TERRIER_HOME to be %TERRIER_HOME%
+REM echo Set TERRIER_HOME to be %TERRIER_HOME%
 
 :terrier_etc
 if defined TERRIER_ETC goto classpath
@@ -71,7 +71,7 @@ if defined TERRIER_HEAP_MEM SET JAVA_MEM=-Xmx%TERRIER_HEAP_MEM%
 
 
 REM ------------------------
-REM -- Build up memory 
+REM -- Identify java binary
 REM ------------------------
 SET JAVA=java
 if defined JAVA_HOME SET JAVA=%JAVA_HOME%\bin\java

@@ -58,7 +58,7 @@ then
 	fullPath TEMPVAR
 	#terrier folder is folder above
 	TERRIER_HOME=`dirname $TEMPVAR`
-	echo "Setting TERRIER_HOME to $TERRIER_HOME"
+	#echo "Setting TERRIER_HOME to $TERRIER_HOME"
 fi
 
 #setup TERRIER_ETC
@@ -76,7 +76,7 @@ then
 	TEMPVAR=`dirname $TEMPVAR`
 	#then java install prefix is folder above
 	JAVA_HOME=`dirname $TEMPVAR`
-	echo "Setting JAVA_HOME to $JAVA_HOME"
+	#echo "Setting JAVA_HOME to $JAVA_HOME"
 fi
 
 #setup CLASSPATH

@@ -66,11 +66,17 @@ FOR /f "tokens=*" %%G IN ('dir /b %TERRIER_HOME%\modules\assemblies\target\terri
 call "%BIN%\lcp.bat" "%TERRIER_HOME%\etc\logback.xml"
 
 
+REM ------------------------
+REM -- Identify java binary
+REM ------------------------
+SET JAVA=java
+if defined JAVA_HOME SET JAVA=%JAVA_HOME%\bin\java
+
 echo %CLASSPATH%
 REM ------------------------
 REM -- Run TRECSetup
 REM ------------------------
-java -Dterrier.home="%TERRIER_HOME%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% org.terrier.applications.batchquerying.TRECSetup "%TERRIER_HOME%"
+%JAVA% -Dterrier.home="%TERRIER_HOME%" -Dterrier.setup="%TERRIER_ETC%\terrier.properties" -cp %LOCALCLASSPATH% org.terrier.applications.batchquerying.TRECSetup "%TERRIER_HOME%"
 
 
 
@@ -79,7 +85,7 @@ REM -- Building collection.spec
 REM ------------------------
 echo Now building collection.spec
 REM No find on Windows, so use java app for same purpose
-java -cp %LOCALCLASSPATH% org.terrier.applications.FileFind "%COLLECTIONPATH%" >> "%TERRIER_ETC%\collection.spec"
+%JAVA% -cp %LOCALCLASSPATH% org.terrier.applications.FileFind "%COLLECTIONPATH%" >> "%TERRIER_ETC%\collection.spec"
 
 REM ------------------------
 REM -- Display collection.spec
