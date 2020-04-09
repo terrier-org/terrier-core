@@ -75,10 +75,7 @@ public class IndexUtil {
 
 		@Override
 		@SuppressWarnings({ "unchecked", "deprecation" })
-		// public int run(String[] args) throws Exception {
 		public int run(CommandLine line) throws Exception {
-			String[] args = line.getArgs();
-
 			IndexRef iRef = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 			if (line.hasOption("I")) {
 				String indexLocation = line.getOptionValue("I");
@@ -122,10 +119,15 @@ public class IndexUtil {
 				});
 				String structureName = "lexicon";
 				if (line.hasOption("s"))
-					structureName = line.getOptionValue("s"); 
+					structureName = line.getOptionValue("s");
+				String term = line.getOptionValue("printterm");
 				Lexicon<String> lex = (Lexicon<String>) index.getIndexStructure(structureName);
 				PostingIndex<?> inv = (PostingIndex<?>) index.getInvertedIndex();
-				LexiconEntry le = lex.getLexiconEntry(args[1]);
+				LexiconEntry le = lex.getLexiconEntry(term);
+				if (le == null) {
+					System.err.println("Term " + term + " not found");
+					return -1;
+				}
 				IterablePosting ip = inv.getPostings(le);
 				while (ip.next() != IterablePosting.EOL) {
 					System.out.print(ip.toString());
@@ -134,7 +136,7 @@ public class IndexUtil {
 				ip.close();
 				lex.close();
 				close(inv);
-			} else if (line.hasOption("--printPosting")) {
+			} else if (line.hasOption("printposting")) {
 				IndexUtil.forceStructure(index, "document", new DocumentIndex() {
 
 					@Override
@@ -152,51 +154,57 @@ public class IndexUtil {
 						return null;
 					}
 				});
+				String[] localArgs = line.getOptionValues("printposting");
+				if (localArgs.length != 2) {
+					System.err.println("Usage: --printposting <term> <docid>");
+					return;
+				}
 				Lexicon<String> lex = index.getLexicon();
 				PostingIndex<Pointer> inv = (PostingIndex<Pointer>) index.getInvertedIndex();
-				LexiconEntry le = lex.getLexiconEntry(args[1]);
+				LexiconEntry le = lex.getLexiconEntry(localArgs[0]);
 				IterablePosting ip = inv.getPostings(le);
-				int targetId = Integer.parseInt(args[2]);
+				int targetId = Integer.parseInt(localArgs[1]);
 				int foundId = ip.next(targetId);
 				if (foundId == targetId) {
 					System.out.println(ip.toString());
 				} else {
 					System.err.println(
-							"Docid " + targetId + " not found for term " + args[1] + " (nearest was " + foundId + ")");
+							"Docid " + targetId + " not found for term " + localArgs[0] + " (nearest was " + foundId + ")");
+					return -1;
 				}
 				ip.close();
 				lex.close();
 				close(inv);
-			} else if (line.hasOption("--printbitentry")) {
-				String structureName = "inverted";
-				if (line.hasOption("s"))
-					structureName = line.getOptionValue("s"); 
-				List<BitIndexPointer> pointerList = (List<BitIndexPointer>) index.getIndexStructure(args[2]);
-				PostingIndex<?> bpi = (PostingIndex<?>) index.getIndexStructure(structureName);
-				// for every docid on cmdline
-				for (String arg: args) {
-					BitIndexPointer pointer = pointerList.get(Integer.parseInt(arg));
-					if (pointer.getNumberOfEntries() == 0)
-						continue;
-					System.out.print(arg + " ");
-					IterablePosting ip = bpi.getPostings(pointer);
-					while (ip.next() != IterablePosting.EOL) {
-						System.out.print(ip.toString());
-						System.out.print(" ");
-					}
-					System.out.println();
-				}
-			} else if (line.hasOption("--printlex")) {
+			// } else if (line.hasOption("printbitentry")) {
+			// 	String structureName = "inverted";
+			// 	if (line.hasOption("s"))
+			// 		structureName = line.getOptionValue("s");
+			// 	List<BitIndexPointer> pointerList = (List<BitIndexPointer>) index.getIndexStructure();
+			// 	PostingIndex<?> bpi = (PostingIndex<?>) index.getIndexStructure(structureName);
+			// 	// for every docid on cmdline
+			// 	for (String arg: args) {
+			// 		BitIndexPointer pointer = pointerList.get(Integer.parseInt(arg));
+			// 		if (pointer.getNumberOfEntries() == 0)
+			// 			continue;
+			// 		System.out.print(arg + " ");
+			// 		IterablePosting ip = bpi.getPostings(pointer);
+			// 		while (ip.next() != IterablePosting.EOL) {
+			// 			System.out.print(ip.toString());
+			// 			System.out.print(" ");
+			// 		}
+			// 		System.out.println();
+			// 	}
+			} else if (line.hasOption("printlex")) {
 				String structureName = "lexicon";
 				if (line.hasOption("s"))
 					structureName = line.getOptionValue("s"); 
 				LexiconUtil.printLexicon(index, structureName);
-			} else if (line.hasOption("--printdocument")) {
+			} else if (line.hasOption("printdocument")) {
 				String structureName = "document";
 				if (line.hasOption("s"))
 					structureName = line.getOptionValue("s"); 
 				printDocumentIndex(index, structureName);
-			} else if (line.hasOption("--printlist")) {
+			} else if (line.hasOption("printlist")) {
 				String structureName = "document";
 				if (line.hasOption("s"))
 					structureName = line.getOptionValue("s"); 
@@ -206,16 +214,17 @@ public class IndexUtil {
 					System.out.println(in.next().toString());
 				}
 				IndexUtil.close(in);
-			} else if (line.hasOption("--printlistentry")) {
+			} else if (line.hasOption("printlistentry")) {
 				String structureName = "document";
 				if (line.hasOption("s"))
 					structureName = line.getOptionValue("s"); 
 				List<? extends Writable> list = (List<? extends Writable>) index.getIndexStructure(structureName);
-				for (int argC = 2; argC < args.length; argC++) {
-					System.out.println(list.get(Integer.parseInt(args[argC])).toString());
+				for(String arg : line.getOptionValues("printlistentry"))
+				{
+					System.out.println(list.get(Integer.parseInt(arg)).toString());
 				}
 				IndexUtil.close(list);
-			} else if (line.hasOption("--printmeta")) {
+			} else if (line.hasOption("printmeta")) {
 				boolean json = line.hasOption("j");
 				String structureName = "meta";
 				if (line.hasOption("s"))
@@ -226,7 +235,7 @@ public class IndexUtil {
 				else
 					printMetaIndex(index, structureName);
 			} else {
-				System.err.println(MAIN_USAGE);
+				System.err.println(super.help());
 			}
 			index.close();
 			return 0;
@@ -235,17 +244,51 @@ public class IndexUtil {
 		@Override
 		protected Options getOptions() {
 			Options opts = super.getOptions();
-			opts.addOption(Option.builder("printmeta").build());
-			opts.addOption(Option.builder("printlex").build());
-			opts.addOption(Option.builder("printlist").build());
-			opts.addOption(Option.builder("printlistentry").build());
-			opts.addOption(Option.builder("printbitentry").build());
-			opts.addOption(Option.builder("printposting").build());
-			opts.addOption(Option.builder("printpostingfile").build());
-			opts.addOption(Option.builder("printterm").build());
-			opts.addOption(Option.builder("s").longOpt("structure").build());
-			opts.addOption(Option.builder("j").longOpt("json").build());
-
+			opts.addOption(Option.builder()
+				.longOpt("printmeta")
+				.desc("display contents of a meta index")
+				.build());
+				opts.addOption(Option.builder()
+				.longOpt("printdocument")
+				.desc("display contents of a document index")
+				.build());
+			opts.addOption(Option.builder()
+				.longOpt("printlex")
+				.desc("display contents of a lexicon index")
+				.build());
+			opts.addOption(Option.builder()
+				.longOpt("printlist")
+				.desc("display contents of a list index structure, such as a document index")
+				.build());
+			opts.addOption(Option.builder()
+				.longOpt("printlistentry")
+				.desc("display one entry in a list index structure, such as an entry in a document index")
+				.hasArgs()
+				.build());
+			//opts.addOption(Option.builder().longOpt("printbitentry").build());
+			opts.addOption(Option.builder()
+				.longOpt("printposting")
+				.desc("display posting for specific term and specified docid")
+				.hasArgs()
+				.build());
+			opts.addOption(Option.builder()
+				.longOpt("printpostingfile")
+				.desc("Display contents of a posting file (e.g. inverted or direct)")
+				.build());
+			opts.addOption(Option.builder()
+				.longOpt("printterm")
+				.hasArg()
+				.desc("Display contents of a posting list for one term")
+				.build());
+			opts.addOption(Option.builder("s")
+				.longOpt("structure")
+				.desc("Change the name structure being operated on")
+				.hasArg(true)
+				.build());
+			opts.addOption(Option.builder("j")
+				.desc("Display output in JSON (only for printmeta)")
+				.longOpt("json")
+				.build());
 			return opts;
 		}
 		
@@ -254,8 +297,7 @@ public class IndexUtil {
 	
 	
 	
-	private final static String MAIN_USAGE = "Usage: " + IndexUtil.class.getName() + " {--printbitfile|--printlex|--printdocument|--printlist|--printmeta} structureName";
-	/** Has some handy utilities for printing various index structures to System.out.
+	/** Has some handy utilities for printing various index structures to System.out, such as:
 	 * <ul>
 	 * <li>--printbitfile - print the bit file with the specified name</li>
 	 * <li>--printbitentry - print one entry in a bit posting index.</li>
@@ -264,6 +306,7 @@ public class IndexUtil {
 	 * <li>--printlist - print the named list (e.g. document index)</li>
 	 * <li>--printmeta - print the meta index</li>
 	 * </ul>
+	 * See bin/terrier help indexutils for more 
 	 */
 	public static void main(String[] args) {
 		CLITool.run(Command.class, args);
