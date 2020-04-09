@@ -1,7 +1,7 @@
-Terrier Components
-==================
+Terrier Architecture
+====================
 
-On this page we will give an overview of Terrier's main components and their interaction.
+On this page we will give an architectural overview of Terrier's main components and their interaction.
 
 
 Modules
