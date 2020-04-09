@@ -77,7 +77,9 @@ public abstract class Operator implements Serializable, Cloneable {
 		}
 	}
 	
-	/** get posting iterator for this query op. */
+	/** get posting iterator for this query op. 
+	 * @return Pair, but Pair.of(null,null) if term not found
+	*/
 	public abstract Pair<EntryStatistics,IterablePosting> getPostingIterator(Index index) throws IOException;
 	
 	public static Operator parse(String stringRep) {
