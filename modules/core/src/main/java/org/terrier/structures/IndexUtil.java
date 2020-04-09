@@ -157,7 +157,7 @@ public class IndexUtil {
 				String[] localArgs = line.getOptionValues("printposting");
 				if (localArgs.length != 2) {
 					System.err.println("Usage: --printposting <term> <docid>");
-					return;
+					return -1;
 				}
 				Lexicon<String> lex = index.getLexicon();
 				PostingIndex<Pointer> inv = (PostingIndex<Pointer>) index.getInvertedIndex();
