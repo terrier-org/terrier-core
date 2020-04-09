@@ -191,6 +191,21 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 			return null;
 	}
 
+	public Object getIndexStructureInputStream(String structureName) {
+		if (structureName.equalsIgnoreCase("lexicon"))
+			return lexicon.iterator();
+		if (structureName.equalsIgnoreCase("inverted"))
+			return inverted.iterator();
+		if (structureName.equalsIgnoreCase("meta"))
+			return metadata.iterator();
+		if (structureName.equalsIgnoreCase("document"))
+			return document.iterator();
+		if (structureName.equalsIgnoreCase("direct"))
+			return direct.iterator();
+		else
+			return null;
+	}
+
 	/** {@inheritDoc} */
 	public Lexicon<String> getLexicon() {
 		return lexicon;

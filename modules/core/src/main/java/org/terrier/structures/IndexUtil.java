@@ -565,7 +565,7 @@ public class IndexUtil {
 	 */
 	public static boolean renameIndexStructure(Index _index, String sourceStructureName, String destinationStructureName) throws IOException
 	{
-		if (_index instanceof IndexOnDisk)
+		if (! (_index instanceof IndexOnDisk))
 		{
 			throw new IllegalArgumentException("Sorry, this operation only support for IndexOnDisk");
 		}
