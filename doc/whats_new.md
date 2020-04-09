@@ -1,6 +1,31 @@
 What's New in Terrier
 =====================
 
+Terrier 5.3 - ??/??/2020
+
+### Indexing
+ - [#85] basic inverted index builder approx pointer counts are wrong in 5.2
+ - [#84] structure mergers and other indexing time operations load document index unnecessarily
+ - [#87] Always require explicit specification of the file encoding used to process files in TREC format.
+
+### Retrieval
+ - Make TRECQuery (source) easier to use programatically - support for PyTerrier
+ - not able to parse queries with non-latin characters. Fix by Anuj Saini, Indian Institute of Technology Kanpur.
+ - [#79] c control not passed to weighting model
+ - [#80] interactive should not die on a query parser error
+ - [#87] Always require explicit specification of the file encoding used to process files in TREC format.
+
+### Other
+ - Document other packages in the platform
+ - Remove unused shell scripts.
+ - Trim down modules in terrier-platform: integer-compression and website-search were removed.
+ - [#72] specifying a version should be optional for specifying additional Maven packages
+ - [#71] Maven package resolver should try jitpack as well
+ - [#81](https://github.com/terrier-org/terrier-core/issues/81) Windows batch scripts had hardcoded memory and java locations 
+ - [#82] make Shakespeare test cases easier to re-use externally
+ - [#89] better error message when a non-field index is used for field WeightingModel 
+
+
 Terrier 5.2 - 9/01/2020
 ------------------------
 Minor update with bug-fixes and improvements. In particular, the classical indexer has been shown some love, and inverted index building should be faster by default, courtesy of changes that improve its usage of available memory. Some improvements were identified in support of activities surrounding the [SIGIR 2019 Open-Source IR Replicability Challenge](https://osirrc.github.io/osirrc2019/) (OSIRRC). A [OSIRRC Docker image](https://github.com/osirrc/terrier-docker) is now available, supporting Robust04, GOV2, and Core18 test collections.
