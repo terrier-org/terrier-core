@@ -166,7 +166,6 @@ public class DiskIndexWriter {
         return target;
     }
 
-    /** {@inheritDoc} */
     protected void collectProperties(Index source, Index index, CompressionConfiguration compressionConfigInverted, CompressionConfiguration compressionConfigDirect) {
 
         /*
