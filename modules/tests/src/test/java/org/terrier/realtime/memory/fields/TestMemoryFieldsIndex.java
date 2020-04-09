@@ -41,6 +41,7 @@ import java.util.Map.Entry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionDocumentList;
 import org.terrier.indexing.Document;
@@ -373,7 +374,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 	/*
 	 * Comparison of disk and memory->disk indices.
 	 */
-	@Test
+	@Test @Ignore
 	public void test_compare3() throws Exception {
 		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
 		assertNotNull(mem);
