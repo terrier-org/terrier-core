@@ -28,15 +28,18 @@
 package org.terrier.realtime.multi;
 
 import java.io.IOException;
+import java.io.Flushable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.realtime.matching.IncrementalSelectiveMatching;
+import org.terrier.querying.IndexRef;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.Pointer;
@@ -77,7 +80,6 @@ public class MultiIndex extends Index {
 	 * Constructor.
 	 */
 	public MultiIndex(Index[] indices, boolean blocks, boolean fields) {
-		super(0l, 0l, 0l);
 		ArrayList<Index> in = new ArrayList<Index>(indices.length);
 		for (Index i : indices)
 			in.add(i);
@@ -97,22 +99,8 @@ public class MultiIndex extends Index {
 		return "MultiIndex";
 	}
 
-	/** {@inheritDoc} */
-	public Object getIndexStructure(String structureName) {
-		if (structureName.equalsIgnoreCase("lexicon"))
-			return getLexicon();
-		if (structureName.equalsIgnoreCase("meta"))
-			return getMetaIndex();
-		if (structureName.equalsIgnoreCase("inverted"))
-			return getInvertedIndex();
-		if (structureName.equalsIgnoreCase("document"))
-			return getDocumentIndex();
-		if (structureName.equalsIgnoreCase("direct"))
-			return getDirectIndex();
-		if (structureName.equalsIgnoreCase("collectionstatistics"))
-			return getCollectionStatistics();
-		else
-			return null;
+	public IndexRef getIndexRef() {
+		return makeDirectIndexRef(this);
 	}
 
 	/** {@inheritDoc} */
@@ -241,7 +229,8 @@ public class MultiIndex extends Index {
 	/** {@inheritDoc} */
 	public void flush() throws IOException {
 		for (Index i : this.indices)
-			i.flush();
+			if (i instanceof Flushable)
+				((Flushable)i).flush();
 	}
 	
 	public Index getIthShard(int i) {

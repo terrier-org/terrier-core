@@ -32,32 +32,7 @@ import org.terrier.structures.postings.IterablePosting;
  * @param <POINTERTYPE> the type of pointer required to access this posting source 
  */
 public interface PostingIndex<POINTERTYPE extends Pointer> extends Closeable {
-	public static class DocidSpecificDocumentIndex implements FieldDocumentIndex {
-		DocumentIndexEntry die;
-		DocumentIndex di;
-		
-		public DocidSpecificDocumentIndex(DocumentIndex _di, DocumentIndexEntry _die)
-		{
-			di = _di;
-			die = _die;
-		}
-		
-		public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
-			return die;
-		}
 	
-		public int getDocumentLength(int docid) throws IOException {
-			return die.getDocumentLength();
-		}
-	
-		public int getNumberOfDocuments() {
-			return di.getNumberOfDocuments();
-		}
-	
-		public int[] getFieldLengths(int docid) throws IOException {
-			return ((FieldDocumentIndexEntry)die).getFieldLengths();
-		}
-	}
 
 	/** 
 	 * Get the posting given a pointer

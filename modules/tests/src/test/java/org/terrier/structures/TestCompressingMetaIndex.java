@@ -85,7 +85,7 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 	{
 		exception.expect(IllegalArgumentException.class);
 		CompressingMetaIndexBuilder x = new CompressingMetaIndexBuilder(
-				Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX), 
+				IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX), 
 				new String[]{"docno"}, new int[]{20}, new String[]{"url"});
 		x.close();
 	}
@@ -214,7 +214,7 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 	
 	protected void testBase(String name, String[] keyNames, int[] keyLengths, String[] revKeys, String[][] data) throws Exception
 	{
-		IndexOnDisk index = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+		IndexOnDisk index = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 		assertNotNull("Index should not be null", index);
 		MetaIndexBuilder b = new CompressingMetaIndexBuilder(index, name,
 				keyNames, keyLengths, revKeys);
@@ -374,7 +374,7 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		FlatJSONDocument doc = new FlatJSONDocument(tweet);
 		
 		
-		IndexOnDisk index = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+		IndexOnDisk index = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 		
 		String[] _keyNames = {"docno", "text"};
 		int[] _valueLens = {20, 140};

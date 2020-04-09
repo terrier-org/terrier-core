@@ -48,6 +48,7 @@ import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.daat.FatCandidateResultSet;
+import org.terrier.querying.IndexRef;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.EntryStatistics;
@@ -1083,7 +1084,7 @@ public class FatUtils {
 			}			
 		};
 		
-		return new Index(0l, 0l, 0l){
+		return new Index(){
 
 			@Override
 			public PostingIndex<Pointer> getInvertedIndex() {
@@ -1101,32 +1102,12 @@ public class FatUtils {
 			}
 
 			@Override
-			public void close() throws IOException {
-				
-			}
-
-			@Override
-			public void flush() throws IOException {
-				
-			}
-
-			@Override
 			public PostingIndex<?> getDirectIndex() {
 				return null;
 			}
 
 			@Override
 			public DocumentIndex getDocumentIndex() {
-				return null;
-			}
-
-			@Override
-			public Object getIndexStructure(String structureName) {
-				return null;
-			}
-
-			@Override
-			public Object getIndexStructureInputStream(String structureName) {
 				return null;
 			}
 
@@ -1138,6 +1119,11 @@ public class FatUtils {
 			@Override
 			public String toString() {
 				return this.getClass().getSimpleName();
+			}
+
+			@Override
+			public IndexRef getIndexRef() {
+				return makeDirectIndexRef(this);
 			}
 			
 		};

@@ -215,8 +215,8 @@ public class StructureMerger {
 			numberOfDocuments = numberOfDocs1 + numberOfDocs2;
 			
 			
-			final int srcFieldCount1 = srcIndex1.getIntIndexProperty("index.inverted.fields.count", 0);
-			final int srcFieldCount2 = srcIndex1.getIntIndexProperty("index.inverted.fields.count", 0);
+			final int srcFieldCount1 = srcIndex1.getCollectionStatistics().getNumberOfFields();
+			final int srcFieldCount2 = srcIndex2.getCollectionStatistics().getNumberOfFields();
 			if (srcFieldCount1 != srcFieldCount2)
 			{
 				throw new Error("FieldCounts in source indices must match");
@@ -760,10 +760,10 @@ public class StructureMerger {
 				return 1;
 			}
 			
-			Index.setIndexLoadingProfileAsRetrieval(false);
-			IndexOnDisk indexSrc1 = Index.createIndex(args[0], args[1]);
-			IndexOnDisk indexSrc2 = Index.createIndex(args[2], args[3]);
-			IndexOnDisk indexDest = Index.createNewIndex(args[4], args[5]);
+			IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
+			IndexOnDisk indexSrc1 = IndexOnDisk.createIndex(args[0], args[1]);
+			IndexOnDisk indexSrc2 = IndexOnDisk.createIndex(args[2], args[3]);
+			IndexOnDisk indexDest = IndexOnDisk.createNewIndex(args[4], args[5]);
 			
 			StructureMerger sMerger = new StructureMerger(indexSrc1, indexSrc2, indexDest);
 			long start = System.currentTimeMillis();

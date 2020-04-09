@@ -75,10 +75,10 @@ public class BlockStructureMerger extends StructureMerger {
 			logger.error("Exiting ...");
 			return;
 		}
-		Index.setIndexLoadingProfileAsRetrieval(false);
-		IndexOnDisk indexSrc1 = Index.createIndex(args[0], args[1]);
-		IndexOnDisk indexSrc2 = Index.createIndex(args[2], args[3]);
-		IndexOnDisk indexDest = Index.createNewIndex(args[4], args[5]);
+		IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
+		IndexOnDisk indexSrc1 = IndexOnDisk.createIndex(args[0], args[1]);
+		IndexOnDisk indexSrc2 = IndexOnDisk.createIndex(args[2], args[3]);
+		IndexOnDisk indexDest = IndexOnDisk.createNewIndex(args[4], args[5]);
 		
 		StructureMerger sMerger = new BlockStructureMerger(indexSrc1, indexSrc2, indexDest);
 		long start = System.currentTimeMillis();

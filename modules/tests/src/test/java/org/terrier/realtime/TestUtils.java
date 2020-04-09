@@ -56,6 +56,7 @@ import org.terrier.realtime.memory.fields.MemoryFieldsIndex;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.Index;
+import org.terrier.structures.PropertiesIndex;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
@@ -166,7 +167,7 @@ public class TestUtils {
 	/*
 	 * compare index properties.
 	 */
-	public static void compareProperties(Index index1, Index index2) {
+	public static void compareProperties(PropertiesIndex index1, PropertiesIndex index2) {
 		Properties props1 = index1.getProperties();
 		Set<Entry<Object,Object>> props2 = index2.getProperties().entrySet();
 		Iterator<Entry<Object, Object>> it = props2.iterator();

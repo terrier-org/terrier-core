@@ -104,9 +104,9 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		assertEquals(prefix, ApplicationSetup.TERRIER_INDEX_PREFIX);
 
 		//check that indexing actually created an index
-		assertTrue("Index does not exist at ["+ApplicationSetup.TERRIER_INDEX_PATH+","+ApplicationSetup.TERRIER_INDEX_PREFIX+"]", Index.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
-		IndexOnDisk i = Index.createIndex();
-		assertNotNull(Index.getLastIndexLoadError(), i);
+		assertTrue("Index does not exist at ["+ApplicationSetup.TERRIER_INDEX_PATH+","+ApplicationSetup.TERRIER_INDEX_PREFIX+"]", IndexOnDisk.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX));
+		IndexOnDisk i = IndexOnDisk.createIndex();
+		assertNotNull(IndexOnDisk.getLastIndexLoadError(), i);
 		assertEquals(ApplicationSetup.TERRIER_VERSION,i.getIndexProperty("index.terrier.version", ""));
 		assertTrue("Index does not have an inverted structure", i.hasIndexStructure("inverted"));
 		assertTrue("Index does not have an lexicon structure", i.hasIndexStructure("lexicon"));

@@ -48,6 +48,7 @@ import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
@@ -512,7 +513,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 	@Override
 	protected void checkIndex() throws Exception
 	{	
-		Index index = Index.createIndex();
+		IndexOnDisk index = IndexOnDisk.createIndex();
 		assertNotNull("Failed to get an index", index);
 		final String[] expectedStructures = new String[]{
 			"inverted", "lexicon", "meta", "document", "document-factory", "lexicon-keyfactory", "lexicon-valuefactory", "direct"

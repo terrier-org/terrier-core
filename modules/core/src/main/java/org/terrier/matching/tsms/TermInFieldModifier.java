@@ -93,7 +93,8 @@ public class TermInFieldModifier
 		}
 		if (fieldIndex == -1)
 		{
-			throw new IllegalArgumentException("Field '" + this.field + "' is not a valid field; possibilities were " +  index.getIndexProperty("index.inverted.fields.names", ""));
+			throw new IllegalArgumentException("Field '" + this.field + "' is not a valid field; possibilities were " 
+			+  index.getCollectionStatistics().getFieldNames());
 		}
 		//else
 		//{

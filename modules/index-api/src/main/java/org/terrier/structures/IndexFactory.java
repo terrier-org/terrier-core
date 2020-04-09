@@ -29,22 +29,13 @@ import java.io.File;
 import java.util.ServiceLoader;
 
 import org.terrier.querying.IndexRef;
-import org.terrier.utility.ApplicationSetup;
-import org.terrier.utility.Files;
+//import org.terrier.utility.ApplicationSetup;
+//import org.terrier.utility.Files;
+import org.terrier.structures.Index.DirectIndexRef;
 
 public class IndexFactory {
-	
-	public static class DirectIndexRef extends IndexRef
-	{
-		private static final long serialVersionUID = 1L;
-		Index underlyingIndex;
-		
-		DirectIndexRef(Index i)
-		{
-			super(i.toString());//THIS IS A HACK
-			this.underlyingIndex = i;
-		}
-	}
+
+	public static ClassLoader cl = null;
 	
 	public static interface IndexLoader
 	{
@@ -55,7 +46,6 @@ public class IndexFactory {
 	
 	public static class DirectIndexLoader implements IndexLoader
 	{
-
 		@Override
 		public boolean supports(IndexRef ref) {
 			return ref instanceof DirectIndexRef;
@@ -73,37 +63,12 @@ public class IndexFactory {
 		
 	}
 	
-	public static class DiskIndexLoader implements IndexLoader
-	{
-		@Override
-		public boolean supports(IndexRef ref) {
-			String l = ref.toString();
-			if (ref.size() > 1)
-				return false; //this is a multi-index
-			if (l.startsWith("http") || l.startsWith("https") || l.startsWith("concurrent"))
-				return false;
-			if (! l.endsWith(".properties"))
-				return false;
-			return Files.exists(l);
-		}
-
-		@Override
-		public Index load(IndexRef ref) {
-			String l = ref.toString();
-			File file = new File(l);
-			String path = file.getParent(); 
-			String prefix = file.getName().replace(".properties", "");
-			return IndexOnDisk.createIndex(path, prefix);			
-		}
-
-		@Override
-		public Class<? extends Index> indexImplementor(IndexRef ref) {
-			return IndexOnDisk.class;
-		}		
-	}
-	
 	public static boolean isLoaded(IndexRef ref) {
 		return ref instanceof DirectIndexRef;
+	}
+
+	private static ClassLoader getClassLoader() {
+		return cl == null ? IndexFactory.class.getClassLoader() : cl;
 	}
 	
 	public static boolean isLocal(IndexRef ref) {
@@ -114,7 +79,7 @@ public class IndexFactory {
 	}
 	
 	public static Class<? extends Index> whoSupports(IndexRef ref) {
-		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, ApplicationSetup.getClassLoader());
+		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, getClassLoader());
 		for(IndexLoader l : loaders)
 		{
 			if (l.supports(ref))
@@ -127,10 +92,10 @@ public class IndexFactory {
 	{
 		if (ref instanceof DirectIndexRef)
 			return ((DirectIndexRef)ref).underlyingIndex;
-//		System.err.println(DirectIndexRef.class.getClassLoader());
-//		System.err.println(ApplicationSetup.getClassLoader());
-		
-		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, ApplicationSetup.getClassLoader());
+		// System.err.println(DirectIndexRef.class.getClassLoader());
+		// System.err.println(ApplicationSetup.getClassLoader());
+		// System.err.println(IndexFactory.class.getClassLoader());
+		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, getClassLoader());
 		for(IndexLoader l : loaders)
 		{
 			if (l.supports(ref))
@@ -138,5 +103,4 @@ public class IndexFactory {
 		}
 		return null;
 	}
-	
 }

@@ -82,12 +82,12 @@ public class IndexUtil {
 				iRef = IndexRef.of(indexLocation);
 			}
 
-			Index.setIndexLoadingProfileAsRetrieval(false);
+			PropertiesIndex.setIndexLoadingProfileAsRetrieval(false);
 
 			// load the index
 			final Index index = IndexFactory.of(iRef);
 			if (index == null) {
-				System.err.println("Index for ref "+iRef+" not found: " + Index.getLastIndexLoadError());
+				System.err.println("Index for ref "+iRef+" not found: " + IndexOnDisk.getLastIndexLoadError());
 				return 2;
 			}
 
@@ -341,12 +341,12 @@ public class IndexUtil {
 		String path = index.getPath();
 		String prefix = index.getPrefix();
 		index.close();
-		rtr = Index.createIndex(path, prefix);
+		rtr = IndexOnDisk.createIndex(path, prefix);
 		return rtr;
 	}
 	
 	/** Returns a list of the structures in the given index */
-	public static String[] getStructures(Index index)
+	public static String[] getStructures(PropertiesIndex index)
 	{
 		List<String> rtr = new ArrayList<String>();
 		for(Object o : index.getProperties().keySet())
@@ -422,7 +422,7 @@ public class IndexUtil {
 	 * @param structureName name of structure to delete
 	 * @return true if structure was found and deleted, false otherwise
 	 */
-	public static boolean deleteStructure(Index index, String structureName) throws IOException
+	public static boolean deleteStructure(IndexOnDisk index, String structureName) throws IOException
 	{
 		boolean found = false;
 		List<String> toRemove = new ArrayList<String>();
@@ -465,7 +465,7 @@ public class IndexUtil {
 	 * @param destinationStructureName
 	 * @throws IOException if an IO problem occurs
 	 */
-	public static boolean copyStructure(Index sourceIndex, Index destIndex, String sourceStructureName, String destinationStructureName) throws IOException
+	public static boolean copyStructure(IndexOnDisk sourceIndex, IndexOnDisk destIndex, String sourceStructureName, String destinationStructureName) throws IOException
 	{
 		boolean found = false;
 		
@@ -563,12 +563,17 @@ public class IndexUtil {
 	/** Rename a structure within a given index. 
 	 * @return Returns true iff a structure was successfully renamed.
 	 */
-	public static boolean renameIndexStructure(Index index, String sourceStructureName, String destinationStructureName) throws IOException
+	public static boolean renameIndexStructure(Index _index, String sourceStructureName, String destinationStructureName) throws IOException
 	{
-		final String actualSourcePrefix = ((IndexOnDisk) index).getPrefix() +'.' + sourceStructureName+".";
-		final String actualDestinationPrefix = ((IndexOnDisk) index).getPrefix() +'.' + destinationStructureName + ".";
-		final String path = ((IndexOnDisk) index).getPath();
-		for (String filename : Files.list(((IndexOnDisk) index).getPath()))
+		if (_index instanceof IndexOnDisk)
+		{
+			throw new IllegalArgumentException("Sorry, this operation only support for IndexOnDisk");
+		}
+		IndexOnDisk index = (IndexOnDisk) _index;
+		final String actualSourcePrefix = index.getPrefix() +'.' + sourceStructureName+".";
+		final String actualDestinationPrefix = index.getPrefix() +'.' + destinationStructureName + ".";
+		final String path = index.getPath();
+		for (String filename : Files.list(index.getPath()))
 		{
 			if (filename.startsWith(actualSourcePrefix))
 			{

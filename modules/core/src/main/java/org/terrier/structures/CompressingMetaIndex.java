@@ -1025,8 +1025,8 @@ public class CompressingMetaIndex implements MetaIndex {
 		}
 		
 		//load structures that we actually need
-		Index.setIndexLoadingProfileAsRetrieval(false);
-		IndexOnDisk index = Index.createIndex();
+		IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
+		IndexOnDisk index = IndexOnDisk.createIndex();
 		if (args[0].equals("print"))
 		{
 			IndexUtil.printMetaIndex(index, "meta");

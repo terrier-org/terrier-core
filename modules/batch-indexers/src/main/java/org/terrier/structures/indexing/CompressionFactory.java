@@ -33,6 +33,7 @@ import org.terrier.compression.bit.BitIn;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.Index;
 import org.terrier.structures.PostingIndex;
+import org.terrier.structures.PropertiesIndex;
 import org.terrier.structures.bit.BitPostingIndex;
 import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.bit.BlockDirectInvertedOutputStream;
@@ -105,7 +106,7 @@ public class CompressionFactory {
 		public abstract String getStructureFileExtension();
 		
 		/** Update the index's properties for this structure */
-		public void writeIndexProperties(Index index, String pointerSourceStream)
+		public void writeIndexProperties(PropertiesIndex index, String pointerSourceStream)
 		{
 			index.addIndexStructure(
 					this.structureName, 

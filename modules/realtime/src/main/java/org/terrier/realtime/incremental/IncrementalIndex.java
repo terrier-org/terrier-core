@@ -44,6 +44,7 @@ import org.terrier.querying.IndexRef;
 import org.terrier.realtime.UpdatableIndex;
 import org.terrier.realtime.memory.MemoryIndex;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexFactory;
 import org.terrier.structures.indexing.DocumentPostingList;
 import org.terrier.utility.ApplicationSetup;
@@ -152,39 +153,39 @@ public class IncrementalIndex extends org.terrier.realtime.multi.MultiIndex impl
 		// No previous on-disk indices.
 		if (existing == 0) {
 			
-				// also check for a normal index that we could treat as an incremental...
-				File singleproperties = new File(path+ApplicationSetup.FILE_SEPARATOR+prefix+".properties");
-				if (singleproperties.exists()) {
-					// Set prefixID to 1.
-					prefixID = 1;
+			// also check for a normal index that we could treat as an incremental...
+			File singleproperties = new File(path+ApplicationSetup.FILE_SEPARATOR+prefix+".properties");
+			if (singleproperties.exists()) {
+				// Set prefixID to 1.
+				prefixID = 1;
 
-					Index[] indexes = new Index[2];
-					indexes[0] = Index.createIndex(path, prefix);
-					MemoryIndex imi = new MemoryIndex();
-					indexes[1] = imi;
-					// IncrementalIndex consists of a single InMemoryIndex.
-					
-					IncrementalIndex ii = new IncrementalIndex(indexes);
-					ii.memory = imi;
-					ii.setPath(path);
-					ii.setPrefix(prefix);
-					ii.setPrefixID(prefixID);
-					return ii;
-				} else {
-					// Set prefixID to 1.
-					prefixID = 1;
+				Index[] indexes = new Index[2];
+				indexes[0] = IndexOnDisk.createIndex(path, prefix);
+				MemoryIndex imi = new MemoryIndex();
+				indexes[1] = imi;
+				// IncrementalIndex consists of a single InMemoryIndex.
+				
+				IncrementalIndex ii = new IncrementalIndex(indexes);
+				ii.memory = imi;
+				ii.setPath(path);
+				ii.setPrefix(prefix);
+				ii.setPrefixID(prefixID);
+				return ii;
+			} else {
+				// Set prefixID to 1.
+				prefixID = 1;
 
-					// IncrementalIndex consists of a single InMemoryIndex.
-					MemoryIndex imi;
-					IncrementalIndex ii = new IncrementalIndex(
-							new Index[] { imi = new MemoryIndex() });
-					ii.memory = imi;
-					
-					ii.setPath(path);
-					ii.setPrefix(prefix);
-					ii.setPrefixID(prefixID);
-					return ii;
-				}
+				// IncrementalIndex consists of a single InMemoryIndex.
+				MemoryIndex imi;
+				IncrementalIndex ii = new IncrementalIndex(
+						new Index[] { imi = new MemoryIndex() });
+				ii.memory = imi;
+				
+				ii.setPath(path);
+				ii.setPrefix(prefix);
+				ii.setPrefixID(prefixID);
+				return ii;
+			}
 
 		}
 

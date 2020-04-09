@@ -56,7 +56,7 @@ import org.terrier.utility.Files;
  * 
  * @author Craig Macdonald &amp; Vassilis Plachouras
  */
-public abstract class Index implements Closeable, Flushable {
+public abstract class PropertiesIndex extends Index implements Closeable, Flushable {
 	/**
 	 * This collection statistics parses the associated index properties for
 	 * each call. It doesnt support fields.
@@ -128,7 +128,7 @@ public abstract class Index implements Closeable, Flushable {
 	 * Empty Index constructor - this should never be used!
 	 * Use Index.createIndex() instead
 	 */
-	public Index() {
+	public PropertiesIndex() {
 		
 	}
 
@@ -227,16 +227,6 @@ public abstract class Index implements Closeable, Flushable {
 	}
 
 	/**
-	 * main
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		Index index = Index.createIndex();
-		System.out.println("Index " + index.toString());
-	}
-
-	/**
 	 * Set RETRIEVAL_LOADING_PROFILE
 	 * 
 	 * @param yes
@@ -255,7 +245,7 @@ public abstract class Index implements Closeable, Flushable {
 	protected boolean dirtyProperties = false;
 
 	/** A constructor for child classes that doesnt open the file */
-	protected Index(long a, long b, long c) {
+	protected PropertiesIndex(long a, long b, long c) {
 	}
 
 	/**
@@ -379,7 +369,7 @@ public abstract class Index implements Closeable, Flushable {
 	}
 	
 	public IndexRef getIndexRef() {
-		return new IndexFactory.DirectIndexRef(this);
+		return makeDirectIndexRef(this);
 	}
 
 	/**

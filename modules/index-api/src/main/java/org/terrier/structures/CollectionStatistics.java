@@ -31,11 +31,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.cli.CommandLine;
+
 import org.apache.hadoop.io.Writable;
-import org.terrier.applications.CLITool;
-import org.terrier.applications.CLITool.CLIParsedCLITool;
-import org.terrier.querying.IndexRef;
+
 
 /**
  * This class provides basic statistics for the indexed
@@ -234,62 +232,6 @@ public class CollectionStatistics implements Serializable,Writable {
 			out.writeLong(fieldTokens[fi]);
 			out.writeUTF(fieldNames[fi]);
 		}
-	}
-	
-	public static class Command extends CLIParsedCLITool
-	{
-
-		@Override
-		public int run(CommandLine line) throws Exception {
-			IndexRef iR = getIndexRef(line);
-			Index.setIndexLoadingProfileAsRetrieval(false);
-			Index i = IndexFactory.of(iR);
-			if (i == null)
-			{
-				System.err.println("Index not found at " + iR);
-				return 1;
-			}
-			System.out.println("Collection statistics:");
-			System.out.println("number of indexed documents: " + i.getCollectionStatistics().getNumberOfDocuments());
-			System.out.println("size of vocabulary: " +  i.getCollectionStatistics().getNumberOfUniqueTerms());
-			System.out.println("number of tokens: " +  i.getCollectionStatistics().getNumberOfTokens());
-			System.out.println("number of pointers: " +  i.getCollectionStatistics().getNumberOfPointers());
-			System.out.println("number of fields: " +  i.getCollectionStatistics().getNumberOfFields());
-			System.out.println("field names: " +  Arrays.toString(i.getCollectionStatistics().getFieldNames()));
-			
-			Boolean blocks = null;
-			for(String structureName : new String[]{"direct", "inverted"})
-			{
-				int num = i.getIntIndexProperty("index." + structureName + ".blocks", -1);
-				if (num != -1)
-				{
-					blocks = num > 0;
-					break;
-				}
-			}
-			System.out.println("blocks: " + ( blocks == null ? "unknown" : blocks.toString() ));
-			
-			try {
-				i.close();
-			} catch (IOException e) {}
-			return 0;
-		}
-
-		@Override
-		public String commandname() {
-			return "indexstats";
-		}
-
-		@Override
-		public String helpsummary() {
-			return "display the statistics of an index";
-		}
-
-		@Override
-		public String sourcepackage() {
-			return CLITool.PLATFORM_MODULE;
-		}
-		
 	}
 
 }

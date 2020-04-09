@@ -279,7 +279,7 @@ public class BitPostingIndexInputStream implements PostingIndexInputStream, Skip
 		//this is the hack: only a direct index has a pointer type of DocumentIndexEntry
 		if(pointer instanceof DocumentIndexEntry)
 		{
-			return new PostingIndex.DocidSpecificDocumentIndex(doi, (DocumentIndexEntry)pointer);
+			return new org.terrier.structures.postings.PostingUtil.DocidSpecificDocumentIndex(doi, (DocumentIndexEntry)pointer);
 		}
 		return doi;
 	}

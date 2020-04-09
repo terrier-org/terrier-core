@@ -36,8 +36,8 @@ public class TestIndexUtil extends ApplicationSetupBasedTest {
 
 	@Test public void testCopyStructureDifferentIndex() throws Exception
 	{
-		Index i1 = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + "i1");
-		Index i2 = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + "i2");
+		IndexOnDisk i1 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + "i1");
+		IndexOnDisk i2 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + "i2");
 		i1.addIndexStructure("test1", Object.class.getName(), "", "");
 		IndexUtil.copyStructure(i1, i2, "test1", "test2");
 		assertEquals(Object.class, i2.getIndexStructure("test2").getClass());
@@ -45,7 +45,7 @@ public class TestIndexUtil extends ApplicationSetupBasedTest {
 	
 	@Test public void testCopyStructureSameIndex() throws Exception
 	{
-		Index i1 = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + "i1");
+		IndexOnDisk i1 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX + "i1");
 		i1.addIndexStructure("test1", Object.class.getName(), "", "");
 		IndexUtil.copyStructure(i1, i1, "test1", "test2");
 		assertEquals(Object.class, i1.getIndexStructure("test2").getClass());

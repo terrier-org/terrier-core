@@ -29,7 +29,7 @@
 package org.terrier.applications;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionFactory;
-import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.indexing.Indexer;
 import org.terrier.structures.indexing.classical.BasicIndexer;
 import org.terrier.structures.indexing.classical.BlockIndexer;
@@ -147,7 +147,7 @@ public class TRECIndexing extends BatchIndexing {
 	 */
 	@Override
 	public void index() {
-		if (Index.existsIndex(path, prefix))
+		if (IndexOnDisk.existsIndex(path, prefix))
 		{
 			logger.error("Cannot index while an index exists at "+path + ","+ prefix);
 			return;

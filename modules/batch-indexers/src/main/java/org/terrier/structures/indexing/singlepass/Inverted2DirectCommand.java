@@ -73,7 +73,7 @@ public class Inverted2DirectCommand extends CLIParsedCLITool {
 	@Override
 	public int run(CommandLine line) throws Exception {
 		Index.setIndexLoadingProfileAsRetrieval(false);
-		IndexOnDisk i = Index.createIndex();
+		IndexOnDisk i = IndexOnDisk.createIndex();
 		if (i== null)
 		{
 			System.err.println("Sorry, no index could be found in default location");

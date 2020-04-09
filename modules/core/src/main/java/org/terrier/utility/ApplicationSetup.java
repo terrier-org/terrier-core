@@ -585,7 +585,9 @@ public class ApplicationSetup {
 						clzLoader == null 
 							? Class.forName(pluginName) 
 							: getClass(pluginName) )
-						.asSubclass(TerrierApplicationPlugin.class).newInstance();
+						.asSubclass(TerrierApplicationPlugin.class)
+						.getDeclaredConstructor()
+						.newInstance();
 				plugin.initialise();
 				loadedPlugins.add(plugin);
 			} catch (Exception e) {
@@ -596,6 +598,7 @@ public class ApplicationSetup {
 			clzLoader = Thread.currentThread().getContextClassLoader();
 		if (clzLoader == null)
 			clzLoader = ApplicationSetup.class.getClassLoader();
+		org.terrier.structures.IndexFactory.cl = clzLoader;
 	}
 
 	public static ClassLoader getClassLoader() {

@@ -25,6 +25,8 @@
  */
 package org.terrier.structures.postings;
 
+import org.terrier.structures.*;
+
 import gnu.trove.TIntArrayList;
 
 import java.io.IOException;
@@ -35,7 +37,32 @@ import java.io.IOException;
  */
 public class PostingUtil {
 
+	public static class DocidSpecificDocumentIndex implements FieldDocumentIndex {
+		DocumentIndexEntry die;
+		DocumentIndex di;
+		
+		public DocidSpecificDocumentIndex(DocumentIndex _di, DocumentIndexEntry _die)
+		{
+			di = _di;
+			die = _die;
+		}
+		
+		public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
+			return die;
+		}
 	
+		public int getDocumentLength(int docid) throws IOException {
+			return die.getDocumentLength();
+		}
+	
+		public int getNumberOfDocuments() {
+			return di.getNumberOfDocuments();
+		}
+	
+		public int[] getFieldLengths(int docid) throws IOException {
+			return ((FieldDocumentIndexEntry)die).getFieldLengths();
+		}
+	}
 	
 	
 	/** Get an array of all the ids in a given IterablePosting stream */

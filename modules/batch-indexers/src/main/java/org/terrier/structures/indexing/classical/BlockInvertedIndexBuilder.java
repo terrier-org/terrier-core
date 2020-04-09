@@ -516,7 +516,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 	
 	/** Use this main method to recover the creation of an inverted index, should it fail */
 	public static void main(String[] args) throws Exception {
-		IndexOnDisk indx = Index.createIndex();
+		IndexOnDisk indx = IndexOnDisk.createIndex();
 		String structureName = "inverted";
 		new BlockInvertedIndexBuilder(
 				indx, 

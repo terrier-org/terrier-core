@@ -112,7 +112,7 @@ public abstract class FSOMapFileLexiconOutputStreamGeneric<T1, T2 extends Writab
 		} catch (Exception ioe) {}
 	}
 	
-	static FixedSizeWriteableFactory<?> getKeyFactory(Index _index, String _structureName) throws IOException
+	static FixedSizeWriteableFactory<?> getKeyFactory(PropertiesIndex _index, String _structureName) throws IOException
 	{
 		_index.addIndexStructure(_structureName+"-keyfactory", 
 				org.terrier.structures.seralization.FixedSizeTextFactory.class.getName(),

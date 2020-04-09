@@ -39,6 +39,7 @@ import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldLexiconEntry;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.Index;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
@@ -209,7 +210,7 @@ public class BasicIndexer extends Indexer
 	
 	public void createDirectIndex(Collection[] collections)
 	{
-		currentIndex = Index.createNewIndex(path, prefix);
+		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
 			? new LexiconBuilder(currentIndex, "lexicon", 
 					new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
@@ -396,7 +397,7 @@ public class BasicIndexer extends Indexer
 	public void createInvertedIndex() {
 		if (currentIndex == null)
 		{
-			currentIndex = Index.createIndex(path,prefix);
+			currentIndex = IndexOnDisk.createIndex(path,prefix);
 			if (currentIndex == null)
 			{
 				logger.error("No index at ("+path+","+prefix+") to build an inverted index for ");

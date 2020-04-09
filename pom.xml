@@ -61,6 +61,7 @@
 	<modules>
 		<module>modules/retrieval-api</module>
 		<module>modules/rest-client</module>
+		<module>modules/index-api</module>
 		<module>modules/core</module>
 		<module>modules/batch-indexers</module>
 		<module>modules/batch-retrieval</module>
@@ -68,7 +69,7 @@
 		<module>modules/logging</module>
 		<module>modules/tests</module>
 		<module>modules/concurrent</module>
-		<module>modules/integer-compression</module>
+		<!-- <module>modules/integer-compression</module> -->
 		<module>modules/realtime</module>
 		<module>modules/rest-server</module>
 		<module>modules/website-search</module>

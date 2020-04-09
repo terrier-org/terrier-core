@@ -106,8 +106,7 @@ public class IncrementalFlushPolicy implements Runnable {
 		index.prefixID++;
 		
 		// Update list of indices (replace memory with the disk index).
-		IndexOnDisk indexOnDisk = (IndexOnDisk) Index.createIndex(
-				index.path, partition);
+		IndexOnDisk indexOnDisk = IndexOnDisk.createIndex(index.path, partition);
 		synchronized (indices) {
 			indices.set(indices.size() - 2, indexOnDisk);
 		}

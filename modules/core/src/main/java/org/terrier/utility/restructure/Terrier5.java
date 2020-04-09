@@ -38,7 +38,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terrier.structures.Index;
+import org.terrier.structures.PropertiesIndex;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 
@@ -210,7 +210,7 @@ public class Terrier5 {
 		try {
 			String propertiesFilename = path + ApplicationSetup.FILE_SEPARATOR
 					+ prefix + ".properties";
-			if (!Index.allExists(propertiesFilename)) {
+			if (!PropertiesIndex.allExists(propertiesFilename)) {
 				System.err.println("INFO: Index not found: " + propertiesFilename
 						+ " not found.");
 				return false;

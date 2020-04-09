@@ -138,15 +138,15 @@ public class IncrementalMergeGeometric extends IncrementalMergePolicy implements
 	private int merge(int partition1, int partition2) {
 
 		// Source index 1.
-		IndexOnDisk src1 = Index.createIndex(index.path,
+		IndexOnDisk src1 = IndexOnDisk.createIndex(index.path,
 				index.prefix + "-" + partition1);
 
 		// Source index 2.
-		IndexOnDisk src2 = Index.createIndex(index.path,
+		IndexOnDisk src2 = IndexOnDisk.createIndex(index.path,
 				index.prefix + "-" + partition2);
 
 		// Destination index.
-		IndexOnDisk indexD = Index.createNewIndex(index.path,
+		IndexOnDisk indexD = IndexOnDisk.createNewIndex(index.path,
 				index.prefix + "-" + index.prefixID);
 
 		// Merge the index structures.

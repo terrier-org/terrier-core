@@ -41,6 +41,7 @@ import org.terrier.structures.FSOMapFileLexiconOutputStream;
 import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.SimpleDocumentIndexEntry;
 import org.terrier.structures.indexing.CompressionFactory.BitCompressionConfiguration;
@@ -178,7 +179,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		numberOfDocuments = currentId = numberOfDocsSinceCheck = numberOfDocsSinceFlush = numberOfUniqueTerms = 0;
 		numberOfTokens = numberOfPointers = 0;
 		createMemoryPostings();
-		currentIndex = Index.createNewIndex(path, prefix);
+		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
 		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
 		metaBuilder = createMetaIndexBuilder();
 		

@@ -283,6 +283,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.terrier</groupId>
+			<artifactId>terrier-index-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>2.9.10</version>

@@ -42,7 +42,7 @@ public class TestFSOMapFileLexicon extends ApplicationSetupBasedTest
 
 	Index createLexiconIndex(String[] tokens) throws Exception
 	{
-		IndexOnDisk index = Index.createNewIndex(
+		IndexOnDisk index = IndexOnDisk.createNewIndex(
 				ApplicationSetup.TERRIER_INDEX_PATH,
 				ApplicationSetup.TERRIER_INDEX_PREFIX);
 		LexiconBuilder lb = new LexiconBuilder(index, "lexicon", new TermCodes());
@@ -58,7 +58,7 @@ public class TestFSOMapFileLexicon extends ApplicationSetupBasedTest
 	
 	@Test(expected=IllegalArgumentException.class) public void testNullTermException() throws Exception
 	{
-		IndexOnDisk index = Index.createNewIndex(
+		IndexOnDisk index = IndexOnDisk.createNewIndex(
 				ApplicationSetup.TERRIER_INDEX_PATH,
 				ApplicationSetup.TERRIER_INDEX_PREFIX);
 		LexiconBuilder lb = new LexiconBuilder(index, "lexicon", new TermCodes());

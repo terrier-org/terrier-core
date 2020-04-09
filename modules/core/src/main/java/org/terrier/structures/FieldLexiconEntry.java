@@ -25,13 +25,14 @@
  */
 package org.terrier.structures;
 
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
-import org.terrier.utility.ArrayUtils;
-import org.terrier.utility.FieldScore;
+//import org.terrier.utility.FieldScore;
 
 /** A LexiconEntry with field support */
 public class FieldLexiconEntry extends BasicLexiconEntry implements
@@ -48,8 +49,9 @@ public class FieldLexiconEntry extends BasicLexiconEntry implements
 		 */
 		public Factory()
 		{
-			this(FieldScore.FIELDS_COUNT); //TODO this is a hack
-			System.err.println(this.getClass().getName() + "- default constructor should not be used - fields are " + FieldScore.FIELDS_COUNT);
+			throw new IllegalStateException(this.getClass().getName() + "- default constructor should not be used");
+			//this(FieldScore.FIELDS_COUNT); //TODO this is a hack
+			//System.err.println(this.getClass().getName() + "- default constructor should not be used - fields are " + FieldScore.FIELDS_COUNT);
 			//new Exception().printStackTrace(System.err);
 			//throw new RuntimeException();
 		}
@@ -129,7 +131,7 @@ public class FieldLexiconEntry extends BasicLexiconEntry implements
 
 	@Override
 	public String toString() {
-		return super.toString() + " TFf=" + ArrayUtils.join(this.getFieldFrequencies(), ",");
+		return super.toString() + " TFf=" + StringUtils.join(this.getFieldFrequencies(), ',');
 	}
 
 	@Override
