@@ -126,7 +126,7 @@ public class TestIncremental extends ApplicationSetupBasedTest {
 				new FileDocument("doc2", new ByteArrayInputStream(
 						"turing knuth knuth turing".getBytes()),
 						new EnglishTokeniser()) };
-		Collection coll = new CollectionDocumentList(docs1, "filename");
+		Collection coll = new CollectionDocumentList(docs1);
 		BasicIndexer indexer = new BasicIndexer(
 				ApplicationSetup.TERRIER_INDEX_PATH,
 				ApplicationSetup.TERRIER_INDEX_PREFIX + "-"
@@ -134,7 +134,7 @@ public class TestIncremental extends ApplicationSetupBasedTest {
 		assertNotNull(indexer);
 		indexer.createDirectIndex(new Collection[] { coll });
 		indexer.createInvertedIndex();
-		IndexOnDisk index = (IndexOnDisk) Index.createIndex(
+		IndexOnDisk index = Index.createIndex(
 				ApplicationSetup.TERRIER_INDEX_PATH,
 				ApplicationSetup.TERRIER_INDEX_PREFIX + "-"
 						+ String.valueOf(prefix));

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Terrier - Terabyte Retriever
-# Webpage: http://terrier.org/
+# Webpage: http://terrier.org
 # Contact: terrier@dcs.gla.ac.uk 
 #
 # The contents of this file are subject to the Mozilla Public
@@ -24,9 +24,7 @@
 #	Vassilis Plachouras <vassilis@dcs.gla.ac.uk> (original author)
 #	Craig Macdonald <craigm@dcs.gla.ac.uk>
 #
-# a script for handling the indexing and retrieval from a standard 
-# TREC test collection. It also prints out the contents of the basic
-# structures of Terrier.
+# a shortcut script for running trec_eval
 
 fullPath () {
 	t='TEMP=`cd $TEMP; pwd`'
@@ -34,12 +32,6 @@ fullPath () {
 		eval `echo $t | sed 's/TEMP/'$d'/g'`
 	done
 }
-
-TERRIER_BIN=`dirname $0`
-if [ -e "$TERRIER_BIN/terrier-env.sh" ];
-then
-	. $TERRIER_BIN/terrier-env.sh
-fi
 
 #setup TERRIER_HOME
 if [ ! -n "$TERRIER_HOME" ]
@@ -53,4 +45,4 @@ then
 	#echo "Setting TERRIER_HOME to $TERRIER_HOME"
 fi
 
-$TERRIER_HOME/bin/anyclass.sh org.terrier.applications.TrecTerrier $@
+$TERRIER_HOME/bin/terrier uk.ac.gla.terrier.jtreceval.trec_eval $@

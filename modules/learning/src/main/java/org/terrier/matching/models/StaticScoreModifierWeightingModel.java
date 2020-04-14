@@ -189,8 +189,7 @@ public abstract class StaticScoreModifierWeightingModel extends WeightingModel {
 			printStats(staticScores);
 			br.close();
 		} catch (Exception e) {
-			System.err.println("Problem opening file: \""+inputFile+"\" : "+e);
-			e.printStackTrace();
+			logger.error("Problem opening file: \""+inputFile+"\"", e);
 		}
 	}
 	
@@ -278,7 +277,7 @@ public abstract class StaticScoreModifierWeightingModel extends WeightingModel {
 		final int l = ar.length;
 		for(int i=0;i<l;i++)
 			sum += ar[i];
-		System.err.println("Sum of array of length "+l+" is "+ sum+ " average "+ (sum/(double)l));
+		logger.info("Sum of array of length "+l+" is "+ sum+ " average "+ (sum/(double)l));
 	}
 
 	

@@ -74,63 +74,13 @@ public class TermInFieldModifier
 		requirement = req;
 	}
 	
-	/** 
-	 * Resets the scores of documents for a particular term, based on 
-	 * the fields a term appears in documents.
-	 * @param scores double[] the scores of the documents.
-	 * @param pointers int[][] the pointers read from the inverted file 
-	 *        for a particular query term.
-	 * @return the number of documents for which the scores were modified. 
-	 */
-	public int modifyScores(double[] scores, int[][] pointers) {
-		int numOfModifiedDocs=0;
-		//check that there field scores have been retrieved
-		if (pointers.length < 3 || pointers[2] == null)
-			return numOfModifiedDocs;
-		
-		int[] fieldscores = pointers[2];
-		final int numOfPointers = fieldscores.length;
-		FieldScore fScore = new FieldScore();
-		fScore.insertField(field);
-		int fieldScore = fScore.getFieldScore();
-		if (fieldScore == 0) 
-			return numOfModifiedDocs;
-		
-		//for each document that contains the query term, the score is computed.
-		//int docFieldScore;
-		if (requirement) { //the term should appear in the field
-			for (int j = 0; j < numOfPointers; j++) {
-				//filter out results that do not have the corresponding query 
-				//term in the given field.
-				if((fieldscores[j] & fieldScore) == 0) {
-					if (scores[j]!=Double.NEGATIVE_INFINITY)
-						numOfModifiedDocs++;
-					scores[j] = Double.NEGATIVE_INFINITY;
-					
-				}
-			}
-		} else { //the term should not appear in the field
-			for (int j = 0; j < numOfPointers; j++) {
-				//filter out results that have the corresponding query 
-				//term in the given field.
-				if((fieldscores[j] & fieldScore) > 0) {
-					if (scores[j]!=Double.NEGATIVE_INFINITY)
-						numOfModifiedDocs++;
-					scores[j] = Double.NEGATIVE_INFINITY;
-				}
-			}
-		}
-		return numOfModifiedDocs;
-	}
-	
-	
 	int fieldIndex = -1;
 	/** 
 	 * {@inheritDoc} 
 	 */
 	public void prepare()
 	{
-		String[] indexFieldNames = index.getIndexProperty("index.inverted.fields.names", "").split("\\s*,\\s*");
+		String[] indexFieldNames = index.getCollectionStatistics().getFieldNames();
 		int i=0;
 		for(String f : indexFieldNames)
 		{

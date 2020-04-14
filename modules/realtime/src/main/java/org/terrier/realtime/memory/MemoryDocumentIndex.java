@@ -72,6 +72,7 @@ public class MemoryDocumentIndex implements DocumentIndex,Serializable {
 	/** {@inheritDoc} */
 	public DocumentIndexEntry getDocumentEntry(int docid) throws IOException {
 		BasicDocumentIndexEntry die = new BasicDocumentIndexEntry();
+		die.setOffset(docid, (byte)0);
 		die.setDocumentLength(docLengths.get(docid));
 		return die;
 	}
@@ -125,7 +126,7 @@ public class MemoryDocumentIndex implements DocumentIndex,Serializable {
 	}
 	
 	/**
-	 * Document index iterator, iterates over DocumentIndexEntry only, not Entry<index, DocumentIndexEntry>.
+	 * Document index iterator, iterates over DocumentIndexEntry only, in constrast to DocumentIterator
 	 */
 	public class DocumentIterator2 implements Iterator<DocumentIndexEntry> {
 		private int index = 0;

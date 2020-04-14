@@ -32,26 +32,23 @@ public class CollectionDocumentList implements Collection {
 
 	Document[] docs;
 	int index = -1;
-	String docidPropertyName;
 	
-	public CollectionDocumentList(Document[] _docs, String _docidPropertyName)
+	public CollectionDocumentList(Document[] _docs)
 	{
 		docs = _docs;
-		docidPropertyName = _docidPropertyName;
 	}
 	
+	@Override
 	public boolean endOfCollection() {
 		return index >= docs.length -1;
 	}
 
-	public String getDocid() {
-		return docs[index].getProperty(docidPropertyName);
-	}
-
+	@Override
 	public Document getDocument() {
 		return docs[index];
 	}
 
+	@Override
 	public boolean nextDocument() {
 		if (index < docs.length -1)
 		{
@@ -61,6 +58,7 @@ public class CollectionDocumentList implements Collection {
 		return false;
 	}
 
+	@Override
 	public void reset() {
 		index = -1;
 	}

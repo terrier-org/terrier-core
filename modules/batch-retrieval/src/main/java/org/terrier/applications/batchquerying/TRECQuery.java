@@ -60,18 +60,20 @@ public class TRECQuery implements QuerySource {
 		Boolean.parseBoolean(ApplicationSetup.getProperty("trecquery.ignore.desc.narr.name.tokens","true"));
 
 	/** Encoding to be used to open all files. */
-	protected static String desiredEncoding = ApplicationSetup.getProperty("trec.encoding", Charset.defaultCharset().name());
+	protected String desiredEncoding = ApplicationSetup.getProperty("trec.encoding", null);
 
 	/** The topic files used in this object */
 	protected String[] topicFiles;
 
 	/** The queries in the topic files.*/
-	protected String[] queries;
+	protected String[] queries = null;
 	
 	/** The query identifiers in the topic files.*/
-	protected String[] query_ids;
+	protected String[] query_ids = null;
 	/** The index of the queries.*/
 	protected int index;
+
+	protected TagSet tags;
 	/**
 	 * Extracts and stores all the queries from query files.
 	 * @param queryfilenames String the name of files containing topics.
@@ -81,11 +83,11 @@ public class TRECQuery implements QuerySource {
 	 *		identifiers as strings.
 	 * @return boolean true if some queries were successfully extracted.
 	 */
-	public boolean extractQuery(String[] queryfilenames, Vector<String> vecStringQueries, Vector<String> vecStringIds)
+	public boolean extractQuery(String[] queryfilenames, TagSet t, Vector<String> vecStringQueries, Vector<String> vecStringIds)
 	{
 		boolean rtn = false;
 		for (int i=0;i<queryfilenames.length;i++) {
-			if (extractQuery(queryfilenames[i], vecStringQueries, vecStringIds))
+			if (extractQuery(queryfilenames[i], t, vecStringQueries, vecStringIds))
 				rtn = true;
 		}
 		return rtn;
@@ -99,7 +101,7 @@ public class TRECQuery implements QuerySource {
 	 *		identifiers as strings.
 	 * @return boolean true if some queries were successfully extracted.
 	 */
-	public boolean extractQuery(String queryfilename, Vector<String> vecStringQueries, Vector<String> vecStringIds)
+	public boolean extractQuery(String queryfilename, TagSet t, Vector<String> vecStringQueries, Vector<String> vecStringIds)
 	{
 		boolean gotSome = false;
 		try {
@@ -110,7 +112,7 @@ public class TRECQuery implements QuerySource {
 			} else {
 				br = Files.openFileReader(queryfilename,desiredEncoding);
 				TRECFullTokenizer queryTokenizer = new TRECFullTokenizer(
-							new TagSet(TagSet.TREC_QUERY_TAGS),
+							t,
 							new TagSet(TagSet.EMPTY_TAGS),
 							br);
 				queryTokenizer.setIgnoreMissingClosingTags(true);
@@ -178,67 +180,22 @@ public class TRECQuery implements QuerySource {
 		return gotSome;
 	}
 	
+	public TRECQuery(String[] queryfilenames, String docTag, String idTag, String[] whitelist, String[] blacklist) {
+		TagSet.TagSetFactory fact = TagSet.factory().setDocTag(docTag).setIdTag(idTag);
+		if (whitelist != null)
+			fact.setWhitelist(whitelist);
+		if (blacklist != null)
+			fact.setBlacklist(blacklist);
+		this.tags = fact.build();
+		this.topicFiles = queryfilenames;
+	}
 	
 	/** 
 	 * Constructs an instance of TRECQuery,
 	 * that reads and stores all the queries from
 	 * the files defined in the trec.topics property. */
 	public TRECQuery() {
-		//this(ApplicationSetup.getProperty("trec.topics", null));
-		try {
-			String files[] = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("trec.topics", ""));
-			assert files.length > 0;
-			Vector<String> vecStringQueries = new Vector<String>();
-			Vector<String> vecStringQueryIDs = new Vector<String>();
-			Vector<String> vecStringFiles = new Vector<String>();
-			for (int i=0; i<files.length;i++) {
-				if (this.extractQuery(files[i], vecStringQueries, vecStringQueryIDs)) {
-					vecStringFiles.add(files[i]);
-				}
-			}
-						
-			this.topicFiles = vecStringQueries.toArray(new String[0]);
-			this.queries = vecStringQueries.toArray(new String[0]);
-			this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
-			this.index = 0;
-		} catch (Exception ioe) {
-			logger.error("Problem getting trec.topics property:", ioe);
-			return;
-		}
-		
-	}
-	
-	/** 
-	 * Constructs an instance of TRECQuery that
-	 * reads and stores all the queries from a 
-	 * the specified query file.
-	 * @param queryfile File the file containing the queries.
-	 */
-	public TRECQuery(File queryfile){
-		this(queryfile.getName());
-	}
-	
-	/** 
-	 * Constructs an instance of TRECQuery that
-	 * reads and stores all the queries from 
-	 * the specified query files.
-	 * @param queryfiles File the file containing the queries.
-	 */
-	public TRECQuery(File[] queryfiles){
-		Vector<String> vecStringQueries = new Vector<String>();
-		Vector<String> vecStringQueryIDs = new Vector<String>();
-		String[] files = new String[queryfiles.length];
-		for (int i=0;i<queryfiles.length;i++)
-			files[i] = queryfiles[i].getName();
-		if (this.extractQuery(files, vecStringQueries, vecStringQueryIDs))
-			this.topicFiles = files;
-		if (topicFiles == null)
-			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
-				+ " Check you have the correct topic files specified, and that TrecQueryTags properties are correct.");
-
-		this.queries = vecStringQueries.toArray(new String[0]);
-		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
-		this.index = 0;
+		this(ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("trec.topics", "")));
 	}
 	
 	/** 
@@ -249,18 +206,7 @@ public class TRECQuery implements QuerySource {
 	 *		all the queries.
 	 */	
 	public TRECQuery(String queryfilename){
-		Vector<String> vecStringQueries = new Vector<String>();
-		Vector<String> vecStringQueryIDs = new Vector<String>();
-		if (this.extractQuery(queryfilename, vecStringQueries, vecStringQueryIDs))
-			this.topicFiles = new String[]{queryfilename};
-		
-		if (topicFiles == null)
-			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
-				+ " Check you have the correct topic files specified, and that TrecQueryTags properties are correct.");
-		
-		this.queries = vecStringQueries.toArray(new String[0]);
-		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
-		this.index = 0;
+		this(new String[]{queryfilename});
 	}
 	
 	/** 
@@ -271,14 +217,34 @@ public class TRECQuery implements QuerySource {
 	 *		all the queries.
 	 */	
 	public TRECQuery(String[] queryfilenames){
+		this.topicFiles = queryfilenames;
+		this.tags = new TagSet(TagSet.TREC_QUERY_TAGS);
+		checkEncoding();
+	}
+
+
+	protected void checkEncoding() {
+		if (desiredEncoding == null)
+		{
+			String defaultEncoding = Charset.defaultCharset().name();
+			if (! defaultEncoding.equals("UTF-8"))
+			{
+				logger.warn("trec.encoding is not set; resorting to platform default ("+defaultEncoding+"). Retrieval may be platform dependent. Recommend trec.encoding=UTF-8");
+			}
+			desiredEncoding = defaultEncoding;
+		}
+	}
+
+	protected void performExtraction(){
 		Vector<String> vecStringQueries = new Vector<String>();
 		Vector<String> vecStringQueryIDs = new Vector<String>();
-		if (this.extractQuery(queryfilenames, vecStringQueries, vecStringQueryIDs))
-			this.topicFiles = queryfilenames;
-		if (topicFiles == null)
+		checkEncoding();
+		if (! this.extractQuery(this.topicFiles, this.tags, vecStringQueries, vecStringQueryIDs))
+		{
 			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
-				+ " Check you have the correct topic files specified, and that TrecQueryTags properties are correct.");
-
+				+ " Check you have the correct topic files specified, and that tags are correct.");
+			return;
+		}
 		this.queries = vecStringQueries.toArray(new String[0]);
 		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
 		this.index = 0;
@@ -308,11 +274,6 @@ public class TRECQuery implements QuerySource {
 		return this.topicFiles;
 	}
 	
-	/** @deprecated */
-	public String[] getTopicFilenames() {
-		return getInfo();
-	}
-	
 	/**
 	* Return the query for the given query number.
 	* @return String the string representing the query.
@@ -324,38 +285,26 @@ public class TRECQuery implements QuerySource {
 				return queries[i];
 		return null;
 	}
-	/** 
-	 * Test if there are more queries to process.
-	 * @return boolean true if there are more queries
-	 *		 to process, otherwise returns false.
-	 * @deprecated
-	 */
-	public boolean hasMoreQueries() {
-		return hasNext();
-	}
+	
 	/** 
 	 * {@inheritDoc} 
 	 */
 	public boolean hasNext()
 	{
+		if (queries == null)
+			performExtraction();
 		if (index == queries.length)
 			return false;
 		return true;
 	}
 	
 	/** 
-	 * Returns a query. 
-	 * @return String the next query.
-	 * @deprecated
-	 */
-	public String nextQuery() {
-		return next();
-	}
-	/** 
 	 * {@inheritDoc} 
 	 */
 	public String next()
 	{
+		if (queries == null)
+			performExtraction();
 		if (index == queries.length)
 			return null;
 		return queries[index++];

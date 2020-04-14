@@ -56,7 +56,8 @@ public abstract class FeaturedScoringMatching extends FilterMatching {
 		String[] modelNames = 
 			ArrayUtils.parseDelimitedString(
 					ApplicationSetup.getProperty(property, ""), ";");
-		if (modelNames.length == 1 && modelNames[0].equals("FILE"))
+		boolean file = modelNames.length == 1 && modelNames[0].equals("FILE");
+		if (file)
 		{
 			String filename = ApplicationSetup.getProperty(property + ".file", null);
 			if (filename == null)
@@ -82,7 +83,11 @@ public abstract class FeaturedScoringMatching extends FilterMatching {
 		}
 		if (modelNames.length == 0)
 		{
-			System.err.println("WARN no features specified");
+			if (file)
+				throw new IllegalArgumentException("No features found in file " +
+					ApplicationSetup.getProperty(property + ".file", null) + " specified in property"  +
+					property + ".file");
+			throw new IllegalArgumentException("No features in property " + property);
 		}
 		return modelNames;
 	}

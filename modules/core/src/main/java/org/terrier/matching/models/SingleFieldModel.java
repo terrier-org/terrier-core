@@ -108,8 +108,7 @@ public class SingleFieldModel extends WeightingModel {
 	{
 		super.setCollectionStatistics(_cs);
 		int fieldCount = _cs.getNumberOfFields();
-		if (fieldCount < 1)
-			throw new IllegalStateException("Fields must be 1 or more");
+		WeightingModelLibrary.checkForFields(_cs);
 		long tokens = 0;
 		final long[] tokensf = _cs.getFieldTokens();
 		for(int fieldId : activeFieldIds)

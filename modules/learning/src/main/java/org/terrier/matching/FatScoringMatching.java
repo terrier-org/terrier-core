@@ -31,6 +31,9 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.terrier.matching.dsms.DocumentScoreModifier;
 import org.terrier.matching.models.WeightingModel;
@@ -48,9 +51,10 @@ import org.terrier.utility.HeapSort;
  */ 
 public class FatScoringMatching extends AbstractScoringMatching {
 	
+	protected static final Logger logger = LoggerFactory.getLogger(FatScoringMatching.class);
+
 	/** check for weighting models giving NaN scores */
 	static final boolean DEBUG = true;
-	
 	
 	protected static final boolean SCORE_ONLY_FROM_MQT = Boolean.parseBoolean(ApplicationSetup.getProperty("fat.scoring.only.mqt", "false"));
 	
@@ -85,7 +89,6 @@ public class FatScoringMatching extends AbstractScoringMatching {
 		boolean _fields = false;
 		CHECKFIELDS: for(int di=0;di<postings.length;di++)
 		{
-			
 			for(int ti=0;ti<postings[0].length;ti++)
 			{
 				if (postings[di][ti] != null)
@@ -112,8 +115,14 @@ public class FatScoringMatching extends AbstractScoringMatching {
 		
 		final int numDocs = docids.length;
 
-		System.err.println("mqt has " +  queryTerms.size() + " terms while fatresultset has " + fInputRS.getQueryTerms().length);
-		System.err.println(filterTerm == null ? "Using all of " : "Filtering from " + (SCORE_ONLY_FROM_MQT ? "former" : "latter") + " for scoring");
+		if (queryTerms.size() != fInputRS.getQueryTerms().length) {
+			logger.warn("mqt has " + queryTerms.size() + " terms while fatresultset has " + fInputRS.getQueryTerms().length);
+		}
+		if (filterTerm == null) {
+			logger.info("Using all terms from " + (SCORE_ONLY_FROM_MQT ? "mqt" : "fat result set")+" for scoring");
+		} else {
+			logger.info("Filtering "+ filterTerm +" from " + (SCORE_ONLY_FROM_MQT ? "mqt" : "fat result set")+" for scoring");
+		}
 		//we rely on the MQT to define the query terms to score
 		//in doing so, we assume that the query termis in mqt 
 		//are a subset of those in the FatResultSet
@@ -143,11 +152,10 @@ public class FatScoringMatching extends AbstractScoringMatching {
 				okToScore[ti] = filterTerm.test(Pair.of(fInputRS.getQueryTerms()[ti],fInputRS.getTags()[ti]));
 			if (! okToScore[ti])
 			{
-				System.err.println("Term: "+fInputRS.getQueryTerms()[ti]+"$"+fInputRS.getTags()[ti]+" not scored for wm " + wm.getInfo());
+				logger.debug("Term: "+fInputRS.getQueryTerms()[ti]+"$"+fInputRS.getTags()[ti]+" not scored for wm " + wm.getInfo());
 				continue;
 			}
-			if (DEBUG)
-				System.err.println("Term: " + fInputRS.getQueryTerms()[ti]+"$"+fInputRS.getTags()[ti] + " qtw="+keyFreqs[ti] + " es="+entryStats[ti] + " scored for wm " + wm.getInfo());
+			logger.debug("Term: " + fInputRS.getQueryTerms()[ti]+"$"+fInputRS.getTags()[ti] + " qtw="+keyFreqs[ti] + " es="+entryStats[ti] + " scored for wm " + wm.getInfo());
 			
 			if (wm != null)
 				wms[ti] = (WeightingModel) wm.clone();
@@ -160,7 +168,7 @@ public class FatScoringMatching extends AbstractScoringMatching {
 			validTerms++;			
 		}
 		if (validTerms == 0)
-			System.err.println("WARN: No terms were valid for " + this.getClass().getSimpleName() + " with " + wm.getInfo());
+			logger.warn(" No terms were valid for " + this.getClass().getSimpleName() + " with " + wm.getInfo());
 		//rescore the documents
 		int gt0 = 0;
 		
@@ -177,12 +185,11 @@ public class FatScoringMatching extends AbstractScoringMatching {
 					assert postings[di][ti].getFrequency() > 0;
 					final WritablePosting p = postings[di][ti];
 					final double s = wms[ti].score(p);
-					//System.err.println(docids[di] + " score=" + s);
-					if (DEBUG && (Double.isNaN(s) || Double.isInfinite(s)))
+					if (logger.isDebugEnabled() && (Double.isNaN(s) || Double.isInfinite(s)))
 					{
-						System.err.println(wms[ti].getInfo() + " was "+s+": posting=(" +  p.toString() + ") for term " + ti + " ks=" + keyFreqs[ti] + " es="+ entryStats[ti] + " l=" + p.getDocumentLength());
+						logger.debug(wms[ti].getInfo() + " was "+s+": posting=(" +  p.toString() + ") for term " + ti + " ks=" + keyFreqs[ti] + " es="+ entryStats[ti] + " l=" + p.getDocumentLength());
 						if (p instanceof FieldPosting)
-							System.err.println("lf="+ Arrays.toString(((FieldPosting)p).getFieldLengths()));
+							logger.debug("lf="+ Arrays.toString(((FieldPosting)p).getFieldLengths()));
 					}
 					score += s;
 				}

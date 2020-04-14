@@ -35,26 +35,16 @@ SET BIN=%~dp0
 
 
 REM --------------------------
-REM Load a settings batch file if it exists
-REM --------------------------
-if NOT EXIST "%BIN%\terrier-env.bat" GOTO defaultvars
-CALL "%BIN%\terrier-env.bat" "%BIN%\.."
-
-:defaultvars
-
-set COLLECTIONPATH=%~f1
-
-REM --------------------------
-REM Derive TERRIER_HOME, then call anyclass.bat
+REM Derive TERRIER_HOME, then call terrier.bat
 REM --------------------------
 
 if defined TERRIER_HOME goto run_anyclass
 CALL "%BIN%\fq.bat" "%BIN%\.."
 SET TERRIER_HOME=%FQ%
-echo Set TERRIER_HOME to be %TERRIER_HOME%
+REM echo Set TERRIER_HOME to be %TERRIER_HOME%
 
 :run_anyclass
-%TERRIER_HOME%\bin\anyclass.bat uk.ac.gla.terrier.jtreceval.trec_eval %* 
+%TERRIER_HOME%\bin\terrier.bat uk.ac.gla.terrier.jtreceval.trec_eval %* 
 
 if "Windows_NT"=="%OS%" endlocal
 

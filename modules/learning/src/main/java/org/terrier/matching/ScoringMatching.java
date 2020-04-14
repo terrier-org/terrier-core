@@ -76,7 +76,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 		scores = new double[docCount];
 		org.terrier.sorting.HeapSort.heapSort(docids, scores, docCount);
 
-		System.err.println("ScoringMatching running for " + wm.getInfo() + ' '+ queryNumber);
+		logger.info("ScoringMatching running for " + wm.getInfo() + ' '+ queryNumber);
 		
 		//this smells like a hack
 		if (super.wm != null)
@@ -93,13 +93,13 @@ public class ScoringMatching extends AbstractScoringMatching {
 				okToScore = filterTerm.test(Pair.of(term.getKey().toString(),term.getValue().getTags()));
 			if (! okToScore)
 			{
-				System.err.println("Term: "+term.getKey().toString()+"$"+term.getValue().getTags()+" not scored for wm " + wm.getInfo() + ' '+ queryNumber);
+				logger.debug("Term: "+term.getKey().toString()+"$"+term.getValue().getTags()+" not scored for wm " + wm.getInfo() + ' '+ queryNumber);
 				iter.remove();
 				continue;
 			}			
 		}
 		if(queryTerms.size() ==0)
-			System.err.println("Warn no terms being scored for " + queryNumber);
+			logger.warn("no terms being scored for " + queryNumber);
 		PostingListManager plm = new PostingListManager(index, this.cs, queryTerms, true, null, null);
 		
 		plm.prepare(true);
@@ -117,7 +117,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 		
 		makeResultSet(qTerms, entryStats, keyFreqs);
 		
-		System.err.println(this.getClass().getSimpleName() + " is rescoring " + docCount + " documents");
+		logger.info(this.getClass().getSimpleName() + " is rescoring " + docCount + " documents");
 		scored = 0;
 		int matchingCount = 0;
 		for(int i=0;i<docCount;i++)
@@ -150,7 +150,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 			}		
  		}
 		assert matchingCount <= docids.length;	
-		System.err.println(this.getClass().getSimpleName() + " for "+this.wm.getInfo()+" on "+terms+" terms, scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
+		logger.info(this.getClass().getSimpleName() + " for "+this.wm.getInfo()+" on "+terms+" terms, scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
 		finalise(matchingCount);
 		
 		plm.close();

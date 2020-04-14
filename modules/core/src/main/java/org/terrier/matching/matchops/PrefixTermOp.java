@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.tuple.Pair;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.Index;
@@ -22,6 +24,7 @@ import org.terrier.utility.ArrayUtils;
  */
 public class PrefixTermOp extends SynonymOp {
 
+	protected static final Logger logger = LoggerFactory.getLogger(PrefixTermOp.class);
 	public static final String STRING_PREFIX = "#prefix";
 	private static final long serialVersionUID = 1L;
 	Predicate<String> predFunction = (e->true);

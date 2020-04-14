@@ -34,8 +34,11 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
-import org.terrier.applications.TrecTerrier;
+import org.terrier.applications.batchquerying.TRECQuerying;
+import org.terrier.applications.BatchIndexing;
+import org.terrier.evaluation.BatchEvaluationCommand;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.utility.ApplicationSetup;
@@ -94,8 +97,8 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 	{
 		String path = ApplicationSetup.TERRIER_INDEX_PATH;
 		String prefix = ApplicationSetup.TERRIER_INDEX_PREFIX;
-		TrecTerrier.main(joinSets(trec_terrier_args, indexingOptions));
-
+		new BatchIndexing.Command().run(joinSets(trec_terrier_args, indexingOptions));
+		
 		//check that application setup hasnt changed unexpectedly
 		assertEquals(path, ApplicationSetup.TERRIER_INDEX_PATH);
 		assertEquals(prefix, ApplicationSetup.TERRIER_INDEX_PREFIX);
@@ -133,12 +136,18 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		}
 //		w.close();
 //
-		String[] newArgs = new String[2+trecTerrierArgs.length];
-		newArgs[0] = "-r";
-		newArgs[1] = "-Dtrec.topics=" + ArrayUtils.join(allTopicFiles, ',');
-		System.arraycopy(trecTerrierArgs, 0, newArgs, 2, trecTerrierArgs.length);
+		
+		List<String> args = new ArrayList<>();
+		args.addAll(Arrays.asList(trecTerrierArgs));
+		args.add("-t");
+		args.add(ArrayUtils.join(allTopicFiles, ','));
+		new TRECQuerying.Command().run(args.toArray(new String[0]));
+		// String[] newArgs = new String[2+trecTerrierArgs.length];
+		// newArgs[0] = "-r";
+		// newArgs[1] = "-Dtrec.topics=" + ArrayUtils.join(allTopicFiles, ',');
+		// System.arraycopy(trecTerrierArgs, 0, newArgs, 2, trecTerrierArgs.length);
 		//System.err.println("TrecTerrier " + ArrayUtils.join(newArgs, " "));
-		TrecTerrier.main(newArgs);
+		//TrecTerrier.main(newArgs);
 		return queryCount;
 	}
 
@@ -149,7 +158,8 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 //		System.err.println("Writing qrel files files to " + ApplicationSetup.TREC_QRELS);
 //		w.write(qrels + "\n");
 //		w.close();
-		TrecTerrier.main(new String[]{"-e", "-Dtrec.qrels=" + qrels});
+		new BatchEvaluationCommand().run(new String[]{"-q", qrels});
+		//TrecTerrier.main();
 		float MAP = -1.0f;
 		int queryCount = 0;
 		File[] fs = new File(ApplicationSetup.TREC_RESULTS).listFiles();

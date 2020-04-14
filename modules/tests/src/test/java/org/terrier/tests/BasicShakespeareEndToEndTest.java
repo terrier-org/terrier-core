@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.BufferedReader;
 
 import org.junit.Test;
+import org.junit.Before;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.Pointer;
@@ -47,6 +48,10 @@ public class BasicShakespeareEndToEndTest extends ShakespeareEndToEndTest {
 	public BasicShakespeareEndToEndTest()
 	{
 		retrievalTopicSets.add("resource:/tests/shakespeare/test.shakespeare-merchant.basic.topics");
+		
+	}
+
+	@Before public void setupQrels() throws Exception {
 		try{
 			BufferedReader br = Files.openFileReader(testQrelsSource);
 			testQrels = super.writeTemporaryFile("testQrels", br.lines().toArray(String[]::new));
@@ -54,12 +59,12 @@ public class BasicShakespeareEndToEndTest extends ShakespeareEndToEndTest {
 		} catch (Exception e) {
 			throw new Error(e);
 		}
-	}	
+	}
 	
 	@Test public void testBasicClassical() throws Exception {
 		System.err.println(this.getClass().getName() +" : testBasicClassical");
 		doTrecTerrierIndexingRunAndEvaluate(
-				new String[]{"-i", "-Dindexer.meta.reverse.keys=docno"}, 
+				new String[]{"-Dindexer.meta.reverse.keys=docno"}, 
 				new String[0], new String[0],
 				testQrels, 1.0f);
 	}
@@ -68,7 +73,7 @@ public class BasicShakespeareEndToEndTest extends ShakespeareEndToEndTest {
 	@Test public void testBasicClassicalUTFTokeniser() throws Exception {
 		System.err.println(this.getClass().getName() +" : testBasicClassicalUTFTokeniser");
 		doTrecTerrierIndexingRunAndEvaluate(
-				new String[]{"-i", "-Dtokeniser=UTFTokeniser", "-Dindexer.meta.reverse.keys=docno"}, 
+				new String[]{"-Dtokeniser=UTFTokeniser", "-Dindexer.meta.reverse.keys=docno"}, 
 				new String[0], new String[0],
 				testQrels, 1.0f);
 	}
@@ -126,7 +131,7 @@ public class BasicShakespeareEndToEndTest extends ShakespeareEndToEndTest {
 		System.err.println(this.getClass().getName() +" : testBasicClassicalFields");
 		testHooks.add(new FieldBatchEndToEndTestEventChecks());
 		doTrecTerrierIndexingRunAndEvaluate(
-				new String[]{"-i", "-DFieldTags.process=TITLE,SPEAKER", "-Dindexer.meta.reverse.keys=docno"}, 
+				new String[]{"-DFieldTags.process=TITLE,SPEAKER", "-Dindexer.meta.reverse.keys=docno"}, 
 				new String[]{"resource:/tests/shakespeare/test.shakespeare-merchant.field.topics" /*System.getProperty("user.dir") + "/../../share/tests/shakespeare/test.shakespeare-merchant.field.topics"*/}, new String[0],
 				testQrels, 1.0f);
 	}

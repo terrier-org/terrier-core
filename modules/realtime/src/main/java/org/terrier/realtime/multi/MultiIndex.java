@@ -215,6 +215,18 @@ public class MultiIndex extends Index {
 		return new MultiDirect((PostingIndex<Pointer>[]) postings, (MultiLexicon) this.getLexicon(), blocks, fields);
 	}
 
+	@Override
+	public boolean hasIndexStructure(String structureName) {
+		switch (structureName) {
+			case "direct": return true;
+			case "inverted": return true;
+			case "lexicon": return true;
+			case "document": return true;
+			case "meta": return true;
+		}
+		return false;
+	}
+
 	/** Not implemented. */
 	public Object getIndexStructureInputStream(String structureName) {
 		return null;

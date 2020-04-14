@@ -26,7 +26,7 @@
  */
 package org.terrier.matching.models;
 
-
+import org.terrier.structures.CollectionStatistics;
 /**
  * A library of tf normalizations for weighting models such as the pivoted length normalization
  * described in Singhal et al., 1996.
@@ -40,6 +40,13 @@ public class WeightingModelLibrary {
 	public static final double LOG_E_OF_2 = Math.log(2.0D);
 	/** The logarithm in base 2 of e, used to change the base of logarithms.*/
 	public static final double LOG_2_OF_E = 1.0D / LOG_E_OF_2;
+
+	public static void checkForFields(CollectionStatistics _cs) {
+		int fieldCount = _cs.getNumberOfFields();
+		if (fieldCount < 1)
+			throw new IllegalStateException("Index must have 1 or more fields. Your index has"
+				+" not been indexed with fields enabled. ");
+	}
 
 	/**
 	 * Returns the base 2 log of the given double precision number.

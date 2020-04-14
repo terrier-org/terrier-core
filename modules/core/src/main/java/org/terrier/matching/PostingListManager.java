@@ -334,7 +334,7 @@ public class PostingListManager implements Closeable
 					}
 				}
 				if (me.getTags().size() == 0 && scoringTag != null ) {
-					logger.warn(me + " did not contain any tags, it will not be matched!");
+					logger.warn(term.toString() + " did not contain any tags, it will not be matched!");
 				}
 				if (scoringTag == null  || me.getTags().contains(scoringTag))
 				{

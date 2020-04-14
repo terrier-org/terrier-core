@@ -51,14 +51,17 @@ public abstract class MultiTermOp extends Operator {
 	private static final long serialVersionUID = 1L;
 	protected static final Logger logger = LoggerFactory.getLogger(MultiTermOp.class);
 	Operator[] terms;
-	public MultiTermOp(String[] ts)
+	boolean allRequired;
+
+	public MultiTermOp(String[] ts, boolean allRequired)
 	{
-		this(getSingleTerms(ts));	
+		this(getSingleTerms(ts), allRequired);	
 	}
 	
-	public MultiTermOp(Operator[] _ts)
+	public MultiTermOp(Operator[] _ts, boolean _allRequired)
 	{
 		this.terms = _ts;
+		this.allRequired = _allRequired;
 	}
 	
 	public Operator[] getConstituents() {
@@ -102,6 +105,10 @@ public abstract class MultiTermOp extends Operator {
 			if (pair == null || pair.getLeft() == null)
 			{
 				logger.debug("Component term Not Found: " + ts);
+				if (allRequired)
+				{
+					return Pair.of(null,null);
+				}
 			} else if (IGNORE_LOW_IDF_TERMS && index.getCollectionStatistics().getNumberOfDocuments() < pair.getKey().getFrequency()) {
 				logger.warn("query term " + ts + " has low idf - ignored from scoring.");
 			} else {
@@ -115,6 +122,7 @@ public abstract class MultiTermOp extends Operator {
 		{
 			//TODO consider if we should return an empty posting list iterator instead
 			logger.warn("No alternatives matched in " + Arrays.toString(terms));
+			//OR pair.of(null,null)
 			return null;
 		}
 		//TODO: shouldnt collstats be allowed to come from elsewhere?

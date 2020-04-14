@@ -69,7 +69,7 @@ import org.terrier.utility.io.CountingInputStream;
 public class TRECCollection extends MultiDocumentFileCollection {
 	
 	/** Tag names for tags that should be added as properties **/
-	String[] propertyTags = new String[0];
+	protected String[] propertyTags = new String[0];
 
 	/**
 	 * Counts the documents that are found in the collection, ignoring those
