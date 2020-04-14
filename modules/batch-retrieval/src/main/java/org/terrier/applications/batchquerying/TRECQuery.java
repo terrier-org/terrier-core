@@ -66,12 +66,14 @@ public class TRECQuery implements QuerySource {
 	protected String[] topicFiles;
 
 	/** The queries in the topic files.*/
-	protected String[] queries;
+	protected String[] queries = null;
 	
 	/** The query identifiers in the topic files.*/
-	protected String[] query_ids;
+	protected String[] query_ids = null;
 	/** The index of the queries.*/
 	protected int index;
+
+	protected TagSet tags;
 	/**
 	 * Extracts and stores all the queries from query files.
 	 * @param queryfilenames String the name of files containing topics.
@@ -184,19 +186,8 @@ public class TRECQuery implements QuerySource {
 			fact.setWhitelist(whitelist);
 		if (blacklist != null)
 			fact.setBlacklist(blacklist);
-		TagSet tags = fact.build();
-		Vector<String> vecStringQueries = new Vector<String>();
-		Vector<String> vecStringQueryIDs = new Vector<String>();
-		checkEncoding();
-		if (this.extractQuery(queryfilenames, tags, vecStringQueries, vecStringQueryIDs))
-			this.topicFiles = queryfilenames;
-		if (topicFiles == null)
-			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
-				+ " Check you have the correct topic files specified, and that tags are correct.");
-
-		this.queries = vecStringQueries.toArray(new String[0]);
-		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
-		this.index = 0;
+		this.tags = fact.build();
+		this.topicFiles = queryfilenames;
 	}
 	
 	/** 
@@ -226,23 +217,11 @@ public class TRECQuery implements QuerySource {
 	 *		all the queries.
 	 */	
 	public TRECQuery(String[] queryfilenames){
-		assert queryfilenames != null;
-		assert queryfilenames.length > 0;
-		
-		Vector<String> vecStringQueries = new Vector<String>();
-		Vector<String> vecStringQueryIDs = new Vector<String>();
-		TagSet tags = new TagSet(TagSet.TREC_QUERY_TAGS);
+		this.topicFiles = queryfilenames;
+		this.tags = new TagSet(TagSet.TREC_QUERY_TAGS);
 		checkEncoding();
-		if (this.extractQuery(queryfilenames, tags, vecStringQueries, vecStringQueryIDs))
-			this.topicFiles = queryfilenames;
-		if (topicFiles == null)
-			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
-				+ " Check you have the correct topic files specified, and that TrecQueryTags properties are correct.");
-
-		this.queries = vecStringQueries.toArray(new String[0]);
-		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
-		this.index = 0;
 	}
+
 
 	protected void checkEncoding() {
 		if (desiredEncoding == null)
@@ -254,6 +233,21 @@ public class TRECQuery implements QuerySource {
 			}
 			desiredEncoding = defaultEncoding;
 		}
+	}
+
+	protected void performExtraction(){
+		Vector<String> vecStringQueries = new Vector<String>();
+		Vector<String> vecStringQueryIDs = new Vector<String>();
+		checkEncoding();
+		if (! this.extractQuery(this.topicFiles, this.tags, vecStringQueries, vecStringQueryIDs))
+		{
+			logger.error("Topic files were specified, but non could be parsed correctly to obtain any topics."
+				+ " Check you have the correct topic files specified, and that tags are correct.");
+			return;
+		}
+		this.queries = vecStringQueries.toArray(new String[0]);
+		this.query_ids = vecStringQueryIDs.toArray(new String[0]);	
+		this.index = 0;
 	}
 	
 	/** 
@@ -280,11 +274,6 @@ public class TRECQuery implements QuerySource {
 		return this.topicFiles;
 	}
 	
-	/** @deprecated */
-	public String[] getTopicFilenames() {
-		return getInfo();
-	}
-	
 	/**
 	* Return the query for the given query number.
 	* @return String the string representing the query.
@@ -296,38 +285,26 @@ public class TRECQuery implements QuerySource {
 				return queries[i];
 		return null;
 	}
-	/** 
-	 * Test if there are more queries to process.
-	 * @return boolean true if there are more queries
-	 *		 to process, otherwise returns false.
-	 * @deprecated
-	 */
-	public boolean hasMoreQueries() {
-		return hasNext();
-	}
+	
 	/** 
 	 * {@inheritDoc} 
 	 */
 	public boolean hasNext()
 	{
+		if (queries == null)
+			performExtraction();
 		if (index == queries.length)
 			return false;
 		return true;
 	}
 	
 	/** 
-	 * Returns a query. 
-	 * @return String the next query.
-	 * @deprecated
-	 */
-	public String nextQuery() {
-		return next();
-	}
-	/** 
 	 * {@inheritDoc} 
 	 */
 	public String next()
 	{
+		if (queries == null)
+			performExtraction();
 		if (index == queries.length)
 			return null;
 		return queries[index++];

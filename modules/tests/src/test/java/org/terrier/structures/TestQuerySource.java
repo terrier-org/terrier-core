@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.PrintWriter;
-
+import java.util.Random;
 import org.terrier.applications.batchquerying.QuerySource;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.Files;
@@ -37,12 +37,13 @@ import org.terrier.utility.Files;
 /** Base class for testing query sources */
 public abstract class TestQuerySource extends ApplicationSetupBasedTest {
 
+	Random random = new Random();
 	public TestQuerySource() {
 		super();
 	}
 
 	protected String writeFile(String fileContents) throws Exception {
-		File tmpFile = tmpfolder.newFile("tmpQueries.trec");
+		File tmpFile = tmpfolder.newFile(String.valueOf(random.nextInt()) + "-tmpQueries.trec");
 		PrintWriter pw = new PrintWriter(Files.writeFileWriter(tmpFile));
 		pw.print(fileContents);
 		pw.close();
