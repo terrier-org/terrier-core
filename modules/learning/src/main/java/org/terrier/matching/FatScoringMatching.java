@@ -116,7 +116,7 @@ public class FatScoringMatching extends AbstractScoringMatching {
 		final int numDocs = docids.length;
 
 		if (queryTerms.size() != fInputRS.getQueryTerms().length) {
-			logger.warn("mqt has " + queryTerms.size() + " terms while fatresultset has " + fInputRS.getQueryTerms().length);
+			logger.debug("mqt has " + queryTerms.size() + " terms while fatresultset has " + fInputRS.getQueryTerms().length);
 		}
 		if (filterTerm == null) {
 			logger.info("Using all terms from " + (SCORE_ONLY_FROM_MQT ? "mqt" : "fat result set")+" for scoring");
