@@ -50,16 +50,17 @@ import org.terrier.utility.Rounding;
  * Implements automatic query expansion as PostProcess that is applied to the result set
  * after 1st-time matching.
  * <B>Controls</B>
- * <ul><li><tt>qemodel</tt> : The query expansion model used for Query Expansion. 
- * Defauls to Bo1.</li></ul>
- * <B>Properties</B>
- * <ul><li><tt>expansion.terms</tt> : The maximum number of most weighted terms in the 
+ * <ul>
+ * <li><tt>qemodel</tt> : The query expansion model used for Query Expansion. Defaults to Bo1.</li>
+ * <li><tt>qe_fb_terms</tt> : The maximum number of most weighted terms in the 
  * pseudo relevance set to be added to the original query. The system performs a conservative
  * query expansion if this property is set to 0. A conservative query expansion only re-weighs
- * the original query terms without adding new terms to the query.</li>
- * <li><tt>expansion.documents</tt> : The number of top documents from the 1st pass 
+ * the original query terms without adding new terms to the query. Default set by property <tt>expansion.terms</tt>.</li>
+ * <li><tt>qe_fb_docs</tt> : The number of top documents from the 1st pass 
  * retrieval to use for QE. The query is expanded from this set of documents, also 
- * known as the pseudo relevance set.</li>
+ * known as the pseudo relevance set. Default set by property <tt>expansion.docs</tt>.</li>
+ * </ul>
+ * <B>Properties</B>
  * <li><tt>qe.feedback.selector</tt> : The class to be used for selecting feedback documents.</li>
  * <li><tt>qe.expansion.terms.class</tt> : The class to be used for selecting expansion terms from feedback documents.</li>
  * </ul>
@@ -68,6 +69,35 @@ import org.terrier.utility.Rounding;
 @ProcessPhaseRequisites({ManagerRequisite.MQT, ManagerRequisite.RESULTSET})
 public class QueryExpansion implements MQTRewritingProcess {
 	protected static final Logger logger = LoggerFactory.getLogger(QueryExpansion.class);
+
+
+	public static class QueryExpansionConfig 
+	{
+		public static final String CONTROL_EXP_DOCS = "qe_fb_docs";
+		public static final String CONTROL_EXP_TERMS = "qe_fb_terms";
+		
+		public final int EXPANSION_DOCUMENTS;
+		public final int EXPANSION_TERMS;
+
+		private QueryExpansionConfig(int docs, int terms) {
+			EXPANSION_DOCUMENTS = docs;
+			EXPANSION_TERMS = terms;
+		}
+	}
+
+	/** Get the standard configuration for QueryExpansion, namely number of terms & docs, 
+	 * from the Request, using two controls.
+	 */
+	public static QueryExpansionConfig configFromRequest(Request r) {
+		int docs = ApplicationSetup.EXPANSION_DOCUMENTS;
+		if (r.getControl(QueryExpansionConfig.CONTROL_EXP_DOCS, null) != null)
+			docs = Integer.parseInt(r.getControl(QueryExpansionConfig.CONTROL_EXP_DOCS));
+		int terms = ApplicationSetup.EXPANSION_TERMS;
+		if (r.getControl(QueryExpansionConfig.CONTROL_EXP_TERMS, null) != null)
+			terms = Integer.parseInt(r.getControl(QueryExpansionConfig.CONTROL_EXP_TERMS));
+		return new QueryExpansionConfig(docs, terms);
+	}
+	
 	/**
 	 * The default namespace of query expansion model classes.
 	 * The query expansion model names are prefixed with this
@@ -128,6 +158,7 @@ public class QueryExpansion implements MQTRewritingProcess {
 	@Override
 	public boolean expandQuery(MatchingQueryTerms query, Request rq) throws IOException 
 	{
+		QueryExpansionConfig qeConfig = configFromRequest(rq);
 		//get the query expansion model to use
 		String qeModel = rq.getControl("qemodel");
 		if (qeModel == null || qeModel.length() ==0)
@@ -138,7 +169,7 @@ public class QueryExpansion implements MQTRewritingProcess {
 		}
 		setQueryExpansionModel(getQueryExpansionModel(qeModel));
 		if(logger.isDebugEnabled()){
-			logger.info("query expansion model: " + QEModel.getInfo());
+			logger.debug("query expansion model: " + QEModel.getInfo());
 		}
 		
 		// the number of term to re-weight (i.e. to do relevance feedback) is
@@ -146,9 +177,8 @@ public class QueryExpansion implements MQTRewritingProcess {
 		// if the query length is larger than the system setting, it does not
 		// make sense to do relevance feedback for a portion of the query. Therefore, 
 		// we re-weight the number of query length of terms.
-		int numberOfTermsToReweight = Math.max(ApplicationSetup.EXPANSION_TERMS, 
-				query.size());
-		if (ApplicationSetup.EXPANSION_TERMS == 0)
+		int numberOfTermsToReweight = Math.max(qeConfig.EXPANSION_TERMS, query.size());
+		if (qeConfig.EXPANSION_TERMS == 0)
 			numberOfTermsToReweight = 0;
 
 		if (selector == null)
@@ -159,16 +189,6 @@ public class QueryExpansion implements MQTRewritingProcess {
 		if (feedback == null || feedback.length == 0)
 			return false;
 	
-		//double totalDocumentLength = 0;
-		//for(FeedbackDocument doc : feedback)
-		//{
-			//totalDocumentLength += documentIndex.getDocumentLength(doc.docid);
-
-		//	if(logger.isDebugEnabled()){
-		//		logger.debug(doc.rank +": " + metaIndex.getItem("docno", doc.docid)+
-		//			" ("+doc.docid+") with "+doc.score);
-		//	}
-		//}
 		ExpansionTerms expansionTerms = getExpansionTerms();
 		expansionTerms.setModel(QEModel);
 		
