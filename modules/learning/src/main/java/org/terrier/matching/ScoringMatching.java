@@ -72,7 +72,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 			this.cs = index.getCollectionStatistics();
 		
 		rs_input = rsInput;
-		//final int[] docids = rs_input.getDocids();
+		docids = rs_input.getDocids();
 		final int docCount = docids.length;
 		scores = new double[docCount];
 		org.terrier.sorting.HeapSort.heapSort(docids, scores, docCount);
