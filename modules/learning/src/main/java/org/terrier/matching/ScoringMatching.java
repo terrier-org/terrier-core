@@ -29,6 +29,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 	CollectionStatistics cs; 
 	ResultSet rs_input;
 	double[] scores;
+	int[] docids;
 	int scored = 0;
 	
 	public ScoringMatching(Index _index, Matching _parent, WeightingModel _wm, Predicate<Pair<String,Set<String>>> _filter)
@@ -71,7 +72,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 			this.cs = index.getCollectionStatistics();
 		
 		rs_input = rsInput;
-		final int[] docids = rs_input.getDocids();
+		//final int[] docids = rs_input.getDocids();
 		final int docCount = docids.length;
 		scores = new double[docCount];
 		org.terrier.sorting.HeapSort.heapSort(docids, scores, docCount);
@@ -185,7 +186,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 	protected ResultSet getFinalResultSet()
 	{
 		QueryResultSet rtr = new QueryResultSet(scores.length);
-		rtr.docids = rs_input.getDocids();
+		rtr.docids = docids;
 		rtr.scores = scores;
 		return rtr;
 		//return rs_input;
