@@ -359,6 +359,7 @@ public class LocalManager implements Manager
 				entireSequence.append(",");
 			}
 			ModelName = entireSequence.substring(0,entireSequence.length() -1);
+			logger.debug("Using Matching as " + ModelName);
 			//check for already instantiated class
 			Map<String, Matching> indexMap = Cache_Matching.get(_index);
 			if (indexMap == null)
