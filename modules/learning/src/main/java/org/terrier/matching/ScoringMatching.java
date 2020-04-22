@@ -18,7 +18,7 @@ import org.terrier.structures.postings.IterablePosting;
 
 /** Matching implementation that uses a parent Matching instance to get the docids to work with.
  * Scores are replaced using the specified weighting model. Scoring is done in a DAAT fashion.
- * 
+ *
  * @author craigm
  *
  */
@@ -26,7 +26,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 
 	Lexicon<String> lexicon;
 	PostingIndex<?> invertedIndex;
-	CollectionStatistics cs; 
+	CollectionStatistics cs;
 	ResultSet rs_input;
 	double[] scores;
 	int[] docids;
@@ -72,16 +72,18 @@ public class ScoringMatching extends AbstractScoringMatching {
 			this.cs = index.getCollectionStatistics();
 		
 		rs_input = rsInput;
-		//final int[] docids = rs_input.getDocids();
+		docids = rs_input.getDocids();
 		final int docCount = docids.length;
 		scores = new double[docCount];
 		org.terrier.sorting.HeapSort.heapSort(docids, scores, docCount);
 
-		logger.info("ScoringMatching running for " + wm.getInfo() + ' '+ queryNumber);
-		
 		//this smells like a hack
-		if (super.wm != null)
+		if (super.wm != null) {
 			queryTerms.forEach( qtPair -> qtPair.getValue().termModels = Arrays.asList(wm));
+			logger.info("ScoringMatching running for " + wm.getInfo() + ' '+ queryNumber);
+		} else {
+			logger.info("ScoringMatching running for " + queryNumber);
+		}
 		
 		Iterator<MatchingTerm> iter = queryTerms.iterator();
 		while(iter.hasNext())
@@ -150,8 +152,13 @@ public class ScoringMatching extends AbstractScoringMatching {
 				assignScore(i, docid, score, matching);
 			}		
  		}
-		assert matchingCount <= docids.length;	
-		logger.info(this.getClass().getSimpleName() + " for "+this.wm.getInfo()+" on "+terms+" terms, scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
+		assert matchingCount <= docids.length;
+		if (this.wm == null)
+		{
+			logger.info(this.getClass().getSimpleName() + " for "+terms+" terms, scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
+		} else {
+			logger.info(this.getClass().getSimpleName() + " for "+this.wm.getInfo()+" on "+terms+" terms, scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
+		}
 		finalise(matchingCount);
 		
 		plm.close();
