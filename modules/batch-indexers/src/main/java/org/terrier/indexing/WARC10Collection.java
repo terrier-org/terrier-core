@@ -127,8 +127,8 @@ public class WARC10Collection extends WARC018Collection  {
 				DocProperties.put("docno", DocProperties.get(warc_docno_header));
 				DocProperties.put("url", DocProperties.get(warc_url_header));
 				DocProperties.put("crawldate", parseDate(DocProperties.get(warc_crawldate_header)));
-				if (logger.isDebugEnabled())
-					logger.debug("Now working on document "+ DocProperties.get("docno"));
+				if (logger.isTraceEnabled())
+					logger.trace("Now working on document "+ DocProperties.get("docno"));
 				
 				DocProperties.put("charset", desiredEncoding);
 				//obtain the character set of the document and put in the charset property

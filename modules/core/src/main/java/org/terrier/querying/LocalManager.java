@@ -569,6 +569,13 @@ public class LocalManager implements Manager
 		}		
 	}
 
+	/** this allows processes to invoke other processes. 
+	 * E.g. QueryExpansion can ask for matching to be re-run */
+	public void runNamedProcess(String processName, Request q)
+	{
+		processModuleManager.getModule(processName).process(this, q);
+	}
+
 	/* -------------- factory methods for SearchRequest objects ---------*/
 	/* (non-Javadoc)
 	 * @see org.terrier.querying.IManager#newSearchRequest()
