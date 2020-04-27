@@ -86,7 +86,7 @@ public abstract class MultiDocumentFileCollection implements Collection {
 	protected MultiDocumentFileCollection(){}
 	
 	/** construct a collection from the denoted collection.spec file */
-	MultiDocumentFileCollection(List<String> _FilesToProcess)
+	protected MultiDocumentFileCollection(List<String> _FilesToProcess)
 	{
 		FilesToProcess = _FilesToProcess;
 		if (new HashSet<>(FilesToProcess).size() < FilesToProcess.size())
@@ -100,19 +100,18 @@ public abstract class MultiDocumentFileCollection implements Collection {
 		} catch (IOException ioe) {
 			logger.error("Problem opening first file ", ioe);
 		}
-		
 	}
 	
 	
 	/** construct a collection from the denoted collection.spec file */
-	MultiDocumentFileCollection(final String CollectionSpecFilename)
+	protected MultiDocumentFileCollection(final String CollectionSpecFilename)
 	{
 		this(CollectionFactory.loadCollectionSpecFileList(CollectionSpecFilename));		
 	}
 
 	/**
     * A constructor that reads only the specified InputStream.*/
-   MultiDocumentFileCollection(InputStream input)
+   protected MultiDocumentFileCollection(InputStream input)
    {
        is = input;
        FilesToProcess = new ArrayList<String>();
