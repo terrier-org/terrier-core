@@ -31,6 +31,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldDocumentIndex;
 import org.terrier.structures.postings.*;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
@@ -357,6 +359,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 	public void test_compare2() throws Exception {
 		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
 		assertNotNull(mem);
+		assertFalse(IndexOnDisk.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields"));
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 		Index mem2disk = Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
 				"memoryFields");
