@@ -35,6 +35,7 @@ import org.apache.hadoop.io.Writable;
  * @since 3.0
  * @author Craig Macdonald
  */
+@SuppressWarnings("deprecation")
 public interface WritablePosting extends Posting, Writable, Serializable 
 {
     /**
@@ -42,4 +43,10 @@ public interface WritablePosting extends Posting, Writable, Serializable
      * @param l length of the document of the current posting in tokens.
      */
     public void setDocumentLength(int l);
+
+    /** It may be of benefit to update the frequency of the id in some applications.
+     * This should not be used lightly, as it may break the decompression of other
+     * postings in iterators. This was moved from Posting.
+     */
+    public void setId(int id);
 }

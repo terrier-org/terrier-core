@@ -60,9 +60,9 @@ public interface Posting
      */
     int getDocumentLength();
     
-    // TODO [NIC]: Should be not exposed.
+    /** This will be removed in a future release */
     @Deprecated
-    void setId(int id);
+    default void setId(int id) {}
     
     /** 
      * Copy this posting to one free of an iterator. Kind of like a clone.

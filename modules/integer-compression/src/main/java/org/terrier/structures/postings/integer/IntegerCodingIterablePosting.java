@@ -188,13 +188,6 @@ public class IntegerCodingIterablePosting implements IterablePosting, FieldPosti
 	}
 
 	@Override
-	public void setId(int id) {
-		
-		this.id = id;
-		
-	}
-
-	@Override
 	public WritablePosting asWritablePosting() {
 
 		return new BlockFieldPostingImpl(id, tf, blocks, fields);

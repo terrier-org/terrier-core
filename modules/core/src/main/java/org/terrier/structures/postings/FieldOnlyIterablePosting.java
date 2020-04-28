@@ -84,11 +84,6 @@ public class FieldOnlyIterablePosting extends IterablePostingImpl {
 	}
 
 	@Override
-	public void setId(int id) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public WritablePosting asWritablePosting() {
 		return new BasicPostingImpl(this.currentId, this.frequency);
 	}
