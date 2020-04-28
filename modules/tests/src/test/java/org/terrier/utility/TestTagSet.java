@@ -39,11 +39,50 @@ public class TestTagSet extends ApplicationSetupBasedTest {
 		assertTrue(t.isTagToProcess("text"));
 		assertFalse(t.isTagToProcess("abstract"));
 	}
+
+	@Test public void testSimpleWithFactory() {
+		TagSet t = TagSet.factory()
+			.setDocTag("DOC")
+			.setIdTag("DOCNO")
+			.setWhitelist("TEXT")
+			.setCaseSensitive(true)
+			.build();
+
+		assertTrue(t.isIdTag("DOCNO"));
+		assertFalse(t.isIdTag("docno"));
+		assertTrue(t.isDocTag("DOC"));
+		assertFalse(t.isDocTag("doc"));
+		
+		assertTrue(t.isTagToProcess("TEXT"));
+		assertFalse(t.isTagToProcess("text"));
+		assertFalse(t.isTagToProcess("abstract"));
+	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testConfiguration() {
 		ApplicationSetup.setProperty("TrecDocTags.process", "TEXT");
 		ApplicationSetup.setProperty("TrecDocTags.skip", "TEXT");
 		new TagSet(TagSet.TREC_DOC_TAGS);
+	}
+
+	public void testFields() {
+		ApplicationSetup.setProperty("FieldTags.process", "");
+		FieldScore.init();
+		assertFalse(FieldScore.USE_FIELD_INFORMATION);
+
+		ApplicationSetup.setProperty("FieldTags.process", "TEXT");
+		FieldScore.init();
+		assertTrue(FieldScore.USE_FIELD_INFORMATION);
+		assertEquals(1, FieldScore.FIELDS_COUNT);
+		assertEquals(1, FieldScore.FIELD_NAMES.length);
+
+		ApplicationSetup.setProperty("FieldTags.process", "TEXT,H1");
+		FieldScore.init();
+		assertTrue(FieldScore.USE_FIELD_INFORMATION);
+		assertEquals(2, FieldScore.FIELDS_COUNT);
+		assertEquals(2, FieldScore.FIELD_NAMES.length);
+		assertEquals("TEXT", FieldScore.FIELD_NAMES[0]);
+		assertEquals("H1", FieldScore.FIELD_NAMES[1]);
+		
 	}
 }

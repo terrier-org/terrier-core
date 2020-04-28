@@ -359,6 +359,7 @@ public class LocalManager implements Manager
 				entireSequence.append(",");
 			}
 			ModelName = entireSequence.substring(0,entireSequence.length() -1);
+			logger.debug("Using Matching as " + ModelName);
 			//check for already instantiated class
 			Map<String, Matching> indexMap = Cache_Matching.get(_index);
 			if (indexMap == null)
@@ -566,6 +567,13 @@ public class LocalManager implements Manager
 		synchronized (this) {
 			tpa = new BaseTermPipelineAccessor(pipes);
 		}		
+	}
+
+	/** this allows processes to invoke other processes. 
+	 * E.g. QueryExpansion can ask for matching to be re-run */
+	public void runNamedProcess(String processName, Request q)
+	{
+		processModuleManager.getModule(processName).process(this, q);
 	}
 
 	/* -------------- factory methods for SearchRequest objects ---------*/

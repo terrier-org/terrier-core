@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>terrier-platform</artifactId>
 		<groupId>org.terrier</groupId>
-		<version>5.2</version>
+		<version>5.3-SNAPSHOT</version>
 		<relativePath>../../</relativePath>
 	</parent>
 
@@ -292,7 +292,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.10.1</version>
+			<version>2.9.10.4</version>
 			<type>jar</type>
 		</dependency>
 

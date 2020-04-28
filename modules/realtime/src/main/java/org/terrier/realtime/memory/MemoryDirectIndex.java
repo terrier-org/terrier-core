@@ -41,6 +41,7 @@ import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.postings.IterablePosting;
+import org.terrier.structures.BitIndexPointer;
 
 /**
  * This is a DirectIndex structure that is held fully in memory, it 
@@ -59,8 +60,8 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 	/*
 	 * Inverted file structures.
 	 */
-	private DocumentIndex doi;
-	private TIntObjectHashMap<DocumentPostingList> postings;
+	protected DocumentIndex doi;
+	protected TIntObjectHashMap<DocumentPostingList> postings;
 
 	/**
 	 * Constructor.
@@ -74,8 +75,8 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 	 * Postings list.
 	 */
 	public class DocumentPostingList {
-		private TIntArrayList pl_termids;
-		private TIntIntHashMap termIds2frequencies;
+		protected TIntArrayList pl_termids;
+		protected TIntIntHashMap termIds2frequencies;
 
 		public DocumentPostingList() {
 			pl_termids = new TIntArrayList();
@@ -116,11 +117,8 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 			for (int i =0; i<pl_termids.size(); i++) { 
 				frequencies.add(termIds2frequencies.get(pl_termids.get(i)));
 			}
-			
 			return frequencies;
 		}
-		
-		
 	}
 
 	/**
@@ -135,17 +133,9 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 
 	
 	
-	
-	/** {@inheritDoc} */
+	@Override
 	public IterablePosting getPostings(Pointer pointer) throws IOException {
-		DocumentPostingList pl = postings.get(((MemoryPointer)pointer).getPointer());
-		if (pl==null) {
-			pl = new DocumentPostingList();
-		}
-		
-		TIntArrayList termidsSorted = pl.getPl_termids(); // this does a sort of the termids
-		TIntArrayList frequencies = pl.getPl_freq(); // this is the same order as the termids (so the sort in the previous call affects this)
-		return new MemoryDirectIterablePosting(termidsSorted, frequencies);
+		return getPostings((int) ((BitIndexPointer) pointer).getOffset());
 	}
 	
 	public IterablePosting getPostings(int pointer) throws IOException {
@@ -153,7 +143,6 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 		if (pl==null) {
 			pl = new DocumentPostingList();
 		}
-		
 		
 		TIntArrayList termidsSorted = pl.getPl_termids(); // this does a sort of the termids
 		TIntArrayList frequencies = pl.getPl_freq(); // this is the same order as the termids (so the sort in the previous call affects this)
@@ -169,16 +158,20 @@ public class MemoryDirectIndex implements PostingIndex<MemoryPointer> {
 	 * Return an iterator over the inverted file.
 	 */
 	public PostingIndexInputStream iterator() {
-		return new DirectIterator();
+		return new DirectIterator(((MemoryDocumentIndex)doi).iteratorOverEntries());
 	}
 
 	/**
 	 * Direct index iterator.
 	 */
-	private class DirectIterator implements PostingIndexInputStream {
+	protected class DirectIterator implements PostingIndexInputStream {
 		// TODO: This cast to a MemoryDocumentIndex is not good. Should the iterator method be in an interface up the chain?
-		private Iterator<Entry<Integer, DocumentIndexEntry>> doiIter = ((MemoryDocumentIndex)doi).iteratorOverEntries();
+		private Iterator<Entry<Integer, DocumentIndexEntry>> doiIter;
 		private Entry<Integer, DocumentIndexEntry> doiEntry;
+
+		protected DirectIterator(Iterator<Entry<Integer, DocumentIndexEntry>> _doiIter) {
+			doiIter = _doiIter;
+		}
 
 		public boolean hasNext() {
 			return doiIter.hasNext();

@@ -43,6 +43,7 @@ import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndexInputStream;
+import org.terrier.structures.indexing.DiskIndexWriter;
 import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
@@ -52,6 +53,8 @@ import org.terrier.structures.indexing.LexiconBuilder;
 import org.terrier.structures.seralization.FixedSizeTextFactory;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
+import org.terrier.structures.IndexFactory;
+import org.terrier.querying.IndexRef;
 
 /** An in-memory incremental fields index (non-compressed).
  * @author Stuart Mackie
@@ -59,11 +62,31 @@ import org.terrier.utility.ArrayUtils;
  */
 public class MemoryFieldsIndex extends MemoryFields {
 
+
+    public static class Loader implements IndexFactory.IndexLoader
+	{
+		@Override
+		public boolean supports(IndexRef ref) {
+			return ref.size() == 1 && ref.toString().equals("#memoryfields");
+		}
+
+		@Override
+		public Index load(IndexRef ref) {
+			return new MemoryFieldsIndex();
+		}
+
+		@Override
+		public Class<? extends Index> indexImplementor(IndexRef ref) {
+			return MemoryFieldsIndex.class;
+		}
+	}
+
     /** Constructor. */
     public MemoryFieldsIndex() {
         super();
         logger.info("** Fields **");
         inverted = new MemoryFieldsInvertedIndex(lexicon, document);
+        direct = new MemoryFieldsDirectIndex(this.getDocumentIndex());
     }
 
     /** {@inheritDoc} */
@@ -78,7 +101,7 @@ public class MemoryFieldsIndex extends MemoryFields {
 			return;
 		
 		// Write the document's properties to the meta index.
-				metadata.writeDocumentEntry(docProperties);
+		metadata.writeDocumentEntry(docProperties);
 		
         // Add the document's length to the document index.
         ((MemoryDocumentIndexFields) document).addDocument(docContents.getDocumentLength(), ((FieldDocumentIndexEntry) docContents.getDocumentStatistics()).getFieldLengths());
@@ -93,10 +116,15 @@ public class MemoryFieldsIndex extends MemoryFields {
 
             // Insert/update term in lexicon.
             int termid = lexicon.term(term, le);
+            int docid = stats.getNumberOfDocuments();
+            int tf =  docContents.getFrequency(term);
+            int[] tff = ((FieldDocumentPostingList)docContents).getFieldFrequencies(term);
 
             // Insert/update term posting list.
             //System.err.println(term+" "+((FieldDocumentPostingList)docContents).getFieldFrequencies(term)[0]+" "+((FieldDocumentPostingList)docContents).getFieldFrequencies(term)[1]);
-            ((MemoryFieldsInvertedIndex) inverted).add(termid, stats.getNumberOfDocuments(), docContents.getFrequency(term), ((FieldDocumentPostingList)docContents).getFieldFrequencies(term));
+            ((MemoryFieldsInvertedIndex) inverted).add(termid, docid, tf, tff);
+
+            ((MemoryFieldsDirectIndex)direct).add(docid, termid, tf, tff);
 
             // Keep tally on fields.
             int[] ffreq = ((FieldDocumentPostingList)docContents).getFieldFrequencies(term);
@@ -130,96 +158,14 @@ public class MemoryFieldsIndex extends MemoryFields {
         }
 
         indexDocument(doc.getAllProperties(), fdpl);
-
     }
 
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
-    public Index write(String path, String prefix) throws IOException {
-
-    	IndexOnDisk index = Index.createNewIndex(path, prefix);
-
-        compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldtags, 0,0);
-        compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", fieldtags, 0, 0);
-        /*
-         * Meta-data & document index.
-         */
-
-        Iterator<String[]> metaIter = (Iterator<String[]>) this
-				.getIndexStructureInputStream("meta");
-
-		Iterator<DocumentIndexEntry> docIter = (Iterator<DocumentIndexEntry>) this
-				.getIndexStructureInputStream("document");
-        
-        CompressingMetaIndexBuilder metaOut = new CompressingMetaIndexBuilder(
-        		index, ((MetaIndex)this.getIndexStructure("meta")).getKeys(),
-				ArrayUtils.parseCommaDelimitedInts(ApplicationSetup
-						.getProperty("indexer.meta.forward.keylens", "")),
-				ArrayUtils.parseCommaDelimitedString(ApplicationSetup
-						.getProperty("indexer.meta.reverse.keys", "")));
-
-		DocumentIndexBuilder docOut = new DocumentIndexBuilder(index,
-				"document");
-
-		//System.out.println(this.getCollectionStatistics().getNumberOfDocuments());
-		while (docIter.hasNext()) {
-			
-			
-			DocumentIndexEntry die = docIter.next();
-			//System.err.println(die.getDocumentLength()+" "+die.getClass().getName());
-			docOut.addEntryToBuffer(die);
-		}
-		while(metaIter.hasNext()){
-			metaOut.writeDocumentEntry(metaIter.next());
-		}
-		docOut.finishedCollections();
-		docOut.close();
-		metaOut.close();
-
-        /*
-         * Lexicon and inverted index.
-         */
-
-        Iterator<Entry<String, MemoryFieldsLexiconEntry>> lexIN = (Iterator<Entry<String, MemoryFieldsLexiconEntry>>) this.getIndexStructureInputStream("lexicon");
-        FSOMapFileLexiconOutputStream lexOUT = new FSOMapFileLexiconOutputStream(index, "lexicon", new FixedSizeTextFactory(ApplicationSetup.MAX_TERM_LENGTH), FieldLexiconEntry.Factory.class);
-        FieldLexiconEntry.Factory leFactory = new FieldLexiconEntry.Factory(fieldtags.length);
-
-        PostingIndexInputStream invIN = (PostingIndexInputStream) this.getIndexStructureInputStream("inverted");
-        AbstractPostingOutputStream invOut = compressionInvertedConfig.getPostingOutputStream(
-				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "inverted" + compressionInvertedConfig.getStructureFileExtension());
-
-        while (lexIN.hasNext()) {
-
-            // Read in-memory lexicon and postings.
-            Entry<String, MemoryFieldsLexiconEntry> term = lexIN.next();
-            MemoryFieldsIterablePosting postings = (MemoryFieldsIterablePosting) invIN.next();
-
-            // Write on-disk lexicon and postings.
-            BitIndexPointer pointer = invOut.writePostings(postings);
-            FieldLexiconEntry le = (FieldLexiconEntry) leFactory.newInstance();
-            le.add(term.getValue());
-            le.setTermId(term.getValue().getTermId());
-            le.setPointer(pointer);
-            lexOUT.writeNextEntry(term.getKey(), le);
-        }
-
-        IndexUtil.close(lexIN);
-        IndexUtil.close(lexOUT);
-        IndexUtil.close(invIN);
-        IndexUtil.close(invOut);
-
-        /*
-         * Tidy up.
-         */
-
-        index.flush();
-        collectProperties(this,index,compressionInvertedConfig, compressionDirectConfig);
-        LexiconBuilder.optimise(index, "lexicon");
-        index.flush();
-
-        return index;
-    }
+    protected DiskIndexWriter makeDiskIndexWriter(String path, String prefix) {
+        return new DiskIndexWriter(path, prefix)
+            .setFields(this.getCollectionStatistics().getFieldNames())
+            .withDirect();
+	}
 
     /** Not implemented. */
     public Index merge(String diskpath, String diskprefix, String newpath, String newprefix) throws IOException {

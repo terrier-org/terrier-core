@@ -26,6 +26,13 @@
  */
 package org.terrier.utility;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.ArrayList;
+
 /**
  * A class that models a set of tags to process (white list),
  * a set of tags to skip (black list), a tag that is used as a
@@ -96,25 +103,21 @@ public class TagSet {
 	/**
 	 * The set of tags to process.
 	 */
-	protected final HashSet<String> whiteList;
+	protected Set<String> whiteList = new HashSet<>();
 	/** Size of whiteList hashset */
 	protected final int whiteListSize;
 	
-	/**
-	 * A comma separated list of tags to process.
-	 */
-	protected final String whiteListTags;
+	protected List<String> whiteListTags = new ArrayList<>();
 	
 	/**
 	 * The set of tags to skip.
 	 */
-	protected final HashSet<String> blackList;
+	protected Set<String> blackList = new HashSet<>();
 	/** Size of whiteList hashset */
 	protected final int blackListSize;
-	/**
-	 * A comma separated list of tags to skip.
-	 */
-	protected final String blackListTags;
+
+	protected List<String> blackListTags = new ArrayList<>();
+	
 	
 	/**
 	 * The tag that is used as a unique identifier.
@@ -128,6 +131,154 @@ public class TagSet {
 	protected final String docTag;
 	/** is this TagSet case sensitive. Defaults to true for all sets except TrecDocTags */
 	protected final boolean caseSensitive;
+
+	public static TagSetFactory factory() {
+		return new TagSetFactory();
+	}
+
+	public static class TagSetFactory {
+
+		String docTag = null;
+		String idTag = null;
+		List<String> whitelist = Collections.emptyList();
+		List<String> blacklist = Collections.emptyList();
+		boolean caseSensitive = false;
+
+		public TagSetFactory setDocTag(String tag) {
+			this.docTag = tag;
+			return this;
+		}
+
+		public TagSetFactory setIdTag(String tag) {
+			this.idTag = tag;
+			return this;
+		}
+
+		public TagSetFactory setWhitelist(List<String> tags) {
+			this.whitelist = tags;
+			return this;
+		}
+
+		public TagSetFactory setWhitelist(String... tags) {
+			this.whitelist = Arrays.asList(tags);
+			return this;
+		}
+
+		public TagSetFactory setBlacklist(List<String> tags) {
+			this.blacklist = tags;
+			return this;
+		}
+
+		public TagSetFactory setBlacklist(String... tags) {
+			this.blacklist = Arrays.asList(tags);
+			return this;
+		}
+
+		public TagSetFactory setCaseSensitive(boolean yes) {
+			this.caseSensitive = yes;
+			return this;
+		}
+
+		public TagSet build() {
+			return new TagSet(docTag, caseSensitive, idTag, whitelist, blacklist);
+		}
+	}
+
+	//private constructor - the the factory class instead
+	private TagSet(String docTag, boolean caseSensitive, String idTag, List<String> whitelist, List<String> blacklist) {
+		this.caseSensitive = caseSensitive;
+		if (this.caseSensitive) {
+			this.docTag = docTag;
+			this.idTag = idTag;
+			this.whiteListTags = whitelist;
+			this.blackListTags = blacklist;
+			this.whiteList = new HashSet<>(whitelist);
+			this.blackList = new HashSet<>(blacklist);			
+		} else {
+			this.idTag = StringTools.toUpperCase(idTag);
+			this.docTag = StringTools.toUpperCase(docTag);
+			this.whiteListTags = whitelist.stream().map(t -> StringTools.toUpperCase(t)).collect(Collectors.toList());
+			this.blackListTags = blacklist.stream().map(t -> StringTools.toUpperCase(t)).collect(Collectors.toList());
+			this.blackList = blacklist.stream().map(t -> StringTools.toUpperCase(t)).collect(Collectors.toSet());
+			this.whiteList = whitelist.stream().map(t -> StringTools.toUpperCase(t)).collect(Collectors.toSet());
+		}
+		this.whiteListSize = whitelist.size();
+		this.blackListSize = blackList.size();
+		if (this.idTag.length() > 0)
+			this.whiteList.add(this.idTag);
+		if (this.docTag.length() > 0)
+			this.whiteList.add(this.docTag);
+	}
+	
+	/**
+	 * Constructs the tag set for the given prefix,
+	 * by reading the corresponding properties from
+	 * the properties file.
+	 * @param prefix the common prefix of the properties to read.
+	 */
+	public TagSet(String prefix) {
+		caseSensitive = Boolean.parseBoolean(
+            ApplicationSetup.getProperty(prefix+".casesensitive",
+				prefix.equals(TREC_DOC_TAGS) ? "true" : "false"));
+		
+		String whiteListTags;
+		String blackListTags;
+		if (prefix.length() > 0)
+		{
+			String _whiteListTags = ApplicationSetup.getProperty(prefix+".process","");
+			String _blackListTags = ApplicationSetup.getProperty(prefix+".skip","");
+			if (!caseSensitive)
+			{
+				whiteListTags = StringTools.toUpperCase(_whiteListTags);
+				blackListTags =  StringTools.toUpperCase(_blackListTags);
+			}
+			else
+			{
+				whiteListTags = _whiteListTags;
+				blackListTags = _blackListTags;
+			}
+			for (String t: whiteListTags.split("\\s*,\\s*"))
+				if (t.length() > 0){
+					whiteList.add(t);
+					this.whiteListTags.add(t);
+				}
+					
+			for (String t : blackListTags.split("\\s*,\\s*"))
+				if (t.length() > 0)
+				{
+					if (whiteList.contains(t))
+						throw new IllegalArgumentException(prefix+".process" + " and " + prefix+".skip" + " cannot both contain tag " + t);
+					blackList.add(t);
+					this.blackListTags.add(t);
+				}
+			String _idTag = ApplicationSetup.getProperty(prefix+".idtag","");
+			String _docTag = ApplicationSetup.getProperty(prefix+".doctag","");
+			if (!caseSensitive)
+			{
+				idTag =  StringTools.toUpperCase(_idTag);
+				docTag = StringTools.toUpperCase(_docTag);
+			} else {
+				idTag = _idTag;
+				docTag = _docTag;
+			}			
+		}
+		else
+		{
+			whiteListTags = null;
+			blackListTags = null;
+			idTag = null;
+			docTag = null;
+		}
+		whiteListSize = whiteList.size();
+		blackListSize = blackList.size();
+
+		/*if the exist, the id and doc tags do not have to be included in the whitelist, as 
+		they are automatically added here*/
+		if (idTag != null && idTag.length() > 0)
+			whiteList.add(idTag);
+		if (idTag != null && docTag.length() > 0)	
+			whiteList.add(docTag);
+	}
 
 	/** Returns true if whiteListSize &gt; 0.
 	 *  @return Returns true if whiteListSize &gt; 0
@@ -193,83 +344,19 @@ public class TagSet {
 	}
 	
 	/**
-	 * Constructs the tag set for the given prefix,
-	 * by reading the corresponding properties from
-	 * the properties file.
-	 * @param prefix the common prefix of the properties to read.
-	 */
-	public TagSet(String prefix) {
-		whiteList = new HashSet<String>();
-		blackList = new HashSet<String>();
-        caseSensitive = Boolean.parseBoolean(
-            ApplicationSetup.getProperty(prefix+".casesensitive",
-                prefix.equals(TREC_DOC_TAGS) ? "true" : "false"));
-
-		if (prefix.length() > 0)
-		{
-			String _whiteListTags = ApplicationSetup.getProperty(prefix+".process","");
-			String _blackListTags = ApplicationSetup.getProperty(prefix+".skip","");
-			if (!caseSensitive)
-			{
-				whiteListTags = StringTools.toUpperCase(_whiteListTags);
-				blackListTags =  StringTools.toUpperCase(_blackListTags);
-			}
-			else
-			{
-				whiteListTags = _whiteListTags;
-				blackListTags = _blackListTags;
-			}
-			for (String t: whiteListTags.split("\\s*,\\s*"))
-				if (t.length() > 0)
-					whiteList.add(t);
-			for (String t : blackListTags.split("\\s*,\\s*"))
-				if (t.length() > 0)
-				{
-					if (whiteList.contains(t))
-						throw new IllegalArgumentException(prefix+".process" + " and " + prefix+".skip" + " cannot both contain tag " + t);
-					blackList.add(t);
-				}
-			String _idTag = ApplicationSetup.getProperty(prefix+".idtag","");
-			String _docTag = ApplicationSetup.getProperty(prefix+".doctag","");
-			if (!caseSensitive)
-			{
-				idTag =  StringTools.toUpperCase(_idTag);
-				docTag = StringTools.toUpperCase(_docTag);
-			} else {
-				idTag = _idTag;
-				docTag = _docTag;
-			}			
-		}
-		else
-		{
-			whiteListTags = null;
-			blackListTags = null;
-			idTag = null;
-			docTag = null;
-		}
-		whiteListSize = whiteList.size();
-		blackListSize = blackList.size();
-
-		/*the id and doc tags do not have to be specified in the whitelist, as 
-		they are automatically added here*/
-		whiteList.add(idTag);
-		whiteList.add(docTag);
-	}
-	
-	/**
 	 * Returns a comma separated list of tags to process
 	 * @return String the tags to process
 	 */
-	public String getTagsToProcess() {
-		return whiteListTags;
+	public String[] getTagsToProcess() {
+		return whiteListTags.toArray(new String[whiteListTags.size()]);
 	}
 	
 	/**
 	 * Returns a comma separated list of tags to skip
 	 * @return String the tags to skip
 	 */
-	public String getTagsToSkip() {
-		return blackListTags;
+	public String[] getTagsToSkip() {
+		return blackListTags.toArray(new String[blackListTags.size()]);
 	}
 	
 	/**

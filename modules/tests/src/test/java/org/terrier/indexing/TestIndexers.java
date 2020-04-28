@@ -162,7 +162,7 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 		dirFfs[1].put("chicken", new int[]{1,2});
 		
 		
-		Collection col = new CollectionDocumentList(sourceDocs, "filename");
+		Collection col = new CollectionDocumentList(sourceDocs);
 		indexer.createDirectIndex(new Collection[]{col});
 		indexer.createInvertedIndex();
 		

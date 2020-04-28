@@ -57,7 +57,7 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		
 		assertEquals(3, merged2.getCollectionStatistics().getNumberOfDocuments());
 		
-		checkTerm(index2, "sentence", 1, true, false);
+		checkTerm(merged2, "sentence", 3, true, false);
 	}
 	
 	void checkTerm(Index i, String term, int df, boolean blocks, boolean fields) throws Exception

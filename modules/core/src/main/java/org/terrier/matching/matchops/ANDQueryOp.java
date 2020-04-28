@@ -46,11 +46,11 @@ public class ANDQueryOp extends MultiTermOp {
 	private static final long serialVersionUID = 1L;
 
 	public ANDQueryOp(String[] ts) {
-		super(ts);
+		super(ts, true);
 	}
 	
 	public ANDQueryOp(Operator[] ts) {
-		super(ts);
+		super(ts, true);
 	}
 
 	@Override

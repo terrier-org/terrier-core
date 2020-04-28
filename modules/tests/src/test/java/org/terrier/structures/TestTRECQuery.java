@@ -40,6 +40,20 @@ public class TestTRECQuery extends TestQuerySource {
 	{
 		return new TRECQuery(filename);
 	}
+
+	@Test public void testTwoFiles() throws Exception {
+		String filename1 = super.writeFile("<top>\n<num> Number: 4\n<title> defination Gravitational\n</top>");
+		String filename2 = super.writeFile("<top>\n<num> Number: 6\n<title> another query\n</top>");
+		QuerySource source = new TRECQuery(new String[]{filename1, filename2});
+		assertTrue(source.hasNext());
+		assertEquals("defination gravitational", source.next());
+		assertEquals("4", source.getQueryId());
+		assertTrue(source.hasNext());
+		assertEquals("another query", source.next());
+		assertEquals("6", source.getQueryId());
+		assertFalse(source.hasNext());
+		
+	}
 		
 	@Test public void testOneNoClosing() throws Exception {
 		QuerySource source = processString("<top>\n<num> Number: 4\n<title> defination Gravitational\n</top>");
@@ -117,6 +131,19 @@ public class TestTRECQuery extends TestQuerySource {
 		
 		assertFalse(source.hasNext());
 	}
+
+	@Test public void testSpecifics() throws Exception {
+		String fileContents  = "<start> <id>111</id> <middle> hello <skip>world </start>";
+		String fileName = super.writeFile(fileContents);
+		QuerySource tq = new TRECQuery(
+			new String[]{fileName}, 
+			"start", "id", 
+			new String[]{"middle"}, new String[]{"skip"});
+		assertTrue(tq.hasNext());
+		assertEquals("hello", tq.next());
+		assertEquals("111", tq.getQueryId());
+		assertFalse(tq.hasNext());
+	} 
 	
 	@Test public void testOneLongQID() throws Exception {
 		QuerySource source = processString("<top>\n<num> Number: 4444\n<title> defination Gravitational\n</top>");

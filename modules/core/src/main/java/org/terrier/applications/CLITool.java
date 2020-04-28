@@ -97,7 +97,7 @@ public abstract class CLITool {
 			options.addOption(Option.builder("P")
 					.argName("package")
 					.hasArgs()
-					.desc("specify Maven packages to import, in format group:artifact:version")
+					.desc("specify Maven packages to import, in format group:artifact[:version]")
 					.build());
 			options.addOption(Option.builder("I")
 					.argName("indexref")

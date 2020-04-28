@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import objectexplorer.ObjectGraphMeasurer;
+import objectexplorer.ObjectGraphMeasurer.Footprint;
+
 import com.jakewharton.byteunits.BinaryByteUnit;
 
 import org.apache.hadoop.io.Text;
@@ -55,6 +58,7 @@ import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.SimpleBitIndexPointer;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
+import org.terrier.structures.merging.StructureMerger;
 import org.terrier.structures.postings.ArrayOfBasicIterablePosting;
 import org.terrier.structures.postings.ArrayOfFieldIterablePosting;
 import org.terrier.structures.postings.FieldPosting;
@@ -105,6 +109,8 @@ import gnu.trove.TIntIntHashMap;
  * @author Craig Macdonald &amp; Vassilis Plachouras
   */
 public class InvertedIndexBuilder {
+
+	protected static final boolean MEM_SIZE_TRACE = false;
 	
 	protected static final int tintint_overhead = 5;
 	protected static final float tintlist_overhead = 1.12f;
@@ -443,16 +449,26 @@ public class InvertedIndexBuilder {
 			assert free > 5 * 1024*1024;
 			memThreshold = (long) (heapusage * free);
 			logger.debug("Memory threshold is " + BinaryByteUnit.format(memThreshold));
-			projectedPointerCount = (long) (memThreshold / tintlist_overhead * (
-				(16l + Integer.BYTES + 16l + 2l* Integer.BYTES)* (2l + fieldCount) +
-				(long) (2l + fieldCount) * Integer.BYTES)
-				);
+			projectedPointerCount = (long) (memThreshold / pointerSize());
+				//(tintlist_overhead * (
+				//(16l + Integer.BYTES + 16l + 2l* Integer.BYTES)* (2l + fieldCount) +
+				//(long) (2l + fieldCount) * Integer.BYTES)
+				//));
 			logger.debug("projectedPointerCount " + projectedPointerCount); 
 		}
 		
 		@Override
 		public String toString() {
 			return this.getClass().getSimpleName() + ": lexicon scanning until approx " + BinaryByteUnit.format(memThreshold) +" of memory is consumed";
+		}
+
+		protected float pointerSize()
+		{
+			return (
+                1.02f * (Integer.BYTES* (2l + fieldCount)) //pointer storage + 2% overhead
+                +
+                (16l * 0.05f + 4l * 0.05f) //objects and references for tintlist
+            );	
 		}
 		
 		@Override
@@ -476,12 +492,38 @@ public class InvertedIndexBuilder {
 				tmpStorageStorage.add(createPointerForTerm(le));
 				numberOfPointersThisIteration += le.getDocumentFrequency();				
 				j++;
-				cumulativeSize += tintlist_overhead * (
-						(16 + Integer.BYTES + 16 + 2* Integer.BYTES)* (2 + fieldCount) + //array and tintarraylist overheads
-						le.getDocumentFrequency() * (2l + fieldCount) * Integer.BYTES);  //pointer storage
-				
-				if (numberOfPointersThisIteration > projectedPointerCount)
+				cumulativeSize += 
+						tintlist_overhead * (
+						(16 + Integer.BYTES + 16 + 2* Integer.BYTES)* (2 + fieldCount)) + //array and tintarraylist overheads
+						le.getDocumentFrequency() * pointerSize();
+
+				if (cumulativeSize > memThreshold)
+				{
+					logger.debug("Terminating lexicon scan as memory limit exceeded");
 					break;
+				}
+				if (numberOfPointersThisIteration > projectedPointerCount)
+				{
+					logger.debug("Terminating lexicon scan as projected pointer count exceeded");
+					break;
+				}
+
+				if (logger.isTraceEnabled() && (j % 100 == 0))
+				{
+					logger.trace("term "+ j + " pointers " + numberOfPointersThisIteration + " cumSize "+ cumulativeSize);
+					if (MEM_SIZE_TRACE)
+					{
+						Footprint footprint1 = ObjectGraphMeasurer.measure(tmpStorageStorage);
+                		logger.trace("tmpStorageStorage type usage is " + footprint1.toString());
+                		logger.trace("tmpStorageStorage requires " + footprint1.getSize());
+                		Footprint footprint2 = ObjectGraphMeasurer.measure(codesHashMap);
+                		logger.trace("codesHashMap type usage is " + footprint2.toString());
+                		logger.trace("codesHashMap type requires " + footprint2.getSize());
+						long diff =  footprint1.getSize()+ footprint2.getSize()  - cumulativeSize;
+						logger.trace("Difference " + diff + " " + (diff > 0 ? " underestimate " : " overestimate")); 
+					}
+					
+				}
 			}
 			LexiconScanResult rtr = new LexiconScanResult(j, numberOfPointersThisIteration, codesHashMap, tmpStorageStorage);
 			if (logger.isDebugEnabled())
@@ -491,7 +533,22 @@ public class InvertedIndexBuilder {
 							+ BinaryByteUnit.format(cumulativeSize));
 				else
 					logger.debug("All of lexicon consumed using "+ numberOfPointersThisIteration + " pointers, under memory threshold");
-					
+			
+			if (logger.isTraceEnabled())
+			{
+				logger.trace("term "+ j + " pointers " + numberOfPointersThisIteration + " cumSize "+ cumulativeSize);
+				if (MEM_SIZE_TRACE)
+				{
+					Footprint footprint1 = ObjectGraphMeasurer.measure(tmpStorageStorage);
+					logger.trace("tmpStorageStorage type usage is " + footprint1.toString());
+					logger.trace("tmpStorageStorage requires " + footprint1.getSize());
+					Footprint footprint2 = ObjectGraphMeasurer.measure(codesHashMap);
+					logger.trace("codesHashMap type usage is " + footprint2.toString());
+					logger.trace("codesHashMap requires " + footprint2.getSize());
+					long diff =  footprint1.getSize()+ footprint2.getSize()  - cumulativeSize;         
+                	logger.trace("Difference " + diff + " " + (diff > 0 ? " underestimate " : " overestimate"));
+				}
+			}	
 			return rtr;
 		}
 
@@ -514,7 +571,7 @@ public class InvertedIndexBuilder {
 		
 		@Override
 		public String toString() {
-			return this.getClass().getSimpleName() + ": lexicon scanning for " + PointersToProcess  + "pointers";
+			return this.getClass().getSimpleName() + ": lexicon scanning for " + PointersToProcess  + " pointers";
 		}
 
 		@Override
@@ -629,7 +686,14 @@ public class InvertedIndexBuilder {
 		throws IOException 
 	{
 		//scan the direct file
+		
+		//dont load a document index for the direct
+		IndexUtil.forceStructure(index, "document", new StructureMerger.NullDocumentIndex(index.getCollectionStatistics().getNumberOfDocuments()));
 		PostingIndexInputStream directInputStream = (PostingIndexInputStream)index.getIndexStructureInputStream("direct");
+		
+		//but restore previous functionality
+		IndexUtil.forceReloadStructure(index, "document");
+		
 		int docid = 0; //a document counter;
 		final boolean _useFieldInformation = this.useFieldInformation;
 		

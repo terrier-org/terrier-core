@@ -80,12 +80,12 @@ public class LinearModelMatching extends LearnedModelMatching  {
 		{
 			if (j+increment >= weights.length)
 			{
-				System.err.println("Trailing feature " + j + " not present in learned model.");
+				logger.warn("Trailing feature " + j + " not present in learned model.");
 				continue;
 			}
 			if (weights[j+increment] == 0)
 				continue;
-			System.err.println("Feature " + j + " with first score of " + features[j][0]);
+			//logger.debug("Feature " + j + " with first score of " + features[j][0]);
 
 			for(int i=0;i<N;i++)
 			{

@@ -32,9 +32,6 @@ collection.spec=/local/collections/WT2G/files.txt
 FieldTags.process=TITLE,ELSE
 #note that ELSE is a special field, which is everything not in one of the other fields
 
-#which collection to use to index?
-#or if you're indexing nonEnglish collections:
-#trec.collection.class=TRECUTFCollection
 
 ###################################################################
 #TRECCollection specific properties
@@ -49,6 +46,10 @@ TrecDocTags.idtag=DOCNO
 TrecDocTags.skip=DOCHDR
 #set to false if the tags can be of various case eg DOC and DoC
 TrecDocTags.casesensitive=true
+
+
+#which default encoding to open input files/documents
+trec.encoding=UTF-8
 
 ###################################################################
 #Web Interface and Query-biased summarisation

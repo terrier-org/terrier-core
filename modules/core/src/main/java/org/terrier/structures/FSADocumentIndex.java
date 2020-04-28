@@ -34,10 +34,13 @@ import org.slf4j.LoggerFactory;
 import org.terrier.structures.collections.FSArrayFile;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.TerrierTimer;
+import com.jakewharton.byteunits.BinaryByteUnit;
+
 /** 
  * Document Index saved as a fixed size array
  */
 public class FSADocumentIndex extends FSArrayFile<DocumentIndexEntry> implements DocumentIndex {
+	
 	protected static final Logger logger = LoggerFactory.getLogger(FSADocumentIndex.class);
 	
 	protected int lastDocid = -1;
@@ -88,11 +91,12 @@ public class FSADocumentIndex extends FSArrayFile<DocumentIndexEntry> implements
 	{
 		logger.debug("Loading document lengths for " + structureName + " structure into memory. NB: The following stacktrace IS NOT AN Exception", new Exception("THIS IS **NOT** AN EXCEPTION"));
 		int numEntries = this.size();
-		long size = (long) numEntries * (long) Integer.BYTES;
-		logger.info("Document index requires "+ size +" remaining stack is " + freeMem());
-		if (freeMem() < size)
+		final long size = (long) numEntries * (long) Integer.BYTES;
+		final long free = freeMem();
+		logger.info("Document index requires "+  BinaryByteUnit.format(size) +" remaining heap is " +  BinaryByteUnit.format(free));
+		if (free < size)
 		{
-			logger.warn("Insufficient memory to load document index - use TERRIER_HEAP_MEM env var to increase available stack space");
+			logger.warn("Insufficient memory to load document index - use TERRIER_HEAP_MEM env var to increase available heap space");
 		}
 		docLengths = new int[numEntries];
 		int i=0;

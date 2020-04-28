@@ -95,6 +95,7 @@ public class ML2 extends WeightingModel {
 	public void setCollectionStatistics(CollectionStatistics _cs) {
 		super.setCollectionStatistics(_cs);
 		fieldCount = _cs.getNumberOfFields();
+		WeightingModelLibrary.checkForFields(_cs);
 		p = new double[fieldCount];
 		fieldWeights = new double[fieldCount];
 		this.fieldNormalisations = new Normalisation[fieldCount];

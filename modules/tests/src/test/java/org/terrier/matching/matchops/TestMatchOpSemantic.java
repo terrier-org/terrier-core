@@ -150,11 +150,84 @@ public class TestMatchOpSemantic extends ApplicationSetupBasedTest {
 		assertEquals(IterablePosting.EOL, ip.next());
 		
 	}
+
+	public void testSynonymMatchNoMatch() throws Exception {
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1", "doc2"}, new String[]{"aa", "aa bb"});
+		Pair<EntryStatistics, IterablePosting> pair;
+		Operator op;
+
+		op = getOp(SynonymOp.class, new String[]{"bb", "cc"});
+		pair = op.getPostingIterator(index);
+		assertNotNull(pair);
+		checkOneMatch(pair.getRight(), 1);
+
+		op = getOp(SynonymOp.class, new String[]{"bb"});
+		pair = op.getPostingIterator(index);
+		assertNotNull(pair);
+		checkOneMatch(pair.getRight(), 1);
+
+		op = getOp(SynonymOp.class, new String[]{"cc"});
+		pair = op.getPostingIterator(index);
+		assertNotNull(pair);
+		checkNoMatch(pair.getRight());
+	}
+
+	@Test
+	public void testPhraseMatchNoMatch() throws Exception {
+		Index index = IndexTestUtils.makeIndexBlocks(new String[]{"doc1", "doc2"}, new String[]{"aa", "aa bb"});
+		AndMatchNoMatch(PhraseOp.class, index);
+	}
+
+	@Test
+	public void testAndMatchNoMatch() throws Exception {
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1", "doc2"}, new String[]{"aa", "aa bb"});
+		AndMatchNoMatch(ANDQueryOp.class, index);
+	}
+
+	protected MultiTermOp getOp(Class<? extends MultiTermOp> opClz, String[] terms) throws Exception {
+		return opClz.getConstructor(String[].class).newInstance((Object)terms);
+	}
+
+	protected void AndMatchNoMatch(Class<? extends MultiTermOp> opClz, Index index) throws Exception {
+		Pair<EntryStatistics, IterablePosting> pair;
+		Operator op;
+		
+		op = getOp(opClz, new String[]{"aa", "bb"});
+		pair = op.getPostingIterator(index);
+		assertNotNull(pair);
+		checkOneMatch(pair.getRight(), 1);
+
+		op = getOp(opClz, new String[]{"aa", "cc"});
+		pair = op.getPostingIterator(index);
+		assertNotNull(pair);
+		checkNoMatch(pair.getRight());
+
+		op = getOp(opClz, new String[]{"cc", "dd"});
+		pair = op.getPostingIterator(index);
+		assertNotNull(pair);
+		checkNoMatch(pair.getRight());
+	}
+
 	
+
+	protected void checkOneMatch(IterablePosting ip, int docid) throws Exception {
+		assertNotNull(ip);
+		assertEquals(docid, ip.next());
+		assertEquals(1, ip.getFrequency());
+		assertEquals(docid, ip.getId());
+		assertEquals(IterablePosting.EOL, ip.next());
+	}
+
+	protected void checkNoMatch(IterablePosting ip) throws Exception {
+		if (ip == null)
+			return;
+		assertEquals(IterablePosting.EOL, ip.next());
+	}
+
 	@Test
 	public void testStatsPhraseUW() throws Exception {
 		
-		Index index = IndexTestUtils.makeIndexBlocks(new String[]{"doc1"}, new String[]{"aa ab"});
+		Index index = IndexTestUtils.makeIndexBlocks(new String[]{"doc1"}, new String[]{"aa bb"});
 		int numdocs = 10000;
 		IndexUtil.forceStructure(index, "collectionstatistics", new CollectionStatistics(numdocs, 50, 20000, 100, new long[0], new String[0]));
 		

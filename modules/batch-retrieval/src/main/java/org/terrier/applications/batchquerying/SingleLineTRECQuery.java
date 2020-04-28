@@ -37,6 +37,7 @@ import org.terrier.indexing.tokenisation.Tokeniser;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
+import org.terrier.utility.TagSet;
 
 /** This class can be used to extract batch queries from a simpler format than the regular SGML TREC format.
   * In particular, this class reads queries, one per line, verbatim from the specified file(s).
@@ -62,41 +63,59 @@ import org.terrier.utility.Files;
   */
 public class SingleLineTRECQuery extends TRECQuery
 {
-	private Tokeniser tokeniser;
+	protected Tokeniser tokeniser;
+	protected boolean tokenise = true;
 
 	/** Constructor - default */
 	public SingleLineTRECQuery() {
 		super();
 	}
 
-	/** Reads queries from the specified file */
-	public SingleLineTRECQuery(File queryfile){
-		super(queryfile);
+	/** Reads queries from the specified filenames */
+	public SingleLineTRECQuery(String[] queryfilenames){
+		this(queryfilenames, 
+			Boolean.parseBoolean(ApplicationSetup.getProperty("SingleLineTRECQuery.tokenise", "false")));
 	}
 
 	/** Reads queries from the specified filename */
 	public SingleLineTRECQuery(String queryfilename){
-		super(queryfilename);
+		this(queryfilename, 
+			Boolean.parseBoolean(ApplicationSetup.getProperty("SingleLineTRECQuery.tokenise", "false")));
 	}
-	
-	/** Reads queries from the specified filenames */
-	public SingleLineTRECQuery(String[] queryfilenames){
+
+	public SingleLineTRECQuery(String queryfilename, boolean tokenise){
+		super(queryfilename);
+		this.tokenise = tokenise;
+		this.tokeniser = Tokeniser.getTokeniser();
+	}
+
+	public SingleLineTRECQuery(String queryfilename, Tokeniser tokeniser){
+		super(queryfilename);
+		this.tokenise = tokenise;
+		this.tokeniser = tokeniser;
+	}
+
+	public SingleLineTRECQuery(String[] queryfilenames, boolean tokenise){
 		super(queryfilenames);
+		this.tokenise = tokenise;
+		this.tokeniser = Tokeniser.getTokeniser();
+	}
+
+	public SingleLineTRECQuery(String[] queryfilenames, Tokeniser tokeniser){
+		super(queryfilenames);
+		this.tokenise = tokenise;
+		this.tokeniser = tokeniser;
 	}
 
 	/** Extracts queries from the specified filename, adding their contents to vecStringQueries and the
 	  * corresponding query ids to vecStringIds. 
 	  * @return true if some queries were successfully read */
-	public boolean extractQuery(String queryfilename, Vector<String> vecStringQueries, Vector<String> vecStringIds)
+	public boolean extractQuery(String queryfilename, TagSet ignore, Vector<String> vecStringQueries, Vector<String> vecStringIds)
 	{		
 		boolean gotSome = false;
 		final boolean QueryLineHasQueryID = Boolean.parseBoolean(ApplicationSetup.getProperty("SingleLineTRECQuery.queryid.exists","true"));
-		final boolean QueryTokenise = Boolean.parseBoolean(ApplicationSetup.getProperty("SingleLineTRECQuery.tokenise", 
-				ApplicationSetup.getProperty("SingleLineTRECQuery.periods.allowed", "false")));
-		logger.info("Extracting queries from "+queryfilename + " - queryids "+QueryLineHasQueryID);
-		if (tokeniser == null) {
-			tokeniser = QueryTokenise ? Tokeniser.getTokeniser() : new IdentityTokeniser();
-		}
+		tokeniser = tokenise ? Tokeniser.getTokeniser() : new IdentityTokeniser();
+		logger.info("Extracting queries from "+queryfilename + " tokeniser=" + tokeniser.getClass().getSimpleName());
 		try {
 			BufferedReader br;
 			if (! Files.exists(queryfilename))
@@ -130,16 +149,6 @@ public class SingleLineTRECQuery extends TRECQuery
 
 					queryID = line.substring(0,queryIdEnd);
 					query = line.substring(queryIdEnd+1);
-					/*if ()
-					String parts[] = line.split("\\s+|:");
-					queryID = parts[0];
-					StringBuilder query_tmp = new StringBuilder();
-					for(int i=1;i<parts.length;i++)
-					{
-						query_tmp.append(parts[i]);
-						query_tmp.append(' ');
-					}
-					query = query_tmp.toString();*/
 				}
 				else
 				{

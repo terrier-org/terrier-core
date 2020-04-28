@@ -83,7 +83,7 @@ public class TestUtils {
 			docProperties.put("filename", docnos[i]);
 			sourceDocs[i] = new FileDocument(new ByteArrayInputStream(documents[i].getBytes()), docProperties, new EnglishTokeniser());
 		}
-		Collection col = new CollectionDocumentList(sourceDocs, "filename");
+		Collection col = new CollectionDocumentList(sourceDocs);
 		indexer.index(new Collection[]{col});		
 		Index index = Index.createIndex();
 		assertEquals(sourceDocs.length, index.getCollectionStatistics().getNumberOfDocuments());
@@ -251,6 +251,15 @@ public class TestUtils {
 		assertEquals(docindex1.getNumberOfDocuments(),docindex2.getNumberOfDocuments());
 		for (int i=0;i<docindex1.getNumberOfDocuments();i++)
 			assertEquals(docindex1.getDocumentLength(i),docindex2.getDocumentLength(i));
+
+		if (index1.hasIndexStructure("direct"))
+		{
+			assertTrue("index2 does not have direct index", index2.hasIndexStructure("direct"));
+			PostingIndex<?> pi1 = index1.getDirectIndex();
+			PostingIndex<?> pi2 = index2.getDirectIndex();			
+			assertNotNull(pi1);
+			assertNotNull("index2 does not have direct index", pi2);
+		}
 	}
 	
 	/*

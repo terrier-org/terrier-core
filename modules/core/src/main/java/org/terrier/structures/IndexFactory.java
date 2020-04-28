@@ -122,7 +122,13 @@ public class IndexFactory {
 		}
 		return null;
 	}
+
+	/** Shortcut method to avoid instantiating an IndexRef */
+	public static Index of(String indexRefString) {
+		return of(IndexRef.of(indexRefString));
+	}
 	
+	/** Load an Index from an IndexRef */
 	public static Index of(IndexRef ref)
 	{
 		if (ref instanceof DirectIndexRef)

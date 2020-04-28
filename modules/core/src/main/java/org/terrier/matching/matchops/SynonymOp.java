@@ -48,12 +48,12 @@ public class SynonymOp extends MultiTermOp {
 	protected static final Logger logger = LoggerFactory.getLogger(SynonymOp.class);
 	
 	public SynonymOp(Operator[] ts) {
-		super(ts);
+		super(ts, false);
 	}
 
 	
 	public SynonymOp(String[] ts) {
-		super(ts);
+		super(ts, false);
 	}
 
 	@Override

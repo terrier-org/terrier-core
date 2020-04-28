@@ -53,10 +53,14 @@ public abstract class FeaturedScoringMatching extends FilterMatching {
 	}
 	
 	protected static String[] getModelNames(String property) throws Exception {
+		return getModelNames(property, false);
+	}
+	protected static String[] getModelNames(String property, boolean optional) throws Exception {
 		String[] modelNames = 
 			ArrayUtils.parseDelimitedString(
 					ApplicationSetup.getProperty(property, ""), ";");
-		if (modelNames.length == 1 && modelNames[0].equals("FILE"))
+		boolean file = modelNames.length == 1 && modelNames[0].equals("FILE");
+		if (file)
 		{
 			String filename = ApplicationSetup.getProperty(property + ".file", null);
 			if (filename == null)
@@ -80,9 +84,16 @@ public abstract class FeaturedScoringMatching extends FilterMatching {
 			br.close();
 			modelNames = models.toArray(new String[models.size()]);
 		}
-		if (modelNames.length == 0)
+		//allow empty feature files
+		if (! optional && modelNames.length == 0)
 		{
-			System.err.println("WARN no features specified");
+			if (file)
+				throw new IllegalArgumentException("No features found in file " +
+					ApplicationSetup.getProperty(property + ".file", null) + " specified in property"  +
+					property + ".file");
+			
+			
+			throw new IllegalArgumentException("No features in property " + property);
 		}
 		return modelNames;
 	}

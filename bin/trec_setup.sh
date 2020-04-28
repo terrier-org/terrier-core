@@ -58,7 +58,7 @@ then
 	fullPath TEMPVAR
 	#terrier folder is folder above
 	TERRIER_HOME=`dirname $TEMPVAR`
-	echo "Setting TERRIER_HOME to $TERRIER_HOME"
+	#echo "Setting TERRIER_HOME to $TERRIER_HOME"
 fi
 
 #setup TERRIER_ETC
@@ -76,7 +76,7 @@ then
 	TEMPVAR=`dirname $TEMPVAR`
 	#then java install prefix is folder above
 	JAVA_HOME=`dirname $TEMPVAR`
-	echo "Setting JAVA_HOME to $JAVA_HOME"
+	#echo "Setting JAVA_HOME to $JAVA_HOME"
 fi
 
 #setup CLASSPATH
@@ -88,7 +88,7 @@ else
 	CLASSPATH=$CLASSPATH:$JAR:$TERRIER_HOME/etc/logback.xml
 fi
 
-echo $CLASSPATH
+#echo $CLASSPATH
 
 
 $JAVA_HOME/bin/java $JAVA_OPTIONS -cp $CLASSPATH \
@@ -100,5 +100,6 @@ $JAVA_HOME/bin/java $JAVA_OPTIONS -cp $CLASSPATH \
 #updating the address_collection file
 find $1 -type f | sort >> $TERRIER_ETC/collection.spec
 tail $TERRIER_ETC/collection.spec
-echo "Updated collection.spec file. Please check that it contains"
+LINES=`wc -l $TERRIER_ETC/collection.spec| awk '{print $1}'`
+echo "Updated collection.spec file ($LINES lines). Please check that it contains"
 echo "all and only all the files to be indexed, or create it manually."

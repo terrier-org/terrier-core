@@ -24,8 +24,11 @@ Table of Contents
 >[What's New](whats_new.md)  
 >What has changed in the Terrier platform in the recent releases.
 
->[Terrier Components](basicComponents.md)  
->An overview of the main components of Terrier.
+>[Terrier Architecture](basicArchitecture.md)  
+>An overview of the main architectural components of Terrier.
+
+>[Terrier Add-on Components](components.md)  
+>An overview of the add-on components available for Terrier.
 
 >[Query Language](querylanguage.md)  
 >A description of the query language that Terrier supports.

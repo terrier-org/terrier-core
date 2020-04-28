@@ -162,6 +162,8 @@ public class TRECSetup {
 			propertiesWriter.println("TrecDocTags.skip=DOCHDR");
 			propertiesWriter.println("#set to true if the tags can be of various case");
 			propertiesWriter.println("TrecDocTags.casesensitive=false");
+			propertiesWriter.println("#starting from Terrier 5.3, we assume that documents are in UTF-8");
+			propertiesWriter.println("trec.encoding=UTF-8");
 
 			propertiesWriter.println();
 			propertiesWriter.println("#query tags specification");

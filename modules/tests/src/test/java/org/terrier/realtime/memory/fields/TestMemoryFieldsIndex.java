@@ -31,6 +31,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import java.util.Map.Entry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionDocumentList;
 import org.terrier.indexing.Document;
@@ -52,13 +54,20 @@ import org.terrier.realtime.TestUtils;
 import org.terrier.realtime.memory.*;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
+import org.terrier.structures.DocumentIndexEntry;
+import org.terrier.structures.FieldDocumentIndexEntry;
+import org.terrier.structures.FieldDocumentIndex;
+import org.terrier.structures.postings.*;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
+import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndex;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
+
 
 /** Unit tests for IndexInMemory. */
 public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
@@ -107,6 +116,9 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		Iterator<DocumentIndex> document_iterator = (Iterator<DocumentIndex>) index
 				.getIndexStructureInputStream("document");
 		assertNotNull(document_iterator);
+
+		PostingIndex<?> direct = (PostingIndex<?>) index.getIndexStructure("direct");
+		assertNotNull(direct);
 	}
 
 	/*
@@ -277,6 +289,14 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		assertEquals(4, cs.getNumberOfUniqueTerms());
 		assertEquals(6l, cs.getNumberOfPointers());
 		assertEquals(4.0d, cs.getAverageDocumentLength(), 0.0d);
+
+		PostingIndex<?> direct = (PostingIndex<?>) index.getIndexStructure("direct");
+		assertNotNull(direct);
+		DocumentIndexEntry doie = index.getDocumentIndex().getDocumentEntry(0);
+		assertNotNull(doie);
+		assertTrue(doie instanceof FieldDocumentIndexEntry);
+		IterablePosting ip = direct.getPostings(doie);
+		assertTrue(ip instanceof FieldPosting);
 	}
 
 	/*
@@ -314,21 +334,6 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		assertArrayEquals(new int[] { 1, 0 }, docids);
 	}
 
-	
-
-	/*
-	 * Write in-memory index to disk, then load it from disk.
-	 */
-	@Test
-	public void test_todisk() throws Exception {
-		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
-		assertNotNull(mem);
-		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
-		Index mem2disk = Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
-				"memoryFields");
-		assertNotNull(mem2disk);
-	}
-
 	/*
 	 * Comparison of memory and disk indices.
 	 */
@@ -344,6 +349,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", disk, mem);
 		TestUtils.compareRetrieval("knuth", disk, mem);
 		TestUtils.compareRetrieval("turing", disk, mem);
+		disk.close();
 	}
 
 	/*
@@ -353,6 +359,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 	public void test_compare2() throws Exception {
 		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
 		assertNotNull(mem);
+		assertFalse(IndexOnDisk.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields"));
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 		Index mem2disk = Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
 				"memoryFields");
@@ -363,12 +370,14 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", mem, mem2disk);
 		TestUtils.compareRetrieval("knuth", mem, mem2disk);
 		TestUtils.compareRetrieval("turing", mem, mem2disk);
+		mem2disk.close();
+		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 	}
 
 	/*
 	 * Comparison of disk and memory->disk indices.
 	 */
-	@Test
+	@Test @Ignore
 	public void test_compare3() throws Exception {
 		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
 		assertNotNull(mem);
@@ -384,6 +393,9 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", disk, mem2disk);
 		TestUtils.compareRetrieval("knuth", disk, mem2disk);
 		TestUtils.compareRetrieval("turing", disk, mem2disk);
+		disk.close();
+		mem2disk.close();
+		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 	}
 
 	/*
@@ -405,7 +417,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		docs1 = new Document[] {
 				new TaggedDocument(new ByteArrayInputStream("<TITLE>curry</TITLE><CONTENT>church turing knuth</CONTENT>".getBytes()), doc1Props, new EnglishTokeniser()),
 				new TaggedDocument(new ByteArrayInputStream("<TITLE>turing</TITLE><CONTENT>knuth knuth turing</CONTENT>".getBytes()), doc2Props, new EnglishTokeniser()) };
-		collection = new CollectionDocumentList(docs1, "filename");
+		collection = new CollectionDocumentList(docs1);
 		ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
 		ApplicationSetup.setProperty("indexer.meta.forward.keylens", "10");
 	}

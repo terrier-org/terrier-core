@@ -56,6 +56,11 @@ public class TestQueryParser {
 		assertEquals(0, terms.size());
 	}
 	
+	@Test(expected = QueryParserException.class) 
+	public void testException() throws Exception
+	{
+		QueryParser.parseQuery("a'");
+	}
 
 	@Test public void testControls() throws Exception
 	{
@@ -78,6 +83,8 @@ public class TestQueryParser {
 		if (checkParseTree) assertEquals("SingleTermQuery(a)", q.parseTree());
 		assertEquals("a", q.toString());
 	}
+
+	
 	
 	@Test public void testSingleTermQueryWeighted() throws Exception
 	{
@@ -131,6 +138,42 @@ public class TestQueryParser {
 		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
 		if (checkParseTree) assertEquals("MultiTermQuery(SingleTermQuery(a),SingleTermQuery(b))", q.parseTree());
 		assertEquals("a b", q.toString());
+	}
+	
+	@Ignore @Test public void testSingleTermQueryUTF() throws Exception
+	{
+		String word = "\u0917\u0941\u091C\u094D\u091C\u0930\u094B\u0902";
+		Query q = QueryParser.parseQuery(word);
+		List<Query> terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		assertEquals(1, terms.size());
+		assertEquals(word, ((SingleTermQuery)terms.get(0)).getTerm());
+		if (checkParseTree) assertEquals("SingleTermQuery("+word+")", q.parseTree());
+		assertEquals(word, q.toString());
+	}
+
+	@Ignore @Test public void testTwoTermQueryUTF() throws Exception
+	{
+
+		String word1 = "\u0917\u0941\u091C\u094D\u091C\u0930\u094B\u0902";
+		String word2 ="\u0914\u0930";
+		for (char c:  word1.toCharArray())
+		{
+			System.out.println(c + " " + Character.isLetterOrDigit(c) + " " + Character.isWhitespace(c));
+		}
+		for (char c:  word2.toCharArray())
+		{
+			System.out.println(c + " " + Character.isLetterOrDigit(c) + " " + Character.isWhitespace(c));
+		}
+
+		Query q = QueryParser.parseQuery(word1 + " " + word2);
+		List<Query> terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		assertEquals(2, terms.size());
+		assertEquals(word1, ((SingleTermQuery)terms.get(0)).getTerm());
+		assertEquals(word2, ((SingleTermQuery)terms.get(1)).getTerm());
+		if (checkParseTree) assertEquals("MultiTermQuery(SingleTermQuery("+word1+"),SingleTermQuery("+word2+"))", q.parseTree());
+		assertEquals(word1 + " " + word2, q.toString());
 	}
 	
 	@Test public void testTwoTermDisjunctiveQuery() throws Exception

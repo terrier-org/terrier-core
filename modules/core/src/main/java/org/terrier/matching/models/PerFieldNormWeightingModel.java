@@ -137,8 +137,7 @@ public class PerFieldNormWeightingModel extends WeightingModel {
 	{
 		super.setCollectionStatistics(_cs);
 		fieldCount = _cs.getNumberOfFields();
-		if (fieldCount < 1)
-			throw new IllegalStateException("Fields must be 1 or more");
+		WeightingModelLibrary.checkForFields(_cs);
 				
 		basicModel.setNumberOfDocuments(_cs.getNumberOfDocuments());
 		basicModel.setNumberOfTokens(_cs.getNumberOfTokens());

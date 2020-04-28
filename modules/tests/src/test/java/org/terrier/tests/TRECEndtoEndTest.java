@@ -113,7 +113,6 @@ public abstract class TRECEndtoEndTest extends BatchEndToEndTest
 	}
 	
 	protected void doTest(List<String> indexingOptions) throws Exception {
-		indexingOptions.add(0, "-i");
 		doTrecTerrierIndexing(indexingOptions.toArray(new String[0]));
 		runsAndEvaluate();
 	}

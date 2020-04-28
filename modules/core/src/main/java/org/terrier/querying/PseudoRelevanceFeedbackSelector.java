@@ -43,6 +43,7 @@ public class PseudoRelevanceFeedbackSelector extends FeedbackSelector
 	public FeedbackDocument[] getFeedbackDocuments(Request request)
 	{
 		final ResultSet rs = request.getResultSet();
+		QueryExpansion.QueryExpansionConfig qeConfig = QueryExpansion.configFromRequest(request);
 		if (rs.getResultSize() == 0)
 			return null;
 
@@ -52,7 +53,7 @@ public class PseudoRelevanceFeedbackSelector extends FeedbackSelector
 		// if the number of retrieved documents is lower than the parameter
         // EXPANSION_DOCUMENTS, reduce the number of documents for expansion
         // to the number of retrieved documents.
-		final int effDocuments = Math.min(docIDs.length, ApplicationSetup.EXPANSION_DOCUMENTS);
+		final int effDocuments = Math.min(docIDs.length, qeConfig.EXPANSION_DOCUMENTS);
 		final FeedbackDocument[] rtr = new FeedbackDocument[effDocuments];
         for (int i = 0; i < effDocuments; i++)
 		{

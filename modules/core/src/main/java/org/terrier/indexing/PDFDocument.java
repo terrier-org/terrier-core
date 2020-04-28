@@ -33,7 +33,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
-import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -99,6 +98,7 @@ public class PDFDocument extends FileDocument
 	 * @param is the input stream that represents the document's file.
 	 * @return Reader a reader that is fed to an indexer.
 	 */
+	@SuppressWarnings("resource") //incorrect warning
 	protected Reader getReader(InputStream is)
 	{
 		

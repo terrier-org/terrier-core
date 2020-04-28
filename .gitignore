@@ -6,3 +6,6 @@
 modules/*/target/
 .settings/
 .DS_Store
+.classpath
+.project
+.settings
