@@ -4,5 +4,9 @@
 /logs/
 /target/
 modules/*/target/
-.settings/
 .DS_Store
+.classpath
+.settings
+.project
+pom.xml.versionsBackup
+
