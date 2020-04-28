@@ -31,9 +31,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
-
 import org.apache.hadoop.io.Writable;
-
 
 /**
  * This class provides basic statistics for the indexed
@@ -47,191 +45,235 @@ import org.apache.hadoop.io.Writable;
  * @author Gianni Amati, Vassilis Plachouras, Craig Macdonald
  */
 @ConcurrentReadable
-public class CollectionStatistics implements Serializable,Writable {
-	private static final long serialVersionUID = 1L;
-	/** Number of fields used to index */
-	protected int numberOfFields;
-	
-	/** number of tokens in each field */
-	protected long[] fieldTokens;
-	/** Average length of each field */
-	protected double[] avgFieldLengths;
-	
-	protected String[] fieldNames;
-	
-	/** The total number of documents in the collection.*/
-	protected int numberOfDocuments;
-	
-	/** The total number of tokens in the collection.*/
-	protected long numberOfTokens;
-	/** 
-	 * The total number of pointers in the inverted file.
-	 * This corresponds to the sum of the document frequencies for
-	 * the terms in the lexicon.
-	 */
-	protected long numberOfPointers;
-	/**
-	 * The total number of unique terms in the collection.
-	 * This corresponds to the number of entries in the lexicon.
-	 */
-	protected int numberOfUniqueTerms;
-	/**
-	 * The average length of a document in the collection.
-	 */
-	protected double averageDocumentLength;
-	
-	/**
-	 * Constructs an instance of the class with
-	 * @param numDocs
-	 * @param numTerms
-	 * @param numTokens
-	 * @param numPointers
-	 * @param _fieldTokens
-	 */
-	public CollectionStatistics(int numDocs, int numTerms, long numTokens, long numPointers, long[] _fieldTokens, String[] fieldNames)
-	{
-		numberOfDocuments = numDocs;
-		numberOfUniqueTerms = numTerms;
-		numberOfTokens = numTokens;
-		numberOfPointers = numPointers;
-		numberOfFields = _fieldTokens.length;
-		fieldTokens = _fieldTokens;
-		avgFieldLengths = new double[numberOfFields];
-		this.fieldNames = fieldNames;
-		relcaluateAverageLengths();
-	}
-	
-	public CollectionStatistics(){}
-	
-	protected void relcaluateAverageLengths()
-	{
-		if (numberOfDocuments != 0)
-		{
-			averageDocumentLength = (1.0D * numberOfTokens) / (1.0D * numberOfDocuments);
-			for(int fi=0;fi<numberOfFields;fi++)
-				avgFieldLengths[fi] = (1.0D * fieldTokens[fi]) / (1.0D * numberOfDocuments);
-		}
-		else
-		{
-			averageDocumentLength = 0.0D;
-			Arrays.fill(avgFieldLengths, 0.0d);
-		}
-	}
-	
-	/** Returns a concrete representation of an index's statistics */
-	public String toString()
-	{
-		return 
-			"Number of documents: " + getNumberOfDocuments() + "\n" + 
-			"Number of terms: " + getNumberOfUniqueTerms() + "\n"  + 
-			"Number of fields: " + getNumberOfFields() + "\n" + 
-			"Field names: " + Arrays.toString(getFieldNames())  + "\n" + 
-			"Number of tokens: " + getNumberOfTokens() + "\n";		
-	}
-	
-	/**
-	 * Returns the documents' average length.
-	 * @return the average length of the documents in the collection.
-	 */
-	public double getAverageDocumentLength() {
-		return averageDocumentLength;
-	}
-	/**
-	 * Returns the total number of documents in the collection.
-	 * @return the total number of documents in the collection
-	 */
-	public int getNumberOfDocuments() {
-		return numberOfDocuments;
-	}
-	/**
-	 * Returns the total number of pointers in the collection.
-	 * @return the total number of pointers in the collection
-	 */
-	public long getNumberOfPointers() {
-		return numberOfPointers;
-	}
-	/**
-	 * Returns the total number of tokens in the collection.
-	 * @return the total number of tokens in the collection
-	 */
-	public long getNumberOfTokens() {
-		return numberOfTokens;
-	}
-	/**
-	 * Returns the total number of unique terms in the lexicon.
-	 * @return the total number of unique terms in the lexicon
-	 */
-	public int getNumberOfUniqueTerms() {
-		return numberOfUniqueTerms;
-	}
-	
-	/** Returns the number of fields being used to index */
-	public int getNumberOfFields()
-	{
-		return numberOfFields;
-	}
-	
-	/** Returns the length of each field in tokens */
-	public long[] getFieldTokens()
-	{
-		return fieldTokens;
-	}
-	
-	/** Returns the average length of each field in tokens */
-	public double[] getAverageFieldLengths()
-	{
-		return avgFieldLengths;
-	}
-	
-	public String[] getFieldNames()
-	{
-		return fieldNames;
-	}
-	
-	/** Increment the statistics by the specified amount */
-	public void addStatistics(CollectionStatistics cs)
-	{
-		numberOfDocuments += cs.getNumberOfDocuments();
-		numberOfPointers += cs.getNumberOfPointers();
-		numberOfTokens += cs.getNumberOfTokens();
-		numberOfUniqueTerms = Math.max(cs.getNumberOfUniqueTerms(), numberOfUniqueTerms);
-		final long[] otherFieldTokens = cs.getFieldTokens();
-		for(int fi=0;fi<numberOfFields;fi++)
-			fieldTokens[fi] += otherFieldTokens[fi];
-		
-		relcaluateAverageLengths();
-	}
+public class CollectionStatistics implements Serializable,Writable 
+{
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void readFields(DataInput in) throws IOException {
-		numberOfDocuments = in.readInt();
-		numberOfUniqueTerms = in.readInt();
-		numberOfTokens = in.readLong();
-		numberOfPointers = in.readLong();
-		numberOfFields = in.readInt();
-		fieldTokens = new long[numberOfFields];
-		avgFieldLengths = new double[numberOfFields];
-		fieldNames = new String[numberOfFields];
-		for(int fi=0;fi<numberOfFields;fi++)
-		{
-			fieldTokens[fi] = in.readLong();
-			fieldNames[fi] = in.readUTF();
-		}
-		relcaluateAverageLengths();
-	}
+    /** Number of fields used to index */
+    protected int numberOfFields;
+    /** Number of tokens in each field */
+    protected long[] fieldTokens;
+    /** Average length of each field */
+    protected double[] avgFieldLengths;
+    /** Field names */
+    protected String[] fieldNames;
+    
+    /** Total number of documents in the collection.*/
+    protected int numberOfDocuments;
+    
+    /** Total number of tokens in the collection.*/
+    protected long numberOfTokens;
+    
+    /** 
+     * Total number of pointers in the inverted file.
+     * This corresponds to the sum of the document frequencies for
+     * the terms in the lexicon.
+     */
+    protected long numberOfPointers;
+    
+    /**
+     * Total number of unique terms in the collection.
+     * This corresponds to the number of entries in the lexicon.
+     */
+    protected int numberOfUniqueTerms;
+    
+    /**
+     * Average length of a document in the collection.
+     */
+    protected double averageDocumentLength;
+    
+    /**
+     * Constructs an instance of the class.
+     * 
+     * @param numDocs the number of documents in the collection.
+     * @param numTerms the number of terms in the collection.
+     * @param numTokens the number of tokens in the collection.
+     * @param numPointers the number of pointers in the inverted file.
+     * @param _fieldTokens the number of tokens in each field.
+     * @param _fieldNames the field names.
+     */
+    public CollectionStatistics(int numDocs, int numTerms, long numTokens, long numPointers, final long[] _fieldTokens, final String[] _fieldNames)
+    {
+        assert _fieldTokens != null && fieldNames != null && fieldNames.length ==_fieldTokens.length;
 
-	@Override
-	public void write(DataOutput out) throws IOException {
-		out.writeInt(numberOfDocuments);
-		out.writeInt(numberOfUniqueTerms);
-		out.writeLong(numberOfTokens);
-		out.writeLong(numberOfPointers);
-		out.writeInt(numberOfFields);
-		for(int fi=0;fi<numberOfFields;fi++)
-		{
-			out.writeLong(fieldTokens[fi]);
-			out.writeUTF(fieldNames[fi]);
-		}
-	}
+        numberOfDocuments = numDocs;
+        numberOfUniqueTerms = numTerms;
+        numberOfTokens = numTokens;
+        numberOfPointers = numPointers;
+        fieldTokens = _fieldTokens;
+        fieldNames = _fieldNames;
+        
+        numberOfFields = _fieldTokens.length;
+        avgFieldLengths = new double[numberOfFields];
+        
+        recalculateAverageLengths();
+    }
+    
+    /**
+     * Default constructor.
+     */
+    public CollectionStatistics()
+    {
+    }
+    
+    protected void recalculateAverageLengths()
+    {
+        if (numberOfDocuments != 0) {
+            averageDocumentLength = (double)numberOfTokens / (double)numberOfDocuments;
+            for (int fi = 0; fi < numberOfFields; fi++)
+                avgFieldLengths[fi] = (double)fieldTokens[fi] / (double)numberOfDocuments;
+        } else {
+            averageDocumentLength = 0.0D;
+            Arrays.fill(avgFieldLengths, 0.0d);
+        }
+    }
+    
+    @Override
+    public String toString()
+    {
+        return 
+            "Number of documents: " + getNumberOfDocuments()           + "\n" + 
+            "Number of terms: "     + getNumberOfUniqueTerms()         + "\n"+ 
+            "Number of fields: "    + getNumberOfFields()              + "\n" + 
+            "Field names: "         + Arrays.toString(getFieldNames()) + "\n" + 
+            "Number of tokens: "    + getNumberOfTokens()              + "\n";
+    }
+    
+    /**
+     * Returns the documents' average length.
+     * 
+     * @return the average length of the documents in the collection.
+     */
+    public double getAverageDocumentLength() 
+    {
+        return averageDocumentLength;
+    }
+    
+    /**
+     * Returns the total number of documents in the collection.
+     * 
+     * @return the total number of documents in the collection.
+     */
+    public int getNumberOfDocuments() 
+    {
+        return numberOfDocuments;
+    }
+    
+    /**
+     * Returns the total number of pointers in the collection.
+     * 
+     * @return the total number of pointers in the collection.
+     */
+    public long getNumberOfPointers() 
+    {
+        return numberOfPointers;
+    }
+    
+    /**
+     * Returns the total number of tokens in the collection.
+     * @return the total number of tokens in the collection.
+     */
+    public long getNumberOfTokens() 
+    {
+        return numberOfTokens;
+    }
+    
+    /**
+     * Returns the total number of unique terms in the lexicon.
+     * 
+     * @return the total number of unique terms in the lexicon.
+     */
+    public int getNumberOfUniqueTerms() 
+    {
+        return numberOfUniqueTerms;
+    }
+    
+    /** 
+     * Returns the number of fields being used to index. 
+     * 
+     * @return the number of fields being used to index.
+     */
+    public int getNumberOfFields()
+    {
+        return numberOfFields;
+    }
+    
+    /** 
+     * Returns the length of each field in tokens. 
+     * 
+     * @return the length of each field in tokens.
+     */
+    public long[] getFieldTokens()
+    {
+        return fieldTokens;
+    }
+    
+    /** 
+     * Returns the average length of each field in tokens.
+     * 
+     * @return the average length of each field in tokens.
+     */
+    public double[] getAverageFieldLengths()
+    {
+        return avgFieldLengths;
+    }
 
+    /** 
+     * Returns the field names.
+     * 
+     * @return the field names.
+     */
+    public String[] getFieldNames()
+    {
+        return fieldNames;
+    }
+    
+    /** 
+     * Increment the collection statistics with the provided collection statistics. 
+     * 
+     * @param cs the collection statistics to use to increment.
+     * */
+    public void addStatistics(final CollectionStatistics cs)
+    {
+        numberOfDocuments += cs.getNumberOfDocuments();
+        numberOfPointers += cs.getNumberOfPointers();
+        numberOfTokens += cs.getNumberOfTokens();
+        numberOfUniqueTerms = Math.max(cs.getNumberOfUniqueTerms(), numberOfUniqueTerms);
+        final long[] otherFieldTokens = cs.getFieldTokens();
+        for (int fi = 0; fi < numberOfFields; fi++)
+            fieldTokens[fi] += otherFieldTokens[fi];
+        recalculateAverageLengths();
+    }
+
+    @Override
+    public void readFields(DataInput in) throws IOException 
+    {
+        numberOfDocuments = in.readInt();
+        numberOfUniqueTerms = in.readInt();
+        numberOfTokens = in.readLong();
+        numberOfPointers = in.readLong();
+        numberOfFields = in.readInt();
+        fieldTokens = new long[numberOfFields];
+        avgFieldLengths = new double[numberOfFields];
+        fieldNames = new String[numberOfFields];
+        for (int fi = 0; fi < numberOfFields; fi++) {
+            fieldTokens[fi] = in.readLong();
+            fieldNames[fi] = in.readUTF();
+        }
+        recalculateAverageLengths();
+    }
+
+    @Override
+    public void write(DataOutput out) throws IOException 
+    {
+        out.writeInt(numberOfDocuments);
+        out.writeInt(numberOfUniqueTerms);
+        out.writeLong(numberOfTokens);
+        out.writeLong(numberOfPointers);
+        out.writeInt(numberOfFields);
+        for (int fi = 0; fi < numberOfFields; fi++) {
+            out.writeLong(fieldTokens[fi]);
+            out.writeUTF(fieldNames[fi]);
+        }
+    }
 }
