@@ -8,3 +8,4 @@ modules/*/target/
 .DS_Store
 .classpath
 .project
+.settings
