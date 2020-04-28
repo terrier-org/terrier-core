@@ -30,17 +30,31 @@ import java.util.ServiceLoader;
 import org.terrier.querying.IndexRef;
 import org.terrier.structures.Index.DirectIndexRef;
 
-// TODO [NIC]: Javadoc
+/** This is the main developer API for loading an index.
+ * You pass an {@link IndexRef} to the of() static method,
+ * and are return the corresponding {@link Index}, if any can be found. 
+ * 
+ * Different indices are supported: an {@link IndexOnDisk}, 
+ * as well as memory indices. An IndexRef can also 
+ * target a remote REST server, but no Index can be loaded for 
+ * such an IndexRef.
+ * 
+ * {@link IndexLoader}s are used to load indices; They are found
+ * using service discovery. 
+ */
 public class IndexFactory 
 {
     public static ClassLoader cl = null;
     
     public static interface IndexLoader
     {
+        /** Does this IndexLoader support this IndexRef */
         boolean supports(IndexRef ref);
 
+        /** Returns the Index for this IndexRef */
         Index load(IndexRef ref);
 
+        /** Returns the class that will implement the Index for the passed reference */
         Class<? extends Index> indexImplementor(IndexRef ref);
     }
 
@@ -66,6 +80,7 @@ public class IndexFactory
         
     }
     
+    /** Is this index already loaded? */
     public static boolean isLoaded(IndexRef ref) 
     {
         return ref instanceof DirectIndexRef;
@@ -76,6 +91,7 @@ public class IndexFactory
         return cl == null ? IndexFactory.class.getClassLoader() : cl;
     }
     
+    /** Is this a local index, or a remote one? */
     public static boolean isLocal(IndexRef ref) 
     {
         String l = ref.toString();
@@ -93,6 +109,7 @@ public class IndexFactory
         return null;
     }
     
+    /** Load the index for the specified reference. */
     public static Index of(IndexRef ref)
     {
         if (ref instanceof DirectIndexRef)

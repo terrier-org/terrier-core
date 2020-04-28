@@ -4,7 +4,7 @@ import java.io.Closeable;
 import org.terrier.querying.IndexRef;
 import java.io.IOException;
 
-// TODO [NIC]: JAVADOC!
+/** Base class for all Index implementations */
 // TODO [NIC]: This can be an interface with default methods!
 public abstract class Index implements Closeable 
 {
@@ -29,6 +29,7 @@ public abstract class Index implements Closeable
     /** Get the Meta Index structure */
     public abstract MetaIndex getMetaIndex();
 
+    /** Return a particular index data structure */
     public Object getIndexStructure(String structureName) 
     {
         if (structureName.equals("direct"))
@@ -46,16 +47,19 @@ public abstract class Index implements Closeable
         return null;
     }
 
+    /** Return a particular index data structure input stream */
     public Object getIndexStructureInputStream(String structureName) 
     {
         return null;
     }
     
+    /** Returns true iff the structure exists */
     public boolean hasIndexStructure(String structureName) 
     {
         return getIndexStructure(structureName) != null;
     }
 
+    /** Returns true iff the structure input stream exists */
     public boolean hasIndexStructureInputStream(String structureName) 
     {
         return false;
@@ -75,8 +79,7 @@ public abstract class Index implements Closeable
 
     @Override
     public void close() throws IOException 
-    {
-    }
+    {}
 
     protected static IndexRef makeDirectIndexRef(Index index) 
     {
@@ -111,6 +114,9 @@ public abstract class Index implements Closeable
     /** @Deprecated */
     @Deprecated
     public static Index createIndex() {
+        /* This method is now deprecated, but we need it still to work.
+         * We use reflection, as IndexOnDisk is in a separate module. 
+         */
         try{
             return (Index) Index.class.getClassLoader()
                 .loadClass("org.terrier.structures.IndexOnDisk")
@@ -124,6 +130,9 @@ public abstract class Index implements Closeable
     /** @Deprecated */
     @Deprecated
     public static Index createIndex(String path, String prefix) {
+        /* This method is now deprecated, but we need it still to work.
+         * We use reflection, as IndexOnDisk is in a separate module. 
+         */
         try{
             return (Index) Index.class.getClassLoader()
                 .loadClass("org.terrier.structures.IndexOnDisk")
