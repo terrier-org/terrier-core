@@ -27,11 +27,12 @@ package org.terrier.structures;
 
 import java.io.IOException;
 
-/** Interface for document metadata. Metadata is stored compressed on disk.
- * Document offsets are stored in memory. Use getItem() methods to get
- * metadata for a given document. Use getDocument() method to determine
- * docid for a given metadata value.
- * <p><b>Examples</b>:
+/** 
+ * Interface for document metadata. Metadata is stored compressed on disk.
+ * Use the <code>getItem()</code> methods to get the metadata for a given document.
+ * Use the {@link #getDocument()} method to determine docid for a given metadata value.
+ * <p>
+ * <b>Examples</b>:
  * <pre>
  * MetaIndex meta = index.getMetaIndex();
  * //get docno of document with id 10
@@ -41,38 +42,37 @@ import java.io.IOException;
  * //get docid of documet with url http://www.bbc.co.uk/
  * int docid = meta.getDocument("url", "http://www.bbc.co.uk/");
  * </pre>
+ * 
  * @author Craig Macdonald
  * @since 3.0
  */
-public interface MetaIndex extends java.io.Closeable {
+public interface MetaIndex extends java.io.Closeable 
+{
+    /** Obtain metadata of specified type for specified document. */
+    String getItem(String Key, int docid) throws IOException;
+    
+    /** Obtain all metadata for specified document. */
+    String[] getAllItems(int docid) throws IOException;
 
-	/** Obtain metadata of specified type for specified document. */
-	String getItem(String Key, int docid)
-		throws IOException;
-	
-	/** Obtain all metadata for specified document. */
-	String[] getAllItems(int docid) throws IOException;
-
-	/** Obtain metadata of specified type for specified documents. */
-	String[] getItems(String Key, int[] docids)
-	    throws IOException;
-	
-	/** Obtain metadata of specified types for specified document. */
-	String[] getItems(String[] keys, int docid) 
-		throws IOException;
-	
-	/** Obtain metadata of specified types for specified documents. */
-	String[][] getItems(String Key[], int[] docids)
-	    throws IOException;
-	
-	/** Obtain docid where document has specified metadata value in the specified type. 
-	 * Returns -1 if the value cannot be found for the specified key type. */
-	int getDocument(String key, String value)
-		throws IOException;
-	
-	/** Returns the keys of this meta index */
-	String[] getKeys();
-	
-	/** Returns the reverse keys of this meta index */
-	default String[] getReverseKeys() { return new String[0]; }
+    /** Obtain metadata of specified type for specified documents. */
+    String[] getItems(String Key, int[] docids) throws IOException;
+    
+    /** Obtain metadata of specified types for specified document. */
+    String[] getItems(String[] keys, int docid) throws IOException;
+    
+    /** Obtain metadata of specified types for specified documents. */
+    String[][] getItems(String Key[], int[] docids) throws IOException;
+    
+    /** Obtain docid where document has specified metadata value in the specified type. 
+     * Returns -1 if the value cannot be found for the specified key type. */
+    int getDocument(String key, String value) throws IOException;
+    
+    /** Returns the keys of this meta index */
+    String[] getKeys();
+    
+    /** Returns the reverse keys of this meta index */
+    default String[] getReverseKeys() 
+    { 
+        return new String[0]; 
+    }
 }

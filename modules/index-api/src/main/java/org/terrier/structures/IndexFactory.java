@@ -25,82 +25,85 @@
  */
 package org.terrier.structures;
 
-import java.io.File;
 import java.util.ServiceLoader;
 
 import org.terrier.querying.IndexRef;
-//import org.terrier.utility.ApplicationSetup;
-//import org.terrier.utility.Files;
 import org.terrier.structures.Index.DirectIndexRef;
 
-public class IndexFactory {
+// TODO [NIC]: Javadoc
+public class IndexFactory 
+{
+    public static ClassLoader cl = null;
+    
+    public static interface IndexLoader
+    {
+        boolean supports(IndexRef ref);
 
-	public static ClassLoader cl = null;
-	
-	public static interface IndexLoader
-	{
-		boolean supports(IndexRef ref);
-		Index load(IndexRef ref);
-		Class<? extends Index> indexImplementor(IndexRef ref);
-	}
-	
-	public static class DirectIndexLoader implements IndexLoader
-	{
-		@Override
-		public boolean supports(IndexRef ref) {
-			return ref instanceof DirectIndexRef;
-		}
+        Index load(IndexRef ref);
 
-		@Override
-		public Index load(IndexRef ref) {
-			return ((DirectIndexRef)ref).underlyingIndex;
-		}
+        Class<? extends Index> indexImplementor(IndexRef ref);
+    }
 
-		@Override
-		public Class<? extends Index> indexImplementor(IndexRef ref) {
-			return load(ref).getClass();
-		}
-		
-	}
-	
-	public static boolean isLoaded(IndexRef ref) {
-		return ref instanceof DirectIndexRef;
-	}
+    public static class DirectIndexLoader implements IndexLoader
+    {
+        @Override
+        public boolean supports(IndexRef ref) 
+        {
+            return ref instanceof DirectIndexRef;
+        }
 
-	private static ClassLoader getClassLoader() {
-		return cl == null ? IndexFactory.class.getClassLoader() : cl;
-	}
-	
-	public static boolean isLocal(IndexRef ref) {
-		String l = ref.toString();
-		if (l.startsWith("http") || l.startsWith("https"))
-			return false;
-		return true;
-	}
-	
-	public static Class<? extends Index> whoSupports(IndexRef ref) {
-		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, getClassLoader());
-		for(IndexLoader l : loaders)
-		{
-			if (l.supports(ref))
-				return l.indexImplementor(ref);
-		}
-		return null;
-	}
-	
-	public static Index of(IndexRef ref)
-	{
-		if (ref instanceof DirectIndexRef)
-			return ((DirectIndexRef)ref).underlyingIndex;
-		// System.err.println(DirectIndexRef.class.getClassLoader());
-		// System.err.println(ApplicationSetup.getClassLoader());
-		// System.err.println(IndexFactory.class.getClassLoader());
-		Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, getClassLoader());
-		for(IndexLoader l : loaders)
-		{
-			if (l.supports(ref))
-				return l.load(ref);
-		}
-		return null;
-	}
+        @Override
+        public Index load(IndexRef ref) 
+        {
+            return ((DirectIndexRef)ref).underlyingIndex;
+        }
+
+        @Override
+        public Class<? extends Index> indexImplementor(IndexRef ref) 
+        {
+            return load(ref).getClass();
+        }
+        
+    }
+    
+    public static boolean isLoaded(IndexRef ref) 
+    {
+        return ref instanceof DirectIndexRef;
+    }
+
+    private static ClassLoader getClassLoader() 
+    {
+        return cl == null ? IndexFactory.class.getClassLoader() : cl;
+    }
+    
+    public static boolean isLocal(IndexRef ref) 
+    {
+        String l = ref.toString();
+        if (l.startsWith("http") || l.startsWith("https"))
+            return false;
+        return true;
+    }
+    
+    public static Class<? extends Index> whoSupports(IndexRef ref) 
+    {
+        Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, getClassLoader());
+        for (IndexLoader l : loaders)
+            if (l.supports(ref))
+                return l.indexImplementor(ref);
+        return null;
+    }
+    
+    public static Index of(IndexRef ref)
+    {
+        if (ref instanceof DirectIndexRef)
+            return ((DirectIndexRef)ref).underlyingIndex;
+        // System.err.println(DirectIndexRef.class.getClassLoader());
+        // System.err.println(ApplicationSetup.getClassLoader());
+        // System.err.println(IndexFactory.class.getClassLoader());
+        Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, getClassLoader());
+        for (IndexLoader l : loaders)
+            if (l.supports(ref))
+                return l.load(ref);
+        return null;
+    }
 }

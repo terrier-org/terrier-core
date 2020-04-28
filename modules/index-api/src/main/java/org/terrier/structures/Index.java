@@ -4,29 +4,33 @@ import java.io.Closeable;
 import org.terrier.querying.IndexRef;
 import java.io.IOException;
 
-public abstract class Index implements Closeable {
+// TODO [NIC]: JAVADOC!
+// TODO [NIC]: This can be an interface with default methods!
+public abstract class Index implements Closeable 
+{
     /** Get the collection statistics */
-	public abstract CollectionStatistics getCollectionStatistics();
+    public abstract CollectionStatistics getCollectionStatistics();
 
-	/** Return the DirectIndex associated with this index */
-	public abstract PostingIndex<?> getDirectIndex();
+    /** Return the DirectIndex associated with this index */
+    public abstract PostingIndex<?> getDirectIndex();
 
-	/** Return the DocumentIndex associated with this index */
+    /** Return the DocumentIndex associated with this index */
     public abstract DocumentIndex getDocumentIndex();
     
     /** Returns a direct IndexRef to this index */
     public abstract IndexRef getIndexRef();
 
     /** Returns the InvertedIndex to use for this index */
-	public abstract PostingIndex<?> getInvertedIndex();
+    public abstract PostingIndex<?> getInvertedIndex();
 
-	/** Return the Lexicon associated with this index */
-	public abstract Lexicon<String> getLexicon();
+    /** Return the Lexicon associated with this index */
+    public abstract Lexicon<String> getLexicon();
 
-	/** Get the Meta Index structure */
+    /** Get the Meta Index structure */
     public abstract MetaIndex getMetaIndex();
 
-    public Object getIndexStructure(String structureName) {
+    public Object getIndexStructure(String structureName) 
+    {
         if (structureName.equals("direct"))
             return getDirectIndex();
         if (structureName.equals("inverted"))
@@ -42,45 +46,53 @@ public abstract class Index implements Closeable {
         return null;
     }
 
-	public Object getIndexStructureInputStream(String structureName) {
+    public Object getIndexStructureInputStream(String structureName) 
+    {
         return null;
     }
     
-    public boolean hasIndexStructure(String structureName) {
+    public boolean hasIndexStructure(String structureName) 
+    {
         return getIndexStructure(structureName) != null;
     }
 
-    public boolean hasIndexStructureInputStream(String structureName) {
+    public boolean hasIndexStructureInputStream(String structureName) 
+    {
         return false;
     }
 
     /** Returns the first docid in this index **/
-	public int getStart() {
+    public int getStart() 
+    {
         return 0;
     }
-	
-	/** Returns the last docid in this index **/
-	public int getEnd() {
-		return this.getCollectionStatistics().getNumberOfDocuments()-1;
+    
+    /** Returns the last docid in this index **/
+    public int getEnd() 
+    {
+        return this.getCollectionStatistics().getNumberOfDocuments()-1;
     }
 
     @Override
-    public void close() throws IOException {}
+    public void close() throws IOException 
+    {
+    }
 
-    protected static IndexRef makeDirectIndexRef(Index index) {
+    protected static IndexRef makeDirectIndexRef(Index index) 
+    {
         return new DirectIndexRef(index);
     }
 
     static class DirectIndexRef extends IndexRef
-	{
-		private static final long serialVersionUID = 1L;
-		Index underlyingIndex;
-		
-		DirectIndexRef(Index i)
-		{
-			super(i.toString());//THIS IS A HACK
-			this.underlyingIndex = i;
-		}
+    {
+        private static final long serialVersionUID = 1L;
+        Index underlyingIndex;
+        
+        DirectIndexRef(Index i)
+        {
+            super(i.toString());// THIS IS A HACK
+            this.underlyingIndex = i;
+        }
     }
     
     /** @Deprecated */ 
