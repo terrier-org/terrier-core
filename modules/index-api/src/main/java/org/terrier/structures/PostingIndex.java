@@ -28,14 +28,20 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import org.terrier.structures.postings.IterablePosting;
-/** An interface for accessing a posting list.
+
+/** 
+ * An interface for accessing a posting list.
+ * 
  * @param <POINTERTYPE> the type of pointer required to access this posting source 
  */
-public interface PostingIndex<POINTERTYPE extends Pointer> extends Closeable {
-	
-
-	/** 
-	 * Get the posting given a pointer
-	 */
-	IterablePosting getPostings(Pointer lEntry) throws IOException;
+// TODO [NIC]: The parameter is not used in the interface at all!.
+public interface PostingIndex<POINTERTYPE extends Pointer> extends Closeable 
+{
+    /** 
+     * Returns the posting iterator given a pointer.
+     * 
+     * @return the posting iterator given a pointer.
+     */
+    // TODO [NIC]: throwing an IOException assumes everything is on file/network.
+    IterablePosting getPostings(Pointer lEntry) throws IOException;
 }

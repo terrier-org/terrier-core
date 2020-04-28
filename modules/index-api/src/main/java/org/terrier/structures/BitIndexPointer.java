@@ -27,37 +27,47 @@ package org.terrier.structures;
 
 import org.apache.hadoop.io.Writable;
 
-/** A pointer implementation for BitPostingIndex structures. It has all the
- * attrbutes of a Pointer. However, BitIndexPointer supports a FileNumber
- * attribute, which allows a single Bit structure to be represented by several
- * underlying files. Moreover, as this is a BitFilePosition, the offset is
- * recorded in terms of bytes (a long) and bits (a byte). In practive, the
- * FileNumber is recorded in 5 spare bits of the "bit" byte, so valid
- * FileNumbers are 0-31 (MAX_FILE_ID).
+/** 
+ * A {@link Pointer} specialisation for {@link BitPostingIndex} structures. 
+ * It has all the methods of a {@link Pointer}. However, {@link BitPostingIndex} 
+ * supports a "file number" attribute, which allows a single {@link BitPostingIndex} 
+ * to be represented by several underlying files. 
+ * Moreover, as this is a {@link BitFilePosition}, the offset is
+ * recorded in terms of bytes (a long) and bits (a byte).
+ * 
+ * In practice, the "file number" is recorded in 5 spare bits of the "bit" byte, so valid
+ * "file numbers" are 0 - 31 (see {@link #MAX_FILE_ID}).
+
  * @author Craig Macdonald
  * @since 3.0
  */
 public interface BitIndexPointer extends BitFilePosition, Writable, Pointer
 {
-	/** largest permissible file id using most implementations */
-	byte MAX_FILE_ID = 31;
-	
-	/** amount to mask byte by to obtain bit offset */
-	byte BIT_MASK = 0x7;
-	/** amount to shift byte by to obtain file id */
-	byte FILE_SHIFT = 0x3;
-	
-	
-	/** Update this pointer to reflect the same values as the specified
-	 * pointer
-	 * @param pointer - pointer to use to set the offset, bit offset
-	 * and file Id parameters.
-	 */ 
-	void setBitIndexPointer(BitIndexPointer pointer);
-	/** Set the file number */
-	void setFileNumber(byte fileId);
-	
-	/** Returns the file number: 0-32 */
-	byte getFileNumber();
-	
+    /** largest permissible file id using most implementations */
+    byte MAX_FILE_ID = 31;    
+    /** amount to mask byte by to obtain bit offset */
+    byte BIT_MASK = 0x7;
+    /** amount to shift byte by to obtain file id */
+    byte FILE_SHIFT = 0x3;
+
+    /** 
+     * Update this pointer to reflect the same values as the specified pointer
+     * 
+     * @param pointer the pointer to use to set the byte offset, bit offset and file number parameters.
+     */ 
+    void setBitIndexPointer(BitIndexPointer pointer);
+
+    /** 
+     * Set the file number.
+     * 
+     * @param the file number.
+     */
+    void setFileNumber(byte fileId);
+
+    /** 
+     * Returns the file number (byte value in the 0-31 range) 
+     * 
+     * @return the file number (byte value in the 0-31 range)
+     */
+    byte getFileNumber();
 }

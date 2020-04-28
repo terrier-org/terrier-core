@@ -25,6 +25,8 @@
  */
 package org.terrier.structures;
 
-public @interface ConcurrentReadable {
-
+// TODO [NIC]: why this marker interface is here?
+@Deprecated
+public @interface ConcurrentReadable 
+{
 }
