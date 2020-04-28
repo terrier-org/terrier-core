@@ -94,7 +94,7 @@ public class CollectionStatistics implements Serializable,Writable
      */
     public CollectionStatistics(int numDocs, int numTerms, long numTokens, long numPointers, final long[] _fieldTokens, final String[] _fieldNames)
     {
-        assert _fieldTokens != null && fieldNames != null && fieldNames.length ==_fieldTokens.length;
+        assert _fieldTokens != null && _fieldNames != null && _fieldNames.length ==_fieldTokens.length;
 
         numberOfDocuments = numDocs;
         numberOfUniqueTerms = numTerms;
