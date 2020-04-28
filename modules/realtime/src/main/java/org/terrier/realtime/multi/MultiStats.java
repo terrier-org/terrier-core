@@ -45,14 +45,20 @@ public class MultiStats extends CollectionStatistics {
 	public static MultiStats factory(CollectionStatistics[] stats) {
 		int numDocs = 0, numTerms = 0;
 		long numTokens = 0, numPointers = 0;
-		long[] fieldTokens = new long[] { 0 };
-		String[] fieldNames = {};
+		final int fieldCount = stats[0].getNumberOfFields();
+		long[] fieldTokens = new long[fieldCount];
+		String[] fieldNames = stats[0].getFieldNames();
 		for (CollectionStatistics stat : stats) {
+			assert fieldCount == stat.getNumberOfFields();
 			numDocs += stat.getNumberOfDocuments();
 			numTokens += stat.getNumberOfTokens();
 			numPointers += stat.getNumberOfPointers();
 			if (stat.getNumberOfUniqueTerms() > numTerms)
 				numTerms = stat.getNumberOfUniqueTerms();
+			for(int fi=0;fi<fieldCount;fi++)
+			{
+				fieldTokens[fi] += stat.getFieldTokens()[fi];
+			}
 		}
 
 		return new MultiStats(numDocs, numTerms, numTokens, numPointers,
