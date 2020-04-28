@@ -65,7 +65,7 @@ public interface Posting
     void setId(int id);
     
     /** 
-     * Copies this posting to one free of an iterator. Kind of like a clone.
+     * Copy this posting to one free of an iterator. Kind of like a clone.
      * 
      * @return an identical posting, but which can be manipulated free of this iterator
      */

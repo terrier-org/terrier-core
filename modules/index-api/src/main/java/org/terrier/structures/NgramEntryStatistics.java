@@ -25,9 +25,9 @@
  */
 package org.terrier.structures;
 
-public interface NgramEntryStatistics extends EntryStatistics {
-
-	public int getWindowSize();
-	public void setWindowSize(int ws);
-	
+// TODO [NIC]: JAVADOCS!!!!!
+public interface NgramEntryStatistics extends EntryStatistics 
+{
+    public int getWindowSize();
+    public void setWindowSize(int ws);
 }

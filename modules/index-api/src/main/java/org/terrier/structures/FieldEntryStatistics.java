@@ -24,12 +24,17 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
 package org.terrier.structures;
+
 /** 
- * The statistics for a field entry
+ * The statistics for a field entry.
  */
-public interface FieldEntryStatistics extends EntryStatistics {
-	/** 
-	 * Get the frequencies for each field 
-	 */
-	int[] getFieldFrequencies();
+// TODO [Nic]: should expose setter and add/subtract methods as well?
+public interface FieldEntryStatistics extends EntryStatistics 
+{
+    /** 
+     * Return the frequencies (total numbers of occurrences) of the term for each field.
+     * 
+     * @return the frequencies (total numbers of occurrences) of the term for each field.
+     */
+    int[] getFieldFrequencies();
 }

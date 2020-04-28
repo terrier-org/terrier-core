@@ -33,7 +33,7 @@ import java.io.IOException;
  * An interface that allows a list of postings to be iterated over.
  *  
  * @since 3.0
- * @author Craig Macdonald, Nicola Tonnellotto
+ * @author Craig Macdonald, Nicola Tonellotto
  */
 public interface IterablePosting extends Posting, Closeable 
 {
@@ -44,6 +44,8 @@ public interface IterablePosting extends Posting, Closeable
     int EOL = Integer.MAX_VALUE;
     int END_OF_LIST = EOL;
 
+    // TODO [NIC]: should not raise an IOException because implementation-dependent.
+    // Consider posting lists in memory for example. 
     /** 
      * Move this iterator to the next posting.
      * 
@@ -51,7 +53,9 @@ public interface IterablePosting extends Posting, Closeable
      * @throws IOException 
      */
     int next() throws IOException;
-    
+
+    // TODO [NIC]: should not raise an IOException because implementation-dependent.
+    // Consider posting lists in memory for example. 
     /** 
      * Move this iterator to the posting with specified id, or next posting after that
      * if a posting with the specified id does not exist.
