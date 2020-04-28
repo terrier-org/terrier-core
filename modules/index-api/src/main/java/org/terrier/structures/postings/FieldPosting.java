@@ -25,20 +25,32 @@
  */
 package org.terrier.structures.postings;
 
-/** Interface implemented by Posting objects that have field information
+/** 
+ * Interface implemented by posting objects that have field information
  * recorded.
- * Position information can be obtained from the getFieldFrequencies() method.
- * Typically, getFieldLengths() involves a call to the DocumentIndex.
+ * 
+ * Field information can be obtained from the {@link #getFieldFrequencies()} method.
+ *
  * @since 3.0
  * @author Craig Macdonald
  */
-public interface FieldPosting extends Posting {
-	/** Returns the frequencies of the term in each field of the document */
-	int[] getFieldFrequencies();
-	
-	/** Returns the lengths of the each fields in the current document */
-	int[] getFieldLengths();
-	
-	void setFieldLengths(int[] newLengths);
-	
+public interface FieldPosting extends Posting 
+{
+    /** 
+     * Returns the frequencies of the term in each field of the document.
+     * 
+     * @return the frequencies of the term in each field of the document.
+     *  */
+    int[] getFieldFrequencies();
+    
+    /** 
+     * Returns the lengths of the each field in the current document.
+     * 
+     * @return the lengths of the each field in the current document.
+     *  */
+    int[] getFieldLengths();
+    
+    // TODO [NIC]: Should be not exposed.
+    @Deprecated
+    void setFieldLengths(int[] newLengths);
 }

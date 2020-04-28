@@ -29,12 +29,17 @@ import java.io.Serializable;
 
 import org.apache.hadoop.io.Writable;
 
-/** Allow a {@link Posting} to be written to a DataOut
+/** 
+ * Allow a {@link Posting} to be serialized to a DataOut.
+ * 
  * @since 3.0
  * @author Craig Macdonald
  */
-public interface WritablePosting extends Posting, Writable, Serializable {
-	
-	public void setDocumentLength(int l);
-	
+public interface WritablePosting extends Posting, Writable, Serializable 
+{
+    /**
+     * Set the length of the document of the current posting in tokens. 
+     * @param l length of the document of the current posting in tokens.
+     */
+    public void setDocumentLength(int l);
 }

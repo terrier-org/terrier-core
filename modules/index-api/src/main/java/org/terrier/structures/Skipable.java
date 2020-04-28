@@ -26,12 +26,23 @@
 package org.terrier.structures;
 
 import java.io.IOException;
-/** Interface denoting implementations which can skip forward in a stream by a number of entries.
- * @since 3.0 */
-public interface Skipable {
-	/** Skip forward the specified number of entries. Should be followed by a next() call.
-	 * @param numEntries number of entries to skip
-	 * @throws IOException if an IO problem occurs.
-	 */
-	void skip(int numEntries) throws IOException;
+/** 
+ * Interface denoting implementations which can skip forward in a stream by a number of entries.
+ * 
+ * @since 3.0 
+ * @author Craig Macdonald
+ * */
+// TODO [NIC]: Should be not exposed.
+@Deprecated
+public interface Skipable 
+{
+    // TODO [NIC]: Should be not exposed. What is the next() call referred to in the javadoc?
+    @Deprecated
+    /** 
+     * Skip forward the specified number of entries. Should be followed by a next() call.
+     * 
+     * @param numEntries number of entries to skip.
+     * @throws IOException
+     */
+    void skip(int numEntries) throws IOException;
 }
