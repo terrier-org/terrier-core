@@ -146,6 +146,33 @@ public class MavenResolver implements TerrierApplicationPlugin {
 		resolveDependencies(deps, system, session, repos);
 	}
 
+	public void addJarFiles(Collection<String> newJars) throws Exception {
+		Collection<URL> newJarURIs = newJars.stream().map(fi -> {
+			try {
+				return new URL(fi);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}).collect(Collectors.toList());
+		addJarURLs(newJarURIs);
+	}
+
+	public void addJarURLs(Collection<URL> newJars) throws Exception {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		if (cl instanceof MutableURLClassLoader)
+		{
+			MutableURLClassLoader mucl = (MutableURLClassLoader)cl;
+			mucl.addURLs(newJars);
+		}
+		else
+		{
+			ClassLoader newCl = new MutableURLClassLoader(cl, newJars);
+			Thread.currentThread().setContextClassLoader(newCl);
+			ApplicationSetup.clzLoader = newCl;
+			// new Exception("not an exception: CL replaced here").printStackTrace();
+		}
+	}
+
 	/** Allows user-facing code to add more jar files */
 	public void addDependencies(List<String> coords) throws Exception {
 		RepositorySystem system = newRepositorySystem();
@@ -228,21 +255,9 @@ public class MavenResolver implements TerrierApplicationPlugin {
 			}
 		}).collect(Collectors.toList());
 
-		if (!newJars.isEmpty())
+		if (!newJars.isEmpty()) {
 			System.out.println("Enhancing classpath with " + newJars);
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-
-		if (cl instanceof MutableURLClassLoader)
-		{
-			MutableURLClassLoader mucl = (MutableURLClassLoader)cl;
-			mucl.addURLs(newJars);
-		}
-		else
-		{
-			ClassLoader newCl = new MutableURLClassLoader(cl, newJars);
-			Thread.currentThread().setContextClassLoader(newCl);
-			ApplicationSetup.clzLoader = newCl;
-			// new Exception("not an exception: CL replaced here").printStackTrace();
+			addJarURLs(newJars);
 		}
 	}
 
