@@ -46,7 +46,6 @@ public interface Pointer
      *  */
     void setNumberOfEntries(int n);
     
-    // TODO [NIC]: why not toString()?
     /** Returns a textual representation of the pointer alone */
     @Deprecated
     String pointerToString();
