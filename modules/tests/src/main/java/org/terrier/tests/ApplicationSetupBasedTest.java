@@ -65,7 +65,7 @@ public class ApplicationSetupBasedTest {
 	{
 		System.setProperty("terrier.home", terrier_home = System.getProperty("user.dir"));
 		terrier_etc = tmpfolder.getRoot().toString();
-		System.err.println("terrier.home="+ System.getProperty("user.dir"));
+		//System.err.println("terrier.home="+ System.getProperty("user.dir"));
 		System.err.println("terrier.etc="+ terrier_etc);
 		File fs[] = new File(terrier_etc).listFiles();
 		if (fs != null)
