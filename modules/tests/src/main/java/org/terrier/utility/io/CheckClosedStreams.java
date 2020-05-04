@@ -100,6 +100,7 @@ public class CheckClosedStreams extends ApplicationSetupBasedTest implements Ter
 	
 	public static void enable()
 	{
+		outputStreams.clear();
 		Files.addFilterInputStreamMapping(".*", CloseCheckFilterInputStream.class, CloseCheckFilterOutputStream.class);	
 	}
 	
@@ -113,6 +114,7 @@ public class CheckClosedStreams extends ApplicationSetupBasedTest implements Ter
 		{
 			assertFalse("OutputStream is still open - opened at: "+ toString(is.openTrace), true);
 		}
+		outputStreams.clear();
 	}
 	
 	public void finishedLog()
