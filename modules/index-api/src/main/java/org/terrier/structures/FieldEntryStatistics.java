@@ -28,7 +28,6 @@ package org.terrier.structures;
 /** 
  * The statistics for a field entry.
  */
-// TODO [Nic]: should expose setter and add/subtract methods as well?
 public interface FieldEntryStatistics extends EntryStatistics 
 {
     /** 
