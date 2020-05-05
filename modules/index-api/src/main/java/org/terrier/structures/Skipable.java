@@ -32,11 +32,9 @@ import java.io.IOException;
  * @since 3.0 
  * @author Craig Macdonald
  * */
-// TODO [NIC]: Should be not exposed.
 @Deprecated
 public interface Skipable 
 {
-    // TODO [NIC]: Should be not exposed. What is the next() call referred to in the javadoc?
     @Deprecated
     /** 
      * Skip forward the specified number of entries. Should be followed by a next() call.

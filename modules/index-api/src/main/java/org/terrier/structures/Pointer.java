@@ -50,7 +50,6 @@ public interface Pointer
     @Deprecated
     String pointerToString();
 
-    // TODO [NIC]: I suggest to change this method to simply set().
     /** 
      * Sets the pointer within this object to that represented by
      * the specified pointer.

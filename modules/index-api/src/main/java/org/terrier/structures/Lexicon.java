@@ -49,7 +49,6 @@ import java.util.Map;
  */
 public abstract class Lexicon<KEY> implements Closeable, Iterable<Map.Entry<KEY,LexiconEntry>>
 {
-    // TODO [NIC]: Should be not exposed. It is mainly used in Lexicon builder for its own stuff and some other classes.
     public static class LexiconFileEntry<KEY2> implements Map.Entry<KEY2,LexiconEntry>
     {
         KEY2 key;
@@ -116,14 +115,10 @@ public abstract class Lexicon<KEY> implements Closeable, Iterable<Map.Entry<KEY,
      */
     public abstract LexiconEntry getLexiconEntry(KEY term);
     
-    // TODO [NIC]: Should not throw an exception, as the previous method does not throw any exception but returns null.
-    //             Both behaviours should be consistent.
-    //             Moreover, throwing an exception not specified in the signature is an implementation detail.
-    //             This comment applies to all other following methods.
     /** 
      * Returns the term and {@link LexiconEntry} (containing statistics and a pointer) for the given term id.
      * 
-     * Throws NoSuchElementException is the termid is not found. TODO [NIC]: check nic comment above
+     * Throws NoSuchElementException is the termid is not found.
      * 
      * @param termid the term id to lookup in the lexicon.
      * @return the {@link java.util.Map.Entry} containing the term and the {@link LexiconEntry}.
@@ -135,7 +130,7 @@ public abstract class Lexicon<KEY> implements Closeable, Iterable<Map.Entry<KEY,
      * Returns the term and {@link LexiconEntry} (containing statistics and a pointer) for
      * the entry in the lexicon with the specified index.
      * 
-     * Throws NoSuchElementException is the termid is not found. TODO [NIC]: check nic comment above
+     * Throws NoSuchElementException is the termid is not found.
      * 
      * @param index the entry number to lookup in the lexicon.
      * @return the {@link java.util.Map.Entry} containing the term and the {@link LexiconEntry}.

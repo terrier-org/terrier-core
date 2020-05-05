@@ -38,8 +38,6 @@ import org.apache.hadoop.io.Writable;
  *
  * @author Craig Macdonald
  */
-//TODO [NIC]: This class can easily transformed into an interface with default methods. 
-//            Javadoc must be seriously improved.
 public abstract class LexiconEntry implements EntryStatistics, Pointer, Writable
 {
     private static final long serialVersionUID = 1L;

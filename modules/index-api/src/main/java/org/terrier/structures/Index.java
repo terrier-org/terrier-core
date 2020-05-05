@@ -5,7 +5,6 @@ import org.terrier.querying.IndexRef;
 import java.io.IOException;
 
 /** Base class for all Index implementations */
-// TODO [NIC]: This can be an interface with default methods!
 public abstract class Index implements Closeable 
 {
     /** Get the collection statistics */

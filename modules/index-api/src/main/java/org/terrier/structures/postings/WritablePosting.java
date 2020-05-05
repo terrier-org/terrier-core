@@ -35,7 +35,6 @@ import org.apache.hadoop.io.Writable;
  * @since 3.0
  * @author Craig Macdonald
  */
-@SuppressWarnings("deprecation")
 public interface WritablePosting extends Posting, Writable, Serializable 
 {
     /**

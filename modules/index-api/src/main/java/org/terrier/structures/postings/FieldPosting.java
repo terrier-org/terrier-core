@@ -50,7 +50,6 @@ public interface FieldPosting extends Posting
      *  */
     int[] getFieldLengths();
     
-    // TODO [NIC]: Should be not exposed.
     @Deprecated
     void setFieldLengths(int[] newLengths);
 }

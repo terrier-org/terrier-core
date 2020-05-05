@@ -34,7 +34,6 @@ import org.terrier.structures.postings.IterablePosting;
  * 
  * @param <POINTERTYPE> the type of pointer required to access this posting source 
  */
-// TODO [NIC]: The parameter is not used in the interface at all!.
 public interface PostingIndex<POINTERTYPE extends Pointer> extends Closeable 
 {
     /** 
@@ -42,6 +41,5 @@ public interface PostingIndex<POINTERTYPE extends Pointer> extends Closeable
      * 
      * @return the posting iterator given a pointer.
      */
-    // TODO [NIC]: throwing an IOException assumes everything is on file/network.
     IterablePosting getPostings(Pointer lEntry) throws IOException;
 }

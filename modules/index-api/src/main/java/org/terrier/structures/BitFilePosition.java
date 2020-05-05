@@ -52,7 +52,6 @@ public interface BitFilePosition
      */
     void setOffset(long bytes, byte bits);
 
-    // TODO [NIC]: I suggest to change this method to simply set().
     /** 
      * Sets the bit file position within this object to that represented by
      * the specified bit file position.
