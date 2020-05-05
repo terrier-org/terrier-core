@@ -508,6 +508,7 @@ public class LocalManager implements Manager
 			Query q = rq.getQuery();
 			logger.info(mqt.toString());
 
+			if (mqt.stream().allMatch( me -> me.getValue().getTags().size() == 0))
 			{
 				logger.warn("MatchingQueryTerms has no terms tagged for matching; applying " + BaseMatching.BASE_MATCHING_TAG);
 				mqt.stream().forEach(me -> me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG));
