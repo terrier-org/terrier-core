@@ -40,9 +40,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.Matching;
+import org.terrier.matching.BaseMatching;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.Model;
 import org.terrier.matching.QueryResultSet;
@@ -168,7 +171,8 @@ public class LocalManager implements Manager
 		}
 	}
 	
-	/** Class that keeps a cache of queries, and helps parse controls to identify them
+	/** Class that keeps a cache of Process objects or PostFilter object, 
+	 * and helps parse controls to identify them
 	 * @since 5.0
 	 */
 	static class ModuleManager<K> extends ModuleCache<K> {
@@ -191,7 +195,8 @@ public class LocalManager implements Manager
 			super(namespace, _caching);
 			this.typeName = _typeName;
 			this.load_module_controls();
-			//System.err.println(Arrays.deepToString(Class_Controls));
+			//System.err.println(java.util.Arrays.deepToString(Class_Order));
+			//System.err.println(java.util.Arrays.deepToString(Class_Controls));
 		}
 		
 		final int getSize()
@@ -207,7 +212,7 @@ public class LocalManager implements Manager
 				for(int j=0; j<Class_Controls[i].length; j++)
 				{
 					String ControlName = Class_Controls[i][j];
-					String value = (String)controls.get(ControlName);
+					String value = controls.get(ControlName);
 					if (logger.isDebugEnabled()){
 						logger.debug(ControlName+ "("+PostFilter_Name+") => "+value);
 					}
@@ -228,8 +233,62 @@ public class LocalManager implements Manager
 		/** parses the controls hashtable, looking for references to controls, and returns the appropriate
 		  * postfilters to be run. */
 		Iterator<K> getActiveIterator(Map<String,String> controls) {
-			//TODO this implementation should check if controls have been updated since the iterator was created.
-			return getActive(controls).iterator();
+			// this implementation checks if controls have been updated since the iterator was created.
+						
+			return new Iterator<K>() {
+				int starting_offset = -1;
+				Pair<K,Integer> the_next = null;
+				public boolean hasNext() {
+					if (starting_offset >=  Class_Order.length)
+						return false;
+					the_next = _get(starting_offset+1);
+					return the_next != null;
+				}
+
+				/** looks for the next item that is activated by a control */
+				Pair<K,Integer> _get(int startoffset)
+				{
+					for(int i=startoffset; i<Class_Order.length; i++)
+					{
+						String PostFilter_Name = Class_Order[i];
+						for(int j=0; j<Class_Controls[i].length; j++)
+						{
+							String ControlName = Class_Controls[i][j];
+							String value = controls.get(ControlName);
+							if (logger.isDebugEnabled()){
+								logger.debug(ControlName+ "("+PostFilter_Name+") => "+value);
+							}
+							if (value == null)
+								continue;
+							value = value.toLowerCase();
+							if(! (value.equals("off") || value.equals("false")))
+							{
+								return Pair.of(getModule(PostFilter_Name), i);
+							}
+						}
+					}
+					return null;
+				}
+
+				public K next() {
+					starting_offset++;
+					
+					assert starting_offset < Class_Order.length;
+
+					// hasNext() may have already loaded the object
+					if (the_next != null)
+					{
+						K tmp = the_next.getLeft();
+						// we skip on if some process stages were missed
+						starting_offset = the_next.getRight();
+						the_next = null;
+						return tmp;
+					}
+					Pair<K,Integer> rtr = _get(starting_offset);
+					starting_offset = rtr.getRight();
+					return rtr.getLeft();
+				}
+			};
 		}
 		
 		/** load in the allowed post filter controls, and the order to run post processes in */
@@ -448,6 +507,11 @@ public class LocalManager implements Manager
 			mqt.setDefaultTermWeightingModel((WeightingModel)wmodel);
 			Query q = rq.getQuery();
 			logger.info(mqt.toString());
+
+			{
+				logger.warn("MatchingQueryTerms has no terms tagged for matching; applying " + BaseMatching.BASE_MATCHING_TAG);
+				mqt.stream().forEach(me -> me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG));
+			}
 				
 	
 			mqt.setQuery(q);
@@ -812,7 +876,7 @@ public class LocalManager implements Manager
 	public void runSearchRequest(SearchRequest srq)
 	{	
 		Request rq = (Request)srq;		
-		logger.info("Starting to execute query " + srq.getQueryID());
+		logger.info("Starting to execute query " + srq.getQueryID() + " - " + srq.getOriginalQuery());
 		boolean mqtObtained = rq.getMatchingQueryTerms() != null;
 		boolean hasRawQuery = rq.getOriginalQuery() != null;
 		boolean hasTerrierQLquery = rq.getQuery() != null;
