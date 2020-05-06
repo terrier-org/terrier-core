@@ -107,7 +107,7 @@ public abstract class MultiTermOp extends Operator {
 				logger.debug("Component term Not Found: " + ts);
 				if (allRequired)
 				{
-					return Pair.of(null,null);
+					return null; //Pair.of(null,null);
 				}
 			} else if (IGNORE_LOW_IDF_TERMS && index.getCollectionStatistics().getNumberOfDocuments() < pair.getKey().getFrequency()) {
 				logger.warn("query term " + ts + " has low idf - ignored from scoring.");
