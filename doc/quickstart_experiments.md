@@ -6,7 +6,7 @@ If you are interested in using Terrier straight-away in order to index and retri
 Terrier Requirements
 --------------------
 
-Terrier's single requirement consists of an installed Java JRE 1.8.0 or higher. You can download the JRE, or the JDK (if you want to [develop with Terrier](terrier_develop.md), or run the [web-based interface](terrier_http.md)), from the [Java website](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+Terrier's single requirement consists of an installed Java JRE 11 or higher. You can download the JRE, or the JDK (if you want to [develop with Terrier](terrier_develop.md), or run the [web-based interface](terrier_http.md)), from the [Java website](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
 Download Terrier
 ----------------
@@ -18,24 +18,24 @@ Step by Step Unix Installation
 
 After having downloaded Terrier, copy the file to the directory where you want to install Terrier. Navigate to this directory and execute the following command to decompress the distribution:
 
-    tar -zxvf terrier-project-5.2-bin.tar.gz
+    tar -zxvf terrier-project-5.3-bin.tar.gz
 
 This will result in the creation of a `terrier-project` directory in your current directory. Terrier will use the java command in your $PATH, if there is one, or otherwise will resort to looking in $JAVA_HOME. To check that java is in your path, type:
 
     java -version
     
-We are looking for Java version 1.8.0 or greater. If the java command is not found, you may have to install the Java, or ensure that the $JAVA_HOME directory to point to your Java installation. If your system does not meet these requirements you can download a Java 1.8 or newer from the [Java download website](https://www.java.com/en/download/). If necessary, set the environment variable by including the following line either in your ~/.bashrc file:
+We are looking for Java version 11 or greater. If the java command is not found, you may have to install the Java, or ensure that the $JAVA_HOME directory to point to your Java installation. If your system does not meet these requirements you can download a Java 1.8 or newer from the [Java download website](https://www.java.com/en/download/). If necessary, set the environment variable by including the following line either in your ~/.bashrc file:
 
     export JAVA_HOME=<absolute-path-of-java-installation>
 
 e.g.
 
-    export JAVA_HOME=/usr/java/jre1.8.0
+    export JAVA_HOME=/usr/java/latest
 
 Step by Step Windows Installation
 ---------------------------------
 
-In order to be able to use Terrier on Windows you simply have to extract the contents of the downloaded .zip file into a directory of your choice. Terrier requires Java version 1.8 or higher. If your system does not meet this requirement you can download an appropriate version from the [JRE download website](https://www.java.com/en/download/). Finally, Terrier assumes that java.exe is on the path, so you should use the System applet in the control panel, to ensure that your [Java\\bin folder is in your PATH environment variable](http://www.oracle.com/technetwork/java/javase/install-windows-189425.html#Environment).
+In order to be able to use Terrier on Windows you simply have to extract the contents of the downloaded .zip file into a directory of your choice. Terrier requires Java version 11 or higher. If your system does not meet this requirement you can download an appropriate version from the [JRE download website](https://www.java.com/en/download/). Finally, Terrier assumes that java.exe is on the path, so you should use the System applet in the control panel, to ensure that your [Java\\bin folder is in your PATH environment variable](http://www.oracle.com/technetwork/java/javase/install-windows-189425.html#Environment).
 
 **The following instructions are equally applicable to Windows, with the exception that the script filenames are suffixed by .bat**.
 
@@ -45,7 +45,7 @@ Using Terrier
 Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` command-line script. While in Terrier's directory, type `bin/terrier` to see the available commands (`bin\terrier.bat` on Windows):
 
 	$ bin/terrier 
-	Terrier version 5.2
+	Terrier version 5.3
 	No command specified. You must specify a command.
 	Popular commands:
 		batchevaluate	evaluate all run result files in the results directory
@@ -100,7 +100,7 @@ This guide will provide step-by-step instructions for using Terrier to index a T
 1. Go to the Terrier folder.
 
 ```shell
-    cd terrier-project-5.2
+    cd terrier-project-5.3
 ```
 
 2. Setup Terrier for using a TREC test collection by using the `trec_setup` script (`trec_setup.bat` on Windows)
