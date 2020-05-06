@@ -57,6 +57,15 @@ public class DependenceModelPreProcess implements MQTRewritingProcess{
 	static Set<Class<? extends Operator>> ALLOWED_OP_TYPES = Sets.newHashSet(SingleTermOp.class, SynonymOp.class);
 	
 	Double param = null;
+	String defaultModel;
+
+	public DependenceModelPreProcess() {
+		this(DEFAULT_DEPENDENCE_WEIGHTING_MODEL);
+	}
+	
+	public DependenceModelPreProcess(String _defaultModel) {
+		defaultModel = _defaultModel;
+	} 
 	
 	protected void initialise(SearchRequest q) {}
 	
@@ -65,7 +74,7 @@ public class DependenceModelPreProcess implements MQTRewritingProcess{
 		initialise(q);
 		String modelName = q.getControl(CONTROL_MODEL);
 		if (modelName == null || modelName.length() == 0)
-			modelName = DEFAULT_DEPENDENCE_WEIGHTING_MODEL;
+			modelName = defaultModel;
 		
 		String paramValue = q.getControl(CONTROL_MODEL_PARAM);
 		param = paramValue != null && paramValue.length() > 0 ? Double.parseDouble(paramValue) : null;	
@@ -156,7 +165,7 @@ public class DependenceModelPreProcess implements MQTRewritingProcess{
 
 	public boolean expandQuery(MatchingQueryTerms mqt, Request rq) throws IOException {
 		int count = mqt.size();
-		this.process(mqt, DEFAULT_DEPENDENCE_WEIGHTING_MODEL);
+		this.process(mqt, defaultModel);
 		return (mqt.size() != count);
 	}
 
