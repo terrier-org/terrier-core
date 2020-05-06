@@ -86,6 +86,11 @@ public abstract class ExpansionTerms
 			}
 		}
 	}
+
+	/** Returns the termids for the original query */
+	public int[] getOriginalTermIds() {
+		return this.originalTermids.keys();
+	}
 	
 	/** Add a single document to be considered for expanding the query 
 	 * @throws IOException */
