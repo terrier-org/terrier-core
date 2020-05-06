@@ -588,10 +588,10 @@ public class ApplicationSetup {
 
 	/** Return a loaded plugin by name. Returns null if a plugin
 	  * of that name has not been loaded */
-	public TerrierApplicationPlugin getPlugin(String name)
+	public static TerrierApplicationPlugin getPlugin(String name)
 	{
 		for (TerrierApplicationPlugin p : loadedPlugins)
-			if (p.getClass().getName().equals(name))
+			if (p.getClass().getSimpleName().equals(name))
 				return p;
 		return null;
 	}
