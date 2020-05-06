@@ -238,6 +238,7 @@ public class ApplicationSetup {
 	 * The corresponding property is <tt>expansion.terms</tt>
 	 * and the default value is <tt>10</tt>.
 	 */
+	@Deprecated
 	public static int EXPANSION_TERMS;
 		
 	/**
@@ -245,6 +246,7 @@ public class ApplicationSetup {
 	 * expanding the query. The corresponding property is 
 	 * <tt>expansion.documents</tt> and the default value is <tt>3</tt>.
 	 */
+	@Deprecated
 	public static int EXPANSION_DOCUMENTS;
 	
 
@@ -272,14 +274,6 @@ public class ApplicationSetup {
 	 */
 	public static boolean BLOCK_INDEXING = false;
 	
-	/** 
-	 * Specifies whether fields will be used for querying. 
-	 * The corresponding property is <tt>field.querying</tt> and 
-	 * the default value is false.
-	 */
-	public static boolean FIELD_QUERYING = false;
-	
-	//new
 	/**
 	 * Memory threshold in the single pass inversion method. If a memory check is below this value, the postings
 	 * in memory are written to disk. Default is 50 000 000 (50MB) and 100 000 000 (100MB) for 32bit and 64bit 
@@ -456,27 +450,17 @@ public class ApplicationSetup {
 		//empty documents are added to the index.
 		IGNORE_EMPTY_DOCUMENTS = Boolean.parseBoolean(getProperty("ignore.empty.documents", "false"));
 		
-		//During the indexing process, we process and create temporary structures
-		//for bundle.size files.
-		//BUNDLE_SIZE = Integer.parseInt(getProperty("bundle.size", "2000"));
-		
 		//the maximum size of a term (string)
-		MAX_TERM_LENGTH = Integer.parseInt(getProperty("max.term.length", "20"));
-
-		//the maximum number of bytes used to store a document number.
-		//DOCNO_BYTE_LENGTH = Integer.parseInt(getProperty("docno.byte.length", "20"));	
-
-		
+		MAX_TERM_LENGTH = Integer.parseInt(getProperty("max.term.length", "20"));		
 
 		//query expansion properties
 		EXPANSION_TERMS = Integer.parseInt(getProperty("expansion.terms", "10"));
 		EXPANSION_DOCUMENTS = Integer.parseInt(getProperty("expansion.documents", "3"));
-		//html tags and proximity related properties		
+		//block related properties		
 		BLOCK_INDEXING = Boolean.parseBoolean(getProperty("block.indexing", "false"));
 		BLOCK_SIZE = Integer.parseInt(getProperty("blocks.size", "1"));
 		MAX_BLOCKS = Integer.parseInt(getProperty("blocks.max", "100000"));
-		FIELD_QUERYING = Boolean.parseBoolean(getProperty("field.querying", "false"));
-	
+		
 		//double the amount of memory if using 64bit JVM.	
 		MEMORY_THRESHOLD_SINGLEPASS = UnitUtils.parseInt(getProperty("memory.reserved", 
 			System.getProperty("sun.arch.data.model", "32").equals("64") ? "200Mi" : "50Mi")); 
@@ -607,10 +591,10 @@ public class ApplicationSetup {
 
 	/** Return a loaded plugin by name. Returns null if a plugin
 	  * of that name has not been loaded */
-	public TerrierApplicationPlugin getPlugin(String name)
+	public static TerrierApplicationPlugin getPlugin(String name)
 	{
 		for (TerrierApplicationPlugin p : loadedPlugins)
-			if (p.getClass().getName().equals(name))
+			if (p.getClass().getSimpleName().equals(name))
 				return p;
 		return null;
 	}

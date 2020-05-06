@@ -27,6 +27,7 @@ package org.terrier.structures;
 
 import java.io.IOException;
 import java.util.Iterator;
+import com.jakewharton.byteunits.BinaryByteUnit;
 
 import org.terrier.utility.TerrierTimer;
 /** 
@@ -53,15 +54,19 @@ public class FSAFieldDocumentIndex
 	protected void initialise(IndexOnDisk index, String structureName)
 			throws IOException 
 	{
-		logger.debug("Loading document + field lengths for " + structureName + " structure into memory. NB: The following stacktrace IS NOT AN Exception", new Exception("THIS IS **NOT** AN EXCEPTION"));
+		logger.debug("Loading document + field lengths for " + structureName + " structure into memory."+
+			" NB: The following stacktrace IS NOT AN Exception", 
+			new Exception("THIS IS **NOT** AN EXCEPTION"));
 		final long fieldCount = index.getCollectionStatistics().getNumberOfFields();
 		final int numEntries = this.size();
 		final long size = ( (long) numEntries * (long) Integer.BYTES)
 			+ (numEntries * (12l + ((long) Integer.BYTES * fieldCount)));
-		logger.info("Document index requires "+ size +" remaining stack is " + freeMem());
-		if (freeMem() < size)
+		final long free = freeMem();
+		logger.info("Document index requires "+  BinaryByteUnit.format(size) +" remaining heap is " +  BinaryByteUnit.format(free));
+		if (free < size)
 		{
-			logger.warn("Insufficient memory to load document index - use TERRIER_HEAP_MEM env var to increase available stack space");
+			logger.warn("Insufficient memory to load document index - use TERRIER_HEAP_MEM env var to increase available heap space");
+			logger.warn("If fields arent required, change index."+structureName+".class to " + FSADocumentIndex.class + " in " + index.getPrefix() + ".properties" );
 		}
 		docLengths = new int[numEntries];
 		fieldLengths = new int[numEntries][];

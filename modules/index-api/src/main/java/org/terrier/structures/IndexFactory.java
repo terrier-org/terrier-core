@@ -108,6 +108,11 @@ public class IndexFactory
                 return l.indexImplementor(ref);
         return null;
     }
+
+    /** Shortcut method to avoid instantiating an IndexRef */
+	public static Index of(String indexRefString) {
+		return of(IndexRef.of(indexRefString));
+	}
     
     /** Load the index for the specified reference. */
     public static Index of(IndexRef ref)

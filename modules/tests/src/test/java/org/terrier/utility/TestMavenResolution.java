@@ -48,6 +48,12 @@ public class TestMavenResolution extends ApplicationSetupBasedTest {
 		new MavenResolver().initialise("org.apache.commons:commons-rng-simple");
 		assertNotNull(Thread.currentThread().getContextClassLoader().loadClass("org.apache.commons.rng.simple.RandomSource"));
 	}
+
+	@Test public void testImportSingleJitpack() throws Exception
+	{
+		new MavenResolver().initialise("com.github.terrierteam:terrier-wapo:-SNAPSHOT");
+		assertNotNull(Thread.currentThread().getContextClassLoader().loadClass("uk.ac.gla.terrier.indexing.WAPOCollection"));
+	}
 	
 	@Test public void testImportSingleIndirectWithClassifier() throws Exception
 	{

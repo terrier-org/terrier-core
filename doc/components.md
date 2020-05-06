@@ -6,6 +6,11 @@ Terrier's ecosystem has a number of components:
 
 [PyTerrier](http://github.com/terrier-org/pyterrier/) are Python bindings for Terrier.
 
+
+----
+
+The following components can be used from Terrier or Pyterrier. In Terrier, using the `-P` commandline option to include the package. In Pyterrier, include the components in `pt.init(packages=[])` startup option.
+
 ## terrier-lucene
 Terrier-lucene allows Terrier to read a Lucene index, including those created by Anserini.
 

@@ -28,6 +28,7 @@ package org.terrier.querying;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
@@ -58,6 +59,16 @@ public class TestManager extends ApplicationSetupBasedTest {
 		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
 		assertEquals(0, ((Request) srq).getResultSet().getDocids()[0]);
 		
+	}
+
+	public void testUpdateFromControl() throws Exception
+	{
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"The quick brown fox jumps over the lazy dog"});
+		Manager m = new LocalManager(index);
+		SearchRequest srq;
+		srq = m.newSearchRequest("testQuery", "fox fox dog qe:on");
+		m.runSearchRequest(srq);
+		assertTrue(srq.getControl("runname").contains("QueryExpansion"));	
 	}
 	
 	@Test

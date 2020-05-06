@@ -40,6 +40,20 @@ public class TestTRECQuery extends TestQuerySource {
 	{
 		return new TRECQuery(filename);
 	}
+
+	@Test public void testTwoFiles() throws Exception {
+		String filename1 = super.writeFile("<top>\n<num> Number: 4\n<title> defination Gravitational\n</top>");
+		String filename2 = super.writeFile("<top>\n<num> Number: 6\n<title> another query\n</top>");
+		QuerySource source = new TRECQuery(new String[]{filename1, filename2});
+		assertTrue(source.hasNext());
+		assertEquals("defination gravitational", source.next());
+		assertEquals("4", source.getQueryId());
+		assertTrue(source.hasNext());
+		assertEquals("another query", source.next());
+		assertEquals("6", source.getQueryId());
+		assertFalse(source.hasNext());
+		
+	}
 		
 	@Test public void testOneNoClosing() throws Exception {
 		QuerySource source = processString("<top>\n<num> Number: 4\n<title> defination Gravitational\n</top>");

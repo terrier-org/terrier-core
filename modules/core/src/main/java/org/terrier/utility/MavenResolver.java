@@ -66,7 +66,7 @@ import org.terrier.utility.ApplicationSetup.TerrierApplicationPlugin;
 
 /**
  * Resolves Maven dependencies specified in <tt>terrier.mvn.coords</tt> and adds
- * to classpath.
+ * to classpath. This can checkin in ~/.m2/, as well as Maven Central and Jitpack.
  * <p>
  * <b>Properties</b>
  * <ul>
@@ -76,6 +76,7 @@ import org.terrier.utility.ApplicationSetup.TerrierApplicationPlugin;
  * </li>
  * </ul>
  * 
+
  * @since 5.0
  */
 public class MavenResolver implements TerrierApplicationPlugin {
@@ -120,6 +121,7 @@ public class MavenResolver implements TerrierApplicationPlugin {
 			USER_HOME, ".m2");
 
 	@Override
+	/** Calls initialise(String) using value of the property <tt>terrier.mvn.coords</tt> */
 	public void initialise() throws Exception {
 		String requestedCoords = ApplicationSetup.getProperty("terrier.mvn.coords", null);
 		if (requestedCoords == null)
@@ -133,6 +135,7 @@ public class MavenResolver implements TerrierApplicationPlugin {
 		}
 	}
 
+	/** Usually called via initialise() from ApplicationSetup */
 	public void initialise(String coordinates) throws Exception {
 
 		RepositorySystem system = newRepositorySystem();
@@ -140,6 +143,47 @@ public class MavenResolver implements TerrierApplicationPlugin {
 		final List<RemoteRepository> repos = newRepositories( system, session );
 
 		List<Artifact> deps = extractMavenCoordinates(coordinates, system, session, repos);
+		resolveDependencies(deps, system, session, repos);
+	}
+
+	public void addJarFiles(Collection<String> newJars) throws Exception {
+		Collection<URL> newJarURIs = newJars.stream().map(fi -> {
+			try {
+				return new URL(fi);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}).collect(Collectors.toList());
+		addJarURLs(newJarURIs);
+	}
+
+	public void addJarURLs(Collection<URL> newJars) throws Exception {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		if (cl instanceof MutableURLClassLoader)
+		{
+			MutableURLClassLoader mucl = (MutableURLClassLoader)cl;
+			mucl.addURLs(newJars);
+		}
+		else
+		{
+			ClassLoader newCl = new MutableURLClassLoader(cl, newJars);
+			Thread.currentThread().setContextClassLoader(newCl);
+			ApplicationSetup.clzLoader = newCl;
+			// new Exception("not an exception: CL replaced here").printStackTrace();
+		}
+	}
+
+	/** Allows user-facing code to add more jar files */
+	public void addDependencies(List<String> coords) throws Exception {
+		RepositorySystem system = newRepositorySystem();
+		RepositorySystemSession session = newRepositorySystemSession(system);
+		final List<RemoteRepository> repos = newRepositories( system, session );
+
+		List<Artifact> deps = extractMavenCoordinates(coords, system, session, repos);
+		resolveDependencies(deps, system, session, repos);
+	}
+
+	void resolveDependencies(List<Artifact> deps, RepositorySystem system, RepositorySystemSession session, List<RemoteRepository> repos) throws Exception {
 		Collection<File> foundDepFiles = new ArrayList<>();
 		DependencyFilter df = new DependencyFilter() {
 
@@ -201,7 +245,7 @@ public class MavenResolver implements TerrierApplicationPlugin {
 			foundDepFiles.addAll(artifactResults.stream().map( r -> r.getArtifact().getFile()).collect(Collectors.toList()) );
 		}
 
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		
 		Collection<URL> newJars = foundDepFiles.stream().map(fi -> {
 			try {
 				assert (fi.exists());
@@ -211,13 +255,10 @@ public class MavenResolver implements TerrierApplicationPlugin {
 			}
 		}).collect(Collectors.toList());
 
-		if (!newJars.isEmpty())
+		if (!newJars.isEmpty()) {
 			System.out.println("Enhancing classpath with " + newJars);
-		ClassLoader newCl = new MutableURLClassLoader(cl, newJars);
-		// new
-		// Exception("not an exception: CL replaced here").printStackTrace();
-		Thread.currentThread().setContextClassLoader(newCl);
-		ApplicationSetup.clzLoader = newCl;
+			addJarURLs(newJars);
+		}
 	}
 
 	// replacement for scala require implicit
@@ -227,20 +268,30 @@ public class MavenResolver implements TerrierApplicationPlugin {
 		throw new RuntimeException(reason);
 	}
 
-	/**
-	 * Extracts maven coordinates from a comma-delimited string. Coordinates
-	 * should be provided in the format `groupId:artifactId[:version]` or
-	 * `groupId/artifactId[:version]`. If the version is not provided, the
-	 * latest version will be resolved.
-	 * 
+	
+
+	/** Extracts maven coordinates from a comma-delimited string, and passes to other method
+	 * of same name.
 	 * @param coordinates
 	 *            Comma-delimited string of maven coordinates
 	 * @return Sequence of Maven coordinates
 	 */
 	List<Artifact> extractMavenCoordinates(String coordinates, RepositorySystem repoSystem, RepositorySystemSession session, List<RemoteRepository> repos) {
-		return Arrays
-				.asList(coordinates.split(","))
-				.stream()
+		return extractMavenCoordinates(Arrays.asList(coordinates.split(",")), repoSystem, session, repos);
+	}
+	
+	/**
+	 * Resolves coordinates.
+	 * Coordinates should be provided in the format `groupId:artifactId[:version]` or
+	 * `groupId/artifactId[:version]`. If the version is not provided, the
+	 * latest version will be resolved.
+	 * 
+	 * @param coordinates
+	 *            List of Maven coordinate strings
+	 * @return Sequence of Maven coordinates
+	 */
+	List<Artifact> extractMavenCoordinates(List<String> coordinates, RepositorySystem repoSystem, RepositorySystemSession session, List<RemoteRepository> repos) {
+		return coordinates.stream()
 				.map(p -> {
 					String[] splits = p.replace("/", ":").split(":");
 					require(splits.length == 3 || splits.length == 2 || splits.length == 4,
@@ -273,22 +324,22 @@ public class MavenResolver implements TerrierApplicationPlugin {
 				}).collect(Collectors.toList());
 	}
 	
-	 public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system )
-	    {
-		 File local = new File(USER_MAVEN_CONFIGURATION_HOME, "repository");
-	        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+	public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system )
+	{
+		File local = new File(USER_MAVEN_CONFIGURATION_HOME, "repository");
+		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-	        LocalRepository localRepo = new LocalRepository(local);
-	        session.setLocalRepositoryManager( system.newLocalRepositoryManager( session, localRepo ) );
+		LocalRepository localRepo = new LocalRepository(local);
+		session.setLocalRepositoryManager( system.newLocalRepositoryManager( session, localRepo ) );
 
-//	        session.setTransferListener( new ConsoleTransferListener() );
-//	        session.setRepositoryListener( new ConsoleRepositoryListener() );
+	    // session.setTransferListener( new ConsoleTransferListener() );
+	    // session.setRepositoryListener( new ConsoleRepositoryListener() );
 
-	        // uncomment to generate dirty trees
-	        // session.setDependencyGraphTransformer( null );
+		// uncomment to generate dirty trees
+		// session.setDependencyGraphTransformer( null );
 
-	        return session;
-	    }
+		return session;
+	}
 	
 	public static RepositorySystem newRepositorySystem()
     {
@@ -316,8 +367,11 @@ public class MavenResolver implements TerrierApplicationPlugin {
 	
 	public static List<RemoteRepository> newRepositories( RepositorySystem system, RepositorySystemSession session )
     {
+		System.setProperty("https.protocols", "SSLv3,TLSv1,TLSv1.1,TLSv1.2");
         return new ArrayList<RemoteRepository>( Arrays.asList( 
-        		newCentralRepository()) );
+				newCentralRepository(),
+				new RemoteRepository.Builder( "jitpack", "default", "http://jitpack.io").build()
+				));
     }
 
     private static RemoteRepository newCentralRepository()

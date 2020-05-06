@@ -216,12 +216,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>3.8.0</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<fork>true</fork>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 					<compilerArgs>
 						<arg>-Xpkginfo:always</arg>
 					</compilerArgs>
@@ -234,7 +234,7 @@
 				<version>2.6</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
+				</configuration>	
 			</plugin>
 
 		</plugins>

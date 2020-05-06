@@ -9,4 +9,3 @@ modules/*/target/
 .settings
 .project
 pom.xml.versionsBackup
-

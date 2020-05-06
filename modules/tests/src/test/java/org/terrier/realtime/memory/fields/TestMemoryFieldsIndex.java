@@ -31,6 +31,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -358,6 +359,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 	public void test_compare2() throws Exception {
 		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
 		assertNotNull(mem);
+		assertFalse(IndexOnDisk.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields"));
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
 		IndexOnDisk mem2disk = IndexOnDisk.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
 				"memoryFields");

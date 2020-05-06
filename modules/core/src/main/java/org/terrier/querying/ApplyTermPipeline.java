@@ -46,13 +46,17 @@ public class ApplyTermPipeline implements Process {
 	
 	public ApplyTermPipeline()
 	{
-		this.load_pipeline();
+		this.load_pipeline(ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer").trim());
+	}
+
+	public ApplyTermPipeline(String pipeline)
+	{
+		this.load_pipeline(pipeline);
 	}
 	
 	/** load in the term pipeline */
-	protected void load_pipeline()
+	protected void load_pipeline(final String tp)
 	{
-		final String tp = ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer").trim();
 		final String[] pipes = tp.split("\\s*,\\s*");
 		info = "termpipelines=" + tp;
 		synchronized (this) {

@@ -81,6 +81,7 @@ public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 		throws IOException
 	{
 		final FatResultSet fat = (FatResultSet)res;
+		final int numFields = fat.getCollectionStatistics().getNumberOfFields();
 		final int numResults = fat.getResultSize();
 		final FeaturedQueryResultSet rtr = new FeaturedQueryResultSet(fat);
 		int featureCount = 0;
@@ -105,10 +106,12 @@ public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 			rtr.putFeatureScores(wModelNames[fid], thinChild.getScores());
 			featureCount++;
 		}
-		
+
+
 		//for each QI features
 		if (qiFeatures.length > 0)
 		{
+			//order is as per fat resultset
 			WritablePosting[][] postings = fat.getPostings();
 			int[] docids = fat.getDocids();
 			for(int fid=0;fid<qiFeatures.length;fid++)
@@ -119,8 +122,8 @@ public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 				{
 					WritablePosting p = FatUtils.firstPosting(postings[di]);
 					if (p == null){
-						p = new BlockFieldPostingImpl(docids[di], 0, new int[0], new int[4]);//hack
-						((FieldPosting)p).setFieldLengths(new int[4]);
+						p = new BlockFieldPostingImpl(docids[di], 0, new int[0], new int[numFields]);//hack
+						((FieldPosting)p).setFieldLengths(new int[numFields]);
 					}
 					scores[di] = wm.score(p);
 				}

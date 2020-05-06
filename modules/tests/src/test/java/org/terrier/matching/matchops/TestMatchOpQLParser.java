@@ -66,6 +66,29 @@ public class TestMatchOpQLParser {
 		assertTrue(rtr.get(1).getKey() instanceof SingleTermOp);
 		assertEquals("b", rtr.get(1).getKey().toString());
 	}
+
+	@Test public void testCombineTagOneLevel() throws Exception {		
+		List<MatchingTerm> rtr = new MatchOpQLParser("#combine:tag=tagA(a b)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(2, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
+		assertEquals("a", rtr.get(0).getKey().toString());
+		assertEquals("b", rtr.get(1).getKey().toString());
+		assertTrue(rtr.get(0).getValue().getTags().contains("tagA"));
+		assertTrue(rtr.get(1).getValue().getTags().contains("tagA"));
+	}
+
+	@Test public void testCombineTagTwoevel() throws Exception {		
+		List<MatchingTerm> rtr = new MatchOpQLParser("#combine:tag=tagA(a #combine:tag=tagB(b))").parseAll();
+		assertNotNull(rtr);
+		assertEquals(2, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
+		assertEquals("a", rtr.get(0).getKey().toString());
+		assertEquals("b", rtr.get(1).getKey().toString());
+		assertTrue(rtr.get(0).getValue().getTags().contains("tagA"));
+		assertTrue(rtr.get(1).getValue().getTags().contains("tagA"));
+		assertTrue(rtr.get(1).getValue().getTags().contains("tagB"));
+	}
 	
 	@Test public void testMultiTermsCombineWmodel() throws Exception {		
 		List<MatchingTerm> rtr = new MatchOpQLParser("#combine:wmodel=PL2(a b)").parseAll();
