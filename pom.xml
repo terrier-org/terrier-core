@@ -69,7 +69,6 @@
 		<module>modules/logging</module>
 		<module>modules/tests</module>
 		<module>modules/concurrent</module>
-		<!-- <module>modules/integer-compression</module> -->
 		<module>modules/realtime</module>
 		<module>modules/rest-server</module>
 		<module>modules/website-search</module>
