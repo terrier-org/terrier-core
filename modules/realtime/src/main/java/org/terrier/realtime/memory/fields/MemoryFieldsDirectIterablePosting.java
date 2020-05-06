@@ -19,10 +19,7 @@ public class MemoryFieldsDirectIterablePosting extends MemoryDirectIterablePosti
     }
 
     public WritablePosting asWritablePosting() {
-		FieldPostingImpl bp = new FieldPostingImpl();
-		bp.setId(getId());
-		bp.setTf(getFrequency());
-		return bp;
+        return new FieldPostingImpl(getId(), getFrequency(), getFieldFrequencies());
     }
     
     /** Returns the frequencies of the term in each field of the document */

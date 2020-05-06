@@ -40,14 +40,13 @@
 			<version>${project.version}</version>
 			<!-- <scope>provided</scope> -->
 		</dependency>
-
+<!--
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>terrier-integer-compression</artifactId>
 			<version>${project.version}</version>
-			<!-- <scope>provided</scope> -->
 		</dependency>
-
+-->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>terrier-learning</artifactId>

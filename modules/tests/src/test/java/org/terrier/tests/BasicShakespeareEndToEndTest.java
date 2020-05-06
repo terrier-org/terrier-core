@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.Before;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
+import org.terrier.structures.PropertiesIndex;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PostingIndexInputStream;
@@ -82,9 +83,14 @@ public class BasicShakespeareEndToEndTest extends ShakespeareEndToEndTest {
 	static class FieldBatchEndToEndTestEventChecks extends BatchEndToEndTestEventHooks
 	{
 		@Override
-		public void checkIndex(BatchEndToEndTest test, Index index)
+		public void checkIndex(BatchEndToEndTest test, Index _index)
 				throws Exception
 		{
+			if (_index instanceof PropertiesIndex)
+			{
+				return;
+			}
+			PropertiesIndex index = (PropertiesIndex)_index;
 			assertEquals(2, index.getIntIndexProperty("index.inverted.fields.count", -1));
 			assertEquals(2, index.getIntIndexProperty("index.direct.fields.count", -1));
 			assertTrue("Constructor for lexicon-value type is incorrect", index.getIndexProperty("index.lexicon-valuefactory.parameter_values", "").length() >0);

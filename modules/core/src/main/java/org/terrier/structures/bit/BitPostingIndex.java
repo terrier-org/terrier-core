@@ -184,7 +184,7 @@ public class BitPostingIndex implements PostingIndex<BitIndexPointer>
 		
 		//this is the hack: only a direct index has a pointer type of DocumentIndexEntry
 		DocumentIndex fixedDi = pointer instanceof DocumentIndexEntry
-			? new PostingIndex.DocidSpecificDocumentIndex(doi, (DocumentIndexEntry)pointer)
+			? new org.terrier.structures.postings.PostingUtil.DocidSpecificDocumentIndex(doi, (DocumentIndexEntry)pointer)
 			: doi;
 		
 		try{

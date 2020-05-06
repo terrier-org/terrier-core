@@ -37,6 +37,7 @@ import org.junit.rules.TemporaryFolder;
 import org.terrier.matching.dsms.ResetScores;
 import org.terrier.structures.ArrayMetaIndex;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
@@ -57,7 +58,7 @@ public class TestTRECResultsMatching extends ApplicationSetupBasedTest {
 			w.append(row + "\n");
 		w.close();
 		
-		Index index = Index.createNewIndex(folder.newFolder("index").toString(), "data");
+		IndexOnDisk index = IndexOnDisk.createNewIndex(folder.newFolder("index").toString(), "data");
 		index.setIndexProperty("num.Documents", ""+docnos.length);
 		IndexUtil.forceStructure(index, "meta", new ArrayMetaIndex(docnos));
 		Matching rtr = new TRECResultsMatching(index, tmpFile.toString());

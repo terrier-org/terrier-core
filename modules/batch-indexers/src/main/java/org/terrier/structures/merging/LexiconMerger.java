@@ -192,11 +192,11 @@ public class LexiconMerger {
 			logger.error("usage: java org.terrier.structures.merging.LexiconMerger srcPath1 srcPrefix1 srcPath2 srcPrefix2 destPath1 destPrefix1 ");
 			return;
 		}
-		Index.setIndexLoadingProfileAsRetrieval(false);
+		IndexOnDisk.setIndexLoadingProfileAsRetrieval(false);
 		
-		IndexOnDisk indexSrc1 = Index.createIndex(args[0], args[1]);
-		IndexOnDisk indexSrc2 = Index.createIndex(args[2], args[3]);
-		IndexOnDisk indexDest = Index.createNewIndex(args[4], args[5]);
+		IndexOnDisk indexSrc1 = IndexOnDisk.createIndex(args[0], args[1]);
+		IndexOnDisk indexSrc2 = IndexOnDisk.createIndex(args[2], args[3]);
+		IndexOnDisk indexDest = IndexOnDisk.createNewIndex(args[4], args[5]);
 
 		LexiconMerger lMerger = new LexiconMerger(indexSrc1, indexSrc2, indexDest);
 		long start = System.currentTimeMillis();

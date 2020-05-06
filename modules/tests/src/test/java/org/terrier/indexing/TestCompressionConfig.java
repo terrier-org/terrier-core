@@ -54,7 +54,7 @@ public class TestCompressionConfig extends ApplicationSetupBasedTest {
 	@SuppressWarnings("unchecked")
 	@Test public void testSimple() throws IOException
 	{
-		Index index = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+		IndexOnDisk index = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 		CompressionConfiguration cc =  getConfig("inverted", new String[0], 0,0);
 		
 		AbstractPostingOutputStream pos = cc.getPostingOutputStream(((IndexOnDisk)index).getPath() + "/" + ((IndexOnDisk)index).getPrefix() + ".inverted" + cc.getStructureFileExtension());

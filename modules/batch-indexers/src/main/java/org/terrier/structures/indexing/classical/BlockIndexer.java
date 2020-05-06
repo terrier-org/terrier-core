@@ -338,7 +338,7 @@ public class BlockIndexer extends Indexer {
 		logger.info("BlockIndexer creating direct index"+ 
 			(Boolean.parseBoolean(ApplicationSetup.getProperty("block.delimiters.enabled", "false"))
 			? " delimited-block indexing enabled" : ""));
-		currentIndex = Index.createNewIndex(path, prefix);
+		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
 				? new LexiconBuilder(currentIndex, "lexicon", 
 						new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
@@ -516,7 +516,7 @@ public class BlockIndexer extends Indexer {
 	public void createInvertedIndex() {
 		if (currentIndex == null)
 		{
-			currentIndex = Index.createIndex(path,prefix);
+			currentIndex = IndexOnDisk.createIndex(path,prefix);
 			if (currentIndex == null)
 			{
 				logger.error("No index at ("+path+","+prefix+") to build an inverted index for ");

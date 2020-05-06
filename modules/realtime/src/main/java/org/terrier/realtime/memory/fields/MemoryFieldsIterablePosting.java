@@ -81,9 +81,6 @@ public class MemoryFieldsIterablePosting extends MemoryIterablePosting implement
 	/** {@inheritDoc} */
 	@Override
 	public WritablePosting asWritablePosting() {
-		FieldPostingImpl bp = new FieldPostingImpl(getFieldFrequencies());
-		bp.setId(getId());
-		bp.setTf(getFrequency());
-		return bp;
+		return new FieldPostingImpl(getId(), getFrequency(), getFieldFrequencies());
 	}
 }

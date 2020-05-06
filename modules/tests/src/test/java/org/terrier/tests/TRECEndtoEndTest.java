@@ -81,9 +81,10 @@ public abstract class TRECEndtoEndTest extends BatchEndToEndTest
 		//also check that the index has the expected properties
 		super.testHooks.add(new BatchEndToEndTestEventHooks() {
 			@Override
-			public void checkIndex(BatchEndToEndTest test, Index index)
+			public void checkIndex(BatchEndToEndTest test, Index _index)
 					throws Exception {
 				String line = null;
+				IndexOnDisk index = (IndexOnDisk) _index;
 				BufferedReader br = Files.openFileReader(testData+corpus+".indexproperties");
 				while((line = br.readLine()) != null)
 				{

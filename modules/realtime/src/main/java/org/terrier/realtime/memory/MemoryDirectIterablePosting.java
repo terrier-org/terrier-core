@@ -102,16 +102,8 @@ public class MemoryDirectIterablePosting extends IterablePostingImpl {
 	}
 
 	/** {@inheritDoc} */
-	public void setId(int id) {
-		pl_freq.set(index, id);
-	}
-
-	/** {@inheritDoc} */
 	public WritablePosting asWritablePosting() {
-		BasicPostingImpl bp = new BasicPostingImpl();
-		bp.setId(getId());
-		bp.setTf(getFrequency());
-		return bp;
+		return new BasicPostingImpl(getId(), getFrequency());
 	}
 
 	@Override

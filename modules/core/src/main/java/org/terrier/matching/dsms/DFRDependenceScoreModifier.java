@@ -124,22 +124,4 @@ public class DFRDependenceScoreModifier extends DependenceScoreModifier {
 		//System.err.println(this.getClass().getSimpleName() + " score="+ score);
 		return score;
 	}
-	/**
-	 * main
-	 * @param args
-	 */
-	public static void main(String[]args)
-	{
-		Index.setIndexLoadingProfileAsRetrieval(false);
-		Index index = Index.createIndex();
-		if (index == null)
-		{
-			System.err.println("No such index");
-			return;
-		}
-		DFRDependenceScoreModifier d = new DFRDependenceScoreModifier();
-		d.setCollectionStatistics(index.getCollectionStatistics(), index);
-		System.out.println(d.scoreFDSD(Integer.parseInt(args[0]), Integer.parseInt(args[1])));	
-	}
-
 }

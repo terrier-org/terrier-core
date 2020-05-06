@@ -51,7 +51,7 @@ public class DiskIndexWriter {
 
     @SuppressWarnings("unchecked")
     public IndexOnDisk write(Index source) throws IOException {
-        IndexOnDisk target = Index.createNewIndex(path, prefix);
+        IndexOnDisk target = IndexOnDisk.createNewIndex(path, prefix);
 
         CompressionConfiguration compressionDirectConfig = null;
         
@@ -166,7 +166,7 @@ public class DiskIndexWriter {
         return target;
     }
 
-    protected void collectProperties(Index source, Index index, CompressionConfiguration compressionConfigInverted, CompressionConfiguration compressionConfigDirect) {
+    protected void collectProperties(Index source, IndexOnDisk index, CompressionConfiguration compressionConfigInverted, CompressionConfiguration compressionConfigDirect) {
 
         /*
          * index

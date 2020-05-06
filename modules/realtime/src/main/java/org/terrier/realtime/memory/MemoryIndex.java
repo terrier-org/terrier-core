@@ -147,7 +147,6 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	 * Constructor.
 	 */
 	public MemoryIndex() {
-		super(0l, 0l, 0l); // Do nothing.
 		fieldIDs = new TObjectIntHashMap<String>(fieldtags.length);
         for (int i = 0; i < fieldtags.length; i++)
             fieldIDs.put(fieldtags[i], i);
@@ -166,7 +165,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		document = new MemoryDocumentIndex();
 		inverted = new MemoryInvertedIndex(lexicon, document);
 		metadata = new MemoryMetaIndex();
-		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] { 0 }, fieldtags);
+		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[fieldtags.length], fieldtags);
 		load_pipeline(); // For term processing (stemming, stop-words).
 
 		direct = new MemoryDirectIndex(document);
@@ -188,6 +187,21 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 			return getCollectionStatistics();
 		if (structureName.equalsIgnoreCase("direct"))
 			return direct;
+		else
+			return null;
+	}
+
+	public Object getIndexStructureInputStream(String structureName) {
+		if (structureName.equalsIgnoreCase("lexicon"))
+			return lexicon.iterator();
+		if (structureName.equalsIgnoreCase("inverted"))
+			return inverted.iterator();
+		if (structureName.equalsIgnoreCase("meta"))
+			return metadata.iterator();
+		if (structureName.equalsIgnoreCase("document"))
+			return document.iterator();
+		if (structureName.equalsIgnoreCase("direct"))
+			return direct.iterator();
 		else
 			return null;
 	}
@@ -221,21 +235,9 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	public PostingIndex<?> getDirectIndex() {
 		return direct;
 	}
-
-	/** {@inheritDoc} */
-	public Object getIndexStructureInputStream(String structureName) {
-		if (structureName.equalsIgnoreCase("lexicon"))
-			return lexicon.iterator();
-		if (structureName.equalsIgnoreCase("inverted"))
-			return inverted.iterator();
-		if (structureName.equalsIgnoreCase("meta"))
-			return metadata.iterator();
-		if (structureName.equalsIgnoreCase("document"))
-			return document.iterator();
-		if (structureName.equalsIgnoreCase("direct"))
-			return direct.iterator();
-		else
-			return null;
+	
+	public IndexRef getIndexRef() {
+		return makeDirectIndexRef(this);
 	}
 
 	/**
@@ -600,8 +602,6 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 	 */
 	@SuppressWarnings("unchecked")
 	public MemoryIndex(IndexOnDisk superIndex, boolean compressedMeta){
-		
-		super(0l, 0l, 0l); // Do nothing.
 		
 		fieldIDs = new TObjectIntHashMap<String>(fieldtags.length);
         for (int i = 0; i < fieldtags.length; i++)

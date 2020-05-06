@@ -121,7 +121,6 @@ public class SimplePostingInRun extends PostingInRun {
 			return docid;
 		}
 
-		public void setId(int id) {}	
 		public void close() throws IOException {	}
 
 		public WritablePosting asWritablePosting() {

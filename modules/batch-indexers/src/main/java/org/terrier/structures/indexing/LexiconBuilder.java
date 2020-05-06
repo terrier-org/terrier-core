@@ -49,6 +49,7 @@ import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon.LexiconFileEntry;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
+import org.terrier.structures.PropertiesIndex;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.MemoryChecker;
@@ -180,12 +181,12 @@ public class LexiconBuilder
 		long numberOfTokens = 0;
 		int numberOfTerms = 0;
 		long numberOfPointers = 0;
-		final Index index;
+		final PropertiesIndex index;
 		/**
 		 * constructor
 		 * @param _index
 		 */
-		public BasicLexiconCollectionStaticticsCounter(Index _index)
+		public BasicLexiconCollectionStaticticsCounter(PropertiesIndex _index)
 		{
 			index = _index;
 		}
@@ -194,7 +195,7 @@ public class LexiconBuilder
 		 * @param _index
 		 * @param subset_name
 		 */
-		public BasicLexiconCollectionStaticticsCounter(Index _index, String subset_name)
+		public BasicLexiconCollectionStaticticsCounter(PropertiesIndex _index, String subset_name)
 		{
 			index = _index;
 			midfix = '.'+subset_name;

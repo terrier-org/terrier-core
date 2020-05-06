@@ -54,6 +54,7 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
@@ -422,7 +423,7 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 		MemoryIndex mem = TestUtils.memory(collection);
 		assertNotNull(mem);
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memory");
-		Index mem2disk = Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
+		Index mem2disk = IndexOnDisk.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
 				"memory");
 		assertNotNull(mem2disk);
 
@@ -435,10 +436,9 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 	public void testCompare1() throws Exception {
 		MemoryIndex mem = TestUtils.memory(collection);
 		assertNotNull(mem);
-		Index disk = IndexTestUtils.makeIndex(docids, documents);
+		IndexOnDisk disk = (IndexOnDisk) IndexTestUtils.makeIndex(docids, documents);
 		assertNotNull(disk);
 		TestUtils.compareIndices(disk, mem);
-		TestUtils.compareProperties(disk, mem);
 		TestUtils.compareRetrieval("curry", disk, mem);
 		TestUtils.compareRetrieval("church", disk, mem);
 		TestUtils.compareRetrieval("knuth", disk, mem);
@@ -457,7 +457,6 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 				"memory");
 		assertNotNull(mem2disk);
 		TestUtils.compareIndices(mem, mem2disk);
-		TestUtils.compareProperties(mem, mem2disk);
 		TestUtils.compareRetrieval("curry", mem, mem2disk);
 		TestUtils.compareRetrieval("church", mem, mem2disk);
 		TestUtils.compareRetrieval("knuth", mem, mem2disk);
@@ -472,10 +471,11 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 		MemoryIndex mem = TestUtils.memory(collection);
 		assertNotNull(mem);
 		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memory");
-		Index mem2disk = Index.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
+		IndexOnDisk mem2disk = IndexOnDisk.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
 				"memory");
 		assertNotNull(mem2disk);
-		Index disk = IndexTestUtils.makeIndex(docids, documents);
+		IndexOnDisk disk = (IndexOnDisk) IndexTestUtils.makeIndex(docids, documents);
+		
 		assertNotNull(disk);
 		TestUtils.compareIndices(disk, mem2disk);
 		TestUtils.compareProperties(disk, mem2disk);

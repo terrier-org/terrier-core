@@ -135,11 +135,6 @@ public class ANDIterablePosting extends IterablePostingImpl {
 	}
 
 	@Override
-	public void setId(int id) {
-		currentId = id;
-	}
-	
-	@Override
 	public int next(int targetID) throws IOException {
 		
 		ITERATION: do

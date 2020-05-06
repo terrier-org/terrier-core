@@ -26,7 +26,7 @@
 package org.terrier.structures;
 
 import org.terrier.querying.IndexRef;
-import org.terrier.structures.IndexFactory.DirectIndexRef;
+import org.terrier.structures.Index.DirectIndexRef;
 import org.terrier.structures.concurrent.ConcurrentIndexUtils;
 
 /** An index loader for index references for indices that we wish to be thread safe */

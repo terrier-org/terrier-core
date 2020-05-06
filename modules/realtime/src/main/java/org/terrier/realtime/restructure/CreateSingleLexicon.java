@@ -56,8 +56,8 @@ public class CreateSingleLexicon {
 	public void rewriteLexicon(String path, String prefix) {
 		try {
 			
-			IndexOnDisk oldIndex = Index.createIndex(path, prefix);
-			IndexOnDisk newIndex = Index.createNewIndex(path, prefix+"-tmp");
+			IndexOnDisk oldIndex = IndexOnDisk.createIndex(path, prefix);
+			IndexOnDisk newIndex = IndexOnDisk.createNewIndex(path, prefix+"-tmp");
 			
 			@SuppressWarnings("unchecked")
 			Iterator<Entry<String, LexiconEntry>> lexIn = (Iterator<Entry<String, LexiconEntry>>) oldIndex.getIndexStructureInputStream("lexicon");

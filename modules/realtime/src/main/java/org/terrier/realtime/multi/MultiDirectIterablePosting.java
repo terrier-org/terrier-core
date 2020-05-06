@@ -71,12 +71,6 @@ public class MultiDirectIterablePosting implements IterablePosting {
 	}
 
 	@Override
-	public void setId(int id) {
-		posting.setId(id);
-		
-	}
-
-	@Override
 	public WritablePosting asWritablePosting() {
 		return new BasicPostingImpl(this.getId(), this.getFrequency());
 	}

@@ -72,10 +72,7 @@ public class ArrayOfIdsIterablePosting extends IterablePostingImpl implements Cl
 	 * {@inheritDoc} 
 	 */
 	public int getFrequency() {return 0;}
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public void setId(int id) {}
+
 	/** 
 	 * {@inheritDoc} 
 	 */

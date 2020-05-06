@@ -38,6 +38,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.terrier.Version;
+import org.terrier.querying.IndexRef;
+import org.terrier.structures.IndexFactory.IndexLoader;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.Files;
@@ -50,7 +52,36 @@ import org.terrier.utility.restructure.Terrier5;
  * @author Stuart Mackie, Craig Macdonald, Richard McCreadie
  * @since 4.0
  */
-public class IndexOnDisk extends Index {
+public class IndexOnDisk extends PropertiesIndex {
+
+	public static class DiskIndexLoader implements IndexLoader
+	{
+		@Override
+		public boolean supports(IndexRef ref) {
+			String l = ref.toString();
+			if (ref.size() > 1)
+				return false; //this is a multi-index
+			if (l.startsWith("http") || l.startsWith("https") || l.startsWith("concurrent"))
+				return false;
+			if (! l.endsWith(".properties"))
+				return false;
+			return Files.exists(l);
+		}
+
+		@Override
+		public Index load(IndexRef ref) {
+			String l = ref.toString();
+			File file = new File(l);
+			String path = file.getParent(); 
+			String prefix = file.getName().replace(".properties", "");
+			return IndexOnDisk.createIndex(path, prefix);			
+		}
+
+		@Override
+		public Class<? extends Index> indexImplementor(IndexRef ref) {
+			return IndexOnDisk.class;
+		}		
+	}
 
 	/** path component of this index's location */
 	protected String path;

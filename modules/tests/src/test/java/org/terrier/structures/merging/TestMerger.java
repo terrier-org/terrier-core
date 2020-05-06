@@ -25,10 +25,10 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		IndexOnDisk index2 = (IndexOnDisk) IndexTestUtils.makeIndex(new String[]{"doc2"}, new String[]{"this is also a sentence"});
 		IndexOnDisk index3 = (IndexOnDisk) IndexTestUtils.makeIndex(new String[]{"doc3"}, new String[]{"a third sentence"});
 		
-		IndexOnDisk merged1 = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
+		IndexOnDisk merged1 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new StructureMerger(index1, index2, merged1).mergeStructures();
 		
-		IndexOnDisk merged2 = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
+		IndexOnDisk merged2 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new StructureMerger(merged1, index3, merged2).mergeStructures();
 		
 		assertEquals(3, merged2.getCollectionStatistics().getNumberOfDocuments());
@@ -47,12 +47,12 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		checkTerm(index2, "sentence", 1, true, false);
 		checkTerm(index3, "sentence", 1, true, false);
 		
-		IndexOnDisk merged1 = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
+		IndexOnDisk merged1 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new BlockStructureMerger(index1, index2, merged1).mergeStructures();
 		
 		checkTerm(merged1, "sentence", 2, true, false);
 		
-		IndexOnDisk merged2 = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
+		IndexOnDisk merged2 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new BlockStructureMerger(merged1, index3, merged2).mergeStructures();
 		
 		assertEquals(3, merged2.getCollectionStatistics().getNumberOfDocuments());
@@ -75,7 +75,7 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		ApplicationSetup.setProperty("termpipelines", "");
 		IndexOnDisk index1 = (IndexOnDisk) IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"this is a sentence"});
 		IndexOnDisk index2 = (IndexOnDisk) IndexTestUtils.makeIndex(new String[]{"doc2"}, new String[]{"this is also a sentence"});
-		IndexOnDisk merged = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
+		IndexOnDisk merged = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new StructureMerger(index1, index2, merged).mergeStructures();
 		assertEquals(2, merged.getCollectionStatistics().getNumberOfDocuments());
 		assertTrue(merged.hasIndexStructure("inverted"));
@@ -92,7 +92,7 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		IndexOnDisk index2 = (IndexOnDisk) IndexTestUtils.makeIndexBlocks(new String[]{"doc2"}, new String[]{"a third sentence"});
 		checkTerm(index2, "sentence", 1, true, false);
 		
-		IndexOnDisk merged = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
+		IndexOnDisk merged = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new BlockStructureMerger(index1, index2, merged).mergeStructures();
 
 		assertEquals(3, merged.getCollectionStatistics().getNumberOfDocuments());
@@ -105,8 +105,8 @@ public class TestMerger extends ApplicationSetupBasedTest {
 	{
 		ApplicationSetup.setProperty("termpipelines", "");
 		IndexOnDisk index1 = (IndexOnDisk) IndexTestUtils.makeIndex(new String[]{"doc1"}, new String[]{"this is a sentence"});
-		IndexOnDisk empty = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );		
-		IndexOnDisk merged = Index.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
+		IndexOnDisk empty = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );		
+		IndexOnDisk merged = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new StructureMerger(index1, empty, merged).mergeStructures();
 		assertEquals(1, merged.getCollectionStatistics().getNumberOfDocuments());
 		assertTrue(merged.hasIndexStructure("inverted"));

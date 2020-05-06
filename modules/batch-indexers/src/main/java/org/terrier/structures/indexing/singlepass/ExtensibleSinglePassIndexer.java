@@ -35,6 +35,7 @@ import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
 import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.SimpleDocumentIndexEntry;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.terms.TermPipeline;
@@ -106,7 +107,7 @@ public abstract class ExtensibleSinglePassIndexer extends BasicSinglePassIndexer
 		numberOfDocuments = currentId = numberOfDocsSinceCheck = numberOfDocsSinceFlush = numberOfUniqueTerms = 0;
 		numberOfTokens = numberOfPointers = 0;
 		createMemoryPostings();
-		currentIndex = Index.createNewIndex(path, prefix);
+		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
 		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
 		metaBuilder = createMetaIndexBuilder();
 		

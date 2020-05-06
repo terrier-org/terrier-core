@@ -162,7 +162,7 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 		Index multi = new MultiIndex(new Index[]{disk1,disk2}, false, false);
 		assertNotNull(multi);
 		TestUtils.compareIndices(disk,multi);
-		TestUtils.compareProperties(disk,multi);
+		//TestUtils.compareProperties(disk,multi);
 		TestUtils.compareRetrieval("one",disk,multi);
 		TestUtils.compareRetrieval("three",disk,multi);
 		TestUtils.compareRetrieval("five",disk,multi);

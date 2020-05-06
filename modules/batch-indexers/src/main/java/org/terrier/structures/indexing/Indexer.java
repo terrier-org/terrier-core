@@ -415,9 +415,9 @@ public abstract class Indexer
 	  */
 	protected static void mergeTwoIndices(String[] index1, String[] index2, String[] outputIndex, boolean blocks){
 		StructureMerger sMerger = null;
-		IndexOnDisk src1 = Index.createIndex(index1[0], index1[1]);
-		IndexOnDisk src2 = Index.createIndex(index2[0], index2[1]);
-		IndexOnDisk dst = Index.createNewIndex(outputIndex[0], outputIndex[1]);
+		IndexOnDisk src1 = IndexOnDisk.createIndex(index1[0], index1[1]);
+		IndexOnDisk src2 = IndexOnDisk.createIndex(index2[0], index2[1]);
+		IndexOnDisk dst = IndexOnDisk.createNewIndex(outputIndex[0], outputIndex[1]);
 		logger.info("Merging "+ src1+ " ("+src1.getCollectionStatistics().getNumberOfDocuments()+" docs) & "
 				+ src2 +" ("+src2.getCollectionStatistics().getNumberOfDocuments()+" docs) to " + dst);
 		if (blocks) 
