@@ -35,6 +35,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.models.queryexpansion.QueryExpansionModel;
 import org.terrier.querying.parser.SingleTermQuery;
 import org.terrier.structures.BitIndexPointer;
@@ -109,6 +110,17 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 		 this.totalDocumentLength = totalLength;
 	}
 
+	@Override 
+	public void setOriginalQueryTerms(MatchingQueryTerms query){
+		for (String term : query.getTerms())
+		{
+			if (query.getStatistics(term) == null) {
+				query.setTermProperty(term, lexicon.getLexiconEntry(term));
+			}
+		}
+		super.setOriginalQueryTerms(query);
+	}
+
 	/** Returns the termids of all terms found in the top-ranked documents */
 	public int[] getTermIds()
 	{
@@ -163,7 +175,7 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 				Map.Entry<String,LexiconEntry> lee = lexicon.getLexiconEntry(termEntries[i].getTermID());
 				results[i] = new SingleTermQuery(lee.getKey());
 				results[i].setWeight(termEntries[i].getWeightExpansion());
-			}		
+			}	
 		} else { //numberOfExpandedTerms=0, Conservative"QE"
 		
 			results = new SingleTermQuery[originalTermids.size()];
@@ -283,7 +295,6 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 				logger.error("Termid " + allTerms[i].getTermID() +" was not found in the lexicon");
 				continue;
 			}
-
 			TF = lee.getValue().getFrequency();
 			//Nt = lee.getValue().getDocumentFrequency();
 			allTerms[i].setWeightExpansion(QEModel.score(
@@ -291,6 +302,7 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 				TF
 				)
 			);
+			logger.debug("Term " + lee.getKey() + " weight = " + allTerms[i].getWeightExpansion());
 			if (allTerms[i].getWeightExpansion() > allTerms[posMaxWeight].getWeightExpansion())
 				posMaxWeight = i;
 		}
@@ -377,6 +389,7 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 	 */
 	public void insertDocument(FeedbackDocument doc) throws IOException
 	{
+		logger.debug("Inserting docid " + doc.docid);
 		insertDocument(doc.docid, doc.rank, doc.score);
 	}
 	/** 
@@ -385,7 +398,7 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 	public void insertDocument(int docid, int rank, double score) throws IOException
 	{
 		totalDocumentLength += documentIndex.getDocumentLength(docid);
-		final IterablePosting ip = directIndex.getPostings((BitIndexPointer)documentIndex.getDocumentEntry(docid));
+		final IterablePosting ip = directIndex.getPostings(documentIndex.getDocumentEntry(docid));
 		if (ip == null)
 		{
 			logger.warn("document id "+docid+" not found");
