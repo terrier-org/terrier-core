@@ -195,13 +195,15 @@ public class QueryExpansion implements MQTRewritingProcess {
 		for(FeedbackDocument doc : feedback)
 		{
 			expansionTerms.insertDocument(doc);
-		}
-		logger.debug("Selecting "+numberOfTermsToReweight + " from " + expansionTerms.getNumberOfUniqueTerms());
-		
+		}		
 		expansionTerms.setOriginalQueryTerms(query);
+		logger.debug("Selecting "+numberOfTermsToReweight + " from " + expansionTerms.getNumberOfUniqueTerms() + ", " + 
+			expansionTerms.getOriginalTermIds().length + " original terms");
 		SingleTermQuery[] expandedTerms = expansionTerms.getExpandedTerms(numberOfTermsToReweight);
 		for (int i = 0; i < expandedTerms.length; i++){
 			SingleTermQuery expandedTerm = expandedTerms[i];
+			logger.debug("term " + expandedTerms[i].getTerm() + " already has weight " +
+				query.getTermWeight( expandedTerms[i].getTerm()));
 			query.addTermPropertyWeight(expandedTerm.getTerm(), expandedTerm.getWeight());
 			if(logger.isDebugEnabled()){
 				logger.debug("term " + expandedTerms[i].getTerm()
@@ -383,12 +385,12 @@ public class QueryExpansion implements MQTRewritingProcess {
 		if (Name.indexOf(".") < 0 )
 			Name = NAMESPACE_QEMODEL +Name;
 		//check for acceptable matching models
-		rtr = (QueryExpansionModel)Cache_QueryExpansionModel.get(Name);
+		rtr = Cache_QueryExpansionModel.get(Name);
 		if (rtr == null)
 		{
 			try
 			{
-				rtr = (QueryExpansionModel) ApplicationSetup.getClass(Name).newInstance();
+				rtr = ApplicationSetup.getClass(Name).newInstance();
 			}
 			catch(Exception e)
 			{
