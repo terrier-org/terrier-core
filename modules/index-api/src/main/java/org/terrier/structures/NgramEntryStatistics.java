@@ -25,9 +25,17 @@
  */
 package org.terrier.structures;
 
-public interface NgramEntryStatistics extends EntryStatistics {
-
-	public int getWindowSize();
-	public void setWindowSize(int ws);
-	
+/** Represent statistics of n-grams, such as those used in
+ * sequence dependence models. These require to know the 
+ * windows size.
+ */
+public interface NgramEntryStatistics extends EntryStatistics 
+{
+    /** Get the size of the window used to calculate an n-gram frequency 
+     * @return number of tokens
+    */
+    public int getWindowSize();
+    
+    /** Update the window size */
+    public void setWindowSize(int ws);
 }

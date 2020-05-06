@@ -58,7 +58,7 @@ public class MemoryCollectionStatistics extends CollectionStatistics implements 
 		numberOfTokens += tokens;
 		// FIXME: numberOfPointers
 		numberOfPointers += terms;
-		relcaluateAverageLengths();
+		recalculateAverageLengths();
 	}
 
 	/**
@@ -78,6 +78,6 @@ public class MemoryCollectionStatistics extends CollectionStatistics implements 
     
     /** Relcaluate average lengths. */
     public void relcaluate() {
-        this.relcaluateAverageLengths();
+        this.recalculateAverageLengths();
     }
 }

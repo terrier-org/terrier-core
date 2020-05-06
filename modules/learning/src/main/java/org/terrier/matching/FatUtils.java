@@ -1181,11 +1181,6 @@ public class FatUtils {
 		}
 
 		@Override
-		public void setId(int id) {
-			current.setId(id);
-		}
-
-		@Override
 		public WritablePosting asWritablePosting() {
 			return current.asWritablePosting();
 		}

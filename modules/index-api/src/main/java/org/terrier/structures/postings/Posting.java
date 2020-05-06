@@ -25,7 +25,8 @@
  */
 package org.terrier.structures.postings;
 
-/** This interface represents one posting in a posting list.
+/** 
+ * This interface represents one posting in a posting list.
  * From a Posting object, the id of the posting list entry (e.g. document id
  * for inverted index, or term id for direct index), the frequency,
  * and the length of the document can be accessed.
@@ -33,31 +34,40 @@ package org.terrier.structures.postings;
  * @since 3.0
  * @author Craig Macdonald
  */
-public interface Posting {
-	/** Return the id of the current posting. For the inverted index, this is
-	 * the docid; for the direct index it corresponds to the term id
-	 * @return id of the posting */
+public interface Posting 
+{
+	/** 
+	 * Return the id of the current posting. For the inverted index, this is
+	 * the current docid; for the direct index it corresponds to the current term id.
+	 * 
+	 * @return id of the posting.
+	 */
     int getId();
     
-    /** Return the frequency of the term in the current document
-     * @return frequency of posting, in tokens */
+    /** 
+     * Return the frequency of the term in the current document, in tokens.
+     * 
+     * @return frequency of the term in the current document, in tokens.
+     */
     int getFrequency();
     
-    /** Return the length of the document for this posting.
+    /** 
+     * Return the length of the document of the current posting in tokens.
      * Usually uses the DocumentIndex, may do otherwise if
-     * document length statistics are in posting list
+     * document length statistics are in posting list.
+     * 
      * @return length of the document of the current posting in tokens.
      */
     int getDocumentLength();
     
-    /** It may be of benefit to update the frequency of the id in some applications.
-     * This should not be used lightly, as it may break the decompression of other
-     * postings in iterators.
-     */
-    void setId(int id);
+    /** This will be removed in a future release */
+    @Deprecated
+    default void setId(int id) {}
     
-    /** Copies this posting to one free of an iterator. Kind of like a clone.
-     * @return an identical posting, but which can be maniulated free of this iterator
+    /** 
+     * Copy this posting to one free of an iterator. Kind of like a clone.
+     * 
+     * @return an identical posting, but which can be manipulated free of this iterator
      */
     WritablePosting asWritablePosting();
 }

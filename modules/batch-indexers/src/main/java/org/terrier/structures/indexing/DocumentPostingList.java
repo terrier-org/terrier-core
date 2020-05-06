@@ -227,10 +227,6 @@ public class DocumentPostingList implements Writable,Serializable{
 			return termIds[i];
 		}
 
-		public void setId(int id) {
-			termIds[i] = id;
-		}
-
 		public int next() throws IOException {
 			if (i >= termIds.length -1)
 				return EOL;

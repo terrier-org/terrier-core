@@ -28,31 +28,47 @@ package org.terrier.structures.postings;
 
 import java.io.Closeable;
 import java.io.IOException;
-/** An interface that allows a list of postings to be iterated over 
+
+/** 
+ * An interface that allows a list of postings to be iterated over.
+ *  
  * @since 3.0
- * @author Craig Macdonald, Nicola Tonnellotto
+ * @author Craig Macdonald, Nicola Tonellotto
  */
-public interface IterablePosting extends Posting, Closeable {
-	
-	/** Value which denotes that the end of the posting list has been reached */
-	int EOL = Integer.MAX_VALUE;
-	int END_OF_LIST = Integer.MAX_VALUE;
-	
-	/** Move this iterator to the next posting.
-     * @return id of next posting, or EOL if end of posting list 
+public interface IterablePosting extends Posting, Closeable 
+{
+    
+    /** 
+     * Values which denotes that the end of the posting list has been reached.
      */
-	int next() throws IOException;
-	
-	/** Move this iterator to the posting with specified id, or next posting after that.
-	 * This is usually implemented internally by next(), but more
-	 * efficient implementations can override this behaviour.
-	 * @param targetId id of the posting to find in this posting list.
-	 * @return id of the posting found, or EOL if end of posting list.
-	 */
-	int next(int targetId) throws IOException;
-	
-	/** Status method to see if this posting list iterator has been finished
-	 * @return true if next() or next(int) would return EOL or have returned EOL.
-	 */
-	boolean endOfPostings();
+    int EOL = Integer.MAX_VALUE;
+    int END_OF_LIST = EOL;
+
+    /** 
+     * Move this iterator to the next posting.
+     * 
+     * @return id of next posting, or EOL if end of posting list.
+     * @throws IOException 
+     */
+    int next() throws IOException;
+
+    /** 
+     * Move this iterator to the posting with specified id, or next posting after that
+     * if a posting with the specified id does not exist.
+     * 
+     * This is usually implemented internally by {@link #next()}, but more
+     * efficient implementations can override this behaviour.
+     * 
+     * @param targetId id of the posting to find in this posting list.
+     * @return id of the posting found, or EOL if end of posting list is reached.
+     * @throws IOException
+     */
+    int next(int targetId) throws IOException;
+    
+    /** 
+     * Status method to see if this posting list iterator has been finished.
+     * 
+     * @return true if {@link #next()} or {@link #next(int)} would return EOL or have returned EOL.
+     */
+    boolean endOfPostings();
 }

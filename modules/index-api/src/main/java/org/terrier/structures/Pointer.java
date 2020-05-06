@@ -24,21 +24,37 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
 package org.terrier.structures;
+
 /** 
- * A base interface for all pointers 
+ * A base interface for all pointers.
+ * A pointer is a "counter" of "things". 
  * @since 3.0
  */
-public interface Pointer {
-	
-	/** Returns number of "things" that this pointer refers to */
-	int getNumberOfEntries();
-	/** Set the number of "things that the pointer refers to */
-	void setNumberOfEntries(int n);
-	/** Returns a textual representation of the pointer alone */
-	String pointerToString();
-	/** Sets the pointer within this object to that represented by
-	 * the specified pointer
-	 * @param p other pointer to update the pointer in this object
-	 */
-	void setPointer(Pointer p);
+public interface Pointer
+{
+    /** 
+     * Return the number of "things" that this pointer refers to.
+     * 
+     * @return the number of "things" that this pointer refers to.
+     */
+    int getNumberOfEntries();
+    
+    /** 
+     * Set the number of "things" that the pointer refers to.
+     * 
+     * @param n the number of "things" that the pointer refers to.
+     *  */
+    void setNumberOfEntries(int n);
+    
+    /** Returns a textual representation of the pointer alone */
+    @Deprecated
+    String pointerToString();
+
+    /** 
+     * Sets the pointer within this object to that represented by
+     * the specified pointer.
+     * 
+     * @param p other pointer to update the pointer in this object.
+     */
+    void setPointer(Pointer p);
 }

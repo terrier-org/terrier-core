@@ -27,30 +27,88 @@ package org.terrier.structures;
 
 import java.io.Serializable;
 
-/** An interface for basic statistics about a lexical entry (usually a term)
+/** 
+ * An interface for basic statistics about a lexicon entry.
+ * 
  * @since 3.0
  * @author Craig Macdonald
  */
 public interface EntryStatistics extends Serializable
 {
-	/** The frequency (total number of occurrences) of the entry (term). */
-	int getFrequency(); //F
-	void setFrequency(int F);
-	/** The number of documents that the entry (term) occurred in */
-	int getDocumentFrequency(); //Nt
-	void setDocumentFrequency(int nt);
-	/** The id of the term */
-	int getTermId();
-	
-	int getMaxFrequencyInDocuments();
-	void setMaxFrequencyInDocuments(int max);
-	
-	
-	/** Increment the statistics of this object by that of another */
-	void add(EntryStatistics e);
-	/** Decrement the statistics of this object by that of another */
+    /** 
+     * Return the frequency (total number of occurrences) of the term.
+     * 
+     * @return the frequency (total number of occurrences) of the entry (term).
+     */
+    int getFrequency(); // F
+
+    /** 
+     * Set the frequency (total number of occurrences) of the term.
+     * 
+     * @param F the frequency (total number of occurrences) of the entry (term).
+     */
+    void setFrequency(int F);
+
+    /** 
+     * Return the number of documents that the term occurs in.
+     * 
+     * @return the number of documents that the term occurs in.
+     */
+    int getDocumentFrequency(); // Nt
+
+    /** 
+     * Set the number of documents that the term occurs in.
+     * 
+     * @param nt the number of documents that the term occurs in.
+     */
+    void setDocumentFrequency(int nt);
+    
+    /** 
+     * Return the id of the term.
+     * 
+     * @return the id of the term.
+     */
+    int getTermId();
+
+    /** 
+     * Return the maximum in-document term frequency of the term
+     * among all documents the terms appears in.
+     * 
+     * @return the maximum in-document term frequency of the term
+     *         among all documents the terms appears in.
+     */
+    int getMaxFrequencyInDocuments();
+
+    /** 
+     * Set the maximum in-document term frequency of the term
+     * among all documents the terms appears in.
+     * 
+     * @param max the maximum in-document term frequency of the term
+     *            among all documents the terms appears in.
+     */
+    void setMaxFrequencyInDocuments(int max);
+
+    /** 
+     * Increment the statistics of this object by that of another.
+     * 
+     * @param e the other object whose statistics are used to 
+     *          increment the statistics of this object.
+     */
+    void add(EntryStatistics e);
+
+    /** 
+     * Decrement the statistics of this object by that of another.
+     * 
+     * @param e the other object whose statistics are used to 
+     *          decrement the statistics of this object.
+     */
     void subtract(EntryStatistics e);
-    /** Get a copy of these entry statistics that can be reused.
-     * @since 3.6 */
+    
+    /** 
+     * Copy this entry statistics to one that can be reused. Kind of like a clone.
+     * 
+     * @return an identical entry statistics, but which can be reused.
+     * @since 3.6
+     */
     EntryStatistics getWritableEntryStatistics();
 }

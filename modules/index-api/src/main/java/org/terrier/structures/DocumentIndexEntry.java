@@ -26,92 +26,101 @@
 package org.terrier.structures;
 
 import org.apache.hadoop.io.Writable;
+
 /** 
  * A document index entry. Also acts as a pointer into the direct index.
  */
 public abstract class DocumentIndexEntry implements BitIndexPointer, Writable
 {
-	int entries;
-	int doclength;
-	long bytes;
-	byte bits;
-	
-	/** 
-	 * Get the length of the document
-	 */
-	public int getDocumentLength()
-	{
-		return doclength;
-	}
-	/** 
-	 * Set the length of the document
-	 */
-	public void setDocumentLength(int l)
-	{
-		doclength = l;
-	}
-	
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public int getNumberOfEntries() {
-		return entries;
-	}
+    int entries;
+    int doclength;
+    long bytes;
+    byte bits;
+    
+    /** 
+     * Return the length of the document.
+     * 
+     * @return the length of the document.
+     */
+    public int getDocumentLength()
+    {
+        return doclength;
+    }
+    
+    /** 
+     * Set the length of the document.
+     * 
+     * @param l the length of the document.
+     */
+    public void setDocumentLength(int l)
+    {
+        doclength = l;
+    }
+    
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public int getNumberOfEntries() 
+    {
+        return entries;
+    }
 
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public byte getOffsetBits() {
-		return (byte) (bits & BIT_MASK);
-	}
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public byte getOffsetBits() 
+    {
+        return (byte) (bits & BIT_MASK);
+    }
 
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public long getOffset() {
-		return bytes;
-	}
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public byte getFileNumber() {
-		return (byte) ( (0xFF & bits) >> FILE_SHIFT);
-	}
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public void setFileNumber(byte fileId)
-	{
-		bits = getOffsetBits();
-		bits += (fileId << FILE_SHIFT);
-	}
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public long getOffset() 
+    {
+        return bytes;
+    }
+    
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public byte getFileNumber() 
+    {
+        return (byte) ( (0xFF & bits) >> FILE_SHIFT);
+    }
+    
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public void setFileNumber(byte fileId)
+    {
+        bits = getOffsetBits();
+        bits += (fileId << FILE_SHIFT);
+    }
 
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public void setOffset(long _bytes, byte _bits) {
-		bytes = _bytes;
-		byte fileId = this.getFileNumber();
-		bits = _bits;
-		bits += (fileId << FILE_SHIFT);
-	}
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public String toString()
-	{
-		StringBuilder s = new StringBuilder();
-		s.append(doclength);
-		s.append(' ');
-		s.append(entries);
-		s.append("@{");
-		s.append(this.getFileNumber());
-		s.append(',');
-		s.append(bytes);
-		s.append(',');
-		s.append(this.getOffsetBits());
-		s.append('}');
-		return s.toString();
-	}
-	
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public void setOffset(long _bytes, byte _bits) 
+    {
+        bytes = _bytes;
+        byte fileId = this.getFileNumber();
+        bits = _bits;
+        bits += (fileId << FILE_SHIFT);
+    }
+    
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public String toString()
+    {
+        return getDocumentLength() + " " + getNumberOfEntries() + "@{" + getFileNumber() + "," + getOffset() + "," + getOffsetBits() + "}";
+    }
 }

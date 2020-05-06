@@ -139,13 +139,6 @@ public class BasicIntegerCodingIterablePosting implements IterablePosting{
 	}
 
 	@Override
-	public void setId(int id) {
-		
-		this.id = id;
-		
-	}
-
-	@Override
 	public WritablePosting asWritablePosting() {
 
 		return new BasicPostingImpl(id, tf);

@@ -24,25 +24,39 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
 package org.terrier.structures;
+
 /** 
- * A bit file position
+ * A (number of bytes, number of bits) position in a bit file.
  */
 public interface BitFilePosition
 {
-	/** 
-	 * Return the offset
-	 */
-	long getOffset();
-	/** 
-	 * Return the offset bits
-	 */
-	byte getOffsetBits();
-	/** 
-	 * Set the offset in bytes and bits
-	 */
-	void setOffset(long bytes, byte bits);
-	/** 
-	 * Set the offset
-	 */
-	void setOffset(BitFilePosition pos);
+    /** 
+     * Return the number of bytes offset.
+     * 
+     * @return the number of bytes offset.
+     */
+    long getOffset();
+    
+    /** 
+     * Return the number of bits offset.
+     * 
+     * @return the number of bits offset.
+     */
+    byte getOffsetBits();
+    
+    /** 
+     * Set the offset in number of bytes and number of bits.
+     * 
+     * @param bytes the number of bytes to set.
+     * @param bits the number of bits to set.
+     */
+    void setOffset(long bytes, byte bits);
+
+    /** 
+     * Sets the bit file position within this object to that represented by
+     * the specified bit file position.
+     * 
+     * @param pos other bit file position to update the bit file position in this object.
+     */
+    void setOffset(BitFilePosition pos);
 }

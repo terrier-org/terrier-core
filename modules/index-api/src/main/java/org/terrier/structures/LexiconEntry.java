@@ -26,68 +26,90 @@
 package org.terrier.structures;
 import org.apache.hadoop.io.Writable;
 
-/** Represents the statistics of a term in the {@link Lexicon}, and
+/** 
+ * Base class for all LexiconEntry implementations. A LexiconEntry
+ * represents the statistics of a term in the {@link Lexicon}, and
  * a pointer to the term's location in a {@link PostingIndex}. For
  * these reasons, this class implements {@link Pointer} and {@link EntryStatistics}.
+ * 
  * @see Lexicon
  * @see Pointer
  * @see EntryStatistics
+ *
  * @author Craig Macdonald
  */
 public abstract class LexiconEntry implements EntryStatistics, Pointer, Writable
 {
-	private static final long serialVersionUID = 1L;
-	/** 
-	 * {@inheritDoc} 
-	 */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
     public String toString()
-	{
-        return '('+getDocumentFrequency()+","+getFrequency()+')'
-            + pointerToString();
-	}
-	/** 
-	 * Set the term ID
-	 */
+    {
+        return '(' + getDocumentFrequency() + "," + getFrequency() + ')' + pointerToString();
+    }
+
+    /** 
+     * Set the term ID, the integer representation of the term in the index,
+     * e.g. as used in direct index posting structures.
+     */
     public abstract void setTermId(int newTermId);
-	/** 
-	 * Set the document frequency and term frequency
-	 */
+
+    /** 
+     * Update the document frequency and term frequency
+     */
     public abstract void setStatistics(int n_t, int TF);
    
-	@Override
-	public int getNumberOfEntries() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	@Override
-	public void setNumberOfEntries(int n) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public String pointerToString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void setPointer(Pointer p) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public EntryStatistics getWritableEntryStatistics() {
-		return this;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (! (obj instanceof LexiconEntry))
-			return false;
-		LexiconEntry o = (LexiconEntry)obj;
-		return o.getTermId() == this.getTermId();
-	}
+    /** Pointer implementation: how many entries in the inverted index.
+     * Usually the same as getDocumentFrequency().
+     */
+    @Override
+    public int getNumberOfEntries() 
+    {
+        return 0;
+    }
+    
+    /** Update the number of entries in the pointer */
+    @Override
+    public void setNumberOfEntries(int n) 
+    {
+    }
+    
+    @Override
+    public String pointerToString() 
+    {
+        return null;
+    }
+    
+    /** Update the pointer */
+    @Override
+    public void setPointer(Pointer p) 
+    {
+    }
+    
+    /** Get a writable copy of the EntryStatistics. Just returns itself. */
+    @Override
+    public EntryStatistics getWritableEntryStatistics() 
+    {
+        return this;
+    }
+    
+    /** Does this refer to the same term */
+    @Override
+    public boolean equals(Object obj) 
+    {
+        if (! (obj instanceof LexiconEntry))
+            return false;
+        LexiconEntry o = (LexiconEntry)obj;
+        return o.getTermId() == this.getTermId();
+    }
 
-	@Override
-	public int hashCode() {
-		return this.getTermId();
-	}
+    /** hash this object based on termid */
+    @Override
+    public int hashCode() 
+    {
+        return this.getTermId();
+    }
 }

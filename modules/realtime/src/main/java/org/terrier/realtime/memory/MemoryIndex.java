@@ -165,7 +165,7 @@ public class MemoryIndex extends Index implements UpdatableIndex,WritableIndex {
 		document = new MemoryDocumentIndex();
 		inverted = new MemoryInvertedIndex(lexicon, document);
 		metadata = new MemoryMetaIndex();
-		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[] { 0 }, fieldtags);
+		stats = new MemoryCollectionStatistics(0, 0, 0, 0, new long[fieldtags.length], fieldtags);
 		load_pipeline(); // For term processing (stemming, stop-words).
 
 		direct = new MemoryDirectIndex(document);

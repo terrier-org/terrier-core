@@ -25,13 +25,21 @@
  */
 package org.terrier.structures.postings;
 
-/** Interface implemented by Posting objects that have position information
+/** 
+ * Interface implemented by posting objects that have position information
  * recorded.
- * Position information can be obtained from the getPositions() method.
+ * 
+ * Position information can be obtained from the {@link #getPositions()} method.
+ * 
  * @since 3.0
  * @author Craig Macdonald
  */
-public interface BlockPosting extends Posting {
-	/** Return positions of occurrences */
-	int[] getPositions();
+public interface BlockPosting extends Posting 
+{
+    /** 
+     * Return the positions of occurrences of the term in the current document. 
+     * 
+     * @return the positions of occurrences of the term in the current document.
+     * */
+    int[] getPositions();
 }

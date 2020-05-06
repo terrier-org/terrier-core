@@ -27,20 +27,30 @@
  */
 package org.terrier.structures;
 import java.io.IOException;
+
 /** 
  * Interface for a document index.
  */
-public interface DocumentIndex {
-	/** 
-	 * Get the document index entry based on its docid 
-	 */
-	DocumentIndexEntry getDocumentEntry(int docid) throws IOException;
-	/** 
-	 * Get the length of the document
-	 */
-	int getDocumentLength(int docid) throws IOException;
-	/** 
-	 * Get the number of documents
-	 */
-	int getNumberOfDocuments();
+public interface DocumentIndex 
+{
+    /** 
+     * Return the document index entry based on its docid.
+     * 
+     * @return the document index entry based on its docid.
+     */
+    DocumentIndexEntry getDocumentEntry(int docid) throws IOException;
+    
+    /** 
+     * Return the length of the document.
+     * 
+     * @return the length of the document.
+     */
+    int getDocumentLength(int docid) throws IOException;
+    
+    /** 
+     * Return the number of documents.
+     * 
+     * @return the number of documents.
+     */
+    int getNumberOfDocuments();
 }

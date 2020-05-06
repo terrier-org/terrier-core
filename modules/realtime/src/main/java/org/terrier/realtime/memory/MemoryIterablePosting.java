@@ -113,16 +113,9 @@ public class MemoryIterablePosting extends IterablePostingImpl {
 		pl_freq = null;
 	}
 
-	/** Not implemented. */
-	public void setId(int id) {
-	}
-
 	/** {@inheritDoc} */
 	public WritablePosting asWritablePosting() {
-		BasicPostingImpl bp = new BasicPostingImpl();
-		bp.setId(getId());
-		bp.setTf(getFrequency());
-		return bp;
+		return new BasicPostingImpl(getId(), getFrequency());
 	}
 
 }

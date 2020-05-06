@@ -202,12 +202,6 @@ public class ORIterablePosting extends IterablePostingImpl {
 
 	/** {@inheritDoc} */
 	@Override
-	public void setId(int _id) {
-		this.id = _id;
-	}
-
-	/** {@inheritDoc} */
-	@Override
 	public void close() throws IOException {
 		
 	}

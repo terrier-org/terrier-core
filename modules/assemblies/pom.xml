@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>terrier-platform</artifactId>
 		<groupId>org.terrier</groupId>
-		<version>5.2</version>
+		<version>5.3-SNAPSHOT</version>
 		<relativePath>../../</relativePath>
 	</parent>
 
@@ -40,14 +40,13 @@
 			<version>${project.version}</version>
 			<!-- <scope>provided</scope> -->
 		</dependency>
-
+<!--
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>terrier-integer-compression</artifactId>
 			<version>${project.version}</version>
-			<!-- <scope>provided</scope> -->
 		</dependency>
-
+-->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>terrier-learning</artifactId>

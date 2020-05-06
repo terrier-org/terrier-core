@@ -25,6 +25,8 @@
  */
 package org.terrier.structures;
 
-public @interface ConcurrentReadable {
-
+/** This annotation makes that an index data 
+ * structure can be read by more than one thread concurrently. */
+public @interface ConcurrentReadable 
+{
 }

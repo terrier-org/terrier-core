@@ -89,10 +89,6 @@ public class MultiIterablePosting extends IterablePostingImpl implements
 		return children[currentChild].getDocumentLength();
 	}
 
-	/** Not implemented. */
-	public void setId(int id) {
-	}
-
 	/** {@inheritDoc} */
 	public WritablePosting asWritablePosting() {
 		return children[currentChild].asWritablePosting();
