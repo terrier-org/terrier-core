@@ -510,10 +510,11 @@ public class LocalManager implements Manager
 
 			if (mqt.stream().allMatch( me -> me.getValue().getTags().size() == 0))
 			{
-				logger.warn("MatchingQueryTerms has no terms tagged for matching; applying " + BaseMatching.BASE_MATCHING_TAG);
+				logger.info("In MatchingQueryTerms, none of the "+mqt.size()
+					+" terms are tagged for matching. applying " 
+					+ BaseMatching.BASE_MATCHING_TAG + " to all terms");
 				mqt.stream().forEach(me -> me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG));
 			}
-				
 	
 			mqt.setQuery(q);
 			mqt.normaliseTermWeights();
