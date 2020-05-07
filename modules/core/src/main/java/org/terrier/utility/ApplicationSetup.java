@@ -34,7 +34,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Enumeration;
+import java.net.URL;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -329,15 +332,7 @@ public class ApplicationSetup {
 				}
 				try{
 					terrier_home = (String)envCtx.lookup("terrier.home");
-				}catch(NamingException ne) {
-					throw new RuntimeException("NamingException finding terrier variables from envCtx",ne);
-				}
-				try{
 					terrier_etc = (String)envCtx.lookup("terrier.etc");
-				} catch(NamingException ne) {
-					throw new RuntimeException("NamingException finding terrier variables from envCtx",ne);
-				}
-				try{
 					propertiesFile = (String)envCtx.lookup("terrier.setup");
 				}catch(NamingException ne) {
 					throw new RuntimeException("NamingException finding terrier variables from envCtx",ne);
@@ -347,32 +342,36 @@ public class ApplicationSetup {
 						terrier_etc = terrier_home +FILE_SEPARATOR+"etc";
 					propertiesFile = terrier_etc+FILE_SEPARATOR+"terrier.properties";				
 			}
-			else
+			else //we will need to hunt for the terrier.properties file
 			{
-				terrier_home = System.getProperty("terrier.home", "");
+				terrier_home = System.getProperty("terrier.home", ".");
+
 				terrier_etc = System.getProperty("terrier.etc", terrier_home +FILE_SEPARATOR+"etc");
 				propertiesFile = System.getProperty("terrier.setup", terrier_etc + FILE_SEPARATOR+"terrier.properties");
 			}
-	
-			//if system property terrier.setup is not specified, then it is 
-			//assumed that the properties file is at ./etc/terrier.properties
-	
-			//System.err.println("Properties file is "+propertiesFile);	
-			clearAllProperties();
-			TERRIER_HOME = getProperty("terrier.home", terrier_home);
-			FileInputStream in = new FileInputStream(propertiesFile);
-			commonPropertiesLoaded = configure(new BufferedInputStream(in));
-			in.close();
-		} catch (java.io.FileNotFoundException fnfe) {
-			System.out.println("WARNING: The file terrier.properties was not found at location "+propertiesFile);
-			System.out.println(" Assuming the value of terrier.home from the corresponding system property.");
-			//new Exception().printStackTrace();
+			
+			if (new File(propertiesFile).exists())
+			{
+				clearAllProperties();
+				TERRIER_HOME = getProperty("terrier.home", terrier_home);
+				FileInputStream in = new FileInputStream(propertiesFile);
+				commonPropertiesLoaded = configure(new BufferedInputStream(in));
+				in.close();
+			}
+			else {
+				TERRIER_HOME = ".";
+				terrier_etc = System.getProperty("terrier.etc", ".");
+				ClassLoader clz = ApplicationSetup.class.getClassLoader(); 
+				List<InputStream> resources = loadResources("terrier.default.properties", clz);
+				System.err.println("No etc/terrier.properties, using terrier.default.properties for bootstrap configuration.");
+				configure(resources.toArray(new InputStream[0]));
+				for(InputStream in : resources) {
+					in.close();
+				}
+			}
+			
 		} catch (java.io.IOException ioe) {
-			System.err.println(
-				"Input/Output Exception during initialization of ");
-			System.err.println("org.terrier.utility.ApplicationSetup: "+ioe);
-			System.err.println("Stack trace follows.");
-			ioe.printStackTrace();
+			throw new IllegalArgumentException("Input/Output Exception during initialization of ApplicationSetup", ioe);
 		}
 		/* 
 		 * The property terrier.home does not have a default value, so it has
@@ -383,15 +382,32 @@ public class ApplicationSetup {
 		 * have deprecated System.getEnv() in Java 1.4. 
 		 */
 		TERRIER_HOME = getProperty("terrier.home", terrier_home);
-		if (TERRIER_HOME.equals("")) {
-			System.err.println("Please ensure that the property terrier.home");
-			System.err.println("is specified in the file terrier.properties,");
-			System.err.println("or as a system property in the command line.");
-			TERRIER_HOME = ".";
-		}
+		assert TERRIER_HOME != null && TERRIER_HOME.length() > 0;
+		// if (TERRIER_HOME.equals("")) {
+		// 	System.err.println("Please ensure that the property terrier.home");
+		// 	System.err.println("is specified in the file terrier.properties,");
+		// 	System.err.println("or as a system property in the command line.");
+		// 	TERRIER_HOME = ".";
+		// }
+		//System.err.println("TERRIER_HOME="+TERRIER_HOME);
+		//System.err.println("TERRIER_ETC="+TERRIER_ETC);
+
 		if (!commonPropertiesLoaded)
 			loadCommonProperties();
 		System.setProperty("terrier.applicationsetup.loaded", "true");
+	}
+
+	//source: https://stackoverflow.com/a/6730897
+	public static List<InputStream> loadResources(
+        final String name, final ClassLoader classLoader) throws IOException {
+		final List<InputStream> list = new ArrayList<InputStream>();
+		final Enumeration<URL> systemResources = 
+				(classLoader == null ? ClassLoader.getSystemClassLoader() : classLoader)
+				.getResources(name);
+		while (systemResources.hasMoreElements()) {
+			list.add(systemResources.nextElement().openStream());
+		}
+		return list;
 	}
 	
 	public static Class<?> getClass(String name) throws ClassNotFoundException {
@@ -406,8 +422,8 @@ public class ApplicationSetup {
 	
 	public static void bootstrapInitialisation(Properties properties) {
 		TERRIER_HOME = properties.getProperty("terrier.home", new File(".").getAbsolutePath());
-		System.err.println("TERRIER_HOME="+TERRIER_HOME);
-		System.err.println("terrier.etc="+properties.getProperty("terrier.etc"));
+		//System.err.println("TERRIER_HOME="+TERRIER_HOME);
+		//System.err.println("terrier.etc="+properties.getProperty("terrier.etc"));
 		appProperties.clear();
 		String terrier_home = properties.getProperty("terrier.home", "");
 		String terrier_etc = properties.getProperty("terrier.etc", terrier_home +FILE_SEPARATOR+"etc");
@@ -423,8 +439,8 @@ public class ApplicationSetup {
 		appProperties.putAll(properties);
 		loadCommonProperties();
 		System.setProperty("terrier.applicationsetup.loaded", "true");
-		System.err.println("TERRIER_HOME="+TERRIER_HOME);
-		System.err.println("TERRIER_ETC="+TERRIER_ETC);
+		//System.err.println("TERRIER_HOME="+TERRIER_HOME);
+		//System.err.println("TERRIER_ETC="+TERRIER_ETC);
 	}
 	
 	/** Loads the ApplicationSetup variables, e.g. ApplicationSetup.TERRIER_HOME */
@@ -474,9 +490,11 @@ public class ApplicationSetup {
 	}
 	
 	/** Loads the common Terrier properties from the specified InputStream */
-	public static boolean configure(InputStream propertiesStream) throws IOException
+	public static boolean configure(InputStream ... propertiesStreams) throws IOException
 	{
-		appProperties.load(propertiesStream);
+		for (InputStream p : propertiesStreams) {
+			appProperties.load(p);
+		}
 		loadCommonProperties();
 		return true;
 	}
