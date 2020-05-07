@@ -85,7 +85,7 @@ public abstract class Index implements Closeable
         return new DirectIndexRef(index);
     }
 
-    static class DirectIndexRef extends IndexRef
+    public static class DirectIndexRef extends IndexRef
     {
         private static final long serialVersionUID = 1L;
         Index underlyingIndex;
@@ -94,6 +94,10 @@ public abstract class Index implements Closeable
         {
             super(i.toString());// THIS IS A HACK
             this.underlyingIndex = i;
+        }
+
+        public Index getIndex() {
+            return this.underlyingIndex;
         }
     }
     
