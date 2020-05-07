@@ -1,7 +1,6 @@
 org.terrier.applications.CLITool$HelpCLITool
 org.terrier.applications.InteractiveQuerying$Command
 org.terrier.applications.BatchIndexing$Command
-org.terrier.structures.CollectionStatistics$Command
 org.terrier.structures.IndexUtil$Command
 org.terrier.applications.batchquerying.TRECQuerying$Command
 org.terrier.evaluation.TrecEvalEvaluation$Command
