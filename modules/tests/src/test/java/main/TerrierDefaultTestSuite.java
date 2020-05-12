@@ -97,6 +97,7 @@ import org.terrier.terms.TestSnowball;
 import org.terrier.terms.TestTermPipelineAccessor;
 import org.terrier.tests.ShakespeareEndToEndTestSuite;
 import org.terrier.utility.TestArrayUtils;
+import org.terrier.utility.TestClassNameParser;
 import org.terrier.utility.TestCollectionStatistics;
 import org.terrier.utility.TestDistance;
 import org.terrier.utility.TestHeapSort;
@@ -249,6 +250,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	
 	//.utility
 	TestArrayUtils.class,
+	TestClassNameParser.class,
 	TestCollectionStatistics.class,
 	TestDistance.class,
 	TestHeapSort.class,

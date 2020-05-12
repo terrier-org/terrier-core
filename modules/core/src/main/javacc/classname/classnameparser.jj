@@ -1,0 +1,132 @@
+options {
+	STATIC = false;
+	LOOKAHEAD = 2;
+	FORCE_LA_CHECK = true;
+//	DEBUG_PARSER=false;
+}
+
+PARSER_BEGIN(ClassNameParser)
+
+package org.terrier.utility;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.io.StringReader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+
+@SuppressWarnings("all")
+public class ClassNameParser<K>
+{
+   Class<K> type;
+   String defaultPackage;
+   public ClassNameParser(String r, String _defaultPackage, Class<K> cls) {
+    	this(new StringReader(r));
+    	defaultPackage = _defaultPackage;
+    	if (! defaultPackage.endsWith("."))
+    		defaultPackage = defaultPackage + ".";
+    	this.type = cls;
+   }
+}
+
+PARSER_END(ClassNameParser) 
+
+/** Skip these characters, they are considered "white space" **/
+SKIP :                              
+{
+      " "
+}
+
+< WithinBrackets > SKIP : {
+	" "
+}
+
+/** Reserved tokens for UQL */
+TOKEN :
+{
+	  <WORD : (["A"-"Z","a"-"z","0"-"9"])+ > 
+	  | <COMMA:  ",">
+	  | <PERIOD : ".">
+	  | <OPEN_PAREN: "("> : WithinBrackets
+}
+
+<WithinBrackets> TOKEN : {
+   <PARAM_WORD : (["A"-"Z","a"-"z","0"-"9"])+ > 
+   | <PARAM_COMMA:  ",">
+   | <CLOSE_PAREN: ")"> : DEFAULT
+}
+
+
+K parseOne()  throws Exception: 
+{
+	List<String> packageNameComps = new ArrayList<String>();
+	Token packagePart;
+	Token className;
+	Token param;
+	List<String> params = new ArrayList<String>();
+}
+{
+	//  )
+	(
+	  packagePart = <WORD> <PERIOD> { packageNameComps.add(packagePart.image); } 
+	)*  
+	className = <WORD>
+	(
+		<OPEN_PAREN>
+		(
+			param = <PARAM_WORD> { params.add(param.image); } 
+			(
+				<PARAM_COMMA>
+				param = <PARAM_WORD> { params.add(param.image); } 
+			)*
+		)?
+		<CLOSE_PAREN>
+	) ?
+	{
+		String packageName = defaultPackage;
+		if (packageNameComps.size() > 0)
+		{
+			StringBuilder s = new StringBuilder();
+			for(String comp : packageNameComps)
+			{
+				s.append(comp);
+				s.append('.');
+			}
+			//s.setLength(s.length() -1);
+			packageName = s.toString();
+		}
+		
+		String clzName = packageName + className.image;
+		try{
+		Class<?> clz = ApplicationSetup.getClass(clzName).asSubclass(type);
+		Object rtr;
+		if (params.size() > 0)
+		{
+			rtr = clz.getConstructor(new Class[]{new String[0].getClass()}).newInstance(new Object[]{params.toArray(new String[0])});
+		} else {
+			rtr = clz.newInstance();
+		}
+		return (K)rtr;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Problem instantiating "+ clzName + params.toString(), e);
+		}
+	}
+}
+
+List<K> parseAll() throws Exception : 
+{
+	List<K> rtrList = new ArrayList<K>();
+	K o;
+}
+{
+	o = parseOne() { rtrList.add(o); } 
+	(
+		<COMMA>
+		o = parseOne() { rtrList.add(o); } 
+	)*
+	{
+		return rtrList;
+	}
+}

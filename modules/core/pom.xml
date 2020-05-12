@@ -384,6 +384,21 @@
 						</configuration>
 					</execution>
 
+					<execution>
+						<id>classname</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>javacc</goal>
+						</goals>
+						<configuration>
+							<jdkVersion>1.8</jdkVersion>
+							<javadocFriendlyComments>true</javadocFriendlyComments>
+							<packageName>org.terrier.utility</packageName>
+							<sourceDirectory>src/main/javacc/classname</sourceDirectory>
+							<outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
+						</configuration>
+					</execution>
+
 				</executions>
 				<dependencies>
 					<dependency>
