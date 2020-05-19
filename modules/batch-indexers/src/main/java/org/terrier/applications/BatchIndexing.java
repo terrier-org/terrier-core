@@ -99,6 +99,11 @@ public abstract class BatchIndexing {
 		}
 
 		@Override
+		public String help() {
+			return super.help() + "\n" + "Files to index can also be specified after command line arguments.";
+		}
+
+		@Override
 		public String helpsummary() {
 			return "allows a static collection of documents to be indexed";
 		}
