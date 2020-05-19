@@ -26,6 +26,11 @@
 package org.terrier.applications;
 
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import org.terrier.indexing.Collection;
+import org.terrier.indexing.CollectionFactory;
+import org.terrier.utility.TagSet;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -49,7 +54,13 @@ public abstract class BatchIndexing {
 			options.addOption(Option.builder("C")
 					.argName("collection")
 					.longOpt("collection")
-					.desc("specify the collection class to use. This overrides the trec.collection.class property")
+					.desc("specify the Collection class to use. This overrides the trec.collection.class property")
+					.hasArg()
+					.build());
+			options.addOption(Option.builder("F")
+					.argName("fields")
+					.longOpt("fields")
+					.desc("specify the fields to index. This overrides the FieldTags.process property")
 					.hasArg()
 					.build());
 			options.addOption(Option.builder("j")
@@ -67,6 +78,11 @@ public abstract class BatchIndexing {
 					.argName("blocks")
 					.longOpt("blocks")
 					.desc("record block (positions) in the index")
+					.build());
+			options.addOption(Option.builder("s")
+					.argName("spec")
+					.longOpt("spec")
+					.desc("filename of the collection.spec file -- containing the list of files to index -- which is usually found in etc/")
 					.build());
 			return options;
 		}
@@ -97,11 +113,8 @@ public abstract class BatchIndexing {
 			
 			final long starttime = System.currentTimeMillis();
 			BatchIndexing indexing;
-			if (line.hasOption("C"))
-			{
-				ApplicationSetup.setProperty("trec.collection.class", line.getOptionValue("C"));
-			}
 			
+			//which indexer
 			if (line.hasOption("parallel"))
 			{
 				indexing = new ThreadedBatchIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX, line.hasOption("singlepass"));
@@ -115,8 +128,38 @@ public abstract class BatchIndexing {
 						? new TRECIndexingSinglePass(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX)
 						: new TRECIndexing(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 			}
+
+			//name of the collection class
+			if (line.hasOption("C"))
+			{
+				indexing.collectionClassName = line.getOptionValue("C");
+			}
+
+			//to record positions or not
 			if (line.hasOption("blocks"))
 				indexing.blocks = true;
+
+			//which fields to index
+			if (line.hasOption("F"))
+			{
+				ApplicationSetup.setProperty("FieldTags.process", line.getOptionValue("F"));
+			}
+
+			//which files to index
+			if (line.getArgList().size() > 0)
+			{
+				if (line.hasOption("s"))
+				{
+					System.err.println("Specifying file argments and -s option at same time is not supported");
+					return -1;
+				}
+				indexing.collectionFiles = line.getArgList();
+			}
+			else if (line.hasOption("s"))
+			{
+				indexing.collectionSpec = line.getOptionValue("s");
+			}
+
 			indexing.index();	
 			final long endtime = System.currentTimeMillis();
 			final long seconds = (endtime - starttime) / 1000l;
@@ -131,8 +174,17 @@ public abstract class BatchIndexing {
 	protected final String path;
 	protected final String prefix;
 	protected boolean blocks = ApplicationSetup.BLOCK_INDEXING;
+	protected String collectionClassName = ApplicationSetup.getProperty("trec.collection.class", "TRECCollection");
+	protected String collectionSpec = ApplicationSetup.COLLECTION_SPEC;
+	protected List<String> collectionFiles = new ArrayList<>();
 	//how many instances are being used by the code calling this class in parallel
 	protected int externalParalllism = 1;
+
+	public BatchIndexing(String _path, String _prefix) {
+		super();
+		this.path = _path;
+		this.prefix = _prefix;
+	}
 
 	public int getExternalParalllism() {
 		return externalParalllism;
@@ -142,12 +194,58 @@ public abstract class BatchIndexing {
 		this.externalParalllism = externalParalllism;
 	}
 
-	public BatchIndexing(String _path, String _prefix) {
-		super();
-		this.path = _path;
-		this.prefix = _prefix;
+	public void setCollectionName(String collName) {
+		this.collectionClassName = collName;
+	}
+
+	public void setCollectionSpec(String specFile) {
+		this.collectionSpec = specFile;
 	}
 
 	public abstract void index();
+
+	/** open a collection when given a list of files */
+	protected Collection loadCollection(List<String> files) {
+		//load the appropriate collection
+		final String collectionName = this.collectionClassName;
+		
+		Class<?>[] constructerClasses = {List.class,String.class,String.class,String.class};
+		Object[] constructorValues = {files,TagSet.TREC_DOC_TAGS,
+			ApplicationSetup.makeAbsolute(
+				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
+				ApplicationSetup.TERRIER_ETC), 
+		    ApplicationSetup.makeAbsolute(
+			ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
+				ApplicationSetup.TERRIER_INDEX_PATH)
+		};
+		Collection rtr = CollectionFactory.loadCollection(collectionName, constructerClasses, constructorValues);
+		if (rtr == null)
+		{
+			throw new IllegalArgumentException("Collection class named "+ collectionName + " not loaded, aborting");
+		}
+		return rtr;
+	}
+
+	/** open a collection when given the collection.spec name */
+	protected Collection loadCollection(String collectionSpec) {
+		//load the appropriate collection
+		final String collectionName = this.collectionClassName;
+		
+		Class<?>[] constructerClasses = {String.class,String.class,String.class,String.class};
+		String[] constructorValues = {collectionSpec,TagSet.TREC_DOC_TAGS,
+			ApplicationSetup.makeAbsolute(
+				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
+				ApplicationSetup.TERRIER_ETC), 
+		    ApplicationSetup.makeAbsolute(
+			ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
+				ApplicationSetup.TERRIER_INDEX_PATH)
+		};
+		Collection rtr = CollectionFactory.loadCollection(collectionName, constructerClasses, constructorValues);
+		if (rtr == null)
+		{
+			throw new IllegalArgumentException("Collection class named "+ collectionName + " not loaded, aborting");
+		}
+		return rtr;
+	}
 	
 }

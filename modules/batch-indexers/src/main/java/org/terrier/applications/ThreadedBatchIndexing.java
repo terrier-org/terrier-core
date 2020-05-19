@@ -66,27 +66,6 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 		this.maxThreads = threads;
 	}
 	
-	protected static Collection loadCollection(List<String> files) {
-		//load the appropriate collection
-		final String collectionName = ApplicationSetup.getProperty("trec.collection.class", "TRECCollection");
-		
-		Class<?>[] constructerClasses = {List.class,String.class,String.class,String.class};
-		Object[] constructorValues = {files,TagSet.TREC_DOC_TAGS,
-			ApplicationSetup.makeAbsolute(
-				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
-				ApplicationSetup.TERRIER_ETC), 
-		    ApplicationSetup.makeAbsolute(
-			ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
-				ApplicationSetup.TERRIER_INDEX_PATH)
-		};
-		Collection rtr = CollectionFactory.loadCollection(collectionName, constructerClasses, constructorValues);
-		if (rtr == null)
-		{
-			throw new IllegalArgumentException("Collection class named "+ collectionName + " not loaded, aborting");
-		}
-		return rtr;
-	}
-	
 	/** Define maximum number of threads in use. -1 for no limit. */
 	public void setMaxThreads(int threads)
 	{
@@ -112,8 +91,9 @@ public class ThreadedBatchIndexing extends BatchIndexing {
 				ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS *= reservationFactor;
 				logger.info("Memory reserved is now "+ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS);
 			}
-			
-			List<List<String>> partitioned = CollectionFactory.splitCollectionSpecFileList(ApplicationSetup.COLLECTION_SPEC, threadCount);
+			final List<List<String>> partitioned = collectionFiles.size() > 0
+				? CollectionFactory.splitList(super.collectionFiles, threadCount)
+				: CollectionFactory.splitCollectionSpecFileList(super.collectionSpec, threadCount);
 			logger.info("Partitioned collection.spec into "+ partitioned.size() + " partitions");
 			if (partitioned.size() == 1)
 			{

@@ -172,7 +172,7 @@ public class ApplicationSetup {
 	/**
 	 * The name of the directory where the inverted
 	 * file and other data structures are stored.
-	 * The default value is InvFileCollection but it
+	 * The default value is index in the TERRIER_VAR diretory but it
 	 * can be overridden with the property <tt>terrier.index.path</tt>.
 	 * If a relative path is given, TERRIER_VAR will be prefixed.
 	 */
@@ -188,6 +188,7 @@ public class ApplicationSetup {
 	 * and by default its value is <tt>collection.spec</tt>.
 	 * If a relative path is given, TERRIER_ETC will be prefixed.
 	 */
+	@Deprecated
 	public static String COLLECTION_SPEC;
 	
 	

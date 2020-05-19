@@ -145,7 +145,7 @@ public class CollectionFactory
 		return splitList(all, k);		
 	}
 	
-	static <T> List<List<T>> splitList(final List<T> all, final int k) {
+	public static <T> List<List<T>> splitList(final List<T> all, final int k) {
 		assert all.size() > 0;
 		int size = all.size()/k;
 		if (all.size() % k != 0)

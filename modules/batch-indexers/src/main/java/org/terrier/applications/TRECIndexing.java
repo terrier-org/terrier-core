@@ -53,7 +53,7 @@ public class TRECIndexing extends BatchIndexing {
 	
 	
 	public TRECIndexing(String _path, String _prefix) {
-		this(_path, _prefix, ApplicationSetup.COLLECTION_SPEC);
+		super(_path, _prefix);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class TRECIndexing extends BatchIndexing {
 	public TRECIndexing(String _path, String _prefix, String collectionSpec)
 	{
 		super(_path, _prefix);
-		collectionTREC = loadCollection(collectionSpec);
+		super.collectionSpec = collectionSpec;
 		//indexer = loadIndexer(path, prefix);
 	}
 	
@@ -80,27 +80,6 @@ public class TRECIndexing extends BatchIndexing {
 		super(_path, _prefix);
 		collectionTREC = c;
 		//indexer = loadIndexer(path, prefix);
-	}
-
-	protected Collection loadCollection(String collectionSpec) {
-		//load the appropriate collection
-		final String collectionName = ApplicationSetup.getProperty("trec.collection.class", "TRECCollection");
-		
-		Class<?>[] constructerClasses = {String.class,String.class,String.class,String.class};
-		String[] constructorValues = {collectionSpec,TagSet.TREC_DOC_TAGS,
-			ApplicationSetup.makeAbsolute(
-				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
-				ApplicationSetup.TERRIER_ETC), 
-		    ApplicationSetup.makeAbsolute(
-			ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
-				ApplicationSetup.TERRIER_INDEX_PATH)
-		};
-		Collection rtr = CollectionFactory.loadCollection(collectionName, constructerClasses, constructorValues);
-		if (rtr == null)
-		{
-			throw new IllegalArgumentException("Collection class named "+ collectionName + " not loaded, aborting");
-		}
-		return rtr;
 	}
 
 	protected Indexer loadIndexer(String pa, String pr) {
@@ -151,7 +130,17 @@ public class TRECIndexing extends BatchIndexing {
 		{
 			logger.error("Cannot index while an index exists at "+path + ","+ prefix);
 			return;
-		}		
+		}
+
+		if (collectionTREC == null){
+			if (collectionFiles.size() > 0)
+			{
+				collectionTREC = loadCollection(collectionFiles);
+			} else {
+				collectionTREC = loadCollection(collectionSpec);
+			}
+		}
+
 		loadIndexer(path, prefix).index(new Collection[] {collectionTREC});
 		try{
 			collectionTREC.close();
