@@ -99,6 +99,23 @@ public abstract class Index implements Closeable
         public Index getIndex() {
             return this.underlyingIndex;
         }
+        
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }            
+            if (o == null) {
+                return false;
+            }
+            if (o instanceof DirectIndexRef)
+            {
+                DirectIndexRef other = (DirectIndexRef)o;
+                if (other.underlyingIndex.toString().equals(underlyingIndex.toString())) 
+                    return true;
+            }
+            return super.equals(o);
+        }
     }
     
     /** @Deprecated */ 

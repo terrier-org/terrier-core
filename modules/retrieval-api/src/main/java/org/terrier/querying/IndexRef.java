@@ -45,6 +45,18 @@ public class IndexRef implements Serializable {
 	{
 		return location.length;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || !( o instanceof IndexRef)) {
+			return false;
+		}
+		IndexRef other = (IndexRef)o;
+		return toString().equals(other.toString());
+	}
 	
 	@Override
 	public int hashCode() {
