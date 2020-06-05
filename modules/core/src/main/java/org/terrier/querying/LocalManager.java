@@ -877,7 +877,8 @@ public class LocalManager implements Manager
 	
 	public void runSearchRequest(SearchRequest srq)
 	{	
-		Request rq = (Request)srq;		
+		Request rq = (Request)srq;
+		final long starttime = System.currentTimeMillis();
 		logger.info("Starting to execute query " + srq.getQueryID() + " - " + srq.getOriginalQuery());
 		boolean mqtObtained = rq.getMatchingQueryTerms() != null;
 		boolean hasRawQuery = rq.getOriginalQuery() != null;
@@ -934,7 +935,8 @@ public class LocalManager implements Manager
 		} else {
 			logger.warn("After running " + ran + " processes, no ResultSet was obtained. Controls were: " + rq.getControls().toString());
 		}
-		logger.info("Finished executing query " + srq.getQueryID() + msg);
+		final long endtime = System.currentTimeMillis();
+		logger.info("Finished executing query " + srq.getQueryID() + " in " + (endtime - starttime) + "ms" + msg);
 	 }
 	
 	/*-------------------------------- helper methods -----------------------------------*/
