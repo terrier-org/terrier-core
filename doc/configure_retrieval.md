@@ -46,7 +46,7 @@ Single-line topic files have a simpler format, without the additional descriptio
 1. a few query terms
 2. some different query terms
 
-Support for single-line topic files is provided by the SingleLineTRECQuery class. To use a topics file in this format, you must firstly set `trec.topics.parser=SingleLineTRECQuery`. The `batchretrieval` command has a handy `-s` command line argument:
+Support for single-line topic files is provided by the SingleLineTRECQuery class. To use a topics file in this format, you must firstly set `trec.topics.parser=SingleLineTRECQuery`. The `batchretrieval` command has a handy `-s` command line argument that has the same effect:
 
 	bin/terrier batchretrieve -s
 
