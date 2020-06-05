@@ -156,7 +156,7 @@ public class FeaturedQueryResultSet extends QueryResultSet implements FeaturedRe
 		FeaturedQueryResultSet rs = (FeaturedQueryResultSet) super.getResultSet(positions);
 		
 		rs.labels = new String[length];
-		rs.defLabel = new String(defLabel);
+		rs.defLabel = defLabel;
 		for (int i = 0; i < length; i++) {
 			rs.labels[i] = labels[positions[i]];
 		}
