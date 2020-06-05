@@ -1,6 +1,6 @@
-
-
 # Configuring Retrieval in Terrier
+
+NB: Note that some of the configuration described here is better controlled using controls. See [Configuring Retrieval using Controls](configure_retrieval_controls.md).
 
 ## Topics
 

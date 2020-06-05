@@ -56,6 +56,9 @@ Table of Contents
 >[Configuring Retrieval](configure_retrieval.md)  
 >A guide of the retrieval functionalities, covering frequently-used retrieval methodologies, such as TF-IDF, Okapi’s BM25, language models (Hiemstra and Ponte & Croft) and weighting models from the probabilistic Divergence From Randomness (DFR), as well as query expansion (pseudo-relevance feedback).
 
+>[Configuring Retrieval using Controls](configure_retrieval_controls.md)  
+>A summary of the controls that can be used to configure retrieval.
+
 >[Configuring Real-time Index Structures](realtime_indices.md)  
 >An introduction to the real-time index structures in Terrier.
 
