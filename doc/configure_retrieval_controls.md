@@ -20,6 +20,7 @@ Controls are methods for configuring retrieval. Controls are set using the setCo
 | `qe`           | off      | Controls if query expansion should be applied              |
 | `filters`      | on       | Controls if any post-filters should be applied for the query |
 | `site`         | off      | Performs hostname suffix matching as a PostFilter, like on web search engines. Requires the ResultSet to be decorated with "url" metadata |
+| `labels`       | off      | Adds the labels to documents in the ResultSet, using org.terrier.learning.LabelDecorator. Require the qrels file to have been set, using property `learning.labels.file`. | 
 
 
 ## Query Expansion
