@@ -91,11 +91,11 @@ public class RandomDataInputMemory extends DataInputStream implements RandomData
             long remainingLength = length;
             for (int i = 0; i < parts; ++i) {
                 int bytesToRead = (int) Math.min(this.individual_buffer_size, remainingLength);
-                System.err.println("Reading from disk to memory " + bytesToRead + " bytes");
+                //System.err.println("Reading from disk to memory " + bytesToRead + " bytes");
                 data[i] = new byte[bytesToRead];
                 in.readFully(data[i]);
                 remainingLength -= bytesToRead;
-                System.err.println("array " + i + " length = " + bytesToRead + " bytes");
+                //System.err.println("array " + i + " length = " + bytesToRead + " bytes");
             }
              
             current_sector = data[0];

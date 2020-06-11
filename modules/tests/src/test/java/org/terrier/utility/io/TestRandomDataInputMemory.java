@@ -38,21 +38,21 @@ public class TestRandomDataInputMemory extends TestCase {
 	
 	@Test public void testSingle()  throws IOException
 	{
-		System.err.println("testSingle");
+		//System.err.println("testSingle");
 		RandomDataInput rdi = new RandomDataInputMemory(data);
 		doTest(rdi);			
 	}
 	
 	@Test public void testStream()  throws IOException
 	{
-		System.err.println("testStream");
+		//System.err.println("testStream");
 		RandomDataInput rdi = new RandomDataInputMemory(new DataInputStream(new ByteArrayInputStream(data)), (long)data.length);
 		doTest(rdi);
 	}
 	
 	@Test public void testStreamMulti()  throws IOException
 	{
-		System.err.println("testStreamMulti");
+		//System.err.println("testStreamMulti");
 		final int old = RandomDataInputMemory.MAX_INDIVIDUAL_BUFFER_SIZE;
 		
 		for(int l : new int[]{2,3,4,5,6})
@@ -70,7 +70,7 @@ public class TestRandomDataInputMemory extends TestCase {
 		for(byte b : data)
 		{
 			byte got = rdi.readByte();
-			System.err.println("Got=" + got + " expected " + b);
+			//System.err.println("Got=" + got + " expected " + b);
 			assertEquals(b, got);
 		}
 		rdi.seek(0);
