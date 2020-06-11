@@ -349,7 +349,10 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", disk, mem);
 		TestUtils.compareRetrieval("knuth", disk, mem);
 		TestUtils.compareRetrieval("turing", disk, mem);
+		String path = disk.getPath();
+		String prefix = disk.getPrefix();
 		disk.close();
+		IndexUtil.deleteIndex(path, prefix);
 	}
 
 	/*
@@ -359,10 +362,11 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 	public void test_compare2() throws Exception {
 		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
 		assertNotNull(mem);
-		assertFalse(IndexOnDisk.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields"));
-		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
+		String prefix = "memoryFields_compare2_" + System.currentTimeMillis();
+		assertFalse(IndexOnDisk.existsIndex(ApplicationSetup.TERRIER_INDEX_PATH, prefix));
+		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, prefix);
 		IndexOnDisk mem2disk = IndexOnDisk.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
-				"memoryFields");
+		prefix);
 		assertNotNull(mem2disk);
 		TestUtils.compareIndices(mem, mem2disk);
 		//TestUtils.compareProperties(mem, mem2disk);
@@ -371,7 +375,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("knuth", mem, mem2disk);
 		TestUtils.compareRetrieval("turing", mem, mem2disk);
 		mem2disk.close();
-		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
+		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, prefix);
 	}
 
 	/*
@@ -381,9 +385,10 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 	public void test_compare3() throws Exception {
 		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
 		assertNotNull(mem);
-		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
+		String prefix = "memoryFields_compare3" + System.currentTimeMillis();
+		mem.write(ApplicationSetup.TERRIER_INDEX_PATH, prefix);
 		IndexOnDisk mem2disk = IndexOnDisk.createIndex(ApplicationSetup.TERRIER_INDEX_PATH,
-				"memoryFields");
+				prefix);
 		assertNotNull(mem2disk);
 		IndexOnDisk disk = (IndexOnDisk) IndexTestUtils.makeIndex(docids, documents);
 		assertNotNull(disk);
@@ -393,9 +398,12 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		TestUtils.compareRetrieval("church", disk, mem2disk);
 		TestUtils.compareRetrieval("knuth", disk, mem2disk);
 		TestUtils.compareRetrieval("turing", disk, mem2disk);
+		String dpath = disk.getPath();
+		String dprefix = disk.getPrefix();
 		disk.close();
 		mem2disk.close();
-		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, "memoryFields");
+		IndexUtil.deleteIndex(ApplicationSetup.TERRIER_INDEX_PATH, prefix);
+		IndexUtil.deleteIndex(dpath, dprefix);
 	}
 
 	/*
