@@ -10,6 +10,8 @@ Terrier is written in Java, and is developed at the School of Computing Science,
 
 The latest version of Terrier can be found at https://github.com/terrier-org/terrier-core/
 
+New in 2020, Terrier has Python bindings called [PyTerrier](https://github.com/terrier-org/pyterrier). PyTerrier allows experiments to be conducted in a succinct, declarative manner, including in Jupyter or Colab notebooks, while benefiting from the flexibility of Terrier.
+
 ### Open Source Licence
 
 Terrier is subject to the terms detailed in the Mozilla Public License Version 1.1. The Mozilla Public License can be found in the file
@@ -28,8 +30,7 @@ In order to start [experimenting with Terrier](http://terrier.org/docs/current/q
 
 ### Other Resources
 * The full documentation of Terrier can also be found on the offical [website](http://terrier.org/). 
-* [Terrier Forum](http://terrier.org/forum/) is a place where you can ask questions.
-* Bug reports or requests for new features can be posted on the [issue tracker](http://terrier.org/issues/browse/TR). 
+* Bug reports, question or requests for new features can be posted on the [issue tracker](https://github.com/terrier-org/terrier-core). 
 
 ------------------------
 > Webpage: <http://terrier.org>  
