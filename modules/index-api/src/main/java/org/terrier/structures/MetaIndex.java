@@ -48,6 +48,9 @@ import java.io.IOException;
  */
 public interface MetaIndex extends java.io.Closeable 
 {
+    /** How many documents in this metaindex */
+    int size();
+
     /** Obtain metadata of specified type for specified document. */
     String getItem(String Key, int docid) throws IOException;
     
@@ -60,7 +63,7 @@ public interface MetaIndex extends java.io.Closeable
     /** Obtain metadata of specified types for specified document. */
     String[] getItems(String[] keys, int docid) throws IOException;
     
-    /** Obtain metadata of specified types for specified documents. */
+    /** Obtain metadata of specified types for specified documents. Return array is indexed by documents, then by metakeys. */
     String[][] getItems(String Key[], int[] docids) throws IOException;
     
     /** Obtain docid where document has specified metadata value in the specified type. 

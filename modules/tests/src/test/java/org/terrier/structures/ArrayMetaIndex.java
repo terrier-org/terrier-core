@@ -41,6 +41,11 @@ public class ArrayMetaIndex implements MetaIndex {
 	{
 		meta = _meta;
 	}
+
+	@Override
+	public int size() {
+		return meta.length;
+	}
 	
 	@Override
 	public String[] getAllItems(int docid) throws IOException {

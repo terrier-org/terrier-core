@@ -117,6 +117,13 @@ public class MemoryMetaIndex extends MetaIndexBuilder implements MetaIndex,Seria
 
 	/** {@inheritDoc} */
 	@Override
+	public int size() {
+		return metadata.size();
+	}
+
+
+	/** {@inheritDoc} */
+	@Override
 	public String[] getKeys() {
 		return keys;
 	}

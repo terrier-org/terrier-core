@@ -614,6 +614,7 @@ public class CompressingMetaIndex implements MetaIndex {
 	protected int keyCount;
 	protected int[] valueByteOffsets;
 	protected int[] valueByteLengths;
+	protected int numDocs;
 	
 	protected final String path;
 	protected final String prefix;
@@ -632,6 +633,7 @@ public class CompressingMetaIndex implements MetaIndex {
 		throws IOException
 	{
 		this.path = index.getPath(); this.prefix = index.getPrefix();
+		numDocs = index.getCollectionStatistics().getNumberOfDocuments();
 		loadIndex(index, structureName);
 		final String dataFilename = 
 			path + ApplicationSetup.FILE_SEPARATOR + prefix + "."+structureName+".zdata";
@@ -675,6 +677,11 @@ public class CompressingMetaIndex implements MetaIndex {
 				"Bad property value for index."+structureName + ".source="+fileSource); 
 		}
 	}
+
+	public int size() {
+		return numDocs;
+	}
+
 	/** 
 	 * {@inheritDoc} 
 	 */

@@ -56,6 +56,14 @@ public class MultiMeta implements MetaIndex {
 	}
 
 	/** {@inheritDoc} */
+	public int size() {
+		int rtr = 0;
+		for (MetaIndex meta : metas)
+			rtr += meta.size();
+		return rtr;
+	}
+
+	/** {@inheritDoc} */
 	public String getItem(String key, int docid) throws IOException {
 		int offset = 0, i = 0;
 		for (MetaIndex meta : metas) {
