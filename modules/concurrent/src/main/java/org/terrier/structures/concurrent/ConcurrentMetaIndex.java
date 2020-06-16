@@ -89,4 +89,9 @@ class ConcurrentMetaIndex implements MetaIndex {
 		return parent.getKeys();
 	}
 
+	@Override
+	public int size() {
+		return parent.size();
+	}
+
 }
