@@ -123,9 +123,25 @@ public class IndexFactory
         // System.err.println(ApplicationSetup.getClassLoader());
         // System.err.println(IndexFactory.class.getClassLoader());
         Iterable<IndexLoader> loaders = ServiceLoader.load(IndexLoader.class, getClassLoader());
-        for (IndexLoader l : loaders)
-            if (l.supports(ref))
-                return l.load(ref);
-        return null;
+        boolean any_support = false;
+        boolean any_loaders = false;
+        for (IndexLoader l : loaders) {
+            any_loaders = true;
+            if (l.supports(ref)) {
+                any_support = true;
+                Index rtr = l.load(ref);
+                if (rtr == null) {
+                    throw new IllegalArgumentException("Could not load an index for ref " + ref.toString() + ", even though IndexLoader " 
+                        + l.getClass().getName() + " could support that type of index. It may be your ref had a wrong location; Terrier logs may have more information.");
+                }
+                return rtr;
+            }
+        }
+        if (! any_loaders)
+            throw new UnsupportedOperationException("No IndexLoaders found for indexref " + ref.toString() + " - probably Terrier is misconfigured - did you import terrier-core?");
+        if (! any_support)
+            throw new UnsupportedOperationException("No IndexLoaders were supported for indexref " + ref.toString() + "; It may be your ref has the wrong location. Alternatively, "
+                + "Terrier is misconfigured - did you import the correct package to deal with this indexref?");
+        throw new RuntimeException("This statement should be unreachable");
     }
 }
