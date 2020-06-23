@@ -111,14 +111,16 @@ public class ScoringMatching extends AbstractScoringMatching {
 		String[] qTerms = new String[terms];
 		EntryStatistics[] entryStats = new EntryStatistics[terms];
 		double[] keyFreqs = new double[terms];
+		Set<String>[] tags = new Set[terms];
 		
 		for (int i=0; i<terms; i++) {
 			qTerms[i] = plm.getTerm(i);
 			entryStats[i] = plm.getStatistics(i).getWritableEntryStatistics();
 			keyFreqs[i] = plm.getKeyFrequency(i);
+			tags[i] = plm.getTags(i);
 		}
 		
-		makeResultSet(qTerms, entryStats, keyFreqs);
+		makeResultSet(docCount, qTerms, entryStats, keyFreqs, tags);
 		
 		logger.info(this.getClass().getSimpleName() + " is rescoring " + docCount + " documents");
 		scored = 0;
@@ -178,10 +180,8 @@ public class ScoringMatching extends AbstractScoringMatching {
 		}
 	}
 
-	protected void makeResultSet(String[] qs, EntryStatistics[] es, double[] ks)
-	{
-		
-	}
+	protected void makeResultSet(int docCount, String[] qs, EntryStatistics[] es, double[] ks, Set<String>[] tags)
+	{}
 	
 	protected void assignScore(int offset, int docid, double score, IterablePosting[] postings)
 	{
