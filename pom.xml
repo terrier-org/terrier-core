@@ -71,7 +71,6 @@
 		<module>modules/concurrent</module>
 		<module>modules/realtime</module>
 		<module>modules/rest-server</module>
-		<module>modules/website-search</module>
 		<module>modules/assemblies</module>
 	</modules>
 

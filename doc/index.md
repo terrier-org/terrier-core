@@ -81,9 +81,6 @@ Table of Contents
 >[Web-based Terrier](terrier_http.md)  
 >A guide to using the Web-based application of Terrier.
 
->[Website Search Application](website_search.md)  
->A guide to using the website search application, which illustrates real-time crawling, indexing and retrieval functionalities in Terrier.
-
 >[Desktop Search](terrier_desktop.md)  
 >A summary of the Desktop Search application of Terrier available from Github.
 

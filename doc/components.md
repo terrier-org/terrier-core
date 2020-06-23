@@ -29,6 +29,14 @@ Terrier-EF provides support for writing and reading Elias Fano indices in Terrie
 ## terrier-micro
 Terrier-micro provides implementations of MaxScore, WAND, BlockMaxWAND for Terrier. Developed by Nicola Tonellotto.
 
+## Legacy
+
+A number of legacy components are available - these are now unmaintained:
+ - terrier-desktop - a Java Swing UI for searching files on your desktop (removed from terrier-platform)
+ - terrier-integer-compression - allows to change Terriers indices to PForDelta compression etc. (removed from terrier-platform)
+ - terrier-website-search - a website crawling application (removed from terrier-platform)
+
+
 ----------------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
