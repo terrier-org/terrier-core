@@ -118,6 +118,9 @@ public class QueryExpansion implements MQTRewritingProcess {
 	protected Lexicon<String> lexicon;
 	/** The direct index used for retrieval. */
 	protected PostingIndex<?> directIndex;
+
+	/** Set to true if this instancae has warned about the control "qemodel" not being set */
+	protected boolean warnQeModel = false;
 	
 	protected String expanderNames[] = ApplicationSetup.getProperty("qe.expansion.terms.class", "DFRBagExpansionTerms").split("\\s*,\\s*");
 	
@@ -163,8 +166,10 @@ public class QueryExpansion implements MQTRewritingProcess {
 		String qeModel = rq.getControl("qemodel");
 		if (qeModel == null || qeModel.length() ==0)
 		{
-			logger.warn("qemodel control not set for QueryExpansion"+
+			if (! warnQeModel)
+				logger.warn("qemodel control not set for QueryExpansion"+
 					" post process. Using default model Bo1");
+			warnQeModel = true;
 			qeModel = "Bo1";
 		}
 		setQueryExpansionModel(getQueryExpansionModel(qeModel));
