@@ -34,6 +34,7 @@ Terrier 5.3 - ??/??/2020
  - [#72](https://github.com/terrier-org/terrier-core/issues/72) specifying a version should be optional for specifying additional Maven packages
  - [#71](https://github.com/terrier-org/terrier-core/issues/71) Maven package resolver should try jitpack as well
  - [#74](https://github.com/terrier-org/terrier-core/issues/74) have a terrier.default.properties.file in src/main/resources
+ - [#77](https://github.com/terrier-org/terrier-core/issues/77) Unix scripts should work for locations with space
  - [#81](https://github.com/terrier-org/terrier-core/issues/81) Windows batch scripts had hardcoded memory and java locations 
  - [#82](https://github.com/terrier-org/terrier-core/issues/82) make Shakespeare test cases easier to re-use externally
  - [#86](https://github.com/terrier-org/terrier-core/issues/86) rename .sh files so they work on mingw64
