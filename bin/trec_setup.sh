@@ -43,21 +43,21 @@ fullPath () {
 	done
 }
 
-TERRIER_BIN=`dirname $0`
+TERRIER_BIN=`dirname "$0"`
 if [ -e "$TERRIER_BIN/terrier-env.sh" ];
 then
-	. $TERRIER_BIN/terrier-env.sh
+	. "$TERRIER_BIN"/terrier-env.sh
 fi
 
 #setup TERRIER_HOME
 if [ ! -n "$TERRIER_HOME" ]
 then
 	#find out where this script is running
-	TEMPVAR=`dirname $0`
+	TEMPVAR=`dirname "$0"`
 	#make the path abolute
 	fullPath TEMPVAR
 	#terrier folder is folder above
-	TERRIER_HOME=`dirname $TEMPVAR`
+	TERRIER_HOME=`dirname "$TEMPVAR"`
 	#echo "Setting TERRIER_HOME to $TERRIER_HOME"
 fi
 
@@ -73,33 +73,33 @@ then
 	#where is java?
 	TEMPVAR=`which java`
 	#j2sdk/bin folder is in the dir that java was in
-	TEMPVAR=`dirname $TEMPVAR`
+	TEMPVAR=`dirname "$TEMPVAR"`
 	#then java install prefix is folder above
-	JAVA_HOME=`dirname $TEMPVAR`
+	JAVA_HOME=`dirname "$TEMPVAR"`
 	#echo "Setting JAVA_HOME to $JAVA_HOME"
 fi
 
 #setup CLASSPATH
-JAR=`ls $TERRIER_HOME/modules/assemblies/target/terrier-project-*-jar-with-dependencies.jar`
+JAR=`ls "$TERRIER_HOME"/modules/assemblies/target/terrier-project-*-jar-with-dependencies.jar | tail -n 1`
 if [ ! -n "$CLASSPATH" ]
 then
-	CLASSPATH=$JAR:$TERRIER_HOME/etc/logback.xml
+	CLASSPATH="$JAR":"$TERRIER_HOME/etc/logback.xml"
 else
-	CLASSPATH=$CLASSPATH:$JAR:$TERRIER_HOME/etc/logback.xml
+	CLASSPATH=$CLASSPATH:"$JAR":"$TERRIER_HOME/etc/logback.xml"
 fi
 
 #echo $CLASSPATH
 
 
-$JAVA_HOME/bin/java $JAVA_OPTIONS -cp $CLASSPATH \
-	 -Dterrier.etc=$TERRIER_ETC \
-	 -Dterrier.home=$TERRIER_HOME \
-	 -Dterrier.setup=$TERRIER_ETC/terrier.properties \
-	 org.terrier.applications.batchquerying.TRECSetup $TERRIER_HOME
+$JAVA_HOME/bin/java $JAVA_OPTIONS -cp "$CLASSPATH" \
+	 -Dterrier.etc="$TERRIER_ETC" \
+	 -Dterrier.home="$TERRIER_HOME" \
+	 -Dterrier.setup="$TERRIER_ETC/terrier.properties" \
+	 org.terrier.applications.batchquerying.TRECSetup "$TERRIER_HOME"
 
 #updating the address_collection file
-find $1 -type f | sort >> $TERRIER_ETC/collection.spec
-tail $TERRIER_ETC/collection.spec
-LINES=`wc -l $TERRIER_ETC/collection.spec| awk '{print $1}'`
+find $1 -type f | sort >> "$TERRIER_ETC/collection.spec"
+tail "$TERRIER_ETC/collection.spec"
+LINES=`wc -l "$TERRIER_ETC/collection.spec" | awk '{print $1}'`
 echo "Updated collection.spec file ($LINES lines). Please check that it contains"
 echo "all and only all the files to be indexed, or create it manually."

@@ -33,28 +33,28 @@ fullPath () {
 	done
 }
 
-TERRIER_BIN=`dirname $0`
+TERRIER_BIN=`dirname "$0"`
 if [ -e "$TERRIER_BIN/terrier-env.sh" ];
 then
-    . $TERRIER_BIN/terrier-env.sh
+    . "$TERRIER_BIN"/terrier-env.sh
 fi
 
 #setup TERRIER_HOME
 if [ ! -n "$TERRIER_HOME" ]
 then
 	#find out where this script is running
-	TEMPVAR=`dirname $0`
+	TEMPVAR=`dirname "$0"`
 	#make the path abolute
 	fullPath TEMPVAR
 	#terrier folder is folder above
-	TERRIER_HOME=`dirname $TEMPVAR`
-	#echo "Setting TERRIER_HOME to $TERRIER_HOME"
+	TERRIER_HOME=`dirname "$TEMPVAR"`
+	#echo "Setting TERRIER_HOME to '$TERRIER_HOME'"
 fi
 
 #setup TERRIER_ETC
 if [ ! -n "$TERRIER_ETC" ]
 then
-	TERRIER_ETC=$TERRIER_HOME/etc
+	TERRIER_ETC="$TERRIER_HOME"/etc
 fi
 
 #setup JAVA_HOME
@@ -63,26 +63,26 @@ then
 	#where is java?
 	TEMPVAR=`which java`
 	#j2sdk/bin folder is in the dir that java was in
-	TEMPVAR=`dirname $TEMPVAR`
+	TEMPVAR=`dirname "$TEMPVAR"`
 	#then java install prefix is folder above
-	JAVA_HOME=`dirname $TEMPVAR`
+	JAVA_HOME=`dirname "$TEMPVAR"`
 	#echo "Setting JAVA_HOME to $JAVA_HOME"
 fi
 
 #setup CLASSPATH
 if [ ! -n "$CLASSPATH" ];
 then
-	CLASSPATH=$JAVA_HOME/lib/tools.jar
+	CLASSPATH="$JAVA_HOME/lib/tools.jar"
 else
-	CLASSPATH=$CLASSPATH:$JAVA_HOME/lib/tools.jar
+	CLASSPATH=$CLASSPATH:"$JAVA_HOME/lib/tools.jar"
 fi
 
-JAR=`ls $TERRIER_HOME/modules/*/target/terrier-project-*-jar-with-dependencies.jar | xargs| tr ' ' :`
+JAR=`ls "$TERRIER_HOME"/modules/*/target/terrier-project-*-jar-with-dependencies.jar | tail -n 1`
 if [ ! -n "$CLASSPATH" ]
 then
-	CLASSPATH=$JAR:$TERRIER_ETC/logback.xml
+	CLASSPATH="$JAR":"$TERRIER_ETC/logback.xml"
 else
-	CLASSPATH=$CLASSPATH:$JAR:$TERRIER_ETC/logback.xml
+	CLASSPATH=$CLASSPATH:"$JAR":"$TERRIER_ETC/logback.xml"
 fi
 
 JAVA_MEM=""
@@ -119,11 +119,11 @@ done
 
 
 $JAVA_HOME/bin/java $JAVA_MEM $JAVA_OPTIONS $TERRIER_OPTIONS \
-	 -Dterrier.etc=$TERRIER_ETC \
-	 -Dterrier.home=$TERRIER_HOME \
-     -Dterrier.setup=$TERRIER_ETC/terrier.properties \
-     -Dlogback.configurationFile=$TERRIER_ETC/logback.xml \
-     -cp $CLASSPATH ${JVMARGS[@]} org.terrier.applications.CLITool $CLASS ${POSTARGS[@]}
+	 -Dterrier.etc="$TERRIER_ETC" \
+	 -Dterrier.home="$TERRIER_HOME" \
+     -Dterrier.setup="$TERRIER_ETC/terrier.properties" \
+     -Dlogback.configurationFile="$TERRIER_ETC/logback.xml" \
+     -cp "$CLASSPATH" ${JVMARGS[@]} org.terrier.applications.CLITool $CLASS ${POSTARGS[@]}
 
 if [ "$TERRIER_LIB_TMP" == "1" ];
 then
