@@ -4,27 +4,41 @@ What's New in Terrier
 Terrier 5.3 - ??/??/2020
 
 ### Indexing
+ - [#66]https://github.com/terrier-org/terrier-core/issues/66) realtime should support fields for direct index
  - [#84](https://github.com/terrier-org/terrier-core/issues/84) structure mergers and other indexing time operations load document index unnecessarily
  - [#85](https://github.com/terrier-org/terrier-core/issues/85) basic inverted index builder approx pointer counts are wrong in 5.2
  - [#87](https://github.com/terrier-org/terrier-core/issues/87) Always require explicit specification of the file encoding used to process files in TREC format.
+ - [#110](https://github.com/terrier-org/terrier-core/issues/110 deprecate ApplicationSetup.COLLECTION_SPEC
 
 ### Retrieval
  - Make TRECQuery (source) easier to use programatically - support for PyTerrier
- - not able to parse queries with non-latin characters. Fix by Anuj Saini, Indian Institute of Technology Kanpur.
+ - not able to parse queries with non-latin characters. Fix by Anuj Saini, Indian Institute of Technology Kanpur
+ - [#47](https://github.com/terrier-org/terrier-core/issues/47) document index should error/warn if not enough memory to load
  - [#79](https://github.com/terrier-org/terrier-core/issues/79) c control not passed to weighting model
  - [#80](https://github.com/terrier-org/terrier-core/issues/80) interactive should not die on a query parser error
- - [#87](https://github.com/terrier-org/terrier-core/issues/87) Always require explicit specification of the file encoding used to process files in TREC format.
+ - [#87](https://github.com/terrier-org/terrier-core/issues/87) Always require explicit specification of the file encoding used to process files in TREC format
  - [#94](https://github.com/terrier-org/terrier-core/issues/94) Fat is noisy on stdout/err
+ - [#96](https://github.com/terrier-org/terrier-core/issues/96) give SingleLineTRECQuery a more dev-friendly API
+ - [#97](https://github.com/terrier-org/terrier-core/issues/97) IndexUtil options are not working
+ - [#106](https://github.com/terrier-org/terrier-core/issues/106) ModuleManager.getActiveIterator() doesnt update when controls change
+ - [#107](https://github.com/terrier-org/terrier-core/issues/107), [#104](https://github.com/terrier-org/terrier-core/issues/104) Refactor out a clear index-api module, with thanks to Nicola Tonellotto, Univerity of Pisa
+ - [#113](https://github.com/terrier-org/terrier-core/issues/113) MetaIndex be able to report its size (i.e. number of documents)
+ - [#117](https://github.com/terrier-org/terrier-core/issues/117) IndexFactory.of() should not return null
+ - [#119](https://github.com/terrier-org/terrier-core/issues/119) a class for adding Fat to an existing ResultSet
 
 ### Other
  - Document other packages in the platform
  - Remove unused shell scripts.
- - Trim down modules in terrier-platform: integer-compression and website-search were removed.
+ - [#54](https://github.com/terrier-org/terrier-core/issues/54) remove trecterrier
+ - [#67](https://github.com/terrier-org/terrier-core/issues/67) Trim down modules in terrier-platform: integer-compression and website-search were removed.
  - [#72](https://github.com/terrier-org/terrier-core/issues/72) specifying a version should be optional for specifying additional Maven packages
  - [#71](https://github.com/terrier-org/terrier-core/issues/71) Maven package resolver should try jitpack as well
+ - [#74](https://github.com/terrier-org/terrier-core/issues/74) have a terrier.default.properties.file in src/main/resources
  - [#81](https://github.com/terrier-org/terrier-core/issues/81) Windows batch scripts had hardcoded memory and java locations 
  - [#82](https://github.com/terrier-org/terrier-core/issues/82) make Shakespeare test cases easier to re-use externally
+ - [#86](https://github.com/terrier-org/terrier-core/issues/86) rename .sh files so they work on mingw64
  - [#89](https://github.com/terrier-org/terrier-core/issues/89) better error message when a non-field index is used for field WeightingModel 
+ - [#111](https://github.com/terrier-org/terrier-core/issues/111) Document standard retrieval controls, with thanks to Arthur Camara, University of Delft
 
 
 Terrier 5.2 - 9/01/2020
