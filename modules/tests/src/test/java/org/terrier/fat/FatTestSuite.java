@@ -38,7 +38,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	TestFatFeaturedScoringMatching.class,
 	TestFatFullMatching.class,
 	TestFatScoringMatching.class,
-	TestLinearModelMatching.class
+	TestLinearModelMatching.class,
+	TestScoringMatchingWithFat.class
 })
 
 public class FatTestSuite {

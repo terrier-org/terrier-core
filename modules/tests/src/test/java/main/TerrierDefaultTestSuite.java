@@ -41,6 +41,7 @@ import org.terrier.fat.TestFatFeaturedScoringMatching;
 import org.terrier.fat.TestFatFullMatching;
 import org.terrier.fat.TestFatScoringMatching;
 import org.terrier.fat.TestLinearModelMatching;
+import org.terrier.fat.TestScoringMatchingWithFat;
 import org.terrier.indexing.TestCollectionFactory;
 import org.terrier.indexing.TestCollections;
 import org.terrier.indexing.TestCompressionConfig;
@@ -150,6 +151,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestFatFullMatching.class,
 	TestFatScoringMatching.class,
 	TestLinearModelMatching.class,
+	TestScoringMatchingWithFat.class,
 	
 	//.indexing
 	TestCollections.class,
