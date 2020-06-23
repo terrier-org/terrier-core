@@ -86,13 +86,6 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>terrier-website-search</artifactId>
-			<version>${project.version}</version>
-			<!-- <scope>provided</scope> -->
-		</dependency>
-
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>terrier-realtime</artifactId>
 			<version>${project.version}</version>
 			<!-- <scope>provided</scope> -->
