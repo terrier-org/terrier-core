@@ -115,6 +115,7 @@ public abstract class Indexer
 	 * document index, or empty documents should be ignored.
 	 */
 	protected boolean IndexEmptyDocuments;
+	protected int emptyDocCount = 0;
 	
 	/**
 	 * The builder that creates the direct index.
@@ -495,10 +496,12 @@ public abstract class Indexer
 	{
 		if (! IndexEmptyDocuments)
 			return;
-		/* add doc to documentindex, even though it's empty */	
-		logger.warn("Adding empty document "+docProperties.get("docno"));
+		/* add doc to documentindex, even though it's empty */
+		if (emptyDocCount == 0)
+			logger.warn("Adding an empty document to the index ("+docProperties.get("docno")+") - further warnings are suppressed");
 		docIndexBuilder.addEntryToBuffer(emptyDocIndexEntry);
-		metaBuilder.writeDocumentEntry(docProperties);	
+		metaBuilder.writeDocumentEntry(docProperties);
+		emptyDocCount++;
 	}
 
 	/** Utility method for merging indices */

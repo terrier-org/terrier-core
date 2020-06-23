@@ -301,7 +301,9 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 				logger.info("Collection #"+collectionNo+" total time "+( (endCollection-startCollection)/1000+partialTime));
 				long secs = ((endCollection-startCollection)/1000);
 				if (secs > 3600)
-	                 logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
+					 logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
+				if (emptyDocCount > 0)
+					logger.warn("Indexed " + emptyDocCount + " empty documents");
 			} catch (Exception e) {
 				logger.error("Problem finishing index", e);
 			}

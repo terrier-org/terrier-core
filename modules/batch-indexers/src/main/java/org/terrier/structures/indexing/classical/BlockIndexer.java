@@ -438,7 +438,8 @@ public class BlockIndexer extends Indexer {
 				+"("+numberOfDocuments+" documents)\n");
 			if (secs > 3600)
 				 logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
-
+			if (emptyDocCount > 0)
+				logger.warn("Indexed " + emptyDocCount + " empty documents");
 			if (! notLastDoc)
 			{
 				try{

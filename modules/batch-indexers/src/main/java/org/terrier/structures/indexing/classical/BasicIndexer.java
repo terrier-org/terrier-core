@@ -321,7 +321,9 @@ public class BasicIndexer extends Indexer
 			logger.info("Collection #"+collectionNo+ " took "+secs+" seconds to index "
 				+"("+numberOfDocuments+" documents)");
 			if (secs > 3600)
-				 logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour"); 
+				 logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
+			if (emptyDocCount > 0)
+				logger.warn("Indexed " + emptyDocCount + " empty documents");
 		}
 		finishedDirectIndexBuild();
 		/*end of all the collections has been reached */
