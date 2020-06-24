@@ -30,7 +30,8 @@ In order to start [experimenting with Terrier](http://terrier.org/docs/current/q
 
 ### Other Resources
 * The full documentation of Terrier can also be found on the offical [website](http://terrier.org/). 
-* Bug reports, question or requests for new features can be posted on the [issue tracker](https://github.com/terrier-org/terrier-core). 
+* Bug reports, question or requests for new features can be posted on the [issue tracker](https://github.com/terrier-org/terrier-core/issues).
+* More information about PyTerrier can be found at its [Github repo](https://github.com/terrier-org/pyterrier).
 
 ------------------------
 > Webpage: <http://terrier.org>  
