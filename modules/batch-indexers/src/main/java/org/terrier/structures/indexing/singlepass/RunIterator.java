@@ -35,7 +35,7 @@ import java.util.Iterator;
   * @author Craig Macdonald
   * @since 2.2
     */
-public abstract class RunIterator implements Iterator<PostingInRun>, Closeable {
+abstract class RunIterator implements Iterator<PostingInRun>, Closeable {
 
 	/** class that new postings are derived from */
 	protected Class<? extends PostingInRun> postingClass;

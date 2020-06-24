@@ -41,7 +41,7 @@ import org.terrier.structures.postings.WritablePosting;
  * @author Roi Blanco
  *
  */
-public class SimplePostingInRun extends PostingInRun {
+class SimplePostingInRun extends PostingInRun {
 	
 	/**
 	 * Constructor for the class.

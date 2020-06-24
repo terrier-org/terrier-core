@@ -27,7 +27,7 @@ package org.terrier.structures.indexing.singlepass;
 
 /** Creates FileRunIterators, using the specificed filenames as the run data files, and
   * the specified class as the type of the postings in the run files */
-public class FileRunIteratorFactory extends RunIteratorFactory {
+class FileRunIteratorFactory extends RunIteratorFactory {
 	/** type of the postings in the run data files */
 	Class <? extends PostingInRun> postingClass;
 	/** all the run filesnames */

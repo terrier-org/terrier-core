@@ -34,7 +34,7 @@ import java.io.IOException;
  * @author Roi Blanco
  *
  */
-public class BlockFieldPosting extends BlockPosting{
+class BlockFieldPosting extends BlockPosting{
 	/** 
 	 * Writes out the first document to the MemorySBOS.
 	 */

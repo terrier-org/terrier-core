@@ -35,7 +35,7 @@ import java.io.IOException;
  * @author Roi Blanco
  *
  */
-public class BlockPosting extends Posting{
+class BlockPosting extends Posting{
 	
 	/**
 	 * Writes the first document in the posting list.

@@ -35,7 +35,7 @@ import java.io.IOException;
  * @author Roi Blanco and Craig Macdonald
  *
  */
-public class FieldPosting extends Posting{
+class FieldPosting extends Posting{
 	/**
 	 * Writes the first document in the posting list.
 	 * @param doc the document identifier.

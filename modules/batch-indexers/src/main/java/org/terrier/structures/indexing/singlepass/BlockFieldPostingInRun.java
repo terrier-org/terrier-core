@@ -43,7 +43,7 @@ import org.terrier.structures.postings.WritablePosting;
  * @author Roi Blanco
  *
  */
-public class BlockFieldPostingInRun extends BlockPostingInRun{
+class BlockFieldPostingInRun extends BlockPostingInRun{
 	/** The number of different fields that are used for indexing field information.*/	
 	protected final int fieldTags;
 	

@@ -42,7 +42,7 @@ import org.terrier.structures.postings.WritablePosting;
  * @author Roi Blanco
  *
  */
-public class FieldPostingInRun extends SimplePostingInRun {
+class FieldPostingInRun extends SimplePostingInRun {
 		
 	protected final int[] fieldTFs;
 	

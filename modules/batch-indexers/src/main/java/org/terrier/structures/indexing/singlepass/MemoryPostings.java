@@ -42,7 +42,7 @@ import org.terrier.structures.indexing.DocumentPostingList;
  * Class for handling Simple posting lists in memory while indexing.
  * @author Roi Blanco
  */
-public class MemoryPostings {
+class MemoryPostings {
 	/** logger to use in this class */
 	protected static final Logger logger = LoggerFactory.getLogger(MemoryPostings.class); 
 	

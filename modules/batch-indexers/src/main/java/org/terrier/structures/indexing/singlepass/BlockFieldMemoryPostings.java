@@ -36,7 +36,7 @@ import org.terrier.structures.indexing.DocumentPostingList;
  * @author Roi Blanco
  *
  */
-public class BlockFieldMemoryPostings extends BlockMemoryPostings{
+class BlockFieldMemoryPostings extends BlockMemoryPostings{
 	/** 
 	 * {@inheritDoc} 
 	 */

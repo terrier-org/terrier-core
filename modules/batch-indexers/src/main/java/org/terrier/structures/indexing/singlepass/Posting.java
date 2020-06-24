@@ -37,7 +37,7 @@ import org.terrier.compression.bit.MemorySBOS;
  * @author Roi Blanco
  *
  */
-public class Posting {
+class Posting {
 	
 	/** The term frequency */
 	protected int TF;

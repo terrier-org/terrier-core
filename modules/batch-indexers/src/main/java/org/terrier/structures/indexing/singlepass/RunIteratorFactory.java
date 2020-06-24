@@ -31,7 +31,7 @@ package org.terrier.structures.indexing.singlepass;
   * @author Craig Macdonald
     * @since 2.2
   */
-public abstract class RunIteratorFactory {
+abstract class RunIteratorFactory {
 	protected int numberOfFields;
 	
 	protected RunIteratorFactory(int numF)

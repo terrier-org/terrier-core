@@ -38,7 +38,7 @@ import org.terrier.utility.Files;
   * @author Craig Macdonald
   * @param <K>
     */
-public class FileRunIterator<K extends PostingInRun> extends RunIterator {
+class FileRunIterator<K extends PostingInRun> extends RunIterator {
 
 	/** Input stream for reading the run. */
 	protected BitIn mbis;

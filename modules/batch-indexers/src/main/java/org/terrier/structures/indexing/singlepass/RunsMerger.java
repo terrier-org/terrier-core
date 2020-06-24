@@ -49,7 +49,7 @@ import org.terrier.structures.LexiconOutputStream;
  * @author Roi Blanco and Craig Macdonald
  * @since 2.0
   */
-public class RunsMerger {
+class RunsMerger {
 	
 	/**
 	 * Implements a comparator for RunIterators (so it can be used by the queue).

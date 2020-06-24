@@ -35,7 +35,7 @@ import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.postings.IterablePosting;
 
 /** Base class for PostingInRun classes */
-public abstract class PostingInRun {
+abstract class PostingInRun {
 
 	/** source for postings to be read from */
 	protected BitIn postingSource;

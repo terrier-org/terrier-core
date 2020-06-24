@@ -39,7 +39,7 @@ import org.terrier.utility.Files;
  * It also writes the max frequency of a term in the run (useful for allocating memory during the merging phase).
  * @author Roi Blanco
  */
-public class RunWriter {
+class RunWriter {
 	/** Underlying {@link org.terrier.compression.bit.BitOutputStream} to write the compressed objects */
 	protected final BitOutputStream bos;
 	/** Underlying {@link java.io.DataOutputStream} to write the term Strings */

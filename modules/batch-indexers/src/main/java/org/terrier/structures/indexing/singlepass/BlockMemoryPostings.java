@@ -35,7 +35,7 @@ import org.terrier.structures.indexing.DocumentPostingList;
  * Class for handling posting lists containing block information in memory while indexing.
  * @author Roi Blanco
  */
-public class BlockMemoryPostings extends MemoryPostings{
+class BlockMemoryPostings extends MemoryPostings{
 
 	/**  	 
 	 * Add the terms in a DocumentPostingList to the postings in memory. 	 

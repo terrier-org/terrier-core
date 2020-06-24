@@ -35,7 +35,7 @@ import org.terrier.structures.indexing.FieldDocumentPostingList;
  * @author Roi Blanco
  *
  */
-public class FieldsMemoryPostings extends MemoryPostings{
+class FieldsMemoryPostings extends MemoryPostings{
 	
 	/** {@inheritDoc} */
 	public void addTerms(DocumentPostingList docPostings, int docid) throws IOException{
