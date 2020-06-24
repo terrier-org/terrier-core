@@ -146,6 +146,24 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 				new String[]{"d", "today"}
 			});
 	}
+
+	@Test public void testManyKeyManyValueBinaryRev() throws Exception
+	{
+		IndexOnDisk index = createMetaIndex("meta", new String[]{"docno", "words"}, new int[]{1, 15}, new String[0], new String[][]{
+			new String[]{"a", "The lazy cat"},
+			new String[]{"b", "jumped over the"},
+			new String[]{"c", "sleeping dog"},
+			new String[]{"d", "today"}
+		});
+		MetaIndex meta = index.getMetaIndex();
+		for(int i=0;i<meta.size();i++)
+		{
+			String docno = meta.getItem("docno", i);
+			assertEquals(i, meta.getDocument("docno", docno));
+		}
+		index.close();
+		IndexUtil.deleteIndex(index.getPath(), index.getPrefix());		
+	}
 	
 	@Test public void testDifferentName() throws Exception
 	{
@@ -211,19 +229,13 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		});
 	}
 	
-	
-	protected void testBase(String name, String[] keyNames, int[] keyLengths, String[] revKeys, String[][] data) throws Exception
+	protected IndexOnDisk createMetaIndex(String name, String[] keyNames, int[] keyLengths, String[] revKeys, String[][] data) throws Exception
 	{
 		IndexOnDisk index = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 		assertNotNull("Index should not be null", index);
 		MetaIndexBuilder b = new CompressingMetaIndexBuilder(index, name,
 				keyNames, keyLengths, revKeys);
 		assertNotNull(b);
-		Set<String> rev = new HashSet<String>();
-		for(String revKey : revKeys)
-		{
-			rev.add(revKey);
-		}
 		
 		for(String[] dataOne : data)
 		{
@@ -232,9 +244,18 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		b.close();
 		b = null;
 		finishedCreatingMeta(index, name);
-		//index.close();  Index.createIndex("/tmp", "test");
-		
+		return index;
+	}
+	
+	protected void testBase(String name, String[] keyNames, int[] keyLengths, String[] revKeys, String[][] data) throws Exception
+	{
+		IndexOnDisk index = createMetaIndex(name, keyNames, keyLengths, revKeys, data);		
 		int offset = 0;
+		Set<String> rev = new HashSet<String>();
+		for(String revKey : revKeys)
+		{
+			rev.add(revKey);
+		}
 		for(String key : keyNames)
 		{	
 			String[] meta_for_this_key = slice(data, offset);
@@ -243,13 +264,8 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 			checkStream(index, name, meta_for_this_key, offset);					
 			offset++;
 		}
-//		String[] meta_for_first_key = slice(data, 0);
-//		checkMRInputFormat(index, name, meta_for_first_key, -1);// 1 split
-//		checkMRInputFormat(index, name, meta_for_first_key, 20);// 2 splits
-//		checkMRInputFormat(index, name, meta_for_first_key, 10);// 3 splits
-		
 		index.close();
-		IndexUtil.deleteIndex(((IndexOnDisk)index).getPath(), ((IndexOnDisk)index).getPrefix());
+		IndexUtil.deleteIndex(index.getPath(), index.getPrefix());
 	}
 	
 	protected static String[] slice(String[][] in, int index)

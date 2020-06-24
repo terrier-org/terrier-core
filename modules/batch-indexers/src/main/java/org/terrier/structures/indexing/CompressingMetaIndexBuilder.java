@@ -299,6 +299,7 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 		index.setIndexProperty("index."+structureName+".key-names", ArrayUtils.join(keyNames, ","));
 		index.setIndexProperty("index."+structureName+".value-lengths", ArrayUtils.join(valueLensChars, ","));
 		index.setIndexProperty("index."+structureName+".entry-length", ""+entryLengthBytes);
+		index.setIndexProperty("index."+structureName+".value-sorted", ArrayUtils.join(forwardKeyValuesSorted, ","));
 		index.setIndexProperty("index."+structureName+".data-source",
 			currentOffset > MAX_MB_IN_MEM_RETRIEVAL * (long)1024 * (long)1024 
 			? "file"

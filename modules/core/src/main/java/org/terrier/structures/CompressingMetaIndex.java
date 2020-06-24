@@ -476,16 +476,15 @@ public class CompressingMetaIndex implements MetaIndex {
 			valueByteLengths = new int[_tmpValueLengths.length];
 			int _recordLength = 0;
 			if (_index.getIndexProperty("index."+_structureName+".value-lengths", "").length()>0) {
-			for(String lens : _tmpValueLengths)
-			{
-				valueByteLengths[i] = FixedSizeTextFactory.getMaximumTextLength(Integer.parseInt(lens));
-				_recordLength += valueByteLengths[i];
-				i++;
-			}
+				for(String lens : _tmpValueLengths)
+				{
+					valueByteLengths[i] = FixedSizeTextFactory.getMaximumTextLength(Integer.parseInt(lens));
+					_recordLength += valueByteLengths[i];
+					i++;
+				}
 			}
 			recordLength = _recordLength;
 			keyCount = valueByteLengths.length;
-			
 			//5. offsets in file
 			lastId = _endId;
 			numberOfRecords = _index.getIntIndexProperty("index."+_structureName+".entries", 0);
@@ -614,6 +613,7 @@ public class CompressingMetaIndex implements MetaIndex {
 	protected int keyCount;
 	protected int[] valueByteOffsets;
 	protected int[] valueByteLengths;
+	protected boolean[] valuesSorted;
 	protected int numDocs;
 	
 	protected final String path;
@@ -638,6 +638,17 @@ public class CompressingMetaIndex implements MetaIndex {
 		final String dataFilename = 
 			path + ApplicationSetup.FILE_SEPARATOR + prefix + "."+structureName+".zdata";
 		long dataFileLength = Files.length(dataFilename);
+
+		valuesSorted = new boolean[keyCount];
+		if (index.getIndexProperty("index."+structureName+".value-sorted", "").length()>0) {
+			String[] values = index.getIndexProperty("index."+structureName+".value-sorted", "").split("\\s*,\\s*");
+			assert values.length == keyCount;
+			for(int i=0;i<keyCount;i++) {
+				valuesSorted[i] = Boolean.parseBoolean(values[i]);
+			}
+		} else {				
+			Arrays.fill(valuesSorted, false);
+		}
 
 		String fileSource = index.getIndexProperty("index."+structureName + ".data-source", "fileinmem");
 		ByteAccessor _dataSource = null;
@@ -705,19 +716,66 @@ public class CompressingMetaIndex implements MetaIndex {
 	public String[] getReverseKeys() {
 		return key2forwardOffset.keys(new String[key2forwardOffset.size()]);
 	}
+
+	/** performs a binary search on the metaindex, if they keys happen to be in lexographical order */
+	protected int _binarySearch(String key, String value) throws IOException {
+		int l = 0, r = this.size() - 1; 
+        while (l <= r) { 
+            int m = l + (r - l) / 2; 
+  
+			String found = getItem(key, m);
+			// Check if value is present at mid
+			int compare = value.compareTo(found);			
+            if (compare == 0)
+                return m; 
+  
+            // If x greater, ignore left half 
+            if (compare > 0) 
+                l = m + 1; 
+  
+            // If x is smaller, ignore right half 
+            else
+                r = m - 1; 
+        }  
+        // if we reach here, then element was 
+        // not present 
+        return -1; 
+	}
 	
 	/** {@inheritDoc} */
 	public int getDocument(String key, String value) throws IOException {
+		
+		//use a reverse meta lookup, if possible
 		final int forwardId = key2forwardOffset.get(key) -1;
-		if (forwardId == -1)
-			throw new NoSuchElementException("No reverse lookup for key " + key + " is supported");
-		final Text wKey = keyFactories[forwardId].newInstance();
-		wKey.set(value);
-		assert forwardMetaMaps[forwardId].size() > 0;
-		final IntWritable rtr = forwardMetaMaps[forwardId].get(wKey);		
-		if (rtr == null)
-			return -1;
-		return rtr.get();
+		if (forwardId != -1) {
+
+			final Text wKey = keyFactories[forwardId].newInstance();
+			wKey.set(value);
+			assert forwardMetaMaps[forwardId].size() > 0;
+			final IntWritable rtr = forwardMetaMaps[forwardId].get(wKey);		
+			if (rtr == null)
+				return -1;
+			return rtr.get();
+
+		} else {
+			int i=-1;
+			for (String k : this.keyNames)
+			{	
+				i++;
+				if (k.equals(key))
+				{
+					break;
+				}
+			}
+			if (i == this.keyCount){
+				throw new NoSuchElementException("Unknown key " + key);
+			}
+			if (! this.valuesSorted[i])
+			{
+				throw new NoSuchElementException("No reverse lookup for key " + key + " is supported, and metadata for that key is not sorted");
+			}
+			return _binarySearch(key, value);
+		}		
 	}
 	
 	/** {@inheritDoc}.

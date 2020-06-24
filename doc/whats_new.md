@@ -25,12 +25,14 @@ Terrier 5.3 - ??/??/2020
  - [#113](https://github.com/terrier-org/terrier-core/issues/113) MetaIndex be able to report its size (i.e. number of documents)
  - [#117](https://github.com/terrier-org/terrier-core/issues/117) IndexFactory.of() should not return null
  - [#119](https://github.com/terrier-org/terrier-core/issues/119) a class for adding Fat to an existing ResultSet
+ - [#120](https://github.com/terrier-org/terrier-core/issues/120) binarysearch the MetaIndex when possible
+ 
 
 ### Other
  - Document other packages in the platform
  - Remove unused shell scripts.
- - [#54](https://github.com/terrier-org/terrier-core/issues/54) remove trecterrier
- - [#67](https://github.com/terrier-org/terrier-core/issues/67) Trim down modules in terrier-platform: integer-compression and website-search were removed.
+ - [#54](https://github.com/terrier-org/terrier-core/issues/54) remove the legacy TrecTerrier utility scripts and application 
+ - [#67](https://github.com/terrier-org/terrier-core/issues/67) Trim down modules in terrier-platform: integer-compression and website-search were removed
  - [#72](https://github.com/terrier-org/terrier-core/issues/72) specifying a version should be optional for specifying additional Maven packages
  - [#71](https://github.com/terrier-org/terrier-core/issues/71) Maven package resolver should try jitpack as well
  - [#74](https://github.com/terrier-org/terrier-core/issues/74) have a terrier.default.properties.file in src/main/resources
