@@ -226,7 +226,6 @@ public class MultiIndex extends Index {
 			i.close();
 	}
 
-	/** {@inheritDoc} */
 	public void flush() throws IOException {
 		for (Index i : this.indices)
 			if (i instanceof Flushable)

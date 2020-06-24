@@ -246,7 +246,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.1.0</version>
+						<version>3.2.0</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -267,6 +267,7 @@
 									<windowtitle>${project.parent.Name} ${project.version} API</windowtitle>
 									<failOnError>false</failOnError>
 									<failOnWarnings>false</failOnWarnings>
+									<detectJavaApiLink>false</detectJavaApiLink>
 									<doclint>none</doclint> <!-- https://stackoverflow.com/questions/15886209/maven-is-not-working-in-java-8-when-javadoc-tags-are-incomplete#comment82738599_16743137 -->
 								</configuration>
 							</execution>

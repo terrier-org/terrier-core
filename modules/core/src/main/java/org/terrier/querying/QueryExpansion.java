@@ -85,7 +85,7 @@ public class QueryExpansion implements MQTRewritingProcess {
 		}
 	}
 
-	/** Get the standard configuration for QueryExpansion, namely number of terms & docs, 
+	/** Get the standard configuration for QueryExpansion, namely number of terms and docs, 
 	 * from the Request, using two controls.
 	 */
 	public static QueryExpansionConfig configFromRequest(Request r) {
