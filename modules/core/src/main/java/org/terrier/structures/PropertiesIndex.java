@@ -95,6 +95,17 @@ public abstract class PropertiesIndex extends Index implements Closeable, Flusha
 		public int getNumberOfUniqueTerms() {
 			return Integer.parseInt(properties.getProperty("num.Terms", "0"));
 		}
+
+		@Override
+		public boolean hasPositions() {
+			boolean blocks = false;
+			if (hasIndexStructure("inverted")) {
+				blocks = getIntIndexProperty("index.inverted.blocks", 0) > 0;
+			} else if (hasIndexStructure("direct")) {
+				blocks = getIntIndexProperty("index.direct.blocks", 0) > 0;
+			}
+			return blocks;
+		}
 		
 	}
 

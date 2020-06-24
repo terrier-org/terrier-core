@@ -47,7 +47,7 @@ public class MemoryCollectionStatistics extends CollectionStatistics implements 
 	 */
 	public MemoryCollectionStatistics(int numDocs, int numTerms,
 			long numTokens, long numPointers, long[] fieldTokens, String[] fieldNames) {
-		super(numDocs, numTerms, numTokens, numPointers, fieldTokens, fieldNames);
+		super(numDocs, numTerms, numTokens, numPointers, fieldTokens, fieldNames, false);
 	}
 
 	/**

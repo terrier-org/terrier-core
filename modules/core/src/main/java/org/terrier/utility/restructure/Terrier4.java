@@ -120,6 +120,14 @@ public class Terrier4 {
 			if (oldvalue.contains("Block")) blocks=true;
 			if (oldvalue.contains("Field")) fields=true;
 		}
+		if (blocks)
+		{
+			//these values are the most likely values
+			indexProperties.setProperty("index.inverted.blocks", "1");
+			indexProperties.setProperty("index.direct.blocks", "1");
+			indexProperties.setProperty("index.inverted.blocks.max", String.valueOf(ApplicationSetup.MAX_BLOCKS));
+			indexProperties.setProperty("index.direct.blocks.max", String.valueOf(ApplicationSetup.MAX_BLOCKS));	
+		}
 		
 		for (Object k : indexProperties.keySet()) {
 			String key = (String)k;

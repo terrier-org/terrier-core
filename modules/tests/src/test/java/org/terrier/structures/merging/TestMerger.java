@@ -51,12 +51,13 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		new BlockStructureMerger(index1, index2, merged1).mergeStructures();
 		
 		checkTerm(merged1, "sentence", 2, true, false);
+		assertTrue(merged1.getCollectionStatistics().hasPositions());
 		
 		IndexOnDisk merged2 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new BlockStructureMerger(merged1, index3, merged2).mergeStructures();
 		
 		assertEquals(3, merged2.getCollectionStatistics().getNumberOfDocuments());
-		
+		assertTrue(merged2.getCollectionStatistics().hasPositions());
 		checkTerm(merged2, "sentence", 3, true, false);
 	}
 	
@@ -88,13 +89,16 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		ApplicationSetup.setProperty("indexing.max.docs.per.builder", "1");
 		IndexOnDisk index1 = (IndexOnDisk) IndexTestUtils.makeIndexBlocks(new String[]{"doc1", "doc1a"}, new String[]{"this is a sentence", "this is also a sentence"});
 		checkTerm(index1, "sentence", 2, true, false);
+		assertTrue(index1.getCollectionStatistics().hasPositions());
 		
 		IndexOnDisk index2 = (IndexOnDisk) IndexTestUtils.makeIndexBlocks(new String[]{"doc2"}, new String[]{"a third sentence"});
 		checkTerm(index2, "sentence", 1, true, false);
+		assertTrue(index2.getCollectionStatistics().hasPositions());
 		
 		IndexOnDisk merged = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new BlockStructureMerger(index1, index2, merged).mergeStructures();
-
+		
+		assertTrue(merged.getCollectionStatistics().hasPositions());
 		assertEquals(3, merged.getCollectionStatistics().getNumberOfDocuments());
 		checkTerm(merged, "sentence", 3, true, false);
 		

@@ -67,6 +67,8 @@ public class BlockShakespeareEndToEndTest extends BasicShakespeareEndToEndTest {
 			bpi = (PostingIndex<Pointer>) index.getDirectIndex();
 			ip = bpi.getPostings(index.getDocumentIndex().getDocumentEntry(0));
 			assertTrue(ip instanceof BlockPosting);
+
+			assertTrue(index.getCollectionStatistics().hasPositions());
 		}
 	}
 	

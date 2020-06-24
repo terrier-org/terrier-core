@@ -48,6 +48,7 @@ public class MultiStats extends CollectionStatistics {
 		final int fieldCount = stats[0].getNumberOfFields();
 		long[] fieldTokens = new long[fieldCount];
 		String[] fieldNames = stats[0].getFieldNames();
+		boolean blocks = true;
 		for (CollectionStatistics stat : stats) {
 			assert fieldCount == stat.getNumberOfFields();
 			numDocs += stat.getNumberOfDocuments();
@@ -59,17 +60,19 @@ public class MultiStats extends CollectionStatistics {
 			{
 				fieldTokens[fi] += stat.getFieldTokens()[fi];
 			}
+			if (! stat.hasPositions())
+				blocks = false;
 		}
 
 		return new MultiStats(numDocs, numTerms, numTokens, numPointers,
-				fieldTokens, fieldNames);
+				fieldTokens, fieldNames, blocks);
 	}
 
 	/*
 	 * Private constructor.
 	 */
 	private MultiStats(int numDocs, int numTerms, long numTokens,
-			long numPointers, long[] fieldTokens, String[] fieldNames) {
-		super(numDocs, numTerms, numTokens, numPointers, fieldTokens, fieldNames);
+			long numPointers, long[] fieldTokens, String[] fieldNames, boolean blocks) {
+		super(numDocs, numTerms, numTokens, numPointers, fieldTokens, fieldNames, blocks);
 	}
 }

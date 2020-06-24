@@ -529,6 +529,14 @@ public class IndexOnDisk extends PropertiesIndex {
 			tokensF[fi] = Long.parseLong(properties.getProperty("num.field."
 					+ fi + ".Tokens", "0"));
 		}
+
+		boolean blocks = false;
+		if (this.hasIndexStructure("inverted")) {
+			blocks = getIntIndexProperty("index.inverted.blocks", 0) > 0;
+		} else if (this.hasIndexStructure("direct")) {
+			blocks = getIntIndexProperty("index.direct.blocks", 0) > 0;
+		}
+
 		// create collection statistics
 		structureCache.put(
 				"collectionstatistics",
@@ -538,7 +546,8 @@ public class IndexOnDisk extends PropertiesIndex {
 						Long.parseLong(properties.getProperty("num.Tokens", "0")), 
 						Long.parseLong(properties.getProperty("num.Pointers", "0")), 
 						tokensF, 
-						ArrayUtils.parseCommaDelimitedString(properties.getProperty("index.inverted.fields.names", ""))
+						ArrayUtils.parseCommaDelimitedString(properties.getProperty("index.inverted.fields.names", "")),
+						blocks
 						));
 	}
 

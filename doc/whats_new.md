@@ -22,6 +22,7 @@ Terrier 5.3 - ??/??/2020
  - [#97](https://github.com/terrier-org/terrier-core/issues/97) IndexUtil options are not working
  - [#106](https://github.com/terrier-org/terrier-core/issues/106) ModuleManager.getActiveIterator() doesnt update when controls change
  - [#107](https://github.com/terrier-org/terrier-core/issues/107), [#104](https://github.com/terrier-org/terrier-core/issues/104) Refactor out a clear index-api module, with thanks to Nicola Tonellotto, Univerity of Pisa
+ - [#112](https://github.com/terrier-org/terrier-core/issues/112) Index API should have definitive way of determining if index has positions, with thanks to Nicola Tonellotto, Univerity of Pisa
  - [#113](https://github.com/terrier-org/terrier-core/issues/113) MetaIndex be able to report its size (i.e. number of documents)
  - [#117](https://github.com/terrier-org/terrier-core/issues/117) IndexFactory.of() should not return null
  - [#119](https://github.com/terrier-org/terrier-core/issues/119) a class for adding Fat to an existing ResultSet

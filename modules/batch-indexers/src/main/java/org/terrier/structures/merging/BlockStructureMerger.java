@@ -26,8 +26,8 @@
 package org.terrier.structures.merging;
 
 import org.terrier.utility.ApplicationSetup;
+import java.io.IOException;
 import java.util.Date;
-
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.indexing.CompressionFactory;
@@ -63,7 +63,39 @@ public class BlockStructureMerger extends StructureMerger {
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldNames, blocks, maxblocks);
 	}
 
-	
+	@Override
+	protected void mergeInvertedFiles() {
+		super.mergeInvertedFiles();
+		matchBlockProperties("inverted");		
+	}
+
+	@Override
+	protected void mergeDirectFiles() {
+		super.mergeDirectFiles();
+		matchBlockProperties("direct");
+	}
+
+	protected void matchBlockProperties(String structureName) {
+		int blocks1 = srcIndex1.getIntIndexProperty("index."+structureName+".blocks", 1);
+		int maxblocks1 = srcIndex1.getIntIndexProperty("index."+structureName+".blocks.max", ApplicationSetup.MAX_BLOCKS);
+		int blocks2 = srcIndex2.getIntIndexProperty("index."+structureName+".blocks", 1);
+		int maxblocks2 = srcIndex2.getIntIndexProperty("index."+structureName+".blocks.max", ApplicationSetup.MAX_BLOCKS);
+		if (blocks1 != blocks2)
+		{
+			logger.warn("Blocks indexing configuration mismatch in merged indices: index."+structureName+".blocks in the source indices is " + blocks1 + "," + blocks2);
+		}
+		if (maxblocks1 != maxblocks2)
+		{
+			logger.warn("Blocks indexing configuration mismatch in merged indices: index."+structureName+".blocks.max in the source indices is " + maxblocks1 + "," + maxblocks2);
+		}
+		destIndex.setIndexProperty("index."+structureName+".blocks", String.valueOf(blocks1));
+		destIndex.setIndexProperty("index."+structureName+".blocks.max", String.valueOf(maxblocks1));
+		try{
+			destIndex.flush();
+		} catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
 
 
 	/** usage: java org.terrier.structures.merging.BlockStructureMerger [binary bits] [inverted file 1] [inverted file 2] [output inverted file]
@@ -79,6 +111,14 @@ public class BlockStructureMerger extends StructureMerger {
 		IndexOnDisk indexSrc1 = IndexOnDisk.createIndex(args[0], args[1]);
 		IndexOnDisk indexSrc2 = IndexOnDisk.createIndex(args[2], args[3]);
 		IndexOnDisk indexDest = IndexOnDisk.createNewIndex(args[4], args[5]);
+		if (! indexSrc1.getCollectionStatistics().hasPositions())
+		{
+			throw new IllegalArgumentException("Index 1 ("+indexSrc1.toString()+") does not have positions");
+		}
+		if (! indexSrc2.getCollectionStatistics().hasPositions())
+		{
+			throw new IllegalArgumentException("Index 2 ("+indexSrc1.toString()+") does not have positions");
+		}
 		
 		StructureMerger sMerger = new BlockStructureMerger(indexSrc1, indexSrc2, indexDest);
 		long start = System.currentTimeMillis();

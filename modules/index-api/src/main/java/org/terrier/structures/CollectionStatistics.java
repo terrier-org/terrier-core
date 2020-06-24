@@ -81,7 +81,15 @@ public class CollectionStatistics implements Serializable,Writable
      * Average length of a document in the collection.
      */
     protected double averageDocumentLength;
+
+    /** Does the index have positions */
+    protected boolean hasPositions;
     
+    @Deprecated
+    public CollectionStatistics(int numDocs, int numTerms, long numTokens, long numPointers, final long[] _fieldTokens, final String[] _fieldNames)
+    {
+        this(numDocs, numTerms, numTokens, numPointers, _fieldTokens, _fieldNames, false);
+    }
     /**
      * Constructs an instance of the class.
      * 
@@ -92,7 +100,7 @@ public class CollectionStatistics implements Serializable,Writable
      * @param _fieldTokens the number of tokens in each field.
      * @param _fieldNames the field names.
      */
-    public CollectionStatistics(int numDocs, int numTerms, long numTokens, long numPointers, final long[] _fieldTokens, final String[] _fieldNames)
+    public CollectionStatistics(int numDocs, int numTerms, long numTokens, long numPointers, final long[] _fieldTokens, final String[] _fieldNames, boolean positions)
     {
         assert _fieldTokens != null && _fieldNames != null && _fieldNames.length ==_fieldTokens.length;
 
@@ -105,7 +113,7 @@ public class CollectionStatistics implements Serializable,Writable
         
         numberOfFields = _fieldTokens.length;
         avgFieldLengths = new double[numberOfFields];
-        
+        hasPositions = positions;
         recalculateAverageLengths();
     }
     
@@ -135,8 +143,14 @@ public class CollectionStatistics implements Serializable,Writable
             "Number of documents: " + getNumberOfDocuments()           + "\n" + 
             "Number of terms: "     + getNumberOfUniqueTerms()         + "\n"+ 
             "Number of fields: "    + getNumberOfFields()              + "\n" + 
-            "Field names: "         + Arrays.toString(getFieldNames()) + "\n" + 
-            "Number of tokens: "    + getNumberOfTokens()              + "\n";
+            "Number of tokens: "    + getNumberOfTokens()              + "\n" +
+            "Field names: "         + Arrays.toString(getFieldNames()) + "\n" +
+            "Positions:   "         + hasPositions + "\n";
+    }
+
+    /** Returns true if the inverted index will have position informat */
+    public boolean hasPositions() {
+        return hasPositions;
     }
     
     /**
@@ -260,6 +274,24 @@ public class CollectionStatistics implements Serializable,Writable
             fieldTokens[fi] = in.readLong();
             fieldNames[fi] = in.readUTF();
         }
+        hasPositions = in.readBoolean();
+        recalculateAverageLengths();
+    }
+
+    public void readFieldsV5(DataInput in) throws IOException 
+    {
+        numberOfDocuments = in.readInt();
+        numberOfUniqueTerms = in.readInt();
+        numberOfTokens = in.readLong();
+        numberOfPointers = in.readLong();
+        numberOfFields = in.readInt();
+        fieldTokens = new long[numberOfFields];
+        avgFieldLengths = new double[numberOfFields];
+        fieldNames = new String[numberOfFields];
+        for (int fi = 0; fi < numberOfFields; fi++) {
+            fieldTokens[fi] = in.readLong();
+            fieldNames[fi] = in.readUTF();
+        }
         recalculateAverageLengths();
     }
 
@@ -275,5 +307,6 @@ public class CollectionStatistics implements Serializable,Writable
             out.writeLong(fieldTokens[fi]);
             out.writeUTF(fieldNames[fi]);
         }
+        out.writeBoolean(hasPositions);
     }
 }

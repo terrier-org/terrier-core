@@ -84,7 +84,7 @@ import org.terrier.utility.io.WrappedIOException;
  */
 public class FatUtils {
 
-	private static final byte VERSION = 5;
+	private static final byte VERSION = 6;
 	private static final boolean DEBUG = false;
 	
 	static Logger logger = LoggerFactory.getLogger(FatUtils.class);
@@ -110,7 +110,8 @@ public class FatUtils {
 				case 2: readFieldsV2(frs, in); break;
 				case 3: readFieldsV3(frs, in); break;
 				case 4: readFieldsV4(frs, in); break;
-				case 5: readFieldsV5(frs, in); break;
+				case 5: readFieldsV6(frs, in, false); break;
+				case 6: readFieldsV6(frs, in, true); break;
 				default: throw new IOException("Version mismatch, version " + version +" is not supported");
 			}			
 		}catch (EOFException eofe) {
@@ -581,8 +582,12 @@ public class FatUtils {
 		
 	}
 	
+	protected static void readFieldsV5(FatResultSet frs, DataInput in, boolean v6)
+			throws IOException {
+		readFieldsV6(frs, in, false);
+	}
 	
-	protected static void readFieldsV5(FatResultSet frs, DataInput in)
+	protected static void readFieldsV6(FatResultSet frs, DataInput in, boolean v6)
 			throws IOException 
 	{
 		int i =-1;
@@ -593,7 +598,10 @@ public class FatUtils {
 		
 		try{
 			CollectionStatistics collStats = new CollectionStatistics();
-			collStats.readFields(in);
+			if (v6)
+				collStats.readFields(in);
+			else
+				collStats.readFieldsV5(in);
 			frs.setCollectionStatistics(collStats);
 			
 			final int fieldCount = collStats.getNumberOfFields();

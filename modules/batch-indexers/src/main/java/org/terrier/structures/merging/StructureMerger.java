@@ -411,7 +411,7 @@ public class StructureMerger {
 	                    "org.terrier.structures.IndexOnDisk,java.lang.String,java.util.Iterator,java.lang.Class",
 	                    "index,structureName,lexicon-entry-inputstream,"+
 	                    compressionInvertedConfig.getPostingIteratorClass().getName());
-	        destIndex.setIndexProperty("index.inverted.fields.count", ""+fieldCount);
+			destIndex.setIndexProperty("index.inverted.fields.count", ""+fieldCount);
 			lexOutStream.close();
 			if (fieldCount > 0)
 			{
