@@ -236,7 +236,7 @@ The following table lists the retrieval performance achieved using three weighti
 |WT2G, TREC8 small-web task|0.2381|0.3186|26.04|0.3252|0.2829|
 |WT10G, TREC9-10 Web Tracks|0.2505|0.2104|12.33|0.2103|0.2030|
 |DOTGOV, TREC11 Topic-distillation task|0.7228|0.1910|1.280|0.2030|0.1945|
-|DOTGOV2, TREC2004-2006 Terabyte Track adhoc tasks|0.39|0.3046|6.48|0.3097|0.2935|
+|DOTGOV2, TREC2004-2020 Terabyte Track adhoc tasks|0.39|0.3046|6.48|0.3097|0.2935|
 
 Many of the above TREC collections can be obtained directly from either [TREC (NIST)](http://trec.nist.gov), or from the [University of Glasgow](http://ir.dcs.gla.ac.uk/test_collections/)
 
@@ -246,4 +246,4 @@ Many of the above TREC collections can be obtained directly from either [TREC (N
 
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2019 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2020 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
