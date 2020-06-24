@@ -174,23 +174,23 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 	 */
 	public void createInvertedIndex(Collection[] collections) {
 		logger.info("Creating IF (no direct file)..");
+		final boolean FIELDS = (FieldScore.FIELDS_COUNT > 0);
 		long startCollection, endCollection;
 		fileNames = new LinkedList<String[]>();	
 		numberOfDocuments = currentId = numberOfDocsSinceCheck = numberOfDocsSinceFlush = numberOfUniqueTerms = 0;
 		numberOfTokens = numberOfPointers = 0;
 		createMemoryPostings();
 		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
+		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
 		metaBuilder = createMetaIndexBuilder();
 		
-		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new SimpleDocumentIndexEntry();
+		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new SimpleDocumentIndexEntry();
 		
 		MAX_DOCS_PER_BUILDER = UnitUtils.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "0"));
 		maxMemory = UnitUtils.parseLong(ApplicationSetup.getProperty("indexing.singlepass.max.postings.memory", "0"));
 		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
 		final int collections_length = collections.length;
 		boolean stopIndexing = false;
-		System.gc();
 		memoryAfterFlush = runtime.freeMemory();
 		logger.debug("Starting free memory: "+memoryAfterFlush/1000000+"M");
 

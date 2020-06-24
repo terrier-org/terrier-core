@@ -31,6 +31,11 @@ import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.terrier.structures.FSADocumentIndex;
+import org.terrier.structures.FSADocumentIndexInMem;
+import org.terrier.structures.FSADocumentIndexInMemFields;
+import org.terrier.structures.FSAFieldDocumentIndex;
+import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.collections.FSArrayFile;
 import org.terrier.utility.ApplicationSetup;
@@ -51,14 +56,18 @@ public class DocumentIndexBuilder {
 	protected int numberOfDocumentIndexEntries;
 	/** index object of the index currently being created */
 	protected IndexOnDisk index;
+	/** does this index have fields */
+	protected boolean fields;
+	/** utility for writing to disk */
+	protected FSArrayFile.ArrayFileWriter fileWriter;
 	
-	FSArrayFile.ArrayFileWriter fileWriter;
-	
+
 	/** Construct a DocumentIndex associated with the specified index
 	  * @param i Index being constructed
 	  * @param _structureName the name of the structure being created
-	  */	
-	public DocumentIndexBuilder(IndexOnDisk i, String _structureName) 
+	  * @param fields does this index have fields
+	  */
+	public DocumentIndexBuilder(IndexOnDisk i, String _structureName, boolean fields) 
 	{
 		this.index = i;
 		this.structureName = _structureName;
@@ -68,6 +77,8 @@ public class DocumentIndexBuilder {
 			logger.error("Could not make FSArrayFile.ArrayFileWriter", ioe);
 		}
 	}
+	@Deprecated
+	public DocumentIndexBuilder(IndexOnDisk i, String _structureName) { this (i, _structureName, false); }
 
 	/**
 	 * Adds to the index a new entry, giving to it the next 
@@ -102,16 +113,25 @@ public class DocumentIndexBuilder {
 		{
 			if (structureName.equals("document"))
 				index.setIndexProperty("num.Documents", ""+numberOfDocumentIndexEntries);
-			index.addIndexStructure(structureName, 
-				numberOfDocumentIndexEntries > maxDocsEncodedDocid 
-					? "org.terrier.structures.FSADocumentIndex"
-					: "org.terrier.structures.FSADocumentIndexInMem",
-				"org.terrier.structures.IndexOnDisk,java.lang.String",
-				"index,structureName");
-			index.addIndexStructureInputStream(structureName, 
-					"org.terrier.structures.FSADocumentIndex$FSADocumentIndexIterator",
-					"org.terrier.structures.IndexOnDisk,java.lang.String",
-					"index,structureName");
+			Class<?> docIndexStructure = FSADocumentIndex.class;
+			if (fields)
+				docIndexStructure = FSAFieldDocumentIndex.class;
+			if (numberOfDocumentIndexEntries < maxDocsEncodedDocid)
+				if (fields)
+				docIndexStructure = FSADocumentIndexInMemFields.class;
+				else
+					docIndexStructure = FSADocumentIndexInMem.class;
+			
+			index.addIndexStructure(
+				structureName, 
+				docIndexStructure,
+				new Class<?>[]{IndexOnDisk.class, String.class},
+				new String[]{"index","structureName"}
+				);
+			index.addIndexStructureInputStream(structureName,
+					FSADocumentIndex.FSADocumentIndexIterator.class,
+					new Class<?>[]{IndexOnDisk.class, String.class},
+					new String[]{"index","structureName"});
 		}
 		close();
 	}

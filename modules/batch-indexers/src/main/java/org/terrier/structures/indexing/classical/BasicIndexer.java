@@ -211,7 +211,8 @@ public class BasicIndexer extends Indexer
 	public void createDirectIndex(Collection[] collections)
 	{
 		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
-		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
+		final boolean FIELDS = FieldScore.FIELDS_COUNT > 0;
+		lexiconBuilder = FIELDS
 			? new LexiconBuilder(currentIndex, "lexicon", 
 					new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
 					FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"",
@@ -225,9 +226,9 @@ public class BasicIndexer extends Indexer
 			logger.error("Cannot make PostingOutputStream:", ioe);
 		}
 			//	new DirectIndexBuilder(currentIndex, "direct");
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
+		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
 		metaBuilder = createMetaIndexBuilder();
-		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
+		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
 				
 		//int LexiconCount = 0;
 		int numberOfDocuments = 0; int numberOfTokens = 0;
@@ -333,7 +334,7 @@ public class BasicIndexer extends Indexer
 		directIndexBuilder.close();
 		docIndexBuilder.finishedCollections();
 		
-		if (FieldScore.FIELDS_COUNT > 0)
+		if (FIELDS)
 		{
 			currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
 		}

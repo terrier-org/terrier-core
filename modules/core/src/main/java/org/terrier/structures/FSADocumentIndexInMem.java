@@ -32,7 +32,8 @@ import org.terrier.structures.collections.FSArrayFile;
 import org.terrier.structures.collections.FSArrayFileInMem;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 
-class FSADocumentIndexInMem extends FSArrayFileInMem<DocumentIndexEntry> implements DocumentIndex 
+/** A DocumentIndex implementation that loads everything in memory. It is not compatible with fields. */
+public class FSADocumentIndexInMem extends FSArrayFileInMem<DocumentIndexEntry> implements DocumentIndex 
 {
 	protected int lastDocid = -1;
 	protected DocumentIndexEntry lastEntry = null;

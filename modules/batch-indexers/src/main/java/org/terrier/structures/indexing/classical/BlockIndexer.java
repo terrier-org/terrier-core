@@ -338,8 +338,9 @@ public class BlockIndexer extends Indexer {
 		logger.info("BlockIndexer creating direct index"+ 
 			(Boolean.parseBoolean(ApplicationSetup.getProperty("block.delimiters.enabled", "false"))
 			? " delimited-block indexing enabled" : ""));
+		final boolean FIELDS = FieldScore.FIELDS_COUNT > 0;
 		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
-		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
+		lexiconBuilder = FIELDS
 				? new LexiconBuilder(currentIndex, "lexicon", 
 						new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
 						FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"", 
@@ -348,13 +349,13 @@ public class BlockIndexer extends Indexer {
 
 		try{
 			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
-					((IndexOnDisk) currentIndex).getPath() + ApplicationSetup.FILE_SEPARATOR + ((IndexOnDisk) currentIndex).getPrefix() + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
+					currentIndex.getPath() + ApplicationSetup.FILE_SEPARATOR + currentIndex.getPrefix() + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
 		} catch (Exception ioe) {
 			logger.error("Cannot make DirectInvertedOutputStream:", ioe);
 		}
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
+		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
 		metaBuilder = createMetaIndexBuilder();
-		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
+		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
 		
 		int numberOfDocuments = 0;
 		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
@@ -453,7 +454,7 @@ public class BlockIndexer extends Indexer {
 		/* end of the collection has been reached */
 		finishedDirectIndexBuild();
 		compressionDirectConfig.writeIndexProperties(currentIndex, "document-inputstream");
-		if (FieldScore.FIELDS_COUNT > 0)
+		if (FIELDS)
 		{
 			currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
 		}
@@ -472,7 +473,7 @@ public class BlockIndexer extends Indexer {
 		} catch (IOException ioe) {
 			logger.error("Could not finish MetaIndexBuilder: ", ioe);
 		}
-		if (FieldScore.FIELDS_COUNT > 0)
+		if (FIELDS)
 		{
 			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
 		}

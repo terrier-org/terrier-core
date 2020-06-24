@@ -66,7 +66,7 @@ public class FSAFieldDocumentIndex
 		if (free < size)
 		{
 			logger.warn("Insufficient memory to load document index - use TERRIER_HEAP_MEM env var to increase available heap space");
-			logger.warn("If fields arent required, change index."+structureName+".class to " + FSADocumentIndex.class + " in " + index.getPrefix() + ".properties" );
+			logger.warn("If fields arent required for retrieval, change index."+structureName+".class to " + FSADocumentIndex.class + " in " + index.getPrefix() + ".properties" );
 		}
 		docLengths = new int[numEntries];
 		fieldLengths = new int[numEntries][];

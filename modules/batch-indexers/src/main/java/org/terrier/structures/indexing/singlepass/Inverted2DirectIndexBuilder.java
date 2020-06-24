@@ -108,7 +108,7 @@ public class Inverted2DirectIndexBuilder {
 	public Inverted2DirectIndexBuilder(IndexOnDisk i)
 	{
 		this.index =  i;
-		fieldCount = index.getIntIndexProperty("index."+sourceStructure+".fields.count", 0);
+		fieldCount = index.getCollectionStatistics().getNumberOfFields();
 		saveTagInformation = fieldCount > 0;
 	}
 	
@@ -221,7 +221,7 @@ public class Inverted2DirectIndexBuilder {
 			offsetsTmpFile.close();
 			//write the offsets to the DocumentIndex
 			final DataInputStream dis = new DataInputStream(Files.openFileStream(offsetsFilename));
-			final DocumentIndexBuilder dios = new DocumentIndexBuilder(index, "document-df");
+			final DocumentIndexBuilder dios = new DocumentIndexBuilder(index, "document-df", fieldCount > 0);
 			final Iterator<DocumentIndexEntry> docidInput = (Iterator<DocumentIndexEntry>)index.getIndexStructureInputStream("document");
 			
 			DocumentIndexEntry die = null;
