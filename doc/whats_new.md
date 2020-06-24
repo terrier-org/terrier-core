@@ -7,12 +7,12 @@ Significant update, addressing various capabilities that can be utilised by [PyT
 
 ### Indexing
  - Further fixes for classical indexing memory usage.
- - [#66]https://github.com/terrier-org/terrier-core/issues/66) realtime should support fields for direct index
+ - [#66](https://github.com/terrier-org/terrier-core/issues/66) realtime should support fields for direct index
  - [#84](https://github.com/terrier-org/terrier-core/issues/84) structure mergers and other indexing time operations load document index unnecessarily
  - [#85](https://github.com/terrier-org/terrier-core/issues/85) basic inverted index builder approx pointer counts are wrong in 5.2
  - [#87](https://github.com/terrier-org/terrier-core/issues/87) Always require explicit specification of the file encoding used to process files in TREC format.
  - [#93](https://github.com/terrier-org/terrier-core/issues/93) FieldDocumentIndex by default for field indices
- - [#110](https://github.com/terrier-org/terrier-core/issues/110 deprecate ApplicationSetup.COLLECTION_SPEC
+ - [#110](https://github.com/terrier-org/terrier-core/issues/110) deprecate ApplicationSetup.COLLECTION_SPEC
 
 ### Retrieval
  - Make TRECQuery (source) easier to use programatically - support for PyTerrier
