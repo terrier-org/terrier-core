@@ -41,6 +41,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestName;
 import org.terrier.applications.batchquerying.TRECSetup;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.utility.Files;
@@ -53,13 +54,16 @@ import org.terrier.utility.Files;
 public class ApplicationSetupBasedTest {
 
 	@Rule
-    public TemporaryFolder tmpfolder = new TemporaryFolder();
+	public TemporaryFolder tmpfolder = new TemporaryFolder();
+	
+	@Rule
+	public TestName testName = new TestName();
 
 	protected String terrier_home;
 	protected String terrier_etc;
 	
 	public ApplicationSetupBasedTest() {}
-	
+
 	@Before
 	public void makeEnvironment() throws Exception
 	{
@@ -100,6 +104,7 @@ public class ApplicationSetupBasedTest {
 		assertEquals(terrier_etc, org.terrier.utility.ApplicationSetup.TERRIER_ETC);
 		assertEquals(terrier_etc, org.terrier.utility.ApplicationSetup.TERRIER_INDEX_PATH);
 		assertFalse(IndexOnDisk.existsIndex(org.terrier.utility.ApplicationSetup.TERRIER_INDEX_PATH, "data"));
+		System.err.println("Setup complete for " + this.getClass().getSimpleName() + "#" + testName.getMethodName() );
 	}
 	
 	static String propertyFileEscape(String s)
