@@ -62,13 +62,7 @@
 	
 	<files>
 		<file>
-			<source>../../.classpath</source>
-		</file>
-		<file>
 			<source>../../.gitignore</source>
-		</file>
-		<file>
-			<source>../../.project</source>
 		</file>
 		<file>
 			<source>../../.travis.yml</source>
