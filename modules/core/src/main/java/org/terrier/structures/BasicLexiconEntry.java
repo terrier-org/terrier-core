@@ -152,12 +152,6 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 		this.TF  -= le.getFrequency();
 	}
 
-	
-	/** returns a string representation of this lexicon entry */	
-	public String toString() {
-		return "term"+ termId + " Nt=" + this.getDocumentFrequency() + " TF=" + this.getFrequency() + " maxTF=" + this.getMaxFrequencyInDocuments()
-			+ " @{"+ this.getFileNumber() +" " + startOffset + " " + this.getOffsetBits()+"}";
-	}
 	/** 
 	 * {@inheritDoc} 
 	 */
@@ -282,8 +276,7 @@ public class BasicLexiconEntry extends LexiconEntry implements BitIndexPointer {
 	 * {@inheritDoc} 
 	 */
 	public String pointerToString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "@{"+ this.getFileNumber() +" " + startOffset + " " + this.getOffsetBits()+"}";
 	}
 	/** 
 	 * {@inheritDoc} 

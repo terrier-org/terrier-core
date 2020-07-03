@@ -42,13 +42,12 @@ public abstract class LexiconEntry implements EntryStatistics, Pointer, Writable
 {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** returns a string representation of this lexicon entry */
     @Override
     public String toString()
     {
-        return '(' + getDocumentFrequency() + "," + getFrequency() + ')' + pointerToString();
+        return "term"+ getTermId() + " Nt=" + this.getDocumentFrequency() + " TF=" + this.getFrequency() + " maxTF=" + this.getMaxFrequencyInDocuments()
+                + " " + pointerToString();    
     }
 
     /** 
