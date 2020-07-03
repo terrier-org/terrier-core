@@ -45,8 +45,9 @@ public class MatchingOpQLParser implements Process {
 		try{
 			List<MatchingTerm> terms = new org.terrier.matching.matchops.MatchOpQLParser(q.getOriginalQuery()).parseAll();
 			MatchingQueryTerms mqt = new MatchingQueryTerms(terms);
-			q.setMatchingQueryTerms(mqt);
+			mqt.setRequest(q);
 			mqt.setQueryId(q.getQueryID());
+			q.setMatchingQueryTerms(mqt);
 		} catch (ParseException | TokenMgrError e) {
 			throw new QueryParserException("Could not parse query", e);
 		}
