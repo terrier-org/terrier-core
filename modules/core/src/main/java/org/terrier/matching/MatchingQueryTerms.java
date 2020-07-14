@@ -312,12 +312,11 @@ implements Serializable,Cloneable
 		return this.rq;
 	}
 
-	/** Sets the request.
-	  * @return Request*/
-	  public void setRequest(Request r)
-	  {
-		  this.rq = r;
-	  }
+	/** Sets the request. */
+	public void setRequest(Request r)
+	{
+		this.rq = r;
+	}
 	
 	/**
 	 * Adds a document score modifier for the query.

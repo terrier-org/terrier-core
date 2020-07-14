@@ -28,9 +28,9 @@ package org.terrier.structures;
 import org.apache.hadoop.io.Writable;
 
 /** 
- * A {@link Pointer} specialisation for {@link BitPostingIndex} structures. 
- * It has all the methods of a {@link Pointer}. However, {@link BitPostingIndex} 
- * supports a "file number" attribute, which allows a single {@link BitPostingIndex} 
+ * A {@link Pointer} specialisation for some {@link PostingIndex} structures. 
+ * It has all the methods of a {@link Pointer}. However, some implementations (e.g. BitPostingIndex) 
+ * supports a "file number" attribute, which allows a single index data structure
  * to be represented by several underlying files. 
  * Moreover, as this is a {@link BitFilePosition}, the offset is
  * recorded in terms of bytes (a long) and bits (a byte).
@@ -59,8 +59,7 @@ public interface BitIndexPointer extends BitFilePosition, Writable, Pointer
 
     /** 
      * Set the file number.
-     * 
-     * @param the file number.
+     * @param fileId the file number.
      */
     void setFileNumber(byte fileId);
 
