@@ -30,7 +30,7 @@ import java.io.IOException;
 /** 
  * Interface for document metadata. Metadata is stored compressed on disk.
  * Use the <code>getItem()</code> methods to get the metadata for a given document.
- * Use the {@link #getDocument()} method to determine docid for a given metadata value.
+ * Use the <code>getDocument()</code> method to determine docid for a given metadata value.
  * <p>
  * <b>Examples</b>:
  * <pre>
