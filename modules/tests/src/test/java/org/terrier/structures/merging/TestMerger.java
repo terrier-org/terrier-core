@@ -1,7 +1,6 @@
 package org.terrier.structures.merging;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Random;
 
@@ -33,7 +32,8 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		
 		assertEquals(3, merged2.getCollectionStatistics().getNumberOfDocuments());
 		assertTrue(merged2.hasIndexStructure("inverted"));
-		assertTrue(merged2.hasIndexStructure("direct"));		
+		assertTrue(merged2.hasIndexStructure("direct"));
+		checkTerm(merged2, "sentence", 3, false, false);	
 	}
 	
 	@Test public void test111_blocks() throws Exception
@@ -63,7 +63,9 @@ public class TestMerger extends ApplicationSetupBasedTest {
 	
 	void checkTerm(Index i, String term, int df, boolean blocks, boolean fields) throws Exception
 	{
-		LexiconEntry le = i.getLexicon().getLexiconEntry("sentence");
+		LexiconEntry le = i.getLexicon().getLexiconEntry(term);
+		assertNotNull(le);
+		assertTrue(le.getDocumentFrequency() <= i.getCollectionStatistics().getNumberOfDocuments());
 		assertEquals(df, le.getDocumentFrequency());
 		IterablePosting ip = i.getInvertedIndex().getPostings(le);
 		assertEquals(blocks, ip instanceof BlockPosting);

@@ -20,4 +20,8 @@ public class Postings {
     public static IterablePosting chain(IterablePosting[] ips, boolean blocks, boolean fields) {
         return ChainIterablePosting.of(ips, blocks, fields);
     }
+
+    public static IterablePosting shiftIds(IterablePosting ip, int delta, boolean blocks, boolean fields) {
+        return ShiftIdIterablePosting.of(ip, delta, blocks, fields);
+    }
 }

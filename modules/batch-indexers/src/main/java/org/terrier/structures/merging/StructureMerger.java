@@ -67,7 +67,9 @@ import org.terrier.structures.indexing.LexiconBuilder;
 import org.terrier.structures.indexing.MetaIndexBuilder;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.postings.IterablePosting;
+import org.terrier.structures.postings.WritablePosting;
 import org.terrier.structures.postings.Posting;
+import org.terrier.structures.postings.Postings;
 import org.terrier.structures.postings.PostingIdComparator;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
 import org.terrier.structures.postings.bit.FieldIterablePosting;
@@ -150,11 +152,9 @@ public class StructureMerger {
 	protected Class<? extends DirectInvertedOutputStream> fieldDirectFileOutputStreamClass = FieldDirectInvertedOutputStream.class;
 	
 	protected final int fieldCount;
+	protected boolean fields;
+	protected boolean blocks = false;
 	
-	protected String basicInvertedIndexPostingIteratorClass = BasicIterablePosting.class.getName();
-	protected String fieldInvertedIndexPostingIteratorClass = FieldIterablePosting.class.getName();
-	protected String basicDirectIndexPostingIteratorClass = BasicIterablePosting.class.getName();
-	protected String fieldDirectIndexPostingIteratorClass = FieldIterablePosting.class.getName();
 	/**
 	 * constructor
 	 * @param _srcIndex1
@@ -182,6 +182,7 @@ public class StructureMerger {
 		fieldCount = srcFieldCount1;
 		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", fieldNames, 0,0);
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldNames, 0,0);
+		fields = fieldCount > 0;
 	}
 	
 
@@ -293,7 +294,8 @@ public class StructureMerger {
 				int lexicographicalCompare = term1.compareTo(term2);
 				if (lexicographicalCompare < 0) {
 					//write to inverted file postings for the term that only occurs in 1st index
-					BitIndexPointer newPointer = invOS.writePostings(inverted1.getPostings(lee1.getValue()));
+					IterablePosting ip1 = inverted1.getPostings(lee1.getValue());
+					BitIndexPointer newPointer = invOS.writePostings(ip1);
 					lee1.getValue().setPointer(newPointer);
 					numberOfPointers+=newPointer.getNumberOfEntries();
 					if (! keepTermCodeMap)
@@ -307,8 +309,9 @@ public class StructureMerger {
 				} else if (lexicographicalCompare > 0) {
 					//write to inverted file postings for the term that only occurs in 2nd index
 					//docids are transformed as we go.
-					BitIndexPointer newPointer = 
-						invOS.writePostings(inverted2.getPostings(lee2.getValue()), -(numberOfDocs1+1));
+					IterablePosting ip2 = inverted2.getPostings(lee2.getValue());
+					ip2 = Postings.shiftIds(ip2, numberOfDocs1, blocks, fields);
+					BitIndexPointer newPointer = invOS.writePostings(ip2);
 					lee2.getValue().setPointer(newPointer);
 					numberOfPointers+=newPointer.getNumberOfEntries();
 					
@@ -325,22 +328,23 @@ public class StructureMerger {
 					
 					//1. postings from the first index are unchanged
 					IterablePosting ip1 = inverted1.getPostings(lee1.getValue());
-					BitIndexPointer newPointer1 = invOS.writePostings(ip1);
 					
-					//2. postings from the 2nd index have their docids transformed
+					//2. postings from the 2nd index have their docids increased
 					IterablePosting ip2 = inverted2.getPostings(lee2.getValue());
-					BitIndexPointer newPointer2 = invOS.writePostings(ip2, invOS.getLastDocidWritten() - numberOfDocs1);
+					ip2 = Postings.shiftIds(ip2, numberOfDocs1, blocks, fields);
 					
-					numberOfPointers += newPointer1.getNumberOfEntries() + newPointer2.getNumberOfEntries();
+					BitIndexPointer newPointer = invOS.writePostings(Postings.chain(new IterablePosting[]{ip1, ip2}, blocks, fields));
+					numberOfPointers += newPointer.getNumberOfEntries();
 
-					//don't set numberOfEntries, as LexiconEntry.add() will take care of this.
-					lee1.getValue().setPointer(newPointer1);
 					if (keepTermCodeMap)
 						termcodeHashmap.put(lee2.getValue().getTermId(), lee1.getValue().getTermId());
 					else
 						lee1.getValue().setTermId(newCodes++);
 					
+					//fix numberOfEntries, as LexiconEntry.add() and setPointer() both change this number.
+					lee1.getValue().setPointer(newPointer);
 					lee1.getValue().add(lee2.getValue());
+					lee1.getValue().setNumberOfEntries(newPointer.getNumberOfEntries());
 					lexOutStream.writeNextEntry(term1, lee1.getValue());
 					
 					hasMore1 = lexInStream1.hasNext();
@@ -374,10 +378,12 @@ public class StructureMerger {
 				logger.debug("Now processing trailing terms from lex2");
 				while (hasMore2) {
 					//write to inverted file as well.
-					BitIndexPointer newPointer = invOS.writePostings(
-							inverted2.getPostings(lee2.getValue()), -(numberOfDocs1+1));
+					IterablePosting ip2 = inverted2.getPostings(lee2.getValue());
+					ip2 = Postings.shiftIds(ip2, numberOfDocs1, blocks, fields);
+					BitIndexPointer newPointer = invOS.writePostings(ip2);
 					lee2.getValue().setPointer(newPointer);
-					numberOfPointers+=newPointer.getNumberOfEntries();
+
+					numberOfPointers += newPointer.getNumberOfEntries();
 					int newCode = newCodes++;
 					if (keepTermCodeMap)
 						termcodeHashmap.put(lee2.getValue().getTermId(), newCode);
@@ -517,7 +523,7 @@ public class StructureMerger {
 					List<Posting> postingList = new ArrayList<Posting>();
 					while(postings.next() != IterablePosting.EOL)
 					{
-						final Posting p = postings.asWritablePosting();
+						final WritablePosting p = postings.asWritablePosting();
 						p.setId(termcodeHashmap.get(postings.getId()));
 						postingList.add(p);
 					}

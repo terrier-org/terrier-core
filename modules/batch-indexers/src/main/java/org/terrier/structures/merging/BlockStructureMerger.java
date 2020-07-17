@@ -61,6 +61,7 @@ public class BlockStructureMerger extends StructureMerger {
 		int maxblocks = srcIndex1.getIntIndexProperty("index.inverted.blocks.max", ApplicationSetup.MAX_BLOCKS);
 		compressionDirectConfig = CompressionFactory.getCompressionConfiguration("direct", fieldNames, blocks, maxblocks);
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", fieldNames, blocks, maxblocks);
+		super.blocks = true;
 	}
 
 	@Override
