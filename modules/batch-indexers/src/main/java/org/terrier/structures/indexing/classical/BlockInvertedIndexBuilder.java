@@ -50,7 +50,7 @@ import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.PostingIndexInputStream;
-import org.terrier.structures.SimpleBitIndexPointer;
+import org.terrier.structures.Pointer;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.postings.ArrayOfBlockFieldIterablePosting;
@@ -257,7 +257,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			//the temporary data containing the offsets
 			DataInputStream dis = new DataInputStream(Files.openFileStream(LexiconFilename.concat(".tmp2")));
 
-			BitIndexPointer pin = new SimpleBitIndexPointer();
+			Pointer pin = compressionConfig.getPointerClass().getConstructor().newInstance();
 			while(lexiconStream.hasNext())
 			{
 				Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
@@ -469,7 +469,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			final int _processTerms)
 			throws IOException
 		{
-			BitIndexPointer p = new SimpleBitIndexPointer();
+			Pointer p = null;;
 			//write to the inverted file. We should note that the lexicon 
 			//should be updated with the start bit and byte offset for this
 			//set of postings.
@@ -494,10 +494,6 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 				tmpStorage[j] = null;
 				size += ids.length * (3 + fieldCount) * Integer.BYTES + tmpMatrix_blockIds.length * Integer.BYTES;
 								
-				p.setOffset(file.getOffset());
-				p.setNumberOfEntries(ids.length);
-				p.write(dos);
-				
 				IterablePosting ip = null;
 				if (fieldCount > 0)
 				{
@@ -507,7 +503,8 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 				{
 					ip = new ArrayOfBlockIterablePosting(ids, tf, tmpMatrix_blockFreq, tmpMatrix_blockIds);
 				}
-				file.writePostings(ip);
+				p = file.writePostings(ip);
+				p.write(dos);
 
 				numTokens += frequency;				
 			}

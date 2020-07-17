@@ -24,13 +24,14 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
 package org.terrier.structures;
+import org.apache.hadoop.io.Writable;
 
 /** 
  * A base interface for all pointers.
  * A pointer is a "counter" of "things". 
  * @since 3.0
  */
-public interface Pointer
+public interface Pointer extends Writable
 {
     /** 
      * Return the number of "things" that this pointer refers to.

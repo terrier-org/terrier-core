@@ -55,7 +55,7 @@ import org.terrier.structures.IndexUtil;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.PostingIndexInputStream;
-import org.terrier.structures.SimpleBitIndexPointer;
+import org.terrier.structures.Pointer;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.merging.StructureMerger;
@@ -334,7 +334,7 @@ public class InvertedIndexBuilder {
 			
 			//the temporary data containing the offsets
 			DataInputStream dis = new DataInputStream(Files.openFileStream(LexiconFilename.concat(".tmp2")));
-			BitIndexPointer pin = new SimpleBitIndexPointer();
+			Pointer pin = compressionConfig.getPointerClass().getConstructor().newInstance();
 			while(lexiconStream.hasNext())
 			{
 				Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
@@ -759,7 +759,7 @@ public class InvertedIndexBuilder {
 			final int _processTerms)
 			throws IOException
 		{
-			BitIndexPointer p = new SimpleBitIndexPointer();
+			Pointer p = null;
 			//write to the inverted file. We should note that the lexicon 
 			//should be updated with the start bit and byte offset for this
 			//set of postings.
@@ -782,10 +782,6 @@ public class InvertedIndexBuilder {
 				tmpStorage[j] = null;
 				size += ids.length * (2 + fieldCount) * 4;
 				
-				p.setOffset(file.getOffset());
-				p.setNumberOfEntries(ids.length);
-				p.write(dos);
-				
 				IterablePosting ip = null;
 				if (fieldCount > 0)
 				{
@@ -795,7 +791,8 @@ public class InvertedIndexBuilder {
 				{
 					ip = new ArrayOfBasicIterablePosting(ids, tf, null);
 				}
-				file.writePostings(ip);
+				p = file.writePostings(ip);
+				p.write(dos);
 
 				numTokens += frequency;				
 			}

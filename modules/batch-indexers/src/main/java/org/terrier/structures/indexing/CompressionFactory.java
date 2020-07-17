@@ -47,6 +47,8 @@ import org.terrier.structures.postings.bit.BasicIterablePostingDocidOnly;
 import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
 import org.terrier.structures.postings.bit.BlockIterablePosting;
 import org.terrier.structures.postings.bit.FieldIterablePosting;
+import org.terrier.structures.Pointer;
+import org.terrier.structures.SimpleBitIndexPointer;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 /** Configures the compression to be used when creating an IndexOnDisk.
@@ -104,6 +106,8 @@ public class CompressionFactory {
 		public abstract Class<? extends Iterator<IterablePosting>> getStructureInputStreamClass();
 		/** What is the file extension for this structure. Usually ".bf" for BitFile and ".if" for files containing compressed integers */
 		public abstract String getStructureFileExtension();
+
+		public abstract Class<? extends Pointer> getPointerClass();
 		
 		/** Update the index's properties for this structure */
 		public void writeIndexProperties(PropertiesIndex index, String pointerSourceStream)
@@ -133,6 +137,7 @@ public class CompressionFactory {
 		final Class<? extends IterablePosting> postingIterator;
 		final Class<? extends PostingIndex<?>> structureClass;
 		final Class<? extends Iterator<IterablePosting>> inputStream;
+		final Class<? extends Pointer> pointerClass;
 		final String fileExtension;
 		
 		public SpecificCompressionConfiguration(
@@ -141,12 +146,14 @@ public class CompressionFactory {
 				Class<? extends IterablePosting> postingIterator,
 				Class<? extends PostingIndex<?>> structureClass,
 				Class<? extends Iterator<IterablePosting>> inputStream,
+				Class<? extends Pointer> pointerClass,
 				String fileExtension) {
 			super(structureName, fieldNames, hasBlocks, maxBlocks);
 			this.outputStream = outputStream;
 			this.postingIterator = postingIterator;
 			this.structureClass = structureClass;
 			this.inputStream = inputStream;
+			this.pointerClass = pointerClass;
 			this.fileExtension = fileExtension;
 		}
 		@Override
@@ -175,6 +182,10 @@ public class CompressionFactory {
 		public String getStructureFileExtension() {
 			return fileExtension;
 		}
+		@Override
+		public Class<? extends Pointer> getPointerClass() {
+			return pointerClass;
+		}
 	}
 	
 	public static class BitCompressionConfiguration extends SpecificCompressionConfiguration
@@ -187,6 +198,7 @@ public class CompressionFactory {
 				fieldNames.length > 0 ? hasBlocks > 0 ? BlockFieldIterablePosting.class : FieldIterablePosting.class : hasBlocks > 0 ? BlockIterablePosting.class : BasicIterablePosting.class,
 				BitPostingIndex.class, 
 				BitPostingIndexInputStream.class,
+				SimpleBitIndexPointer.class,
 				BitIn.USUAL_EXTENSION
 			);
 		}
@@ -202,6 +214,7 @@ public class CompressionFactory {
 				BasicIterablePostingDocidOnly.class,
 				BitPostingIndex.class, 
 				BitPostingIndexInputStream.class,
+				SimpleBitIndexPointer.class,
 				BitIn.USUAL_EXTENSION
 			);
 		}
