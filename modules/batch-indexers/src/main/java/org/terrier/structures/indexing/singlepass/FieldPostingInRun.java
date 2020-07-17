@@ -136,13 +136,6 @@ class FieldPostingInRun extends SimplePostingInRun {
 		public int[] getFieldLengths() {
 			return null;
 		}
-		
-		/** {@inheritDoc}.
-		 * This operation is unsupported. */
-		@Override
-		public void setFieldLengths(int[] fl) {
-			throw new UnsupportedOperationException();
-		}
 
 		@Override
 		protected void readPostingNotDocid() throws IOException {
