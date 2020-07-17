@@ -121,20 +121,6 @@ class RunsMerger {
 	}
 	
 	/**
-	 * @return the byte offset in the BitOut (used for lexicon writting)
-	 */
-	public long getByteOffset(){
-		return pos.getOffset().getOffset();
-	}
-	
-	/**
-	 * @return the bit offset in the BitOut (used for lexicon writting)
-	 */
-	public byte getBitOffset(){
-		return pos.getOffset().getOffsetBits();
-	}
-	
-	/**
 	 * Begins the merge, initilialising the structures.
 	 * Notice that the file names must be in order of run-id	
 	 * @param size number of runs in disk.
