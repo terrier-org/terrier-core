@@ -41,7 +41,7 @@ import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.BitFilePosition;
 import org.terrier.structures.FilePosition;
 import org.terrier.structures.Pointer;
-import org.terrier.structures.postings.ChainIterablePosting;
+import org.terrier.structures.postings.Postings;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
@@ -179,6 +179,10 @@ class RunsMerger {
 		// identify all other runs with this term 
 		while(queue.size() > 0 && queue.peek().current().getTerm().equals(term) ) {
 			RunIterator run = queue.poll();
+			
+			// runs must be processed in order
+			assert myRun.getRunNo() < run.getRunNo();
+
 			runsWithThisTerm.add(run);
 			numEntries += run.current().getDf();
 			run.current().addToLexiconEntry(termStatistics);
@@ -187,7 +191,7 @@ class RunsMerger {
 		// get an IterablePosting represent all of the terms;
 		// we use an if to reduce overhead for single run scenarios
 		IterablePosting ip = runsWithThisTerm.size() > 1
-			? ChainIterablePosting.of(
+			? Postings.chain(
 				runsWithThisTerm
 					.stream()
 					.map(run -> run.current().getPostingIterator(0))
@@ -206,7 +210,7 @@ class RunsMerger {
 		for (RunIterator run: runsWithThisTerm) {
 			if(run.hasNext()){
 				run.next();
-				queue.add(myRun);
+				queue.add(run);
 			}else{
 				run.close();
 			}

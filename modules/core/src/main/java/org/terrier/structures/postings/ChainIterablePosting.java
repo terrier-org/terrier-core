@@ -1,7 +1,7 @@
 package org.terrier.structures.postings;
 import java.io.IOException;
-/** Chainrs together several IterablePostings. The order of the IterablePosting objects is assumed to be valid. */
-public class ChainIterablePosting  extends IterablePostingImpl {
+/** Chains together several IterablePostings. The order of the IterablePosting objects is assumed to be valid. */
+class ChainIterablePosting  extends IterablePostingImpl {
 
     static class FieldChainIterablePosting extends ChainIterablePosting implements FieldPosting {
         FieldPosting[] fps;
@@ -75,7 +75,7 @@ public class ChainIterablePosting  extends IterablePostingImpl {
         }
     }
 
-    public static IterablePosting of(IterablePosting[] _ips, boolean blocks, boolean fields)  {
+    static IterablePosting of(IterablePosting[] _ips, boolean blocks, boolean fields)  {
         if (blocks && fields)
             return new BlockFieldChainIterablePosting(_ips);
     
@@ -92,6 +92,7 @@ public class ChainIterablePosting  extends IterablePostingImpl {
 
     IterablePosting[] ips;
     int index = 0;
+    int lastid = -1;
 
     public ChainIterablePosting(IterablePosting[] _ips) 
 	{
@@ -116,6 +117,8 @@ public class ChainIterablePosting  extends IterablePostingImpl {
             //this class isnt designed for contituents that are empty
             assert rtr != EOL;
         }
+        assert lastid < rtr : "Chained IterablePostings require docids to be ascending: last was" + lastid + " next was " + rtr + " index is now " + index;
+        lastid = rtr;
         return rtr;
     }
     

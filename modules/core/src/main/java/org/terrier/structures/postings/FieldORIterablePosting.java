@@ -59,13 +59,6 @@ public class FieldORIterablePosting extends ORIterablePosting implements
 	public int[] getFieldLengths() {
 		return fieldLens;
 	}
-	
-	/** {@inheritDoc}.
-	 * This operation is unsupported. */
-	@Override
-	public void setFieldLengths(int[] fl) {
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	protected void addPosting(Posting _p) {
