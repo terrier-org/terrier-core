@@ -117,7 +117,7 @@ class ChainIterablePosting  extends IterablePostingImpl {
             //this class isnt designed for contituents that are empty
             assert rtr != EOL;
         }
-        assert lastid < rtr : "Chained IterablePostings require docids to be ascending: last was" + lastid + " next was " + rtr + " index is now " + index;
+        assert lastid < rtr : "Chained IterablePostings require docids to be ascending: last was " + lastid + " next was " + rtr + " index is now " + index;
         lastid = rtr;
         return rtr;
     }
