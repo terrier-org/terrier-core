@@ -191,6 +191,9 @@ public class FSOMapFileLexiconUtilities {
 			(FixedSizeWriteableFactory<Text>)index.getIndexStructure(structureName+"-keyfactory");
 		final FixedSizeWriteableFactory<LexiconEntry> valueFactory = 
 			(FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure(structureName+"-valuefactory");
+		assert keyFactory != null : "this index does not have a keyfactory for " + structureName;
+		assert valueFactory != null : "this index does not have a valuefactory for " + structureName;
+		
 		final int numEntries = FSOrderedMapFile.numberOfEntries(mapFileFilename, keyFactory, valueFactory);
 		optimise(structureName, index, statsCounter, numEntries);
 	}
