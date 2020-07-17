@@ -41,14 +41,20 @@ import org.terrier.compression.bit.BitOut;
 import org.terrier.compression.bit.BitOutputStream;
 import org.terrier.compression.bit.MemorySBOS;
 import org.terrier.structures.BasicDocumentIndexEntry;
+import org.terrier.structures.Pointer;
+import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
+import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.bit.BitPostingIndex;
+import org.terrier.structures.BitIndexPointer;
+import org.terrier.structures.SimpleBitIndexPointer;
 import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
+import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
 import org.terrier.structures.postings.bit.FieldIterablePosting;
@@ -91,13 +97,6 @@ public class Inverted2DirectIndexBuilder {
 	/** Indicates whether field information is used. */
 	protected final boolean saveTagInformation;
 
-	/** Class to read the generated direct index */
-	protected String directIndexClass = BitPostingIndex.class.getName();
-	/** Class to read the generated inverted index */
-	protected String directIndexInputStreamClass = BitPostingIndexInputStream.class.getName();
-	protected String basicDirectIndexPostingIteratorClass = BasicIterablePosting.class.getName();
-	protected String fieldDirectIndexPostingIteratorClass = FieldIterablePosting.class.getName();
-	
 	/** number of tokens limit per iteration */
 	protected long processTokens = UnitUtils.parseLong(ApplicationSetup.getProperty("inverted2direct.processtokens", "100000000"));
 	
@@ -111,7 +110,11 @@ public class Inverted2DirectIndexBuilder {
 		fieldCount = index.getCollectionStatistics().getNumberOfFields();
 		saveTagInformation = fieldCount > 0;
 	}
-	
+
+	protected CompressionConfiguration getCompressionConfiguration() {
+		return CompressionFactory.getCompressionConfiguration(destinationStructure, index.getCollectionStatistics().getFieldNames(), 0, 0);
+	}
+
 	/** create the direct index when the collection contains an existing inverted index */
 	@SuppressWarnings("unchecked")
 	public void createDirectIndex()
@@ -138,7 +141,8 @@ public class Inverted2DirectIndexBuilder {
 			logger.error("This index is not supported by " + this.getClass().getName() + " - termids are not strictly ascending. Try Inv2DirectMultiReduce");
 			return;
 		}
-		
+		CompressionConfiguration directCompressor = getCompressionConfiguration();
+
 		logger.info("Generating a "+destinationStructure+" structure from the "+sourceStructure+" structure");
 		int firstDocid = 0;
 		final long totalTokens = index.getCollectionStatistics().getNumberOfTokens();
@@ -153,7 +157,7 @@ public class Inverted2DirectIndexBuilder {
 			Iterator<DocumentIndexEntry> diis =  (Iterator<DocumentIndexEntry>) index.getIndexStructureInputStream("document");
 			final String offsetsFilename = index.getPath() + ApplicationSetup.FILE_SEPARATOR + index.getPrefix() + "."+destinationStructure+".offsets";
 			final DataOutputStream offsetsTmpFile = new DataOutputStream(Files.writeFileStream(offsetsFilename));
-			final BitOut bos = new BitOutputStream(index.getPath() + ApplicationSetup.FILE_SEPARATOR + index.getPrefix() + "."+destinationStructure+ BitIn.USUAL_EXTENSION);
+			final AbstractPostingOutputStream pos = directCompressor.getPostingOutputStream​( index.getPath() + ApplicationSetup.FILE_SEPARATOR + index.getPrefix() + "."+destinationStructure+ directCompressor.getStructureFileExtension());
 			do//for each pass of the inverted file
 			{
 				iteration++;
@@ -169,13 +173,13 @@ public class Inverted2DirectIndexBuilder {
 				//get postings for these documents
 				numberOfTokensFound += traverseInvertedFile(iiis, firstDocid, countDocsThisIteration, postings);
 				logger.info("Writing postings for iteration "+iteration+" to disk");
+				Pointer lastPointer = new SimpleBitIndexPointer();
 				for (Posting p : postings) //for each document
 				{	
 					//logger.debug("Document " + id  + " length="+ p.getDocF());
 					
 					//get the offsets
-					long startByte = bos.getByteOffset();
-					byte startBit = bos.getBitOffset();
+					Pointer pointer = null;
 					
 					//if the document is non-empty
 					if (p.getDocF() > 0)
@@ -197,13 +201,18 @@ public class Inverted2DirectIndexBuilder {
 							Docs.getMOS().getBuffer())));
 						//System.err.println("temp compressed buffer size="+Docs.getMOS().getPos() + " length="+Docs.getMOS().getBuffer().length);
 						//decompress the memory postings and write out to the direct file
-						pir.append(bos, -1);
+						pointer = pir.append(pos, -1).getRight();
+						lastPointer = pointer;
+					} else {
+						pointer = lastPointer;
+						pointer.setNumberOfEntries(0);
 					}
 
 					//take note of the offset for this document in the df
-					offsetsTmpFile.writeLong(startByte);
-					offsetsTmpFile.writeByte(startBit);
-					offsetsTmpFile.writeInt(p.getDocF());
+					BitIndexPointer bp = (BitIndexPointer)pointer;
+					offsetsTmpFile.writeLong(bp.getOffset());
+					offsetsTmpFile.writeByte(bp.getOffsetBits());
+					offsetsTmpFile.writeInt(pointer.getNumberOfEntries());
 				}// /for document postings
 				iiis.close();
 				firstDocid = firstDocid + countDocsThisIteration;
@@ -241,7 +250,7 @@ public class Inverted2DirectIndexBuilder {
 				dios.addEntryToBuffer(die);
 		    }
 		    IndexUtil.close(docidInput);
-			bos.close();
+			pos.close();
 			IndexUtil.close(diis);
 			dis.close();
 			Files.delete(offsetsFilename);
@@ -252,24 +261,9 @@ public class Inverted2DirectIndexBuilder {
 			if (fieldCount == 0)
 				index.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
 
-			
 			//inform the index about the new data structure
-			index.addIndexStructure(
-				destinationStructure, 
-				directIndexClass, 
-				"org.terrier.structures.IndexOnDisk,java.lang.String,java.lang.Class", 
-				"index,structureName,"+ 
-					(fieldCount > 0 ? fieldDirectIndexPostingIteratorClass : basicDirectIndexPostingIteratorClass));
-			index.addIndexStructureInputStream(
-				destinationStructure, 
-				directIndexInputStreamClass,
-				"org.terrier.structures.IndexOnDisk,java.lang.String,java.util.Iterator,java.lang.Class",
-				"index,structureName,document-inputstream,"+ 
-					(fieldCount > 0 ? fieldDirectIndexPostingIteratorClass : basicDirectIndexPostingIteratorClass));
-			index.setIndexProperty("index."+destinationStructure+".fields.count", ""+fieldCount );
-			index.setIndexProperty("index."+destinationStructure+".fields.names", index.getIndexProperty("index."+sourceStructure+".fields.names", ""));
-			index.flush();//save changes
-			
+			directCompressor.writeIndexProperties(index, "document-inputstream");
+			index.flush();//save changes			
 			logger.info("Finished generating a "+destinationStructure+" structure from the "+sourceStructure+" structure. Time elapsed: "+((System.currentTimeMillis() - startTime)/1000) + " seconds");
 
 		}catch (IOException ioe) {

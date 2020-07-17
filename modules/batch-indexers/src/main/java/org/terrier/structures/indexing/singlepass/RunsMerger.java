@@ -198,7 +198,7 @@ class RunsMerger {
 		init(size, _pos);
 		myRun = queue.poll();
 		while(myRun.current().getTerm().equals(" ")) myRun = queue.poll();		
-		lastDocument = myRun.current().append(pos,-1);
+		lastDocument = myRun.current().append(pos,-1).getLeft();
 		termStatistics = myRun.current().getLexiconEntry();
 		lastFreq = myRun.current().getTF();
 		lastDocFreq = myRun.current().getDf();	
@@ -220,7 +220,7 @@ class RunsMerger {
 		myRun = queue.poll();
 		if(myRun.current().getTerm().equals(lastTermWritten)){
 			// append the term --> keep the data in memory
-			lastDocument = myRun.current().append(pos, lastDocument);
+			lastDocument = myRun.current().append(pos, lastDocument).getLeft();
 			myRun.current().addToLexiconEntry(termStatistics);
 			lastFreq += myRun.current().getTF();
 			lastDocFreq += myRun.current().getDf();
@@ -234,12 +234,12 @@ class RunsMerger {
 			startOffset.setOffset(this.getByteOffset(), this.getBitOffset());
 			//get the information of the next term from the Run
 			numberOfPointers += lastDocFreq;
-			lastDocument = myRun.current().append(pos,-1);
+			lastDocument = myRun.current().append(pos,-1).getLeft();
 			termStatistics = myRun.current().getLexiconEntry();
 			lastFreq = myRun.current().getTF();
 			lastDocFreq = myRun.current().getDf();
 			lastTermWritten = myRun.current().getTerm();
-			
+
 		}
 		if(myRun.hasNext()){
 			myRun.next();
@@ -263,20 +263,5 @@ class RunsMerger {
 		pos.close();
 		myRun.close();
 	}	
-
-	// /**
-	//  * getBos
-	//  * @return BitOut
-	//  */
-	// public BitOut getBos() {
-	// 	return bos;
-	// }
-
-	// /**
-	//  * setBos
-	//  * @param _bos
-	//  */
-	// public void setBos(BitOut _bos) {
-	// 	this.bos = _bos;
-	// }
+	
 }

@@ -33,7 +33,9 @@ import org.terrier.compression.bit.BitOut;
 import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.postings.IterablePosting;
+import org.terrier.structures.Pointer;
 import org.terrier.structures.AbstractPostingOutputStream;
+import org.apache.commons.lang3.tuple.Pair;
 
 /** Base class for PostingInRun classes */
 abstract class PostingInRun {
@@ -130,9 +132,9 @@ abstract class PostingInRun {
 		postingSource = source;
 	}
 
-	public abstract int append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException;
+	public abstract Pair<Integer,Pointer> append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException;
 
-	public int append(AbstractPostingOutputStream pos, int last) throws IOException {
+	public Pair<Integer,Pointer> append(AbstractPostingOutputStream pos, int last) throws IOException {
 		return this.append(pos, last, 0);
 	}
 

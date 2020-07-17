@@ -28,7 +28,9 @@ package org.terrier.structures.indexing.singlepass;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.terrier.compression.bit.BitOut;
+import org.terrier.structures.Pointer;
 import org.terrier.structures.postings.BasicPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.IterablePostingImpl;
@@ -52,11 +54,11 @@ class SimplePostingInRun extends PostingInRun {
 		termTF = 0;
 	}
 
-	public int append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException {
+	public Pair<Integer,Pointer> append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException {
 		IterablePosting postings = this.getPostingIterator(runShift);
 		Pointer p = pos.writePostings(postings, last);
 		//getId() is still valid.
-		return postings.getId();
+		return Pair.of(postings.getId(), p);
 	}	
 	
 	/**

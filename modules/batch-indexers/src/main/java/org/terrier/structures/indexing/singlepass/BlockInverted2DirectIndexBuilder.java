@@ -28,8 +28,12 @@ package org.terrier.structures.indexing.singlepass;
 import java.io.IOException;
 import java.util.Arrays;
 
+
+import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.LexiconEntry;
+import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
+import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.bit.BitPostingIndex;
 import org.terrier.structures.bit.BitPostingIndexInputStream;
@@ -58,10 +62,6 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
 	public BlockInverted2DirectIndexBuilder(IndexOnDisk i)
 	{
 		super(i);
-		directIndexClass = BitPostingIndex.class.getName();
-    	directIndexInputStreamClass = BitPostingIndexInputStream.class.getName();
-    	basicDirectIndexPostingIteratorClass = BlockIterablePosting.class.getName();
-    	fieldDirectIndexPostingIteratorClass = BlockFieldIterablePosting.class.getName();
 		processTokens = UnitUtils.parseLong(ApplicationSetup.getProperty("inverted2direct.processtokens", "10000000"));
 	}
 
@@ -92,7 +92,13 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
             return new BlockFieldPostingInRun(fieldCount);
         }
         return new BlockPostingInRun();
-    }
+	}
+	
+	protected CompressionConfiguration getCompressionConfiguration() {
+		int blocks = index.getIntIndexProperty("index."+sourceStructure+".blocks", ApplicationSetup.BLOCK_SIZE);
+		int max_blocks = index.getIntIndexProperty("index."+sourceStructure+".blocks.max", ApplicationSetup.MAX_BLOCKS);
+		return CompressionFactory.getCompressionConfiguration(destinationStructure, index.getCollectionStatistics().getFieldNames(), blocks, max_blocks);
+	}
 	
 	/** traverse the inverted file, looking for all occurrences of documents in the given range */
     @Override
