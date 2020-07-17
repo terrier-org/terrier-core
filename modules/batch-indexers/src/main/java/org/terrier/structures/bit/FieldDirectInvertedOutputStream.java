@@ -72,7 +72,6 @@ public class FieldDirectInvertedOutputStream extends DirectInvertedOutputStream 
 		{
 			super.output.writeUnary(fieldFrequency+1);
 		}
-		//System.err.println("FieldDirectInvertedOutputStream: " + ArrayUtils.join(p.getFieldFrequencies(), ","));
 	}
 
 }

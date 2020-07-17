@@ -45,21 +45,10 @@ public abstract class AbstractPostingOutputStream implements Closeable {
 	public AbstractPostingOutputStream() {
 		super();
 	}
-
-	public abstract BitFilePosition getOffset();
 	
 	public abstract int getLastDocidWritten();
 
-	// public abstract BitIndexPointer writePostings(int[][] postings, int startOffset,
-	// 		int Length, int firstId) throws IOException;
-
 	public abstract BitIndexPointer writePostings(IterablePosting postings) throws IOException;
-
-	// public abstract BitIndexPointer writePostings(IterablePosting postings, int previousId)
-	// 		throws IOException;
-
-	// public abstract BitIndexPointer writePostings(Iterator<Posting> iterator, int previousId)
-	// 		throws IOException;
 
 	public abstract BitIndexPointer writePostings(Iterator<Posting> iterator) throws IOException;
 
