@@ -35,8 +35,11 @@ import java.util.Queue;
 
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
+import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.DocumentIndexEntry;
+import org.terrier.structures.indexing.CompressionFactory;
+import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
 import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldLexiconEntry;
@@ -141,12 +144,13 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		super(pathname, prefix);
 		//delay the execution of init() if we are a parent class
         if (this.getClass() == BasicSinglePassIndexer.class) 
-            init();
-        if (! (this.compressionInvertedConfig instanceof BitCompressionConfiguration ))
+			init();
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
+		if (! (this.compressionInvertedConfig instanceof BitCompressionConfiguration ))
         {
         	throw new Error("Sorry, only default BitCompressionConfiguration is supported by " + this.getClass().getName() 
         			+ " - you can recompress the inverted index later using IndexRecompressor");
-        }
+		}
 	}
 
 	/** Protected do-nothing constructor for use by child classes */
@@ -392,12 +396,17 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		return names;
 	}
 
+	protected CompressionConfiguration getCompressionConfig() {
+		return CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
+	}
+
 	/**
 	 * Uses the merger class to perform a k multiway merge
 	 * in a set of previously written runs.
 	 * The file names and the number of runs are given by the private queue
 	 */
 	public void performMultiWayMerge() throws IOException {
+
 		String[][] _fileNames = getFileNames();
 		this.currentIndex.setIndexProperty("max.term.length", ApplicationSetup.getProperty("max.term.length", ""+20));
 		LexiconOutputStream<String> lexStream = new FSOMapFileLexiconOutputStream(this.currentIndex, "lexicon", 
@@ -408,7 +417,9 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 				createFieldRunMerger(_fileNames);
 			else
 				createRunMerger(_fileNames);
-			merger.beginMerge(_fileNames.length, path + ApplicationSetup.FILE_SEPARATOR + prefix +  ".inverted.bf");
+
+			AbstractPostingOutputStream pos = compressionInvertedConfig.getPostingOutputStream(path + ApplicationSetup.FILE_SEPARATOR +  prefix + ".inverted"+ compressionInvertedConfig.getStructureFileExtension());
+			merger.beginMerge(_fileNames.length, pos);
 			while(!merger.isDone()){
 				merger.mergeOne(lexStream);
 			}
@@ -430,24 +441,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 			currentIndex.setIndexProperty("num.Terms", ""+numberOfUniqueTerms);
 			currentIndex.setIndexProperty("num.Pointers", ""+numberOfPointers);
 			currentIndex.setIndexProperty("num.Tokens", ""+numberOfTokens);
-			currentIndex.addIndexStructure(
-					"inverted",
-					invertedIndexClass,
-					"org.terrier.structures.IndexOnDisk,java.lang.String,org.terrier.structures.DocumentIndex,java.lang.Class", 
-					"index,structureName,document,"+ 
-						(FieldScore.FIELDS_COUNT > 0
-							? fieldInvertedIndexPostingIteratorClass
-							: basicInvertedIndexPostingIteratorClass ));
-			currentIndex.addIndexStructureInputStream(
-                    "inverted",
-                    invertedIndexInputStreamClass,
-                    "org.terrier.structures.IndexOnDisk,java.lang.String,java.util.Iterator,java.lang.Class",
-                    "index,structureName,lexicon-entry-inputstream,"+
-                    	(FieldScore.FIELDS_COUNT > 0
-                    		? fieldInvertedIndexPostingIteratorClass
-							: basicInvertedIndexPostingIteratorClass ));
-			currentIndex.setIndexProperty("index.inverted.fields.count", ""+FieldScore.FIELDS_COUNT );
-			currentIndex.setIndexProperty("index.inverted.fields.names", ArrayUtils.join(FieldScore.FIELD_NAMES, ","));
+			compressionInvertedConfig.writeIndexProperties(currentIndex, "lexicon-entry-inputstream");
 		}catch(Exception e){
 			logger.error("Problem in performMultiWayMerge", e);
 		}

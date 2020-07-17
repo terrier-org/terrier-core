@@ -94,7 +94,8 @@ class BlockPostingInRun extends SimplePostingInRun
 		@Override
 		protected void readPostingNotDocid() throws IOException {
 			super.readPostingNotDocid();
-			blockIds = new int[postingSource.readUnary() -1];
+			blockFreq = postingSource.readUnary() -1;
+			blockIds = new int[blockFreq];
 			blockIds[0] = postingSource.readGamma()-1;
 			for(int i=1;i<blockFreq;i++)
 				blockIds[i] = postingSource.readGamma() - blockIds[i-1];

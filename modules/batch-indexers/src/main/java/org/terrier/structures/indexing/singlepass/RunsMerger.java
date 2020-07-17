@@ -40,6 +40,7 @@ import org.terrier.structures.BitFilePosition;
 import org.terrier.structures.FilePosition;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
+import org.terrier.structures.AbstractPostingOutputStream;
 
 /**
  * Merges a set of N runs using a priority queue. Each element of the queue is a {@link org.terrier.structures.indexing.singlepass.RunIterator}
@@ -73,7 +74,7 @@ class RunsMerger {
 	 */	 
 	protected Queue<RunIterator> queue;		
 	/** BitOut used to write the merged postings to disk*/
-	protected BitOut bos;	
+	protected AbstractPostingOutputStream pos;	
 	/** RunReader reference for instantiation*/
 	/** Last term written to disk (useful for terms appearing in multiple runs */
 	protected String lastTermWritten = "";
@@ -145,7 +146,7 @@ class RunsMerger {
 	 * @return the byte offset in the BitOut (used for lexicon writting)
 	 */
 	public long getByteOffset(){
-		return bos.getByteOffset();
+		return pos.getOffset().getOffset();
 		//return bos.getBitOffset() == 0? bos.getByteOffset() - 1: bos.getByteOffset(); 
 	}
 	
@@ -153,7 +154,7 @@ class RunsMerger {
 	 * @return the bit offset in the BitOut (used for lexicon writting)
 	 */
 	public byte getBitOffset(){
-		return bos.getBitOffset();
+		return pos.getOffset().getOffsetBits();
 		//return bos.getBitOffset() == 0 ? (byte)7 : bos.getBitOffset() - (byte)1;
 	}
 	
@@ -179,13 +180,9 @@ class RunsMerger {
 	 * @param fileName String with the file name of the final inverted file.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	protected void init(int size, String fileName) throws Exception{
-		this.init(size, new BitOutputStream(fileName));
-	}
-	
-	protected void init(int size, BitOut invertedFile) throws Exception{
+	protected void init(int size, AbstractPostingOutputStream _pos) throws Exception{
+		this.pos = _pos;
 		queue = new PriorityQueue<RunIterator>(size, new PostingComparator());
-		bos = invertedFile;
 		for(int i = 0; i < size; i++){	
 			RunIterator run = runsSource.createRunIterator(i);
 			run.next();
@@ -199,11 +196,11 @@ class RunsMerger {
 	 * @param fileName output filename.
 	 * @throws Exception if an I/O error occurs. 
 	 */
-	public void beginMerge(int size, String fileName) throws Exception{		
-		init(size, fileName);
+	public void beginMerge(int size, AbstractPostingOutputStream _pos) throws Exception{		
+		init(size, _pos);
 		myRun = queue.poll();
 		while(myRun.current().getTerm().equals(" ")) myRun = queue.poll();		
-		lastDocument = myRun.current().append(bos,-1);
+		lastDocument = myRun.current().append(pos,-1);
 		termStatistics = myRun.current().getLexiconEntry();
 		lastFreq = myRun.current().getTF();
 		lastDocFreq = myRun.current().getDf();	
@@ -221,11 +218,11 @@ class RunsMerger {
 	 * @param lexStream LexiconOutputStream used to write the lexicon.
 	 * @throws Exception if an I/O error occurs.
 	 */
-	public void mergeOne(LexiconOutputStream<String> lexStream) throws Exception{		
+	public void mergeOne(LexiconOutputStream<String> lexStream) throws Exception{
 		myRun = queue.poll();
 		if(myRun.current().getTerm().equals(lastTermWritten)){
 			// append the term --> keep the data in memory
-			lastDocument = myRun.current().append(bos, lastDocument);
+			lastDocument = myRun.current().append(pos, lastDocument);
 			myRun.current().addToLexiconEntry(termStatistics);
 			lastFreq += myRun.current().getTF();
 			lastDocFreq += myRun.current().getDf();
@@ -239,7 +236,7 @@ class RunsMerger {
 			startOffset.setOffset(this.getByteOffset(), this.getBitOffset());
 			//get the information of the next term from the Run
 			numberOfPointers += lastDocFreq;
-			lastDocument = myRun.current().append(bos,-1);
+			lastDocument = myRun.current().append(pos,-1);
 			termStatistics = myRun.current().getLexiconEntry();
 			lastFreq = myRun.current().getTF();
 			lastDocFreq = myRun.current().getDf();
@@ -264,26 +261,24 @@ class RunsMerger {
 		((BasicLexiconEntry)termStatistics).setOffset(startOffset);
 		lexStream.writeNextEntry(lastTermWritten, termStatistics);
 		
-		//lexStream.writeNextEntry(lastTermWritten, new BasicLexiconEntry(currentTerm++, lastDocFreq, lastFreq, startOffset));
-		//startOffset.setPosition(this.getByteOffset(), this.getBitOffset());
 		numberOfPointers += lastDocFreq;
-		bos.close();
+		pos.close();
 		myRun.close();
 	}	
 
-	/**
-	 * getBos
-	 * @return BitOut
-	 */
-	public BitOut getBos() {
-		return bos;
-	}
+	// /**
+	//  * getBos
+	//  * @return BitOut
+	//  */
+	// public BitOut getBos() {
+	// 	return bos;
+	// }
 
-	/**
-	 * setBos
-	 * @param _bos
-	 */
-	public void setBos(BitOut _bos) {
-		this.bos = _bos;
-	}
+	// /**
+	//  * setBos
+	//  * @param _bos
+	//  */
+	// public void setBos(BitOut _bos) {
+	// 	this.bos = _bos;
+	// }
 }

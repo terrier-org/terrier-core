@@ -40,6 +40,7 @@ import org.terrier.structures.indexing.BlockDocumentPostingList;
 import org.terrier.structures.indexing.BlockFieldDocumentPostingList;
 import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
 import org.terrier.structures.postings.bit.BlockIterablePosting;
+import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.terms.TermPipeline;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FieldScore;
@@ -269,6 +270,8 @@ public class BlockSinglePassIndexer extends BasicSinglePassIndexer{
 		invertedIndexInputStreamClass = BitPostingIndexInputStream.class.getName();
 		basicInvertedIndexPostingIteratorClass = BlockIterablePosting.class.getName();
 		fieldInvertedIndexPostingIteratorClass = BlockFieldIterablePosting.class.getName();
+		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, BLOCK_SIZE, MAX_BLOCKS);
+
 		super.blocks = true;
 	}
 	
@@ -279,7 +282,7 @@ public class BlockSinglePassIndexer extends BasicSinglePassIndexer{
 	protected void createRunMerger(String[][] files) throws Exception{
 		merger = new RunsMerger(new FileRunIteratorFactory(files, BlockPostingInRun.class, 0));
 	}
-	
+
 	protected void createMemoryPostings(){
 		if (useFieldInformation) 
 			mp = new BlockFieldMemoryPostings();

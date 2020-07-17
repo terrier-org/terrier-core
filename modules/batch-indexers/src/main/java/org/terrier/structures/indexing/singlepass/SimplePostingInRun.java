@@ -33,6 +33,7 @@ import org.terrier.structures.postings.BasicPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.IterablePostingImpl;
 import org.terrier.structures.postings.WritablePosting;
+import org.terrier.structures.AbstractPostingOutputStream;
 
 /** Class holding the information for a posting list read
  * from a previously written run at disk. Used in the merging phase of the Single pass inversion method.
@@ -49,6 +50,13 @@ class SimplePostingInRun extends PostingInRun {
 	public SimplePostingInRun() {
 		termTF = 0;
 	}
+
+	public int append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException {
+		IterablePosting postings = this.getPostingIterator(last);
+		pos.writePostings(postings);
+		//getId() is still valid.
+		return postings.getId();
+	}	
 	
 	/**
 	 * Writes the document data of this posting to a {@link org.terrier.compression.bit.BitOut} 
@@ -100,6 +108,7 @@ class SimplePostingInRun extends PostingInRun {
 			}
 			docid = postingSource.readGamma() + docid;
 			readPostingNotDocid();
+			i++;
 			return docid;
 		}
 		

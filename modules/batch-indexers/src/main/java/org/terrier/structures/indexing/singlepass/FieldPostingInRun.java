@@ -157,8 +157,7 @@ class FieldPostingInRun extends SimplePostingInRun {
 			FieldPostingImpl bp = new FieldPostingImpl(docid, frequency, fieldFrequencies.length);
 			System.arraycopy(fieldFrequencies, 0, bp.getFieldFrequencies(), 0, fieldFrequencies.length);
 			return bp;
-		}
-				
+		}				
 	}
 	
 	@Override
@@ -166,6 +165,7 @@ class FieldPostingInRun extends SimplePostingInRun {
 	{
 		return new fPIRPostingIterator(runShift);
 	}
+	
 	@Override
 	public void setTerm(String term) {
 		super.setTerm(term);

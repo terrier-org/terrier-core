@@ -33,6 +33,7 @@ import org.terrier.compression.bit.BitOut;
 import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.postings.IterablePosting;
+import org.terrier.structures.AbstractPostingOutputStream;
 
 /** Base class for PostingInRun classes */
 abstract class PostingInRun {
@@ -127,6 +128,12 @@ abstract class PostingInRun {
 	/** Set where the postings should be read from */
 	public void setPostingSource(BitIn source) {
 		postingSource = source;
+	}
+
+	public abstract int append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException;
+
+	public int append(AbstractPostingOutputStream pos, int last) throws IOException {
+		return this.append(pos, last, 0);
 	}
 
 	/**

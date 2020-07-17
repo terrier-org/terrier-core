@@ -143,13 +143,6 @@ class BlockFieldPostingInRun extends BlockPostingInRun{
 		public int[] getFieldLengths() {
 			return null;
 		}
-		
-		/** {@inheritDoc}.
-		 * This operation is unsupported. */
-		@Override
-		public void setFieldLengths(int[] fl) {
-			throw new UnsupportedOperationException();
-		}
 
 		@Override
 		protected void readPostingNotDocid() throws IOException {
@@ -158,7 +151,8 @@ class BlockFieldPostingInRun extends BlockPostingInRun{
 			{
 				fieldFrequencies[fi] = postingSource.readUnary() -1;
 			}
-			blockIds = new int[postingSource.readUnary() -1];
+			blockFreq = postingSource.readUnary() -1;
+			blockIds = new int[blockFreq];
 			blockIds[0] = postingSource.readGamma()-1;
 			for(int i=1;i<blockFreq;i++)
 				blockIds[i] = postingSource.readGamma() - blockIds[i-1];

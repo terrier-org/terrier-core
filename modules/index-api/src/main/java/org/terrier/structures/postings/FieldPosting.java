@@ -51,5 +51,5 @@ public interface FieldPosting extends Posting
     int[] getFieldLengths();
     
     @Deprecated
-    void setFieldLengths(int[] newLengths);
+    default void setFieldLengths(int[] newLengths) { throw new UnsupportedOperationException(); } 
 }
