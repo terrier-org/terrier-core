@@ -26,6 +26,7 @@
 
 package org.terrier.structures;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -39,7 +40,7 @@ import org.terrier.structures.postings.Posting;
  * @since 4.0
  *
  */
-public abstract class AbstractPostingOutputStream {
+public abstract class AbstractPostingOutputStream implements Closeable {
 
 	public AbstractPostingOutputStream() {
 		super();
@@ -49,18 +50,16 @@ public abstract class AbstractPostingOutputStream {
 	
 	public abstract int getLastDocidWritten();
 
-	public abstract void close();
-
-	public abstract BitIndexPointer writePostings(int[][] postings, int startOffset,
-			int Length, int firstId) throws IOException;
+	// public abstract BitIndexPointer writePostings(int[][] postings, int startOffset,
+	// 		int Length, int firstId) throws IOException;
 
 	public abstract BitIndexPointer writePostings(IterablePosting postings) throws IOException;
 
-	public abstract BitIndexPointer writePostings(IterablePosting postings, int previousId)
-			throws IOException;
+	// public abstract BitIndexPointer writePostings(IterablePosting postings, int previousId)
+	// 		throws IOException;
 
-	public abstract BitIndexPointer writePostings(Iterator<Posting> iterator, int previousId)
-			throws IOException;
+	// public abstract BitIndexPointer writePostings(Iterator<Posting> iterator, int previousId)
+	// 		throws IOException;
 
 	public abstract BitIndexPointer writePostings(Iterator<Posting> iterator) throws IOException;
 

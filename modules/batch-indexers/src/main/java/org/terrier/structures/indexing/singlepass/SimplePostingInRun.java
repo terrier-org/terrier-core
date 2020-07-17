@@ -50,13 +50,6 @@ class SimplePostingInRun extends PostingInRun {
 	public SimplePostingInRun() {
 		termTF = 0;
 	}
-
-	public Pair<Integer,Pointer> append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException {
-		IterablePosting postings = this.getPostingIterator(runShift);
-		Pointer p = pos.writePostings(postings, last);
-		//getId() is still valid.
-		return Pair.of(postings.getId(), p);
-	}	
 	
 	protected class PIRPostingIterator extends IterablePostingImpl
 	{

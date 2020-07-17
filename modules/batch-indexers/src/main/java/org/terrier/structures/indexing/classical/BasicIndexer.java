@@ -41,6 +41,7 @@ import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexUtil;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.indexing.DocumentPostingList;
@@ -331,9 +332,14 @@ public class BasicIndexer extends Indexer
 		/* flush the index buffers */
 		compressionDirectConfig.writeIndexProperties(currentIndex, "document-inputstream");
 
-		directIndexBuilder.close();
-		docIndexBuilder.finishedCollections();
 		
+		docIndexBuilder.finishedCollections();
+		try{
+			IndexUtil.close(directIndexBuilder);
+			metaBuilder.close();
+		} catch (IOException ioe) {
+			logger.error("Could not finish directindex or MetaIndexBuilder: ", ioe);
+		}
 		if (FIELDS)
 		{
 			currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
@@ -341,11 +347,6 @@ public class BasicIndexer extends Indexer
 		else
 		{
 			currentIndex.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
-		}
-		try{
-			metaBuilder.close();
-		} catch (IOException ioe) {
-			logger.error("Could not finish MetaIndexBuilder: ", ioe);
 		}
 	
 		/* and then merge all the temporary lexicons */

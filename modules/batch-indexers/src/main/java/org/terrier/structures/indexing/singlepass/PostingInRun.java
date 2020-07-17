@@ -132,19 +132,6 @@ abstract class PostingInRun {
 		postingSource = source;
 	}
 
-	/**
-	 * Writes the document data of this posting to a {@link AbstractPostingOutputStream}
-	 * The stream is written to a AbstractPostingOutputStream.
-	 * @param pos AbstractPostingOutputStream to be written.
-	 * @param last int representing the last document written in this posting.
-	 * @return The id of the last posting written and the pointer.
-	 */
-	public abstract Pair<Integer,Pointer> append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException;
-
-	public Pair<Integer,Pointer> append(AbstractPostingOutputStream pos, int last) throws IOException {
-		return this.append(pos, last, 0);
-	}
-
 	/** Returns an IterablePosting object for the postings in this run */
 	public abstract IterablePosting getPostingIterator(int runShift);
 }

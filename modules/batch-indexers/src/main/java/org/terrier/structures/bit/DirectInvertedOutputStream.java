@@ -88,15 +88,6 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 		return BasicIterablePosting.class;
 	}
 	
-	/** Write out the specified postings. The delta for the first id must be specified.
-	  * @param postings The postings to write out
-	  * @param firstId the (delta) value of the first docid to write out.
-	  */
-	public BitIndexPointer writePostings(int[][] postings, int firstId) throws IOException
-	{
-		 return writeNoFieldPostings(postings, 0, postings[0].length, firstId);
-	}
-	
 	/** Write out the specified postings.
 	 * @param iterator an Iterator of Posting objects
 	 */
@@ -110,8 +101,7 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	 * @param iterator an Iterator of Posting objects
 	 * @param previousId id of the previous posting in this stream
 	 */
-	@Override
-	public BitIndexPointer writePostings(Iterator<Posting> iterator, int previousId) throws IOException
+	BitIndexPointer writePostings(Iterator<Posting> iterator, int previousId) throws IOException
 	{
 		BitIndexPointer pointer = new SimpleBitIndexPointer();
 		pointer.setOffset(output.getByteOffset(), output.getBitOffset());
@@ -134,8 +124,7 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	 * @param postings IterablePosting postings accessed through an IterablePosting object
 	 * @param previousId id of the previous posting in this stream
 	 */
-	@Override
-	public BitIndexPointer writePostings(IterablePosting postings, int previousId) throws IOException
+	BitIndexPointer writePostings(IterablePosting postings, int previousId) throws IOException
 	{
 		BitIndexPointer pointer = new SimpleBitIndexPointer();
 		pointer.setOffset(output.getByteOffset(), output.getBitOffset());
@@ -174,11 +163,11 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	  * @param Length The number of postings to be written out.
 	  * @param firstId the (delta) value of the first docid to write out.
 	  */
-	@Override
-	public BitIndexPointer writePostings(int[][] postings, int startOffset, int Length, int firstId) throws IOException
-	{
-		return writeNoFieldPostings(postings, startOffset, Length, firstId);
-	}
+	// @Override
+	// public BitIndexPointer writePostings(int[][] postings, int startOffset, int Length, int firstId) throws IOException
+	// {
+	// 	return writeNoFieldPostings(postings, startOffset, Length, firstId);
+	// }
 	
 	
 	/**
@@ -191,39 +180,34 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	 * @param length The number of postings to be written out.
 	 * @throws IOException if an error occurs during writing to a file.
 	 */
-	protected BitIndexPointer writeNoFieldPostings(final int[][] postings, int offset, final int length, final int firstId) 
-			throws IOException {
+	// protected BitIndexPointer writeNoFieldPostings(final int[][] postings, int offset, final int length, final int firstId) 
+	// 		throws IOException {
 
-		BitIndexPointer pointer = new SimpleBitIndexPointer();
-		pointer.setOffset(output.getByteOffset(), output.getBitOffset());
+	// 	BitIndexPointer pointer = new SimpleBitIndexPointer();
+	// 	pointer.setOffset(output.getByteOffset(), output.getBitOffset());
 		
-		//local variables in order to reduce the number
-		//of times we need to access a two-dimensional array
-		final int[] postings0 = postings[0];
-		final int[] postings1 = postings[1];
+	// 	//local variables in order to reduce the number
+	// 	//of times we need to access a two-dimensional array
+	// 	final int[] postings0 = postings[0];
+	// 	final int[] postings1 = postings[1];
 		
-		//write the first entry
-		output.writeGamma(lastDocid = firstId);
-		output.writeUnary(postings1[offset]);
+	// 	//write the first entry
+	// 	output.writeGamma(lastDocid = firstId);
+	// 	output.writeUnary(postings1[offset]);
 	
-		offset++;
-		for (; offset < length; offset++) {
-			output.writeGamma( (lastDocid = postings0[offset]) - postings0[offset - 1]);
-			output.writeUnary(postings1[offset]);
-		}
+	// 	offset++;
+	// 	for (; offset < length; offset++) {
+	// 		output.writeGamma( (lastDocid = postings0[offset]) - postings0[offset - 1]);
+	// 		output.writeUnary(postings1[offset]);
+	// 	}
 		
-		return pointer;
-	}
+	// 	return pointer;
+	// }
 	
-	/** close this object. suppresses any exception */
 	@Override
-	public void close()
+	public void close() throws IOException
 	{
-		try{ 
-			output.close();
-		} catch (IOException ioe) {
-			logger.error("Problem closing DirectInvOutputStream", ioe);
-		}
+		output.close();
 	}
 	
 	/** What is current offset? */
@@ -231,20 +215,6 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	public BitFilePosition getOffset()
 	{
 		return new FilePosition(output.getByteOffset(), output.getBitOffset());
-	}
-	
-	/** Return the current offset in bytes in the written file
-	 * @deprecated */
-	public long getByteOffset()
-	{
-		return output.getByteOffset();
-	}
-	
-	/** Return the current offset in bits in the written file 
-	 * @deprecated */
-	public byte getBitOffset()
-	{
-		return output.getBitOffset();
 	}
 	
 	/** Return the underlying BitOut implementation being used by the class */

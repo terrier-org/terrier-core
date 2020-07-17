@@ -464,15 +464,16 @@ public class BlockIndexer extends Indexer {
 		}
 		currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
 		/* flush the index buffers */
-		directIndexBuilder.close();
+		try {
+			metaBuilder.close();
+			directIndexBuilder.close();
+		} catch (IOException ioe) {
+			logger.error("Could not finish direct index or MetaIndexBuilder: ", ioe);
+		}
 		docIndexBuilder.finishedCollections();
 		/* and then merge all the temporary lexicons */
 		lexiconBuilder.finishedDirectIndexBuild();
-		try {
-			metaBuilder.close();
-		} catch (IOException ioe) {
-			logger.error("Could not finish MetaIndexBuilder: ", ioe);
-		}
+		
 		if (FIELDS)
 		{
 			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");

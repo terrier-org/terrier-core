@@ -201,7 +201,7 @@ public class Inverted2DirectIndexBuilder {
 							Docs.getMOS().getBuffer())));
 						//System.err.println("temp compressed buffer size="+Docs.getMOS().getPos() + " length="+Docs.getMOS().getBuffer().length);
 						//decompress the memory postings and write out to the direct file
-						pointer = pir.append(pos, -1).getRight();
+						pointer = pos.writePostings(pir.getPostingIterator(0));
 						lastPointer = pointer;
 					} else {
 						pointer = lastPointer;
