@@ -34,6 +34,7 @@ import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.IterablePostingImpl;
 import org.terrier.structures.postings.WritablePosting;
 import org.terrier.structures.AbstractPostingOutputStream;
+import org.terrier.structures.Pointer;
 
 /** Class holding the information for a posting list read
  * from a previously written run at disk. Used in the merging phase of the Single pass inversion method.
@@ -52,8 +53,8 @@ class SimplePostingInRun extends PostingInRun {
 	}
 
 	public int append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException {
-		IterablePosting postings = this.getPostingIterator(last);
-		pos.writePostings(postings);
+		IterablePosting postings = this.getPostingIterator(runShift);
+		Pointer p = pos.writePostings(postings, last);
 		//getId() is still valid.
 		return postings.getId();
 	}	

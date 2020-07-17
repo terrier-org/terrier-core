@@ -98,7 +98,7 @@ class BlockPostingInRun extends SimplePostingInRun
 			blockIds = new int[blockFreq];
 			blockIds[0] = postingSource.readGamma()-1;
 			for(int i=1;i<blockFreq;i++)
-				blockIds[i] = postingSource.readGamma() - blockIds[i-1];
+				blockIds[i] = postingSource.readGamma() + blockIds[i-1];
 		}
 
 		public int[] getPositions() {

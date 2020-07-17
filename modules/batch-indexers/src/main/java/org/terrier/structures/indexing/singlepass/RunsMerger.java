@@ -73,7 +73,7 @@ class RunsMerger {
 	 * It uses an alphabetical order using the terms
 	 */	 
 	protected Queue<RunIterator> queue;		
-	/** BitOut used to write the merged postings to disk*/
+	/** file used to write the merged postings to disk*/
 	protected AbstractPostingOutputStream pos;	
 	/** RunReader reference for instantiation*/
 	/** Last term written to disk (useful for terms appearing in multiple runs */
@@ -147,7 +147,6 @@ class RunsMerger {
 	 */
 	public long getByteOffset(){
 		return pos.getOffset().getOffset();
-		//return bos.getBitOffset() == 0? bos.getByteOffset() - 1: bos.getByteOffset(); 
 	}
 	
 	/**
@@ -155,7 +154,6 @@ class RunsMerger {
 	 */
 	public byte getBitOffset(){
 		return pos.getOffset().getOffsetBits();
-		//return bos.getBitOffset() == 0 ? (byte)7 : bos.getBitOffset() - (byte)1;
 	}
 	
 	/**
