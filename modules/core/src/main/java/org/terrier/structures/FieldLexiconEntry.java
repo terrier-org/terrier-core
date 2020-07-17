@@ -50,10 +50,6 @@ public class FieldLexiconEntry extends BasicLexiconEntry implements
 		public Factory()
 		{
 			throw new IllegalStateException(this.getClass().getName() + "- default constructor should not be used");
-			//this(FieldScore.FIELDS_COUNT); //TODO this is a hack
-			//System.err.println(this.getClass().getName() + "- default constructor should not be used - fields are " + FieldScore.FIELDS_COUNT);
-			//new Exception().printStackTrace(System.err);
-			//throw new RuntimeException();
 		}
 		/**
 		 * Construct an instance of the class with
