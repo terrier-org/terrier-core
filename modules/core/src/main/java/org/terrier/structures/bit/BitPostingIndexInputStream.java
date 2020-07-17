@@ -252,13 +252,13 @@ public class BitPostingIndexInputStream implements PostingIndexInputStream, Skip
 		}
 		if (file.getByteOffset() != pointer.getOffset())
 		{
-			assert (pointer.getOffset() - file.getByteOffset()) > 0;
+			assert (pointer.getOffset() - file.getByteOffset()) > 0 : "we have a negative bytes seek: current " + file.getByteOffset() + ":" + file.getBitOffset() + " pointer " + pointer.pointerToString();
 			if(DEBUG) System.err.println("skipping " + (pointer.getOffset() - file.getByteOffset()) + " bytes");
 			file.skipBytes(pointer.getOffset() - file.getByteOffset());
 		}
 		if (file.getBitOffset() != pointer.getOffsetBits())
 		{
-			assert (pointer.getOffsetBits() - file.getBitOffset()) > 0;
+			assert (pointer.getOffsetBits() - file.getBitOffset()) > 0  : "we have a negative bit seek: current " + file.getBitOffset() + ":" + file.getBitOffset() + " pointer " + pointer.pointerToString();
 			if(DEBUG) System.err.println("skipping "+ (pointer.getOffsetBits() - file.getBitOffset()) + "bits");
 			file.skipBits(pointer.getOffsetBits() - file.getBitOffset());
 		}
