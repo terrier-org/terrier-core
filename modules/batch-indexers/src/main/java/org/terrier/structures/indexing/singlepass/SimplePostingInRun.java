@@ -47,9 +47,6 @@ import org.terrier.structures.Pointer;
  */
 class SimplePostingInRun extends PostingInRun {
 	
-	/**
-	 * Constructor for the class.
-	 */
 	public SimplePostingInRun() {
 		termTF = 0;
 	}
@@ -60,31 +57,6 @@ class SimplePostingInRun extends PostingInRun {
 		//getId() is still valid.
 		return Pair.of(postings.getId(), p);
 	}	
-	
-	/**
-	 * Writes the document data of this posting to a {@link org.terrier.compression.bit.BitOut} 
-	 * It encodes the data with the right compression methods.
-	 * The stream is written as <code>d1, idf(d1), d2 - d1, idf(d2)</code> etc.
-	 * @param bos BitOut to be written.
-	 * @param last int representing the last document written in this posting.
-	 * @param runShift int representing the last document read document read in this posting stream.
-	 * @return The last posting written.
-	 */
-	public int append(BitOut bos, int last, int runShift) throws IOException {
-		int current = runShift - 1;
-		for(int i = 0; i < termDf; i++){
-			final int docid = postingSource.readGamma() + current;
-			bos.writeGamma(docid - last);
-			bos.writeUnary(postingSource.readGamma());
-			current = last = docid;		
-		}
-		try{
-			postingSource.align();
-		}catch(Exception e){
-			// last posting
-		}
-		return last;
-	}
 	
 	protected class PIRPostingIterator extends IterablePostingImpl
 	{
@@ -143,7 +115,7 @@ class SimplePostingInRun extends PostingInRun {
 	}
 
 	@Override
-	public IterablePosting getPostingIterator(final int runShift) throws IOException 
+	public IterablePosting getPostingIterator(final int runShift)
 	{
 		return new PIRPostingIterator(runShift);
 	}

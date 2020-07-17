@@ -132,34 +132,19 @@ abstract class PostingInRun {
 		postingSource = source;
 	}
 
+	/**
+	 * Writes the document data of this posting to a {@link AbstractPostingOutputStream}
+	 * The stream is written to a AbstractPostingOutputStream.
+	 * @param pos AbstractPostingOutputStream to be written.
+	 * @param last int representing the last document written in this posting.
+	 * @return The id of the last posting written and the pointer.
+	 */
 	public abstract Pair<Integer,Pointer> append(AbstractPostingOutputStream pos, int last, int runShift) throws IOException;
 
 	public Pair<Integer,Pointer> append(AbstractPostingOutputStream pos, int last) throws IOException {
 		return this.append(pos, last, 0);
 	}
 
-	/**
-	 * Writes the document data of this posting to a {@link org.terrier.compression.bit.BitOut} 
-	 * It encodes the data with the right compression methods.
-	 * The stream is written as <code>d1, idf(d1) , d2 - d1, idf(d2)</code> etc.
-	 * @param bos BitOut to be written.
-	 * @param last int representing the last document written in this posting.
-	 * @return The last posting written.
-	 */
-	public abstract int append(BitOut bos, int last, int runShift) throws IOException;
-
-	/**
-	 * Writes the document data of this posting to a {@link org.terrier.compression.bit.BitOut} 
-	 * It encodes the data with the right compression methods.
-	 * The stream is written as <code>d1, idf(d1) , d2 - d1, idf(d2)</code> etc.
-	 * @param bos BitOut to be written.
-	 * @param last int representing the last document written in this posting.
-	 * @return The last posting written.
-	 */
-	public int append(BitOut bos, int last) throws IOException {
-		return append(bos, last, 0);
-	}
-
 	/** Returns an IterablePosting object for the postings in this run */
-	public abstract IterablePosting getPostingIterator(int runShift) throws IOException;
+	public abstract IterablePosting getPostingIterator(int runShift);
 }

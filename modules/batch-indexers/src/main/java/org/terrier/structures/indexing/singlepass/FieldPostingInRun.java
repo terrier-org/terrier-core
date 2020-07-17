@@ -56,44 +56,7 @@ class FieldPostingInRun extends SimplePostingInRun {
 		super();
 		fieldTags = _fieldTags;
 		fieldTFs = new int[fieldTags];
-	}
-	/**
-	 * Writes the document data of this posting to a {@link org.terrier.compression.bit.BitOut} 
-	 * It encodes the data with the right compression methods.
-	 * The stream is written as d1, idf(d1), fieldScore(d1) , d2 - d1, idf(d2), fieldScore(d2) etc.
-	 * @param bos BitOut to be written.
-	 * @param last int representing the last document written in this posting.
-	 * @param runShift amount of delta to apply to the first posting read.
-	 * @return The docid of the last posting written.
-	 */
-	public int append(BitOut bos, int last, int runShift)  throws IOException{
-		int current = runShift - 1;
-		for(int i = 0; i < termDf; i++){
-			int docid = postingSource.readGamma() + current;
-			bos.writeGamma(docid - last);
-			//System.err.println("actual docid="+docid+" read docidD=" + (docid-current) + " writing docidD="+ (docid - last));
-			
-			current = last = docid;	
-			
-			bos.writeUnary(postingSource.readGamma());
-			for(int f=0;f<fieldTags;f++)
-			{
-				int tff = postingSource.readUnary()-1;
-				//System.err.println("f"+f + "=" + tff);
-				fieldTFs[f] += tff;
-				bos.writeUnary(tff +1);
-			}
-				
-		}
-		try{
-			postingSource.align();
-		}catch(Exception e){
-			// last posting
-		}
-		return last;
-	}
-	
-	
+	}	
 	
 	@Override
 	public LexiconEntry getLexiconEntry() {
@@ -154,7 +117,7 @@ class FieldPostingInRun extends SimplePostingInRun {
 	}
 	
 	@Override
-	public IterablePosting getPostingIterator(final int runShift) throws IOException 
+	public IterablePosting getPostingIterator(final int runShift)
 	{
 		return new fPIRPostingIterator(runShift);
 	}

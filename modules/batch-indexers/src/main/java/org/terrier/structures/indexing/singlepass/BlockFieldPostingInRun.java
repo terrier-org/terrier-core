@@ -58,46 +58,6 @@ class BlockFieldPostingInRun extends BlockPostingInRun{
 		fieldTFs = new int[fieldTags];
 	}
 
-	/**
-	 * Writes the document data of this posting to a {@link org.terrier.compression.bit.BitOut} 
-	 * It encodes the data with the right compression methods.
-	 * The stream is written as <code>d1, idf(d1), fields, blockNo(d1), bid1, bid2, ...,  d2 - d1, idf(d2), fields, blockNo(d2), ...</code> etc
-	 * @param bos BitOut to be written.
-	 * @param last int representing the last document written in this posting.
-	 * @param runShift amount of delta to apply to the first posting read.
-	 * @return The last posting written.
-	 */	
-	public int append(BitOut bos, int last, int runShift)  throws IOException{
-		int current = runShift - 1;
-		for(int i = 0; i < termDf; i++){
-			int docid = postingSource.readGamma() + current;
-			bos.writeGamma(docid - last);
-			bos.writeUnary(postingSource.readGamma());
-			current = last = docid;
-			//deal with fields
-			for(int f=0;f<fieldTags;f++)
-			{
-				int tff = postingSource.readUnary() -1;
-				fieldTFs[f] += tff;
-				bos.writeUnary(tff +1);
-			}
-			//now deal with blocks
-			final int numOfBlocks = postingSource.readUnary() -1;
-			bos.writeUnary(numOfBlocks+1);
-			if (numOfBlocks > 0)
-				for(int j = 0; j < numOfBlocks; j++){
-					/* we're reading and saving gaps here, not blockids */
-					bos.writeGamma(postingSource.readGamma());
-				}
-		}
-		try{
-			postingSource.align();
-		}catch(Exception e){
-			// last posting
-		}
-		return last;
-	}
-	
 	@Override
 	public LexiconEntry getLexiconEntry() {
 		FieldLexiconEntry fes = new FieldLexiconEntry(fieldTFs.length);
@@ -177,7 +137,7 @@ class BlockFieldPostingInRun extends BlockPostingInRun{
 	}
 	
 	@Override
-	public IterablePosting getPostingIterator(final int runShift) throws IOException 
+	public IterablePosting getPostingIterator(final int runShift)
 	{
 		return new bfPIRPostingIterator(runShift);
 	}

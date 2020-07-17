@@ -277,10 +277,13 @@ public class BlockSinglePassIndexer extends BasicSinglePassIndexer{
 	
 	protected void createFieldRunMerger(String[][] files) throws IOException{
 		merger = new RunsMerger(new FileRunIteratorFactory(files, BlockFieldPostingInRun.class, super.numFields));
+		merger.fields = true;
+		merger.blocks = true;
 	}
 	
 	protected void createRunMerger(String[][] files) throws Exception{
 		merger = new RunsMerger(new FileRunIteratorFactory(files, BlockPostingInRun.class, 0));
+		merger.blocks = true;
 	}
 
 	protected void createMemoryPostings(){

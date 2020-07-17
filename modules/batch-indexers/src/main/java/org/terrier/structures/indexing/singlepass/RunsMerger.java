@@ -32,12 +32,17 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.terrier.compression.bit.BitOut;
 import org.terrier.compression.bit.BitOutputStream;
 import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.BitFilePosition;
 import org.terrier.structures.FilePosition;
+import org.terrier.structures.Pointer;
+import org.terrier.structures.postings.ChainIterablePosting;
+import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.AbstractPostingOutputStream;
@@ -70,32 +75,19 @@ class RunsMerger {
 	
 	/**
 	 * Heap for the postings coming from different runs.
-	 * It uses an alphabetical order using the terms
+	 * It uses an alphabetical order using the terms, and makes sures runs come in indexing order
 	 */	 
 	protected Queue<RunIterator> queue;		
 	/** file used to write the merged postings to disk*/
 	protected AbstractPostingOutputStream pos;	
-	/** RunReader reference for instantiation*/
-	/** Last term written to disk (useful for terms appearing in multiple runs */
-	protected String lastTermWritten = "";
 	
-	protected LexiconEntry termStatistics = null;
-	
-	/** Frequency in the run of the last term merged */ 
-	protected int lastFreq = 0;
-	/**Last document written in the stream*/
-	protected int lastDocument = 0; 
-	/** Last document's frequency*/
-	protected int lastDocFreq = 0;
-	/** RunReader reference for merging */
-	protected RunIterator myRun;
+	protected boolean fields = false;
+	protected boolean blocks = false;
+
 	/** Number of terms written */
 	protected int currentTerm = 0;
 	/** Number of pointers written */
 	protected int numberOfPointers = 0;
-
-	protected BitFilePosition startOffset = new FilePosition(0l,(byte)0);
-
 	
 	protected RunIteratorFactory runsSource;
 	/**
@@ -106,20 +98,6 @@ class RunsMerger {
 	{
 		runsSource = _runsSource;
 	}
-	
-	/**
-	 * @return the last frequency written.
-	 */
-	public int getLastFreq(){
-		return lastFreq;
-	}
-	
-	/**
-	 * @return the last document frequency written.
-	 */
-	public int getLastDocFreq(){
-		return lastDocFreq;
-	}	
 	
 	/**
 	 * @return the number of terms written.
@@ -157,21 +135,6 @@ class RunsMerger {
 	}
 	
 	/**
-	 * @return the String with the last term written to disk.
-	 */
-	public String getLastTermWritten() {
-		return lastTermWritten;
-	}
-	
-	/**
-	 * Setter for the last term written.
-	 * @param _lastTermWritten String with the last term written. 
-	 */
-	public void setLastTermWritten(String _lastTermWritten) {
-		this.lastTermWritten = _lastTermWritten;
-	}
-	
-	/**
 	 * Begins the merge, initilialising the structures.
 	 * Notice that the file names must be in order of run-id	
 	 * @param size number of runs in disk.
@@ -195,20 +158,7 @@ class RunsMerger {
 	 * @throws Exception if an I/O error occurs. 
 	 */
 	public void beginMerge(int size, AbstractPostingOutputStream _pos) throws Exception{		
-		init(size, _pos);
-		myRun = queue.poll();
-		while(myRun.current().getTerm().equals(" ")) myRun = queue.poll();		
-		lastDocument = myRun.current().append(pos,-1).getLeft();
-		termStatistics = myRun.current().getLexiconEntry();
-		lastFreq = myRun.current().getTF();
-		lastDocFreq = myRun.current().getDf();	
-		lastTermWritten = myRun.current().getTerm();
-		if(myRun.hasNext()){
-			myRun.next();			
-			queue.add(myRun);			
-		}else{
-			myRun.close();
-		}		
+		init(size, _pos);	
 	}
 	
 	/**
@@ -216,36 +166,50 @@ class RunsMerger {
 	 * @param lexStream LexiconOutputStream used to write the lexicon.
 	 * @throws Exception if an I/O error occurs.
 	 */
-	public void mergeOne(LexiconOutputStream<String> lexStream) throws Exception{
-		myRun = queue.poll();
-		if(myRun.current().getTerm().equals(lastTermWritten)){
-			// append the term --> keep the data in memory
-			lastDocument = myRun.current().append(pos, lastDocument).getLeft();
-			myRun.current().addToLexiconEntry(termStatistics);
-			lastFreq += myRun.current().getTF();
-			lastDocFreq += myRun.current().getDf();
-			
-		}else{			
-			//write this term to the lexicon
-			termStatistics.setTermId(currentTerm++);
-			((BasicLexiconEntry)termStatistics).setOffset(startOffset);
-			lexStream.writeNextEntry(lastTermWritten, termStatistics);
-			//record the start offset of the next term
-			startOffset.setOffset(this.getByteOffset(), this.getBitOffset());
-			//get the information of the next term from the Run
-			numberOfPointers += lastDocFreq;
-			lastDocument = myRun.current().append(pos,-1).getLeft();
-			termStatistics = myRun.current().getLexiconEntry();
-			lastFreq = myRun.current().getTF();
-			lastDocFreq = myRun.current().getDf();
-			lastTermWritten = myRun.current().getTerm();
+	public void mergeOne(LexiconOutputStream<String> lexStream) throws Exception {
 
+		// identify the term to process
+		RunIterator myRun = queue.poll();
+		LexiconEntry termStatistics = myRun.current().getLexiconEntry();
+		List<RunIterator> runsWithThisTerm = new ArrayList<>();
+		runsWithThisTerm.add(myRun);
+		int numEntries = myRun.current().getDf();
+		String term = myRun.current().getTerm();
+		
+		// identify all other runs with this term 
+		while(queue.size() > 0 && queue.peek().current().getTerm().equals(term) ) {
+			RunIterator run = queue.poll();
+			runsWithThisTerm.add(run);
+			numEntries += run.current().getDf();
+			run.current().addToLexiconEntry(termStatistics);
 		}
-		if(myRun.hasNext()){
-			myRun.next();
-			queue.add(myRun);
-		}else{
-			myRun.close();
+
+		// get an IterablePosting represent all of the terms;
+		// we use an if to reduce overhead for single run scenarios
+		IterablePosting ip = runsWithThisTerm.size() > 1
+			? ChainIterablePosting.of(
+				runsWithThisTerm
+					.stream()
+					.map(run -> run.current().getPostingIterator(0))
+					.toArray(IterablePosting[]::new),
+				this.blocks, this.fields)
+			: myRun.current().getPostingIterator(0);
+
+		// write that posting list to disk, save the pointers and stats in the lexicon
+		Pointer p = pos.writePostings(ip);
+		termStatistics.setPointer(p);
+		termStatistics.setTermId(currentTerm++);
+		lexStream.writeNextEntry(term, termStatistics);
+		numberOfPointers += numEntries;
+
+		// put the runs back on the priority queue
+		for (RunIterator run: runsWithThisTerm) {
+			if(run.hasNext()){
+				run.next();
+				queue.add(myRun);
+			}else{
+				run.close();
+			}
 		}
 	}
 	
@@ -255,13 +219,7 @@ class RunsMerger {
 	 * @throws IOException if an I/O error occurs.	
 	 */	
 	public void endMerge(LexiconOutputStream<String> lexStream) throws IOException{
-		termStatistics.setTermId(currentTerm++);
-		((BasicLexiconEntry)termStatistics).setOffset(startOffset);
-		lexStream.writeNextEntry(lastTermWritten, termStatistics);
-		
-		numberOfPointers += lastDocFreq;
 		pos.close();
-		myRun.close();
 	}	
 	
 }

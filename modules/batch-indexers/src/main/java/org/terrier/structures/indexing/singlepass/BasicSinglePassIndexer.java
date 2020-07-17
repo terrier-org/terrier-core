@@ -466,6 +466,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 	 */
 	protected void createFieldRunMerger(String[][] files) throws Exception{
 		merger = new RunsMerger(new FileRunIteratorFactory(files, FieldPostingInRun.class, super.numFields));
+		merger.fields = true;
 	}
 
 

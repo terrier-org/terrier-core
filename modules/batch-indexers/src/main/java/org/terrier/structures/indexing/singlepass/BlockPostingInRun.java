@@ -48,40 +48,6 @@ class BlockPostingInRun extends SimplePostingInRun
 	public BlockPostingInRun(){
 		super();
 	}
-
-	/**
-	 * Writes the document data of this posting to a {@link org.terrier.compression.bit.BitOut} 
-	 * It encodes the data with the right compression methods.
-	 * The stream is written as <code>d1, idf(d1), blockNo(d1), bid1, bid2, ...,  d2 - d1, idf(d2), blockNo(d2), ...</code> etc
-	 * @param bos BitOut to be written.
-	 * @param last int representing the last document written in this posting.
-	 * @param runShift amount of delta to apply to the first posting read.
-	 * @return The last posting written.
-	 */
-	public int append(BitOut bos, int last, int runShift)  throws IOException{
-		int current = runShift - 1;
-		for(int i = 0; i < termDf; i++){
-			int docid = postingSource.readGamma() + current;
-			bos.writeGamma(docid - last);
-			bos.writeUnary(postingSource.readGamma());
-			current = last = docid;	
-			
-			//now deal with blocks
-			final int numOfBlocks = postingSource.readUnary() -1;
-			bos.writeUnary(numOfBlocks+1);
-			if (numOfBlocks > 0)
-				for(int j = 0; j < numOfBlocks; j++){
-					/* we're reading and saving gaps here, not blockids */
-					bos.writeGamma(postingSource.readGamma());
-				}
-		}
-		try{
-			postingSource.align();
-		}catch(Exception e){
-			// last posting
-		}
-		return last;
-	}
 	
 	protected class BlockPIRPostingIterator extends PIRPostingIterator implements BlockPosting
 	{
@@ -112,7 +78,7 @@ class BlockPostingInRun extends SimplePostingInRun
 	}
 
 	@Override
-	public IterablePosting getPostingIterator(int runShift) throws IOException {
+	public IterablePosting getPostingIterator(int runShift) {
 		return new BlockPIRPostingIterator(runShift);
 	}
 }
