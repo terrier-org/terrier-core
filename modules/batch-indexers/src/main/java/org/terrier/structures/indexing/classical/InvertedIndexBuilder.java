@@ -238,9 +238,6 @@ public class InvertedIndexBuilder {
 			// creating the inverted file
 			DataOutputStream dos = new DataOutputStream(Files.writeFileStream(LexiconFilename.concat(".tmp2")));
 
-			//if the set number of terms to process is higher than the
-			// available,
-
 			long startProcessingLexicon = 0;
 			long startTraversingDirectFile = 0;
 			long startWritingInvertedFile = 0;
