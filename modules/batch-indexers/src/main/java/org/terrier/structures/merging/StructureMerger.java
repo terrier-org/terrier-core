@@ -252,7 +252,7 @@ public class StructureMerger {
 				new FSOMapFileLexiconOutputStream(destIndex, "lexicon", (Class <FixedSizeWriteableFactory<LexiconEntry>>) lvf.getClass());
 
 			int newCodes = keepTermCodeMap
-					 ? (int)srcIndex1.getCollectionStatistics().getNumberOfUniqueTerms()
+					 ? srcIndex1.getCollectionStatistics().getNumberOfUniqueTerms()
 					 : 0;
 			
 			logger.debug("Opening src inv files");
@@ -264,8 +264,8 @@ public class StructureMerger {
 			logger.debug("Opening new target inv file");
 			AbstractPostingOutputStream invOS = null;
 			try{
-				invOS = compressionInvertedConfig.getPostingOutputStream(((IndexOnDisk) destIndex).getPath() + ApplicationSetup.FILE_SEPARATOR +  
-						((IndexOnDisk) destIndex).getPrefix() + ".inverted"+ compressionInvertedConfig.getStructureFileExtension());
+				invOS = compressionInvertedConfig.getPostingOutputStream(destIndex.getPath() + ApplicationSetup.FILE_SEPARATOR +  
+						destIndex.getPrefix() + ".inverted" + compressionInvertedConfig.getStructureFileExtension());
 				
 			} catch (Exception e) {
 				logger.error("Couldn't create specified AbstractPostingOutputStream", e);
@@ -405,19 +405,7 @@ public class StructureMerger {
 			invOS.close();
 			
 			destIndex.setIndexProperty("num.Documents", ""+numberOfDocuments);
-			destIndex.addIndexStructure(
-						"inverted",
-						compressionInvertedConfig.getStructureClass().getName(),
-						"org.terrier.structures.IndexOnDisk,java.lang.String,org.terrier.structures.DocumentIndex,java.lang.Class", 
-						"index,structureName,document,"+ 
-						compressionInvertedConfig.getPostingIteratorClass().getName() );
-	        destIndex.addIndexStructureInputStream(
-	                    "inverted",
-	                    compressionInvertedConfig.getStructureInputStreamClass().getName(),
-	                    "org.terrier.structures.IndexOnDisk,java.lang.String,java.util.Iterator,java.lang.Class",
-	                    "index,structureName,lexicon-entry-inputstream,"+
-	                    compressionInvertedConfig.getPostingIteratorClass().getName());
-			destIndex.setIndexProperty("index.inverted.fields.count", ""+fieldCount);
+			compressionInvertedConfig.writeIndexProperties(destIndex, "lexicon-entry-inputstream");
 			lexOutStream.close();
 			if (fieldCount > 0)
 			{
@@ -441,7 +429,7 @@ public class StructureMerger {
 	@SuppressWarnings("unchecked")
 	protected void mergeDirectFiles() {
 		try {
-			final DocumentIndexBuilder docidOutput = new DocumentIndexBuilder(destIndex, "document");
+			final DocumentIndexBuilder docidOutput = new DocumentIndexBuilder(destIndex, "document", fields);
 			
 			final String[] metaTags = ArrayUtils.parseCommaDelimitedString(srcIndex1.getIndexProperty("index.meta.key-names", "docno"));
 			final int[] metaTagLengths = ArrayUtils.parseCommaDelimitedInts(srcIndex1.getIndexProperty("index.meta.value-lengths", "20"));
@@ -584,7 +572,7 @@ public class StructureMerger {
 	protected void mergeDocumentIndexFiles() {
 		try {
 			//the output docid file
-			final DocumentIndexBuilder docidOutput = new DocumentIndexBuilder(destIndex, "document");
+			final DocumentIndexBuilder docidOutput = new DocumentIndexBuilder(destIndex, "document", fields);
 			final String[] metaTags = ArrayUtils.parseCommaDelimitedString(srcIndex1.getIndexProperty("index.meta.key-names", "docno"));
 			final int[] metaTagLengths = ArrayUtils.parseCommaDelimitedInts(srcIndex1.getIndexProperty("index.meta.value-lengths", "20"));
 			final String[] metaReverseTags = MetaReverse
@@ -602,8 +590,8 @@ public class StructureMerger {
 			final Iterator<DocumentIndexEntry> docidInput1 = (Iterator<DocumentIndexEntry>)srcIndex1.getIndexStructureInputStream("document");
 			final Iterator<String[]> metaInput1 = (Iterator<String[]>)srcIndex1.getIndexStructureInputStream("meta");
 			
-			int srcFieldCount1 = srcIndex1.getIntIndexProperty("index.inverted.fields.count", 0);
-			int srcFieldCount2 = srcIndex2.getIntIndexProperty("index.inverted.fields.count", 0);
+			int srcFieldCount1 = srcIndex1.getCollectionStatistics().getNumberOfFields();
+			int srcFieldCount2 = srcIndex2.getCollectionStatistics().getNumberOfFields();
 			if (srcFieldCount1 != srcFieldCount2)
 			{
 				metaBuilder.close();
