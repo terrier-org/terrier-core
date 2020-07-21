@@ -393,8 +393,7 @@ public class InvertedIndexBuilder {
 		
 		LexiconScanResult(int terms, long pointers,
 				TIntIntHashMap codesHashMap, List<TIntArrayList[]> tmpStorageStorage) {
-			this(terms, pointers, codesHashMap, (TIntArrayList[][]) tmpStorageStorage.toArray(
-					new TIntArrayList[0][0]));
+			this(terms, pointers, codesHashMap, tmpStorageStorage.toArray(new TIntArrayList[0][0]));
 		}
 		
 		@Override
@@ -708,11 +707,6 @@ public class InvertedIndexBuilder {
 			int termid;
 			FieldPosting fp = _useFieldInformation ? (FieldPosting) ip : null;
 			
-			//use skipping to possibly avoid DF decompression
-//			termid = ip.next(minTermId-1);
-//			if (termid == IterablePosting.EOL)
-//				continue;
-			
 			while( (termid = ip.next()) != IterablePosting.EOL)
 			{
 				//System.err.println("termid="+termid);
@@ -843,7 +837,7 @@ public class InvertedIndexBuilder {
 		IndexOnDisk index = (IndexOnDisk) IndexFactory.of(IndexRef.of(args[0]));
 		new InvertedIndexBuilder(
 			index, 
-			"inverted",
+			"inverted",	
 			CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0)
 		).createInvertedIndex();
 		index.flush();
