@@ -167,9 +167,10 @@ public class TestLinearModelMatching {
 		assertEquals(3.3d, rtr.getScores()[1], 0.0d);
 	}
 	
+	int counter = 0;
 	protected void testWeightsParse(String input, double[] expected) throws Exception
 	{
-		File tempFile = testFolder.newFile("tmp.model");
+		File tempFile = testFolder.newFile("tmp.model.parse" + String.valueOf(counter++));
 		Writer w = new FileWriter(tempFile);
 		w.write(input);
 		w.close();

@@ -74,7 +74,7 @@ public class TestCollections extends ApplicationSetupBasedTest {
 	
 	@Test public void testFactoryConstructorDefault() throws Exception
 	{
-		File f = super.tmpfolder.newFile("collection.spec");
+		File f = super.tmpfolder.newFile("collection.spec.new");
 		f.createNewFile();
 		ApplicationSetup.COLLECTION_SPEC = f.toString();
 		for(Class<? extends Collection> c : ALL_COLLECTIONS)
@@ -98,8 +98,9 @@ public class TestCollections extends ApplicationSetupBasedTest {
 	
 	@Test public void testFactoryConstructorTRECThreadedlike() throws Exception
 	{
-		File f = super.tmpfolder.newFile("collection.spec");
+		File f = super.tmpfolder.newFile("collection.spec.new");
 		f.createNewFile();
+		ApplicationSetup.COLLECTION_SPEC = f.toString();
 		Class<?>[] constructerClasses = {String.class,String.class,String.class,String.class};
 		Object[] constructorValues = {f.toString(), TagSet.TREC_DOC_TAGS, null, null};
 		for(Class<? extends Collection> c : ALL_COLLECTIONS)
