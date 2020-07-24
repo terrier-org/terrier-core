@@ -154,7 +154,7 @@ public class TestBitIndexPointer {
 	@Test
 	public void testSimpleBIPointer() throws Exception
 	{
-		test(new SimpleBitIndexPointer.Factory());
+		test((FixedSizeWriteableFactory<? extends BitIndexPointer>)(FixedSizeWriteableFactory)new SimpleBitIndexPointer.Factory());
 	}
 	
 	

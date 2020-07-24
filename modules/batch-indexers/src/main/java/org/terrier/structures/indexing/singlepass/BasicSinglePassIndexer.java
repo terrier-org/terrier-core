@@ -36,23 +36,18 @@ import java.util.Queue;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
 import org.terrier.structures.AbstractPostingOutputStream;
-import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
-import org.terrier.structures.FieldDocumentIndexEntry;
-import org.terrier.structures.FieldLexiconEntry;
+import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.LexiconOutputStream;
-import org.terrier.structures.SimpleDocumentIndexEntry;
-import org.terrier.structures.indexing.CompressionFactory.BitCompressionConfiguration;
+import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.indexing.DocumentPostingList;
 import org.terrier.structures.indexing.classical.BasicIndexer;
-import org.terrier.structures.postings.bit.BasicIterablePosting;
-import org.terrier.structures.postings.bit.FieldIterablePosting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.FieldScore;
@@ -127,12 +122,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 	protected int numberOfUniqueTerms = 0;
 	/** Number of pointers indexed */
 	protected long numberOfPointers = 0;
-	/** what class should be used to read the generated inverted index? */
-	protected String invertedIndexClass = org.terrier.structures.bit.BitPostingIndex.class.getName();
-	protected String basicInvertedIndexPostingIteratorClass = BasicIterablePosting.class.getName();
-	protected String fieldInvertedIndexPostingIteratorClass = FieldIterablePosting.class.getName();
-	/** what class should be used to read the inverted index as a stream? */
-	protected String invertedIndexInputStreamClass = org.terrier.structures.bit.BitPostingIndexInputStream.class.getName();
+
 	/**
 	 * Constructs an instance of a BasicSinglePassIndexer, using the given path name
 	 * for storing the data structures.
@@ -146,11 +136,6 @@ public class BasicSinglePassIndexer extends BasicIndexer{
         if (this.getClass() == BasicSinglePassIndexer.class) 
 			init();
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, 0, 0);
-		if (! (this.compressionInvertedConfig instanceof BitCompressionConfiguration ))
-        {
-        	throw new Error("Sorry, only default BitCompressionConfiguration is supported by " + this.getClass().getName() 
-        			+ " - you can recompress the inverted index later using IndexRecompressor");
-		}
 	}
 
 	/** Protected do-nothing constructor for use by child classes */
@@ -188,7 +173,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
 		metaBuilder = createMetaIndexBuilder();
 		
-		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new SimpleDocumentIndexEntry();
+		emptyDocIndexEntry = compressionInvertedConfig.getDocumentIndexEntryFactory().newInstance();
 		
 		MAX_DOCS_PER_BUILDER = UnitUtils.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "0"));
 		maxMemory = UnitUtils.parseLong(ApplicationSetup.getProperty("indexing.singlepass.max.postings.memory", "0"));
@@ -279,18 +264,9 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 				endCollection = System.currentTimeMillis();
 				long partialTime = (endCollection-startCollection)/1000;
 				logger.info("Collection #"+collectionNo+ " took "+partialTime+ " seconds to build the runs for "+numberOfDocuments+" documents\n");
-							
-				
-				
+									
 				docIndexBuilder.finishedCollections();
-				if (FieldScore.FIELDS_COUNT > 0)
-				{
-					currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.inverted.fields.count}");
-				}
-				else
-				{
-					currentIndex.addIndexStructure("document-factory", SimpleDocumentIndexEntry.Factory.class.getName(), "", "");
-				}
+				compressionInvertedConfig.getDocumentIndexEntryFactory().writeProperties(currentIndex, "document-factory");	
 				currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
 				metaBuilder.close();
 				currentIndex.flush();
@@ -352,7 +328,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings(
 			value="DM_GC",
 			justification="Forcing GC is an essential part of releasing" +
-					"memory for further indexing")
+					" memory for further indexing")
 	/** causes the posting lists built up in memory to be flushed out */
 	protected void forceFlush() throws IOException
 	{	
@@ -376,8 +352,8 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 			
 			checkFlush();
 			mp.addTerms(termsInDocument, currentId);
-			DocumentIndexEntry die = termsInDocument.getDocumentStatistics();
-			docIndexBuilder.addEntryToBuffer((FieldScore.FIELDS_COUNT > 0) ? die : new SimpleDocumentIndexEntry(die));
+			DocumentIndexEntry die = termsInDocument.getDocumentStatistics( compressionInvertedConfig.getDocumentIndexEntryFactory().newInstance() );
+			docIndexBuilder.addEntryToBuffer(die); 
 			metaBuilder.writeDocumentEntry(docProperties);
 			currentId++;
 			numberOfDocuments++;
@@ -410,7 +386,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		String[][] _fileNames = getFileNames();
 		this.currentIndex.setIndexProperty("max.term.length", ApplicationSetup.getProperty("max.term.length", ""+20));
 		LexiconOutputStream<String> lexStream = new FSOMapFileLexiconOutputStream(this.currentIndex, "lexicon", 
-				(super.numFields > 0 ? FieldLexiconEntry.Factory.class : BasicLexiconEntry.Factory.class));
+			compressionInvertedConfig.getLexiconEntryFactory());
 		
 		try{
 			if (useFieldInformation)
@@ -421,15 +397,13 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 			AbstractPostingOutputStream pos = compressionInvertedConfig.getPostingOutputStream(path + ApplicationSetup.FILE_SEPARATOR +  prefix + ".inverted"+ compressionInvertedConfig.getStructureFileExtension());
 			merger.beginMerge(_fileNames.length, pos);
 			while(!merger.isDone()){
-				merger.mergeOne(lexStream);
+				LexiconEntry le = compressionInvertedConfig.getLexiconEntryFactory().newInstance();
+				le.setMaxFrequencyInDocuments(0);
+				merger.mergeOne(lexStream, le);
 			}
 			merger.endMerge(lexStream);
 			lexStream.close();
-			//the constructor for FieldLexiconEntry is wrong - replace it
-			if (super.numFields > 0)
-			{
-				this.currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.inverted.fields.count}");
-			}
+			compressionInvertedConfig.getLexiconEntryFactory().writeProperties(currentIndex, "lexicon-valuefactory");
 			numberOfUniqueTerms = merger.getNumberOfTerms();
 			numberOfPointers = merger.getNumberOfPointers();
 			// Delete the runs files

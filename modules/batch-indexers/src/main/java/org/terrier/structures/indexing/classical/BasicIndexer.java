@@ -33,15 +33,12 @@ import java.util.Set;
 
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
-import org.terrier.structures.BasicDocumentIndexEntry;
-import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.DocumentIndexEntry;
-import org.terrier.structures.FieldDocumentIndexEntry;
-import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexUtil;
+import org.terrier.structures.Pointer;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.indexing.DocumentPostingList;
@@ -213,12 +210,12 @@ public class BasicIndexer extends Indexer
 	{
 		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
 		final boolean FIELDS = FieldScore.FIELDS_COUNT > 0;
-		lexiconBuilder = FIELDS
-			? new LexiconBuilder(currentIndex, "lexicon", 
-					new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
-					FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"",
-					termCodes)
-			: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName(), termCodes);
+		lexiconBuilder =  new LexiconBuilder(
+			currentIndex, 
+			"lexicon", 
+			FIELDS ? new FieldLexiconMap(FieldScore.FIELDS_COUNT) : new LexiconMap(), 
+			compressionDirectConfig.getLexiconEntryFactory(), 
+			termCodes);
 		
 		try{
 			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
@@ -226,12 +223,10 @@ public class BasicIndexer extends Indexer
 		} catch (Exception ioe) {
 			logger.error("Cannot make PostingOutputStream:", ioe);
 		}
-			//	new DirectIndexBuilder(currentIndex, "direct");
 		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
 		metaBuilder = createMetaIndexBuilder();
-		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
-				
-		//int LexiconCount = 0;
+		emptyDocIndexEntry =  compressionDirectConfig.getDocumentIndexEntryFactory().newInstance();
+
 		int numberOfDocuments = 0; int numberOfTokens = 0;
 		//final long startBunchOfDocuments = System.currentTimeMillis();
 		final int collections_length = collections.length;
@@ -242,7 +237,6 @@ public class BasicIndexer extends Indexer
 			final Collection collection = collections[collectionNo];
 			long startCollection = System.currentTimeMillis();
 			boolean notLastDoc = false;
-			//while(notLastDoc = collection.hasNext()) {
 			while ((notLastDoc = collection.nextDocument())) {
 				//get the next document from the collection
 
@@ -327,6 +321,8 @@ public class BasicIndexer extends Indexer
 			if (emptyDocCount > 0)
 				logger.warn("Indexed " + emptyDocCount + " empty documents");
 		}
+		
+		compressionDirectConfig.getLexiconEntryFactory().writeProperties(currentIndex, "lexicon-valuefactory");
 		finishedDirectIndexBuild();
 		/*end of all the collections has been reached */
 		/* flush the index buffers */
@@ -340,23 +336,12 @@ public class BasicIndexer extends Indexer
 		} catch (IOException ioe) {
 			logger.error("Could not finish directindex or MetaIndexBuilder: ", ioe);
 		}
-		if (FIELDS)
-		{
-			currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
-		}
-		else
-		{
-			currentIndex.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
-		}
-	
+		compressionDirectConfig.getDocumentIndexEntryFactory().writeProperties(currentIndex, "document-factory");	
 		/* and then merge all the temporary lexicons */
 		lexiconBuilder.finishedDirectIndexBuild();
 		currentIndex.setIndexProperty("num.Tokens", ""+numberOfTokens);
 		currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
-		if (FieldScore.FIELDS_COUNT > 0)
-		{
-			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
-		}
+		
 		/* reset the in-memory mapping of terms to term codes.*/
 		termCodes.reset();
 		/* and clear them out of memory */
@@ -384,11 +369,10 @@ public class BasicIndexer extends Indexer
 		/* add words to lexicontree */
 		lexiconBuilder.addDocumentTerms(_termsInDocument);
 		/* add doc postings to the direct index */
-		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2(termCodes));
-			//.addDocument(termsInDocument.getPostings());
+		Pointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2(termCodes), _termsInDocument.getNumberOfPointers(), _termsInDocument.getDocumentLength());
 		/* add doc to documentindex */
-		DocumentIndexEntry die = _termsInDocument.getDocumentStatistics();
-		die.setBitIndexPointer(dirIndexPost);
+		DocumentIndexEntry die = _termsInDocument.getDocumentStatistics(compressionDirectConfig.getDocumentIndexEntryFactory().newInstance());
+		die.setPointer(dirIndexPost);
 		docIndexBuilder.addEntryToBuffer(die);
 		/** add doc metadata to index */
 		metaBuilder.writeDocumentEntry(docProperties);		

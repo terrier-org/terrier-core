@@ -35,7 +35,7 @@ import java.util.Arrays;
 
 import org.terrier.sorting.HeapSortInt;
 import org.terrier.structures.DocumentIndexEntry;
-import org.terrier.structures.FieldDocumentIndexEntry;
+import org.terrier.structures.FieldedDocumentIndexEntry;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.FieldPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
@@ -134,9 +134,9 @@ public class FieldDocumentPostingList extends DocumentPostingList {
 	/** 
 	 * {@inheritDoc} 
 	 */
-	public DocumentIndexEntry getDocumentStatistics()
+	public DocumentIndexEntry getDocumentStatistics(DocumentIndexEntry _die)
 	{
-		FieldDocumentIndexEntry fdie = new FieldDocumentIndexEntry(this.fieldCount);
+		FieldedDocumentIndexEntry fdie = (FieldedDocumentIndexEntry)_die;
 		fdie.setDocumentLength(documentLength);
 		fdie.setNumberOfEntries(occurrences.size());
 		fdie.setFieldLengths(fieldLengths);
@@ -204,13 +204,7 @@ public class FieldDocumentPostingList extends DocumentPostingList {
 			FieldPostingImpl fbp = new FieldPostingImpl(termIds[i],getFrequency(), fieldCount);
 			System.arraycopy(getFieldFrequencies(), 0, fbp.getFieldFrequencies(), 0, fieldCount);
 			return fbp;
-		}
-
-		@Override
-		public void setFieldLengths(int[] newLengths) {
-			throw new UnsupportedOperationException();
-		}
-		
+		}		
 	}
 	
 	@Override 

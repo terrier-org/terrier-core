@@ -37,9 +37,6 @@ import java.util.ArrayList;
 
 import org.terrier.compression.bit.BitOut;
 import org.terrier.compression.bit.BitOutputStream;
-import org.terrier.structures.BasicLexiconEntry;
-import org.terrier.structures.BitFilePosition;
-import org.terrier.structures.FilePosition;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.postings.Postings;
 import org.terrier.structures.postings.IterablePosting;
@@ -152,11 +149,10 @@ class RunsMerger {
 	 * @param lexStream LexiconOutputStream used to write the lexicon.
 	 * @throws Exception if an I/O error occurs.
 	 */
-	public void mergeOne(LexiconOutputStream<String> lexStream) throws Exception {
+	public void mergeOne(LexiconOutputStream<String> lexStream, LexiconEntry termStatistics) throws Exception {
 
 		// identify the term to process
 		RunIterator myRun = queue.poll();
-		LexiconEntry termStatistics = myRun.current().getLexiconEntry();
 		List<RunIterator> runsWithThisTerm = new ArrayList<>();
 		runsWithThisTerm.add(myRun);
 		int numEntries = myRun.current().getDf();
@@ -170,8 +166,9 @@ class RunsMerger {
 			assert myRun.getRunNo() < run.getRunNo();
 
 			runsWithThisTerm.add(run);
+
+			// posting length is required for writing the posting list
 			numEntries += run.current().getDf();
-			run.current().addToLexiconEntry(termStatistics);
 		}
 
 		// get an IterablePosting represent all of the terms;
@@ -186,8 +183,17 @@ class RunsMerger {
 			: myRun.current().getPostingIterator(0);
 
 		// write that posting list to disk, save the pointers and stats in the lexicon
-		Pointer p = pos.writePostings(ip);
+		Pointer p = pos.writePostings(ip, numEntries, termStatistics.getMaxFrequencyInDocuments());
+
+		// some PostingInRun implementations make use of the posting iteration to gather entry statistics. 
+		// For this reason, we delay collation until after the postings have been written
+		for(RunIterator ri : runsWithThisTerm) {
+			ri.current().addToLexiconEntry(termStatistics);
+		}
+
+		// this overwrites the number of entries, so do this after "adding" the entryStatistics
 		termStatistics.setPointer(p);
+
 		termStatistics.setTermId(currentTerm++);
 		lexStream.writeNextEntry(term, termStatistics);
 		numberOfPointers += numEntries;

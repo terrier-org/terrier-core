@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.terrier.compression.bit.BitOut;
-import org.terrier.structures.FieldLexiconEntry;
+import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.postings.BlockFieldPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
@@ -43,7 +43,7 @@ import org.terrier.structures.postings.WritablePosting;
  * @author Roi Blanco
  *
  */
-class BlockFieldPostingInRun extends BlockPostingInRun{
+class BlockFieldPostingInRun extends BlockPostingInRun {
 	/** The number of different fields that are used for indexing field information.*/	
 	protected final int fieldTags;
 	
@@ -59,19 +59,10 @@ class BlockFieldPostingInRun extends BlockPostingInRun{
 	}
 
 	@Override
-	public LexiconEntry getLexiconEntry() {
-		FieldLexiconEntry fes = new FieldLexiconEntry(fieldTFs.length);
-		fes.setStatistics(termDf, termTF);
-		fes.setFieldFrequencies(fieldTFs);
-		fes.setMaxFrequencyInDocuments(maxtf);
-		return fes;
-	}
-	
-	@Override
 	public void addToLexiconEntry(LexiconEntry _le)
 	{
 		super.addToLexiconEntry(_le);
-		FieldLexiconEntry le = (FieldLexiconEntry)_le;
+		FieldEntryStatistics le = (FieldEntryStatistics)_le;
 		int[] tffs = le.getFieldFrequencies();
 		addTo(tffs, fieldTFs);
 	}
@@ -110,6 +101,7 @@ class BlockFieldPostingInRun extends BlockPostingInRun{
 			for(int fi = 0; fi < fieldTags;fi++)
 			{
 				fieldFrequencies[fi] = postingSource.readUnary() -1;
+				fieldTFs[fi] += fieldFrequencies[fi];
 			}
 			blockFreq = postingSource.readUnary() -1;
 			blockIds = new int[blockFreq];

@@ -60,7 +60,7 @@ public class PostingUtil {
 		}
 	
 		public int[] getFieldLengths(int docid) throws IOException {
-			return ((FieldDocumentIndexEntry)die).getFieldLengths();
+			return ((FieldedDocumentIndexEntry)die).getFieldLengths();
 		}
 	}
 	

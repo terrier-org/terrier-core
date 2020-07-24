@@ -33,7 +33,7 @@ import java.util.LinkedList;
 
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
-import org.terrier.structures.FieldDocumentIndexEntry;
+import org.terrier.structures.FieldedDocumentIndexEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.SimpleDocumentIndexEntry;
@@ -108,10 +108,11 @@ public abstract class ExtensibleSinglePassIndexer extends BasicSinglePassIndexer
 		numberOfTokens = numberOfPointers = 0;
 		createMemoryPostings();
 		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
+		final boolean FIELDS = (FieldScore.FIELDS_COUNT > 0);
+		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
 		metaBuilder = createMetaIndexBuilder();
 		
-		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new SimpleDocumentIndexEntry();
+		emptyDocIndexEntry = compressionInvertedConfig.getDocumentIndexEntryFactory().newInstance();
 		
 		MAX_DOCS_PER_BUILDER = Integer.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "0"));
 		maxMemory = Long.parseLong(ApplicationSetup.getProperty("indexing.singlepass.max.postings.memory", "0"));
@@ -210,14 +211,7 @@ public abstract class ExtensibleSinglePassIndexer extends BasicSinglePassIndexer
 				
 				
 				docIndexBuilder.finishedCollections();
-				if (FieldScore.FIELDS_COUNT > 0)
-				{
-					currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.inverted.fields.count}");
-				}
-				else
-				{
-					currentIndex.addIndexStructure("document-factory", SimpleDocumentIndexEntry.Factory.class.getName(), "", "");
-				}
+				compressionInvertedConfig.getDocumentIndexEntryFactory().writeProperties(currentIndex, "document-factory");	
 				metaBuilder.close();
 				currentIndex.flush();
 				

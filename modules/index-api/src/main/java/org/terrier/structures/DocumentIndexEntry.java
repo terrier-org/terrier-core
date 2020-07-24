@@ -30,12 +30,10 @@ import org.apache.hadoop.io.Writable;
 /** 
  * A document index entry. Also acts as a pointer into the direct index.
  */
-public abstract class DocumentIndexEntry implements BitIndexPointer, Writable
+public abstract class DocumentIndexEntry implements Pointer, Writable
 {
     int entries;
     int doclength;
-    long bytes;
-    byte bits;
     
     /** 
      * Return the length of the document.
@@ -66,61 +64,12 @@ public abstract class DocumentIndexEntry implements BitIndexPointer, Writable
         return entries;
     }
 
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public byte getOffsetBits() 
-    {
-        return (byte) (bits & BIT_MASK);
+    public void setDocumentIndexStatistics(DocumentIndexEntry die) {
+        this.doclength = die.getDocumentLength();
+        this.entries = die.getNumberOfEntries();
     }
 
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public long getOffset() 
-    {
-        return bytes;
-    }
-    
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public byte getFileNumber() 
-    {
-        return (byte) ( (0xFF & bits) >> FILE_SHIFT);
-    }
-    
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public void setFileNumber(byte fileId)
-    {
-        bits = getOffsetBits();
-        bits += (fileId << FILE_SHIFT);
-    }
-
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public void setOffset(long _bytes, byte _bits) 
-    {
-        bytes = _bytes;
-        byte fileId = this.getFileNumber();
-        bits = _bits;
-        bits += (fileId << FILE_SHIFT);
-    }
-    
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public String toString()
-    {
-        return getDocumentLength() + " " + getNumberOfEntries() + "@{" + getFileNumber() + "," + getOffset() + "," + getOffsetBits() + "}";
+    @Override public String toString() {
+        return "dl=" + getDocumentLength() + " N=" + getNumberOfEntries();
     }
 }

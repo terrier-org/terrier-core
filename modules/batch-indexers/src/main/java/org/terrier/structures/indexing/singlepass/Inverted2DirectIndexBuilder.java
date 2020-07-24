@@ -40,7 +40,6 @@ import org.terrier.compression.bit.BitInputStream;
 import org.terrier.compression.bit.BitOut;
 import org.terrier.compression.bit.BitOutputStream;
 import org.terrier.compression.bit.MemorySBOS;
-import org.terrier.structures.BasicDocumentIndexEntry;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.indexing.CompressionFactory;
@@ -49,15 +48,9 @@ import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.PostingIndexInputStream;
-import org.terrier.structures.bit.BitPostingIndex;
-import org.terrier.structures.BitIndexPointer;
-import org.terrier.structures.SimpleBitIndexPointer;
-import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.postings.IterablePosting;
-import org.terrier.structures.postings.bit.BasicIterablePosting;
-import org.terrier.structures.postings.bit.FieldIterablePosting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
 import org.terrier.utility.TerrierTimer;
@@ -115,32 +108,37 @@ public class Inverted2DirectIndexBuilder {
 		return CompressionFactory.getCompressionConfiguration(destinationStructure, index.getCollectionStatistics().getFieldNames(), 0, 0);
 	}
 
+	protected boolean checkValidity() {
+		if( ! index.hasIndexStructure(sourceStructure))
+		{
+			logger.error("This index has no "+sourceStructure+" structure, aborting direct index build");
+			return false;
+		}
+		if ( index.hasIndexStructure(destinationStructure))
+		{
+			logger.error("This index already has a "+destinationStructure+" index, no need to create one.");
+			return false;
+		}
+		if (index.getIndexProperty("index.terrier.version", "2.0").startsWith("1.") )
+		{
+			logger.error("Index version from Terrier 1.x - it is likely that the termids are not aligned, and hence df creation would not be correct - aborting direct index build");
+			return false;
+		}		
+		if (! "aligned".equals(index.getIndexProperty("index.lexicon.termids", "")))
+		{
+			logger.error("This index is not supported by " + this.getClass().getName() + " - termids are not strictly ascending.");
+			return false;
+		}
+		return true;
+	}
+
 	/** create the direct index when the collection contains an existing inverted index */
 	@SuppressWarnings("unchecked")
 	public void createDirectIndex()
 	{
 		final long startTime = System.currentTimeMillis();
-		if( ! index.hasIndexStructure(sourceStructure))
-		{
-			logger.error("This index has no "+sourceStructure+" structure, aborting direct index build");
+		if (! checkValidity())
 			return;
-		}
-		if ( index.hasIndexStructure(destinationStructure))
-		{
-			logger.error("This index already has a "+destinationStructure+" index, no need to create one.");
-			return;
-		}
-		if (index.getIndexProperty("index.terrier.version", "2.0").startsWith("1.") )
-		{
-			logger.error("Index version from Terrier 1.x - it is likely that the termids are not aligned, and hence df creation would not be correct - aborting direct index build");
-			return;
-		}
-		
-		if (! "aligned".equals(index.getIndexProperty("index.lexicon.termids", "")))
-		{
-			logger.error("This index is not supported by " + this.getClass().getName() + " - termids are not strictly ascending. Try Inv2DirectMultiReduce");
-			return;
-		}
 		CompressionConfiguration directCompressor = getCompressionConfiguration();
 
 		logger.info("Generating a "+destinationStructure+" structure from the "+sourceStructure+" structure");
@@ -157,7 +155,7 @@ public class Inverted2DirectIndexBuilder {
 			Iterator<DocumentIndexEntry> diis =  (Iterator<DocumentIndexEntry>) index.getIndexStructureInputStream("document");
 			final String offsetsFilename = index.getPath() + ApplicationSetup.FILE_SEPARATOR + index.getPrefix() + "."+destinationStructure+".offsets";
 			final DataOutputStream offsetsTmpFile = new DataOutputStream(Files.writeFileStream(offsetsFilename));
-			final AbstractPostingOutputStream pos = directCompressor.getPostingOutputStream​( index.getPath() + ApplicationSetup.FILE_SEPARATOR + index.getPrefix() + "."+destinationStructure+ directCompressor.getStructureFileExtension());
+			final AbstractPostingOutputStream pos = directCompressor.getPostingOutputStream( index.getPath() + ApplicationSetup.FILE_SEPARATOR + index.getPrefix() + "."+destinationStructure+ directCompressor.getStructureFileExtension());
 			do//for each pass of the inverted file
 			{
 				iteration++;
@@ -173,11 +171,9 @@ public class Inverted2DirectIndexBuilder {
 				//get postings for these documents
 				numberOfTokensFound += traverseInvertedFile(iiis, firstDocid, countDocsThisIteration, postings);
 				logger.info("Writing postings for iteration "+iteration+" to disk");
-				Pointer lastPointer = new SimpleBitIndexPointer();
+				Pointer lastPointer = directCompressor.getPointerFactory().newInstance();
 				for (Posting p : postings) //for each document
 				{	
-					//logger.debug("Document " + id  + " length="+ p.getDocF());
-					
 					//get the offsets
 					Pointer pointer = null;
 					
@@ -201,7 +197,7 @@ public class Inverted2DirectIndexBuilder {
 							Docs.getMOS().getBuffer())));
 						//System.err.println("temp compressed buffer size="+Docs.getMOS().getPos() + " length="+Docs.getMOS().getBuffer().length);
 						//decompress the memory postings and write out to the direct file
-						pointer = pos.writePostings(pir.getPostingIterator(0));
+						pointer = pos.writePostings(pir.getPostingIterator(0), p.getDocF(), p.getMaxtf());
 						lastPointer = pointer;
 					} else {
 						pointer = lastPointer;
@@ -209,10 +205,7 @@ public class Inverted2DirectIndexBuilder {
 					}
 
 					//take note of the offset for this document in the df
-					BitIndexPointer bp = (BitIndexPointer)pointer;
-					offsetsTmpFile.writeLong(bp.getOffset());
-					offsetsTmpFile.writeByte(bp.getOffsetBits());
-					offsetsTmpFile.writeInt(pointer.getNumberOfEntries());
+					pointer.write(offsetsTmpFile);
 				}// /for document postings
 				iiis.close();
 				firstDocid = firstDocid + countDocsThisIteration;
@@ -232,22 +225,15 @@ public class Inverted2DirectIndexBuilder {
 			final DataInputStream dis = new DataInputStream(Files.openFileStream(offsetsFilename));
 			final DocumentIndexBuilder dios = new DocumentIndexBuilder(index, "document-df", fieldCount > 0);
 			final Iterator<DocumentIndexEntry> docidInput = (Iterator<DocumentIndexEntry>)index.getIndexStructureInputStream("document");
-			
-			DocumentIndexEntry die = null;
-		    while (docidInput.hasNext())
+			final Pointer p = directCompressor.getPointerFactory().newInstance();
+			while (docidInput.hasNext())
 			{
-		    	DocumentIndexEntry old = docidInput.next();
-		    	if (fieldCount == 0)
-		    	{
-		    		die = new BasicDocumentIndexEntry(old);
-		    	}
-		    	else
-		    	{
-		    		die = old;
-		    	}
-		    	die.setOffset(dis.readLong(), dis.readByte());
-				die.setNumberOfEntries(dis.readInt());
-				dios.addEntryToBuffer(die);
+				DocumentIndexEntry dieOld = docidInput.next();
+				DocumentIndexEntry dieNew = directCompressor.getDocumentIndexEntryFactory().newInstance(); 
+				p.readFields(dis);
+				dieNew.setPointer(p);
+				dieNew.setDocumentIndexStatistics(dieOld);
+				dios.addEntryToBuffer(dieNew);
 		    }
 		    IndexUtil.close(docidInput);
 			pos.close();
@@ -257,21 +243,15 @@ public class Inverted2DirectIndexBuilder {
 			dios.close();
 			IndexUtil.renameIndexStructure(index, "document-df", "document");
 			
-			//only if no fields do we replace the document-factory type
-			if (fieldCount == 0)
-				index.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
-
 			//inform the index about the new data structure
 			directCompressor.writeIndexProperties(index, "document-inputstream");
+			directCompressor.getDocumentIndexEntryFactory().writeProperties(index, "document-factory");	
+				
 			index.flush();//save changes			
 			logger.info("Finished generating a "+destinationStructure+" structure from the "+sourceStructure+" structure. Time elapsed: "+((System.currentTimeMillis() - startTime)/1000) + " seconds");
 
-		}catch (IOException ioe) {
-			logger.error("Couldnt create a "+destinationStructure+" structure from the "+sourceStructure+" structure", ioe);
 		}catch (Exception ioe) {
 			logger.error("Couldnt create a "+destinationStructure+" structure from the "+sourceStructure+" structure", ioe);
-		} finally {
-			
 		}
 	}
 

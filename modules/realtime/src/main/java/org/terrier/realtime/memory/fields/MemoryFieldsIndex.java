@@ -104,32 +104,33 @@ public class MemoryFieldsIndex extends MemoryFields {
 		metadata.writeDocumentEntry(docProperties);
 		
         // Add the document's length to the document index.
-        ((MemoryDocumentIndexFields) document).addDocument(docContents.getDocumentLength(), ((FieldDocumentIndexEntry) docContents.getDocumentStatistics()).getFieldLengths());
+        FieldDocumentIndexEntry fdie = new FieldDocumentIndexEntry(fieldtags.length);
+        docContents.getDocumentStatistics(fdie);
+        ((MemoryDocumentIndexFields) document).addDocument(fdie.getDocumentLength(), fdie.getFieldLengths());
 
         // Keep tally on fields.
         long[] fieldcounts = new long[fieldtags.length];
 
         // For each term in the document:
+        FieldDocumentPostingList fdpl = (FieldDocumentPostingList) docContents;
         for (String term : docContents.termSet()) {
 
-            MemoryFieldsLexiconEntry le = new MemoryFieldsLexiconEntry(1, docContents.getFrequency(term), ((FieldDocumentPostingList)docContents).getFieldFrequencies(term));
+            int[] tff = fdpl.getFieldFrequencies(term);
+            int tf =  docContents.getFrequency(term);
+            MemoryFieldsLexiconEntry le = new MemoryFieldsLexiconEntry(1, tf, tff);
 
             // Insert/update term in lexicon.
             int termid = lexicon.term(term, le);
             int docid = stats.getNumberOfDocuments();
-            int tf =  docContents.getFrequency(term);
-            int[] tff = ((FieldDocumentPostingList)docContents).getFieldFrequencies(term);
 
             // Insert/update term posting list.
-            //System.err.println(term+" "+((FieldDocumentPostingList)docContents).getFieldFrequencies(term)[0]+" "+((FieldDocumentPostingList)docContents).getFieldFrequencies(term)[1]);
             ((MemoryFieldsInvertedIndex) inverted).add(termid, docid, tf, tff);
 
             ((MemoryFieldsDirectIndex)direct).add(docid, termid, tf, tff);
 
-            // Keep tally on fields.
-            int[] ffreq = ((FieldDocumentPostingList)docContents).getFieldFrequencies(term);
+            // Keep tally on fields lengths.
             for (int i = 0; i < fieldcounts.length; i++)
-                fieldcounts[i] += ffreq[i];
+                fieldcounts[i] += tff[i];
         }
 
         // Update collection statistics.

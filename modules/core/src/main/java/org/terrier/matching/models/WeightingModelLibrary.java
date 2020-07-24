@@ -112,7 +112,7 @@ public class WeightingModelLibrary {
 	 * @return relative term frequency
 	 */
 	public static final double relativeFrequency(double tf, double docLength) {
-		assert tf <= docLength : "tf cannot be greater than docLength";
+		assert tf <= docLength : "tf "+tf+" cannot be greater than docLength " + docLength;
 		double f = tf < docLength ? tf / docLength : 0.99999;
 		assert f > 0 : "relative frequency must be greater than zero: " + f;
 		assert f < 1 : "relative frequency must be less than one: " + f;

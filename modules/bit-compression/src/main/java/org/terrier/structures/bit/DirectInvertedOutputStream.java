@@ -42,6 +42,7 @@ import org.terrier.structures.SimpleBitIndexPointer;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.Posting;
 import org.terrier.structures.postings.bit.BasicIterablePosting;
+import org.terrier.structures.Pointer;
 
 /** Writes a block direct or block inverted index, when passed appropriate posting lists.
   * @author Craig Macdonald
@@ -87,12 +88,20 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	{
 		return BasicIterablePosting.class;
 	}
+
+	public BitIndexPointer writePostings(IterablePosting postings, int postingLength, int maxFreq) throws IOException {
+		return writePostings(postings);
+	}
+
+	public BitIndexPointer writePostings(Iterator<Posting> iterator, int postingLength, int maxFreq) throws IOException {
+		return writePostings(iterator);
+	}
 	
 	/** Write out the specified postings.
 	 * @param iterator an Iterator of Posting objects
 	 */
 	@Override
-	public BitIndexPointer writePostings(Iterator<Posting> iterator) throws IOException
+	protected BitIndexPointer writePostings(Iterator<Posting> iterator) throws IOException
 	{
 		return writePostings(iterator, -1);
 	}
@@ -146,7 +155,7 @@ public class DirectInvertedOutputStream extends AbstractPostingOutputStream impl
 	 * @param postings IterablePosting postings accessed through an IterablePosting object
 	 */
 	@Override
-	public BitIndexPointer writePostings(IterablePosting postings) throws IOException
+	protected BitIndexPointer writePostings(IterablePosting postings) throws IOException
 	{
 		return writePostings(postings, -1);
 	}

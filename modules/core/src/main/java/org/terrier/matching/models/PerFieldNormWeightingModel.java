@@ -31,7 +31,7 @@ import org.terrier.matching.models.basicmodel.BasicModel;
 import org.terrier.matching.models.normalisation.Normalisation;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
-import org.terrier.structures.FieldLexiconEntry;
+import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.Posting;
 import org.terrier.utility.ApplicationSetup;
@@ -168,9 +168,9 @@ public class PerFieldNormWeightingModel extends WeightingModel {
 	@Override
 	public void setEntryStatistics(EntryStatistics _es) {
 		super.setEntryStatistics(_es);
-		if (! (_es instanceof FieldLexiconEntry))
+		if (! (_es instanceof FieldEntryStatistics))
 			return;
-		FieldLexiconEntry fes = (FieldLexiconEntry)_es;
+		FieldEntryStatistics fes = (FieldEntryStatistics)_es;
 		int[] reportedfieldGlobalFrequencies = fes.getFieldFrequencies();
 		
 		for(int i=0;i<fieldCount;i++)

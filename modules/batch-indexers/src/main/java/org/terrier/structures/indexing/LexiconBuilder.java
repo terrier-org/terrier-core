@@ -42,7 +42,7 @@ import org.terrier.structures.FSOMapFileLexicon;
 import org.terrier.structures.FSOMapFileLexiconGeneric;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
 import org.terrier.structures.FSOMapFileLexiconOutputStreamGeneric;
-import org.terrier.structures.FieldLexiconEntry;
+import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
@@ -67,10 +67,6 @@ public class LexiconBuilder
 	@SuppressWarnings({ "rawtypes" }) //this would be a complicated fix
 	protected Class<? extends LexiconOutputStream> lexiconOutputStream = null;
 
-	//protected Class<? extends LexiconMap> LexiconMapClass = null;
-	
-	protected final String lexiconEntryFactoryValueClass;
-	
 	/** The logger used for this class */
 	protected static final Logger logger = LoggerFactory.getLogger(LexiconBuilder.class);
 	
@@ -145,7 +141,7 @@ public class LexiconBuilder
 			numberOfTokens += value.getFrequency();
 			numberOfPointers += value.getDocumentFrequency();
 			numberOfTerms++;
-			int[] fieldFreqs = ((FieldLexiconEntry)value).getFieldFrequencies();
+			int[] fieldFreqs = ((FieldEntryStatistics)value).getFieldFrequencies();
 			for(int fi = 0; fi < numFields; fi++)
 			{
 				tokensF[fi] += (long)fieldFreqs[fi];
@@ -227,7 +223,7 @@ public class LexiconBuilder
 	protected static LexiconMap instantiate(Class<? extends LexiconMap> LexiconMapClass)
 	{
 		LexiconMap TempLex = null;
-		try{ TempLex = (LexiconMap) LexiconMapClass.newInstance(); } catch (Exception e) {logger.error("Error when creating new LexiconMap", e);}
+		try{ TempLex = (LexiconMap) LexiconMapClass.getConstructor().newInstance(); } catch (Exception e) {logger.error("Error when creating new LexiconMap", e);}
 		return TempLex;
 	}
 	
@@ -273,6 +269,45 @@ public class LexiconBuilder
 	{
 		this(i, _structureName, lexiconMap, _lexiconEntryClass, "", "", termCodes);
 	}
+
+
+	/**
+	 * constructor
+	 * @param i
+	 * @param _structureName
+	 * @param lexiconMap
+	 * @param _lexiconEntryFactory
+	 * @param valueFactoryParamTypes
+	 * @param valueFactoryParamValues
+	 */
+	@SuppressWarnings("unchecked")
+	public LexiconBuilder(IndexOnDisk i, String _structureName, 
+				LexiconMap lexiconMap,
+				FixedSizeWriteableFactory<LexiconEntry> _lexiconEntryFactory, 
+				TermCodes _termCodes)
+	{
+		this.index = i;
+		this.indexPath = index.getPath();
+		this.indexPrefix = index.getPrefix();
+		this.defaultStructureName = _structureName;
+		this.termCodes = _termCodes;
+		this.TempLex = lexiconMap;
+		this.valueFactory = _lexiconEntryFactory;
+
+		this.index.addIndexStructure(
+				defaultStructureName+"-keyfactory", 
+				"org.terrier.structures.seralization.FixedSizeTextFactory",
+				"java.lang.String",
+				"${max.term.length}"
+				);
+		if (this.index.getIndexProperty("max.term.length", null) == null)
+			this.index.setIndexProperty("max.term.length", ApplicationSetup.getProperty("max.term.length", ""+20));
+		this.valueFactory.writeProperties(this.index, defaultStructureName+"-valuefactory");
+		lexiconOutputStream = LexiconOutputStream.class;
+		
+		logger.info("LexiconBuilder active - flushing every " 
+			+ DocumentsPerLexicon + " documents, or when memory threshold hit");
+	}
 				
 	
 	/**
@@ -298,8 +333,7 @@ public class LexiconBuilder
 		this.defaultStructureName = _structureName;
 		this.termCodes = _termCodes;
 		this.TempLex = lexiconMap;
-		lexiconEntryFactoryValueClass = _lexiconEntryClass;
-	
+		
 		this.index.addIndexStructure(
 				defaultStructureName+"-keyfactory", 
 				"org.terrier.structures.seralization.FixedSizeTextFactory",
@@ -308,7 +342,7 @@ public class LexiconBuilder
 				);
 		if (this.index.getIndexProperty("max.term.length", null) == null)
 			this.index.setIndexProperty("max.term.length", ApplicationSetup.getProperty("max.term.length", ""+20));
-		this.index.addIndexStructure(defaultStructureName+"-valuefactory", lexiconEntryFactoryValueClass+"$Factory", valueFactoryParamTypes, valueFactoryParamValues);
+		this.index.addIndexStructure(defaultStructureName+"-valuefactory", _lexiconEntryClass+"$Factory", valueFactoryParamTypes, valueFactoryParamValues);
 		valueFactory = (FixedSizeWriteableFactory<LexiconEntry>)this.index.getIndexStructure(defaultStructureName+"-valuefactory");
 		lexiconOutputStream = LexiconOutputStream.class;
 		
@@ -338,7 +372,7 @@ public class LexiconBuilder
 		try{
 			final String tmpLexName = this.defaultStructureName+"-tmp"+ TempLexCount;
 			LexiconOutputStream<String> los = getLexOutputStream(tmpLexName);
-			TempLex.storeToStream(los, termCodes);
+			TempLex.storeToStream(los, termCodes, valueFactory);
 			los.close();
 			tempLexFiles.addLast(tmpLexName);
 		}catch(IOException ioe){
@@ -573,7 +607,7 @@ public class LexiconBuilder
 				FSOMapFileLexicon.class,
 				FSOMapFileLexicon.MapFileLexiconIterator.class,
 				FSOMapFileLexicon.MapFileLexiconEntryIterator.class,
-				lexiconEntryFactoryValueClass+"$Factory"
+				this.valueFactory
 				);
 	}
 	

@@ -32,7 +32,6 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
-//import org.terrier.utility.FieldScore;
 
 /** A LexiconEntry with field support */
 public class FieldLexiconEntry extends BasicLexiconEntry implements
@@ -79,6 +78,17 @@ public class FieldLexiconEntry extends BasicLexiconEntry implements
 		public LexiconEntry newInstance() {
 			return new FieldLexiconEntry(fieldCount);
 		}
+
+		@Override
+		public void writeProperties(PropertiesIndex index, String structureName) {
+			String fieldProp = "index." + structureName + ".fields.count";
+			index.setIndexProperty(fieldProp, String.valueOf(fieldCount));
+			index.addIndexStructure(structureName, 
+				this.getClass(), 
+				new Class<?>[]{String.class}, 
+				new String[]{"${"+fieldProp+"}"});
+		}
+
 	}	
 	
 	protected int[] fieldFrequencies;

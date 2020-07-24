@@ -104,37 +104,7 @@ public class BasicTermStatsLexiconEntry extends LexiconEntry {
 	public int getNumberOfEntries() {
 		return n_t;
 	}
-	/** 
-	 * Get the number of bits for the offset
-	 */
-	public byte getOffsetBits() {
-		return 0;
-	}
-	/** 
-	 * Get the offset (bytes)
-	 */
-	public long getOffset() {
-		return 0;
-	}
-	/** 
-	 * Set the offset in terms of bits and bytes
-	 */
-	public void setOffset(long bytes, byte bits)
-	{
-	}
-	/** 
-	 * Sets the bit index pointer to this LexiconEntry
-	 */
-	public void setBitIndexPointer(BitIndexPointer pointer) {
-		
-	}
-	/** 
-	 * Sets the offset using a BitFilePosition
-	 */
-	public void setOffset(BitFilePosition pos) {
-		
-	}
-	/** 
+		/** 
 	 * {@inheritDoc} 
 	 */
 	public void readFields(DataInput in) throws IOException {

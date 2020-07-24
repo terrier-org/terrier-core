@@ -38,6 +38,7 @@ import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.indexing.CompressionFactory;
+import org.terrier.structures.indexing.BitCompressionConfiguration;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.postings.ArrayOfBasicIterablePosting;
 import org.terrier.structures.postings.IterablePosting;
@@ -48,7 +49,7 @@ public class TestCompressionConfig extends ApplicationSetupBasedTest {
 	
 	protected CompressionConfiguration getConfig(String structure, String[] fieldNames,int hasBlocks, int maxBlocks)
 	{
-		return new CompressionFactory.BitCompressionConfiguration(structure, fieldNames, hasBlocks, maxBlocks);
+		return new BitCompressionConfiguration(structure, fieldNames, hasBlocks, maxBlocks);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -58,7 +59,7 @@ public class TestCompressionConfig extends ApplicationSetupBasedTest {
 		CompressionConfiguration cc =  getConfig("inverted", new String[0], 0,0);
 		
 		AbstractPostingOutputStream pos = cc.getPostingOutputStream(((IndexOnDisk)index).getPath() + "/" + ((IndexOnDisk)index).getPrefix() + ".inverted" + cc.getStructureFileExtension());
-		Pointer p = pos.writePostings(new ArrayOfBasicIterablePosting(new int[]{0, 1}, new int[]{1,2}));
+		Pointer p = pos.writePostings(new ArrayOfBasicIterablePosting(new int[]{0, 1}, new int[]{1,2}), 2, 2);
 		pos.close();
 		cc.writeIndexProperties(index, "lexicon-entry-inputstream");
 		index.flush();

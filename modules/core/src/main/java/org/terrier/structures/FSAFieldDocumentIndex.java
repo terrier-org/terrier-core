@@ -75,7 +75,7 @@ public class FSAFieldDocumentIndex
 		TerrierTimer tt = new TerrierTimer("Loading "+structureName+ " document + field lengths", numEntries);tt.start();
 		while(iter.hasNext())
 		{
-			FieldDocumentIndexEntry fdie = (FieldDocumentIndexEntry)iter.next();
+			FieldedDocumentIndexEntry fdie = (FieldedDocumentIndexEntry)iter.next();
 			docLengths[i] = fdie.getDocumentLength();
 			fieldLengths[i] = fdie.getFieldLengths();
 			i++;

@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
 import org.terrier.structures.AbstractPostingOutputStream;
-import org.terrier.structures.BasicDocumentIndexEntry;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
@@ -486,7 +485,7 @@ public abstract class Indexer
 		return useFieldInformation;
 	}
 
-	protected DocumentIndexEntry emptyDocIndexEntry = new BasicDocumentIndexEntry();
+	protected DocumentIndexEntry emptyDocIndexEntry = null;
 		
 	
 	/** Adds an entry to document index for empty document @param docid, only if

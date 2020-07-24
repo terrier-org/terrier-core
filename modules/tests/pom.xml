@@ -32,6 +32,18 @@
 
 		<dependency>
 			<groupId>org.terrier</groupId>
+			<artifactId>terrier-bit-compression</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.terrier</groupId>
 			<artifactId>terrier-learning</artifactId>
 			<version>${project.version}</version>
 		</dependency>

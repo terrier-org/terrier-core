@@ -64,6 +64,7 @@
 		<module>modules/index-api</module>
 		<module>modules/core</module>
 		<module>modules/batch-indexers</module>
+                <module>modules/bit-compression</module>
 		<module>modules/batch-retrieval</module>
 		<module>modules/learning</module>
 		<module>modules/logging</module>

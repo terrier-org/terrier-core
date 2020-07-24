@@ -120,7 +120,7 @@ public class TestCompressedBitFiles  {
 				{
 					postingList.add(ip.asWritablePosting());
 				}
-				BitIndexPointer diosPointer = dios.writePostings(postingList.iterator());
+				BitIndexPointer diosPointer = (BitIndexPointer) dios.writePostings(postingList.iterator(), -1, -1);
 				
 				IDS.add(_tmp);
 				ids.clear();

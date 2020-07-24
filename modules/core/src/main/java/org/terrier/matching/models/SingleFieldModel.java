@@ -29,9 +29,9 @@ package org.terrier.matching.models;
 
 import java.util.Arrays;
 
-import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
+import org.terrier.structures.SimpleEntryStatistics;
 import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.Posting;
@@ -135,9 +135,10 @@ public class SingleFieldModel extends WeightingModel {
 		}
 		super.termFrequency = TF;
 		super.documentFrequency = fes.getDocumentFrequency();
-		BasicLexiconEntry les = new BasicLexiconEntry();
-		les.setStatistics(fes.getDocumentFrequency(), (int)TF);
-		basicModel.setEntryStatistics(les);
+		EntryStatistics es = new SimpleEntryStatistics();
+		es.setFrequency((int)TF);
+		es.setDocumentFrequency(fes.getDocumentFrequency());
+		basicModel.setEntryStatistics(es);
 	}
 	
 	@Override

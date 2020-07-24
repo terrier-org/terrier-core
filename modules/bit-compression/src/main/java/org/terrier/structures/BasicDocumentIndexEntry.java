@@ -33,7 +33,7 @@ import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 /** 
  * A basic document index entry. Allows the creation of a document index entries.
  */
-public class BasicDocumentIndexEntry extends DocumentIndexEntry
+public class BasicDocumentIndexEntry extends DocumentIndexEntry implements BitIndexPointer
 {
 	/** 
 	 * Returna a factory for creating document index entries
@@ -53,6 +53,10 @@ public class BasicDocumentIndexEntry extends DocumentIndexEntry
 			return new BasicDocumentIndexEntry();
 		}
 	}
+
+	long bytes;
+    byte bits;
+
 	/**
 	 * Constructs an instance of the BasicDocumentIndexEntry.
 	 */
@@ -62,13 +66,10 @@ public class BasicDocumentIndexEntry extends DocumentIndexEntry
 	 * Constructs an instance of the BasicDocumentIndexEntry.
 	 * @param in
 	 */
-	public BasicDocumentIndexEntry(DocumentIndexEntry in)
+	public BasicDocumentIndexEntry(DocumentIndexEntry _in)
 	{
-		doclength = in.getDocumentLength();
-		entries = in.getNumberOfEntries();
-		bytes = in.getOffset();
-		bits = in.getOffsetBits();
-		bits += in.getFileNumber() << FILE_SHIFT;
+		this(_in.getNumberOfEntries(), (BitIndexPointer) _in);
+		doclength = _in.getDocumentLength();
 	}
 	/**
 	 * Constructs an instance of the BasicDocumentIndexEntry.
@@ -150,5 +151,63 @@ public class BasicDocumentIndexEntry extends DocumentIndexEntry
 		bytes = ((BitIndexPointer)p).getOffset();
 		bits = ((BitIndexPointer)p).getOffsetBits();
 	}
+
+	/** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public byte getOffsetBits() 
+    {
+        return (byte) (bits & BIT_MASK);
+    }
+
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public long getOffset() 
+    {
+        return bytes;
+    }
+    
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public byte getFileNumber() 
+    {
+        return (byte) ( (0xFF & bits) >> FILE_SHIFT);
+    }
+    
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public void setFileNumber(byte fileId)
+    {
+        bits = getOffsetBits();
+        bits += (fileId << FILE_SHIFT);
+    }
+
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public void setOffset(long _bytes, byte _bits) 
+    {
+        bytes = _bytes;
+        byte fileId = this.getFileNumber();
+        bits = _bits;
+        bits += (fileId << FILE_SHIFT);
+    }
+    
+    /** 
+     * {@inheritDoc} 
+     */
+    @Override
+    public String toString()
+    {
+        return getDocumentLength() + " " + getNumberOfEntries() + "@{" + getFileNumber() + "," + getOffset() + "," + getOffsetBits() + "}";
+    }
 	
 }

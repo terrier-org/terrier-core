@@ -41,7 +41,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
 import org.terrier.sorting.HeapSortInt;
-import org.terrier.structures.BasicDocumentIndexEntry;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.postings.BasicPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
@@ -49,6 +48,7 @@ import org.terrier.structures.postings.IterablePostingImpl;
 import org.terrier.structures.postings.WritablePosting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.TermCodes;
+import org.terrier.utility.StaTools;
 /** Represents the postings of one document. Uses HashMaps internally.
   * <p>
   * <b>Properties:</b><br>
@@ -92,6 +92,11 @@ public class DocumentPostingList implements Writable,Serializable{
 		documentLength = 0;
 	}
 
+	/** Returns the largest frequency in this document */	
+	public int getMaxFrequency() {
+		return StaTools.max(occurrences.getValues());
+	}
+
 	/** Returns the total number of tokens in this document */	
 	public int getDocumentLength()
 	{
@@ -121,9 +126,8 @@ public class DocumentPostingList implements Writable,Serializable{
     }
 
     /** Return a DocumentIndexEntry for this document */ 
-    public DocumentIndexEntry getDocumentStatistics()
+    public DocumentIndexEntry getDocumentStatistics(DocumentIndexEntry die)
 	{
-		DocumentIndexEntry die = new BasicDocumentIndexEntry();
 		die.setDocumentLength(this.getDocumentLength());
 		die.setNumberOfEntries(this.getNumberOfPointers());
 		return die;

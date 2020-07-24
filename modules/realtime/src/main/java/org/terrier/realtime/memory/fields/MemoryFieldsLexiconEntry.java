@@ -80,4 +80,9 @@ public class MemoryFieldsLexiconEntry extends MemoryLexiconEntry implements Fiel
         for (int i = 0; i < fields.length; i++)
             this.fields[i] -= fields[i];
     }
+
+    @Override
+    public void setFieldFrequencies(int[] tff) {
+       this.fields = tff;
+    }
 }

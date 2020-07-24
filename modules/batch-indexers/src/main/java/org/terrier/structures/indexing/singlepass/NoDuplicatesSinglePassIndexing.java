@@ -74,8 +74,8 @@ public class NoDuplicatesSinglePassIndexing extends BasicSinglePassIndexer {
 			
 			checkFlush();
 			mp.addTerms(termsInDocument, currentId);
-			DocumentIndexEntry die = termsInDocument.getDocumentStatistics();
-			docIndexBuilder.addEntryToBuffer((FieldScore.FIELDS_COUNT > 0) ? die : new SimpleDocumentIndexEntry(die));
+			DocumentIndexEntry die = termsInDocument.getDocumentStatistics( compressionInvertedConfig.getDocumentIndexEntryFactory().newInstance() );
+			docIndexBuilder.addEntryToBuffer(die);
 			metaBuilder.writeDocumentEntry(docProperties);
 			currentId++;
 			numberOfDocuments++;

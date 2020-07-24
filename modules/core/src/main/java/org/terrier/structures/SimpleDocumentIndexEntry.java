@@ -52,7 +52,6 @@ public class SimpleDocumentIndexEntry extends DocumentIndexEntry
 			return new SimpleDocumentIndexEntry();
 		}
 	}
-	//TODO: it doesn't need entries?
 	/**
 	 * Construct an instance of the class.
 	 */
@@ -72,16 +71,6 @@ public class SimpleDocumentIndexEntry extends DocumentIndexEntry
 		super.entries = n;
 	}
 
-	/** 
-	 * {@inheritDoc} 
-	 * Does nothing in this implementation
-	 */
-	public void setOffset(BitFilePosition pos) {}
-	/** 
-	 * {@inheritDoc}
-	 * Does nothing in this implementation
-	 */
-	public void setBitIndexPointer(BitIndexPointer pointer) {}
 	/** 
 	 * {@inheritDoc} 
 	 */
@@ -109,17 +98,5 @@ public class SimpleDocumentIndexEntry extends DocumentIndexEntry
 	public void setPointer(Pointer p) {
 		return;
 	}
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public byte getFileNumber() {
-		return 0;
-	}
-	/** 
-	 * {@inheritDoc} 
-	 * Does nothing in this implementation
-	 */
-	public void setFileNumber(byte fileId)
-	{
-	}
+	
 }

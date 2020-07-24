@@ -24,7 +24,7 @@
  *   Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
  */
 package org.terrier.structures.seralization;
-
+import org.terrier.structures.PropertiesIndex;
 import org.apache.hadoop.io.Writable;
 
 
@@ -38,5 +38,11 @@ public interface FixedSizeWriteableFactory<T extends Writable> extends Writeable
 {
 	/** Returns the size in bytes when T is written 
 	 * to disk by Writable interface methods */
-    int getSize();
+	int getSize();
+
+	/** Indexing time support for adding this factory as an index structure to the 
+	 * specified index, using the specified name */
+	default void writeProperties(PropertiesIndex index, String structureName) {
+		index.addIndexStructure(structureName, this.getClass().getName(), new String[0], new String[0]);
+	}
 }

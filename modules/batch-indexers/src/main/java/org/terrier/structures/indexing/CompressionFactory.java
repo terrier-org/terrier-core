@@ -34,21 +34,11 @@ import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.Index;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PropertiesIndex;
-import org.terrier.structures.bit.BitPostingIndex;
-import org.terrier.structures.bit.BitPostingIndexInputStream;
-import org.terrier.structures.bit.BlockDirectInvertedOutputStream;
-import org.terrier.structures.bit.BlockFieldDirectInvertedOutputStream;
-import org.terrier.structures.bit.DirectInvertedDocidOnlyOuptutStream;
-import org.terrier.structures.bit.DirectInvertedOutputStream;
-import org.terrier.structures.bit.FieldDirectInvertedOutputStream;
+import org.terrier.structures.LexiconEntry;
+import org.terrier.structures.DocumentIndexEntry;
+import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.structures.postings.IterablePosting;
-import org.terrier.structures.postings.bit.BasicIterablePosting;
-import org.terrier.structures.postings.bit.BasicIterablePostingDocidOnly;
-import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
-import org.terrier.structures.postings.bit.BlockIterablePosting;
-import org.terrier.structures.postings.bit.FieldIterablePosting;
 import org.terrier.structures.Pointer;
-import org.terrier.structures.SimpleBitIndexPointer;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 /** Configures the compression to be used when creating an IndexOnDisk.
@@ -98,17 +88,21 @@ public class CompressionFactory {
 		
 		/** Write a file of postings to the given location */
 		public abstract AbstractPostingOutputStream getPostingOutputStream(String filename);
-		/** What is the posting iterator class for this structure */
-		public abstract Class<? extends IterablePosting> getPostingIteratorClass();
-		/** What is the structure class for this structure */
-		public abstract Class<? extends PostingIndex<?>> getStructureClass();
-		/** What is the input stream class for this structure */
-		public abstract Class<? extends Iterator<IterablePosting>> getStructureInputStreamClass();
 		/** What is the file extension for this structure. Usually ".bf" for BitFile and ".if" for files containing compressed integers */
 		public abstract String getStructureFileExtension();
 
-		public abstract Class<? extends Pointer> getPointerClass();
-		
+		public abstract FixedSizeWriteableFactory<Pointer> getPointerFactory();
+		public abstract FixedSizeWriteableFactory<LexiconEntry> getLexiconEntryFactory();
+		public abstract FixedSizeWriteableFactory<DocumentIndexEntry> getDocumentIndexEntryFactory();
+
+		/** What is the posting iterator class for this structure */
+		protected abstract Class<? extends IterablePosting> getPostingIteratorClass();
+		/** What is the structure class for this structure */
+		protected abstract Class<? extends PostingIndex<?>> getStructureClass();
+		/** What is the input stream class for this structure */
+		protected abstract Class<? extends Iterator<IterablePosting>> getStructureInputStreamClass();
+
+				
 		/** Update the index's properties for this structure */
 		public void writeIndexProperties(PropertiesIndex index, String pointerSourceStream)
 		{
@@ -137,7 +131,10 @@ public class CompressionFactory {
 		final Class<? extends IterablePosting> postingIterator;
 		final Class<? extends PostingIndex<?>> structureClass;
 		final Class<? extends Iterator<IterablePosting>> inputStream;
-		final Class<? extends Pointer> pointerClass;
+		final FixedSizeWriteableFactory<Pointer> pointerFactory;
+		final FixedSizeWriteableFactory<LexiconEntry> lexiconEntryFactory;
+		final FixedSizeWriteableFactory<DocumentIndexEntry> documentIndexEntryFactory;
+		
 		final String fileExtension;
 		
 		public SpecificCompressionConfiguration(
@@ -146,14 +143,18 @@ public class CompressionFactory {
 				Class<? extends IterablePosting> postingIterator,
 				Class<? extends PostingIndex<?>> structureClass,
 				Class<? extends Iterator<IterablePosting>> inputStream,
-				Class<? extends Pointer> pointerClass,
+				FixedSizeWriteableFactory<Pointer> pointerFactory,
+				FixedSizeWriteableFactory<LexiconEntry> lexiconEntryFactory,
+				FixedSizeWriteableFactory<DocumentIndexEntry> documentIndexEntryFactory,
 				String fileExtension) {
 			super(structureName, fieldNames, hasBlocks, maxBlocks);
 			this.outputStream = outputStream;
 			this.postingIterator = postingIterator;
 			this.structureClass = structureClass;
 			this.inputStream = inputStream;
-			this.pointerClass = pointerClass;
+			this.pointerFactory = pointerFactory;
+			this.lexiconEntryFactory = lexiconEntryFactory;
+			this.documentIndexEntryFactory = documentIndexEntryFactory;
 			this.fileExtension = fileExtension;
 		}
 		@Override
@@ -183,47 +184,18 @@ public class CompressionFactory {
 			return fileExtension;
 		}
 		@Override
-		public Class<? extends Pointer> getPointerClass() {
-			return pointerClass;
+		public FixedSizeWriteableFactory<Pointer> getPointerFactory() {
+			return pointerFactory;
 		}
-	}
-	
-	public static class BitCompressionConfiguration extends SpecificCompressionConfiguration
-	{
-		public BitCompressionConfiguration(String structureName, String[] fieldNames, int hasBlocks, int maxBlocks)
-		{
-			super(
-				structureName, fieldNames, hasBlocks, maxBlocks,
-				fieldNames.length > 0 ? hasBlocks > 0 ? BlockFieldDirectInvertedOutputStream.class : FieldDirectInvertedOutputStream.class : hasBlocks > 0 ? BlockDirectInvertedOutputStream.class : DirectInvertedOutputStream.class,
-				fieldNames.length > 0 ? hasBlocks > 0 ? BlockFieldIterablePosting.class : FieldIterablePosting.class : hasBlocks > 0 ? BlockIterablePosting.class : BasicIterablePosting.class,
-				BitPostingIndex.class, 
-				BitPostingIndexInputStream.class,
-				SimpleBitIndexPointer.class,
-				BitIn.USUAL_EXTENSION
-			);
-		}
-	}
-	
-	public static class BitIdOnlyCompressionConfiguration extends SpecificCompressionConfiguration
-	{
-		public BitIdOnlyCompressionConfiguration(String structureName, String[] fieldNames, int hasBlocks, int maxBlocks)
-		{
-			super(
-				structureName, fieldNames, 0, 0,
-				DirectInvertedDocidOnlyOuptutStream.class,
-				BasicIterablePostingDocidOnly.class,
-				BitPostingIndex.class, 
-				BitPostingIndexInputStream.class,
-				SimpleBitIndexPointer.class,
-				BitIn.USUAL_EXTENSION
-			);
-		}
+
+		public FixedSizeWriteableFactory<LexiconEntry> getLexiconEntryFactory() { return lexiconEntryFactory; }
+		public FixedSizeWriteableFactory<DocumentIndexEntry> getDocumentIndexEntryFactory() { return documentIndexEntryFactory; }
 	}
 	
 	@Deprecated
 	public static CompressionConfiguration getCompressionConfiguration(String structureName, String[] fieldNames, boolean blocks)
 	{
-		String compressionConfiguration = ApplicationSetup.getProperty("indexing."+structureName+".compression.configuration", BitCompressionConfiguration.class.getName());
+		String compressionConfiguration = ApplicationSetup.getProperty("indexing."+structureName+".compression.configuration", "org.terrier.structures.indexing.BitCompressionConfiguration");
 		CompressionConfiguration rtr = null;
 		
 		try{
@@ -241,7 +213,7 @@ public class CompressionFactory {
 	*/
 	public static CompressionConfiguration getCompressionConfiguration(String structureName, String[] fieldNames, int hasBlocks, int maxBlocks)
 	{
-		String compressionConfiguration = ApplicationSetup.getProperty("indexing."+structureName+".compression.configuration", BitCompressionConfiguration.class.getName());
+		String compressionConfiguration = ApplicationSetup.getProperty("indexing."+structureName+".compression.configuration", "org.terrier.structures.indexing.BitCompressionConfiguration");
 		CompressionConfiguration rtr = null;
 		
 		try{

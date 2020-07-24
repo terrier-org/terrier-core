@@ -53,7 +53,6 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.FieldEntryStatistics;
-import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
@@ -166,7 +165,7 @@ public class FatUtils {
 			
 			//hack for some older fat result versions
 			if (statsClassName.equals("org.terrier.structures.FieldIndex$FieldIndexLexiconEntry"))
-				statsClassName = FieldLexiconEntry.class.getName();
+				statsClassName = "org.terrier.structures.FieldLexiconEntry";
 	
 			Class<? extends EntryStatistics> statisticsClass = ApplicationSetup.getClass(statsClassName).asSubclass(EntryStatistics.class);
 			Class<? extends WritablePosting> postingClass = ApplicationSetup.getClass(in.readUTF()).asSubclass(WritablePosting.class);

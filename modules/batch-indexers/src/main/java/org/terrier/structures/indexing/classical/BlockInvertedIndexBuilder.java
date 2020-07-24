@@ -61,6 +61,7 @@ import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.Files;
+import org.terrier.utility.StaTools;
 import org.terrier.utility.TerrierTimer;
 
 import com.jakewharton.byteunits.BinaryByteUnit;
@@ -257,7 +258,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 			//the temporary data containing the offsets
 			DataInputStream dis = new DataInputStream(Files.openFileStream(LexiconFilename.concat(".tmp2")));
 
-			Pointer pin = compressionConfig.getPointerClass().getConstructor().newInstance();
+			Pointer pin = compressionConfig.getPointerFactory().newInstance();
 			while(lexiconStream.hasNext())
 			{
 				Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
@@ -483,6 +484,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 				
 				final int[] ids = tmpStorage[j][0].toNativeArray();
 				final int[] tf = tmpStorage[j][1].toNativeArray();
+				final int maxTf = StaTools.max(tf);
 				
 				final int[] tmpMatrix_blockFreq = tmpStorage[j][2+fieldCount].toNativeArray();
 				final int[] tmpMatrix_blockIds = tmpStorage[j][3+fieldCount].toNativeArray();	
@@ -503,7 +505,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 				{
 					ip = new ArrayOfBlockIterablePosting(ids, tf, tmpMatrix_blockFreq, tmpMatrix_blockIds);
 				}
-				p = file.writePostings(ip);
+				p = file.writePostings(ip, ids.length, maxTf);
 				p.write(dos);
 
 				numTokens += frequency;				

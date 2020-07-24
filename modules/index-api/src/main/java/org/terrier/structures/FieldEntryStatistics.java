@@ -36,4 +36,7 @@ public interface FieldEntryStatistics extends EntryStatistics
      * @return the frequencies (total numbers of occurrences) of the term for each field.
      */
     int[] getFieldFrequencies();
+
+    /** allows the frequencies in this object to be updated. */
+    public void setFieldFrequencies(int[] tff);
 }

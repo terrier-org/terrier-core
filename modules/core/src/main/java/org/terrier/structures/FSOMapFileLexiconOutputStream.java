@@ -28,6 +28,7 @@ package org.terrier.structures;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
+import org.terrier.utility.ApplicationSetup;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 /** A LexiconOutputStream for FSOMapFileLexicon. Writes to a FSOrderedMapFile.
  * @author Craig Macdonald
@@ -35,15 +36,42 @@ import org.terrier.structures.seralization.FixedSizeWriteableFactory;
  */
 public class FSOMapFileLexiconOutputStream extends FSOMapFileLexiconOutputStreamGeneric<String, Text>
 {
-	
+	FixedSizeWriteableFactory<LexiconEntry> valueFactory;
+
+	public FSOMapFileLexiconOutputStream(
+			IndexOnDisk _index,
+			String _structureName,
+			FixedSizeWriteableFactory<LexiconEntry> valueFactory)
+			throws IOException {
+		super(_index, _structureName, null);
+		this.valueFactory = valueFactory;
+	}
+
+	public FSOMapFileLexiconOutputStream(
+			IndexOnDisk _index,
+			String _structureName,
+			FixedSizeWriteableFactory<Text> keyFactory,
+			FixedSizeWriteableFactory<LexiconEntry> valueFactory)
+			throws IOException {
+		super(_index, _structureName, keyFactory, (Class<? extends FixedSizeWriteableFactory<LexiconEntry>>) null);
+		this.valueFactory = valueFactory;
+	}
+
+	@Deprecated
 	public FSOMapFileLexiconOutputStream(
 			IndexOnDisk _index,
 			String _structureName,
 			Class<? extends FixedSizeWriteableFactory<LexiconEntry>> valueFactoryClass)
 			throws IOException {
 		super(_index, _structureName, valueFactoryClass);
+		try{
+			valueFactory = valueFactoryClass.getConstructor().newInstance();
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
+	@Deprecated
 	public FSOMapFileLexiconOutputStream(
 			IndexOnDisk _index,
 			String _structureName,
@@ -51,12 +79,23 @@ public class FSOMapFileLexiconOutputStream extends FSOMapFileLexiconOutputStream
 			Class<? extends FixedSizeWriteableFactory<LexiconEntry>> valueFactoryClass)
 			throws IOException {
 		super(_index, _structureName, _keyFactory, valueFactoryClass);
+		try{
+			valueFactory = valueFactoryClass.getConstructor().newInstance();
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
+	@Deprecated
 	public FSOMapFileLexiconOutputStream(IndexOnDisk _index,
 			String _structureName, FixedSizeWriteableFactory<Text> _keyFactory,
 			String valueFactoryClassName) throws IOException {
 		super(_index, _structureName, _keyFactory, valueFactoryClassName);
+		try{
+			valueFactory = ApplicationSetup.getClass(valueFactoryClassName).asSubclass(FixedSizeWriteableFactory.class).getConstructor().newInstance();
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}	
 	}
 
 	public FSOMapFileLexiconOutputStream(String filename,
@@ -80,7 +119,7 @@ public class FSOMapFileLexiconOutputStream extends FSOMapFileLexiconOutputStream
 		super.close();
 		if (index != null)
 		{
-			addLexiconToIndex(index, this.structureName, this.leValueClassname);
+			addLexiconToIndex(index, this.structureName, this.valueFactory);
 		}
 	}
 
@@ -90,15 +129,28 @@ public class FSOMapFileLexiconOutputStream extends FSOMapFileLexiconOutputStream
 	 * @param structureName
 	 * @param leValueClassname
 	 */
+	@Deprecated
 	public static void addLexiconToIndex(IndexOnDisk index, String structureName, String leValueClassname)
+	{
+		try {
+			FSOMapFileLexiconOutputStreamGeneric.addLexiconToIndex(index, structureName,
+				FSOMapFileLexicon.class, 
+				FSOMapFileLexicon.MapFileLexiconIterator.class,
+				FSOMapFileLexicon.MapFileLexiconEntryIterator.class,				
+				ApplicationSetup.getClass(leValueClassname).asSubclass(FixedSizeWriteableFactory.class).getConstructor().newInstance());
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}			
+	}
+
+	public static void addLexiconToIndex(IndexOnDisk index, String structureName, FixedSizeWriteableFactory<LexiconEntry> valueFactory)
 	{
 		FSOMapFileLexiconOutputStreamGeneric.addLexiconToIndex(index, structureName,
 				FSOMapFileLexicon.class, 
 				FSOMapFileLexicon.MapFileLexiconIterator.class,
 				FSOMapFileLexicon.MapFileLexiconEntryIterator.class,				
-				leValueClassname);
+				valueFactory);
 	}
-
-	
 
 }

@@ -40,13 +40,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.applications.CLITool;
 import org.terrier.structures.AbstractPostingOutputStream;
-import org.terrier.structures.BasicDocumentIndexEntry;
-import org.terrier.structures.BitIndexPointer;
+import org.terrier.structures.Pointer;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FSOMapFileLexiconOutputStream;
-import org.terrier.structures.FieldDocumentIndexEntry;
-import org.terrier.structures.FieldLexiconEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
@@ -56,10 +53,6 @@ import org.terrier.structures.MetaIndex;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PostingIndexInputStream;
-import org.terrier.structures.SimpleBitIndexPointer;
-import org.terrier.structures.SimpleDocumentIndexEntry;
-import org.terrier.structures.bit.DirectInvertedOutputStream;
-import org.terrier.structures.bit.FieldDirectInvertedOutputStream;
 import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
@@ -71,8 +64,6 @@ import org.terrier.structures.postings.WritablePosting;
 import org.terrier.structures.postings.Posting;
 import org.terrier.structures.postings.Postings;
 import org.terrier.structures.postings.PostingIdComparator;
-import org.terrier.structures.postings.bit.BasicIterablePosting;
-import org.terrier.structures.postings.bit.FieldIterablePosting;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
@@ -147,10 +138,6 @@ public class StructureMerger {
 	/** destination index */
 	protected IndexOnDisk destIndex;
 
-	/** class to use to write direct file */	
-	protected Class<? extends DirectInvertedOutputStream> directFileOutputStreamClass = DirectInvertedOutputStream.class;
-	protected Class<? extends DirectInvertedOutputStream> fieldDirectFileOutputStreamClass = FieldDirectInvertedOutputStream.class;
-	
 	protected final int fieldCount;
 	protected boolean fields;
 	protected boolean blocks = false;
@@ -236,9 +223,8 @@ public class StructureMerger {
 			Iterator<Map.Entry<String,LexiconEntry>> lexInStream2 = 
 				(Iterator<Map.Entry<String,LexiconEntry>>)srcIndex2.getIndexStructureInputStream("lexicon");
 			
-			for(String property : new String[] {"index.inverted.fields.names", "max.term.length", "index.lexicon-keyfactory.class", "index.lexicon-keyfactory.parameter_values",
-					"index.lexicon-keyfactory.parameter_types", "index.lexicon-valuefactory.class", "index.lexicon-valuefactory.parameter_values",
-					"index.lexicon-valuefactory.parameter_types", "termpipelines"} )
+			for(String property : new String[] {"max.term.length", "index.lexicon-keyfactory.class", "index.lexicon-keyfactory.parameter_values",
+					"index.lexicon-keyfactory.parameter_types", "termpipelines"} )
 			{
 				destIndex.setIndexProperty(property, srcIndex1.getIndexProperty(property, null));
 			}
@@ -248,8 +234,7 @@ public class StructureMerger {
 				
 			logger.debug("Opening new target lexicon");
 			//setting the output stream
-			LexiconOutputStream<String> lexOutStream = 
-				new FSOMapFileLexiconOutputStream(destIndex, "lexicon", (Class <FixedSizeWriteableFactory<LexiconEntry>>) lvf.getClass());
+			LexiconOutputStream<String> lexOutStream = new FSOMapFileLexiconOutputStream(destIndex, "lexicon", lvf);
 
 			int newCodes = keepTermCodeMap
 					 ? srcIndex1.getCollectionStatistics().getNumberOfUniqueTerms()
@@ -295,7 +280,7 @@ public class StructureMerger {
 				if (lexicographicalCompare < 0) {
 					//write to inverted file postings for the term that only occurs in 1st index
 					IterablePosting ip1 = inverted1.getPostings(lee1.getValue());
-					BitIndexPointer newPointer = invOS.writePostings(ip1);
+					Pointer newPointer = invOS.writePostings(ip1, lee1.getValue().getNumberOfEntries(), lee1.getValue().getMaxFrequencyInDocuments());
 					lee1.getValue().setPointer(newPointer);
 					numberOfPointers+=newPointer.getNumberOfEntries();
 					if (! keepTermCodeMap)
@@ -311,7 +296,7 @@ public class StructureMerger {
 					//docids are transformed as we go.
 					IterablePosting ip2 = inverted2.getPostings(lee2.getValue());
 					ip2 = Postings.shiftIds(ip2, numberOfDocs1, blocks, fields);
-					BitIndexPointer newPointer = invOS.writePostings(ip2);
+					Pointer newPointer = invOS.writePostings(ip2, lee2.getValue().getNumberOfEntries(), lee2.getValue().getMaxFrequencyInDocuments());
 					lee2.getValue().setPointer(newPointer);
 					numberOfPointers+=newPointer.getNumberOfEntries();
 					
@@ -332,8 +317,12 @@ public class StructureMerger {
 					//2. postings from the 2nd index have their docids increased
 					IterablePosting ip2 = inverted2.getPostings(lee2.getValue());
 					ip2 = Postings.shiftIds(ip2, numberOfDocs1, blocks, fields);
+					lee1.getValue().add(lee2.getValue());
 					
-					BitIndexPointer newPointer = invOS.writePostings(Postings.chain(new IterablePosting[]{ip1, ip2}, blocks, fields));
+					Pointer newPointer = invOS.writePostings(
+						Postings.chain(new IterablePosting[]{ip1, ip2}, blocks, fields), 
+						lee1.getValue().getNumberOfEntries(), 
+						lee1.getValue().getMaxFrequencyInDocuments());
 					numberOfPointers += newPointer.getNumberOfEntries();
 
 					if (keepTermCodeMap)
@@ -343,7 +332,7 @@ public class StructureMerger {
 					
 					//fix numberOfEntries, as LexiconEntry.add() and setPointer() both change this number.
 					lee1.getValue().setPointer(newPointer);
-					lee1.getValue().add(lee2.getValue());
+					
 					lee1.getValue().setNumberOfEntries(newPointer.getNumberOfEntries());
 					lexOutStream.writeNextEntry(term1, lee1.getValue());
 					
@@ -362,8 +351,10 @@ public class StructureMerger {
 				lee2 = null;
 				while (hasMore1) {
 					//write to inverted file as well.
-					BitIndexPointer newPointer = invOS.writePostings(
-							inverted1.getPostings(lee1.getValue()));
+					Pointer newPointer = invOS.writePostings(
+							inverted1.getPostings(lee1.getValue()),
+							lee1.getValue().getNumberOfEntries(), 
+							lee1.getValue().getMaxFrequencyInDocuments());
 					lee1.getValue().setPointer(newPointer);
 					if (! keepTermCodeMap)
 						lee1.getValue().setTermId(newCodes++);
@@ -380,7 +371,9 @@ public class StructureMerger {
 					//write to inverted file as well.
 					IterablePosting ip2 = inverted2.getPostings(lee2.getValue());
 					ip2 = Postings.shiftIds(ip2, numberOfDocs1, blocks, fields);
-					BitIndexPointer newPointer = invOS.writePostings(ip2);
+					Pointer newPointer = invOS.writePostings(ip2,
+						lee2.getValue().getNumberOfEntries(), 
+						lee2.getValue().getMaxFrequencyInDocuments());
 					lee2.getValue().setPointer(newPointer);
 
 					numberOfPointers += newPointer.getNumberOfEntries();
@@ -407,10 +400,7 @@ public class StructureMerger {
 			destIndex.setIndexProperty("num.Documents", ""+numberOfDocuments);
 			compressionInvertedConfig.writeIndexProperties(destIndex, "lexicon-entry-inputstream");
 			lexOutStream.close();
-			if (fieldCount > 0)
-			{
-				destIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.inverted.fields.count}");
-			}
+			compressionInvertedConfig.getLexiconEntryFactory().writeProperties(destIndex, "lexicon-valuefactory");
 			destIndex.flush();
 								
 		} catch(IOException ioe) {
@@ -443,8 +433,6 @@ public class StructureMerger {
 				metaBuilder.close();
 				throw new Error("Meta fields in source indices must match");
 			}
-			final BitIndexPointer emptyPointer = new SimpleBitIndexPointer();
-			
 				
 			final int srcFieldCount1 = srcIndex1.getIntIndexProperty("index.direct.fields.count", 0);
 			final int srcFieldCount2 = srcIndex1.getIntIndexProperty("index.direct.fields.count", 0);
@@ -480,14 +468,16 @@ public class StructureMerger {
 			//traversing the direct index, without any change
 			while(docidInput1.hasNext())
 			{
-				BitIndexPointer pointerDF = emptyPointer;
-				DocumentIndexEntry die = docidInput1.next();
-				if (die.getDocumentLength() > 0)
+				Pointer pointerDF = compressionDirectConfig.getPointerFactory().newInstance();
+				DocumentIndexEntry dieOld = docidInput1.next();
+				DocumentIndexEntry dieNew = compressionDirectConfig.getDocumentIndexEntryFactory().newInstance();
+				if (dieOld.getDocumentLength() > 0)
 				{
-					pointerDF = dfOutput.writePostings(dfInput1.next());
+					pointerDF = dfOutput.writePostings(dfInput1.next(), dieOld.getNumberOfEntries(), dieOld.getDocumentLength());
 				}
-				die.setBitIndexPointer(pointerDF);
-				docidOutput.addEntryToBuffer(die);
+				dieNew.setPointer(pointerDF);
+				dieNew.setDocumentIndexStatistics(dieOld);
+				docidOutput.addEntryToBuffer(dieNew);
 				metaBuilder.writeDocumentEntry(metaInput1.getAllItems(sourceDocid));
 				sourceDocid++;
 			}
@@ -501,10 +491,11 @@ public class StructureMerger {
 			sourceDocid = 0;
 			while (docidInput2.hasNext())
 			{
-				DocumentIndexEntry die = docidInput2.next();
-			
-				BitIndexPointer pointerDF = emptyPointer;
-				if (die.getDocumentLength() > 0)
+				Pointer pointerDF = compressionDirectConfig.getPointerFactory().newInstance();
+				DocumentIndexEntry dieOld = docidInput2.next();
+				DocumentIndexEntry dieNew = compressionDirectConfig.getDocumentIndexEntryFactory().newInstance();
+				
+				if (dieOld.getDocumentLength() > 0)
 				{
 					final IterablePosting postings = dfInput2.next();
 					
@@ -516,10 +507,11 @@ public class StructureMerger {
 						postingList.add(p);
 					}
 					Collections.sort(postingList, new PostingIdComparator());
-					pointerDF = dfOutput.writePostings(postingList.iterator());
+					pointerDF = dfOutput.writePostings(postingList.iterator(), dieOld.getNumberOfEntries(), dieOld.getDocumentLength());
 				}
-				die.setBitIndexPointer(pointerDF);
-				docidOutput.addEntryToBuffer(die);
+				dieNew.setPointer(pointerDF);
+				dieNew.setDocumentIndexStatistics(dieOld);
+				docidOutput.addEntryToBuffer(dieNew);
 				metaBuilder.writeDocumentEntry(metaInput2.getAllItems(sourceDocid));
 				sourceDocid++;
 			}
@@ -533,19 +525,11 @@ public class StructureMerger {
 			docidOutput.close();
 
 			compressionDirectConfig.writeIndexProperties(destIndex, "document-inputstream");
-			
-			if (fieldCount > 0)
-			{
-				destIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
-			}
-			else
-			{
-				destIndex.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
-			}
+			compressionDirectConfig.getDocumentIndexEntryFactory().writeProperties(destIndex, "document-factory");
 			destIndex.flush();
 			
-		} catch(IOException ioe) {
-			logger.error("IOException while merging df and docid files.", ioe);
+		} catch(Exception ioe) {
+			logger.error("Exception while merging df and docid files.", ioe);
 		}
 	}
 	
@@ -597,12 +581,6 @@ public class StructureMerger {
 				metaBuilder.close();
 				throw new Error("FieldCounts in source indices must match");
 			}
-			if (srcIndex1.getIndexProperty("index.document-factory.class", "").equals("org.terrier.structures.SimpleDocumentIndexEntry$Factory")
-				|| srcIndex1.getIndexProperty("index.document-factory.class", "").equals("org.terrier.structures.BasicDocumentIndexEntry$Factory"))
-			{
-				//for some reason, the source document index has not fields. so we shouldn't assume that fields are being used.
-				srcFieldCount1 = 0;
-			}
 			final int fieldCount = srcFieldCount1;
 			
 			//traversing the first set of files, without any change
@@ -610,7 +588,8 @@ public class StructureMerger {
 			{
 				metaInput1.hasNext();
 				DocumentIndexEntry die = docidInput1.next();
-				DocumentIndexEntry dieNew = (fieldCount > 0) ? die : new SimpleDocumentIndexEntry(die);
+				DocumentIndexEntry dieNew = compressionInvertedConfig.getDocumentIndexEntryFactory().newInstance();
+				dieNew.setDocumentIndexStatistics(die);
 				docidOutput.addEntryToBuffer(dieNew);
 				metaBuilder.writeDocumentEntry(metaInput1.next());
 			}
@@ -622,7 +601,8 @@ public class StructureMerger {
 			{
 				metaInput2.hasNext();
 				DocumentIndexEntry die = docidInput2.next();
-				DocumentIndexEntry dieNew = (fieldCount > 0) ? die : new SimpleDocumentIndexEntry(die);
+				DocumentIndexEntry dieNew = compressionInvertedConfig.getDocumentIndexEntryFactory().newInstance();
+				dieNew.setDocumentIndexStatistics(die);
 				docidOutput.addEntryToBuffer(dieNew);
 				metaBuilder.writeDocumentEntry(metaInput2.next());
 			}
@@ -635,14 +615,8 @@ public class StructureMerger {
 			IndexUtil.close(metaInput1);
 			IndexUtil.close(metaInput2);
 			//destIndex.setIndexProperty("index.inverted.fields.count", ""+ fieldCount);
-			if (fieldCount > 0)
-			{
-				destIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.inverted.fields.count}");
-			}
-			else
-			{
-				destIndex.addIndexStructure("document-factory", SimpleDocumentIndexEntry.Factory.class.getName(), "", "");
-			}
+			
+			compressionInvertedConfig.getDocumentIndexEntryFactory().writeProperties(destIndex, "document-factory");
 			destIndex.flush();
 			
 		} catch(IOException ioe) {

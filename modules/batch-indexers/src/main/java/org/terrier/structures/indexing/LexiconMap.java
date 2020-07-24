@@ -32,7 +32,8 @@ import gnu.trove.TObjectIntProcedure;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.terrier.structures.BasicLexiconEntry;
+import org.terrier.structures.seralization.FixedSizeWriteableFactory;
+import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.TermCodes;
@@ -105,11 +106,12 @@ public class LexiconMap {
 	  * The binary tree is traversed in order, by called the method
 	  * traverseAndStoreToStream.
 	  * @param lexiconStream The lexicon output stream to store to. */
-	public void storeToStream(LexiconOutputStream<String> lexiconStream, TermCodes termCodes) throws IOException
+	public void storeToStream(LexiconOutputStream<String> lexiconStream, TermCodes termCodes, FixedSizeWriteableFactory<LexiconEntry> leFactory) throws IOException
 	{
 		final String[] terms = tfs.keys(new String[0]);
 		Arrays.sort(terms);
-		BasicLexiconEntry le = new BasicLexiconEntry();
+
+		LexiconEntry le = leFactory.newInstance();
 		for (String t : terms)
 		{
 			le.setTermId(termCodes.getCode(t));

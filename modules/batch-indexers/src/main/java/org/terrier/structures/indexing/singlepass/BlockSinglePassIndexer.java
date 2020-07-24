@@ -34,12 +34,8 @@ import gnu.trove.TIntHashSet;
 
 import java.io.IOException;
 
-import org.terrier.structures.bit.BitPostingIndex;
-import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.indexing.BlockDocumentPostingList;
 import org.terrier.structures.indexing.BlockFieldDocumentPostingList;
-import org.terrier.structures.postings.bit.BlockFieldIterablePosting;
-import org.terrier.structures.postings.bit.BlockIterablePosting;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.terms.TermPipeline;
 import org.terrier.utility.ApplicationSetup;
@@ -266,10 +262,6 @@ public class BlockSinglePassIndexer extends BasicSinglePassIndexer{
 		//delay the execution of init() if we are a parent class
         if (this.getClass() == BlockSinglePassIndexer.class) 
             init();
-		invertedIndexClass = BitPostingIndex.class.getName();
-		invertedIndexInputStreamClass = BitPostingIndexInputStream.class.getName();
-		basicInvertedIndexPostingIteratorClass = BlockIterablePosting.class.getName();
-		fieldInvertedIndexPostingIteratorClass = BlockFieldIterablePosting.class.getName();
 		compressionInvertedConfig = CompressionFactory.getCompressionConfiguration("inverted", FieldScore.FIELD_NAMES, BLOCK_SIZE, MAX_BLOCKS);
 
 		super.blocks = true;

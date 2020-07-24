@@ -41,7 +41,6 @@ import org.terrier.structures.IndexUtil;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.structures.Pointer;
-import org.terrier.structures.SimpleBitIndexPointer;
 import org.terrier.structures.indexing.LexiconBuilder;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 
@@ -111,8 +110,6 @@ public class LexiconMerger {
 
 			int termId = 0;
 			
-			Pointer p = new SimpleBitIndexPointer();
-		
 			hasMore1 = lexInStream1.hasNext(); 
 			hasMore2 = lexInStream2.hasNext(); 
 			Map.Entry<String,LexiconEntry> lee1 = lexInStream1.next();
@@ -126,20 +123,17 @@ public class LexiconMerger {
 				int lexicographicalCompare = term1.compareTo(term2);
 				if (lexicographicalCompare < 0) {
 					lee1.getValue().setTermId(termId);
-					lee1.getValue().setPointer(p);
 					lexOutStream.writeNextEntry(term1, lee1.getValue());
 					termId++;
 					if (hasMore1 = lexInStream1.hasNext()) lee1 = lexInStream1.next();
 				
 				} else if (lexicographicalCompare > 0) {
 					lee2.getValue().setTermId(termId);
-					lee2.getValue().setPointer(p);
 					lexOutStream.writeNextEntry(term2, lee2.getValue());
 					termId++;
 					if (hasMore2 = lexInStream2.hasNext()) lee2 = lexInStream2.next();
 				} else {
 					lee1.getValue().setTermId(termId);
-					lee1.getValue().setPointer(p);
 					lee1.getValue().add(lee2.getValue());
 					lexOutStream.writeNextEntry(term1, lee1.getValue());
 					if (hasMore1 = lexInStream1.hasNext()) lee1 = lexInStream1.next();
@@ -151,7 +145,6 @@ public class LexiconMerger {
 			if (hasMore1) {
 				while (hasMore1) {
 					lee1.getValue().setTermId(termId);
-					lee1.getValue().setPointer(p);
 					lexOutStream.writeNextEntry(lee1.getKey(), lee1.getValue());
 					if (hasMore1 = lexInStream1.hasNext()) lee1 = lexInStream1.next();
 					termId++;
@@ -159,7 +152,6 @@ public class LexiconMerger {
 			} else if (hasMore2) {
 				while (hasMore2) {
 					lee1.getValue().setTermId(termId);
-					lee1.getValue().setPointer(p);
 					lexOutStream.writeNextEntry(lee2.getKey(), lee2.getValue());
 					if (hasMore2 = lexInStream2.hasNext()) lee2 = lexInStream2.next();
 					termId++;

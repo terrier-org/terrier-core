@@ -29,11 +29,12 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		
 		IndexOnDisk merged2 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new StructureMerger(merged1, index3, merged2).mergeStructures();
-		
+		int[] doclens = new int[]{4,5,3};
+
 		assertEquals(3, merged2.getCollectionStatistics().getNumberOfDocuments());
 		assertTrue(merged2.hasIndexStructure("inverted"));
 		assertTrue(merged2.hasIndexStructure("direct"));
-		checkTerm(merged2, "sentence", 3, false, false);	
+		checkTerm(merged2, "sentence", 3, doclens, false, false);	
 	}
 	
 	@Test public void test111_blocks() throws Exception
@@ -42,15 +43,15 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		IndexOnDisk index1 = (IndexOnDisk) IndexTestUtils.makeIndexBlocks(new String[]{"doc1"}, new String[]{"this is a sentence"});
 		IndexOnDisk index2 = (IndexOnDisk) IndexTestUtils.makeIndexBlocks(new String[]{"doc2"}, new String[]{"this is also a sentence"});
 		IndexOnDisk index3 = (IndexOnDisk) IndexTestUtils.makeIndexBlocks(new String[]{"doc2"}, new String[]{"a third sentence"});
-		
-		checkTerm(index1, "sentence", 1, true, false);
-		checkTerm(index2, "sentence", 1, true, false);
-		checkTerm(index3, "sentence", 1, true, false);
+		int[] doclens = new int[]{4,5,3};
+		checkTerm(index1, "sentence", 1, new int[]{4}, true, false);
+		checkTerm(index2, "sentence", 1, new int[]{5}, true, false);
+		checkTerm(index3, "sentence", 1, new int[]{3}, true, false);
 		
 		IndexOnDisk merged1 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
 		new BlockStructureMerger(index1, index2, merged1).mergeStructures();
 		
-		checkTerm(merged1, "sentence", 2, true, false);
+		checkTerm(merged1, "sentence", 2, new int[]{4,5}, true, false);
 		assertTrue(merged1.getCollectionStatistics().hasPositions());
 		
 		IndexOnDisk merged2 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
@@ -58,10 +59,10 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		
 		assertEquals(3, merged2.getCollectionStatistics().getNumberOfDocuments());
 		assertTrue(merged2.getCollectionStatistics().hasPositions());
-		checkTerm(merged2, "sentence", 3, true, false);
+		checkTerm(merged2, "sentence", 3, doclens, true, false);
 	}
 	
-	void checkTerm(Index i, String term, int df, boolean blocks, boolean fields) throws Exception
+	void checkTerm(Index i, String term, int df, int[] lengths, boolean blocks, boolean fields) throws Exception
 	{
 		LexiconEntry le = i.getLexicon().getLexiconEntry(term);
 		assertNotNull(le);
@@ -70,7 +71,13 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		IterablePosting ip = i.getInvertedIndex().getPostings(le);
 		assertEquals(blocks, ip instanceof BlockPosting);
 		assertEquals(fields, ip instanceof FieldPosting);
-		
+		int count = 0;
+		while(ip.next() != IterablePosting.EOL)
+		{
+			assertEquals(lengths[ip.getId()], ip.getDocumentLength());
+			count++;
+		}
+		assertEquals(count, df);
 	}
 	
 	@Test public void test11() throws Exception
@@ -90,11 +97,11 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		ApplicationSetup.setProperty("termpipelines", "");
 		ApplicationSetup.setProperty("indexing.max.docs.per.builder", "1");
 		IndexOnDisk index1 = (IndexOnDisk) IndexTestUtils.makeIndexBlocks(new String[]{"doc1", "doc1a"}, new String[]{"this is a sentence", "this is also a sentence"});
-		checkTerm(index1, "sentence", 2, true, false);
+		checkTerm(index1, "sentence", 2, new int[]{4,5}, true, false);
 		assertTrue(index1.getCollectionStatistics().hasPositions());
 		
 		IndexOnDisk index2 = (IndexOnDisk) IndexTestUtils.makeIndexBlocks(new String[]{"doc2"}, new String[]{"a third sentence"});
-		checkTerm(index2, "sentence", 1, true, false);
+		checkTerm(index2, "sentence", 1, new int[]{3},  true, false);
 		assertTrue(index2.getCollectionStatistics().hasPositions());
 		
 		IndexOnDisk merged = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, ""+ new Random().nextInt(100) );
@@ -102,7 +109,7 @@ public class TestMerger extends ApplicationSetupBasedTest {
 		
 		assertTrue(merged.getCollectionStatistics().hasPositions());
 		assertEquals(3, merged.getCollectionStatistics().getNumberOfDocuments());
-		checkTerm(merged, "sentence", 3, true, false);
+		checkTerm(merged, "sentence", 3,  new int[]{4,5,3}, true, false);
 		
 	
 	}

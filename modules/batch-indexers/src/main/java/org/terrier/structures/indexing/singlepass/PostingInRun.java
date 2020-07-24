@@ -30,7 +30,6 @@ import java.io.IOException;
 
 import org.terrier.compression.bit.BitIn;
 import org.terrier.compression.bit.BitOut;
-import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.Pointer;
@@ -56,14 +55,6 @@ abstract class PostingInRun {
 	 */
 	public PostingInRun() {
 		super();
-	}
-	
-	/** Return the LexiconEntry for this Posting */
-	public LexiconEntry getLexiconEntry()
-	{
-		LexiconEntry rtr = new BasicLexiconEntry(0, termDf, termTF);
-		rtr.setMaxFrequencyInDocuments(maxtf);
-		return rtr;
 	}
 	
 	/** Add statistics for this posting onto the given LexiconEntry */

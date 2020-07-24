@@ -41,7 +41,7 @@ public abstract class FSOMapFileLexiconOutputStreamGeneric<T1, T2 extends Writab
 	protected final T2 tempKey;
 	protected final FSOrderedMapFile.MapFileWriter mapFileWriter;
 	protected IndexOnDisk index = null;
-	protected String leValueClassname = null;
+	//protected String leValueClassname = null;
 	protected final String structureName;
 
 	public FSOMapFileLexiconOutputStreamGeneric(String path, String prefix,
@@ -61,7 +61,7 @@ public abstract class FSOMapFileLexiconOutputStreamGeneric<T1, T2 extends Writab
 		
 		this(_index.getPath(), _index.getPrefix(), _structureName, (FixedSizeWriteableFactory<T2>) getKeyFactory(_index, _structureName));
 		this.index = _index;
-		leValueClassname = valueFactoryClass.getName();
+		//leValueClassname = valueFactoryClass.getName();
 	}
 
 	public FSOMapFileLexiconOutputStreamGeneric(
@@ -71,7 +71,7 @@ public abstract class FSOMapFileLexiconOutputStreamGeneric<T1, T2 extends Writab
 			Class<? extends FixedSizeWriteableFactory<LexiconEntry>> valueFactoryClass) throws IOException {
 		this(_index.getPath(), _index.getPrefix(), _structureName, _keyFactory);
 		this.index = _index;
-		leValueClassname = valueFactoryClass.getName();
+		//leValueClassname = valueFactoryClass.getName();
 	}
 
 	public FSOMapFileLexiconOutputStreamGeneric(IndexOnDisk _index,
@@ -79,7 +79,7 @@ public abstract class FSOMapFileLexiconOutputStreamGeneric<T1, T2 extends Writab
 			String valueFactoryClassName) throws IOException {
 		this(_index.getPath(), _index.getPrefix(), _structureName, _keyFactory);
 		this.index = _index;
-		leValueClassname = valueFactoryClassName;
+		//leValueClassname = valueFactoryClassName;
 	}
 
 	public FSOMapFileLexiconOutputStreamGeneric(String filename,
@@ -87,7 +87,7 @@ public abstract class FSOMapFileLexiconOutputStreamGeneric<T1, T2 extends Writab
 		
 		mapFileWriter = FSOrderedMapFile.mapFileWrite(filename);
 		structureName = null;
-		leValueClassname = null;
+		//leValueClassname = null;
 		index = null;
 		keyFactory = _keyFactory;
 		tempKey = keyFactory.newInstance();
@@ -132,12 +132,9 @@ public abstract class FSOMapFileLexiconOutputStreamGeneric<T1, T2 extends Writab
 			Class<? extends Lexicon<?>> lexClass,
 			Class<? extends Iterator<?>> lexInputStreamClass,
 			Class<? extends Iterator<LexiconEntry>> lexEntryInputStreamClass,
-			String leValueClassname)
+			FixedSizeWriteableFactory<LexiconEntry> valueFactory)
 	{
-		index.addIndexStructure(
-				structureName+"-valuefactory",
-				leValueClassname,
-				"", "");
+		valueFactory.writeProperties(index, structureName+"-valuefactory");
 		index.addIndexStructure(
 				structureName, 
 				lexClass.getName(),
@@ -164,28 +161,29 @@ public abstract class FSOMapFileLexiconOutputStreamGeneric<T1, T2 extends Writab
 	 * @param structureName
 	 * @param leValueClassname
 	 */
-//	public static void addLexiconToIndex(IndexOnDisk index, 
-//			String structureName, String leValueClassname)
-//	{
-//		index.addIndexStructure(
-//				structureName+"-valuefactory",
-//				leValueClassname,
-//				"", "");
-//		index.addIndexStructure(
-//				structureName, 
-//				"org.terrier.structures.FSOMapFileLexicon",
-//				"java.lang.String,org.terrier.structures.IndexOnDisk",
-//				"structureName,index");
-//		index.addIndexStructureInputStream(
-//				structureName, 
-//				"org.terrier.structures.FSOMapFileLexicon$MapFileLexiconIterator",
-//				"java.lang.String,org.terrier.structures.IndexOnDisk",
-//				"structureName,index");
-//		index.addIndexStructureInputStream(
-//				structureName+"-entry", 
-//				"org.terrier.structures.FSOMapFileLexiconGeneric$MapFileLexiconEntryIterator",
-//				"java.lang.String,org.terrier.structures.IndexOnDisk",
-//				"structureName,index");
-//	}
+	@Deprecated
+	public static void addLexiconToIndex(IndexOnDisk index, 
+			String structureName, String leValueClassname)
+	{
+		index.addIndexStructure(
+				structureName+"-valuefactory",
+				leValueClassname,
+				"", "");
+		index.addIndexStructure(
+				structureName, 
+				"org.terrier.structures.FSOMapFileLexicon",
+				"java.lang.String,org.terrier.structures.IndexOnDisk",
+				"structureName,index");
+		index.addIndexStructureInputStream(
+				structureName, 
+				"org.terrier.structures.FSOMapFileLexicon$MapFileLexiconIterator",
+				"java.lang.String,org.terrier.structures.IndexOnDisk",
+				"structureName,index");
+		index.addIndexStructureInputStream(
+				structureName+"-entry", 
+				"org.terrier.structures.FSOMapFileLexiconGeneric$MapFileLexiconEntryIterator",
+				"java.lang.String,org.terrier.structures.IndexOnDisk",
+				"structureName,index");
+	}
 
 }

@@ -42,7 +42,7 @@ import org.terrier.indexing.tokenisation.EnglishTokeniser;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FieldDocumentIndex;
-import org.terrier.structures.FieldDocumentIndexEntry;
+import org.terrier.structures.FieldedDocumentIndexEntry;
 import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.Index;
 import org.terrier.structures.Lexicon;
@@ -51,7 +51,6 @@ import org.terrier.structures.MetaIndex;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PostingIndexInputStream;
-import org.terrier.structures.bit.BitPostingIndexInputStream;
 import org.terrier.structures.indexing.Indexer;
 import org.terrier.structures.indexing.classical.BasicIndexer;
 import org.terrier.structures.indexing.classical.BlockIndexer;
@@ -201,15 +200,15 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 				
 				assertEquals(1, fDoi.getFieldLengths(1)[0]);
 				assertEquals(3, fDoi.getFieldLengths(1)[1]);
-			} else {
-				FieldDocumentIndexEntry fdie;
-				fdie = (FieldDocumentIndexEntry) doi.getDocumentEntry(0);
-				assertEquals(1, fdie.getFieldLengths()[0]);
-				assertEquals(2, fdie.getFieldLengths()[1]);
-				fdie = (FieldDocumentIndexEntry) doi.getDocumentEntry(1);
-				assertEquals(1, fdie.getFieldLengths()[0]);
-				assertEquals(3, fdie.getFieldLengths()[1]);
 			}
+			
+			FieldedDocumentIndexEntry fdie;
+			fdie = (FieldedDocumentIndexEntry) doi.getDocumentEntry(0);
+			assertEquals(1, fdie.getFieldLengths()[0]);
+			assertEquals(2, fdie.getFieldLengths()[1]);
+			fdie = (FieldedDocumentIndexEntry) doi.getDocumentEntry(1);
+			assertEquals(1, fdie.getFieldLengths()[0]);
+			assertEquals(3, fdie.getFieldLengths()[1]);
 		}
 		
 		/** LEXICON */
@@ -226,8 +225,8 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 		{
 			assertTrue(le instanceof FieldEntryStatistics);
 			fe = (FieldEntryStatistics)le;
-			assertEquals(1, fe.getFieldFrequencies()[0]);
-			assertEquals(1, fe.getFieldFrequencies()[1]);
+			assertEquals("Field 0 frequency mismatch", 1, fe.getFieldFrequencies()[0]);
+			assertEquals("Field 1 frequency mismatch", 1, fe.getFieldFrequencies()[1]);
 		}
 		//finally, lookups by termids work fine
 		assertEquals("cats", lexicon.getLexiconEntry(le.getTermId()).getKey());
@@ -275,8 +274,7 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 		for (int t = 0; t < termStrings.length; t++) {
 			le = lexicon.getLexiconEntry(termStrings[t]);
 			assertNotNull(le);
-			if (memoryIndexer) ip = invertedIndex.getPostings(le);
-			else ip = invertedIndex.getPostings(le);
+			ip = invertedIndex.getPostings(le);
 			// for each document
 			int d = 0;
 			while (ip.next() != IterablePosting.EOL) {
@@ -373,7 +371,7 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 			/**
 			 * Test {@link IterablePosting} entries from a {@link DirectIndexInputStream}
 			 */
-			bpiis = (BitPostingIndexInputStream) index.getIndexStructureInputStream("direct");
+			bpiis = (PostingIndexInputStream) index.getIndexStructureInputStream("direct");
 			assertNotNull(bpiis);
 			// for each document
 			for (int d = 0; d < dirTfs.length; d++) {

@@ -48,9 +48,17 @@ public abstract class AbstractPostingOutputStream implements Closeable {
 	
 	public abstract int getLastDocidWritten();
 
-	public abstract BitIndexPointer writePostings(IterablePosting postings) throws IOException;
+	public Pointer writePostings(IterablePosting postings, int postingLength, int maxFreq) throws IOException {
+		return writePostings(postings);
+	}
 
-	public abstract BitIndexPointer writePostings(Iterator<Posting> iterator) throws IOException;
+	public Pointer writePostings(Iterator<Posting> iterator, int postingLength, int maxFreq) throws IOException {
+		return writePostings(iterator);
+	}
+
+	protected Pointer writePostings(IterablePosting postings) throws IOException { throw new UnsupportedOperationException(); }
+
+	protected Pointer writePostings(Iterator<Posting> iterator) throws IOException { throw new UnsupportedOperationException(); }
 
 	public abstract Class<? extends IterablePosting> getPostingIteratorClass();
 

@@ -44,7 +44,6 @@ import org.terrier.realtime.UpdatableIndex;
 import org.terrier.realtime.WritableIndex;
 import org.terrier.structures.indexing.DiskIndexWriter;
 import org.terrier.structures.AbstractPostingOutputStream;
-import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;

@@ -51,6 +51,7 @@ import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.Posting;
+import org.terrier.structures.Pointer;
 
 public class PostingTestUtils {
 
@@ -161,7 +162,7 @@ public class PostingTestUtils {
 	        DirectInvertedOutputStream dios = new BlockDirectInvertedOutputStream(tmpFile.toString());
 	        for(Iterator<Posting> iterator : iterators)
 	        {
-	            BitIndexPointer p = dios.writePostings(iterator);
+	            BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	            pointerList.add(p);
 	        }
 	        dios.close();
@@ -175,7 +176,7 @@ public class PostingTestUtils {
 	        DirectInvertedOutputStream dios = new BlockDirectInvertedOutputStream(baos);
 	        for(Iterator<Posting> iterator : iterators)
 	        {
-	            BitIndexPointer p = dios.writePostings(iterator);
+	            BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	            pointerList.add(p);
 	        }
 	        dios.close();
@@ -189,7 +190,7 @@ public class PostingTestUtils {
 	        DirectInvertedOutputStream dios = new FieldDirectInvertedOutputStream(tmpFile.toString());
 	        for(Iterator<Posting> iterator : iterators)
 	        {
-	            BitIndexPointer p = dios.writePostings(iterator);
+	            BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	            pointerList.add(p);
 	        }
 	        dios.close();
@@ -203,7 +204,7 @@ public class PostingTestUtils {
 	        DirectInvertedOutputStream dios = new FieldDirectInvertedOutputStream(baos);
 	        for(Iterator<Posting> iterator : iterators)
 	        {
-	            BitIndexPointer p = dios.writePostings(iterator);
+	            BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	            pointerList.add(p);
 	        }
 	        dios.close();
@@ -217,7 +218,7 @@ public class PostingTestUtils {
 	        DirectInvertedOutputStream dios = new BlockFieldDirectInvertedOutputStream(tmpFile.toString());
 	        for(Iterator<Posting> iterator : iterators)
 	        {
-	            BitIndexPointer p = dios.writePostings(iterator);
+	            BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	            pointerList.add(p);
 	        }
 	        dios.close();
@@ -231,7 +232,7 @@ public class PostingTestUtils {
 	        DirectInvertedOutputStream dios = new BlockFieldDirectInvertedOutputStream(baos);
 	        for(Iterator<Posting> iterator : iterators)
 	        {
-	            BitIndexPointer p = dios.writePostings(iterator);
+	            BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	            pointerList.add(p);
 	        }
 	        dios.close();
@@ -246,7 +247,7 @@ public class PostingTestUtils {
 		DirectInvertedOutputStream dios = new DirectInvertedOutputStream(tmpFile.toString());
 		for(Iterator<Posting> iterator : iterators)
 	 	{
-	 		BitIndexPointer p = dios.writePostings(iterator);
+			BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	 		pointerList.add(p);
 	 	}
 		dios.close();
@@ -261,7 +262,7 @@ public class PostingTestUtils {
 		DirectInvertedOutputStream dios = new DirectInvertedOutputStream(baos);
 		for(Iterator<Posting> iterator : iterators)
 	 	{
-	 		BitIndexPointer p = dios.writePostings(iterator);
+			BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	 		pointerList.add(p);
 	 	}
 		dios.close();
@@ -275,7 +276,7 @@ public class PostingTestUtils {
 		DirectInvertedOutputStream dios = new DirectInvertedDocidOnlyOuptutStream(tmpFile.toString());
 		for(Iterator<Posting> iterator : iterators)
 	 	{
-	 		BitIndexPointer p = dios.writePostings(iterator);
+			BitIndexPointer p = dios.writePostings(iterator, -1, -1);
 	 		pointerList.add(p);
 	 	}
 		dios.close();

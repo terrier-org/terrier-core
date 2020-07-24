@@ -39,14 +39,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.CompressingMetaIndex;
 import org.terrier.structures.CompressingMetaIndex.InputStream;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
-import org.terrier.structures.FieldDocumentIndexEntry;
-import org.terrier.structures.FieldLexiconEntry;
+import org.terrier.structures.FieldedDocumentIndexEntry;
+import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
@@ -58,7 +57,6 @@ import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.PostingUtil;
-import org.terrier.structures.restructure.Tr4BasicLexiconEntry;
 import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.Files;
@@ -236,6 +234,22 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		//finished with meta index
 		mi = null;
 	}
+
+	public void checkInvertedIndex(Index index, int[] documentLengths) throws Exception {
+		int ti=0;
+		for (String t: CHECK_TERMS) {
+			LexiconEntry le = index.getLexicon().getLexiconEntry(t);
+			IterablePosting ip = index.getInvertedIndex().getPostings(le);
+			int count = 0;
+			while(ip.next() != IterablePosting.EOL) {
+				count++;
+				assertEquals(documentLengths[ip.getId()], ip.getDocumentLength());
+			}
+			assertEquals(count, CHECK_TERMS_DFS[ti]);
+			ti++;
+		}
+
+	}
 	
 	public void checkInvertedIndexStream(Index index, int[] documentLengths, int[] docPointers) throws Exception
 	{
@@ -270,12 +284,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		}
 		iiis.close();
 		
-				
-//		assertEquals("Number of documents is unexpected:"
-//				+" expected " + Arrays.toString(documentLengths)
-//				+" with " + countZero(documentLengths) +  " zeros"
-//				+" versus ids=" + Arrays.toString(calculatedDocLengths)
-//			, documentLengths.length - countZero(documentLengths), calculatedDocLengths.size());
+
 		long tokens = 0;
 		for(int docid=0;docid<numDocs;docid++)
 		{
@@ -475,14 +484,15 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 			{
 				DocumentIndexEntry die = iDie.next();
 				docid++;
-				//System.out.println(die.getDocumentLength());
-				assertEquals("Document lengths for docid "+ docid + " dont match", lengths[docid], die.getDocumentLength());
+				assertTrue("Iterator continued past expected number of documents ("+lengths.length+")", docid < lengths.length);
+				assertEquals("Document lengths for docid "+ docid + " dont match, class type is "  + die.getClass().toString() + ", contents is " + die.toString() + " -- ", 
+					lengths[docid], die.getDocumentLength());
 			}
 			//check docid is as large as expected
 			assertEquals("Metaindex as stream didnt have expected number of entries", lengths.length -1, docid);
 			IndexUtil.close(iDie);
 		}
-		
+
 		//check index in random access
 		DocumentIndex di = index.getDocumentIndex();
 		assertNotNull("Failed to get a document index", di);
@@ -494,6 +504,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 			if (document_unique_terms.length > 0)
 				assertEquals("Number of pointers for docid " + docid + " dont match", document_unique_terms[docid], di.getDocumentEntry(docid).getNumberOfEntries());
 		}
+
 		
 		di = null;
 	}
@@ -533,6 +544,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		checkDocumentLengths(index, DOCUMENT_LENGTHS, DOCUMENT_UNIQUE_TERMS);
 		checkMetaIndex(index, DOCUMENT_NAMES);
 		checkLexicon(index);
+		checkInvertedIndex(index, DOCUMENT_LENGTHS);
 		checkInvertedIndexStream(index, DOCUMENT_LENGTHS, DOCUMENT_UNIQUE_TERMS);
 		checkDirectIndex(index, 
 				index.getCollectionStatistics().getNumberOfUniqueTerms(), 
@@ -543,17 +555,17 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		if (FieldScore.FIELDS_COUNT > 0)
 		{
 			assertTrue("LexiconEntry is not of type FieldLexiconEntry", ((FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure("lexicon-valuefactory")).newInstance()
-					instanceof FieldLexiconEntry);
+					instanceof FieldEntryStatistics);
 			assertTrue("DocumentIndexEntry is not of type FieldDocumentIndexEntry", ((FixedSizeWriteableFactory<DocumentIndexEntry>)index.getIndexStructure("document-factory")).newInstance()
-					instanceof FieldDocumentIndexEntry);
+					instanceof FieldedDocumentIndexEntry);
 		}
-		else
-		{
-			LexiconEntry le = ((FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure("lexicon-valuefactory")).newInstance();
-			assertTrue("LexiconEntry is not of type BasicLexiconEntry", 
-					(le instanceof BasicLexiconEntry) || (le instanceof Tr4BasicLexiconEntry)
-					);
-		}
+		// else
+		// {
+		// 	LexiconEntry le = ((FixedSizeWriteableFactory<LexiconEntry>)index.getIndexStructure("lexicon-valuefactory")).newInstance();
+		// 	assertTrue("LexiconEntry is not of type BasicLexiconEntry", 
+		// 			(le instanceof BasicLexiconEntry) || (le instanceof Tr4BasicLexiconEntry)
+		// 			);
+		// }
 		index.close();
 		super.checkIndex();
 	}

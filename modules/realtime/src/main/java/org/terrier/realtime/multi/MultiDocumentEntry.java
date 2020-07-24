@@ -31,8 +31,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.terrier.structures.BitFilePosition;
-import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.Pointer;
 
@@ -53,22 +51,10 @@ public class MultiDocumentEntry extends DocumentIndexEntry {
 		innerDocumentIndexEntry = entry;
 		documentIndexShardIndex = index;
 	}
-	
-	@Override
-	public void setBitIndexPointer(BitIndexPointer pointer) {
-		innerDocumentIndexEntry.setBitIndexPointer(pointer);
-		
-	}
-
-	@Override
-	public void setOffset(BitFilePosition pos) {
-		innerDocumentIndexEntry.setOffset(pos);
-	}
 
 	@Override
 	public void readFields(DataInput arg0) throws IOException {
-		innerDocumentIndexEntry.readFields(arg0);
-		
+		innerDocumentIndexEntry.readFields(arg0);	
 	}
 
 	@Override
@@ -101,7 +87,5 @@ public class MultiDocumentEntry extends DocumentIndexEntry {
 	public void setDocumentIndexShardIndex(int documentIndexShardIndex) {
 		this.documentIndexShardIndex = documentIndexShardIndex;
 	}
-	
-	
 
 }

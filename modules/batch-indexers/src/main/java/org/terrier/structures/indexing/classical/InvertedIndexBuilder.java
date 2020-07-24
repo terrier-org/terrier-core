@@ -68,6 +68,7 @@ import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.Files;
 import org.terrier.utility.Rounding;
+import org.terrier.utility.StaTools;
 import org.terrier.utility.TerrierTimer;
 
 import gnu.trove.TIntArrayList;
@@ -331,7 +332,7 @@ public class InvertedIndexBuilder {
 			
 			//the temporary data containing the offsets
 			DataInputStream dis = new DataInputStream(Files.openFileStream(LexiconFilename.concat(".tmp2")));
-			Pointer pin = compressionConfig.getPointerClass().getConstructor().newInstance();
+			Pointer pin = compressionConfig.getPointerFactory().newInstance();
 			while(lexiconStream.hasNext())
 			{
 				Map.Entry<String,LexiconEntry> lee = lexiconStream.next();
@@ -756,7 +757,6 @@ public class InvertedIndexBuilder {
 			//set of postings.
 			int frequency; long numTokens = 0;
 			
-			//InMemoryIterablePosting mip = new InMemoryIterablePosting();
 			long size = 0;
 			for (int j = 0; j < _processTerms; j++) {
 				
@@ -764,6 +764,7 @@ public class InvertedIndexBuilder {
 				
 				final int[] ids = tmpStorage[j][0].toNativeArray();
 				final int[] tf = tmpStorage[j][1].toNativeArray();
+				final int maxTf = StaTools.max(tf);
 				
 				final int[][] tmpFields = new int[fieldCount][]; 
 				for(int k=0;k<fieldCount;k++)
@@ -782,7 +783,7 @@ public class InvertedIndexBuilder {
 				{
 					ip = new ArrayOfBasicIterablePosting(ids, tf, null);
 				}
-				p = file.writePostings(ip);
+				p = file.writePostings(ip, ids.length, maxTf);
 				p.write(dos);
 
 				numTokens += frequency;				

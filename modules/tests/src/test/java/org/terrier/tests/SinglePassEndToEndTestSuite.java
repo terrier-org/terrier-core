@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses( { 
-SinglePassShakespeareEndToEndTest.BasicSinglePassShakespeareEndToEndTest.class,
+	SinglePassShakespeareEndToEndTest.BasicSinglePassShakespeareEndToEndTest.class,
 	SinglePassShakespeareEndToEndTest.BlockSinglePassShakespeareEndToEndTest.class,
 	SinglePassShakespeareEndToEndTest.MultiPassBasicSinglePassShakespeareEndToEndTest.class,
 	SinglePassShakespeareEndToEndTest.MultiPassBlockSinglePassShakespeareEndToEndTest.class,

@@ -94,7 +94,14 @@ public interface EntryStatistics extends Serializable
      * @param e the other object whose statistics are used to 
      *          increment the statistics of this object.
      */
-    void add(EntryStatistics e);
+    default void add(EntryStatistics e) {
+        this.setDocumentFrequency( this.getDocumentFrequency() + e.getDocumentFrequency());
+        this.setFrequency(  this.getFrequency() + e.getFrequency() );
+        if (e.getMaxFrequencyInDocuments() > this.getMaxFrequencyInDocuments())
+        {
+            this.setMaxFrequencyInDocuments(e.getMaxFrequencyInDocuments());
+        } 
+    }
 
     /** 
      * Decrement the statistics of this object by that of another.
@@ -102,7 +109,10 @@ public interface EntryStatistics extends Serializable
      * @param e the other object whose statistics are used to 
      *          decrement the statistics of this object.
      */
-    void subtract(EntryStatistics e);
+    default void subtract(EntryStatistics e) {
+        this.setDocumentFrequency( this.getDocumentFrequency() - e.getDocumentFrequency());
+        this.setFrequency(  this.getFrequency() - e.getFrequency() );
+    }
     
     /** 
      * Copy this entry statistics to one that can be reused. Kind of like a clone.

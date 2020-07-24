@@ -31,9 +31,11 @@ import gnu.trove.TObjectIntProcedure;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.terrier.structures.FieldLexiconEntry;
+import org.terrier.structures.LexiconEntry;
+import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.LexiconOutputStream;
 import org.terrier.utility.TermCodes;
+import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 /** class FieldLexicanMap */
 public class FieldLexiconMap extends LexiconMap {
 
@@ -90,20 +92,20 @@ public class FieldLexiconMap extends LexiconMap {
 	  * traverseAndStoreToStream.
 	  * @param lexiconStream The lexicon output stream to store to. */
 	@Override
-	public void storeToStream(LexiconOutputStream<String> lexiconStream, TermCodes termCodes) throws IOException
+	public void storeToStream(LexiconOutputStream<String> lexiconStream, TermCodes termCodes, FixedSizeWriteableFactory<LexiconEntry> leFactory) throws IOException
 	{
 		final String[] terms = tfs.keys(new String[0]);
 		Arrays.sort(terms);
 		for (String t : terms)
 		{
-			final FieldLexiconEntry fle = new FieldLexiconEntry(getFieldFrequency(t));
+			final LexiconEntry fle = leFactory.newInstance();
 			fle.setTermId(termCodes.getCode(t));
 			fle.setStatistics(nts.get(t), tfs.get(t));
 			fle.setMaxFrequencyInDocuments(maxtfs.get(t));
 			final int[] TFf = new int[fieldCount];
 			for(int fi=0;fi< fieldCount;fi++)
 				TFf[fi] = field_tfs[fi].get(t);
-			fle.setFieldFrequencies(TFf);
+			((FieldEntryStatistics)fle).setFieldFrequencies(TFf);
 			lexiconStream.writeNextEntry(t, fle);
 		}
 	}

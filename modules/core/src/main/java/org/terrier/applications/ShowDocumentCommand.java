@@ -12,7 +12,7 @@ import org.terrier.applications.CLITool.CLIParsedCLITool;
 import org.terrier.querying.IndexRef;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
-import org.terrier.structures.FieldDocumentIndexEntry;
+import org.terrier.structures.FieldedDocumentIndexEntry;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexFactory;
 import org.terrier.structures.IndexUtil;
@@ -90,8 +90,8 @@ public class ShowDocumentCommand extends CLIParsedCLITool {
 			DocumentIndexEntry die = doi.getDocumentEntry(docid);
 			System.err.println("Docid: " + docid);
 			System.err.println("Document Length: " + die.getDocumentLength());
-			if (die instanceof FieldDocumentIndexEntry)
-				System.err.println("Field Lengths: " + ArrayUtils.join(((FieldDocumentIndexEntry)die).getFieldLengths(), ","));
+			if (die instanceof FieldedDocumentIndexEntry)
+				System.err.println("Field Lengths: " + ArrayUtils.join(((FieldedDocumentIndexEntry)die).getFieldLengths(), ","));
 			if (die.getNumberOfEntries() > 0)
 				System.err.println("Document Uniq Terms: " + die.getNumberOfEntries());
 			

@@ -506,8 +506,10 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 		
 		// check the document index first, as we use the pointers from here
 		DocumentIndex document1 = disk.getDocumentIndex(); 
+		assertNotNull(document1);
 		DocumentIndex document2 = mem2disk.getDocumentIndex();
-		
+		assertNotNull(document2);
+
 		assertEquals(document1.getNumberOfDocuments(), document2.getNumberOfDocuments());
 		
 		for (int i=0;i<document1.getNumberOfDocuments(); i++) {

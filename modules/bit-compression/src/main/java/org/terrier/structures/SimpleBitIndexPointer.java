@@ -49,7 +49,7 @@ public class SimpleBitIndexPointer implements BitIndexPointer, Writable {
 	int entries;
 	
 	/** Factory class for {@link SimpleBitIndexPointer}. Total size is 13 bytes */
-	public static class Factory implements FixedSizeWriteableFactory<SimpleBitIndexPointer>
+	public static class Factory implements FixedSizeWriteableFactory<Pointer>
 	{
 		/** 
 		 * {@inheritDoc} 

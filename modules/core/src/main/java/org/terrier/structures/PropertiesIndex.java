@@ -265,6 +265,8 @@ public abstract class PropertiesIndex extends Index implements Closeable, Flusha
 	 */
 	public void addIndexStructure(String structureName, Class<?> className,
 			Class<?>[] paramTypes, String[] paramValues) {
+		// if (structureName.equals("lexicon-valuefactory"))
+		// 	System.err.println(java.util.Arrays.toString(Thread.currentThread().getStackTrace()));
 		final int l = paramTypes.length;
 		String[] SparamTypes = new String[l];
 		for (int i = 0; i < l; i++)
@@ -282,6 +284,8 @@ public abstract class PropertiesIndex extends Index implements Closeable, Flusha
 	 * @param className
 	 */
 	public void addIndexStructure(String structureName, String className) {
+		// if (structureName.equals("lexicon-valuefactory"))
+		// 	System.err.println(java.util.Arrays.toString(Thread.currentThread().getStackTrace()));
 		properties.setProperty("index." + structureName + ".class", className);
 		properties.setProperty("index." + structureName + ".parameter_types",
 				"java.lang.String,java.lang.String");
@@ -297,6 +301,8 @@ public abstract class PropertiesIndex extends Index implements Closeable, Flusha
 	 */
 	public void addIndexStructure(String structureName, String className,
 			String paramTypes, String paramValues) {
+		// if (structureName.equals("lexicon-valuefactory"))
+		// 	System.err.println(java.util.Arrays.toString(Thread.currentThread().getStackTrace()));
 		properties.setProperty("index." + structureName + ".class", className);
 		properties.setProperty("index." + structureName + ".parameter_types",
 				paramTypes);
@@ -312,6 +318,8 @@ public abstract class PropertiesIndex extends Index implements Closeable, Flusha
 	 */
 	public void addIndexStructure(String structureName, String className,
 			String[] paramTypes, String[] paramValues) {
+		// if (structureName.equals("lexicon-valuefactory"))
+		// 		System.err.println(java.util.Arrays.toString(Thread.currentThread().getStackTrace()));
 		properties.setProperty("index." + structureName + ".class", className);
 		properties.setProperty("index." + structureName + ".parameter_types",
 				join(paramTypes, ","));

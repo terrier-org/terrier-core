@@ -33,7 +33,7 @@ public class FSADocumentIndexInMemFields extends FSADocumentIndexInMem implement
     public FSADocumentIndexInMemFields(IndexOnDisk index, String structureName) throws IOException {
         super(index, structureName);
         for(int i=0;i<this.size();i++) {
-            fieldLengths[i] = ((FieldDocumentIndexEntry)this.get(i)).getFieldLengths();
+            fieldLengths[i] = ((FieldedDocumentIndexEntry)this.get(i)).getFieldLengths();
         }
     }
 

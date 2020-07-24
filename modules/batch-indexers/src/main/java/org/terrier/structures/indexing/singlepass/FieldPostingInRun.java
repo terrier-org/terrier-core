@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.terrier.compression.bit.BitOut;
-import org.terrier.structures.FieldLexiconEntry;
+import org.terrier.structures.FieldEntryStatistics;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.postings.FieldPostingImpl;
 import org.terrier.structures.postings.IterablePosting;
@@ -57,21 +57,13 @@ class FieldPostingInRun extends SimplePostingInRun {
 		fieldTags = _fieldTags;
 		fieldTFs = new int[fieldTags];
 	}	
-	
-	@Override
-	public LexiconEntry getLexiconEntry() {
-		FieldLexiconEntry fes = new FieldLexiconEntry(fieldTFs.length);
-		fes.setFieldFrequencies(fieldTFs);		
-		fes.setStatistics(termDf, termTF);
-		fes.setMaxFrequencyInDocuments(maxtf);
-		return fes;
-	}
+
 	
 	@Override
 	public void addToLexiconEntry(LexiconEntry _le)
 	{
 		super.addToLexiconEntry(_le);
-		FieldLexiconEntry le = (FieldLexiconEntry)_le;
+		FieldEntryStatistics le = (FieldEntryStatistics)_le;
 		int[] tffs = le.getFieldFrequencies();
 		addTo(tffs, fieldTFs);
 	}
@@ -106,6 +98,7 @@ class FieldPostingInRun extends SimplePostingInRun {
 			for(int fi = 0; fi < fieldTags;fi++)
 			{
 				fieldFrequencies[fi] = postingSource.readUnary() -1;
+				fieldTFs[fi] += fieldFrequencies[fi];
 			}
 		}
 		
