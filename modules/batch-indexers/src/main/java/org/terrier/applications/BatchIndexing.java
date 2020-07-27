@@ -28,6 +28,7 @@ package org.terrier.applications;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionFactory;
 import org.terrier.utility.TagSet;
@@ -84,6 +85,12 @@ public abstract class BatchIndexing {
 					.longOpt("spec")
 					.desc("filename of the collection.spec file -- containing the list of files to index -- which is usually found in etc/")
 					.build());
+			options.addOption(Option.builder("c")
+					.argName("structure=compressionconfig")
+					.valueSeparator()
+					.hasArgs()
+					.desc("specify structureName=package.compressionconfig. Default for all structures is BitCompressionConfiguration.")
+					.build());
 			return options;
 		}
 		
@@ -138,6 +145,16 @@ public abstract class BatchIndexing {
 			if (line.hasOption("C"))
 			{
 				indexing.collectionClassName = line.getOptionValue("C");
+			}
+
+			//user specified posting list compression
+			if (line.hasOption("c"))
+			{
+				Properties props = line.getOptionProperties("c");
+				System.err.println(props.toString());
+				props.forEach( (structName,className) -> org.terrier.utility.ApplicationSetup.setProperty(
+					"indexing."+structName+".compression.configuration", 
+					(String)className));
 			}
 
 			//to record positions or not
