@@ -111,7 +111,7 @@ class ChainIterablePosting  extends IterablePostingImpl {
         {
             index++;
             if (index == ips.length)
-                return EOL;
+                return lastid = EOL;
             rtr =  ips[index].next();
 
             //this class isnt designed for contituents that are empty
@@ -140,7 +140,7 @@ class ChainIterablePosting  extends IterablePostingImpl {
     
     @Override
     public int getId() {
-		return ips[index].getId();
+		return lastid;
 	}
 
 	@Override

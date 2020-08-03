@@ -76,6 +76,7 @@ class ShiftIdIterablePosting extends IterablePostingImpl {
     
     IterablePosting parent;
     int delta;
+    int id;
 
     ShiftIdIterablePosting(IterablePosting _parent, int ids_delta)
     {
@@ -88,12 +89,13 @@ class ShiftIdIterablePosting extends IterablePostingImpl {
         int rtr = parent.next();
         if (rtr != EOL)
             rtr += delta;
+        id = rtr;
         return rtr;
     } 
 
     @Override
     public int getId() {
-        return parent.getId() + delta;
+        return id;
     }
 
     @Override
