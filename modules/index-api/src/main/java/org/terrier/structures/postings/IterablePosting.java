@@ -30,7 +30,10 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /** 
- * An interface that allows a list of postings to be iterated over.
+ * An interface that allows a list of postings to be iterated over. Iteration takes place
+ * using the next() and next(int) methods, which move the iterator forwards. If the end of
+ * list is reached, END_OF_LIST is returned (alias EOL). Once EOL has been returned, getId()
+ * must also return EOL.
  *  
  * @since 3.0
  * @author Craig Macdonald, Nicola Tonellotto

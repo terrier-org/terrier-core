@@ -48,6 +48,7 @@ public class MemoryIterablePosting extends IterablePostingImpl {
 	 * Postings data structures.
 	 */
 	protected int index = -1;
+	protected int id = -1;
 	protected DocumentIndex doi;
 	protected TIntArrayList pl_doc = new TIntArrayList();
 	private TIntArrayList pl_freq = new TIntArrayList();
@@ -86,15 +87,15 @@ public class MemoryIterablePosting extends IterablePostingImpl {
 			pl_doc.add(0);
 			pl_freq.add(0);
 		}
-		return pl_doc.get(index);
+		return id;
 	}
 
 	/** {@inheritDoc} */
 	public int next() throws IOException {
 		if ((pl_doc == null) || (++index >= pl_doc.size()))
-			return EOL;
+			return id = EOL;
 		else
-			return getId();
+			return id = pl_doc.get(index);
 	}
 
 	/** {@inheritDoc} */

@@ -32,6 +32,7 @@ import java.io.IOException;
  * @author Craig Macdonald */
 public class ArrayOfIdsIterablePosting extends IterablePostingImpl implements Cloneable {
 
+	protected int id;
 	/** ids of each of the entries in this posting list */
 	protected int[] ids;
 	/** where we are in the current posting list */
@@ -46,8 +47,8 @@ public class ArrayOfIdsIterablePosting extends IterablePostingImpl implements Cl
 	/** {@inheritDoc} */
 	public int next() throws IOException {
 		if (indice == ids.length -1)
-			return EOL;
-		return ids[++indice];
+			return id = EOL;
+		return id = ids[++indice];
 	}
 	
 	/** {@inheritDoc} */
@@ -63,7 +64,7 @@ public class ArrayOfIdsIterablePosting extends IterablePostingImpl implements Cl
 	/** {@inheritDoc} */
 	public int getId()
 	{
-		return ids[indice];
+		return id;
 	}
 
 	/** {@inheritDoc} Returns 0. */

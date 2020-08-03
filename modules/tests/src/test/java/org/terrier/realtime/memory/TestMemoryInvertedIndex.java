@@ -68,6 +68,7 @@ public class TestMemoryInvertedIndex {
 			assertEquals(i, post.getDocumentLength());
 		}
 		assertEquals(IterablePosting.EOL, post.next());
+		assertEquals(IterablePosting.EOL, post.getId());
 	}
 	
 	/*
@@ -118,6 +119,7 @@ public class TestMemoryInvertedIndex {
 				assertEquals(docfreqs[j], post.getFrequency());
 			}
 			assertEquals(IterablePosting.EOL, post.next());
+			assertEquals(IterablePosting.EOL, post.getId());
 		}
 	}
 
@@ -150,6 +152,7 @@ public class TestMemoryInvertedIndex {
 				assertEquals(docfreqs[j], post.getFrequency());
 			}
 			assertEquals(IterablePosting.EOL, post.next());
+			assertEquals(IterablePosting.EOL, post.getId());
 		}
 	}
 
