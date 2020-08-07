@@ -278,6 +278,8 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 		ExpansionTerm[] allTerms = terms.getValues(new ExpansionTerm[0]);
 		final int minDF = feedbackDocumentCount < EXPANSION_MIN_DOCUMENTS ? 0 : EXPANSION_MIN_DOCUMENTS;
 		final int len = allTerms.length;
+		if (len == 0)
+			return;
 		for (int i=0; i<len; i++)
 		{	
 			if (minDF > 0 && allTerms[i].getDocumentFrequency() < minDF &&	
