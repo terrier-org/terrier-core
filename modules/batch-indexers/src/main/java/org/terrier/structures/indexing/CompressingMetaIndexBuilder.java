@@ -95,11 +95,11 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 	protected long currentIndexOffset = 0;
 	protected int entryCount = 0;
 
-	protected int[] forwardKeys;
-	protected String[] forwardKeyNames;
+	protected int[] reverseKeys;
+	protected String[] reverseKeyNames;
 	
-	protected MapFileWriter[] forwardWriters;
-	protected boolean[] forwardKeyValuesSorted;
+	protected MapFileWriter[] reverseWriters;
+	protected boolean[] valuesSorted;
 	protected String[] lastValues;
 	protected MemoryChecker memCheck = new RuntimeMemoryChecker();
 	protected FixedSizeWriteableFactory<Text>[] keyFactories;
@@ -110,11 +110,11 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 	 * @param _index
 	 * @param _keyNames
 	 * @param _valueLens
-	 * @param _forwardKeys
+	 * @param _reverseKeys
 	 */
-	public CompressingMetaIndexBuilder(IndexOnDisk _index, String[] _keyNames, int[] _valueLens, String[] _forwardKeys)
+	public CompressingMetaIndexBuilder(IndexOnDisk _index, String[] _keyNames, int[] _valueLens, String[] _reverseKeys)
 	{
-		this(_index, "meta", _keyNames, _valueLens, _forwardKeys);
+		this(_index, "meta", _keyNames, _valueLens, _reverseKeys);
 	}
 	/**
 	 * constructor
@@ -122,10 +122,10 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 	 * @param _structureName
 	 * @param _keyNames
 	 * @param _valueLens
-	 * @param _forwardKeys
+	 * @param _reverseKeys
 	 */
 	@SuppressWarnings("unchecked")
-	public CompressingMetaIndexBuilder(IndexOnDisk _index, String _structureName, String[] _keyNames, int[] _valueLens, String[] _forwardKeys)
+	public CompressingMetaIndexBuilder(IndexOnDisk _index, String _structureName, String[] _keyNames, int[] _valueLens, String[] _reverseKeys)
 	{
 		this.index = _index;
 		this.structureName = _structureName;
@@ -144,35 +144,37 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 		} catch (IOException ioe) {
 			throw new IllegalArgumentException(ioe);
 		}
+
+		this.valuesSorted = new boolean[keyCount];
+		this.lastValues = new String[keyCount];
 		
 		this.zip.setLevel(ZIP_COMPRESSION_LEVEL);
 		
-		if (_forwardKeys.length == 1 && _forwardKeys[0].length() == 0)
-			_forwardKeys = new String[0];
+		if (_reverseKeys.length == 1 && _reverseKeys[0].length() == 0)
+			_reverseKeys = new String[0];
 		
-		this.forwardKeyNames = _forwardKeys;
-		this.forwardKeys = new int[_forwardKeys.length];int i=0;
-		for(String fwdKey : _forwardKeys)
+		this.reverseKeyNames = _reverseKeys;
+		this.reverseKeys = new int[_reverseKeys.length];int i=0;
+		for(String fwdKey : _reverseKeys)
 		{
 			if (! key2Index.contains(fwdKey))
 				throw new IllegalArgumentException("Reverse key " + fwdKey + " must also be a forward meta index key. Add it to indexer.meta.forward.keys");
-			forwardKeys[i++] = key2Index.get(fwdKey);
+			reverseKeys[i++] = key2Index.get(fwdKey);
 		}
 		
-		this.forwardWriters = new MultiFSOMapWriter[forwardKeys.length];
-		this.keyFactories = new FixedSizeWriteableFactory[forwardKeys.length];
-		this.forwardKeyValuesSorted = new boolean[forwardKeys.length];
-		this.lastValues = new String[forwardKeys.length];
+		this.reverseWriters = new MultiFSOMapWriter[reverseKeys.length];
+		this.keyFactories = new FixedSizeWriteableFactory[reverseKeys.length];
+
 		
-		for(i=0;i<forwardKeys.length;i++)
+		for(i=0;i<reverseKeys.length;i++)
 		{
-			forwardWriters[i] = new MultiFSOMapWriter(
+			reverseWriters[i] = new MultiFSOMapWriter(
 					_index.getPath() + "/" + _index.getPrefix() + "."+structureName+"-"+i+FSOrderedMapFile.USUAL_EXTENSION, 
 				REVERSE_KEY_LOOKUP_WRITING_BUFFER_SIZE, 
-				keyFactories[i] = new FixedSizeTextFactory(valueLensChars[forwardKeys[i]]), 
+				keyFactories[i] = new FixedSizeTextFactory(valueLensChars[reverseKeys[i]]), 
 				new FixedSizeIntWritableFactory(), REVERSE_ALLOW_DUPS
 				);
-			forwardKeyValuesSorted[i] = true;
+			valuesSorted[i] = true;
 		}
 		
 		this.valueLensBytes = new int[keyNames.length];
@@ -240,6 +242,10 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 			baos.write(b);
 			if (numberOfBytesToWrite < valueLensBytes[i]) 
 				baos.write(spaces, 0, valueLensBytes[i]-numberOfBytesToWrite);
+
+			if (lastValues[i] != null && value.compareTo(lastValues[i]) < 0)
+				valuesSorted[i] = false;
+			lastValues[i] = value;
 			i++;
 		}
 		zip.reset();
@@ -256,16 +262,13 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 			compressedEntrySize += numOfCompressedBytes;
 		}
 		currentOffset += compressedEntrySize;
-		for(i=0;i<forwardKeys.length;i++)
+		for(i=0;i<reverseKeys.length;i++)
 		{
 			Text key = keyFactories[i].newInstance();
-			key.set(data[forwardKeys[i]]);
+			key.set(data[reverseKeys[i]]);
 			IntWritable value = new IntWritable();
 			value.set(entryCount);
-			forwardWriters[i].write(key, value);
-			if (lastValues[i] != null && data[forwardKeys[i]].compareTo(lastValues[i]) < 1)
-				forwardKeyValuesSorted[i] = false;
-			lastValues[i] = data[forwardKeys[i]];
+			reverseWriters[i].write(key, value);
 		}
 		entryCount++;
 		
@@ -281,7 +284,7 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 	 */
 	public void flush() throws IOException {
 		//logger.info("CompressingMetaIndexBuilder flush");
-		for(MapFileWriter w : forwardWriters)
+		for(MapFileWriter w : reverseWriters)
 			((Flushable)w).flush();
 			
 	}
@@ -299,7 +302,8 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 		index.setIndexProperty("index."+structureName+".key-names", ArrayUtils.join(keyNames, ","));
 		index.setIndexProperty("index."+structureName+".value-lengths", ArrayUtils.join(valueLensChars, ","));
 		index.setIndexProperty("index."+structureName+".entry-length", ""+entryLengthBytes);
-		index.setIndexProperty("index."+structureName+".value-sorted", ArrayUtils.join(forwardKeyValuesSorted, ","));
+		//one entry for each KEY, not "reverse" key
+		index.setIndexProperty("index."+structureName+".value-sorted", ArrayUtils.join(valuesSorted, ","));
 		index.setIndexProperty("index."+structureName+".data-source",
 			currentOffset > MAX_MB_IN_MEM_RETRIEVAL * (long)1024 * (long)1024 
 			? "file"
@@ -310,19 +314,11 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 		//TODO emit warnings
 		index.flush();
 		
-		for(int i=0;i<forwardKeys.length;i++)
+		for(var forwardWriter : reverseWriters)
 		{
-			if (forwardKeyValuesSorted[i])
-			{
-				logger.info("Key "+ forwardKeyNames[i] + " values are sorted in meta index, consider binary searching zdata file");
-				forwardWriters[i].close();
-			}
-			else
-			{
-				forwardWriters[i].close();
-			}
+			forwardWriter.close();
 		}		
-		index.setIndexProperty("index."+structureName+".reverse-key-names", ArrayUtils.join(forwardKeyNames, ","));
+		index.setIndexProperty("index."+structureName+".reverse-key-names", ArrayUtils.join(reverseKeyNames, ","));
 		index.flush();
 		
 	}

@@ -608,7 +608,7 @@ public class CompressingMetaIndex implements MetaIndex {
 	protected TObjectIntHashMap<String> key2byteoffset;
 	protected TObjectIntHashMap<String> key2bytelength;
 	
-	protected TObjectIntHashMap<String> key2forwardOffset;
+	protected TObjectIntHashMap<String> key2reverseOffset;
 	
 	protected int keyCount;
 	protected int[] valueByteOffsets;
@@ -620,7 +620,7 @@ public class CompressingMetaIndex implements MetaIndex {
 	protected final String prefix;
 	
 	protected final ByteAccessor dataSource;
-	protected Map<Text,IntWritable>[] forwardMetaMaps;
+	protected Map<Text,IntWritable>[] reverseMetaMaps;
 	protected FixedSizeWriteableFactory<Text>[] keyFactories;
 	
 	/**
@@ -642,8 +642,8 @@ public class CompressingMetaIndex implements MetaIndex {
 		valuesSorted = new boolean[keyCount];
 		if (index.getIndexProperty("index."+structureName+".value-sorted", "").length()>0) {
 			String[] values = index.getIndexProperty("index."+structureName+".value-sorted", "").split("\\s*,\\s*");
-			assert values.length == keyCount;
-			for(int i=0;i<keyCount;i++) {
+			//math.min addresses bug in Terrier 5.3 and earlier where values-sorted was defined on reverse keys rather than keys
+			for(int i=0;i<Math.min(keyCount, values.length);i++) {
 				valuesSorted[i] = Boolean.parseBoolean(values[i]);
 			}
 		} else {				
@@ -705,7 +705,7 @@ public class CompressingMetaIndex implements MetaIndex {
 	public void close() throws IOException {
 		dataSource.close();
 		offsetLookup.close();
-		for (Map<Text,IntWritable> m : forwardMetaMaps)
+		for (Map<Text,IntWritable> m : reverseMetaMaps)
 		{
 			IndexUtil.close(m);
 		}
@@ -714,7 +714,7 @@ public class CompressingMetaIndex implements MetaIndex {
 	/** {@inheritDoc} */
 	@Override
 	public String[] getReverseKeys() {
-		return key2forwardOffset.keys(new String[key2forwardOffset.size()]);
+		return key2reverseOffset.keys(new String[key2reverseOffset.size()]);
 	}
 
 	/** performs a binary search on the metaindex, if they keys happen to be in lexographical order */
@@ -746,13 +746,13 @@ public class CompressingMetaIndex implements MetaIndex {
 	public int getDocument(String key, String value) throws IOException {
 		
 		//use a reverse meta lookup, if possible
-		final int forwardId = key2forwardOffset.get(key) -1;
-		if (forwardId != -1) {
+		final int reverseId = key2reverseOffset.get(key) -1;
+		if (reverseId != -1) {
 
-			final Text wKey = keyFactories[forwardId].newInstance();
+			final Text wKey = keyFactories[reverseId].newInstance();
 			wKey.set(value);
-			assert forwardMetaMaps[forwardId].size() > 0;
-			final IntWritable rtr = forwardMetaMaps[forwardId].get(wKey);		
+			assert reverseMetaMaps[reverseId].size() > 0;
+			final IntWritable rtr = reverseMetaMaps[reverseId].get(wKey);
 			if (rtr == null)
 				return -1;
 			return rtr.get();
@@ -873,10 +873,6 @@ public class CompressingMetaIndex implements MetaIndex {
 		unzip.setInput(dataSource.read(
 				offsetLookup.getOffset(docid), offsetLookup.getLength(docid)
 				));
-		//unzip.setInput(
-		//		dataSource.read(docid2offsets[docid],
-		//				(docid+1)==docid2offsets.length ? (int)(fileLength-docid2offsets[docid])
-		//				                                : (int)(docid2offsets[docid+1] - docid2offsets[docid])));
 		byte[] bOut = new byte[recordLength];
 		try {
 			unzip.inflate(bOut);
@@ -1018,25 +1014,25 @@ public class CompressingMetaIndex implements MetaIndex {
 			cumulativeOffset += valueByteLengths[i];
 		}
 		
-		key2forwardOffset = new TObjectIntHashMap<String>(2);
-		final String[] forwardKeys = index.getIndexProperty("index."+structureName+".reverse-key-names", "").split("\\s*,\\s*");
-		forwardMetaMaps = (Map<Text,IntWritable>[])new Map[forwardKeys.length];
-		keyFactories = (FixedSizeWriteableFactory<Text>[])new FixedSizeWriteableFactory[forwardKeys.length];
+		key2reverseOffset = new TObjectIntHashMap<String>(2);
+		final String[] reverseKeys = index.getIndexProperty("index."+structureName+".reverse-key-names", "").split("\\s*,\\s*");
+		reverseMetaMaps = (Map<Text,IntWritable>[])new Map[reverseKeys.length];
+		keyFactories = (FixedSizeWriteableFactory<Text>[])new FixedSizeWriteableFactory[reverseKeys.length];
 		i=0; 
 		final FixedSizeIntWritableFactory valueFactory = new FixedSizeIntWritableFactory();
-		for(String keyName : forwardKeys)
+		for(String keyName : reverseKeys)
 		{
 			if (keyName.trim().equals(""))
 				continue;
-			key2forwardOffset.put(keyName, 1+i);
-			logger.debug("Forward key "+ keyName +", length="+ key2bytelength.get(keyName));
+			key2reverseOffset.put(keyName, 1+i);
+			logger.debug("Reverse key "+ keyName +", length="+ key2bytelength.get(keyName));
 			keyFactories[i] = new FixedSizeTextFactory(key2stringlength.get(keyName));
 			String filename = path+ApplicationSetup.FILE_SEPARATOR+prefix+"."+structureName+"-"+i+FSOrderedMapFile.USUAL_EXTENSION;
 			String loadFormat = index.getIndexProperty("index."+structureName+".reverse."+keyName+".in-mem", "false");
 			if (loadFormat.equals("hashmap"))
 			{
 				logger.info("Structure "+ structureName + " reading reverse map for key "+ keyName + " into memory as hashmap");
-				forwardMetaMaps[i] = new FSOrderedMapFile.MapFileInMemory<Text, IntWritable>(
+				reverseMetaMaps[i] = new FSOrderedMapFile.MapFileInMemory<Text, IntWritable>(
 						filename,
 						keyFactories[i], 
 						valueFactory);
@@ -1057,7 +1053,7 @@ public class CompressingMetaIndex implements MetaIndex {
 					//final byte[] bytes = new byte[(int)revDataFileLength];
 					//dis.readFully(bytes);
 					//dis.close();				
-					forwardMetaMaps[i] = new FSOrderedMapFile<Text, IntWritable>(
+					reverseMetaMaps[i] = new FSOrderedMapFile<Text, IntWritable>(
 							new RandomDataInputMemory(dis, revDataFileLength),
 							filename,
 							keyFactories[i], 
@@ -1068,7 +1064,7 @@ public class CompressingMetaIndex implements MetaIndex {
 			if (loadFormat.equals("false"))
 			{	
 				logger.info("Structure "+ structureName + " reading reverse map for key "+ keyName + " directly from disk");
-				forwardMetaMaps[i] = new FSOrderedMapFile<Text, IntWritable>(
+				reverseMetaMaps[i] = new FSOrderedMapFile<Text, IntWritable>(
 						filename, 
 						false,
 						keyFactories[i], 

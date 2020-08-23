@@ -359,7 +359,7 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		assertNotNull(mi);
 
 		if (reverse)
-			assertEquals(docnos.length, ((CompressingMetaIndex)mi).forwardMetaMaps[0].size());
+			assertEquals(docnos.length, ((CompressingMetaIndex)mi).reverseMetaMaps[0].size());
 
 		
 		for(int i=0;i < docnos.length; i++)
@@ -413,14 +413,14 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		
 		String[] _keyNames = {"docno", "text"};
 		int[] _valueLens = {20, 140};
-		String[] _forwardKeys = _keyNames;
+		String[] _reverseKeys = _keyNames;
 		
 		String previousCropConfig = ApplicationSetup.getProperty("metaindex.compressed.crop.long", "false");
 		ApplicationSetup.setProperty("metaindex.compressed.crop.long", "true");
 		
 		CompressingMetaIndexBuilder compressedMetaIndexBuilder;
 		try {
-			compressedMetaIndexBuilder = new CompressingMetaIndexBuilder(index, _keyNames, _valueLens, _forwardKeys);
+			compressedMetaIndexBuilder = new CompressingMetaIndexBuilder(index, _keyNames, _valueLens, _reverseKeys);
 			compressedMetaIndexBuilder.writeDocumentEntry(doc.getAllProperties());
 		} catch (Exception e) {
 			Assert.fail("Compressing MetaIndexBuilder failed to write the metadata for an example tweet. "+e.getMessage());
