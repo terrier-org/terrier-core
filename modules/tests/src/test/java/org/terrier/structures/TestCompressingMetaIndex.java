@@ -164,6 +164,24 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		index.close();
 		IndexUtil.deleteIndex(index.getPath(), index.getPrefix());		
 	}
+
+	@Test public void testReverseValueSorted() throws Exception
+	{
+		IndexOnDisk index = createMetaIndex("meta", new String[]{"docno", "url"}, new int[]{1, 15}, new String[0], new String[][]{
+			new String[]{"a", "url1"},
+			new String[]{"b", "url2"},
+			new String[]{"c", "url3"},
+			new String[]{"d", "url4"}
+		});
+		MetaIndex meta = index.getMetaIndex();
+		for(int i=0;i<meta.size();i++)
+		{
+			String url = meta.getItem("url", i);
+			assertEquals(i, meta.getDocument("url", url));
+		}
+		index.close();
+		IndexUtil.deleteIndex(index.getPath(), index.getPrefix());		
+	}
 	
 	@Test public void testDifferentName() throws Exception
 	{
