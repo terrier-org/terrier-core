@@ -151,7 +151,7 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 	{
 		IndexOnDisk index = createMetaIndex("meta", new String[]{"docno", "words"}, new int[]{1, 15}, new String[0], new String[][]{
 			new String[]{"a", "The lazy cat"},
-			new String[]{"b", "jumped over the"},
+			new String[]{"b", "Jumped over the"},
 			new String[]{"c", "sleeping dog"},
 			new String[]{"d", "today"}
 		});
@@ -262,6 +262,7 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		b.close();
 		b = null;
 		finishedCreatingMeta(index, name);
+		assertEquals(keyNames.length, index.getIndexProperty("index."+name+".value-sorted", "").split(",").length);
 		return index;
 	}
 	
