@@ -140,7 +140,7 @@ public class TestQueryParser {
 		assertEquals("a b", q.toString());
 	}
 	
-	@Ignore @Test public void testSingleTermQueryUTF() throws Exception
+	@Test public void testSingleTermQueryUTF() throws Exception
 	{
 		String word = "\u0917\u0941\u091C\u094D\u091C\u0930\u094B\u0902";
 		Query q = QueryParser.parseQuery(word);
@@ -152,7 +152,7 @@ public class TestQueryParser {
 		assertEquals(word, q.toString());
 	}
 
-	@Ignore @Test public void testTwoTermQueryUTF() throws Exception
+	@Test public void testTwoTermQueryUTF() throws Exception
 	{
 
 		String word1 = "\u0917\u0941\u091C\u094D\u091C\u0930\u094B\u0902";

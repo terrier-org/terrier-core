@@ -73,7 +73,9 @@ SKIP :
 /** Reserved tokens for TQL */
 TOKEN :
 {
-	<ALPHANUMERIC : (["A"-"Z","a"-"z","0"-"9"])+ > 
+	<ALPHANUMERIC : (
+		~[ " ", "\t", "\n", "\r", "\u3000", "+", "-", "!", "(", ")", ":", "^",
+           "\"", "{", "}", "~", "*", "?", "\\", "/", "'"])+ > 
 	| <REQUIRED : "+">
 	| <NOT_REQUIRED : "-">
 	| <HAT : "^"> : WithinWeight
