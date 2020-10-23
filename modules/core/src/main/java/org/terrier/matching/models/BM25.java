@@ -43,7 +43,7 @@ public class BM25 extends WeightingModel {
 	private double k_1 = Double.parseDouble(ApplicationSetup.getProperty("bm25.k_1", "1.2d"));
 	
 	/** The constant k_3.*/
-	private double k_3 = 8d;
+	private double k_3 = Double.parseDouble(ApplicationSetup.getProperty("bm25.k_3", "8d"));
 	
 	/** The parameter b.*/
 	private double b;
@@ -74,6 +74,18 @@ public class BM25 extends WeightingModel {
 				((k_3+1)*keyFrequency/(k_3+keyFrequency));
 	}
 
+	@Override 
+	public void prepare() {
+		if (rq != null) {
+			if (rq.hasControl("bm25.k_1")) {
+				k_1 = Double.parseDouble(rq.getControl("bm25.k_1")); 
+			}
+			if (rq.hasControl("bm25.k_3")) {
+				k_1 = Double.parseDouble(rq.getControl("bm25.k_3")); 
+			}
+		}
+		super.prepare();
+	}
 
 	/**
 	 * Sets the b parameter to BM25 ranking formula
