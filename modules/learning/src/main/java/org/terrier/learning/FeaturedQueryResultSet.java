@@ -32,6 +32,8 @@ import java.util.Map;
 
 import org.terrier.matching.QueryResultSet;
 import org.terrier.matching.ResultSet;
+import org.terrier.utility.HeapSort;
+import gnu.trove.TIntIntHashMap;
 
 /**
  * A result set implementation that accommodates multiple query feature scores,
@@ -175,6 +177,30 @@ public class FeaturedQueryResultSet extends QueryResultSet implements FeaturedRe
 	@Override
 	protected QueryResultSet makeNewResultSet(int length) {
 		return new FeaturedQueryResultSet(length);
-	}	
+	}
+
+
+	@Override
+	public void sort(int topDocs) {
+		int[] oldDocids = new int[getDocids().length];
+		System.arraycopy(getDocids(), 0, oldDocids, 0, getDocids().length);
+		HeapSort.descendingHeapSort(getScores(), getDocids(), getOccurrences(), topDocs);
+		TIntIntHashMap sortedOrder = new TIntIntHashMap(getDocids().length);
+		for(int i=0;i<docids.length;i++)
+		{
+			sortedOrder.put(docids[i], i);
+		}
+		for (String name : features.keySet()) {
+			double [] featureScores = features.get(name);
+			double [] featuresOut = new double[topDocs];
+			for(int i=0;i<docids.length;i++)
+			{
+				int docid = oldDocids[i];
+				if (sortedOrder.containsKey(docid))
+					featuresOut[sortedOrder.get(docid)] = featureScores[i];
+			}
+			features.put(name, featuresOut);
+		}
+	}
 	
 }
