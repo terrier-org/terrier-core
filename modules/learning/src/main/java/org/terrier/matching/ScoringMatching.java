@@ -162,7 +162,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 			logger.info(this.getClass().getSimpleName() + " for "+this.wm.getInfo()+" on "+terms+" terms, scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
 		}
 		plm.close();
-		finalise(matchingCount);
+		finalise(docids.length);
 		
 		
 		return rs_input;
