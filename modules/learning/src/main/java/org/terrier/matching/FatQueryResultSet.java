@@ -36,6 +36,7 @@ import java.util.Set;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.WritablePosting;
+import org.terrier.structures.postings.Posting;
 import org.terrier.utility.HeapSort;
 
 /** An implementation of {@link FatResultSet}.
@@ -157,22 +158,30 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 		{
 			sortedOrder.put(docids[i], i);
 		}
-		WritablePosting[][] tmp = new WritablePosting[postings.length][];//shouldnt this just be topDocs in length?
+		WritablePosting[][] tmp = new WritablePosting[topDocs][];//shouldnt this just be topDocs in length?
 		for(int i=0;i<docids.length;i++)
 		{
 			int docid = oldDocids[i];
-			//int docid = -1;
-			//for(int j=0;j<postings[i].length;j++)
-			//	if (postings[i][j] != null)
-			//	{
-			//		docid = postings[i][j].getId();
-			//		break;
-			//	}
-			//assert docid != -1;
+			
+			assert allIdsEqual(postings[i], docid) : "Posting id mismatch at rank " + i + " docid " + docid;
+
 			if (sortedOrder.containsKey(docid))
+			{
+				assert getDocids()[sortedOrder.get(docid)] == docid;
+
 				tmp[sortedOrder.get(docid)] = postings[i];
+			}
 		}
 		postings = tmp;
+	}
+
+	static boolean allIdsEqual(Posting[] ps, int id) {
+		for (Posting p : ps)
+		{
+			if (p.getId() != id)
+				return false;
+		}
+		return true;
 	}
 	
 	/** {@inheritDoc} */

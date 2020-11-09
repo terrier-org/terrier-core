@@ -152,7 +152,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 			if (anyTermMatch) {
 				matchingCount++;
 				assignScore(i, docid, score, matching);
-			}		
+			}
  		}
 		assert matchingCount <= docids.length;
 		if (this.wm == null)
@@ -161,21 +161,24 @@ public class ScoringMatching extends AbstractScoringMatching {
 		} else {
 			logger.info(this.getClass().getSimpleName() + " for "+this.wm.getInfo()+" on "+terms+" terms, scored " + matchingCount + " of " + docids.length + " retrieved documents docCount="+docCount + " matchingCount="+matchingCount);
 		}
+		plm.close();
 		finalise(matchingCount);
 		
-		plm.close();
-		return getFinalResultSet();
+		
+		return rs_input;
 	}
 
 	protected void finalise(final int numScored)
 	{
 		if (numScored == getFinalResultSet().getResultSize())
 		{
-			getFinalResultSet().sort();
+			rs_input = getFinalResultSet();
+			rs_input.sort();
 		}
 		else
 		{
-			getFinalResultSet().sort(numScored);
+			rs_input = getFinalResultSet();
+			rs_input.sort(numScored);
 			rs_input = rs_input.getResultSet(0, numScored);
 		}
 	}

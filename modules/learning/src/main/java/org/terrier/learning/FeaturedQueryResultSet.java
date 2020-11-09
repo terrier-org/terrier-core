@@ -179,6 +179,11 @@ public class FeaturedQueryResultSet extends QueryResultSet implements FeaturedRe
 		return new FeaturedQueryResultSet(length);
 	}
 
+	@Override
+	public void sort() {
+		this.sort(this.docids.length);
+	}
+
 
 	@Override
 	public void sort(int topDocs) {

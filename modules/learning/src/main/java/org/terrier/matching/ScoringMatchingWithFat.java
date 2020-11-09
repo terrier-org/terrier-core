@@ -66,6 +66,7 @@ public class ScoringMatchingWithFat extends ScoringMatching {
 				continue;
 			final Posting p = postings[i];
 			final WritablePosting wp = postings[i].asWritablePosting();
+			assert wp.getId() == docid : "Posting mismatch for docid " + docid + " rank " + offset + " term " + i;
 
 			wp.setDocumentLength(p.getDocumentLength());
 			if (fields[i])

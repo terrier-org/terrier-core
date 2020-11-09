@@ -204,7 +204,7 @@ public class FatScoringMatching extends AbstractScoringMatching {
 		if (fInputRS.hasMetaItems("docno"))
 			outputRS.addMetaItems("docno", fInputRS.getMetaItems("docno"));
 		if (sort)
-			HeapSort.descendingHeapSort(outputRS.getScores(), outputRS.getDocids(), outputRS.getOccurrences(), numDocs);
+			outputRS.sort(numDocs);
 		int numOfDocModifiers = documentModifiers.size();
 		int NumberOfQueryDSMs = 0;
 		DocumentScoreModifier[] dsms = queryTerms.getDocumentScoreModifiers();
