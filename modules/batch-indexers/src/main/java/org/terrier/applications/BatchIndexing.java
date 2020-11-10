@@ -82,6 +82,7 @@ public abstract class BatchIndexing {
 			options.addOption(Option.builder("s")
 					.argName("spec")
 					.longOpt("spec")
+					.hasArg()
 					.desc("filename of the collection.spec file -- containing the list of files to index -- which is usually found in etc/")
 					.build());
 			return options;
