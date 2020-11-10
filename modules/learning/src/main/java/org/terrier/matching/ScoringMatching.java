@@ -66,7 +66,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 	}
 	
 		
-	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, ResultSet rsInput) throws IOException
+	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, ResultSet rsInput, boolean keepInputScores) throws IOException
 	{
 		if (this.cs == null)
 			this.cs = index.getCollectionStatistics();
@@ -74,7 +74,8 @@ public class ScoringMatching extends AbstractScoringMatching {
 		rs_input = rsInput;
 		docids = rs_input.getDocids();
 		final int docCount = docids.length;
-		scores = new double[docCount];
+		scores = keepInputScores ? rs_input.getScores().clone() : new double[docCount];
+		//sort by ascending docid
 		org.terrier.sorting.HeapSort.heapSort(docids, scores, docCount);
 
 		//this smells like a hack
@@ -129,7 +130,7 @@ public class ScoringMatching extends AbstractScoringMatching {
 		{
 			final int docid = docids[i];
 			final IterablePosting [] matching = new IterablePosting[terms];
-			double score = 0;
+			double score = scores[i];
 			boolean anyTermMatch = false;
 			for(int t=0;t<terms;t++)
 			{

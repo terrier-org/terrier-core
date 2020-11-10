@@ -81,7 +81,7 @@ public class TestFatScoringMatching extends ApplicationSetupBasedTest {
 			assertEquals(1, frInput.getCollectionStatistics().getNumberOfUniqueTerms());
 			
 			FatScoringMatching fsm = new FatScoringMatching(null, null, new TF_IDF());
-			ResultSet r2 = fsm.doMatch("test", mqt, frInput);
+			ResultSet r2 = fsm.doMatch("test", mqt, frInput, false);
 			
 			assertEquals(1, r2.getResultSize());
 			assertEquals(0, r2.getDocids()[0]);
@@ -89,7 +89,7 @@ public class TestFatScoringMatching extends ApplicationSetupBasedTest {
 			assertEquals(0.1d, frInput.getScores()[0], 0.0d);
 			
 			FatScoringMatching fsm2 = new FatScoringMatching(null, null, new LGD());
-			ResultSet r3 = fsm2.doMatch("test", mqt, frInput);
+			ResultSet r3 = fsm2.doMatch("test", mqt, frInput, false);
 			
 			
 			assertEquals(1, r3.getResultSize());

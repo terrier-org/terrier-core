@@ -103,14 +103,13 @@ public class FatScoringMatching extends AbstractScoringMatching {
 	}
 	
 	@Override
-	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, ResultSet inputRS) throws IOException
+	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, ResultSet inputRS, boolean keepInputScores) throws IOException
 	{
 		final int[] docids = inputRS.getDocids()/*.clone()*/; //cloning is unnecessary, as sort is usually disabled when called from FatScoringMatching
 		final short[] occurs = inputRS.getOccurrences()/*.clone()*/;
-		//final double[] scores = inputRS.getScores();\
-		//UNABLE to produce this bug using a junit
-		final double[] scores = new double[inputRS.getResultSize()];
-		
+
+		final double[] scores = keepInputScores ? inputRS.getScores().clone() : new double[inputRS.getResultSize()];
+		System.err.println("keep=" + keepInputScores + " scores="+ java.util.Arrays.toString(scores));
 		final FatResultSet fInputRS = (FatResultSet)inputRS;
 		
 		final int numDocs = docids.length;
@@ -174,7 +173,7 @@ public class FatScoringMatching extends AbstractScoringMatching {
 		
 		for(int di=0;di<numDocs;di++)
 		{
-			double score = 0.0d;
+			double score = scores[di];
 			if (postings[di] == null)
 				continue;
 			for(int ti=0;ti<numTerms;ti++)

@@ -77,7 +77,7 @@ public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 		super(_index, _parent, FatScoringMatching.class);
 	}
 	
-	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, final ResultSet res)
+	public ResultSet doMatch(String queryNumber, MatchingQueryTerms queryTerms, final ResultSet res, boolean keepInputScores)
 		throws IOException
 	{
 		final FatResultSet fat = (FatResultSet)res;
@@ -102,11 +102,10 @@ public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 		//for each WMODEL feature
 		for(int fid=0;fid<wModels.length;fid++)
 		{
-			final ResultSet thinChild = wModels[fid].doMatch(queryNumber, queryTerms, fat);
+			final ResultSet thinChild = wModels[fid].doMatch(queryNumber, queryTerms, fat, false);
 			rtr.putFeatureScores(wModelNames[fid], thinChild.getScores());
 			featureCount++;
 		}
-
 
 		//for each QI features
 		if (qiFeatures.length > 0)
@@ -148,6 +147,10 @@ public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 			}
 			featureCount += applyDSMs(fatIndex, queryNumber, mqtLocal, numResults, fat.getDocids(), fat.getOccurrences(), rtr);
 		}
+
+		if (keepInputScores) {
+			System.arraycopy(fat.getScores(), 0, rtr.getScores(), 0, fat.getResultSize());
+		}
 		
 		//labels
 		final String[] labels = new String[rtr.getResultSize()];
@@ -177,7 +180,7 @@ public class FatFeaturedScoringMatching extends FeaturedScoringMatching {
 			logger.warn("I got NO ResultSet from parent " + parent.getInfo() );
 			return new FeaturedQueryResultSet(0);
 		}
-		return doMatch(queryNumber, queryTerms, fat);
+		return doMatch(queryNumber, queryTerms, fat, true);
 	}
 
 }
