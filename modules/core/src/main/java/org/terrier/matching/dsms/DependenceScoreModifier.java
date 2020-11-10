@@ -29,7 +29,8 @@ package org.terrier.matching.dsms;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terrier.matching.MatchingQueryTerms;
 import org.terrier.matching.PostingListManager;
 import org.terrier.matching.ResultSet;
@@ -74,6 +75,9 @@ import org.terrier.utility.Distance;
  * @since 3.0
  */
 public abstract class DependenceScoreModifier  implements DocumentScoreModifier {
+
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	/** Creates a clone of this object */ @Override 
 	public Object clone() {
 		try{
@@ -139,10 +143,10 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 	 * @return true if any scores have been altered
 	 */
 	public boolean modifyScores(Index index, MatchingQueryTerms terms, ResultSet set) {
-		System.err.println(super.toString() + " ngramlength="+ this.ngramLength);
+		logger.info(super.toString() + " ngramlength="+ this.ngramLength);
 		try {
 			if (phraseQTWfnid < 1 || phraseQTWfnid > 4) {
-				System.err.println("ERROR: Wrong function id specified for " + this.getClass().getSimpleName());
+				logger.error("Wrong function id specified for " + this.getClass().getSimpleName());
 			}
 	
 			MatchingQueryTerms termsFiltered = terms.stream().filter(x -> ! x.getKey().toString().matches("^.*#(\\d|uw\\d|ow\\d).*")).collect(Collectors.toCollection(MatchingQueryTerms::new));
@@ -171,7 +175,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 			final double[] phraseTermWeights = new double[phraseLength];
 			for (int i = 0; i < phraseLength; i++) {
 				phraseTermWeights[i] = terms.getTermWeight(phraseTerms[i]);
-				System.err.println("phrase term: " + phraseTerms[i]);
+				logger.debug("phrase term: " + phraseTerms[i]);
 			}
 	
 			
@@ -193,17 +197,14 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 				plm.close();
 			} else {
 				plm.close();
-				System.err.println("WARNING: proximity.dependency.type not set. Set it to either FD or SD");
+				logger.error("proximity.dependency.type not set. Set it to either FD or SD");
 				return false;
 			}
 		} catch (ClassCastException e) {
-			System.err.println("Error in " + this.getClass().getName() + " "
-					+ e + " -- does your index have blocks (positions) enabled?");
-			e.printStackTrace();
+			logger.error("Error in " + this.getClass().getName() + " "
+					+ e + " -- does your index have blocks (positions) enabled?", e);
 		} catch (Exception e) {
-			System.err.println("Error in " + this.getClass().getName() + " "
-					+ e);
-			e.printStackTrace();
+			logger.error("Error", e);
 		}
 		// returning true, assuming that we have modified the scores of
 		// documents
@@ -319,7 +320,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 			if (ip != null)
 				ip.close();
 		}
-		System.err.println(this.getClass().getSimpleName() + " altered scores for " + altered + " documents");
+		logger.info(this.getClass().getSimpleName() + " altered scores for " + altered + " documents");
 	
 	}
     
@@ -454,7 +455,7 @@ public abstract class DependenceScoreModifier  implements DocumentScoreModifier 
 		final double s = scoreFDSD(matchingNGrams, docLength);
 		if (Double.isNaN(s))
 		{
-			System.err.println(this.getClass().getSimpleName() + " returned NaN for document " 
+			logger.warn(this.getClass().getSimpleName() + " returned NaN for document " 
 				+ ip1.getId() + " "+i+","+j+" pf="+matchingNGrams + " l="+ docLength);
 		}	
 		return s;
