@@ -109,7 +109,6 @@ public class FatScoringMatching extends AbstractScoringMatching {
 		final short[] occurs = inputRS.getOccurrences()/*.clone()*/;
 
 		final double[] scores = keepInputScores ? inputRS.getScores().clone() : new double[inputRS.getResultSize()];
-		System.err.println("keep=" + keepInputScores + " scores="+ java.util.Arrays.toString(scores));
 		final FatResultSet fInputRS = (FatResultSet)inputRS;
 		
 		final int numDocs = docids.length;
