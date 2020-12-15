@@ -26,7 +26,7 @@ citation licence.
 
 ### Getting Started
 
-In order to start [experimenting with Terrier](https://github.com/terrier-org/terrier-core/blob/5.x/doc/quickstart_experiments.md) or [developing new applications with Terrier]https://github.com/terrier-org/terrier-core/blob/5.x/doc/quickstart-integratedsearch.md), we recommend starting from the [quickstart documentation](https://github.com/terrier-org/terrier-core/blob/5.x/doc/index.md). 
+In order to start [experimenting with Terrier](https://github.com/terrier-org/terrier-core/blob/5.x/doc/quickstart_experiments.md) or [developing new applications with Terrier](https://github.com/terrier-org/terrier-core/blob/5.x/doc/quickstart-integratedsearch.md), we recommend starting from the [quickstart documentation](https://github.com/terrier-org/terrier-core/blob/5.x/doc/index.md). 
 
 ### Other Resources
 * The full documentation of Terrier can also be found on the offical [website](http://terrier.org/). 
