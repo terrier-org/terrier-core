@@ -71,6 +71,7 @@ public abstract class BatchIndexing {
 			options.addOption(Option.builder("p")
 					.argName("parallel")
 					.longOpt("parallel")
+					.hasArg()
 					.optionalArg(true)
 					.desc("use multiple threads for the indexer, and optionally specify the number of threads")
 					.build());
@@ -157,6 +158,7 @@ public abstract class BatchIndexing {
 				if (line.hasOption("s"))
 				{
 					System.err.println("Specifying file argments and -s option at same time is not supported");
+					System.err.println("File arguments were " + line.getArgList().toString());
 					return -1;
 				}
 				indexing.collectionFiles = line.getArgList();
