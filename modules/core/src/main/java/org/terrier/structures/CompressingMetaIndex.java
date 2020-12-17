@@ -980,7 +980,7 @@ public class CompressingMetaIndex implements MetaIndex {
 		} else {
 			logger.warn("Structure "+ structureName + " reading lookup file directly from disk (SLOW) - try index."
 					+ structureName+".index-source=fileinmem in the index properties file. " 
-					+ BinaryByteUnit.format(dataFileLength) +" of memory would be required.");
+					+ BinaryByteUnit.format(indexFileLength) +" of memory would be required.");
 			//logger.debug("Metadata lookup will be read directly from disk: "+ length +" entries, size "+ dataFileLength + " bytes");
 			RandomDataInput rfi = Files.openFileRandom(indexFilename);
 			offsetLookup = new OnDiskDocid2OffsetLookup(
