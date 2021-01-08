@@ -166,7 +166,7 @@ public class SingleTermOp extends Operator {
 			w.setKeyFrequency(qtp.weight);
 			w.setCollectionStatistics(collectionStatistics);
 			IndexUtil.configure(index, w);
-			w.prepare();			
+			//NB: we dont prepare the weighting model - PLM is now responsible for that
 		}
 		
 		if (logger.isDebugEnabled())

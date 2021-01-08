@@ -158,7 +158,7 @@ public abstract class MultiTermOp extends Operator {
 			w.setKeyFrequency(qtp.weight);
 			w.setCollectionStatistics(collectionStatistics);
 			IndexUtil.configure(index, w);
-			w.prepare();			
+			//NB: we dont prepare the weighting model - PLM is now responsible for that
 		}
 		MatchingEntry.Requirement required = MatchingEntry.Requirement.UNKNOWN;
 		if (qtp.required != null && qtp.required)

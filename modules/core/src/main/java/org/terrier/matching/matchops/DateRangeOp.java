@@ -129,7 +129,7 @@ public class DateRangeOp extends Operator {
 			w.setKeyFrequency(qtp.weight);
 			w.setCollectionStatistics(collectionStats);
 			IndexUtil.configure(index, w);
-			w.prepare();			
+			//NB: we dont prepare the weighting model - PLM is now responsible for that
 		}
 		
 		MatchingEntry.Requirement required = MatchingEntry.Requirement.UNKNOWN;
