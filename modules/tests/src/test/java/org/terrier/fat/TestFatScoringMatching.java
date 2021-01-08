@@ -76,7 +76,7 @@ public class TestFatScoringMatching extends ApplicationSetupBasedTest {
 			assertEquals(1, frInput.getPostings()[0][0].getDocumentLength());
 			
 			assertEquals(1, frInput.getCollectionStatistics().getNumberOfDocuments());
-			assertEquals(1, frInput.getCollectionStatistics().getNumberOfPointers());
+			assertEquals(1, frInput.getCollectionStatistics().getNumberOfPostings());
 			assertEquals(1, frInput.getCollectionStatistics().getNumberOfTokens());
 			assertEquals(1, frInput.getCollectionStatistics().getNumberOfUniqueTerms());
 			

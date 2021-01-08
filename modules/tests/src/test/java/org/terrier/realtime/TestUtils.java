@@ -244,7 +244,7 @@ public class TestUtils {
 		assertEquals(stats1.getNumberOfDocuments(),		stats2.getNumberOfDocuments());
 		assertEquals(stats1.getNumberOfTokens(), 		stats2.getNumberOfTokens());
 		//NOTDO: assertEquals(stats1.getNumberOfUniqueTerms(), 	stats2.getNumberOfUniqueTerms());
-		assertEquals(stats1.getNumberOfPointers(), 		stats2.getNumberOfPointers());
+		assertEquals(stats1.getNumberOfPostings(), 		stats2.getNumberOfPostings());
 		assertEquals(stats1.getAverageDocumentLength(),	stats2.getAverageDocumentLength(), 0.0d);
 		/*
 		 * Compare document index.

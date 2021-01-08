@@ -22,7 +22,7 @@ public class IndexStatsCommand extends CLIParsedCLITool {
         System.out.println("number of indexed documents: " + i.getCollectionStatistics().getNumberOfDocuments());
         System.out.println("size of vocabulary: " +  i.getCollectionStatistics().getNumberOfUniqueTerms());
         System.out.println("number of tokens: " +  i.getCollectionStatistics().getNumberOfTokens());
-        System.out.println("number of pointers: " +  i.getCollectionStatistics().getNumberOfPointers());
+        System.out.println("number of postings: " +  i.getCollectionStatistics().getNumberOfPostings());
         System.out.println("number of fields: " +  i.getCollectionStatistics().getNumberOfFields());
         System.out.println("field names: " +  Arrays.toString(i.getCollectionStatistics().getFieldNames()));
         

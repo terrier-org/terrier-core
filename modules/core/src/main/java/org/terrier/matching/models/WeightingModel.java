@@ -64,8 +64,12 @@ public abstract class WeightingModel implements Model, Serializable, Cloneable {
 	/** Number of unique terms in the collection */
 	protected double numberOfUniqueTerms;	
 	/** The number of distinct entries in the inverted file. This figure can be calculated
-	  * as the sum of all Nt over all terms */
+	  * as the sum of all Nt over all terms. Deprecated in favour of numberOfPostings */
+	@Deprecated
 	protected double numberOfPointers;
+	/** The number of distinct entries in the inverted file. This figure can be calculated
+	  * as the sum of all Nt over all terms */
+	protected double numberOfPostings;
 
 	/**
 	 * A default constructor that initialises the idf i attribute
@@ -101,7 +105,8 @@ public abstract class WeightingModel implements Model, Serializable, Cloneable {
 		i.setNumberOfDocuments(numberOfDocuments);
 		numberOfTokens = (double)cs.getNumberOfTokens();
 		numberOfUniqueTerms = (double)cs.getNumberOfUniqueTerms();
-		numberOfPointers = (double)cs.getNumberOfPointers();
+		numberOfPointers = (double)cs.getNumberOfPostings();
+		numberOfPostings = (double)cs.getNumberOfPostings();
 		documentFrequency = (double)getOverflowed(es.getDocumentFrequency());
 		termFrequency = (double)getOverflowed(es.getFrequency());		
 	}

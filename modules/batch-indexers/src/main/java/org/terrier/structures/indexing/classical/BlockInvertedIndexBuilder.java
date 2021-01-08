@@ -311,7 +311,7 @@ public class BlockInvertedIndexBuilder extends InvertedIndexBuilder {
 		
 		@Override
 		String estimatedIterations() {
-			final long pointers = this.collStats.getNumberOfPointers();
+			final long pointers = this.collStats.getNumberOfPostings();
 			final long tokens = this.collStats.getNumberOfTokens();
 			long projected_size = pointers * (3+ fieldCount) * Integer.BYTES //pointers
 					+ tokens * Integer.BYTES;

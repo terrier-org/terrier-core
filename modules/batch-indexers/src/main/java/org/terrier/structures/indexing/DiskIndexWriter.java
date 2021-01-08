@@ -178,7 +178,7 @@ public class DiskIndexWriter {
          * num.{Documents,Pointers,Terms,Tokens} max.term.length
          */
         index.getProperties().put("num.Documents", String.valueOf(source.getCollectionStatistics().getNumberOfDocuments()));
-        index.getProperties().put("num.Pointers", String.valueOf(source.getCollectionStatistics().getNumberOfPointers()));
+        index.getProperties().put("num.Pointers", String.valueOf(source.getCollectionStatistics().getNumberOfPostings()));
         index.getProperties().put("num.Terms", String.valueOf(source.getCollectionStatistics().getNumberOfUniqueTerms()));
         index.getProperties().put("num.Tokens", String.valueOf(source.getCollectionStatistics().getNumberOfTokens()));
         index.getProperties().put("max.term.length", String.valueOf(ApplicationSetup.MAX_TERM_LENGTH));

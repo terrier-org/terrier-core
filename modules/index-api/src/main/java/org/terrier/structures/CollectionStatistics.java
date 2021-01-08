@@ -141,7 +141,8 @@ public class CollectionStatistics implements Serializable,Writable
     {
         return 
             "Number of documents: " + getNumberOfDocuments()           + "\n" + 
-            "Number of terms: "     + getNumberOfUniqueTerms()         + "\n"+ 
+            "Number of terms: "     + getNumberOfUniqueTerms()         + "\n" + 
+            "Number of postings: "  + getNumberOfPostings()            + "\n" + 
             "Number of fields: "    + getNumberOfFields()              + "\n" + 
             "Number of tokens: "    + getNumberOfTokens()              + "\n" +
             "Field names: "         + Arrays.toString(getFieldNames()) + "\n" +
@@ -174,11 +175,22 @@ public class CollectionStatistics implements Serializable,Writable
     }
     
     /**
-     * Returns the total number of pointers in the collection.
+     * Returns the total number of postings in the collection.
      * 
-     * @return the total number of pointers in the collection.
+     * @return the total number of postings in the collection.
      */
+    @Deprecated
     public long getNumberOfPointers() 
+    {
+        return numberOfPointers;
+    }
+
+    /**
+     * Returns the total number of postings in the collection.
+     * 
+     * @return the total number of postings in the collection.
+     */
+    public long getNumberOfPostings() 
     {
         return numberOfPointers;
     }
@@ -250,7 +262,7 @@ public class CollectionStatistics implements Serializable,Writable
     public void addStatistics(final CollectionStatistics cs)
     {
         numberOfDocuments += cs.getNumberOfDocuments();
-        numberOfPointers += cs.getNumberOfPointers();
+        numberOfPointers += cs.getNumberOfPostings();
         numberOfTokens += cs.getNumberOfTokens();
         numberOfUniqueTerms = Math.max(cs.getNumberOfUniqueTerms(), numberOfUniqueTerms);
         final long[] otherFieldTokens = cs.getFieldTokens();

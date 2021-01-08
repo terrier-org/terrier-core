@@ -120,7 +120,7 @@ public class SingleFieldModel extends WeightingModel {
 		super.averageDocumentLength = (double)tokens / (double)_cs.getNumberOfDocuments();
 		
 		basicModel.setCollectionStatistics(
-				new CollectionStatistics(_cs.getNumberOfDocuments(), _cs.getNumberOfUniqueTerms(), tokens, _cs.getNumberOfPointers(), new long[0], new String[0]));
+				new CollectionStatistics(_cs.getNumberOfDocuments(), _cs.getNumberOfUniqueTerms(), tokens, _cs.getNumberOfPostings(), new long[0], new String[0]));
 	}
 
 	@Override

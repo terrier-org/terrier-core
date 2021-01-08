@@ -44,7 +44,7 @@ public class MultiStats extends CollectionStatistics {
 	 */
 	public static MultiStats factory(CollectionStatistics[] stats) {
 		int numDocs = 0, numTerms = 0;
-		long numTokens = 0, numPointers = 0;
+		long numTokens = 0, numPostings = 0;
 		final int fieldCount = stats[0].getNumberOfFields();
 		long[] fieldTokens = new long[fieldCount];
 		String[] fieldNames = stats[0].getFieldNames();
@@ -53,7 +53,7 @@ public class MultiStats extends CollectionStatistics {
 			assert fieldCount == stat.getNumberOfFields();
 			numDocs += stat.getNumberOfDocuments();
 			numTokens += stat.getNumberOfTokens();
-			numPointers += stat.getNumberOfPointers();
+			numPostings += stat.getNumberOfPostings();
 			if (stat.getNumberOfUniqueTerms() > numTerms)
 				numTerms = stat.getNumberOfUniqueTerms();
 			for(int fi=0;fi<fieldCount;fi++)
@@ -64,7 +64,7 @@ public class MultiStats extends CollectionStatistics {
 				blocks = false;
 		}
 
-		return new MultiStats(numDocs, numTerms, numTokens, numPointers,
+		return new MultiStats(numDocs, numTerms, numTokens, numPostings,
 				fieldTokens, fieldNames, blocks);
 	}
 
@@ -72,7 +72,7 @@ public class MultiStats extends CollectionStatistics {
 	 * Private constructor.
 	 */
 	private MultiStats(int numDocs, int numTerms, long numTokens,
-			long numPointers, long[] fieldTokens, String[] fieldNames, boolean blocks) {
-		super(numDocs, numTerms, numTokens, numPointers, fieldTokens, fieldNames, blocks);
+			long numPostings, long[] fieldTokens, String[] fieldNames, boolean blocks) {
+		super(numDocs, numTerms, numTokens, numPostings, fieldTokens, fieldNames, blocks);
 	}
 }

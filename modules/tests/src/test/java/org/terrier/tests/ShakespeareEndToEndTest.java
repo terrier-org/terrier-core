@@ -415,7 +415,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 			piis.close();
 			CollectionStatistics cs = index.getCollectionStatistics();
 			assertEquals("Number of documents is incorrect", cs.getNumberOfDocuments(), docid);
-			assertEquals("Number of pointers is incorrect", cs.getNumberOfPointers(), pointers);
+			assertEquals("Number of postings is incorrect", cs.getNumberOfPostings(), pointers);
 			assertEquals("Number of tokens is incorrect", cs.getNumberOfTokens(), tokens);
 			if (numberOfTerms > 0)
 			{
@@ -492,7 +492,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 			assertEquals("Document lengths for docid "+ docid + " dont match", lengths[docid], di.getDocumentLength(docid));
 			assertEquals("Document lengths for docid "+ docid + " dont match", lengths[docid], di.getDocumentEntry(docid).getDocumentLength());
 			if (document_unique_terms.length > 0)
-				assertEquals("Number of pointers for docid " + docid + " dont match", document_unique_terms[docid], di.getDocumentEntry(docid).getNumberOfEntries());
+				assertEquals("Number of postings for docid " + docid + " dont match", document_unique_terms[docid], di.getDocumentEntry(docid).getNumberOfEntries());
 		}
 		
 		di = null;
@@ -505,7 +505,7 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 		assertEquals("Number of documents doesn't match", DOCUMENT_LENGTHS.length, cs.getNumberOfDocuments());
 		assertEquals("Number of tokens doesn't match", StaTools.sum(DOCUMENT_LENGTHS), cs.getNumberOfTokens());
 		assertEquals("Average document length doesn't match", StaTools.mean(DOCUMENT_LENGTHS), cs.getAverageDocumentLength(), 0.0d);
-		assertEquals("Number of pointers doesnt match", NUMBER_POINTERS, cs.getNumberOfPointers());
+		assertEquals("Number of postings doesnt match", NUMBER_POINTERS, cs.getNumberOfPostings());
 		assertEquals("Number of unique terms doesn't match", NUMBER_UNIQUE_TERMS, cs.getNumberOfUniqueTerms());
 	}
 	

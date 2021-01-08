@@ -110,7 +110,7 @@ public class BlockInverted2DirectIndexBuilder extends Inverted2DirectIndexBuilde
         Arrays.fill(prevUse, false);
         int[] fieldFs = null;
         
-        TerrierTimer tt = new TerrierTimer("Inverted index processing for this iteration", index.getCollectionStatistics().getNumberOfPointers());
+        TerrierTimer tt = new TerrierTimer("Inverted index processing for this iteration", index.getCollectionStatistics().getNumberOfPostings());
 		tt.start();
 		try{
 			while(iiis.hasNext())

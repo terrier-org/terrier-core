@@ -554,7 +554,7 @@ public class InvertedIndexBuilder {
 
 		@Override
 		String estimatedIterations() {
-			return (int)Math.ceil((double) this.collStats.getNumberOfPointers() / (double) projectedPointerCount) + " (estimated) iterations";
+			return (int)Math.ceil((double) this.collStats.getNumberOfPostings() / (double) projectedPointerCount) + " (estimated) iterations";
 		}
 	}
 	
@@ -571,13 +571,13 @@ public class InvertedIndexBuilder {
 		
 		@Override
 		public String toString() {
-			return this.getClass().getSimpleName() + ": lexicon scanning for " + PointersToProcess  + " pointers";
+			return this.getClass().getSimpleName() + ": lexicon scanning for " + PointersToProcess  + " postings";
 		}
 
 		@Override
 		LexiconScanResult scanLexicon() {
 			
-			logger.debug("Scanning lexicon for "+ PointersToProcess + " pointers");
+			logger.debug("Scanning lexicon for "+ PointersToProcess + " postings");
 			TIntIntHashMap codesHashMap = new TIntIntHashMap();
 			ArrayList<TIntArrayList[]> tmpStorageStorage = new ArrayList<TIntArrayList[]>();
 			
@@ -612,7 +612,7 @@ public class InvertedIndexBuilder {
 		
 		@Override
 		String estimatedIterations() {
-			return (int)Math.ceil((double) this.collStats.getNumberOfPointers() / (double) PointersToProcess) + " iterations";
+			return (int)Math.ceil((double) this.collStats.getNumberOfPostings() / (double) PointersToProcess) + " iterations";
 		}
 		
 	}

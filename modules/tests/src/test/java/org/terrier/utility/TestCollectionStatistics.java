@@ -57,7 +57,7 @@ public class TestCollectionStatistics {
 		assertEquals(cs1.getNumberOfDocuments(), cs2.getNumberOfDocuments());
 		assertEquals(cs1.getNumberOfUniqueTerms(), cs2.getNumberOfUniqueTerms());
 		
-		assertEquals(cs1.getNumberOfPointers(), cs2.getNumberOfPointers());
+		assertEquals(cs1.getNumberOfPostings(), cs2.getNumberOfPostings());
 		assertEquals(cs1.getNumberOfTokens(), cs2.getNumberOfTokens());
 		assertEquals(cs1.getAverageDocumentLength(), cs2.getAverageDocumentLength(), 0.0d);
 		//TODO: test fields

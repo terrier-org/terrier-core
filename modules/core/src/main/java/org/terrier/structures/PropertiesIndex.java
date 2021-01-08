@@ -82,9 +82,12 @@ public abstract class PropertiesIndex extends Index implements Closeable, Flusha
 		}
 
 		@Override
-		public long getNumberOfPointers() {
+		public long getNumberOfPostings() {
 			return Long.parseLong(properties.getProperty("num.Pointers", "0"));
 		}
+
+		@Override @Deprecated
+		public long getNumberOfPointers() { return getNumberOfPostings(); }
 
 		@Override
 		public long getNumberOfTokens() {

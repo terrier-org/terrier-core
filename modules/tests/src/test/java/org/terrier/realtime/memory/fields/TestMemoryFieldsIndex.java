@@ -287,7 +287,7 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 		assertEquals(2, cs.getNumberOfDocuments());
 		assertEquals(8l, cs.getNumberOfTokens());
 		assertEquals(4, cs.getNumberOfUniqueTerms());
-		assertEquals(6l, cs.getNumberOfPointers());
+		assertEquals(6l, cs.getNumberOfPostings());
 		assertEquals(4.0d, cs.getAverageDocumentLength(), 0.0d);
 
 		PostingIndex<?> direct = (PostingIndex<?>) index.getIndexStructure("direct");

@@ -80,7 +80,7 @@ public class TestFatCandidateResultSet {
 			//1 OF: collection statistics
 			assertNotNull(rs.getCollectionStatistics());
 			assertEquals(5, rs.getCollectionStatistics().getNumberOfDocuments());
-			assertEquals(5, rs.getCollectionStatistics().getNumberOfPointers());
+			assertEquals(5, rs.getCollectionStatistics().getNumberOfPostings());
 			assertEquals(5, rs.getCollectionStatistics().getNumberOfTokens());
 			assertEquals(5, rs.getCollectionStatistics().getNumberOfUniqueTerms());
 			
