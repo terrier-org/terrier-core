@@ -6,7 +6,8 @@ Terrier 5.4 - xx/1/2021
 Minor update addressing bugs identified through usage from PyTerrier and others.
 
 ## Indexing
- - [#130](ttps://github.com/terrier-org/terrier-core/issues/130) MetaIndex creation/loading fails if reverse keys set and not same number of forward keys
+ - [#130](https://github.com/terrier-org/terrier-core/issues/130) MetaIndex creation/loading fails if reverse keys set and not same number of forward keys
+ - [#144](https://github.com/terrier-org/terrier-core/issues/144) metaindex reverse lookup binary search regressions (fixes for #120)
 
 ## Retrieval
  - improved toString() representations for LexiconEntry instances
@@ -18,6 +19,7 @@ Minor update addressing bugs identified through usage from PyTerrier and others.
  - [#135](https://github.com/terrier-org/terrier-core/issues/135) ScoringMatching sorts too many times
  - [#137](https://github.com/terrier-org/terrier-core/issues/137) ScoringMatching, FatFeaturedScoringMatching and friends should pass through the input scores
  - [##141](https://github.com/terrier-org/terrier-core/issues/141) CollectionStatistics.toString() is missing the number of "postings" 
+ 
  ## Other
  - [#132](https://github.com/terrier-org/terrier-core/issues/#132), [#136](https://github.com/terrier-org/terrier-core/issues/136) Dependencies vulnerabilities
 
