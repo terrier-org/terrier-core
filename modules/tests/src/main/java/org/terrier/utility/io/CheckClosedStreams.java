@@ -114,6 +114,7 @@ public class CheckClosedStreams extends ApplicationSetupBasedTest implements Ter
 		{
 			assertFalse("OutputStream is still open - opened at: "+ toString(is.openTrace), true);
 		}
+		inputStreams.clear();
 		outputStreams.clear();
 	}
 	
