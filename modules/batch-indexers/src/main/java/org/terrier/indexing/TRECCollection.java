@@ -163,7 +163,7 @@ public class TRECCollection extends MultiDocumentFileCollection {
 		if (BlacklistSpecFilename != null && BlacklistSpecFilename.length() >0)
 		{
 			try {
-				DocIDBlacklist = new HashSet<String>();
+				DocIDBlacklist.clear();
 				if (Files.exists(BlacklistSpecFilename)) {
 					BufferedReader br2 = Files.openFileReader(BlacklistSpecFilename);
 					String blackListedDocid = null;
@@ -199,8 +199,19 @@ public class TRECCollection extends MultiDocumentFileCollection {
 		setTags(TagSet);
 		readDocumentBlacklist(BlacklistSpecFilename);
 	}
+
+	public TRECCollection(List<String> files) {	
+		super(files);
+		setTags(TagSet.TREC_DOC_TAGS);
+	}
 	
 	public TRECCollection(List<String> files, String TagSet, String BlacklistSpecFilename, String ignored) {		
+		super(files);
+		setTags(TagSet);
+		readDocumentBlacklist(BlacklistSpecFilename);
+	}
+
+	public TRECCollection(List<String> files, String TagSet, String BlacklistSpecFilename) {		
 		super(files);
 		setTags(TagSet);
 		readDocumentBlacklist(BlacklistSpecFilename);
@@ -212,10 +223,8 @@ public class TRECCollection extends MultiDocumentFileCollection {
 			TagSet.TREC_DOC_TAGS, 
 			ApplicationSetup.makeAbsolute(
 				ApplicationSetup.getProperty("trec.blacklist.docids", ""), 
-					ApplicationSetup.TERRIER_ETC), 
-			ApplicationSetup.makeAbsolute(
-				ApplicationSetup.getProperty("trec.collection.pointers", "docpointers.col"), 
-					ApplicationSetup.TERRIER_INDEX_PATH)
+					ApplicationSetup.TERRIER_ETC),
+			null
 		);
 	}
 

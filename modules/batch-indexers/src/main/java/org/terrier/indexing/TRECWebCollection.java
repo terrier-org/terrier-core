@@ -104,6 +104,14 @@ public class TRECWebCollection extends TRECCollection {
 		super(files, TagSet, BlacklistSpecFilename, ignored);
 	}
 
+	public TRECWebCollection(List<String> files, String TagSet, String BlacklistSpecFilename) {
+		super(files, TagSet, BlacklistSpecFilename, null);
+	}
+
+	public TRECWebCollection(List<String> files) {
+		super(files);
+	}
+
 	final static char[] DOCHDR_START = "<DOCHDR>".toCharArray();
 	final static char[] DOCHDR_END = "</DOCHDR>".toCharArray();
 	final static int DOCHDR_START_LENGTH = DOCHDR_START.length;

@@ -59,6 +59,10 @@ public class WARC10Collection extends WARC018Collection  {
 	
     public WARC10Collection(List<String> files, String TagSet, String BlacklistSpecFilename, String ignored) {
         super(files);
+	}
+	
+	public WARC10Collection(List<String> files) {
+        super(files);
     }
 
 

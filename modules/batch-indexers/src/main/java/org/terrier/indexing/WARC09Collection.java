@@ -87,6 +87,10 @@ public class WARC09Collection extends MultiDocumentFileCollection
 
 	public WARC09Collection(List<String> files, String TagSet, String BlacklistSpecFilename, String ignored) {
         super(files);
+	}
+	
+	public WARC09Collection(List<String> files) {
+        super(files);
     }
 
     public WARC09Collection(String CollectionSpecFilename, String TagSet, String BlacklistSpecFilename,
