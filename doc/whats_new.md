@@ -7,7 +7,9 @@ Minor update addressing bugs identified through usage from PyTerrier and others.
 
 ## Indexing
  - [#130](https://github.com/terrier-org/terrier-core/issues/130) MetaIndex creation/loading fails if reverse keys set and not same number of forward keys
+ - [#139](https://github.com/terrier-org/terrier-core/issues/139) TRECCollection is difficult to use from Python
  - [#144](https://github.com/terrier-org/terrier-core/issues/144) metaindex reverse lookup binary search regressions (fixes for #120)
+
 
 ## Retrieval
  - improved toString() representations for LexiconEntry instances
