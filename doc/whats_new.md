@@ -1,6 +1,26 @@
 What's New in Terrier
 =====================
 
+Terrier 5.4 - xx/1/2021
+-----------------------
+Minor update addressing bugs identified through usage from PyTerrier and others.
+
+## Indexing
+ - [#130](ttps://github.com/terrier-org/terrier-core/issues/130) MetaIndex creation/loading fails if reverse keys set and not same number of forward keys
+
+## Retrieval
+ - improved toString() representations for LexiconEntry instances
+ - [#124](https://github.com/terrier-org/terrier-core/issues/124) Empty checks required for feedback documents in query expansion-based retrieval, with thanks to Xi Wang, University of Glasgow
+ - [#128](https://github.com/terrier-org/terrier-core/issues/128) IterablePosting.getId() should always return EOL if next() did
+ - [#131](https://github.com/terrier-org/terrier-core/issues/131) UTF query parsing fails
+ - [#133](https://github.com/terrier-org/terrier-core/issues/133) export BM25 k_1 and k_3 as controls; on weighting models, setRequest() happens after prepare(), with thanks to Xiao Yang, University of Glasgow
+ - [#134](https://github.com/terrier-org/terrier-core/issues/134) FeaturedQueryResultSet.sort() doesnt sort feature scores
+ - [#135](https://github.com/terrier-org/terrier-core/issues/135) ScoringMatching sorts too many times
+ - [#137](https://github.com/terrier-org/terrier-core/issues/137) ScoringMatching, FatFeaturedScoringMatching and friends should pass through the input scores
+ - [##141](https://github.com/terrier-org/terrier-core/issues/141) CollectionStatistics.toString() is missing the number of "postings" 
+ ## Other
+ - [#132](https://github.com/terrier-org/terrier-core/issues/#132), [#136](https://github.com/terrier-org/terrier-core/issues/136) Dependencies vulnerabilities
+
 Terrier 5.3 - 24/6/2020
 -----------------------
 Significant update, addressing various capabilities that can be utilised by [PyTerrier](https://github.com/terrier-org/pyterrier) -- the new Python bindings for Terrier -- as well as addressing other feedback from users. This release continues to reduce the reliance on ApplicationSetup. In particular, for retrieval, more configuration is available through [controls](configure_retrieval.md). We have also trimmed out older packages that are no longer used (c.f. [integer-compression](https://github.com/terrierteam/terrier-integer-compression) and [website-search](https://github.com/terrierteam/terrier-website-search)) into separate legacy Terrier components. Terrier has enhanced support for loading [external components](components.md) from local and remote Maven repositories, including [Jitpack](https://jitpack.io/). Components compatible with this release include ones for [reading Lucene indices](https://github.com/terrierteam/terrier-lucene), reading [CIFF](https://github.com/osirrc/ciff) files [as a Terrier index](https://github.com/terrierteam/terrier-ciff), as well as [additional query expansion](https://github.com/terrierteam/terrier-prf) models (incl. RM3 and Axiomatic query expansion).
