@@ -146,6 +146,7 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 		}
 
 		this.valuesSorted = new boolean[keyCount];
+		Arrays.fill(valuesSorted, true);
 		this.lastValues = new String[keyCount];
 		
 		this.zip.setLevel(ZIP_COMPRESSION_LEVEL);
@@ -174,7 +175,6 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 				keyFactories[i] = new FixedSizeTextFactory(valueLensChars[reverseKeys[i]]), 
 				new FixedSizeIntWritableFactory(), REVERSE_ALLOW_DUPS
 				);
-			valuesSorted[i] = true;
 		}
 		
 		this.valueLensBytes = new int[keyNames.length];
@@ -243,8 +243,15 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 			if (numberOfBytesToWrite < valueLensBytes[i]) 
 				baos.write(spaces, 0, valueLensBytes[i]-numberOfBytesToWrite);
 
-			if (lastValues[i] != null && value.compareTo(lastValues[i]) < 0)
+			if (valuesSorted[i] && entryCount > 0 && lastValues[i].compareTo(value) >= 0)
+			{
+				if (logger.isDebugEnabled())
+					logger.debug(
+						"docid " + entryCount + " key " + keyNames[i] + " value " 
+							+ value + " it not lexicographically after " 
+							+ lastValues[i] + " - key is not sorted");
 				valuesSorted[i] = false;
+			}
 			lastValues[i] = value;
 			i++;
 		}
@@ -303,6 +310,7 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 		index.setIndexProperty("index."+structureName+".value-lengths", ArrayUtils.join(valueLensChars, ","));
 		index.setIndexProperty("index."+structureName+".entry-length", ""+entryLengthBytes);
 		//one entry for each KEY, not "reverse" key
+		
 		index.setIndexProperty("index."+structureName+".value-sorted", ArrayUtils.join(valuesSorted, ","));
 		index.setIndexProperty("index."+structureName+".data-source",
 			currentOffset > MAX_MB_IN_MEM_RETRIEVAL * (long)1024 * (long)1024 
@@ -320,7 +328,11 @@ public class CompressingMetaIndexBuilder extends MetaIndexBuilder implements Flu
 		}		
 		index.setIndexProperty("index."+structureName+".reverse-key-names", ArrayUtils.join(reverseKeyNames, ","));
 		index.flush();
-		
+		logger.debug("Finished writing metaindex:" +
+			" keys " + Arrays.toString(keyNames) + 
+			" keylens " + Arrays.toString(valueLensChars) + 
+			" sorted "  + Arrays.toString(valuesSorted) +
+			" data file size "  + currentOffset);	
 	}
 
 	

@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.indexing.MetaIndexBuilder;
@@ -67,6 +68,7 @@ public class MemoryMetaIndex extends MetaIndexBuilder implements MetaIndex,Seria
 	private TObjectIntHashMap<String> key2meta;
 	private int[] keylengths;
 	private boolean[] isReverse;
+	private boolean[] isSorted;
 
 	private Map<String,TObjectIntHashMap<String>> key2value2id;
 	/*
@@ -99,6 +101,8 @@ public class MemoryMetaIndex extends MetaIndexBuilder implements MetaIndex,Seria
 		if (keys.length != keylengths.length) {
 			throw new IllegalArgumentException("Meta keys and keylens mismatch.");
 		}
+		this.isSorted = new boolean[metaKeys.length];
+		Arrays.fill(isSorted, true);
 		
 		metadata = new ArrayList<String[]>();
 		key2meta = new TObjectIntHashMap<String>();
@@ -207,6 +211,15 @@ public class MemoryMetaIndex extends MetaIndexBuilder implements MetaIndex,Seria
 	public void writeDocumentEntry(String[] data) {
 		//forward metadata
 		metadata.add(data);
+		for (int i=0;i<data.length;i++)
+		{
+			if (isSorted[i] && metadata.size() > 1)
+			{
+				String prev = metadata.get(metadata.size() -2)[i];
+				if (prev.compareTo(data[i]) >= 0)
+					isSorted[i] = false;
+			}
+		}
 		
 		//reverse metadata
 		if (revkeys.length == 0)
@@ -219,13 +232,49 @@ public class MemoryMetaIndex extends MetaIndexBuilder implements MetaIndex,Seria
 			key2value2id.get(this.keys[i]).put(data[i], docid+1);
 		}
 	}
+
+	/** performs a binary search on the metaindex, if they keys happen to be in lexographical order */
+	protected int _binarySearch(String key, String value) throws IOException {
+		int l = 0, r = this.size() - 1; 
+        while (l <= r) { 
+            int m = l + (r - l) / 2; 
+  
+			String found = getItem(key, m);
+			// Check if value is present at mid
+			int compare = value.compareTo(found);			
+            if (compare == 0)
+                return m; 
+  
+            // If x greater, ignore left half 
+            if (compare > 0) 
+                l = m + 1; 
+  
+            // If x is smaller, ignore right half 
+            else
+                r = m - 1; 
+        }  
+        // if we reach here, then element was 
+        // not present 
+        return -1; 
+	}
 	
 	@Override
 	public int getDocument(String key, String value) throws IOException {
 		TObjectIntHashMap<String> map = key2value2id.get(key);
-		if (map == null)
-			return -1;
-		return map.get(value) -1;
+		if (map != null)
+			return map.get(value) -1;
+		for(int i=0;i<this.keys.length;i++)
+		{
+			if (key.equals(keys[i]))
+			{
+				if (! isSorted[i])
+				{
+					throw new UnsupportedOperationException("No reverse lookup for key " + key + "; metdata not sorted");
+				}
+				return _binarySearch(key, value);
+			}
+		}
+		throw new UnsupportedOperationException("No reverse lookup for key " + key + "; key unknown");
 	}
 	
 	@Override
