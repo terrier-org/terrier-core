@@ -772,7 +772,8 @@ public class CompressingMetaIndex implements MetaIndex {
 			}
 			if (! this.valuesSorted[i])
 			{
-				throw new NoSuchElementException("No reverse lookup for key " + key + " is supported, and metadata for that key is not sorted");
+				throw new NoSuchElementException("No reverse lookup for key " + key + " is supported, and metadata for that key is not sorted. " + 
+					"You should re-index with indexer.meta.reverse.keys="+key);
 			}
 			return _binarySearch(key, value);
 		}		
