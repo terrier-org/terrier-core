@@ -66,7 +66,7 @@ Terrier support the application of learning to rank techniques within Terrier's 
 Using Terrier Indices in your own code
 --------------------------------------
 
-**How many documents does term X occur in?**
+### How many documents does term X occur in?
 ```java
 Index index = Index.createIndex();
 Lexicon<String> lex = index.getLexicon();
@@ -77,7 +77,7 @@ else
 	System.out.println("Term term does not occur");
 ```
 
-**What is the probability of term Y occurring in the collection?**
+### What is the probability of term Y occurring in the collection?
 ```java
 Index index = Index.createIndex();
 Lexicon<String> lex = index.getLexicon();
@@ -87,7 +87,7 @@ double p = le == null
 	: (double) le.getFrequency() / index.getCollectionStatistics().getNumberOfTokens();
 ```
 
-**What terms occur in the 11th document?**
+### What terms occur in the 11th document?
 ```java
 Index index = Index.createIndex();
 PostingIndex<?> di = index.getDirectIndex();
@@ -102,7 +102,7 @@ while (postings.next() != IterablePosting.EOL) {
 }
 ```
 
-**What documents does term "Z" occur in, and at what position?**
+### What documents does term "Z" occur in, and at what position?
 
 ```java
 Index index = Index.createIndex();
@@ -130,7 +130,7 @@ while (postings.next() != IterablePosting.EOL) {
 Moreover, if you're not comfortable with using Java, you can dump the indices of a collection using the --print\* options of the indexutil command. See the javadoc of [IndexUtil](http://terrier.org/docs/v5.2/javadoc/org/terrier/structures/IndexUtil.html) for more information.
 
 
-**What are the PL2 weighting model scores of documents that "Y" occurs in?**
+### What are the PL2 weighting model scores of documents that "Y" occurs in?
 
 Use of a [WeightingModel](http://terrier.org/docs/current/javadoc/org/terrier/matching/models/WeightingModel.html) class needs some setup, namely the EntryStatistics of the term (obtained from the Lexicon), as well as the CollectionStatistics (obtained from the index).
 
