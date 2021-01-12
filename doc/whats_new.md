@@ -20,7 +20,8 @@ Minor update addressing bugs identified through usage from PyTerrier and others.
  - [#134](https://github.com/terrier-org/terrier-core/issues/134) FeaturedQueryResultSet.sort() doesnt sort feature scores
  - [#135](https://github.com/terrier-org/terrier-core/issues/135) ScoringMatching sorts too many times
  - [#137](https://github.com/terrier-org/terrier-core/issues/137) ScoringMatching, FatFeaturedScoringMatching and friends should pass through the input scores
- - [##141](https://github.com/terrier-org/terrier-core/issues/141) CollectionStatistics.toString() is missing the number of "postings" 
+ - [#141](https://github.com/terrier-org/terrier-core/issues/141) CollectionStatistics.toString() is missing the number of "postings" 
+ - [#145](https://github.com/terrier-org/terrier-core/issues/145) checks required for words do not occur in the feedback documents in query expansion-based retrieval, with thanks to Sarawoot Kongyoung, University of Glasgow
  
  ## Other
  - [#132](https://github.com/terrier-org/terrier-core/issues/#132), [#136](https://github.com/terrier-org/terrier-core/issues/136) Dependencies vulnerabilities

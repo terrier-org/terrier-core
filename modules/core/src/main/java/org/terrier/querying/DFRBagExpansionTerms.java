@@ -183,7 +183,13 @@ public class DFRBagExpansionTerms extends ExpansionTerms {
 			for(int termId : originalTermids.keys())
 			{
 				results[i] = new SingleTermQuery(originalTermids.get(termId));
-				results[i].setWeight(terms.get(termId).getWeightExpansion());
+				if (terms.containsKey(termId)) {
+					results[i].setWeight(terms.get(termId).getWeightExpansion());
+				} else {
+					// query term is not found in the feedback documents. we add it with
+					// weight 0, which has no real impact.
+					results[i].setWeight(0d);
+				}
 				//if (!QEModel.PARAMETER_FREE)
 				//	results[i].setWeight(results[i].getWeight()*QEModel.ROCCHIO_BETA);
 				i++;
