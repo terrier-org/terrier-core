@@ -231,7 +231,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+			<version>3.17</version> <!-- Should be 3.8-20120326 -->
 		</dependency>
 
 		<dependency>
