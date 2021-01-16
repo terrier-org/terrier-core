@@ -14,6 +14,7 @@
 	<properties>
 		<jetty.version>9.3.29.v20201019</jetty.version>
 		<pdfbox.version>2.0.18</pdfbox.version>
+        <poi.version>3.8</poi.version>
 	</properties>
 
 	<dependencies>
@@ -231,25 +232,25 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+			<version>${poi.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+			<version>${poi.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
-			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+			<version>${poi.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
-			<version>3.8</version> <!-- Should be 3.8-20120326 -->
+			<version>${poi.version}</version>
 		</dependency>
 
 		<dependency> <!-- This is to include sam-1.108.jar -->
