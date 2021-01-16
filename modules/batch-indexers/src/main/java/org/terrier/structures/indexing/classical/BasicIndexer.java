@@ -247,9 +247,9 @@ public class BasicIndexer extends Indexer
 
 				Document doc = collection.getDocument();
 				
-				if (doc == null)
-					continue;
-				
+				if (doc == null) {
+					logger.warn("skipping null document"); continue;
+				}
 				numberOfDocuments++; 
 				/* setup for parsing */
 				createDocumentPostings();
