@@ -1,4 +1,4 @@
-Terrier IR Platform - Terabyte Retriever v5.3
+Terrier IR Platform - Terabyte Retriever v5.4
 -----------------------------------
 ![Terrier Maven CI](https://github.com/terrier-org/terrier-core/workflows/Terrier%20Maven%20CI/badge.svg) [![Build Status](https://api.travis-ci.org/terrier-org/terrier-core.svg?branch=5.x)](https://travis-ci.org/terrier-org/terrier-core) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.terrier/terrier-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.terrier/terrier-platform) 
 
@@ -36,4 +36,4 @@ citation licence.
 ------------------------
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2020 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 
+> Copyright (C) 2004-2021 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved. 

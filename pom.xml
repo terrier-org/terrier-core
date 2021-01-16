@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-platform</artifactId>
-	<version>5.4-SNAPSHOT</version>
+	<version>5.4</version>
 	<name>Terrier Information Retrieval Platform</name>
 	<description>Terrier IR platform</description>
 	<url>http://terrier.org</url>
@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<year>2020</year>
+		<year>2021</year>
 		<gpg.skip>true</gpg.skip>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<timestamp>${maven.build.timestamp}</timestamp>
