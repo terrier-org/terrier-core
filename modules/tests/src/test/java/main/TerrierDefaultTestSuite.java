@@ -54,6 +54,7 @@ import org.terrier.indexing.TestTRECWebCollection;
 import org.terrier.indexing.TestTaggedDocument;
 import org.terrier.indexing.TestTweetJSONCollection;
 import org.terrier.indexing.TestWARC10Collection;
+import org.terrier.indexing.TestFilteringCollection;
 import org.terrier.indexing.tokenisation.TestEnglishTokeniser;
 import org.terrier.indexing.tokenisation.TestUTFTokeniser;
 import org.terrier.matching.TestMatching.TestDAATFullMatching;
@@ -166,6 +167,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestTRECWebCollection.class,
 	TestTweetJSONCollection.class,
 	TestWARC10Collection.class,
+	TestFilteringCollection.class,
 	
 	//.indexing.tokenisation
 	TestEnglishTokeniser.class,
