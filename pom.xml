@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<year>2020</year>
+		<year>2021</year>
 		<gpg.skip>true</gpg.skip>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<timestamp>${maven.build.timestamp}</timestamp>

@@ -1,7 +1,7 @@
 What's New in Terrier
 =====================
 
-Terrier 5.4 - xx/1/2021
+Terrier 5.4 - 16/1/2021
 -----------------------
 Minor update addressing bugs identified through usage from PyTerrier and others.
 
@@ -22,8 +22,8 @@ Minor update addressing bugs identified through usage from PyTerrier and others.
  - [#137](https://github.com/terrier-org/terrier-core/issues/137) ScoringMatching, FatFeaturedScoringMatching and friends should pass through the input scores
  - [#141](https://github.com/terrier-org/terrier-core/issues/141) CollectionStatistics.toString() is missing the number of "postings" 
  - [#145](https://github.com/terrier-org/terrier-core/issues/145) checks required for words do not occur in the feedback documents in query expansion-based retrieval, with thanks to Sarawoot Kongyoung, University of Glasgow
- 
- ## Other
+
+## Other 
  - [#132](https://github.com/terrier-org/terrier-core/issues/#132), [#136](https://github.com/terrier-org/terrier-core/issues/136) Dependencies vulnerabilities
 
 Terrier 5.3 - 24/6/2020
