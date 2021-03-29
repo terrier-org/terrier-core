@@ -66,7 +66,7 @@ public class IndexOnDisk extends PropertiesIndex {
 			//a normal indexref should point to a data.properties file
 			if (l.endsWith(".properties"))
 				return Files.exists(l);
-			//but we also support indexrefs pointing just to a directory containing an index
+			// but we also support indexrefs pointing just to a directory containing an index
 			return Files.exists(l + "/data.properties");
 		}
 
