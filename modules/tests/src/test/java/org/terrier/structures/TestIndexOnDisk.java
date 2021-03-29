@@ -26,10 +26,24 @@
 package org.terrier.structures;
 
 import org.junit.Test;
+import org.terrier.querying.IndexRef;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
+import static org.junit.Assert.*;
 
 public class TestIndexOnDisk extends ApplicationSetupBasedTest {
+
+	@Test public void testIndexRefVariants() throws Exception
+	{
+		IndexOnDisk i1 = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH, "data");
+		i1.close();
+		IndexRef ir1 = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH + "/data.properties");
+		assertTrue(new IndexOnDisk.DiskIndexLoader().supports(ir1));
+		assertNotNull(IndexFactory.of(ir1));
+		IndexRef ir2 = IndexRef.of(ApplicationSetup.TERRIER_INDEX_PATH);
+		assertTrue(new IndexOnDisk.DiskIndexLoader().supports(ir2));
+		assertNotNull(IndexFactory.of(ir2));
+	}
 
 	@Test(expected=IllegalArgumentException.class) public void dirNotExists() throws Exception {
 		IndexOnDisk newIndex = IndexOnDisk.createNewIndex(ApplicationSetup.TERRIER_INDEX_PATH + "/tmp/", "data");
