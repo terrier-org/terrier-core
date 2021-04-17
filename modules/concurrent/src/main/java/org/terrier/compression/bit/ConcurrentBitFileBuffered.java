@@ -62,7 +62,10 @@ public class ConcurrentBitFileBuffered extends BitFileBuffered {
 	@Override
 	public BitIn readReset(long startByteOffset, byte startBitOffset, long endByteOffset, byte endBitOffset) {
 		final long range = endByteOffset - startByteOffset + (long)1;
-		return new ConcurrentBitInBuffered(file,startByteOffset,startBitOffset, range < buffer_size ? (int)range : buffer_size);
+		return new ConcurrentBitInBuffered(file, 
+			startByteOffset, 
+			startBitOffset, 
+			range < buffer_size ? (int)range : buffer_size);
 	}
 	
 	
@@ -72,7 +75,11 @@ public class ConcurrentBitFileBuffered extends BitFileBuffered {
 		final long actualBufferSize = (startByteOffset + buffer_size) > fileSize 
 			? (fileSize - startByteOffset) 
 			: buffer_size;
-		return new ConcurrentBitInBuffered(file,startByteOffset,startBitOffset, (int)actualBufferSize);
+		return new ConcurrentBitInBuffered(
+			file,
+			startByteOffset,
+			startBitOffset, 
+			(int)actualBufferSize);
 	}
 	
 	protected static class ConcurrentBitInBuffered extends BitInBuffered {
@@ -118,7 +125,7 @@ public class ConcurrentBitFileBuffered extends BitFileBuffered {
 			}catch(IOException ioe){
 				logger.error("Input/Output exception while reading from a random access file. Stack trace follows", ioe);
 			}
-		}	
+		}
 	
 		@Override
 		protected void incrByte(int i)
