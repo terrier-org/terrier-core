@@ -76,7 +76,7 @@ class ConcurrentMetaIndex implements MetaIndex {
 
 	public int getDocument(String key, String value) throws IOException {
 		synchronized (parent) {
-			return getDocument(key, value);
+			return parent.getDocument(key, value);
 		}
 	}
 

@@ -34,7 +34,7 @@ import org.terrier.applications.batchquerying.ParallelTRECQuerying;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.tests.BatchEndToEndTest;
 import org.terrier.utility.ApplicationSetup;
-@Ignore //this test fails on travis-ci
+//@Ignore //this test fails on travis-ci
 public class TestShakParallelTRECQuerying extends BatchEndToEndTest {
 
 	public TestShakParallelTRECQuerying()
@@ -45,7 +45,7 @@ public class TestShakParallelTRECQuerying extends BatchEndToEndTest {
 	
 	@Test public void testBasic() throws Exception {
 		
-		doTrecTerrierIndexing(new String[]{"-i"});
+		doTrecTerrierIndexing();
 		doRetrieval(retrievalTopicSets.toArray(new String[0]), new String[0]);
 		doEvaluation(7, System.getProperty("user.dir") + "/../../share/tests/shakespeare/test.shakespeare-merchant.all.qrels", 1.0f);
 		System.err.println("done");

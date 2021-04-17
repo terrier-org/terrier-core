@@ -145,6 +145,8 @@ public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 		Index index = IndexFactory.of(super.indexref);
 		ConcurrentIndexUtils.makeConcurrentForRetrieval(index);
 		this.queryingManager = new ThreadSafeManager(index);
+		//TODO
+		controls.put("matching", "org.terrier.matching.daat.ReentrantFull");
 	}
 
 	final void _processQueryAndWrite(final String queryId, final String query) 
@@ -168,6 +170,7 @@ public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 	@Override
 	protected void finishedQueries() {
 		
+		pool.shutdown();
 		//block here awaiting all threads to write results before closing the file
 		for (Future<?> f : runningQueries)
 			try {

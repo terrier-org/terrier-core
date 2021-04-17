@@ -35,7 +35,7 @@ import org.terrier.structures.IndexOnDisk;
 import org.terrier.tests.BatchEndToEndTest;
 import org.terrier.utility.ApplicationSetup;
 
-@Ignore 
+//@Ignore 
 //this test case does not pass on Travis-CI
 public class TestVaswaniParallelTRECQuerying extends BatchEndToEndTest {
 
@@ -47,7 +47,7 @@ public class TestVaswaniParallelTRECQuerying extends BatchEndToEndTest {
 	
 	@Test public void testBasicClassical() throws Exception {
 		
-		doTrecTerrierIndexing(new String[]{"-i"});
+		doTrecTerrierIndexing();
 		
 		//first do normal retrieval -- we dont specify the topics files in this case.
 		super.doRetrieval(new String[0], new String[0]);
