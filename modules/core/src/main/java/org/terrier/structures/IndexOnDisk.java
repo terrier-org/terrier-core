@@ -63,17 +63,26 @@ public class IndexOnDisk extends PropertiesIndex {
 				return false; //this is a multi-index
 			if (l.startsWith("http") || l.startsWith("https") || l.startsWith("concurrent"))
 				return false;
-			if (! l.endsWith(".properties"))
-				return false;
-			return Files.exists(l);
+			//a normal indexref should point to a data.properties file
+			if (l.endsWith(".properties"))
+				return Files.exists(l);
+			// but we also support indexrefs pointing just to a directory containing an index
+			return Files.exists(l + "/data.properties");
 		}
 
 		@Override
 		public Index load(IndexRef ref) {
 			String l = ref.toString();
 			File file = new File(l);
-			String path = file.getParent(); 
-			String prefix = file.getName().replace(".properties", "");
+			String path, prefix;
+			if (l.endsWith(".properties"))
+			{
+				path = file.getParent(); 
+				prefix = file.getName().replace(".properties", "");
+			} else {
+				path = l;
+				prefix = "data";
+			}
 			return IndexOnDisk.createIndex(path, prefix);			
 		}
 

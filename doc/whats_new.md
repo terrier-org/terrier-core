@@ -1,6 +1,12 @@
 What's New in Terrier
 =====================
 
+Terrier 5.5 - xx/xx/xxxx
+------------------------
+
+## Retrieval
+ - [#154](https://github.com/terrier-org/terrier-core/issues/154) Can an IndexRef find an index just in a directory? (with thanks to Vasileios Stamatis)
+
 Terrier 5.4 - 16/1/2021
 -----------------------
 Minor update addressing bugs identified through usage from PyTerrier and others.
