@@ -173,7 +173,7 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 	protected void createExtensionDocumentMapping()
 	{
 		String staticMappings = ApplicationSetup.getProperty("indexing.simplefilecollection.extensionsparsers",
-			"txt:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument," +
+			"txt:FileDocument,md:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument," +
 			"pdf:PDFDocument,html:TaggedDocument,htm:TaggedDocument,xhtml:TaggedDocument,xml:TaggedDocument,"+
 			"doc:POIDocument,ppt:POIDocument,xls:POIDocument,"+
 			"docx:POIDocument,pptx:POIDocument,xlsx:POIDocument,"+
