@@ -206,7 +206,7 @@ public abstract class BaseReentrantMatching implements Matching
 		//we need to sort at most RETRIEVED_SET_SIZE, or if we have retrieved
 		//less documents than RETRIEVED_SET_SIZE then we need to find the top 
 		//numberOfRetrievedDocuments.
-		int set_size = Math.min(RETRIEVED_SET_SIZE, state.numberOfRetrievedDocuments);
+		int set_size = Math.min(state.numberOfRequestedDocuments, state.numberOfRetrievedDocuments);
 		if (set_size == 0) 
 			set_size = state.numberOfRetrievedDocuments;
 		

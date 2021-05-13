@@ -120,6 +120,7 @@ public class ReentrantFull extends BaseReentrantMatching
         double threshold = 0.0d;
         final long requiredBitPattern = plm.getRequiredBitMask();
         final long negRequiredBitPattern = plm.getNegRequiredBitMask();
+		final int RETRIEVED_SET_SIZE = state.numberOfRequestedDocuments;
 		logger.debug("Requirement patterns: mustmatch="+ requiredBitPattern + " must not match="+negRequiredBitPattern);
         //int scored = 0;
         
