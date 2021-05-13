@@ -72,11 +72,6 @@ public abstract class BaseReentrantMatching implements Matching
 	 * file. */
 	protected static String dsmNamespace = "org.terrier.matching.dsms.";
 	
-	/** The maximum number of documents in the final retrieved set. It corresponds to the 
-	 * property <tt>matching.retrieved_set_size</tt>. The default value is 1000, however, setting
-	 * the property to 0 will return all matched documents. */
-	protected static int RETRIEVED_SET_SIZE;
-		
 	/** A property that enables to ignore the terms with a low IDF. Corresponds to
 	 * property <tt>ignore.low.idf.terms</tt>. Defaults to true. This can cause
 	 * some query terms to be omitted in small corpora. */
@@ -95,7 +90,10 @@ public abstract class BaseReentrantMatching implements Matching
 		/** The result set.*/
 		public ResultSet resultSet;
 
-		/** The number of retrieved documents for a query.*/
+		/** The number of documents that are requested to be retrieved for this query.*/
+		public int numberOfRequestedDocuments = 0;
+
+		/** The number of actually retrieved documents for this query.*/
 		public int numberOfRetrievedDocuments = 0;
 
 		public long totalTime = 0;
@@ -189,7 +187,10 @@ public abstract class BaseReentrantMatching implements Matching
 		state.updateStartTime(System.currentTimeMillis());
 		state.queryTerms = queryTerms;
 		
-		RETRIEVED_SET_SIZE   = Integer.parseInt(ApplicationSetup.getProperty("matching.retrieved_set_size", "1000"));
+		state.numberOfRequestedDocuments = Integer.parseInt(ApplicationSetup.getProperty("matching.retrieved_set_size", "1000"));
+		if (queryTerms.getMatchingRequestSize() > -1) {
+			state.numberOfRequestedDocuments = queryTerms.getMatchingRequestSize();
+		}
 		IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","false"));
 		MATCH_EMPTY_QUERY    = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
 		return state;
