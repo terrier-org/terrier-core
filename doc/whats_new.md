@@ -1,10 +1,18 @@
 What's New in Terrier
 =====================
 
-Terrier 5.5 - xx/xx/xxxx
+Terrier 5.5 - xx/xx/2021
 ------------------------
 
+Minor update addressing bugs identified through usage from PyTerrier.
+
+## Indexing
+ - [#152](https://github.com/terrier-org/terrier-core/issues/157) improvements on abstract metadata from TaggedDocument and FileDocument
+
 ## Retrieval
+
+ - [#152](https://github.com/terrier-org/terrier-core/issues/152) QueryParserException should note the qid (with thanks to @TimMo-prog)
+ - [#153](https://github.com/terrier-org/terrier-core/issues/152) improve error message when a non-fields index is supplied to SingleFieldModel (with thanks to @TimMo-prog)
  - [#154](https://github.com/terrier-org/terrier-core/issues/154) Can an IndexRef find an index just in a directory? (with thanks to Vasileios Stamatis)
 
 Terrier 5.4 - 16/1/2021
