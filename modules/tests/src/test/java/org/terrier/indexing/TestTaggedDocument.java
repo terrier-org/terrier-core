@@ -198,5 +198,51 @@ public class TestTaggedDocument extends BaseTestDocument {
 		
 		
 	}
-	
+
+	@Test public void testAbstractCreation_pyt_example_1abstract() {
+		
+		ApplicationSetup.setProperty("TrecDocTags.process", "");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts", "body");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.tags", "ELSE");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.lengths", "40");
+		
+		Document d;
+		
+		d = makeDocument(
+				"<html>\n"+
+				"<head>\n"+
+				"	<title>test title</title>\n"+
+				"</head>\n"+
+				"<body>\n"+
+				"	test body\n"+
+				"</body>\n"+
+				"</html>", 
+				ENGLISH_TOKENISER);
+		while(! d.endOfDocument()) d.getNextTerm();
+		assertEquals("test title test body", d.getProperty("body").replaceAll("\\s+", " "));		
+	}
+
+	@Test public void testAbstractCreation_pyt_example_2abstracts() {
+		
+		ApplicationSetup.setProperty("TrecDocTags.process", "");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts", "title,body");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.tags", "title,ELSE");
+		ApplicationSetup.setProperty("TaggedDocument.abstracts.lengths", "20,40");
+		
+		Document d;
+		
+		d = makeDocument(
+				"<html>\n"+
+				"<head>\n"+
+				"	<title>test title</title>\n"+
+				"</head>\n"+
+				"<body>\n"+
+				"	test body\n"+
+				"</body>\n"+
+				"</html>", 
+				ENGLISH_TOKENISER);
+		while(! d.endOfDocument()) d.getNextTerm();
+		assertEquals("test title", d.getProperty("title").replaceAll("\\s+", " "));
+		assertEquals("test body", d.getProperty("body").replaceAll("\\s+", " "));
+	}	
 }
