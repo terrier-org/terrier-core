@@ -59,7 +59,7 @@ public class Full extends BaseMatching
 			logger.warn(this.getClass().getName() + " is not suitable for indices with large numbers of documents (> "+WARN_DOCS+") "
 					+"- consider using org.terrier.matching.daat.Full");
 		}
-		resultSet = new AccumulatorResultSet(collectionStatistics.getNumberOfDocuments());		
+		
 	}
 
 	/** {@inheritDoc} */
@@ -76,31 +76,34 @@ public class Full extends BaseMatching
 	public ResultSet match(String queryNumber, MatchingQueryTerms queryTerms) throws IOException 
 	{
 		final long starttime = System.currentTimeMillis();
-		initialise(queryTerms);
+		MatchingState state = initialise(queryTerms);
 		
 		plm = new PostingListManager(index, super.collectionStatistics, queryTerms);
 		if (MATCH_EMPTY_QUERY && plm.size() == 0)
 		{
 			// Check whether we need to match an empty query. If so, then return the existing result set.
-			resultSet = new CollectionResultSet(collectionStatistics.getNumberOfDocuments());
+			ResultSet resultSet = new CollectionResultSet(collectionStatistics.getNumberOfDocuments());
 			resultSet.setExactResultSize(collectionStatistics.getNumberOfDocuments());
 			resultSet.setResultSize(collectionStatistics.getNumberOfDocuments());
 			return resultSet;
 		}
 		//a hook for subclasses
-		initialisePostings(plm);
+		initialisePostings(state);
+
+		AccumulatorResultSet resultSet = new AccumulatorResultSet(collectionStatistics.getNumberOfDocuments());
+		state.resultSet = resultSet;
 		
 		//DO NOT prepare the posting lists for TAAT retrieval
 		plm.prepare(false);
 				
 		for(int i=0; i< plm.size(); i++)
 		{			
-			assignScores(i, (AccumulatorResultSet) resultSet, plm.getPosting(i));
+			assignScores(state, i, resultSet, plm.getPosting(i));
 		}
 
 		resultSet.initialise();
 		plm.close();
-		this.numberOfRetrievedDocuments = resultSet.getExactResultSize();
+		state.numberOfRetrievedDocuments = resultSet.getExactResultSize();
 		final long requiredBitPattern = plm.getRequiredBitMask();
 		final long requiredNegBitPattern = plm.getNegRequiredBitMask();
 		if (requiredBitPattern > 0 || requiredNegBitPattern > 0)
@@ -125,13 +128,13 @@ public class Full extends BaseMatching
 				}
 			}
 		}
-		finalise(queryTerms);
+		finalise(state);
 		if (logger.isDebugEnabled())
-			logger.debug("Time to match "+numberOfRetrievedDocuments+" results: " + (System.currentTimeMillis() - starttime) + "ms");
+			logger.debug("Time to match "+state.numberOfRetrievedDocuments+" results: " + (System.currentTimeMillis() - starttime) + "ms");
 		return resultSet;
 	}
 	
-	protected void assignScores(int i, AccumulatorResultSet rs, final IterablePosting postings) throws IOException
+	protected void assignScores(MatchingState state, int i, AccumulatorResultSet rs, final IterablePosting postings) throws IOException
 	{
 		int docid;
 		double score;
@@ -146,9 +149,9 @@ public class Full extends BaseMatching
 			docid = postings.getId();
 			//logger.info("Docid=" + docid + " score=" + score);
 			if ((!rs.scoresMap.contains(docid)) && (score != Double.NEGATIVE_INFINITY))
-				numberOfRetrievedDocuments++;
+				state.numberOfRetrievedDocuments++;
 			else if ((rs.scoresMap.contains(docid)) && (score == Double.NEGATIVE_INFINITY))
-				numberOfRetrievedDocuments--;
+				state.numberOfRetrievedDocuments--;
 
 			rs.scoresMap.adjustOrPutValue(docid, score, score);
 			rs.occurrencesMap.put(docid, (short)(rs.occurrencesMap.get(docid) | mask));
@@ -156,7 +159,7 @@ public class Full extends BaseMatching
 	}
 
 	@Override
-	protected void initialisePostings(PostingListManager plm) {
+	protected void initialisePostings(MatchingState plm) {
 		
 	}
 }

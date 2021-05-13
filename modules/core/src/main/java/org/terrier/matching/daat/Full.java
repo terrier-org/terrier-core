@@ -58,19 +58,25 @@ import org.terrier.structures.postings.IterablePosting;
  */
 public class Full extends BaseMatching
 {
+	static class DAATFullMatchingState extends BaseMatching.MatchingState {
+		/** posting list manager opens and scores postings */
+		PostingListManager plm;
+	}
+
 	/** Create a new Matching instance based on the specified index */
 	public Full(Index index) 
 	{
 		super(index);
 	}
 	
-	/** posting list manager opens and scores postings */
-	PostingListManager plm;
+	@Override
+	protected MatchingState initialiseState()
+	{
+		return new DAATFullMatchingState();
+	}
 	
 	@Override
-	protected void initialisePostings(PostingListManager plm) {
-		
-	}	
+	protected void initialisePostings(MatchingState plm) {}	
 	
 	/** {@inheritDoc} */
 	@SuppressWarnings("resource") //IterablePosting need not be closed
@@ -78,31 +84,27 @@ public class Full extends BaseMatching
 	public ResultSet match(String queryNumber, MatchingQueryTerms queryTerms) throws IOException 
 	{
 		// The first step is to initialise the arrays of scores and document ids.
-		initialise(queryTerms);
-		plm = new PostingListManager(index, super.collectionStatistics, queryTerms);
+		DAATFullMatchingState state = (DAATFullMatchingState) initialise(queryTerms);
+		final PostingListManager plm = state.plm = new PostingListManager(index, super.collectionStatistics, queryTerms);
 		logger.debug("plm initialised");
 		plm.prepare(true);
 		logger.debug("plm prepared");
 		
 		// Check whether we need to match an empty query. If so, then return the existing result set.
 		if (MATCH_EMPTY_QUERY && plm.size() == 0) {
-			resultSet.setExactResultSize(collectionStatistics.getNumberOfDocuments());
-			resultSet.setResultSize(collectionStatistics.getNumberOfDocuments());
-			return resultSet;
+			state.resultSet.setExactResultSize(collectionStatistics.getNumberOfDocuments());
+			state.resultSet.setResultSize(collectionStatistics.getNumberOfDocuments());
+			return state.resultSet;
 		}
 		
 		//a hook for subclasses
-		initialisePostings(plm);
-		
-		//the number of documents with non-zero score.
-		numberOfRetrievedDocuments = 0;
+		initialisePostings(state);
 		
 		// The posting list min heap for minimum selection
         LongPriorityQueue postingHeap = new LongHeapPriorityQueue();
 		
 		// The posting list iterator array (one per term) and initialization
 		for(int i : plm.getMatchingTerms()) {
-        //for (int i = 0; i < plm.size(); i++) {
 			long docid = plm.getPosting(i).getId();
 			//some ephemeral posting lists may not match any documents; skip these.
 			if (docid == IterablePosting.EOL)
@@ -118,19 +120,20 @@ public class Full extends BaseMatching
         double threshold = 0.0d;
         final long requiredBitPattern = plm.getRequiredBitMask();
         final long negRequiredBitPattern = plm.getNegRequiredBitMask();
+		final int RETRIEVED_SET_SIZE = state.numberOfRequestedDocuments;
 		logger.debug("Requirement patterns: mustmatch="+ requiredBitPattern + " must not match="+negRequiredBitPattern);
         //int scored = 0;
         
         while (currentDocId != -1)  {
             // We create a new candidate for the doc id considered
-            CandidateResult currentCandidate = makeCandidateResult(currentDocId);
+            CandidateResult currentCandidate = makeCandidateResult(state, currentDocId);
             
             int currentPostingListIndex = (int) (postingHeap.firstLong() & 0xFFFF), nextDocid;
             //System.err.println("currentDocid="+currentDocId+" currentPostingListIndex="+currentPostingListIndex + " postingHeap.size()= " + postingHeap.size());
             currentPosting = plm.getPosting(currentPostingListIndex); 
             //scored++;
             do {
-            	assignScore(currentPostingListIndex, currentCandidate);
+            	assignScore(state, currentPostingListIndex, currentCandidate);
             	long newDocid = currentPosting.next();
             	postingHeap.dequeueLong();
                 if (newDocid != IterablePosting.EOL)
@@ -155,7 +158,7 @@ public class Full extends BaseMatching
             			//these are postings that we need to keep/score, but which wont change the threshold
             			//often these might be so FAT can score them later
             			if (plm.getPosting(i).next(currentDocId) == currentDocId)
-            				assignNotScore(i, currentCandidate);
+            				assignNotScore(state, i, currentCandidate);
             		}
 	            	//System.err.println("New document " + currentCandidate.getDocId() + " with score " + currentCandidate.getScore() + " passes threshold of " + threshold);
 	        		candidateResultList.add(currentCandidate);
@@ -178,23 +181,24 @@ public class Full extends BaseMatching
         plm.close();
         
         // Fifth, we build the result set
-        resultSet = makeResultSet(candidateResultList);
-        numberOfRetrievedDocuments = resultSet.getScores().length;
-        finalise(queryTerms);
-		return resultSet;
+        state.resultSet = makeResultSet(state, candidateResultList);
+        state.numberOfRetrievedDocuments = state.resultSet.getScores().length;
+        finalise(state);
+		return state.resultSet;
 	}
 
 	protected CandidateResultSet makeResultSet(
-			Queue<CandidateResult> candidateResultList) {
+			final DAATFullMatchingState state,
+			final Queue<CandidateResult> candidateResultList) {
 		return new CandidateResultSet(candidateResultList);
 	}
 
-	protected CandidateResult makeCandidateResult(int currentDocId) {
+	protected CandidateResult makeCandidateResult(final DAATFullMatchingState state, final int currentDocId) {
 		assert currentDocId != IterablePosting.EOL;
 		return new CandidateResult(currentDocId);
 	}
 	
-	protected void assignNotScore(final int i, final CandidateResult cc) throws IOException {
+	protected void assignNotScore(final DAATFullMatchingState state, final int i, final CandidateResult cc) throws IOException {
         cc.updateOccurrence((i < 16) ? (short)(1 << i) : 0);
 
 	}
@@ -204,14 +208,14 @@ public class Full extends BaseMatching
 	 * @param cc the candidate result object for this document
 	 * @throws IOException
 	 */
-	protected void assignScore(final int i, CandidateResult cc) throws IOException
+	protected void assignScore(final DAATFullMatchingState state, final int i, CandidateResult cc) throws IOException
     {
-        cc.updateScore(plm.score(i));
-        assignNotScore(i, cc);
+        cc.updateScore(state.plm.score(i));
+        assignNotScore(state, i, cc);
     }
 	
 	/** returns the docid of the lowest posting */
-	protected final int selectMinimumDocId(final LongPriorityQueue postingHeap)
+	protected static final int selectMinimumDocId(final LongPriorityQueue postingHeap)
     {
         return (postingHeap.isEmpty()) ? -1 : (int) (postingHeap.firstLong() >>> 32);
     }
@@ -219,7 +223,7 @@ public class Full extends BaseMatching
 	/** {@inheritDoc} */
 	@Override
 	public String getInfo() {
-		return "daat.Full";
+		return "daat.ReentrantFull";
 	}
 
 }

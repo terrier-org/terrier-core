@@ -51,7 +51,10 @@ import org.terrier.structures.postings.WritablePosting;
  */
 public class FatFull extends Full {
 
-	boolean[] fields;
+	static class FatMatchingState extends Full.DAATFullMatchingState {
+		boolean[] fields;
+	}
+	
 	final int fieldCount;
 	
 	public FatFull(Index index) {
@@ -59,29 +62,35 @@ public class FatFull extends Full {
 		fieldCount = super.collectionStatistics.getNumberOfFields(); 
 	}
 	
-	
+	@Override
+	protected MatchingState initialiseState()
+	{
+		return new FatMatchingState();
+	}
 
 	@Override
-	protected void initialisePostings(PostingListManager plm) {
-		super.initialisePostings(plm);
-		fields = new boolean[plm.size()];
+	protected void initialisePostings(MatchingState _state) {
+		FatMatchingState state = (FatMatchingState)_state;
+		super.initialisePostings(state);
+		PostingListManager plm = state.plm;
+		state.fields = new boolean[plm.size()];
 		for(int i=0;i<plm.size();i++)
 		{
-			fields[i] = plm.getPosting(i) instanceof FieldPosting;
+			state.fields[i] = plm.getPosting(i) instanceof FieldPosting;
 		}		
 	}
 
-
-
 	@Override
-	protected CandidateResult makeCandidateResult(int currentDocId) {
-		return new FatCandidateResult(currentDocId, plm.getNumTerms());
+	protected CandidateResult makeCandidateResult(DAATFullMatchingState state, int currentDocId) {
+		return new FatCandidateResult(currentDocId, state.plm.getNumTerms());
 	}	
 	
 	@Override
 	protected CandidateResultSet makeResultSet(
+			DAATFullMatchingState state,
 			Queue<CandidateResult> candidateResultList) 
 	{
+		PostingListManager plm = state.plm;
 		int terms = plm.getNumTerms();
 		String[] queryTerms = new String[terms];
 		EntryStatistics[] entryStats = new EntryStatistics[terms];
@@ -101,26 +110,27 @@ public class FatFull extends Full {
 	}
 	
 	@Override
-	protected void assignScore(final int i, final CandidateResult cc) throws IOException {
+	protected void assignScore(DAATFullMatchingState state, final int i, final CandidateResult cc) throws IOException {
 		//update the score as normal
-		cc.updateScore(plm.score(i));
-		assignNotScore(i, cc);
+		cc.updateScore(state.plm.score(i));
+		assignNotScore(state, i, cc);
 	}
 	
 	@Override
-	protected void assignNotScore(final int i, final CandidateResult cc) throws IOException {
+	protected void assignNotScore(final DAATFullMatchingState _state, final int i, final CandidateResult cc) throws IOException {
 	
+		final FatMatchingState state = (FatMatchingState)_state;
         cc.updateOccurrence((i < 16) ? (short)(1 << i) : 0);
         
         //get a deep copy of the posting
-        final Posting p = plm.getPosting(i);
+        final Posting p = state.plm.getPosting(i);
         
         //writable postings don't copy or retain document length. Make this not so.
         final WritablePosting wp = p.asWritablePosting();
         assert wp.getId() == cc.getDocId() : "Posting does not have same docid as candidate result";
         
         wp.setDocumentLength(p.getDocumentLength());
-        if (fields[i])
+        if (state.fields[i])
         {
         	final int[] fieldLengths =  ((FieldPosting)p).getFieldLengths();
         	final int[] newFieldLengths = new int[fieldCount];
