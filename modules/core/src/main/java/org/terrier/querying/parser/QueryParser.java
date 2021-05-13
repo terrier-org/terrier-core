@@ -47,30 +47,45 @@ public class QueryParser
 	 * @throws QueryParserException when the query cannot be parsed */
 	public static void parseQuery(final String query, final Request srq) throws QueryParserException
 	{
-		Query q = parseQuery(query);
+		Query q = parseQuery(query, srq.getQueryID());
 		srq.setQuery(q);
 	}
 
-    /** Parse the specified query.
+	/** Parse the specified query.
 	  * @since 2.0
 	  * @param query The string query to parse
 	  * @throws QueryParserException when the query cannot be parsed
 	  */
-    public static Query parseQuery(String query) throws QueryParserException
+	public static Query parseQuery(String query) throws QueryParserException
+    {
+		return parseQuery(query, (String)null);
+	}
+
+    /** Parse the specified query. Qid is optionally provided for exception handling
+	  * @since 5.5
+	  * @param query The string query to parse
+	  * @param qid qid of this query	  
+	  * @throws QueryParserException when the query cannot be parsed
+	  */
+    public static Query parseQuery(String query, String qid) throws QueryParserException
     {
         Query rtr = null;
         
         try{
         	rtr = new TerrierQLParser(query).parse();
-        } catch (Exception e) {
-            throw new QueryParserException("Failed to process '"+query+"'",e);
-        } catch (TokenMgrError tme) {
-        	throw new QueryParserException("Failed to process '"+query+"'",tme);
-        }
-	if (rtr == null)
-	{
-		throw new QueryParserException("Failed to process '"+query+"'");
-	}
+        } catch (Exception|TokenMgrError e) {
+			String suffix = "'" + query + "'";
+			if (qid != null)
+				suffix = "qid " + qid + " " + suffix;
+            throw new QueryParserException("Failed to process " + suffix,e);
+		}
+        if (rtr == null)
+		{
+			String suffix = "'" + query + "'";
+			if (qid != null)
+				suffix = "qid " + qid + " " + suffix;
+			throw new QueryParserException("Failed to process " + suffix);
+		}
         return rtr;
     }
 }
