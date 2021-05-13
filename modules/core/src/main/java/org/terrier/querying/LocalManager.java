@@ -488,17 +488,10 @@ public class LocalManager implements Manager
 			Model wmodel = getWeightingModel(rq);
 			
 			/** changed functionality for terrier 5.2 batchretrieve, #79 */
-			if (rq.getControl("c") != null && rq.getControl("c").length() > 0)
+			if (rq.getControl("c").length() > 0)
 			{
 				wmodel.setParameter(Double.parseDouble(rq.getControl("c")));
 			}
-			
-			// this allows matching to only operate on scoring a subset of the query terms
-//			if (rq.getControl("matchingtags").length() > 0)
-//			{
-//				String[] tags = rq.getControl("matchingtags").split(";");
-//				mqt.getMatchingTags().addAll(Lists.newArrayList(tags));
-//			}
 			
 			Matching matching = getMatchingModel(rq);
 			if (logger.isDebugEnabled()){
@@ -515,7 +508,12 @@ public class LocalManager implements Manager
 					+ BaseMatching.BASE_MATCHING_TAG + " to all terms");
 				mqt.stream().forEach(me -> me.getValue().setTag(BaseMatching.BASE_MATCHING_TAG));
 			}
-	
+			
+			if (rq.getControl("end").length() > 0)
+			{
+				int docs = Integer.parseInt(rq.getControl("end"));
+				mqt.setMatchingRequestSize(docs+1);
+			}
 			mqt.setQuery(q);
 			mqt.normaliseTermWeights();
 			try{
