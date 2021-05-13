@@ -126,18 +126,22 @@ public class SingleFieldModel extends WeightingModel {
 	@Override
 	public void setEntryStatistics(EntryStatistics _es) {
 		super.setEntryStatistics(_es);
-		FieldEntryStatistics fes = (FieldEntryStatistics)_es;
-		long TF = 0;
-		int [] TFf = fes.getFieldFrequencies();
-		for(int fieldId : activeFieldIds)
-		{
-			TF += getOverflowed(TFf[fieldId]);
+		try{
+			FieldEntryStatistics fes = (FieldEntryStatistics)_es;
+			long TF = 0;
+			int [] TFf = fes.getFieldFrequencies();
+			for(int fieldId : activeFieldIds)
+			{
+				TF += getOverflowed(TFf[fieldId]);
+			}
+			super.termFrequency = TF;
+			super.documentFrequency = fes.getDocumentFrequency();
+			BasicLexiconEntry les = new BasicLexiconEntry();
+			les.setStatistics(fes.getDocumentFrequency(), (int)TF);
+			basicModel.setEntryStatistics(les);
+		} catch (ClassCastException cce) {
+			throw new IllegalStateException("Index must have 1 or more fields. Your index has not been indexed with fields enabled", cce);
 		}
-		super.termFrequency = TF;
-		super.documentFrequency = fes.getDocumentFrequency();
-		BasicLexiconEntry les = new BasicLexiconEntry();
-		les.setStatistics(fes.getDocumentFrequency(), (int)TF);
-		basicModel.setEntryStatistics(les);
 	}
 	
 	@Override

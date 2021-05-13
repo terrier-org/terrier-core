@@ -360,6 +360,12 @@ public class TestMemoryFieldsIndex extends ApplicationSetupBasedTest {
 	 */
 	@Test
 	public void test_compare2() throws Exception {
+
+		//we skip this test on Windows
+		String osname = System.getProperty("os.name");
+        if (osname.contains("Windows"))
+			return;
+
 		MemoryFieldsIndex mem = TestUtils.memoryFields(collection);
 		assertNotNull(mem);
 		String prefix = "memoryFields_compare2_" + System.currentTimeMillis();

@@ -34,8 +34,8 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
 import java.util.Set;
+import com.google.common.collect.Sets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +60,8 @@ public class CheckClosedStreams extends ApplicationSetupBasedTest implements Ter
 		assertTrue(CheckClosedStreams.allClosed());
 	}
 
-	static Set<CloseCheckFilterInputStream> inputStreams = new HashSet<CloseCheckFilterInputStream>();
-	static Set<CloseCheckFilterOutputStream> outputStreams = new HashSet<CloseCheckFilterOutputStream>();
+	static final Set<CloseCheckFilterInputStream> inputStreams = Sets.newConcurrentHashSet();
+	static final Set<CloseCheckFilterOutputStream> outputStreams = Sets.newConcurrentHashSet();
 	
 	public static class CloseCheckFilterInputStream extends FilterInputStream
 	{
@@ -95,8 +95,7 @@ public class CheckClosedStreams extends ApplicationSetupBasedTest implements Ter
 			super.close();
 			outputStreams.remove(this);
 		}
-	}
-	
+	}	
 	
 	public static void enable()
 	{

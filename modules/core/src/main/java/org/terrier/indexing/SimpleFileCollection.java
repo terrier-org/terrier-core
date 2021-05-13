@@ -62,6 +62,13 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 	  * the class name specified does not contain any periods ('.') */
 	public final static String NAMESPACE_DOCUMENTS = "org.terrier.indexing.";
 
+	/** What to parse each file type with */
+	public final static String DEFAULT_MAPPING_PROPERTY = "txt:FileDocument,md:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument," +
+		"pdf:PDFDocument,html:TaggedDocument,htm:TaggedDocument,xhtml:TaggedDocument,xml:TaggedDocument,"+
+		"doc:POIDocument,ppt:POIDocument,xls:POIDocument,"+
+		"docx:POIDocument,pptx:POIDocument,xlsx:POIDocument,"+
+		"pub:POIDocument,vsd:POIDocument";
+
 	/** The list of files to index.*/
 	protected LinkedList<String> FileList = new LinkedList<String>();
 
@@ -172,13 +179,7 @@ public class SimpleFileCollection implements Collection/*, DocumentExtractor*/
 	  * explicit parser is set. */
 	protected void createExtensionDocumentMapping()
 	{
-		String staticMappings = ApplicationSetup.getProperty("indexing.simplefilecollection.extensionsparsers",
-			"txt:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument," +
-			"pdf:PDFDocument,html:TaggedDocument,htm:TaggedDocument,xhtml:TaggedDocument,xml:TaggedDocument,"+
-			"doc:POIDocument,ppt:POIDocument,xls:POIDocument,"+
-			"docx:POIDocument,pptx:POIDocument,xlsx:POIDocument,"+
-			"pub:POIDocument,vsd:POIDocument"
-			);
+		String staticMappings = ApplicationSetup.getProperty("indexing.simplefilecollection.extensionsparsers", DEFAULT_MAPPING_PROPERTY);
 		String defaultMapping = ApplicationSetup.getProperty("indexing.simplefilecollection.defaultparser","");
 		if (staticMappings.length() > 0)
 		{

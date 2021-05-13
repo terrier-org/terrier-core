@@ -110,6 +110,23 @@ public class TestManager extends ApplicationSetupBasedTest {
 			return super.score(tf, docLength);
 		}
 	};
+
+	@Test public void testNumResults() throws Exception {
+		Index index = IndexTestUtils.makeIndex(
+				new String[]{"doc1", "doc2"}, 
+				new String[]{"The quick brown fox jumps over the lazy dog", 
+				"The quick brown dog jumps over the lazy fox"});
+		Manager m = new LocalManager(index);
+		SearchRequest srq;
+		srq = m.newSearchRequestFromQuery("brown");
+		m.runSearchRequest(srq);		
+		assertEquals(2, ((Request) srq).getResultSet().getResultSize());
+
+		srq = m.newSearchRequestFromQuery("brown");
+		srq.setControl("end", "0");
+		m.runSearchRequest(srq);
+		assertEquals(1, ((Request) srq).getResultSet().getResultSize());
+	}
 	
 	//TR-472 Request not passed to the WeightingModel
 	@Test public void testIndexAndRequestAreSet() throws Exception {

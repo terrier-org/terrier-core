@@ -518,7 +518,8 @@ public class TaggedDocument implements Document {
 	 * @param tag - the tag that this text came from
 	 */
 	protected void saveToAbstract(String text, String tag) {
-		
+		//this prevents whitespace consuming the abstract capacity
+		text = text.trim();
 		if (tag != null && abstractName2Index.containsKey(tag)) {
 			int i = abstractName2Index.get(tag);
 			final int maxAbstractLength = abstractlengths[i];
