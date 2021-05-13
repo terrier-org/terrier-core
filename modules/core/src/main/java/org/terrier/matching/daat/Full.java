@@ -223,7 +223,7 @@ public class Full extends BaseMatching
 	/** {@inheritDoc} */
 	@Override
 	public String getInfo() {
-		return "daat.ReentrantFull";
+		return "daat.Full";
 	}
 
 }
