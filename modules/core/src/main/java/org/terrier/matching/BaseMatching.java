@@ -76,7 +76,7 @@ public abstract class BaseMatching implements Matching
 	/** The maximum number of documents in the final retrieved set. It corresponds to the 
 	 * property <tt>matching.retrieved_set_size</tt>. The default value is 1000, however, setting
 	 * the property to 0 will return all matched documents. */
-	protected static int RETRIEVED_SET_SIZE;
+	protected int RETRIEVED_SET_SIZE;
 		
 	/** A property that enables to ignore the terms with a low IDF. Corresponds to
 	 * property <tt>ignore.low.idf.terms</tt>. Defaults to true. This can cause
@@ -238,7 +238,10 @@ public abstract class BaseMatching implements Matching
 		
 		updateStartTime(System.currentTimeMillis());
 		
-		RETRIEVED_SET_SIZE   = Integer.parseInt(ApplicationSetup.getProperty("matching.retrieved_set_size", "1000"));
+		RETRIEVED_SET_SIZE = Integer.parseInt(ApplicationSetup.getProperty("matching.retrieved_set_size", "1000"));
+		if (queryTerms.getMatchingRequestSize() > -1) {
+			RETRIEVED_SET_SIZE = queryTerms.getMatchingRequestSize();
+		}
 		IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","false"));
 		MATCH_EMPTY_QUERY    = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
 		

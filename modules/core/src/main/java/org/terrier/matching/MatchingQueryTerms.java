@@ -265,6 +265,9 @@ implements Serializable,Cloneable
 	protected String queryId = null;
 	
 	protected Request rq = null;
+
+	/** number of documents to request matching provides. -1 means default. */
+	protected int numDocsRequest = -1;
 	
 	protected Set<String> defaultTags = new HashSet<>(Arrays.asList(BaseMatching.BASE_MATCHING_TAG));
 		
@@ -316,6 +319,14 @@ implements Serializable,Cloneable
 	public void setRequest(Request r)
 	{
 		this.rq = r;
+	}
+
+	public int getMatchingRequestSize() {
+		return numDocsRequest;
+	}
+
+	public void setMatchingRequestSize(int numDocs) {
+		numDocsRequest = numDocs;
 	}
 	
 	/**
