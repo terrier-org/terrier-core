@@ -210,12 +210,12 @@ public class TestTaggedDocument extends BaseTestDocument {
 		
 		d = makeDocument(
 				"<html>\n"+
-				"<head>\n"+
-				"	<title>test title</title>\n"+
-				"</head>\n"+
-				"<body>\n"+
-				"	test body\n"+
-				"</body>\n"+
+				"    <head>\n"+
+				"	     <title>test title</title>\n"+
+				"    </head>\n"+
+				"    <body>\n"+
+				"        test body\n"+
+				"    </body>\n"+
 				"</html>", 
 				ENGLISH_TOKENISER);
 		while(! d.endOfDocument()) d.getNextTerm();

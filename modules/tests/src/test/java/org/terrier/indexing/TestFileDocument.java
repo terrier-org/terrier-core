@@ -66,7 +66,6 @@ public class TestFileDocument extends BaseTestDocument {
 	
 	@Test public void testMulipleTermsAbstracts()
 	{
-		//System.err.println("testMulipleTermsAbstracts");
 		ApplicationSetup.setProperty("FileDocument.abstract", "SUPERAWSOMEHEADER");
 		ApplicationSetup.setProperty("FileDocument.abstract.length", "12");
 		Document d = makeDocument("Hello there, mr wolf", ENGLISH_TOKENISER);
@@ -76,6 +75,20 @@ public class TestFileDocument extends BaseTestDocument {
 			d.getNextTerm();
 		}
 		assertEquals("Hello there,", d.getProperty("SUPERAWSOMEHEADER"));
+		
+	}
+
+	@Test public void testMulipleTermsAbstractsFullLength()
+	{
+		ApplicationSetup.setProperty("FileDocument.abstract", "SUPERAWSOMEHEADER");
+		ApplicationSetup.setProperty("FileDocument.abstract.length", "60");
+		Document d = makeDocument("Hello there, mr wolf", ENGLISH_TOKENISER);
+		assertFalse(d.endOfDocument());
+		while(! d.endOfDocument())
+		{
+			d.getNextTerm();
+		}
+		assertEquals("Hello there, mr wolf", d.getProperty("SUPERAWSOMEHEADER"));
 		
 	}
 	

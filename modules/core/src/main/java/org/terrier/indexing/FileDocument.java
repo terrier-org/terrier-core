@@ -162,27 +162,25 @@ public class FileDocument implements Document {
 		@Override
 		public int read() throws IOException {
 			final int readChar = underlyingStream.read();
-			if (abstractwritten<abstractlength) {
+			if (readChar==-1) {
+				setProperty(abstractname, abstractText.toString());
+			} 
+			else if (abstractwritten<abstractlength) {
 				abstractText.append(((char)readChar));
 				abstractwritten++;
-			}
-			if (readChar==-1)
-			{
-				setProperty(abstractname, abstractText.toString());
 			}
 			return readChar;
 		}
 
 		@Override
 		public int read(char[] cbuf, int off, int len) throws IOException {
-			final int readChar = underlyingStream.read(cbuf,off,len);
-			if (abstractwritten<abstractlength) {
-				abstractText.append(cbuf, off, len);
-				abstractwritten++;
-			}
+			final int readChar = underlyingStream.read(cbuf,off,len);			
 			if (readChar==-1)
 			{	
 				setProperty(abstractname, abstractText.toString());
+			} else if (abstractwritten<abstractlength) {
+				abstractText.append(cbuf, off, len);
+				abstractwritten++;
 			}
 			return readChar;
 		}
