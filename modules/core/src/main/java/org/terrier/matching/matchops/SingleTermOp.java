@@ -162,9 +162,9 @@ public class SingleTermOp extends Operator {
 			qtp.stats = entryStats = t;
 		for (WeightingModel w : wmodels)
 		{
-			w.setEntryStatistics(entryStats);
-			w.setKeyFrequency(qtp.weight);
 			w.setCollectionStatistics(collectionStatistics);
+			w.setEntryStatistics(entryStats);
+			w.setKeyFrequency(qtp.weight);			
 			IndexUtil.configure(index, w);
 			//NB: we dont prepare the weighting model - PLM is now responsible for that
 		}

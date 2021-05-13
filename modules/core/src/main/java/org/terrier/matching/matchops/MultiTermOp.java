@@ -154,9 +154,9 @@ public abstract class MultiTermOp extends Operator {
 			logger.debug(this.getClass().getSimpleName() + " term " + Arrays.toString(terms) + " stats " + entryStats.toString() + " weight " + qtp.weight);
 		for (WeightingModel w : wmodels)
 		{
+			w.setCollectionStatistics(collectionStatistics);
 			w.setEntryStatistics(entryStats);
 			w.setKeyFrequency(qtp.weight);
-			w.setCollectionStatistics(collectionStatistics);
 			IndexUtil.configure(index, w);
 			//NB: we dont prepare the weighting model - PLM is now responsible for that
 		}
