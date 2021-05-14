@@ -200,7 +200,7 @@ public class RandomDataInputMemory extends DataInputStream implements RandomData
     }
      
     /** class which allows seeking over a ByteArrayInputStream */
-    private static class SeeakableByteArrayInputStream extends ByteArrayInputStream implements Seekable
+    public static class SeeakableByteArrayInputStream extends ByteArrayInputStream implements Seekable
     {
         public SeeakableByteArrayInputStream(byte[] buf) 
         {

@@ -32,6 +32,8 @@ import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+import java.nio.ByteBuffer;
 import org.terrier.utility.Files.FSCapability;
 
 /** This is a Terrier File Abstraction Layer implementation of the local file system. The file system implementation for the 
@@ -55,9 +57,21 @@ public class LocalFileSystem implements FileSystem, FSCapability
 		extends RandomAccessFile 
 		implements RandomDataOutput
 	{
+		final FileChannel channel;
 		public LocalRandomAccessFile(String name, String mode) throws FileNotFoundException
 		{
 			super(name,mode);
+			channel = this.getChannel();
+		}
+
+		public void readFullyDirect(byte[] dst, long offset, int length) throws IOException {
+			ByteBuffer buf = ByteBuffer.wrap(dst);
+			int read = 0;
+			while (read < length) {
+				int bytes = channel.read(buf, offset);
+				read += bytes;
+				offset += bytes;				
+			}
 		}
 	}
 

@@ -48,6 +48,7 @@ import org.terrier.utility.Files;
  * </ul>
  * @author Craig Macdonald
  * @since 3.0 */
+@ConcurrentReadable
 public class FSOMapFileLexicon extends FSOMapFileLexiconGeneric<String,Text>
 {
 	static final Logger logger = LoggerFactory.getLogger(FSOMapFileLexicon.class);
