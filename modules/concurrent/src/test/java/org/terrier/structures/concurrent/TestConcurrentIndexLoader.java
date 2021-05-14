@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.querying.IndexRef;
 import org.terrier.structures.ConcurrentIndexLoader;
+import org.terrier.structures.ConcurrentReadable;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexFactory;
 import org.terrier.tests.ApplicationSetupBasedTest;
@@ -48,7 +49,7 @@ public class TestConcurrentIndexLoader extends ApplicationSetupBasedTest {
 		System.out.println(concRef.toString());
 		Index concurrent = IndexFactory.of(concRef);
 		assertNotNull(concurrent);
-		assertTrue(concurrent.getLexicon() instanceof ConcurrentLexicon);
+		assertTrue(concurrent.getLexicon().getClass().isAnnotationPresent(ConcurrentReadable.class));
 	}
 	
 	@Test public void testDirectIndex() throws Exception
@@ -60,7 +61,7 @@ public class TestConcurrentIndexLoader extends ApplicationSetupBasedTest {
 		IndexRef concRef = ConcurrentIndexLoader.makeConcurrent(IndexRef.of(ref.toString()));
 		Index concurrent = IndexFactory.of(concRef);
 		assertNotNull(concurrent);
-		assertTrue(concurrent.getLexicon() instanceof ConcurrentLexicon);
+		assertTrue(concurrent.getLexicon().getClass().isAnnotationPresent(ConcurrentReadable.class));
 	}
 	
 }
