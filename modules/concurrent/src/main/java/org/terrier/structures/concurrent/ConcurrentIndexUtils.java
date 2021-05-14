@@ -24,7 +24,8 @@
  *  Craig Macdonald
  */
 package org.terrier.structures.concurrent;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terrier.structures.ConcurrentReadable;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.FieldDocumentIndex;
@@ -39,26 +40,28 @@ import org.terrier.structures.concurrent.ConcurrentDocumentIndex.ConcurrentField
 
 public class ConcurrentIndexUtils {
 
-	static final String[] STRUCTURES = new String[]{
-		"inverted", "document", "lexicon"
-	};
+	static Logger logger = LoggerFactory.getLogger(ConcurrentIndexUtils.class);
+
 	public static Index makeConcurrentForRetrieval(Index index) {
 		
 		DocumentIndex newDoi = null;
 		if (index.hasIndexStructure("document") && ! index.getDocumentIndex().getClass().isAnnotationPresent(ConcurrentReadable.class) )
 		{
 			DocumentIndex oldDoi = index.getDocumentIndex();
+			logger.debug("Upgrading document index "+oldDoi.getClass().getName()+" to be concurrent");
 			if (oldDoi instanceof FieldDocumentIndex)
 				newDoi = new ConcurrentFieldDocumentIndex((FieldDocumentIndex)oldDoi);
 			else
 				newDoi = new ConcurrentDocumentIndex(oldDoi);
 			
+			assert newDoi.getClass().isAnnotationPresent(ConcurrentReadable.class);
 			IndexUtil.forceStructure(index, "document", newDoi);
 		}
 		
 		if (index.hasIndexStructure("inverted") && ! index.getInvertedIndex().getClass().isAnnotationPresent(ConcurrentReadable.class) )
 		{
 			PostingIndex<?> inv = index.getInvertedIndex();
+			logger.debug("Upgrading inverted index "+inv.getClass().getName()+" to be concurrent");
 			if (inv instanceof BitPostingIndex)
 			{
 				//NB: this does not add the @ConcurrentReadable annotation
@@ -73,14 +76,19 @@ public class ConcurrentIndexUtils {
 		if (index.hasIndexStructure("lexicon") && ! index.getLexicon().getClass().isAnnotationPresent(ConcurrentReadable.class) )
 		{
 			Lexicon<String> oldLex = index.getLexicon();
+			logger.debug("Upgrading lexicon index "+oldLex.getClass().getName()+" to be concurrent");
 			Lexicon<String> newLex = new ConcurrentLexicon(oldLex);
 			IndexUtil.forceStructure(index, "lexicon", newLex);
+			assert newLex.getClass().isAnnotationPresent(ConcurrentReadable.class);
 		}
 		
 		if (index.hasIndexStructure("meta") && ! index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class) )
 		{
 			MetaIndex oldmeta = index.getMetaIndex();
+			logger.debug("Upgrading meta index "+oldmeta.getClass().getName()+" to be concurrent");
+			logger.debug(String.valueOf(index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class)));
 			MetaIndex newmeta = new ConcurrentMetaIndex(oldmeta);
+			assert newmeta.getClass().isAnnotationPresent(ConcurrentReadable.class);
 			IndexUtil.forceStructure(index, "meta", newmeta);
 		}
 		
