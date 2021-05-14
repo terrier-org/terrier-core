@@ -72,6 +72,7 @@ import com.jakewharton.byteunits.BinaryByteUnit;
  * @author Craig Macdonald &amp; Vassilis Plachouras
  * @since 3.0
  */
+@ConcurrentReadable
 public class CompressingMetaIndex implements MetaIndex {
 	
 	private final static Pattern SPLIT_SPACE = Pattern.compile("\\s+");
@@ -83,6 +84,13 @@ public class CompressingMetaIndex implements MetaIndex {
 	{
 		protected final synchronized Inflater initialValue() {
 			return new Inflater();
+		}
+	};
+
+	protected static final ThreadLocal<OffsetPointer> pointerCache = new ThreadLocal<OffsetPointer>() 
+	{
+		protected final synchronized OffsetPointer initialValue() {
+			return new OffsetPointer();
 		}
 	};
 	
@@ -102,8 +110,9 @@ public class CompressingMetaIndex implements MetaIndex {
 		public final byte[] read(long offset, int bytes) throws IOException
 		{
 			byte[] out = new byte[bytes];
-			dataSource.seek(offset);
-			dataSource.readFully(out);
+			dataSource.readFullyDirect(out, offset, bytes);
+			//dataSource.seek(offset);
+			//dataSource.readFully(out);
 			return out;
 		}
 		
@@ -163,11 +172,21 @@ public class CompressingMetaIndex implements MetaIndex {
 			parent.close();
 		}		
 	}
+
+	static class OffsetPointer {
+		long offset;
+		int length;
+	}
 	
 	static interface Docid2OffsetLookup extends java.io.Closeable
     {	
         long getOffset(int docid) throws IOException;
         int getLength(int docid) throws IOException;
+
+		default void readPointer(int docid, OffsetPointer p) throws IOException {
+			p.offset = getOffset(docid);
+			p.length = getLength(docid);
+		}
     }
 	
 	@ConcurrentReadable
@@ -225,6 +244,7 @@ public class CompressingMetaIndex implements MetaIndex {
 		}		
 	}
 	
+	@ConcurrentReadable //its concurrent readable using getPointer()
 	static class OnDiskDocid2OffsetLookup implements Docid2OffsetLookup
     {
 		private static final int SIZE_OF_LONG = Long.SIZE / 8;
@@ -250,12 +270,50 @@ public class CompressingMetaIndex implements MetaIndex {
             return lastOffset;
         }
 
-        public final int getLength(final int docid) throws IOException
+		public final int getLength(final int docid) throws IOException
         {
         	readOffset(docid);
         	//logger.info("length for docid "+ docid + " is " + lastLength);
             return lastLength;
         }
+
+		public void readPointer(final int docid, OffsetPointer p) throws IOException
+		{
+			if (docid +1 == docidCount )
+        	{
+        		final byte[] readBuffer = b.read((long)docid * SIZE_OF_LONG, SIZE_OF_LONG);
+            	p.offset = (((long)readBuffer[0] << 56) +
+                         ((long)(readBuffer[1] & 255) << 48) +
+                         ((long)(readBuffer[2] & 255) << 40) +
+                         ((long)(readBuffer[3] & 255) << 32) +
+                         ((long)(readBuffer[4] & 255) << 24) +
+                         ((readBuffer[5] & 255) << 16) +
+                         ((readBuffer[6] & 255) <<  8) +
+                         ((readBuffer[7] & 255) <<  0));
+            	p.length = (int)(fileLength - p.offset);
+        	}
+        	else
+        	{
+        		final byte[] readBuffer = b.read((long)docid * SIZE_OF_LONG, SIZE_OF_LONG*2);
+            	p.offset = (((long)readBuffer[0] << 56) +
+                         ((long)(readBuffer[1] & 255) << 48) +
+                         ((long)(readBuffer[2] & 255) << 40) +
+                         ((long)(readBuffer[3] & 255) << 32) +
+                         ((long)(readBuffer[4] & 255) << 24) +
+                         ((readBuffer[5] & 255) << 16) +
+                         ((readBuffer[6] & 255) <<  8) +
+                         ((readBuffer[7] & 255) <<  0));
+            	final long tmpLong = (((long)readBuffer[8+0] << 56) +
+                        ((long)(readBuffer[8+1] & 255) << 48) +
+                        ((long)(readBuffer[8+2] & 255) << 40) +
+                        ((long)(readBuffer[8+3] & 255) << 32) +
+                        ((long)(readBuffer[8+4] & 255) << 24) +
+                        ((readBuffer[8+5] & 255) << 16) +
+                        ((readBuffer[8+6] & 255) <<  8) +
+                        ((readBuffer[8+7] & 255) <<  0));
+            	p.length = (int)(tmpLong - p.offset);
+        	}
+		}
         
         protected final void readOffset(int docid) throws IOException
         {
@@ -435,7 +493,6 @@ public class CompressingMetaIndex implements MetaIndex {
 		protected int keyCount;
 		protected int[] keyByteOffset;
 		protected int[] valueByteLengths;
-		//private int[] valueCharLengths;
 		
 		final int numberOfRecords;
 		final int lastId;
@@ -827,11 +884,11 @@ public class CompressingMetaIndex implements MetaIndex {
 	public String getItem(String Key, int docid)
         throws IOException
     {
+		OffsetPointer pointer = pointerCache.get();
+		offsetLookup.readPointer(docid, pointer);
 		Inflater unzip = inflaterCache.get();
-		unzip.reset();
-		unzip.setInput(dataSource.read(
-			offsetLookup.getOffset(docid), offsetLookup.getLength(docid)
-			));
+		unzip.reset();		
+		unzip.setInput(dataSource.read(pointer.offset, pointer.length));
 		
 		byte[] bOut = new byte[recordLength];
 		try {
@@ -844,11 +901,11 @@ public class CompressingMetaIndex implements MetaIndex {
 	
 	/** {@inheritDoc} */
 	public String[] getItems(String[] Keys, int docid) throws IOException {
+		OffsetPointer pointer = pointerCache.get();
+		offsetLookup.readPointer(docid, pointer);
 		Inflater unzip = inflaterCache.get();
 		unzip.reset();
-		unzip.setInput(dataSource.read(
-				offsetLookup.getOffset(docid), offsetLookup.getLength(docid)
-				));
+		unzip.setInput(dataSource.read(pointer.offset, pointer.length));
 		byte[] bOut = new byte[recordLength];
 		try {
 			unzip.inflate(bOut);
@@ -869,11 +926,11 @@ public class CompressingMetaIndex implements MetaIndex {
 	
 	/** {@inheritDoc} */
 	public String[] getAllItems(int docid) throws IOException {
+		OffsetPointer pointer = pointerCache.get();
+		offsetLookup.readPointer(docid, pointer);
 		Inflater unzip = inflaterCache.get();
 		unzip.reset();
-		unzip.setInput(dataSource.read(
-				offsetLookup.getOffset(docid), offsetLookup.getLength(docid)
-				));
+		unzip.setInput(dataSource.read(pointer.offset, pointer.length));
 		byte[] bOut = new byte[recordLength];
 		try {
 			unzip.inflate(bOut);
@@ -882,8 +939,6 @@ public class CompressingMetaIndex implements MetaIndex {
 		}
         final int kCount = this.keyCount;
         String[] sOut = new String[kCount];
- 
-        
         for(int i=0;i<kCount;i++)
         {
             sOut[i] = Text.decode(

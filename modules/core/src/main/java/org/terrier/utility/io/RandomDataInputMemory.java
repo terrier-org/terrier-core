@@ -47,6 +47,8 @@ public class RandomDataInputMemory extends DataInputStream implements RandomData
         void seek(long _pos);       
         long getFilePointer();              
         long length();
+        //void read(ByteBuffer dst, long offset, int length);
+        int read(byte[] dst, long offset, int arrayOffset, int length) throws IOException;
     }
      
     /** seekable implementation which uses multiple byte arrays */
@@ -165,7 +167,25 @@ public class RandomDataInputMemory extends DataInputStream implements RandomData
             part_off += read;
          
             return read;
-        }       
+        }    
+        
+        public int read(byte[] dst, long offset, int arrayOffset, int length) throws IOException {
+            int part_id = (int)(offset / individual_buffer_size);
+            int part_off = (int)(offset % individual_buffer_size);
+            byte[] current_sector = data[part_id];
+            int read = Math.min(current_sector.length - part_off, length);
+            System.arraycopy(current_sector, part_off, dst, arrayOffset, read);
+            return read;
+        }
+        
+        // public int read(ByteBuffer dst, long offset, int length) {
+        //     int part_id = (int)(offset / individual_buffer_size);
+        //     int part_off = (int)(offset % individual_buffer_size);
+        //     byte[] current_sector = data[part_id];
+        //     int read = Math.min(current_sector.length - part_off, len);
+        //     System.arraycopy(current_sector, part_off, dst.array(), dst.arrayOffset(), read);
+        //     return read;
+        // }
  
         @Override
         public final long skip(long n) throws IOException
@@ -205,6 +225,24 @@ public class RandomDataInputMemory extends DataInputStream implements RandomData
         {
             return super.buf;
         }
+
+        // public int read(ByteBuffer dst, long offset, int length) {
+        //     if (offset + length > count)
+        //     {
+        //         throw new java.io.EOFException();
+        //     }
+        //     System.arraycopy(super.buf, offset, dst.array(), dst.arrayOffset(), length);
+        //     return length;
+        // }
+
+        public int read(byte[] dst, long offset, int arrayOffset, int length) throws IOException {
+            if (offset + length > count)
+            {
+                throw new java.io.EOFException();
+            }
+            System.arraycopy(super.buf, (int)offset, dst, arrayOffset, length);
+            return length;
+        } 
     }
      
     /** input stream to use */
@@ -264,6 +302,23 @@ public class RandomDataInputMemory extends DataInputStream implements RandomData
     /** {@inheritDoc} */
     public void seek(long _pos) throws IOException {
         buf.seek(_pos);
+    }
+
+    // public int read(ByteBuffer dst, long offset, int length) throws IOException {
+    //     return buf.read(dst, offset, length);
+    // }
+
+    public void readFullyDirect(byte[] dst, long offset, int length) throws IOException {
+        int remaining = length;
+        int arrayOffset = 0;
+        while (remaining > 0)
+        {
+            int read = buf.read(dst, offset, arrayOffset, length);
+            offset += read;
+            length -= read; 
+            arrayOffset += read;
+            remaining -= read;
+        }
     }
  
     /** {@inheritDoc} */

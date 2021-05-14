@@ -39,5 +39,10 @@ public interface RandomDataInput extends DataInput, java.io.Closeable
 	void seek(long pos) throws IOException;
 	/** Returns the length of the file */
 	long length() throws IOException;
+
+	default void readFullyDirect(byte[] dst, long offset, int length) throws IOException {
+		seek(offset);
+		readFully(dst, 0, length);
+	}
 }
 
