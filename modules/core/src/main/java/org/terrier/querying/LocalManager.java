@@ -811,7 +811,7 @@ public class LocalManager implements Manager
 			}
 			
 			int doccount = -1;//doccount is zero-based, so 0 means 1 document
-			TIntArrayList docatnumbers = new TIntArrayList();//list of resultset index numbers to keep
+			TIntArrayList docatnumbers = new TIntArrayList(length);//list of resultset index numbers to keep
 			byte docstatus; int thisDocId;
 			int[] docids = results.getDocids();
 			//int elitesetsize = results.getExactResultSize();
