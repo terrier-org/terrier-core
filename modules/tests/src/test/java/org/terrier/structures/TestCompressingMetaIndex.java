@@ -192,6 +192,46 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 				new String[]{"d"}
 			});
 	}
+
+	@Test public void testDifferentNameVariants() throws Exception
+	{
+		testBase("differentName", new String[]{"docno"}, new int[]{1}, new String[0], new String[][]{
+				new String[]{"a"},
+				new String[]{"b"},
+				new String[]{"c"},
+				new String[]{"d"}
+			},
+			src.DISK,
+			src.DISK
+		);
+		testBase("differentName", new String[]{"docno"}, new int[]{1}, new String[0], new String[][]{
+				new String[]{"a"},
+				new String[]{"b"},
+				new String[]{"c"},
+				new String[]{"d"}
+			},
+			src.DISK,
+			src.MEM
+		);
+		testBase("differentName", new String[]{"docno"}, new int[]{1}, new String[0], new String[][]{
+				new String[]{"a"},
+				new String[]{"b"},
+				new String[]{"c"},
+				new String[]{"d"}
+			},
+			src.MEM,
+			src.DISK
+		);
+		testBase("differentName", new String[]{"docno"}, new int[]{1}, new String[0], new String[][]{
+				new String[]{"a"},
+				new String[]{"b"},
+				new String[]{"c"},
+				new String[]{"d"}
+			},
+			src.MEM,
+			src.MEM
+		);
+	}
 		
 	@Test
 	public void testSingleKeyExtremeLengths() throws Exception
@@ -265,10 +305,33 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		assertEquals(keyNames.length, index.getIndexProperty("index."+name+".value-sorted", "").split(",").length);
 		return index;
 	}
+
+	enum src { 
+		DEFAULT,
+		DISK,
+		MEM
+	}
+
+	protected void testBase(String name, String[] keyNames, int[] keyLengths, String[] revKeys, String[][] data) throws Exception {
+		testBase(name, keyNames, keyLengths, revKeys, data, src.DEFAULT, src.DEFAULT);
+	}
+
 	
-	protected void testBase(String name, String[] keyNames, int[] keyLengths, String[] revKeys, String[][] data) throws Exception
+	protected void testBase(String name, String[] keyNames, int[] keyLengths, String[] revKeys, String[][] data, src indexsrc, src datasrc) throws Exception
 	{
-		IndexOnDisk index = createMetaIndex(name, keyNames, keyLengths, revKeys, data);		
+		IndexOnDisk index = createMetaIndex(name, keyNames, keyLengths, revKeys, data);
+		if (datasrc == src.DISK) {
+			index.setIndexProperty("index."+name + ".data-source", "file"); 
+		} else if (datasrc == src.MEM) {
+			index.setIndexProperty("index."+name + ".data-source", "fileinmem"); 
+		}
+
+		if (indexsrc == src.DISK) {
+			index.setIndexProperty("index."+name + ".index-source", "file"); 
+		} else if (indexsrc == src.MEM) {
+			index.setIndexProperty("index."+name + ".index-source", "fileinmem"); 
+		}
+		
 		int offset = 0;
 		Set<String> rev = new HashSet<String>();
 		for(String revKey : revKeys)
@@ -303,37 +366,6 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		assertTrue(index.hasIndexStructure(name));
 		assertTrue(index.hasIndexStructureInputStream(name));
 	}
-//	
-//	protected void checkMRInputFormat(Index index, String name, String[] docnos, long blocksize) throws Exception
-//	{
-//		if (! validPlatform()) return;
-//		JobConf jc = HadoopPlugin.getJobFactory(this.getClass().getName()).newJob();
-//		HadoopUtility.toHConfiguration(index, jc);
-//		CompressingMetaIndexInputFormat.setStructure(jc, name);
-//		CompressingMetaIndexInputFormat information = new CompressingMetaIndexInputFormat();
-//		information.validateInput(jc);
-//		information.overrideDataFileBlockSize(blocksize);
-//		InputSplit[] splits = information.getSplits(jc, 2);
-//		Set<String> unseenDocnos = new HashSet<String>(Arrays.asList(docnos));
-//		int seenDocuments = 0;
-//		for(InputSplit split : splits)
-//		{
-//			RecordReader<IntWritable,Wrapper<String[]>> rr = information.getRecordReader(split, jc, null);
-//			IntWritable key = rr.createKey();
-//			Wrapper<String[]> value = rr.createValue();
-//			while(rr.next(key, value))
-//			{
-//				seenDocuments++;
-//				String docno = value.getObject()[0];
-//				unseenDocnos.remove(docno);
-//				assertEquals(docnos[key.get()], docno);
-//			}
-//			rr.close();
-//		}
-//		assertEquals("Not correct number of document seen", docnos.length, seenDocuments);
-//		assertEquals("Some documents unseen", 0, unseenDocnos.size());
-//	}
-//	
 	
 	@SuppressWarnings("unchecked")
 	protected void checkStream(Index index, String name, String[] docnos, int ith) throws Exception
@@ -361,17 +393,33 @@ public class TestCompressingMetaIndex extends ApplicationSetupBasedTest {
 		if (reverse)
 			assertEquals(docnos.length, ((CompressingMetaIndex)mi).reverseMetaMaps[0].size());
 
+		Runnable lookupTask = () -> { 
+			try{
+				for(int i=0;i < docnos.length; i++)
+				{
+					assertEquals(docnos[i], mi.getAllItems(i)[offset]);
+					assertEquals(docnos[i], mi.getItem(key, i));
+					assertEquals(docnos[i], mi.getItems(key, new int[]{i})[0]);
+					assertEquals(docnos[i], mi.getItems(new String[]{key}, i)[0]);
+					assertEquals(docnos[i], mi.getItems(new String[]{key},  new int[]{i})[0][0]);
+					if (reverse)
+						assertEquals(i, mi.getDocument(key, docnos[i]));
+				}
+			} catch (IOException ioe) {
+				throw new Error(ioe);
+			}
+		};
+
+		lookupTask.run();
 		
-		for(int i=0;i < docnos.length; i++)
-		{
-			assertEquals(docnos[i], mi.getAllItems(i)[offset]);
-			assertEquals(docnos[i], mi.getItem(key, i));
-			assertEquals(docnos[i], mi.getItems(key, new int[]{i})[0]);
-			assertEquals(docnos[i], mi.getItems(new String[]{key}, i)[0]);
-			assertEquals(docnos[i], mi.getItems(new String[]{key},  new int[]{i})[0][0]);
-			if (reverse)
-				assertEquals(i, mi.getDocument(key, docnos[i]));
+		Thread[] threads = new Thread[10];
+		for(int i=0;i<10;i++) {
+			(threads[i] = new Thread(lookupTask)).start();
 		}
+		for(int i=0;i<10;i++) {
+			threads[i].join();
+		}
+
 		
 		if (reverse)
 		{
