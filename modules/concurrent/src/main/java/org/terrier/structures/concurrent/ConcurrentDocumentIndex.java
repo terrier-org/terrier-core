@@ -56,6 +56,7 @@ class ConcurrentDocumentIndex implements DocumentIndex {
 		return parent.getNumberOfDocuments();
 	}
 	
+	@ConcurrentReadable
 	static class ConcurrentFieldDocumentIndex extends ConcurrentDocumentIndex implements FieldDocumentIndex
 	{
 		FieldDocumentIndex fparent;
