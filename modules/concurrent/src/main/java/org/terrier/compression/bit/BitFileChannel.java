@@ -82,6 +82,7 @@ public class BitFileChannel extends BitFileBuffered {
 		final long actualBufferSize = (startByteOffset + buffer_size) > fileSize 
 			? (fileSize - startByteOffset) 
 			: buffer_size;
+		assert actualBufferSize > 0;
 		return new FileChannelBitInBuffered(_channel,
 			startByteOffset,
 			startBitOffset, 
@@ -106,7 +107,6 @@ public class BitFileChannel extends BitFileBuffered {
 			
 			try{
 				readFully(channel, buf, offset);
-				//byteRead = buf.get();
 				readByteOffset = 0;
 				byteRead = inBuffer[readByteOffset];
 			}catch(IOException ioe){
@@ -115,7 +115,10 @@ public class BitFileChannel extends BitFileBuffered {
 		}
 
 		static void readFully(FileChannel file, ByteBuffer buf, long offset) throws IOException {
+			buf.clear();
 			int n = buf.remaining();
+			assert n > 0;
+
 			int toRead = n;
 			while (n > 0) {
 				int amt = file.read(buf, offset);
@@ -142,7 +145,6 @@ public class BitFileChannel extends BitFileBuffered {
 					readFully(channel, buf, offset);
 				}
 				byteRead = inBuffer[readByteOffset];
-				//byteRead = buf.get();
 			}catch(IOException ioe){
 				logger.error("Input/Output exception while reading from a random access file. Stack trace follows", ioe);
 			}
@@ -161,7 +163,6 @@ public class BitFileChannel extends BitFileBuffered {
 					readFully(channel, buf, offset);
 				}
 				byteRead = inBuffer[readByteOffset];
-				//byteRead = buf.get();
 			}catch(IOException ioe){
 				logger.error("Input/Output exception while reading from a random access file. Stack trace follows", ioe);
 			}
@@ -176,7 +177,6 @@ public class BitFileChannel extends BitFileBuffered {
 				readByteOffset=0;
 				readFully(channel, buf, offset);				
 				byteRead = inBuffer[readByteOffset];
-				//byteRead = buf.get();
 			}
 			else
 			{
@@ -184,7 +184,6 @@ public class BitFileChannel extends BitFileBuffered {
 				readByteOffset += len;
 				bitOffset = 0;
 				byteRead = inBuffer[readByteOffset];
-				//byteRead = buf.get();
 			}			
 		}
 	}
