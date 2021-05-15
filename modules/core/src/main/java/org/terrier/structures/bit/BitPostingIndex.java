@@ -177,9 +177,10 @@ public class BitPostingIndex implements PostingIndex<BitIndexPointer>
 	/** 
 	 * {@inheritDoc} 
 	 */
-	public IterablePosting getPostings(Pointer pointer) throws IOException
+	public IterablePosting getPostings(Pointer _pointer) throws IOException
 	{
-		final BitIn _file = this.file[((BitIndexPointer)pointer).getFileNumber()].readReset(((BitIndexPointer)pointer).getOffset(), ((BitIndexPointer)pointer).getOffsetBits());
+		final BitIndexPointer pointer = (BitIndexPointer)_pointer;
+		final BitIn _file = this.file[pointer.getFileNumber()].readReset(pointer.getOffset(), pointer.getOffsetBits());
 		IterablePosting rtr = null;
 		
 		//this is the hack: only a direct index has a pointer type of DocumentIndexEntry
