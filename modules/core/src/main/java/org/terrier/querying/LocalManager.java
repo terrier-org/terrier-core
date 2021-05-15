@@ -803,6 +803,10 @@ public class LocalManager implements Manager
 				}
 				return;
 			}
+			if (filters_length == 1 &&  filters[0].getClass().equals(SimpleDecorate.class)) {
+				//prefer SimpleDecorate batching
+				return;
+			}
 
 			//tell all the postfilters that they are processing another query
 			for(int i=0;i<filters_length; i++)
