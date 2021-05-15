@@ -84,7 +84,7 @@ public class BasicIterablePosting extends BasicPostingImpl implements IterablePo
 		try {
 			return doi.getDocumentLength(id);
 		} catch (ArrayIndexOutOfBoundsException aioobe) {
-			throw new RuntimeException("Problem looking for doclength for document "+ id + " -- docid out of bounds, possible (concurrent?) decompression error");
+			throw new RuntimeException("Problem looking for doclength for document "+ id + " -- docid out of bounds, possible (concurrent?) decompression error when reading from " + bitFileReader, aioobe);
 		} catch (Exception e) {
 			throw new RuntimeException("Unknown problem looking for doclength for document "+ id +" "+ e, e);
 		}
