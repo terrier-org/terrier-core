@@ -55,7 +55,7 @@ public class SimpleDecorateProcess implements Process {
 			final String[] decorateKeys = q.getControl("decorate").equals("on") 
 				? metaindex.getKeys()
 				: ArrayUtils.parseCommaDelimitedString(q.getControl("decorate"));
-			
+			logger.debug("Decorating for " + java.util.Arrays.toString(decorateKeys));
 			if (decorateKeys.length == 0){
 				logger.warn("SimpleDecorate called, but no meta keys detected - either metaindex is empty, or decorate control is empty");
 				return;

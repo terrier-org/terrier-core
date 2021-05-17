@@ -75,6 +75,8 @@ import org.terrier.statistics.TestGammaFunction.TestWikipediaLanczosGammaFunctio
 import org.terrier.structures.TestBasicLexiconEntry;
 import org.terrier.structures.TestBitIndexPointer;
 import org.terrier.structures.TestCompressingMetaIndex;
+import org.terrier.structures.TestLZ4MetaIndex;
+import org.terrier.structures.TestZstdMetaIndex;
 import org.terrier.structures.TestIndexOnDisk;
 import org.terrier.structures.TestIndexUtil;
 import org.terrier.structures.TestTRECQuery;

@@ -81,6 +81,20 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 		assertEquals(2, rs.getMetaKeys().length);
 		assertEquals("doc1", rs.getMetaItems("filename")[0]);
 		assertEquals("The quick brown fox jumps over the lazy dog", rs.getMetaItems("abstract")[0]);
+
+
+		//now test that we can specify the metadata
+		srq = m.newSearchRequest("test", "fox");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, TF_IDF.class.getName());
+		srq.setControl("decorate", "filename");
+		m.runSearchRequest(srq);
+		
+		rs = ((Request) srq).getResultSet();
+		assertEquals(1, rs.getResultSize());
+		// SimpleDecorateProcess decorateP = new SimpleDecorateProcess();
+		// decorateP.process(m, srq);
+		assertEquals(1, rs.getMetaKeys().length);
+		assertEquals("doc1", rs.getMetaItems("filename")[0]);
 		
 	}
 	

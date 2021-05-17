@@ -597,6 +597,15 @@ public class CompressingMetaIndex implements MetaIndex {
 		{
 			return index;
 		}
+
+		byte[] decode(byte[] input) throws Exception {
+			byte[] bOut = new byte[recordLength];
+			inflater.reset();
+			inflater.setInput(input);
+			inflater.inflate(bOut);
+			return bOut;
+		}
+		
 		/** 
 		 * {@inheritDoc} 
 		 */
@@ -615,11 +624,8 @@ public class CompressingMetaIndex implements MetaIndex {
 				//logger.info("Reading zdata file docid="+index+" start=" + lastOffset + " end="+endOffset + " length="+dataLength);
 				byte[] b = new byte[dataLength];
 				zdata.readFully(b);
+				byte[] bOut = decode(b);
 				lastOffset = endOffset +1;
-				inflater.reset();
-				inflater.setInput(b);
-				byte[] bOut = new byte[recordLength];
-				inflater.inflate(bOut);
 				String[] sOut = new String[keyCount];
 		        for(int i=0;i<keyCount;i++)
 		        {
@@ -880,22 +886,26 @@ public class CompressingMetaIndex implements MetaIndex {
 		return saOut;
 	}
 
+	protected byte[] decode(byte[] input) throws IOException {
+		try{
+			byte[] bOut = new byte[recordLength];
+			Inflater unzip = inflaterCache.get();
+			unzip.reset();		
+			unzip.setInput(input);
+			unzip.inflate(bOut);
+			return bOut;
+		} catch(DataFormatException dfe) {
+			throw new IOException("Failed to inflate compressed meta data", dfe);
+		}
+	}
+
 	/** {@inheritDoc} */	
 	public String getItem(String Key, int docid)
         throws IOException
     {
 		OffsetPointer pointer = pointerCache.get();
 		offsetLookup.readPointer(docid, pointer);
-		Inflater unzip = inflaterCache.get();
-		unzip.reset();		
-		unzip.setInput(dataSource.read(pointer.offset, pointer.length));
-		
-		byte[] bOut = new byte[recordLength];
-		try {
-			unzip.inflate(bOut);
-		} catch(DataFormatException dfe) {
-			logger.error("Failed to inflate compressed meta data", dfe);
-		}
+		byte[] bOut = decode(dataSource.read(pointer.offset, pointer.length));
 		return Text.decode(bOut, key2byteoffset.get(Key), key2bytelength.get(Key)).trim();
     }
 	
@@ -903,15 +913,7 @@ public class CompressingMetaIndex implements MetaIndex {
 	public String[] getItems(String[] Keys, int docid) throws IOException {
 		OffsetPointer pointer = pointerCache.get();
 		offsetLookup.readPointer(docid, pointer);
-		Inflater unzip = inflaterCache.get();
-		unzip.reset();
-		unzip.setInput(dataSource.read(pointer.offset, pointer.length));
-		byte[] bOut = new byte[recordLength];
-		try {
-			unzip.inflate(bOut);
-		} catch(DataFormatException dfe) {
-			logger.error("Failed to inflate compressed meta data", dfe);
-		}
+		byte[] bOut = decode(dataSource.read(pointer.offset, pointer.length));
         final int kCount = Keys.length;
         String[] sOut = new String[kCount];
         for(int i=0;i<kCount;i++)
@@ -928,15 +930,7 @@ public class CompressingMetaIndex implements MetaIndex {
 	public String[] getAllItems(int docid) throws IOException {
 		OffsetPointer pointer = pointerCache.get();
 		offsetLookup.readPointer(docid, pointer);
-		Inflater unzip = inflaterCache.get();
-		unzip.reset();
-		unzip.setInput(dataSource.read(pointer.offset, pointer.length));
-		byte[] bOut = new byte[recordLength];
-		try {
-			unzip.inflate(bOut);
-		} catch(DataFormatException dfe) {
-			logger.error("Failed to inflate compressed meta data", dfe);
-		}
+		byte[] bOut = decode(dataSource.read(pointer.offset, pointer.length));
         final int kCount = this.keyCount;
         String[] sOut = new String[kCount];
         for(int i=0;i<kCount;i++)
