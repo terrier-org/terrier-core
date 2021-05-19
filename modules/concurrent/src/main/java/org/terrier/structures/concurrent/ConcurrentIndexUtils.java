@@ -41,7 +41,7 @@ import org.terrier.structures.concurrent.ConcurrentDocumentIndex.ConcurrentField
 public class ConcurrentIndexUtils {
 
 	static Logger logger = LoggerFactory.getLogger(ConcurrentIndexUtils.class);
-	static final String[] BIT_STRUCTURES = {"inverted", "direct"};
+	private static final String[] BIT_STRUCTURES = {"inverted", "direct"};
 
 	public static boolean isConcurrent(Index index) {
 		String[] structures = new String[]{"document", "lexicon", "meta"};
@@ -129,7 +129,7 @@ public class ConcurrentIndexUtils {
 		{
 			MetaIndex oldmeta = index.getMetaIndex();
 			logger.debug("Upgrading meta index "+oldmeta.getClass().getName()+" to be concurrent");
-			logger.debug(String.valueOf(index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class)));
+			//logger.debug(String.valueOf(index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class)));
 			MetaIndex newmeta = new ConcurrentMetaIndex(oldmeta);
 			assert newmeta.getClass().isAnnotationPresent(ConcurrentReadable.class);
 			IndexUtil.forceStructure(index, "meta", newmeta);
@@ -137,7 +137,7 @@ public class ConcurrentIndexUtils {
 		if (index.hasIndexStructure("meta") && ! index.getMetaIndex().getClass().equals(ConcurrentDecodingMetaIndex.class) ) {
 			MetaIndex oldmeta = index.getMetaIndex();
 			logger.debug("Upgrading meta index "+oldmeta.getClass().getName()+" to use concurrent decoding");
-			logger.debug(String.valueOf(index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class)));
+			//logger.debug(String.valueOf(index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class)));
 			MetaIndex newmeta = new ConcurrentDecodingMetaIndex(oldmeta);
 			assert newmeta.getClass().isAnnotationPresent(ConcurrentReadable.class);
 			IndexUtil.forceStructure(index, "meta", newmeta);
