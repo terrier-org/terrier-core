@@ -5,7 +5,7 @@ import com.github.luben.zstd.ZstdDecompressCtx;
 /** MetaIndex implementation for when records are compressed using Zstandard 
  * @since 5.5
 */
-public class ZStdCompressedMetaIndex extends CompressingMetaIndex {
+public class ZstdCompressedMetaIndex extends BaseCompressingMetaIndex {
 
     public static class InputStream extends CompressingMetaIndex.InputStream {
         ZstdDecompressCtx z = new ZstdDecompressCtx();
@@ -33,7 +33,7 @@ public class ZStdCompressedMetaIndex extends CompressingMetaIndex {
 		}
     };
 
-    public ZStdCompressedMetaIndex(IndexOnDisk index, String structureName)
+    public ZstdCompressedMetaIndex(IndexOnDisk index, String structureName)
 		throws IOException
 	{
         super(index, structureName);

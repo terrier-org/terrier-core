@@ -7,7 +7,7 @@ import net.jpountz.lz4.LZ4FastDecompressor;
 /** MetaIndex implementation for when records are compressed using LZ4 
  * @since 5.5
 */
-public class LZ4CompressedMetaIndex extends CompressingMetaIndex {
+public class LZ4CompressedMetaIndex extends BaseCompressingMetaIndex {
 
     static final LZ4FastDecompressor decompressor = LZ4Factory.fastestInstance().fastDecompressor();
 

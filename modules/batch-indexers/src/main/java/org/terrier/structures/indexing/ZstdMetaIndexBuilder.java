@@ -19,8 +19,8 @@ public class ZstdMetaIndexBuilder extends BaseMetaIndexBuilder {
     public ZstdMetaIndexBuilder(IndexOnDisk _index, String _structureName, String[] _keyNames, int[] _valueLens, String[] _reverseKeys)
 	{
         super(_index, _structureName, _keyNames, _valueLens, _reverseKeys);
-        this.structureClass = ZStdCompressedMetaIndex.class;
-        this.structureInputStreamClass = ZStdCompressedMetaIndex.InputStream.class;
+        this.structureClass = ZstdCompressedMetaIndex.class;
+        this.structureInputStreamClass = ZstdCompressedMetaIndex.InputStream.class;
         this.compressor.setChecksum(false);
     }
 
