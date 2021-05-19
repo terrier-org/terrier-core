@@ -25,24 +25,53 @@
  */
 package org.terrier.structures.bit;
 
-import org.terrier.compression.bit.BitFileBuffered;
-import org.terrier.compression.bit.BitInSeekable;
-import org.terrier.compression.bit.ConcurrentBitFileBuffered;
+import org.terrier.compression.bit.*;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.bit.BitPostingIndex;
 
 public class ConcurrentBitPostingIndexUtilities {
+
+	private static final boolean USE_CHANNEL = true;
+
+	public static boolean isConcurrent(BitPostingIndex bpi) {
+		BitInSeekable bis = bpi.file[0];
+		if (bis instanceof BitFileChannel)
+			return true;
+		if (bis instanceof ConcurrentBitFileBuffered)
+			return true;
+		if (bis instanceof BitFileInMemoryLarge)
+			return false;
+		if (bis instanceof BitFileInMemory)
+			return true;
+		return false;
+	}
 
 	public static void makeConcurrent(BitPostingIndex bpi, DocumentIndex newDoi)
 	{
 		for(int i=0;i<bpi.file.length;i++)
 		{
 			BitInSeekable bis = bpi.file[i];
-			if (bis instanceof BitFileBuffered && !( bis instanceof ConcurrentBitFileBuffered))
+			if (USE_CHANNEL)
 			{
-				BitFileBuffered theFile = (BitFileBuffered)bis;
-				ConcurrentBitFileBuffered newFile = ConcurrentBitFileBuffered.of(theFile);
-				bpi.file[i] = newFile;
+				if (bis instanceof BitFileBuffered && !( bis instanceof BitFileChannel))
+				{
+					BitFileBuffered theFile = (BitFileBuffered)bis;
+					BitFileChannel newFile = BitFileChannel.of(theFile);
+					bpi.file[i] = newFile;
+				} else if (bis instanceof BitFileInMemoryLarge) {
+					throw new UnsupportedOperationException("Cannot make BitFileInMemoryLarge thread-safe");
+				}
+			}
+			else
+			{
+				if (bis instanceof BitFileBuffered && !( bis instanceof ConcurrentBitFileBuffered))
+				{
+					BitFileBuffered theFile = (BitFileBuffered)bis;
+					ConcurrentBitFileBuffered newFile = ConcurrentBitFileBuffered.of(theFile);
+					bpi.file[i] = newFile;
+				} else if (bis instanceof BitFileInMemoryLarge) {
+					throw new UnsupportedOperationException("Cannot make BitFileInMemoryLarge thread-safe");
+				}
 			}
 		}
 		bpi.doi = newDoi;

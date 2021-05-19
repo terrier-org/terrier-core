@@ -24,9 +24,12 @@
  *  Craig Macdonald
  */
 package org.terrier.structures;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Retention;
 
 /** This annotation makes that an index data 
  * structure can be read by more than one thread concurrently. */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface ConcurrentReadable 
 {
 }

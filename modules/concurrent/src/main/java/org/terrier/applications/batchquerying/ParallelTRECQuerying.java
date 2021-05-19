@@ -168,6 +168,7 @@ public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 	@Override
 	protected void finishedQueries() {
 		
+		pool.shutdown();
 		//block here awaiting all threads to write results before closing the file
 		for (Future<?> f : runningQueries)
 			try {

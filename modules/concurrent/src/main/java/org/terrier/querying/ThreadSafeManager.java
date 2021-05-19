@@ -54,15 +54,6 @@ public class ThreadSafeManager extends LocalManager
 		TSApplyLocalMatching() {
 			Cache_Matching = Collections.synchronizedMap(Cache_Matching);
 		}
-		
-		@Override
-		protected Matching getMatchingModel(Request rq) {
-			synchronized (this) {
-				//matchings are not re-entrant, so we need to make a new one each time.
-				Cache_Matching.clear();
-				return super.getMatchingModel(rq);
-			}
-		}
 	}
 	
 	static class TSPostFilterProcess extends PostFilterProcess {
@@ -107,6 +98,5 @@ public class ThreadSafeManager extends LocalManager
 	
 	void synchronizeCaches() {
 		processModuleManager = new TSModuleManager<>("processes", NAMESPACE_PROCESS, true);
-		
 	}
 }

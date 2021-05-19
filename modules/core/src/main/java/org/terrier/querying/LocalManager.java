@@ -803,6 +803,10 @@ public class LocalManager implements Manager
 				}
 				return;
 			}
+			if (filters_length == 1 &&  filters[0].getClass().equals(SimpleDecorate.class)) {
+				//prefer SimpleDecorate batching
+				return;
+			}
 
 			//tell all the postfilters that they are processing another query
 			for(int i=0;i<filters_length; i++)
@@ -811,7 +815,7 @@ public class LocalManager implements Manager
 			}
 			
 			int doccount = -1;//doccount is zero-based, so 0 means 1 document
-			TIntArrayList docatnumbers = new TIntArrayList();//list of resultset index numbers to keep
+			TIntArrayList docatnumbers = new TIntArrayList(length);//list of resultset index numbers to keep
 			byte docstatus; int thisDocId;
 			int[] docids = results.getDocids();
 			//int elitesetsize = results.getExactResultSize();

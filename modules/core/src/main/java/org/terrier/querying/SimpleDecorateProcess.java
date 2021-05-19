@@ -32,51 +32,53 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.matching.ResultSet;
 import org.terrier.structures.MetaIndex;
+import org.terrier.utility.ArrayUtils;
 
 /** A simple decorator, which applies all metadata in the MetaIndex to each retrieved, displayed document. */
-public class SimpleDecorate implements PostFilter {
+@ProcessPhaseRequisites({ManagerRequisite.MQT, ManagerRequisite.RESULTSET})
+public class SimpleDecorateProcess implements Process {
 
 	static Logger logger = LoggerFactory.getLogger(SimpleDecorate.class);
 	protected static final Pattern controlNonVisibleCharacters = Pattern.compile("[\\p{Cntrl}\uFFFD\uFFFF]|[^\\p{Graph}\\p{Space}]");
-	
-	MetaIndex meta = null;
-	String[] decorateKeys = null;
-	boolean any = false;
-	
-	Matcher controlNonVisibleCharactersMatcher = controlNonVisibleCharacters.matcher("");
-	/** 
-	 * Adds all the metadata for the specified document occurring at the specified
-	 * rank to the ResultSet
-	 * {@inheritDoc} 
-	 */
-	public final byte filter(
-			Manager m, SearchRequest srq, ResultSet results,
-			int rank, int docid) 
-	{
-		if (! any) {
-			any = true;
-			srq.setControl("decorated", "true");
-		}
+
+	public void process(Manager manager, Request q) {
+
+		//we dont repeat decorating that has already happenned
+		if (q.getControl("decorated").equals("true"))
+			return;
+
+
+		Matcher controlNonVisibleCharactersMatcher = controlNonVisibleCharacters.matcher("");
 		try{
-			final String[] values = meta.getItems(decorateKeys, docid);
+			final MetaIndex metaindex = q.getIndex().getMetaIndex();
+			
+			final String[] decorateKeys = q.getControl("decorate").equals("on") 
+				? metaindex.getKeys()
+				: ArrayUtils.parseCommaDelimitedString(q.getControl("decorate"));
+			logger.debug("Decorating for " + java.util.Arrays.toString(decorateKeys));
+			if (decorateKeys.length == 0){
+				logger.warn("SimpleDecorate called, but no meta keys detected - either metaindex is empty, or decorate control is empty");
+				return;
+			}
+			ResultSet res = q.getResultSet();
+			final int num_docs = res.getResultSize();
+			final String[][] meta = metaindex.getItems(decorateKeys, res.getDocids());
+
 			for(int j=0;j<decorateKeys.length;j++)
 			{
-				controlNonVisibleCharactersMatcher.reset(values[j]);
-				results.addMetaItem(decorateKeys[j], rank, controlNonVisibleCharactersMatcher.replaceAll(""));
+				String[] finalmeta = new String[num_docs];
+				for (int i=0;i<num_docs;i++)
+				{
+					String value = meta[i][j];
+					controlNonVisibleCharactersMatcher.reset(value);
+					finalmeta[i] = controlNonVisibleCharactersMatcher.replaceAll("");
+				}
+				res.addMetaItems(decorateKeys[j], finalmeta);
 			}
-			return PostFilter.FILTER_OK;
-		} catch (Exception e) {
-			logger.warn("Problem performing decoration", e);
-			return PostFilter.FILTER_REMOVE;
 		}
-	}
-	/** 
-	 * {@inheritDoc} 
-	 */
-	public void new_query(Manager m, SearchRequest srq, ResultSet rs) 
-	{
-		meta = ((Request)srq).getIndex().getMetaIndex();
-		decorateKeys = meta.getKeys();
+		catch (Exception e) {
+			logger.error("Problem performing decoration", e);
+		}
 	}
 
 }

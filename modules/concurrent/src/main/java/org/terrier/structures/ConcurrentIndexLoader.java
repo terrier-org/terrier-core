@@ -47,6 +47,10 @@ public class ConcurrentIndexLoader implements IndexFactory.IndexLoader {
 			};
 		return IndexRef.of(PREFIX + ref.toString());
 	}
+
+	public static boolean isIndexConcurrent(Index index) {
+		return ConcurrentIndexUtils.isConcurrent(index);
+	}
 	
 	public static boolean isConcurrent(IndexRef ref) {
 		return ref.toString().startsWith(PREFIX);

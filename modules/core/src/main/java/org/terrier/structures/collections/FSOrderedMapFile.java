@@ -48,6 +48,7 @@ import org.apache.hadoop.io.WritableComparable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.terrier.structures.ConcurrentReadable;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexUtil;
 import org.terrier.structures.Skipable;
@@ -55,6 +56,7 @@ import org.terrier.structures.seralization.FixedSizeWriteableFactory;
 import org.terrier.structures.seralization.WriteableFactory;
 import org.terrier.utility.Files;
 import org.terrier.utility.io.RandomDataInput;
+import org.terrier.utility.io.RandomDataInputMemory.SeeakableByteArrayInputStream;
 import org.terrier.utility.io.RandomDataOutput;
 
 /** An implementation of java.util.Map that can be accessed from disk.
@@ -68,6 +70,7 @@ import org.terrier.utility.io.RandomDataOutput;
  */
 //unchecked warnings are suppressed because WritableComparable should be parameterised. I have no idea how though.
 @SuppressWarnings("rawtypes")
+@ConcurrentReadable
 public class FSOrderedMapFile<
         K extends WritableComparable,
         V extends Writable
@@ -957,8 +960,6 @@ public class FSOrderedMapFile<
     @SuppressWarnings("unchecked")
 	protected MapFileEntry<K,V> getEntry(K key)
     {
-    	synchronized(fileAccessLock) {
-    	
     	int[] bounds;
     	try{
     		bounds = shortcut.searchBounds(key);
@@ -972,17 +973,21 @@ public class FSOrderedMapFile<
 		int compareEntry;
 		
 		K testKey = keyFactory.newInstance();
-		V value = valueFactory.newInstance();	
+		V value = valueFactory.newInstance();
 		
+		byte[] buffer = new byte[entrySize];
+		SeeakableByteArrayInputStream bais = new SeeakableByteArrayInputStream(buffer);
+		DataInput di = new DataInputStream(bais);
+		
+
 		try{
 		
 			while (low < high) {
-			    //System.err.println("high="+high + " low="+low);
 			    i = (low + high) >>> 1;
-                //System.err.println("i="+i);
-                dataFile.seek((long)i * entrySize);
-                testKey.readFields(dataFile);
-                //System.err.println("Checking "+testKey.toString() + " cmp="+key.compareTo(testKey));
+				
+				dataFile.readFullyDirect(buffer, (long)i * entrySize, entrySize);
+				bais.seek(0);
+				testKey.readFields(di);
                 if ((compareEntry = testKey.compareTo(key))< 0)
                 	low = i + 1;
                 else if (compareEntry > 0)
@@ -990,10 +995,9 @@ public class FSOrderedMapFile<
                 else 
                 {
                     //read the rest and return the data
-                    value.readFields(dataFile);
+                    value.readFields(di);
                     return new MapFileEntry<K,V>(testKey, value, i);
                 }
-                //System.err.println("high="+high + " low="+low);
             }
         
             if (high == numberOfEntries)
@@ -1001,13 +1005,16 @@ public class FSOrderedMapFile<
             
             if (high == 0) {
                 i = 0;
-                dataFile.seek(0);
+				dataFile.readFullyDirect(buffer, 0, entrySize);
+				
             } else {
                 i = high;
-                dataFile.seek((long)high * entrySize);
+				dataFile.readFullyDirect(buffer, (long)high * entrySize, entrySize);
             }
-            testKey.readFields(dataFile);
-            value.readFields(dataFile);
+
+			bais.seek(0);
+            testKey.readFields(di);
+            value.readFields(di);
         
             if (key.compareTo(testKey) == 0) {
                 return new MapFileEntry<K,V>(testKey, value, i);
@@ -1016,9 +1023,7 @@ public class FSOrderedMapFile<
 		} catch (IOException ioe) {
 		  logger.error("IOException reading FSOrderedMapFile", ioe);
 		  return new MapFileEntry<K,V>(testKey, null, Integer.MIN_VALUE);
-		}
-    	}
-		
+		}		
     }
     
     
@@ -1090,25 +1095,26 @@ public class FSOrderedMapFile<
 	 * {@inheritDoc} 
 	 */
     public Entry<K,V> get(int entryNumber)
-    {
-    	synchronized(fileAccessLock) {
-    	
-        K key = keyFactory.newInstance();
+    {    
+		// used for decoding of the Writables
+		byte[] buffer = new byte[entrySize];
+		SeeakableByteArrayInputStream bais = new SeeakableByteArrayInputStream(buffer);
+		DataInput di = new DataInputStream(bais);
+		//writable instances
+		K key = keyFactory.newInstance();
 		V value = valueFactory.newInstance();
 		if (entryNumber >= numberOfEntries)
-		  throw new NoSuchElementException("Entry number "+ entryNumber + " is larger than map size of "+ numberOfEntries);
+			throw new NoSuchElementException("Entry number "+ entryNumber + " is larger than map size of "+ numberOfEntries);
 		
 		try{
-            dataFile.seek((long)entryNumber * entrySize);
-            key.readFields(dataFile);
-            value.readFields(dataFile);
+			dataFile.readFullyDirect(buffer, (long)entryNumber * entrySize, entrySize);
+            key.readFields(di);
+            value.readFields(di);
         } catch (IOException ioe) {
             throw new NoSuchElementException(
                 "IOException reading FSOrderedMapFile for entry number "+ entryNumber +" : "+ioe);
         }
         return new MapFileEntry<K,V>(key, value, entryNumber);
-        
-    	}
     }
 	/** 
 	 * {@inheritDoc} 

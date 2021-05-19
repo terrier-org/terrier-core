@@ -4,17 +4,19 @@ What's New in Terrier
 Terrier 5.5 - xx/xx/2021
 ------------------------
 
-Minor update addressing bugs identified through usage from PyTerrier.
+Significant update, introducing alternative compression for the meta index, reentrant Matching and data structure classes, and addressing bugs and enhancements identified through usage from PyTerrier.
 
 ## Indexing
  - [#152](https://github.com/terrier-org/terrier-core/issues/157) improvements on abstract metadata from TaggedDocument and FileDocument
+ - [#163](https://github.com/terrier-org/terrier-core/issues/163) Alternative compression for MetaIndex
 
 ## Retrieval
  - [#152](https://github.com/terrier-org/terrier-core/issues/152) QueryParserException should note the qid (with thanks to @TimMo-prog)
  - [#153](https://github.com/terrier-org/terrier-core/issues/152) improve error message when a non-fields index is supplied to SingleFieldModel (with thanks to @TimMo-prog)
  - [#154](https://github.com/terrier-org/terrier-core/issues/154) Can an IndexRef find an index just in a directory? (with thanks to Vasileios Stamatis)
  - [#156](https://github.com/terrier-org/terrier-core/issues/154) matching.retrieved_set_size be non-global (with thanks to @DayalStrub)
-
+ - [#162](https://github.com/terrier-org/terrier-core/issues/162) metadata decoration should occur in a single batch for the entire query
+ - [#164](https://github.com/terrier-org/terrier-core/pull/164) merge support for reentrant Matching, and reentrant standard data structures
 
 Terrier 5.4 - 16/1/2021
 -----------------------

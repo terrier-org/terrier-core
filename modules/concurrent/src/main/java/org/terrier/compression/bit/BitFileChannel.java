@@ -28,44 +28,51 @@ package org.terrier.compression.bit;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.ByteBuffer;
+import java.io.RandomAccessFile;
 
 import org.terrier.compression.bit.BitFileBuffered;
 import org.terrier.compression.bit.BitIn;
 import org.terrier.utility.io.RandomDataInput;
 
-public class ConcurrentBitFileBuffered extends BitFileBuffered {
+public class BitFileChannel extends BitFileBuffered {
 
-	public static ConcurrentBitFileBuffered of(BitFileBuffered old) {
-		return new ConcurrentBitFileBuffered(old.file);
+	public static BitFileChannel of(BitFileBuffered old) {
+		return new BitFileChannel(old.file);
 	}
+
+	protected FileChannel _channel;
 	
-	public ConcurrentBitFileBuffered(File _file, int bufSize) {
+	public BitFileChannel(File _file, int bufSize) {
 		super(_file, bufSize);
+		_channel = ((RandomAccessFile)file).getChannel();
 	}
 
-	public ConcurrentBitFileBuffered(File _file) {
+	public BitFileChannel(File _file) {
 		super(_file);
+		_channel = ((RandomAccessFile)file).getChannel();
 	}
 
-	public ConcurrentBitFileBuffered(RandomDataInput f) {
+	public BitFileChannel(RandomDataInput f) {
 		super(f);
+		_channel = ((RandomAccessFile)file).getChannel();
 	}
 
-	public ConcurrentBitFileBuffered(String filename, int bufSize) {
+	public BitFileChannel(String filename, int bufSize) {
 		super(filename, bufSize);
+		_channel = ((RandomAccessFile)file).getChannel();
 	}
 
-	public ConcurrentBitFileBuffered(String filename) {
+	public BitFileChannel(String filename) {
 		super(filename);
+		_channel = ((RandomAccessFile)file).getChannel();
 	}
 	
 	@Override
 	public BitIn readReset(long startByteOffset, byte startBitOffset, long endByteOffset, byte endBitOffset) {
-		final long range = endByteOffset - startByteOffset + (long)1;
-		return new ConcurrentBitInBuffered(file, 
-			startByteOffset, 
-			startBitOffset, 
-			range < buffer_size ? (int)range : buffer_size);
+		final long range = endByteOffset - startByteOffset + 1L;
+		return new FileChannelBitInBuffered(_channel,startByteOffset,startBitOffset, range < buffer_size ? (int)range : buffer_size);
 	}
 	
 	
@@ -75,33 +82,54 @@ public class ConcurrentBitFileBuffered extends BitFileBuffered {
 		final long actualBufferSize = (startByteOffset + buffer_size) > fileSize 
 			? (fileSize - startByteOffset) 
 			: buffer_size;
-		return new ConcurrentBitInBuffered(
-			file,
+		assert actualBufferSize > 0;
+		return new FileChannelBitInBuffered(_channel,
 			startByteOffset,
 			startBitOffset, 
 			(int)actualBufferSize);
 	}
 	
-	protected static class ConcurrentBitInBuffered extends BitInBuffered {
+	protected static class FileChannelBitInBuffered extends BitInBuffered {
 		
-		public ConcurrentBitInBuffered(RandomDataInput file, long startByteOffset, byte _bitOffset, int _bufLength)
+		protected FileChannel channel; 
+		protected ByteBuffer buf;
+		public FileChannelBitInBuffered(FileChannel file, long startByteOffset, byte _bitOffset, int _bufLength)
 		{
 			super();
 			this.offset = startByteOffset;
 			this.bitOffset= _bitOffset;
-			this.parentFile = file;
+			this.channel = file;
 			this.size = _bufLength;
+			//System.out.println("allocating buffer of " + size);
+			inBuffer = new byte[size];
+			this.buf = ByteBuffer.wrap(inBuffer);
+			//System.out.println("buffer has limit " + buf.limit());
+			
 			try{
-				synchronized (parentFile) {
-					parentFile.seek(startByteOffset);
-					inBuffer = new byte[size];
-					parentFile.readFully(inBuffer);
-					
-				}
+				readFully(channel, buf, offset);
 				readByteOffset = 0;
 				byteRead = inBuffer[readByteOffset];
 			}catch(IOException ioe){
 				logger.error("Input/Output exception while reading from a random access file. Stack trace follows", ioe);
+			}
+		}
+
+		static void readFully(FileChannel file, ByteBuffer buf, long offset) throws IOException {
+			buf.clear();
+			int n = buf.remaining();
+			assert n > 0;
+
+			int toRead = n;
+			while (n > 0) {
+				int amt = file.read(buf, offset);
+				if (amt == -1) {
+					int read = toRead - n;
+					throw new EOFException("reached end of stream after reading "
+							+ read + " bytes; " + toRead + " bytes expected");
+				} else {
+					n -= amt;
+					offset += amt;
+				}
 			}
 		}
 		
@@ -114,18 +142,13 @@ public class ConcurrentBitFileBuffered extends BitFileBuffered {
 				if(readByteOffset == size)
 				{					
 					readByteOffset=0;
-					synchronized (parentFile) {
-						parentFile.seek(offset);
-						try{
-							parentFile.readFully(inBuffer);
-						} catch (EOFException eofe) { /* ignore this */}
-					}					
+					readFully(channel, buf, offset);
 				}
 				byteRead = inBuffer[readByteOffset];
 			}catch(IOException ioe){
 				logger.error("Input/Output exception while reading from a random access file. Stack trace follows", ioe);
 			}
-		}
+		}	
 	
 		@Override
 		protected void incrByte(int i)
@@ -136,13 +159,8 @@ public class ConcurrentBitFileBuffered extends BitFileBuffered {
 				readByteOffset+=i;
 				if( readByteOffset >= size ) // we go to the next block  -- we skip only the begin of the block
 				{
-					synchronized (parentFile) {
-						parentFile.seek(offset); // we skip the first bytes of the next block
-						readByteOffset = 0;
-						try{
-							parentFile.readFully(inBuffer);
-						} catch (EOFException eofe) { /* ignore this */}
-					}					
+					readByteOffset=0;
+					readFully(channel, buf, offset);
 				}
 				byteRead = inBuffer[readByteOffset];
 			}catch(IOException ioe){
@@ -156,13 +174,8 @@ public class ConcurrentBitFileBuffered extends BitFileBuffered {
 			if (readByteOffset + len >= inBuffer.length)
 			{
 				offset += len;
-				synchronized (parentFile) {
-					parentFile.seek(offset); // we skip the first bytes of the next block
-					readByteOffset = 0;
-					try{
-						parentFile.readFully(inBuffer);
-					} catch (EOFException eofe) { /* ignore this */}
-				}				
+				readByteOffset=0;
+				readFully(channel, buf, offset);				
 				byteRead = inBuffer[readByteOffset];
 			}
 			else

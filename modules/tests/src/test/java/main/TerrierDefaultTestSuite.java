@@ -54,6 +54,7 @@ import org.terrier.indexing.TestTRECWebCollection;
 import org.terrier.indexing.TestTaggedDocument;
 import org.terrier.indexing.TestTweetJSONCollection;
 import org.terrier.indexing.TestWARC10Collection;
+import org.terrier.indexing.TestFilteringCollection;
 import org.terrier.indexing.tokenisation.TestEnglishTokeniser;
 import org.terrier.indexing.tokenisation.TestUTFTokeniser;
 import org.terrier.matching.TestMatching.TestDAATFullMatching;
@@ -74,6 +75,8 @@ import org.terrier.statistics.TestGammaFunction.TestWikipediaLanczosGammaFunctio
 import org.terrier.structures.TestBasicLexiconEntry;
 import org.terrier.structures.TestBitIndexPointer;
 import org.terrier.structures.TestCompressingMetaIndex;
+import org.terrier.structures.TestLZ4MetaIndex;
+import org.terrier.structures.TestZstdMetaIndex;
 import org.terrier.structures.TestIndexOnDisk;
 import org.terrier.structures.TestIndexUtil;
 import org.terrier.structures.TestTRECQuery;
@@ -166,6 +169,7 @@ import org.terrier.utility.io.TestRandomDataInputMemory;
 	TestTRECWebCollection.class,
 	TestTweetJSONCollection.class,
 	TestWARC10Collection.class,
+	TestFilteringCollection.class,
 	
 	//.indexing.tokenisation
 	TestEnglishTokeniser.class,

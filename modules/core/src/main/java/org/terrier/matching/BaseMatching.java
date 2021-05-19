@@ -65,19 +65,13 @@ public abstract class BaseMatching implements Matching
 	public static final String BASE_MATCHING_TAG = "firstmatchscore";
 	public static final String NONMATCHING_TAG = "firstkeep";
 	
-	protected long totalTime = 0;
-     /** the logger for this class */
+    /** the logger for this class */
 	protected static final Logger logger = LoggerFactory.getLogger(Matching.class);
 
 	/** the default namespace for the document score modifiers that are specified in the properties
 	 * file. */
 	protected static String dsmNamespace = "org.terrier.matching.dsms.";
 	
-	/** The maximum number of documents in the final retrieved set. It corresponds to the 
-	 * property <tt>matching.retrieved_set_size</tt>. The default value is 1000, however, setting
-	 * the property to 0 will return all matched documents. */
-	protected int RETRIEVED_SET_SIZE;
-		
 	/** A property that enables to ignore the terms with a low IDF. Corresponds to
 	 * property <tt>ignore.low.idf.terms</tt>. Defaults to true. This can cause
 	 * some query terms to be omitted in small corpora. */
@@ -87,10 +81,51 @@ public abstract class BaseMatching implements Matching
 	 * query. In this case the ordering of documents is random. More specifically, 
 	 * it is the ordering of documents in the document index. */
 	protected static boolean MATCH_EMPTY_QUERY;
-	
-	/** The number of retrieved documents for a query.*/
-	protected int numberOfRetrievedDocuments;
+
+	protected static class MatchingState {
+
+		/** input query to matching */
+		public MatchingQueryTerms queryTerms;
+
+		/** The result set.*/
+		public ResultSet resultSet;
+
+		/** The number of documents that are requested to be retrieved for this query.*/
+		public int numberOfRequestedDocuments = 0;
+
+		/** The number of actually retrieved documents for this query.*/
+		public int numberOfRetrievedDocuments = 0;
+
+		public long totalTime = 0;
+		/**
+		 * Update the start time
+		 * @param t
+		 */
+		public void updateStartTime(long t)
+		{
+			this.totalTime -= t;
+		}
+
+		/**
+		 * Update the end time.
+		 * @param t
+		 */
+		public void updateEndTime(long t)
+		{
+			this.totalTime += t;
+		}
 		
+		/**
+		 * get the total time
+		 * @return long
+		 */
+		public long getTotalTime()
+		{
+			return this.totalTime;
+		}
+
+	}
+	
 	/** The index used for retrieval. */ 
 	protected Index index;
 	
@@ -102,45 +137,12 @@ public abstract class BaseMatching implements Matching
 	
 	/** The collection statistics */
 	protected CollectionStatistics collectionStatistics;
-	
-	/** The result set.*/
-	protected ResultSet resultSet;
-	
+		
 	/** Contains the document score modifiers to be applied for a query. */
 	protected List<DocumentScoreModifier> documentModifiers;
 
-//	protected WeightingModel[][] wm = null;
-//	protected List<Map.Entry<String,LexiconEntry>> queryTermsToMatchList = null;
-//	
-	protected BaseMatching() 
-	{
-	}
-	/**
-	 * Update the start time
-	 * @param t
-	 */
-	public void updateStartTime(long t)
-	{
-		this.totalTime -= t;
-	}
-
-	/**
-	 * Update the end time.
-	 * @param t
-	 */
-	public void updateEndTime(long t)
-	{
-		this.totalTime += t;
-	}
+	protected BaseMatching()  {}
 	
-	/**
-	 * get the total time
-	 * @return long
-	 */
-	public long getTotalTime()
-	{
-		return this.totalTime;
-	}
 
 	/**
 	 * Constructs an instance of the BaseMatching
@@ -170,105 +172,51 @@ public abstract class BaseMatching implements Matching
 			logger.error("Exception while initialising default modifiers. Please check the name of the modifiers in the configuration file.", e);
 		}
 	}
-	
-	protected void initialisePostings(PostingListManager plm)
+
+	protected MatchingState initialiseState()
 	{
-		
-//		// We purge the query terms not present in the lexicon and retrieve the information from the lexicon
-//		String[] queryTermStrings = queryTerms.getTerms();
-//		queryTermsToMatchList = new ArrayList<Map.Entry<String,LexiconEntry>>(queryTermStrings.length);
-//		for (String queryTerm: queryTermStrings) {
-//			LexiconEntry t = lexicon.getLexiconEntry(queryTerm);
-//			if (t != null) {
-//				//check if the term IDF is very low.
-//				if (IGNORE_LOW_IDF_TERMS && collectionStatistics.getNumberOfDocuments() < t.getFrequency()) {
-//					logger.warn("query term " + queryTerm + " has low idf - ignored from scoring.");
-//					continue;
-//				}
-//				// check if the term has weighting models
-//				WeightingModel[] termWeightingModels = queryTerms.getTermWeightingModels(queryTerm);
-//				if (termWeightingModels.length == 0) {
-//					logger.warn("No weighting models for term " + queryTerm +", skipping scoring");
-//					continue;
-//				}
-//				queryTermsToMatchList.add(new MapEntry<String, LexiconEntry>(queryTerm, t));
-//			}
-//			else
-//				logger.debug("Term Not Found: " + queryTerm);			
-//		}
-//
-//		//logger.warn("queryTermsToMatchList = " + queryTermsToMatchList.size());
-//		int queryLength = queryTermsToMatchList.size();
-//		
-//		wm = new WeightingModel[queryLength][];
-//		for (int i = 0; i < queryLength; i++) 
-//		{
-//			Map.Entry<String, LexiconEntry> termEntry    = queryTermsToMatchList.get(i);
-//			String 							queryTerm    = termEntry.getKey();
-//			LexiconEntry 					lexiconEntry = termEntry.getValue();
-//			//get the entry statistics - perhaps this came from "far away"
-//			EntryStatistics entryStats = queryTerms.getStatistics(queryTerm);
-//			//if none were provided with the query we seek the entry statistics query term in the lexicon
-//			if (entryStats == null)
-//			{
-//				entryStats = lexiconEntry;
-//				//save them as they may be useful for query expansion. HOWEVER ONLY IF we didnt
-//				//get the statistics from MQT in the first place
-//				queryTerms.setTermProperty(queryTerm, lexiconEntry);
-//			}
-//
-//			// Initialise the weighting models for this term
-//			int numWM = queryTerms.getTermWeightingModels(queryTerm).length;
-//			wm[i] = new WeightingModel[numWM];
-//			for (int j = 0; j < numWM; j++) {
-//				wm[i][j] = (WeightingModel) queryTerms.getTermWeightingModels(queryTerm)[j].clone();
-//				wm[i][j].setCollectionStatistics(collectionStatistics);
-//				wm[i][j].setEntryStatistics(entryStats);
-//				wm[i][j].setRequest(queryTerms.getRequest());
-//				wm[i][j].setKeyFrequency(queryTerms.getTermWeight(queryTerm));
-//				IndexUtil.configure(index, wm[i][j]);
-//				wm[i][j].prepare();
-//			}
-//		}
+		return new MatchingState();
 	}
 	
-	protected void initialise(MatchingQueryTerms queryTerms) 
+	protected void initialisePostings(MatchingState state)
+	{}
+	
+	protected MatchingState initialise(MatchingQueryTerms queryTerms) 
 	{
-		//System.gc();
+		MatchingState state = initialiseState();
+		state.updateStartTime(System.currentTimeMillis());
+		state.queryTerms = queryTerms;
 		
-		updateStartTime(System.currentTimeMillis());
-		
-		RETRIEVED_SET_SIZE = Integer.parseInt(ApplicationSetup.getProperty("matching.retrieved_set_size", "1000"));
+		state.numberOfRequestedDocuments = Integer.parseInt(ApplicationSetup.getProperty("matching.retrieved_set_size", "1000"));
 		if (queryTerms.getMatchingRequestSize() > -1) {
-			RETRIEVED_SET_SIZE = queryTerms.getMatchingRequestSize();
+			state.numberOfRequestedDocuments = queryTerms.getMatchingRequestSize();
 		}
 		IGNORE_LOW_IDF_TERMS = Boolean.parseBoolean(ApplicationSetup.getProperty("ignore.low.idf.terms","false"));
 		MATCH_EMPTY_QUERY    = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
-		
-		this.numberOfRetrievedDocuments = 0;
+		return state;
 	}
 	
-	protected void finalise(MatchingQueryTerms queryTerms)
+	protected void finalise(MatchingState state)
 	{
-		// resultSet.initialise();
+		MatchingQueryTerms queryTerms = state.queryTerms;
 		
-		logger.debug("Number of docs with +ve score: "+numberOfRetrievedDocuments);
+		logger.debug("Number of docs with +ve score: "+state.numberOfRetrievedDocuments);
 		//sort in descending score order the top RETRIEVED_SET_SIZE documents
 		//long sortingStart = System.currentTimeMillis();
 		//we need to sort at most RETRIEVED_SET_SIZE, or if we have retrieved
 		//less documents than RETRIEVED_SET_SIZE then we need to find the top 
 		//numberOfRetrievedDocuments.
-		int set_size = Math.min(RETRIEVED_SET_SIZE, numberOfRetrievedDocuments);
+		int set_size = Math.min(state.numberOfRequestedDocuments, state.numberOfRetrievedDocuments);
 		if (set_size == 0) 
-			set_size = numberOfRetrievedDocuments;
+			set_size = state.numberOfRetrievedDocuments;
 		
 		//sets the effective size of the result set.
-		resultSet.setExactResultSize(numberOfRetrievedDocuments);
+		state.resultSet.setExactResultSize(state.numberOfRetrievedDocuments);
 		
 		//sets the actual size of the result set.
-		resultSet.setResultSize(set_size);
+		state.resultSet.setResultSize(set_size);
 		
-		resultSet.sort(set_size);
+		state.resultSet.sort(set_size);
 		//long sortingEnd = System.currentTimeMillis();
 		
 		/*we apply the query dependent document score modifiers first and then 
@@ -291,20 +239,19 @@ public abstract class BaseMatching implements Matching
 			NumberOfQueryDSMs = dsms.length;
 
 		for (int t = NumberOfQueryDSMs-1; t >= 0; t--) {
-			if (dsms[t].modifyScores(index, queryTerms, resultSet))
-				resultSet.sort(resultSet.getResultSize());
+			if (dsms[t].modifyScores(index, queryTerms, state.resultSet))
+			state.resultSet.sort(state.resultSet.getResultSize());
 		}
 		
 		/*application dependent modification of scores
 		of documents for a query, based on a static set by the client code
 		sorting the result set after applying each DSM*/
 		for (int t = 0; t < numOfDocModifiers; t++) {
-			if (documentModifiers.get(t).modifyScores(index, queryTerms, resultSet))
-				resultSet.sort(resultSet.getResultSize());
+			if (documentModifiers.get(t).modifyScores(index, queryTerms, state.resultSet))
+			state.resultSet.sort(state.resultSet.getResultSize());
 		}
-		logger.debug("query "+ queryTerms.getQueryId() +" number of retrieved documents: " + resultSet.getResultSize());
-		
-		updateEndTime(System.currentTimeMillis());
+		logger.debug("query "+ queryTerms.getQueryId() +" number of retrieved documents: " + state.resultSet.getResultSize());
+		state.updateEndTime(System.currentTimeMillis());
 	}
 	
 	/** {@inheritDoc} */
