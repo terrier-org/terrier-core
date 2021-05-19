@@ -41,7 +41,7 @@ import org.terrier.structures.concurrent.ConcurrentDocumentIndex.ConcurrentField
 public class ConcurrentIndexUtils {
 
 	static Logger logger = LoggerFactory.getLogger(ConcurrentIndexUtils.class);
-	static final String[] BIT_STRUCTURES = {"inverted"};//direct not yet handled
+	static final String[] BIT_STRUCTURES = {"inverted", "direct"};
 
 	public static boolean isConcurrent(Index index) {
 		String[] structures = new String[]{"document", "lexicon", "meta"};
@@ -50,6 +50,7 @@ public class ConcurrentIndexUtils {
 				continue;
 			if (! index.getIndexStructure(s).getClass().isAnnotationPresent(ConcurrentReadable.class) )
 			{
+				logger.debug("Structure " + s + " is not concurrent readable");
 				return false;
 			}
 		}
@@ -60,7 +61,10 @@ public class ConcurrentIndexUtils {
 			PostingIndex<?> pi = (PostingIndex<?>) index.getIndexStructure(s);
 			if ( pi instanceof BitPostingIndex) {
 				if (! ConcurrentBitPostingIndexUtilities.isConcurrent((BitPostingIndex) pi))
-					return false;	
+				{
+					logger.debug("Structure " + s + " is not using a concurrent bitin");
+					return false;
+				}	
 			}
 		}
 		return true;
@@ -94,6 +98,21 @@ public class ConcurrentIndexUtils {
 			else
 			{
 				throw new IllegalArgumentException("Cannot make a " + inv + " concurrent compatible");
+			}
+		}
+
+		if (index.hasIndexStructure("direct") && ! index.getDirectIndex().getClass().isAnnotationPresent(ConcurrentReadable.class) )
+		{
+			PostingIndex<?> dir = index.getDirectIndex();
+			logger.debug("Upgrading inverted index "+dir.getClass().getName()+" to be concurrent");
+			if (dir instanceof BitPostingIndex)
+			{
+				//NB: this does not add the @ConcurrentReadable annotation
+				ConcurrentBitPostingIndexUtilities.makeConcurrent((BitPostingIndex)dir, newDoi);
+			}
+			else
+			{
+				throw new IllegalArgumentException("Cannot make a " + dir + " concurrent compatible");
 			}
 		}
 		
