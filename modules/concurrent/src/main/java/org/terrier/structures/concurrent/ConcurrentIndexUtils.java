@@ -41,6 +41,30 @@ import org.terrier.structures.concurrent.ConcurrentDocumentIndex.ConcurrentField
 public class ConcurrentIndexUtils {
 
 	static Logger logger = LoggerFactory.getLogger(ConcurrentIndexUtils.class);
+	static final String[] BIT_STRUCTURES = {"inverted"};//direct not yet handled
+
+	public static boolean isConcurrent(Index index) {
+		String[] structures = new String[]{"document", "lexicon", "meta"};
+		for (String s : structures) {
+			if (! index.hasIndexStructure(s))
+				continue;
+			if (! index.getIndexStructure(s).getClass().isAnnotationPresent(ConcurrentReadable.class) )
+			{
+				return false;
+			}
+		}
+		
+		for(String s : BIT_STRUCTURES) {
+			if (! index.hasIndexStructure(s))
+				continue;
+			PostingIndex<?> pi = (PostingIndex<?>) index.getIndexStructure(s);
+			if ( pi instanceof BitPostingIndex) {
+				if (! ConcurrentBitPostingIndexUtilities.isConcurrent((BitPostingIndex) pi))
+					return false;	
+			}
+		}
+		return true;
+	}
 
 	public static Index makeConcurrentForRetrieval(Index index) {
 		
