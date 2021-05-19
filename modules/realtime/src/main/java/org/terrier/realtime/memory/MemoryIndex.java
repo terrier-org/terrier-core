@@ -61,7 +61,6 @@ import org.terrier.structures.NonIncrementalDocumentIndexEntry;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
 import org.terrier.structures.PostingIndexInputStream;
-import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.indexing.DocumentIndexBuilder;

@@ -26,8 +26,10 @@
 package org.terrier.structures.indexing;
 
 import java.io.IOException;
+import org.terrier.structures.IndexOnDisk;
+import org.terrier.utility.ApplicationSetup;
 import java.util.Map;
-/** Abstract class for writing document metadata. Metadata means textual data associated
+/** Abstract class for writing document metadata to a disk index. Metadata means textual data associated
  * with a document, e.g. an external document identifier (e.g. docnos), a URL, or the title
  * or abstracts of a document.
  * <p>
@@ -53,4 +55,18 @@ public abstract class MetaIndexBuilder implements java.io.Closeable{
 	public abstract void writeDocumentEntry(Map<String, String> data) throws IOException;
 	/** Write out metadata for current document. Values for all keys are specified. */
 	public abstract void writeDocumentEntry(String[] data) throws IOException;
+
+	/** Factory method - create a MetaIndexBuilder from a given name */
+	public static MetaIndexBuilder create(String metaBuilderName, IndexOnDisk index, String[] forwardMetaKeys, int[] metaKeyLengths, String[] reverseMetaKeys) {
+		try{
+			MetaIndexBuilder rtr = ApplicationSetup.getClass(metaBuilderName)
+				.asSubclass(MetaIndexBuilder.class)
+				.getConstructor(new Class<?>[]{IndexOnDisk.class, String[].class, int[].class,  String[].class})
+				.newInstance(new Object[]{index, forwardMetaKeys, metaKeyLengths, reverseMetaKeys});
+			return rtr;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Could not instantiate MetaIndexBuilder " + metaBuilderName, e);
+		}
+	}
+		
 }
