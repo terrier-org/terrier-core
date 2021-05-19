@@ -244,7 +244,7 @@ public abstract class Indexer
 		final String[] forwardMetaKeys = ApplicationSetup.getProperty("indexer.meta.forward.keys", "docno").split("\\s*,\\s*");
 		final int[] metaKeyLengths = parseInts(ApplicationSetup.getProperty("indexer.meta.forward.keylens", "20").split("\\s*,\\s*"));
 		final String[] reverseMetaKeys = ApplicationSetup.getProperty("indexer.meta.reverse.keys", "").split("\\s*,\\s*");
-		final String metaBuilderName = ApplicationSetup.getProperty("indexer.meta.builder", CompressingMetaIndexBuilder.class.getName());
+		final String metaBuilderName = ApplicationSetup.getProperty("indexer.meta.builder", ZstdMetaIndexBuilder.class.getName());
 		try{
 			MetaIndexBuilder rtr = ApplicationSetup.getClass(metaBuilderName)
 				.asSubclass(MetaIndexBuilder.class)
