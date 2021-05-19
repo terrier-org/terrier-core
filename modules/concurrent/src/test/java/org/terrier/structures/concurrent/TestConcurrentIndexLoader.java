@@ -48,6 +48,7 @@ public class TestConcurrentIndexLoader extends ApplicationSetupBasedTest {
 		assertTrue(IndexFactory.isLoaded(ref));
 		assertFalse(ConcurrentIndexUtils.isConcurrent(index));
 		System.out.println(ref.toString());
+
 		IndexRef concRef = ConcurrentIndexLoader.makeConcurrent(ref);
 		System.out.println(concRef.toString());
 		Index concurrent = IndexFactory.of(concRef);
@@ -63,6 +64,7 @@ public class TestConcurrentIndexLoader extends ApplicationSetupBasedTest {
 		assertTrue(IndexFactory.isLoaded(ref));
 		assertFalse(ConcurrentIndexUtils.isConcurrent(index));
 		System.out.println(ref.toString());
+
 		IndexRef concRef = ConcurrentIndexLoader.makeConcurrent(IndexRef.of(ref.toString()));
 		Index concurrent = IndexFactory.of(concRef);
 		assertNotNull(concurrent);
