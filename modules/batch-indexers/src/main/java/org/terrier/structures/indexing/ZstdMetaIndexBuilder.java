@@ -1,5 +1,5 @@
 package org.terrier.structures.indexing;
-import org.terrier.structures.ZStdCompressedMetaIndex;
+import org.terrier.structures.ZstdCompressedMetaIndex;
 import com.github.luben.zstd.ZstdCompressCtx;
 import org.terrier.structures.IndexOnDisk;
 import java.io.IOException;
