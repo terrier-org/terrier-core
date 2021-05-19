@@ -42,7 +42,7 @@ public class BitFileChannel extends BitFileBuffered {
 		return new BitFileChannel(old.file);
 	}
 
-	FileChannel _channel;
+	protected FileChannel _channel;
 	
 	public BitFileChannel(File _file, int bufSize) {
 		super(_file, bufSize);
@@ -71,7 +71,7 @@ public class BitFileChannel extends BitFileBuffered {
 	
 	@Override
 	public BitIn readReset(long startByteOffset, byte startBitOffset, long endByteOffset, byte endBitOffset) {
-		final long range = endByteOffset - startByteOffset + (long)1;
+		final long range = endByteOffset - startByteOffset + 1L;
 		return new FileChannelBitInBuffered(_channel,startByteOffset,startBitOffset, range < buffer_size ? (int)range : buffer_size);
 	}
 	

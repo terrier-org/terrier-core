@@ -34,7 +34,7 @@ import org.terrier.structures.bit.BitPostingIndex;
 
 public class ConcurrentBitPostingIndexUtilities {
 
-	static final boolean USE_CHANNEL = true; 
+	private static final boolean USE_CHANNEL = true; 
 	public static void makeConcurrent(BitPostingIndex bpi, DocumentIndex newDoi)
 	{
 		for(int i=0;i<bpi.file.length;i++)

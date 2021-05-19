@@ -126,7 +126,7 @@ public class BitFileBuffered implements BitInSeekable {
 	 * @return Returns the BitIn object to use to read that data
 	 */	
 	public BitIn readReset(long startByteOffset, byte startBitOffset, long endByteOffset, byte endBitOffset) {
-		final long range = endByteOffset - startByteOffset + (long)1;
+		final long range = endByteOffset - startByteOffset + 1L;
 		return new BitInBuffered(file,startByteOffset,startBitOffset, range < buffer_size ? (int)range : buffer_size);
 	}
 	
