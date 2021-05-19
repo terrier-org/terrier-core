@@ -125,41 +125,29 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		{
 			trecTerrierArgs = hook.processRetrievalOptions(trecTerrierArgs);
 		}
-//		Writer w = Files.writeFileWriter(ApplicationSetup.TREC_TOPICS_LIST);
-//		System.err.println("Writing topics files to" + ApplicationSetup.TREC_TOPICS_LIST);
+
+		
 		int queryCount = 0;
 		final String[] allTopicFiles = joinSets(topicSet, retrievalTopicSets);
 		for(String topicFile : allTopicFiles)
 		{
 			queryCount += countNumberOfTopics(topicFile);
-//			w.write(topicFile + "\n");
 		}
-//		w.close();
-//
 		
 		List<String> args = new ArrayList<>();
 		args.addAll(Arrays.asList(trecTerrierArgs));
 		args.add("-t");
 		args.add(ArrayUtils.join(allTopicFiles, ','));
 		new TRECQuerying.Command().run(args.toArray(new String[0]));
-		// String[] newArgs = new String[2+trecTerrierArgs.length];
-		// newArgs[0] = "-r";
-		// newArgs[1] = "-Dtrec.topics=" + ArrayUtils.join(allTopicFiles, ',');
-		// System.arraycopy(trecTerrierArgs, 0, newArgs, 2, trecTerrierArgs.length);
-		//System.err.println("TrecTerrier " + ArrayUtils.join(newArgs, " "));
-		//TrecTerrier.main(newArgs);
+
 		return queryCount;
 	}
 
 
 	protected void doEvaluation(int expectedQueryCount, String qrels, float expectedMAP) throws Exception
 	{
-//		Writer w = Files.writeFileWriter(ApplicationSetup.TREC_QRELS);
-//		System.err.println("Writing qrel files files to " + ApplicationSetup.TREC_QRELS);
-//		w.write(qrels + "\n");
-//		w.close();
+
 		new BatchEvaluationCommand().run(new String[]{"-q", qrels});
-		//TrecTerrier.main();
 		float MAP = -1.0f;
 		int queryCount = 0;
 		File[] fs = new File(ApplicationSetup.TREC_RESULTS).listFiles();
@@ -197,10 +185,6 @@ public abstract class BatchEndToEndTest extends ApplicationSetupBasedTest {
 		}
 		assertEquals("Query count was "+ queryCount + " instead of "+ expectedQueryCount, expectedQueryCount, queryCount);
 		assertEquals("MAP was "+MAP + " instead of "+expectedMAP, expectedMAP, MAP, 0.0d);
-
-		//System.err.println("Tidying results folder:");
-		//System.err.println("ls "+ ApplicationSetup.TREC_RESULTS);
-		//System.err.println(Arrays.deepToString(new File(ApplicationSetup.TREC_RESULTS).listFiles()));
 
 		//delete all runs and evaluations
 		fs = new File(ApplicationSetup.TREC_RESULTS).listFiles();
