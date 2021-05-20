@@ -93,7 +93,8 @@ public class TestDecorate extends ApplicationSetupBasedTest {
 		assertEquals(1, rs.getResultSize());
 		// SimpleDecorateProcess decorateP = new SimpleDecorateProcess();
 		// decorateP.process(m, srq);
-		assertEquals(1, rs.getMetaKeys().length);
+		System.out.println(java.util.Arrays.toString(rs.getMetaKeys()));
+		assertEquals(2, rs.getMetaKeys().length);
 		assertEquals("doc1", rs.getMetaItems("filename")[0]);
 		
 	}

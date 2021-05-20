@@ -803,7 +803,7 @@ public class LocalManager implements Manager
 				}
 				return;
 			}
-			if (filters_length == 1 &&  filters[0].getClass().equals(SimpleDecorate.class)) {
+			if (rq.getControl("decorate_batch").equals("on") && filters_length == 1 && filters[0].getClass().equals(SimpleDecorate.class)) {
 				//prefer SimpleDecorate batching
 				return;
 			}
