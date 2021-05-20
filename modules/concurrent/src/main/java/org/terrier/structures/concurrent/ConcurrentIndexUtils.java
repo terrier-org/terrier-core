@@ -40,6 +40,7 @@ import org.terrier.structures.concurrent.ConcurrentDocumentIndex.ConcurrentField
 
 public class ConcurrentIndexUtils {
 
+	public static boolean USE_CONCURRENT_DECODE_METAINDEX = false;
 	static Logger logger = LoggerFactory.getLogger(ConcurrentIndexUtils.class);
 	private static final String[] BIT_STRUCTURES = {"inverted", "direct"};
 
@@ -134,14 +135,15 @@ public class ConcurrentIndexUtils {
 			assert newmeta.getClass().isAnnotationPresent(ConcurrentReadable.class);
 			IndexUtil.forceStructure(index, "meta", newmeta);
 		}
-		if (index.hasIndexStructure("meta") && ! index.getMetaIndex().getClass().equals(ConcurrentDecodingMetaIndex.class) ) {
-			MetaIndex oldmeta = index.getMetaIndex();
-			logger.debug("Upgrading meta index "+oldmeta.getClass().getName()+" to use concurrent decoding");
-			//logger.debug(String.valueOf(index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class)));
-			MetaIndex newmeta = new ConcurrentDecodingMetaIndex(oldmeta);
-			assert newmeta.getClass().isAnnotationPresent(ConcurrentReadable.class);
-			IndexUtil.forceStructure(index, "meta", newmeta);
-		}
+		if (USE_CONCURRENT_DECODE_METAINDEX)
+			if (index.hasIndexStructure("meta") && ! index.getMetaIndex().getClass().equals(ConcurrentDecodingMetaIndex.class) ) {
+				MetaIndex oldmeta = index.getMetaIndex();
+				logger.debug("Upgrading meta index "+oldmeta.getClass().getName()+" to use concurrent decoding");
+				//logger.debug(String.valueOf(index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class)));
+				MetaIndex newmeta = new ConcurrentDecodingMetaIndex(oldmeta);
+				assert newmeta.getClass().isAnnotationPresent(ConcurrentReadable.class);
+				IndexUtil.forceStructure(index, "meta", newmeta);
+			}
 		
 		return index;
 	}
