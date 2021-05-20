@@ -35,7 +35,7 @@ To search our index, we need to use a querying Manager, which does the work of s
 ```java
 Manager queryingManager = ManagerFactory.from(index.getIndexRef());
 SearchRequest srq = queryingManager.newSearchRequestFromQuery("my terrier query");
-srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
+srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 ```
 Finally, we issue the search:
 ```java
@@ -272,7 +272,7 @@ In this case we have created a new SearchRequest for the query 'sample query'. T
 
 
 ```java
-srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
+srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 ```
 
 In this case we are using [BM25](https://en.wikipedia.org/wiki/Okapi_BM25), a classical model from the Best Match family of document weighting models. Second, we need to specify in the SearchRequest that we want to use the post filter we enabled above named 'decorate', as well as enable each of the steps in the querying pipeline:
@@ -356,7 +356,7 @@ public class IndexingAndRetrievalExample {
 		SearchRequest srq = queryingManager.newSearchRequestFromQuery("search for document");
 
 		// Specify the model to use when searching
-		srq.setControl(SearchResult.CONTROL_WMODEL, "BM25");
+		srq.setControl(SearchRequest.CONTROL_WMODEL, "BM25");
 
 		// Enable querying processes
 		srq.setControl("terrierql", "on");
