@@ -65,7 +65,7 @@ import org.terrier.utility.FieldScore;
  * <li><tt>indexer.meta.forward.keys</tt> - comma delimited list of {@link Document} properties to index as document metadata in the {@link MetaIndex}. Defaults to "docno", which permits docid-&gt;docno lookups.. Examples are "docno,url" or "docno,url,content"</li>
  * <li><tt>indexer.meta.forward.keylens</tt> - comma delimited list of the length of the values to record in the {@link MetaIndex}. Defaults to 20.</li>
  * <li><tt>indexer.meta.reverse.keys</tt> - comma delimited list of {@link Document} properties to permit lookups for (i.e. docno-&gt;docid). Defaults to empty (none are enabled).</li>
- * <li><tt>indexer.meta.builder</tt> - name of the class to build the MetaIndex. Defaults to CompressingMetaIndexBuilder, which uses deflate compression.</li>
+ * <li><tt>indexer.meta.builder</tt> - name of the class to build the MetaIndex. Defaults to ZstdMetaIndexBuilder, which uses zstandard compression.</li>
  * 
  * </ul>
  * @author Craig Macdonald
@@ -244,16 +244,8 @@ public abstract class Indexer
 		final String[] forwardMetaKeys = ApplicationSetup.getProperty("indexer.meta.forward.keys", "docno").split("\\s*,\\s*");
 		final int[] metaKeyLengths = parseInts(ApplicationSetup.getProperty("indexer.meta.forward.keylens", "20").split("\\s*,\\s*"));
 		final String[] reverseMetaKeys = ApplicationSetup.getProperty("indexer.meta.reverse.keys", "").split("\\s*,\\s*");
-		final String metaBuilderName = ApplicationSetup.getProperty("indexer.meta.builder", CompressingMetaIndexBuilder.class.getName());
-		try{
-			MetaIndexBuilder rtr = ApplicationSetup.getClass(metaBuilderName)
-				.asSubclass(MetaIndexBuilder.class)
-				.getConstructor(new Class<?>[]{IndexOnDisk.class, String[].class, int[].class,  String[].class})
-				.newInstance(new Object[]{currentIndex, forwardMetaKeys, metaKeyLengths, reverseMetaKeys});
-			return rtr;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not instantiate MetaIndexBuilder", e);
-		}
+		final String metaBuilderName = ApplicationSetup.getProperty("indexer.meta.builder", ZstdMetaIndexBuilder.class.getName());
+		return MetaIndexBuilder.create(metaBuilderName, currentIndex, forwardMetaKeys, metaKeyLengths, reverseMetaKeys);
 	}
 	
 	protected static final int[] parseInts(String[] in)

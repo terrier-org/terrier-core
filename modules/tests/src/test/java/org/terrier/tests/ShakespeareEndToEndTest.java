@@ -41,8 +41,6 @@ import java.util.Properties;
 
 import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.CollectionStatistics;
-import org.terrier.structures.CompressingMetaIndex;
-import org.terrier.structures.CompressingMetaIndex.InputStream;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.FieldDocumentIndexEntry;
@@ -187,14 +185,12 @@ public abstract class ShakespeareEndToEndTest extends BatchEndToEndTest
 			//check as a stream
 			Iterator<String[]> iMi = (Iterator<String[]>) index.getIndexStructureInputStream("meta");
 			//not a close problem, because its the same object
-			CompressingMetaIndex.InputStream cmiis = (InputStream) iMi;
 			assertNotNull("Failed to get a meta input stream", iMi);
 			while(iMi.hasNext())
 			{
 				docid++;
 				final String[] names = iMi.next();
 				assertEquals("Docnos for document "+ docid + " dont match", docnos[docid], names[0]);
-				assertEquals("Docid was not correct", docid, cmiis.getIndex());
 			}
 			//check docid is as large as expected
 			assertEquals("Metaindex as stream didnt have expected number of entries", docnos.length -1, docid);

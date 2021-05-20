@@ -1,10 +1,10 @@
 What's New in Terrier
 =====================
 
-Terrier 5.5 - xx/xx/2021
+Terrier 5.5 - xx/05/2021
 ------------------------
 
-Significant update, introducing alternative compression for the meta index, reentrant Matching and data structure classes, and addressing bugs and enhancements identified through usage from PyTerrier.
+Significant update, introducing alternative compression for the MetaIndex, reentrant Matching and data structure classes, and addressing bugs and enhancements identified through usage from PyTerrier. From 5.5 onwards, the default compressino of the MetaIndex will be Zstd.
 
 ## Indexing
  - [#152](https://github.com/terrier-org/terrier-core/issues/157) improvements on abstract metadata from TaggedDocument and FileDocument

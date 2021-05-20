@@ -100,13 +100,13 @@ public class DiskIndexWriter {
 
         /** metaindex */
         Iterator<String[]> metaIter = (Iterator<String[]>) source.getIndexStructureInputStream("meta");
-        CompressingMetaIndexBuilder metaOut = new CompressingMetaIndexBuilder(
-                target,
-                source.getMetaIndex().getKeys(),
-                ArrayUtils.parseCommaDelimitedInts(ApplicationSetup
-						.getProperty("indexer.meta.forward.keylens", "")),
-				ArrayUtils.parseCommaDelimitedString(ApplicationSetup
-						.getProperty("indexer.meta.reverse.keys", "")));
+        final String metaBuilderName = ApplicationSetup.getProperty("indexer.meta.builder", ZstdMetaIndexBuilder.class.getName());
+		MetaIndexBuilder metaOut = MetaIndexBuilder.create(
+            metaBuilderName, 
+            target, 
+            source.getMetaIndex().getKeys(), 
+            ArrayUtils.parseCommaDelimitedInts(ApplicationSetup.getProperty("indexer.meta.forward.keylens", "")), 
+            ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("indexer.meta.reverse.keys", "")));
 		while(metaIter.hasNext()){
 			metaOut.writeDocumentEntry(metaIter.next());
 		}
@@ -224,15 +224,7 @@ public class DiskIndexWriter {
         
         index.getProperties().put("index.inverted.fields.count", String.valueOf(fields.length));
         index.getProperties().put("index.inverted.fields.names", String.join(",",fields));
-
-        /*
-         * index.meta
-         * structureName,className,paramTypes,paramValues
-         */
-
-        index.addIndexStructure("meta", "org.terrier.structures.CompressingMetaIndex", new String[] { "org.terrier.structures.IndexOnDisk", "java.lang.String" }, new String[] { "index", "structureName" });
-        index.addIndexStructureInputStream("meta", "org.terrier.structures.CompressingMetaIndex$InputStream", new String[] { "org.terrier.structures.IndexOnDisk", "java.lang.String" }, new String[] { "index", "structureName" });
-       
+        
         
         /*for (Object o : index.getProperties().keySet()) {
         	System.err.println(o.toString()+" "+index.getProperties().getProperty((String)o));

@@ -60,11 +60,11 @@ import org.terrier.structures.SimpleBitIndexPointer;
 import org.terrier.structures.SimpleDocumentIndexEntry;
 import org.terrier.structures.bit.DirectInvertedOutputStream;
 import org.terrier.structures.bit.FieldDirectInvertedOutputStream;
-import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
+import org.terrier.structures.indexing.MetaIndexBuilder;
+import org.terrier.structures.indexing.ZstdMetaIndexBuilder;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.indexing.LexiconBuilder;
-import org.terrier.structures.indexing.MetaIndexBuilder;
 import org.terrier.structures.indexing.CompressionFactory.CompressionConfiguration;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.Posting;
@@ -442,7 +442,8 @@ public class StructureMerger {
 			final String[] metaReverseTags = MetaReverse
 				? ArrayUtils.parseCommaDelimitedString(srcIndex1.getIndexProperty("index.meta.reverse-key-names", ""))
 				: new String[0];
-			final MetaIndexBuilder metaBuilder = new CompressingMetaIndexBuilder(destIndex, metaTags, metaTagLengths, metaReverseTags);
+			final String metaBuilderName = ApplicationSetup.getProperty("indexer.meta.builder", ZstdMetaIndexBuilder.class.getName());
+			final MetaIndexBuilder metaBuilder = MetaIndexBuilder.create(metaBuilderName, destIndex, metaTags, metaTagLengths, metaReverseTags);
 		
 			if (! srcIndex1.getIndexProperty("index.meta.key-names", "docno").equals(srcIndex2.getIndexProperty("index.meta.key-names", "docno")))
 			{
@@ -584,7 +585,8 @@ public class StructureMerger {
 			final String[] metaReverseTags = MetaReverse
 				? ArrayUtils.parseCommaDelimitedString(srcIndex1.getIndexProperty("index.meta.reverse-key-names", ""))
 				: new String[0];
-			final MetaIndexBuilder metaBuilder = new CompressingMetaIndexBuilder(destIndex, metaTags, metaTagLengths, metaReverseTags);
+			final String metaBuilderName = ApplicationSetup.getProperty("indexer.meta.builder", ZstdMetaIndexBuilder.class.getName());
+			final MetaIndexBuilder metaBuilder = MetaIndexBuilder.create(metaBuilderName, destIndex, metaTags, metaTagLengths, metaReverseTags);
 		
 			if (! srcIndex1.getIndexProperty("index.meta.key-names", "docno").equals(srcIndex2.getIndexProperty("index.meta.key-names", "docno")))
 			{

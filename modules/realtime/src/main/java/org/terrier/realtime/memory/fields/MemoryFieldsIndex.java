@@ -44,7 +44,6 @@ import org.terrier.structures.IndexUtil;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.indexing.DiskIndexWriter;
-import org.terrier.structures.indexing.CompressingMetaIndexBuilder;
 import org.terrier.structures.indexing.CompressionFactory;
 import org.terrier.structures.indexing.DocumentIndexBuilder;
 import org.terrier.structures.indexing.DocumentPostingList;
