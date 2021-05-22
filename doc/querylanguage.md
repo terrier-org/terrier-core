@@ -13,8 +13,8 @@ Some examples of Terrier's query language are the following:
  - `term1 term2`  -- retrieves documents that contain term1 or term2 (they do not need to contain both of them).
  - `{term1 term2}` -- retrieves documents that contain term1 or term2, where they are treated as synonyms of each other (they do not need to contain both of them)
  - `term1^2.3` -- the weight of term1 is multiplied by 2.3.
- - `+term1 +term2`  -- retrieves documents that contain both term1 and term2.
- - `+term1 -term2` -- retrieves documents that contain term1 and do not contain term2.
+ - `+term1 +term2`  -- retrieves documents that contain must contain term1 and must contain term2.
+ - `+term1 -term2` -- retrieves documents that must contain term1 and must not contain term2.
  - `title:term1` -- retrieves documents that contain term1 in the title field ([Field indexing](configure_indexing.md) must be configured to record the title field). NB: The semantics of this query language changed in Terrier 5.0.
  - `+title:term1` -- retrieves documents that contain term1 in the title field. As above, field indexing must be enabled.
  - `title:(term1 term2)^2.3` -- retrieves documents that contain term1 or term2 in the title field, and boost their weights by 2.3. Field indexing must be enabled.
