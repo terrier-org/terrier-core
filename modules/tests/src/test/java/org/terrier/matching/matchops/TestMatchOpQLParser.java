@@ -207,6 +207,26 @@ public class TestMatchOpQLParser {
 		assertEquals(1, rtr.size());
 		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
 		assertEquals("a", rtr.get(0).getKey().toString());
+
+		rtr = new MatchOpQLParser("#base64(Y2hlbWljYWw=)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
+		assertEquals("chemical", rtr.get(0).getKey().toString());
+
+		rtr = new MatchOpQLParser("#base64(cmVhY3Rpb25z)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(1, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
+		assertEquals("reactions", rtr.get(0).getKey().toString());
+
+		rtr = new MatchOpQLParser("#base64(Y2hlbWljYWw=) #base64(cmVhY3Rpb25z)").parseAll();
+		assertNotNull(rtr);
+		assertEquals(2, rtr.size());
+		assertTrue(rtr.get(0).getKey() instanceof SingleTermOp);
+		assertEquals("chemical", rtr.get(0).getKey().toString());
+		assertTrue(rtr.get(1).getKey() instanceof SingleTermOp);
+		assertEquals("reactions", rtr.get(1).getKey().toString());
 	}
 	
 	@Test public void testBase64Field() throws Exception {		
