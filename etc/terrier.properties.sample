@@ -111,8 +111,6 @@ xml.doctag=document
 xml.idtag=docno
 #what tags hold text to be indexed
 xml.terms=text
-#will the text be in non-English?
-#string.use_utf=false
 
 #Terrier has two indexing strategies:
 #classical two-pass and single-pass. Different properies control each
