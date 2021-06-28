@@ -49,7 +49,12 @@ public class MatchingOpQLParser implements Process {
 			mqt.setQueryId(q.getQueryID());
 			q.setMatchingQueryTerms(mqt);
 		} catch (ParseException | TokenMgrError e) {
-			throw new QueryParserException("Could not parse query", e);
+			String suffix = "'" + q.getOriginalQuery() + "'";
+			String qid = q.getQueryID();
+			if (qid != null)
+				suffix = "qid " + qid + " " + suffix;
+			suffix += " -- " + e.getMessage();
+			throw new QueryParserException("Could not parse query " + suffix, e);
 		}
 	}
 

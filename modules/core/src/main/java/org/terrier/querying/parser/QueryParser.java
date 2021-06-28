@@ -73,13 +73,11 @@ public class QueryParser
         
         try{
         	rtr = new TerrierQLParser(query).parse();
-        } catch (Exception|TokenMgrError e) {
+        } catch (ParseException|TokenMgrError e) {
 			String suffix = "'" + query + "'";
 			if (qid != null)
 				suffix = "qid " + qid + " " + suffix;
-			if (e instanceof TokenMgrError) {
-				suffix += " -- " + e.getMessage();
-			}
+			suffix += " -- " + e.getMessage();
             throw new QueryParserException("Failed to process " + suffix,e);
 		}
         if (rtr == null)
