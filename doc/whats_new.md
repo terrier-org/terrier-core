@@ -1,6 +1,12 @@
 What's New in Terrier
 =====================
 
+Terrier 5.6 - xx/xx/2021
+------------------------
+
+Under development.
+
+
 Terrier 5.5 - 20/05/2021
 ------------------------
 
