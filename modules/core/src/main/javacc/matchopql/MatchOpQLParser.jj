@@ -381,7 +381,7 @@ MatchingTerm base64() : {
 	Token field = null;
 }
 {
-	<BASE64> <OPEN_PAREN> word = <BASE64WORD> <CLOSE_PAREN> (<PERIOD> field = <WORD>)?
+	<BASE64> <OPEN_PAREN> (word = <BASE64WORD> | word=<WORD>) <CLOSE_PAREN> (<PERIOD> field = <WORD>)?
 	{
 		String fieldName = null;
 		byte[] decoded = java.util.Base64.getMimeDecoder().decode(word.image);
