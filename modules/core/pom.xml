@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>terrier-platform</artifactId>
 		<groupId>org.terrier</groupId>
-		<version>5.5</version>
+		<version>5.6-SNAPSHOT</version>
 		<relativePath>../../</relativePath>
 	</parent>
 
@@ -13,7 +13,7 @@
 
 	<properties>
 		<jetty.version>9.3.29.v20201019</jetty.version>
-		<pdfbox.version>2.0.18</pdfbox.version>
+		<pdfbox.version>2.0.24</pdfbox.version>
         <poi.version>3.8</poi.version>
 	</properties>
 
