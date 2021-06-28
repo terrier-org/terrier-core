@@ -7,7 +7,7 @@ Terrier 5.6 - xx/xx/2021
 Under development.
 
 ## Retrieval
- - [#182](https://github.com/terrier-org/terrier-core/issues/182) TokenMgrError exception should be promoted to the QueryParserException (with thanks to Eugene Yang and Sean MacAvaney)
+ - [#182](https://github.com/terrier-org/terrier-core/issues/182) QueryParserException message should give parser's Exception message (with thanks to Eugene Yang and Sean MacAvaney)
 
 Terrier 5.5 - 20/05/2021
 ------------------------
