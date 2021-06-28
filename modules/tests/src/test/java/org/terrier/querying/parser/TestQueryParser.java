@@ -62,6 +62,19 @@ public class TestQueryParser {
 		QueryParser.parseQuery("a'");
 	}
 
+	@Test
+	public void testExceptionMessage() throws Exception
+	{
+		boolean seenException = false;
+		try {
+			QueryParser.parseQuery("a'");
+		} catch (QueryParserException e) {
+			seenException = true;
+			assertTrue(e.getMessage().contains("Lexical error"));
+		}
+		assertTrue(seenException);
+	}
+
 	@Test public void testControls() throws Exception
 	{
 		Query q = QueryParser.parseQuery("a end:10 qemodel:KL");
@@ -84,8 +97,6 @@ public class TestQueryParser {
 		assertEquals("a", q.toString());
 	}
 
-	
-	
 	@Test public void testSingleTermQueryWeighted() throws Exception
 	{
 		Query q = QueryParser.parseQuery("a^2");
@@ -157,14 +168,14 @@ public class TestQueryParser {
 
 		String word1 = "\u0917\u0941\u091C\u094D\u091C\u0930\u094B\u0902";
 		String word2 ="\u0914\u0930";
-		for (char c:  word1.toCharArray())
-		{
-			System.out.println(c + " " + Character.isLetterOrDigit(c) + " " + Character.isWhitespace(c));
-		}
-		for (char c:  word2.toCharArray())
-		{
-			System.out.println(c + " " + Character.isLetterOrDigit(c) + " " + Character.isWhitespace(c));
-		}
+		// for (char c:  word1.toCharArray())
+		// {
+		// 	System.out.println(c + " " + Character.isLetterOrDigit(c) + " " + Character.isWhitespace(c));
+		// }
+		// for (char c:  word2.toCharArray())
+		// {
+		// 	System.out.println(c + " " + Character.isLetterOrDigit(c) + " " + Character.isWhitespace(c));
+		// }
 
 		Query q = QueryParser.parseQuery(word1 + " " + word2);
 		List<Query> terms = new ArrayList<Query>();
