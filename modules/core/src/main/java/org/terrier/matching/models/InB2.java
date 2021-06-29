@@ -31,7 +31,7 @@ package org.terrier.matching.models;
  * Inverse Document Frequency model with Bernoulli after-effect and normalisation 2.
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
-public class InB2 extends WeightingModel {
+public class InB2 extends DFRNorm2BaseModel {
 	private static final long serialVersionUID = 1L;
 	/** 
 	 * A default constructor. This must be followed by specifying 

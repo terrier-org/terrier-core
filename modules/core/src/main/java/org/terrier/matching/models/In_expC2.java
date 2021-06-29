@@ -31,7 +31,7 @@ package org.terrier.matching.models;
  * This class implements the In_expC2 weighting model.
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
-public class In_expC2 extends WeightingModel {
+public class In_expC2 extends DFRNorm2BaseModel {
 
 	private static final long serialVersionUID = 1L;
 

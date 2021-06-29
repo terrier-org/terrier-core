@@ -37,6 +37,7 @@ public class MRF extends WeightingModel {
 	int ngramLength;
 	double defaultDf;
 	double defaultCf;
+	double mu;
 	
 	public MRF(){}
 
@@ -54,7 +55,7 @@ public class MRF extends WeightingModel {
 
 	@Override
 	public String getInfo() {
-		return this.getClass().getSimpleName() + "_mu" + this.c;
+		return this.getClass().getSimpleName() + "_mu" + this.mu;
 	}
 	
 	@Override
@@ -65,7 +66,6 @@ public class MRF extends WeightingModel {
 
 	@Override
 	public double score(double matchingNGrams, double _docLength) {
-		final double mu = this.c;
 		double docLength = (double)_docLength;
 		double tf = (double)matchingNGrams;
 		return (log(1 + (tf/(mu * (defaultCf / super.numberOfTokens)))) + log(mu/(docLength+mu)));

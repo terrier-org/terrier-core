@@ -83,6 +83,9 @@ public class BM25 extends WeightingModel {
 			if (rq.hasControl("bm25.k_3")) {
 				k_3 = Double.parseDouble(rq.getControl("bm25.k_3")); 
 			}
+			if (rq.hasControl("bm25.b")) {
+				b = Double.parseDouble(rq.getControl("bm25.b")); 
+			}
 		}
 		super.prepare();
 	}
