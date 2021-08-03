@@ -37,10 +37,7 @@ import org.apache.hadoop.io.Writable;
  * This class provides basic statistics for the indexed
  * collection of documents, such as the average length of documents,
  * or the total number of documents in the collection. <br>
- * After indexing, statistics are saved in the PREFIX.log file, along
- * with the classes that should be used for the Lexicon, the DocumentIndex,
- * the DirectIndex and the InvertedIndex. This means that an index knows
- * how it was build and how it should be opened again.
+ * After indexing, statistics are saved in the associated index object.
  *
  * @author Gianni Amati, Vassilis Plachouras, Craig Macdonald
  */
