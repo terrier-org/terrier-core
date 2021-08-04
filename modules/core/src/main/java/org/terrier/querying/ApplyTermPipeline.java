@@ -51,8 +51,8 @@ import org.terrier.utility.ApplicationSetup;
  * 3. Failing that, the "termpipelines" property in ApplicationSetup
  * 
  * These configuration rules were introduced in Terrier 5.6. This means that previously where a property was sufficient
- * to set the stemming configuration at retrieval, now a control is required. However, as the index termpipeline configuration
- * is used by default, the scenarios where explicit configuration are less frequent. In particular, if you create an index
+ * to override any stemming configuration recorded in the index at retrieval, now a control is required. However, as the index termpipeline configuration
+ * is used by default, the scenarios where explicit configuration is needed are less frequent. In particular, if you create an index
  * using a particular stemmer, that stemmer should be automatically picked up from the index (some exceptions - realtime and
  * composed indices).
  */
