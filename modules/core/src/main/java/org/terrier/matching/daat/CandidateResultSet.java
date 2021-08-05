@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import org.terrier.matching.QueryResultSet;
 import org.terrier.matching.ResultSet;
-import org.terrier.utility.HeapSort;
+import org.terrier.utility.StableSort;
 
 /** ResultSet which is created from a set of CandidateResults.
  * Used by DAAT matching strategies.
@@ -183,7 +183,7 @@ public class CandidateResultSet implements ResultSet, Serializable
 	
 	@Override
 	public void sort(int topDocs) {
-		HeapSort.descendingHeapSort(getScores(), getDocids(), getOccurrences(), topDocs);
+		StableSort.sortDescending(getScores(), getDocids(), getOccurrences(), topDocs);
 	}
 	
 }

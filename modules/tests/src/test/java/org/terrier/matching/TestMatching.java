@@ -40,6 +40,7 @@ import org.terrier.matching.matchops.SynonymOp;
 import org.terrier.matching.models.DLH13;
 import org.terrier.matching.models.DPH;
 import org.terrier.matching.models.PL2;
+import org.terrier.matching.models.Tf;
 import org.terrier.querying.LocalManager;
 import org.terrier.querying.Manager;
 import org.terrier.querying.Request;
@@ -57,36 +58,6 @@ import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
 
 public abstract class TestMatching extends ApplicationSetupBasedTest {
-
-	public static class TestTAATFullMatching extends TestMatching
-	{
-		@Override
-		protected Matching makeMatching(Index i)
-		{
-			return new org.terrier.matching.taat.Full(i);
-		}
-
-		@Override
-		protected Class<? extends Matching> getMatchingClass() {
-			return org.terrier.matching.taat.Full.class;
-		}
-		
-		
-	}
-	
-	public static class TestDAATFullMatching extends TestMatching
-	{
-		@Override
-		protected Matching makeMatching(Index i)
-		{
-			return new org.terrier.matching.daat.Full(i);
-		}
-
-		@Override
-		protected Class<? extends Matching> getMatchingClass() {
-			return org.terrier.matching.daat.Full.class;
-		}
-	}
 	
 	@Before public void setIndexerProperties()
 	{
@@ -97,6 +68,30 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 	
 	protected abstract Matching makeMatching(Index i);
 	protected abstract Class<? extends Matching> getMatchingClass();
+
+	@Test public void testTie() throws Exception {
+
+		Index index = IndexTestUtils.makeIndex(
+				new String[]{"doc1", "doc2"}, 
+				new String[]{"dog dog", "dog dog"});
+		System.err.println("testTie: " + index.toString());
+		assertNotNull(index);
+		assertEquals(2, index.getCollectionStatistics().getNumberOfDocuments());
+		Matching matching = makeMatching(index);
+		assertNotNull(matching);
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		mqt.setTermProperty("dog", 1);
+		mqt.setDefaultTermWeightingModel(new Tf());
+		ResultSet rs = matching.match("query1", mqt);
+		assertNotNull(rs);
+		assertEquals(2, rs.getResultSize());
+		//if two documents are identical, the lower docid should be the first one
+		//System.err.println(java.util.Arrays.toString( rs.getDocids()));
+		assertEquals(0, rs.getDocids()[0]);
+		assertTrue(rs.getScores()[0] > 0);
+		assertEquals(1, rs.getDocids()[1]);
+		assertTrue(rs.getScores()[1] > 0);
+	}
 
 	@Test public void testSingleDocumentIndexMatching() throws Exception
 	{
