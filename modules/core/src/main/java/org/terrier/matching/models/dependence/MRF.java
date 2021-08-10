@@ -51,6 +51,12 @@ public class MRF extends WeightingModel {
 		//these statistics are as used by Ivory system, of which Don Metzler was one of the authors
 		defaultDf = ((double) cs.getNumberOfDocuments())  / 100.0d;
 		defaultCf = defaultDf * 2;
+
+		if (rq != null) {
+			if (rq.hasControl("mrf.mu")) {
+				mu = Double.parseDouble(rq.getControl("mrf.mu")); 
+			}
+		}
 	}
 
 	@Override
