@@ -1048,10 +1048,15 @@ public abstract class BaseCompressingMetaIndex implements MetaIndex {
 		{
 			if (keyName.trim().equals(""))
 				continue;
+			String filename = path+ApplicationSetup.FILE_SEPARATOR+prefix+"."+structureName+"-"+i+FSOrderedMapFile.USUAL_EXTENSION;
+			if (! Files.exist(filename)) {
+				logger.warn("File " + filename + " containing reverse meta mapping for key" + keyName +" is missing. Reverse lookups for this key will be disabled");
+				continue;
+			}
 			key2reverseOffset.put(keyName, 1+i);
 			logger.debug("Reverse key "+ keyName +", length="+ key2bytelength.get(keyName));
 			keyFactories[i] = new FixedSizeTextFactory(key2stringlength.get(keyName));
-			String filename = path+ApplicationSetup.FILE_SEPARATOR+prefix+"."+structureName+"-"+i+FSOrderedMapFile.USUAL_EXTENSION;
+			
 			String loadFormat = index.getIndexProperty("index."+structureName+".reverse."+keyName+".in-mem", "false");
 			if (loadFormat.equals("hashmap"))
 			{
