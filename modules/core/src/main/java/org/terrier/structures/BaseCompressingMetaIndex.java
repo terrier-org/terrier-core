@@ -1049,7 +1049,7 @@ public abstract class BaseCompressingMetaIndex implements MetaIndex {
 			if (keyName.trim().equals(""))
 				continue;
 			String filename = path+ApplicationSetup.FILE_SEPARATOR+prefix+"."+structureName+"-"+i+FSOrderedMapFile.USUAL_EXTENSION;
-			if (! Files.exist(filename)) {
+			if (! Files.exists(filename)) {
 				logger.warn("File " + filename + " containing reverse meta mapping for key" + keyName +" is missing. Reverse lookups for this key will be disabled");
 				continue;
 			}
