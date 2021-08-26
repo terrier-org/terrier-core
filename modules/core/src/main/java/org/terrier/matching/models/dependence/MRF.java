@@ -37,6 +37,7 @@ public class MRF extends WeightingModel {
 	int ngramLength;
 	double defaultDf;
 	double defaultCf;
+	double mu;
 	
 	public MRF(){}
 
@@ -50,11 +51,17 @@ public class MRF extends WeightingModel {
 		//these statistics are as used by Ivory system, of which Don Metzler was one of the authors
 		defaultDf = ((double) cs.getNumberOfDocuments())  / 100.0d;
 		defaultCf = defaultDf * 2;
+
+		if (rq != null) {
+			if (rq.hasControl("mrf.mu")) {
+				mu = Double.parseDouble(rq.getControl("mrf.mu")); 
+			}
+		}
 	}
 
 	@Override
 	public String getInfo() {
-		return this.getClass().getSimpleName() + "_mu" + this.c;
+		return this.getClass().getSimpleName() + "_mu" + this.mu;
 	}
 	
 	@Override
@@ -65,7 +72,6 @@ public class MRF extends WeightingModel {
 
 	@Override
 	public double score(double matchingNGrams, double _docLength) {
-		final double mu = this.c;
 		double docLength = (double)_docLength;
 		double tf = (double)matchingNGrams;
 		return (log(1 + (tf/(mu * (defaultCf / super.numberOfTokens)))) + log(mu/(docLength+mu)));

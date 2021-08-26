@@ -42,23 +42,34 @@ package org.terrier.matching.models;
 public class DirichletLM extends WeightingModel {
 
 	private static final long serialVersionUID = 1L;
+	double mu = 2500d;
 
 	/** 
 	 * Constructs an instance of DirichletLM
 	 */
 	public DirichletLM() {
 		super();
-		c = 2500;
+		mu = 2500;
+	}
+
+	@Override 
+	public void prepare() {
+		if (rq != null) {
+			if (rq.hasControl("dirichletlm.mu")) {
+				mu = Double.parseDouble(rq.getControl("dirichletlm.mu")); 
+			}
+		}
+		super.prepare();
 	}
 
 	@Override
 	public double score(double tf, double docLength) {
-		return WeightingModelLibrary.log(1 + (tf/(c * (super.termFrequency / numberOfTokens))) ) + WeightingModelLibrary.log(c/(docLength+c));
+		return WeightingModelLibrary.log(1 + (tf/(mu * (super.termFrequency / numberOfTokens))) ) + WeightingModelLibrary.log(mu/(docLength+mu));
 	}
 
 	@Override
 	public String getInfo() {
-		return "DirichletLM";
+		return "DirichletLMmu"+mu;
 	}
 
 }

@@ -39,7 +39,7 @@ package org.terrier.matching.models;
  * </ol>
  * @author Gianni Amati
  */
-public class LGD extends WeightingModel {
+public class LGD extends DFRNorm2BaseModel {
 
 	private static final long serialVersionUID = 1L;
 

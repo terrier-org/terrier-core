@@ -83,6 +83,9 @@ public class BM25 extends WeightingModel {
 			if (rq.hasControl("bm25.k_3")) {
 				k_3 = Double.parseDouble(rq.getControl("bm25.k_3")); 
 			}
+			if (rq.hasControl("bm25.b")) {
+				b = Double.parseDouble(rq.getControl("bm25.b")); 
+			}
 		}
 		super.prepare();
 	}
@@ -91,6 +94,7 @@ public class BM25 extends WeightingModel {
 	 * Sets the b parameter to BM25 ranking formula
 	 * @param _b the b parameter value to use.
 	 */
+	@Deprecated
 	public void setParameter(double _b) {
 	    this.b = _b;
 	}
@@ -99,6 +103,7 @@ public class BM25 extends WeightingModel {
 	/**
 	 * Returns the b parameter to the BM25 ranking formula as set by setParameter()
 	 */
+	@Deprecated
 	public double getParameter() {
 	    return this.b;
 	}

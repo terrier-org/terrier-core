@@ -90,6 +90,18 @@ public class TF_IDF extends WeightingModel {
 		this.b = _b;
 	}
 
+	@Override 
+	public void prepare() {
+		if (rq != null) {
+			if (rq.hasControl("tf_idf.k_1")) {
+				k_1 = Double.parseDouble(rq.getControl("tf_idf.k_1")); 
+			}
+			if (rq.hasControl("tf_idf.b")) {
+				b = Double.parseDouble(rq.getControl("tf_idf.b")); 
+			}
+		}
+		super.prepare();
+	}
 
 	/**
 	 * Returns the b parameter to the ranking formula as set by setParameter()

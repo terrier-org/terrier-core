@@ -31,7 +31,7 @@ package org.terrier.matching.models;
  * 
  * @author Gianni Amati, Ben He
   */
-public class DFR_BM25 extends WeightingModel {
+public class DFR_BM25 extends DFRNorm2BaseModel {
 	private static final long serialVersionUID = 1L;
 	/** 
 	 * A default constructor. This must be followed 

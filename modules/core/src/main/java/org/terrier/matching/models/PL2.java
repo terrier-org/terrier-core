@@ -32,7 +32,7 @@ package org.terrier.matching.models;
  * This class implements the PL2 weighting model.
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
-public class PL2 extends WeightingModel {
+public class PL2 extends DFRNorm2BaseModel {
 	private static final long serialVersionUID = 1L;
 	/** 
 	 * A default constructor. This must be followed 
@@ -40,7 +40,7 @@ public class PL2 extends WeightingModel {
 	 */
 	public PL2() {
 		super();
-		c =1.0d;
+		c = 1.0d;
 	}
 	/** 
 	 * Constructs an instance of this class with the 
@@ -77,4 +77,6 @@ public class PL2 extends WeightingModel {
 				+ 0.5d * WeightingModelLibrary.log(2 * Math.PI * TF)
 				+ TF * (WeightingModelLibrary.log(TF) - WeightingModelLibrary.LOG_2_OF_E));
 	}
+
+	
 }
