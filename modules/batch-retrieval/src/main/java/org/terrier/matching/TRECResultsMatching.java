@@ -40,7 +40,6 @@ import org.terrier.structures.Index;
 import org.terrier.structures.MetaIndex;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
-import org.terrier.utility.HeapSort;
 
 /**
  * A matching implementation that retrieves results from a TREC result file
@@ -276,7 +275,7 @@ public class TRECResultsMatching implements Matching {
 		
 		for (int t = 0; t < numDSMs; t++) {
 			if (dsms.get(t).modifyScores(index, mqt, rs)) {
-				HeapSort.descendingHeapSort(scores, docids, rs.getOccurrences(), rs.getResultSize());
+				rs.sort();
 			}				
 		}
 		

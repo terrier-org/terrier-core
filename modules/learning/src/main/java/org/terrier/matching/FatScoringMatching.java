@@ -44,7 +44,6 @@ import org.terrier.structures.Index;
 import org.terrier.structures.postings.FieldPosting;
 import org.terrier.structures.postings.WritablePosting;
 import org.terrier.utility.ApplicationSetup;
-import org.terrier.utility.HeapSort;
 /** Scores a FatResultSet into a normal ResultSet for a given weighting model
  * @since 4.0
  * @author Craig Macdonald
