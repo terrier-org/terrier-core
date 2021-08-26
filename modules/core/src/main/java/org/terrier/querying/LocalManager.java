@@ -967,9 +967,10 @@ public class LocalManager implements Manager
 		
 		//obtaining the weighting model information
 		Model wmodel = getWeightingModel(rq);
-		final String param = rq.getControl("c");
-		if (rq.getControl("c_set").equals("true") && param.length() > 0)
-			wmodel.setParameter(Double.parseDouble(param));
+		if (rq.getControl("c_set").equals("true"))
+		{
+			logger.warn("Control 'c' has been removed. Please use appropriate controls for each weighting model to set parameters");
+		}
 		info.append(wmodel.getInfo());
 		
 		info.append(srq.getControl("runname"));

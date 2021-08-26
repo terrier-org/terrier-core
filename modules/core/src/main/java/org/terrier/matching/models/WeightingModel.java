@@ -146,6 +146,7 @@ public abstract class WeightingModel implements Model, Serializable, Cloneable {
 	}
 	
 	protected Request rq;
+	
 	/**
 	 * Sets request
 	 * @param _rq
@@ -168,6 +169,7 @@ public abstract class WeightingModel implements Model, Serializable, Cloneable {
 	 * Sets the c value
 	 * @param _c the term frequency normalisation parameter value.
 	 */
+	@Deprecated
 	public void setParameter(double _c) {
 		
 	}
@@ -175,6 +177,7 @@ public abstract class WeightingModel implements Model, Serializable, Cloneable {
 	/**
 	 * Returns the parameter as set by setParameter()
 	 */
+	@Deprecated
 	public double getParameter() {
 		return 0d;
 	}

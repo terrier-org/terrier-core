@@ -40,7 +40,7 @@ public class PL2 extends DFRNorm2BaseModel {
 	 */
 	public PL2() {
 		super();
-		c =1.0d;
+		c = 1.0d;
 	}
 	/** 
 	 * Constructs an instance of this class with the 
