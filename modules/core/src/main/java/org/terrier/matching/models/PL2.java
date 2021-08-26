@@ -29,7 +29,9 @@ package org.terrier.matching.models;
 
 
 /**
- * This class implements the PL2 weighting model.
+ * This class implements the PL2 weighting model. To control the weight of the c length normalisation parameter,
+ * set the dfr.c control in the SearchRequest object.
+ * 
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
 public class PL2 extends DFRNorm2BaseModel {

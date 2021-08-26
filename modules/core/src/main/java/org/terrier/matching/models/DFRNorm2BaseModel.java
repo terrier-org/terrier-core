@@ -1,7 +1,7 @@
 
 package org.terrier.matching.models;
 
-/** Base class for all DFR models what use Normalisation 2. To control the weight of the parameter,
+/** Base class for all DFR models what use Normalisation 2. To control the weight of the c length normalisation parameter,
  * set the dfr.c control in the SearchRequest object.
  */
 public abstract class DFRNorm2BaseModel extends WeightingModel {

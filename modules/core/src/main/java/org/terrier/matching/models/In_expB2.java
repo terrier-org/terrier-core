@@ -29,7 +29,8 @@ package org.terrier.matching.models;
 /**
  * This class implements the In_expB2 weighting model, namely Inverse Expected Document Frequency model with 
  * Bernoulli after-effect and normalisation 2. The logarithms are base 2. This model can be 
- * used for classic ad-hoc tasks.
+ * used for classic ad-hoc tasks. To control the weight of the c length normalisation parameter,
+ * set the dfr.c control in the SearchRequest object.
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
 public class In_expB2 extends DFRNorm2BaseModel {

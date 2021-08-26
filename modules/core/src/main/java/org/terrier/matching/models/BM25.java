@@ -29,11 +29,13 @@ package org.terrier.matching.models;
 import org.terrier.utility.ApplicationSetup;
 
 /**
- * This class implements the Okapi BM25 weighting model. The
- * default parameters used are:<br>
- * k_1 = 1.2d<br>
- * k_3 = 8d<br>
- * b = 0.75d<br> The b parameter can be altered by using the setParameter method.
+ * This class implements the Okapi BM25 weighting model. This has a number of parameters that
+ * can be set using controls in the (Search)Request object.
+ * <ol>
+ * <li>bm25.k_1 = 1.2d
+ * <li>bm25.k_3 = 8d
+ * <li>bm25.b = 0.75d
+ * </ol>
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
 public class BM25 extends WeightingModel {

@@ -28,7 +28,8 @@
 package org.terrier.matching.models;
 /**
  * This class implements the InB2 weighting model, namely
- * Inverse Document Frequency model with Bernoulli after-effect and normalisation 2.
+ * Inverse Document Frequency model with Bernoulli after-effect and normalisation 2. To control the weight of the c length normalisation parameter,
+ * set the dfr.c control in the SearchRequest object.
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
 public class InB2 extends DFRNorm2BaseModel {

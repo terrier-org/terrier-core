@@ -32,6 +32,12 @@ package org.terrier.matching.models;
  * This class implements the TF_IDF weighting model.
  * tf is given by Robertson's tf and idf is given by the 
  * standard Sparck Jones' idf [Sparck Jones, 1972].
+ * This has a number of parameters that
+ * can be set using controls in the (Search)Request object.
+ * <ol>
+ * <li>tf_idf.k_1 = 1.2d
+ * <li>tf_idf.b = 0.75d
+ * </ol>
  * @author Ben He, Gianni Amati, Vassilis Plachouras
   */
 public class TF_IDF extends WeightingModel {
