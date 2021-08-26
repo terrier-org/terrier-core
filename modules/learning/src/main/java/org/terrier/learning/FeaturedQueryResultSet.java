@@ -32,7 +32,7 @@ import java.util.Map;
 
 import org.terrier.matching.QueryResultSet;
 import org.terrier.matching.ResultSet;
-import org.terrier.utility.HeapSort;
+import org.terrier.utility.StableSort;
 import gnu.trove.TIntIntHashMap;
 
 /**
@@ -189,7 +189,7 @@ public class FeaturedQueryResultSet extends QueryResultSet implements FeaturedRe
 	public void sort(int topDocs) {
 		int[] oldDocids = new int[getDocids().length];
 		System.arraycopy(getDocids(), 0, oldDocids, 0, getDocids().length);
-		HeapSort.descendingHeapSort(getScores(), getDocids(), getOccurrences(), topDocs);
+		StableSort.sortDescending(getScores(), getDocids(), getOccurrences(), topDocs);
 		TIntIntHashMap sortedOrder = new TIntIntHashMap(getDocids().length);
 		for(int i=0;i<docids.length;i++)
 		{

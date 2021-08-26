@@ -37,13 +37,14 @@ package org.terrier.matching.models;
 public class Hiemstra_LM extends WeightingModel {
 
 	private static final long serialVersionUID = 1L;
+	double lambda = 0.15;
 
 	/** 
 	 * A default constructor. Uses the default value of lambda=0.15.
 	 */
 	public Hiemstra_LM() {
 		super();
-		this.c = 0.15;
+		this.lambda = 0.15;
 	}
 
 	/** 
@@ -53,15 +54,26 @@ public class Hiemstra_LM extends WeightingModel {
 	 */
 	public Hiemstra_LM(double lambda) {
 		this();
-		this.c = lambda;
+		this.lambda = lambda;
 	}
+
+	@Override 
+	public void prepare() {
+		if (rq != null) {
+			if (rq.hasControl("hiemstra_lm.lambda")) {
+				lambda = Double.parseDouble(rq.getControl("hiemstra_lm.lambda")); 
+			}
+		}
+		super.prepare();
+	}
+
 	/**
 	 * Returns the name of the model.
 	 * @return the name of the model
 	 */
 	
 	public final String getInfo(){
-		return "Hiemstra_LM" + c;
+		return "Hiemstra_LM" + lambda;
 	}
 	/**
 	 * Uses Hiemestra_LM to compute a weight for a term in a document.
@@ -71,14 +83,6 @@ public class Hiemstra_LM extends WeightingModel {
 	 *         tf and docLength, and other preset parameters
 	 */
 	public final double score(double tf, double docLength) {
-
-		return WeightingModelLibrary.log(1 + ( (c * tf * numberOfTokens) / ((1-c) * termFrequency * docLength)) ) * super.keyFrequency;	
-		
-	/*	Idf.log(((1 - c) * (tf / docLength)) 
-		/ (c * (termFrequency / numberOfTokens)) 
-		+ 1)
-		+ Idf.log(c * (termFrequency / numberOfTokens))
-		;
-	*/	
+		return WeightingModelLibrary.log(1 + ( (lambda * tf * numberOfTokens) / ((1-lambda) * termFrequency * docLength)) ) * super.keyFrequency;	
 	}
 }

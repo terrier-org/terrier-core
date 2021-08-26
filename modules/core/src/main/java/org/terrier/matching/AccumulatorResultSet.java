@@ -33,10 +33,14 @@ import gnu.trove.TIntShortHashMap;
 import java.io.Serializable;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.List;
+import java.util.Arrays;
+import com.google.common.primitives.Shorts;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terrier.utility.HeapSort;
+import org.terrier.utility.StableSort;
 
 
 /** A result set instance that uses maps internally until initialise() is called
@@ -110,6 +114,7 @@ public class AccumulatorResultSet implements ResultSet, Serializable
 	public void initialise() 
 	{
 		this.docids = scoresMap.keys();
+		System.out.println(java.util.Arrays.toString(this.docids));
 		this.scores = scoresMap.getValues();
 		this.occurrences = occurrencesMap.getValues();		
 		resultSize = this.docids.length;
@@ -119,7 +124,7 @@ public class AccumulatorResultSet implements ResultSet, Serializable
 		occurrencesMap.clear();
 		this.arraysInitialised = true;
 		
-		HeapSort.descendingHeapSort(this.getScores(), this.getDocids(), this.getOccurrences(), resultSize);
+		StableSort.sortDescendingTieBreaker(getScores(), getDocids(), Arrays.asList(new List<?>[]{Shorts.asList(getOccurrences())} ));
 	}
 	
 	/** Unsupported */
@@ -188,7 +193,7 @@ public class AccumulatorResultSet implements ResultSet, Serializable
 	public void sort(int topDocs) {
 		if (! arraysInitialised)
 			throw new UnsupportedOperationException("");
-		HeapSort.descendingHeapSort(getScores(), getDocids(), getOccurrences(), topDocs);
+		StableSort.sortDescending(getScores(), getDocids(), getOccurrences(), resultSize);
 	}
 	
 	

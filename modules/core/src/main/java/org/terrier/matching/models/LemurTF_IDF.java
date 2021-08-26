@@ -65,4 +65,17 @@ public class LemurTF_IDF extends WeightingModel {
 		return keyFrequency*Robertson_tf * 
 				Math.pow(WeightingModelLibrary.log(numberOfDocuments/documentFrequency), 2);
 	}
+
+	@Override 
+	public void prepare() {
+		if (rq != null) {
+			if (rq.hasControl("LemurTF_IDF.k_1")) {
+				k_1 = Double.parseDouble(rq.getControl("LemurTF_IDF.k_1")); 
+			}
+			if (rq.hasControl("LemurTF_IDF.b")) {
+				b = Double.parseDouble(rq.getControl("LemurTF_IDF.b")); 
+			}
+		}
+		super.prepare();
+	}
 }

@@ -43,7 +43,7 @@ import org.terrier.matching.FatUtils;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.WritablePosting;
-import org.terrier.utility.HeapSort;
+import org.terrier.utility.StableSort;
 
 @SuppressWarnings("serial")
 /** A version of {@link CandidateResultSet} suitable for use within the Fat framework
@@ -156,7 +156,7 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 
 	@Override
 	public void sort(int topDocs) {		
-		HeapSort.descendingHeapSort(getScores(), getDocids(), getOccurrences(), topDocs);
+		StableSort.sortDescending(getScores(), getDocids(), getOccurrences(), topDocs);
 		TIntIntHashMap sortedOrder = new TIntIntHashMap(postings.length);
 		for(int i=0;i<docids.length;i++)
 		{

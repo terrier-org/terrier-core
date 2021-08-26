@@ -25,12 +25,12 @@
  */
 package org.terrier.matching.models.dependence;
 
-import org.terrier.matching.models.WeightingModel;
+import org.terrier.matching.models.DFRNorm2BaseModel;
 import org.terrier.statistics.GammaFunction;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.NgramEntryStatistics;
 
-public class pBiL extends WeightingModel {
+public class pBiL extends DFRNorm2BaseModel {
 
 	private static final long serialVersionUID = 1L;
 	protected static final double REC_LOG_2 = 1.0d / Math.log(2.0d);

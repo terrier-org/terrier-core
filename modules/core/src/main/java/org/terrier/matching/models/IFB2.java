@@ -32,7 +32,7 @@ package org.terrier.matching.models;
  * This class implements the IFB2 weighting model.
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
-public class IFB2 extends WeightingModel {
+public class IFB2 extends DFRNorm2BaseModel {
 
 	private static final long serialVersionUID = 1L;
 

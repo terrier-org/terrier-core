@@ -58,9 +58,7 @@ public abstract class WeightingModel implements Model, Serializable, Cloneable {
 	protected double numberOfDocuments;
 	/** The number of tokens in the collections. */
 	protected double numberOfTokens;
-	/** The parameter c. This defaults to 1.0, but should be set using in the constructor
-	  * of each child weighting model to the sensible default for that weighting model. */
-	protected double c = 1.0d;
+	
 	/** Number of unique terms in the collection */
 	protected double numberOfUniqueTerms;	
 	/** The number of distinct entries in the inverted file. This figure can be calculated
@@ -148,6 +146,7 @@ public abstract class WeightingModel implements Model, Serializable, Cloneable {
 	}
 	
 	protected Request rq;
+	
 	/**
 	 * Sets request
 	 * @param _rq
@@ -170,15 +169,17 @@ public abstract class WeightingModel implements Model, Serializable, Cloneable {
 	 * Sets the c value
 	 * @param _c the term frequency normalisation parameter value.
 	 */
+	@Deprecated
 	public void setParameter(double _c) {
-		this.c = _c;
+		
 	}
 
 	/**
 	 * Returns the parameter as set by setParameter()
 	 */
+	@Deprecated
 	public double getParameter() {
-		return this.c;
+		return 0d;
 	}
 
 	/**

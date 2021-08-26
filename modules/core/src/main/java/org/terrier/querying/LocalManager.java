@@ -55,8 +55,6 @@ import org.terrier.matching.models.WeightingModelFactory;
 import org.terrier.querying.parser.Query;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexFactory;
-import org.terrier.terms.BaseTermPipelineAccessor;
-import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
 /**
   * This class is responsible for handling/co-ordinating the main high-level
@@ -543,10 +541,6 @@ public class LocalManager implements Manager
 	/* ------------------------------------------------*/
 	/* ------------Instantiation caches --------------*/
 	/** Cache loaded Matching models per Index in this map */
-		
-	
-	/** TermPipeline processing */
-	protected TermPipelineAccessor tpa;
 	
 	/** The index this querying comes from */
 	protected Index index;
@@ -563,11 +557,6 @@ public class LocalManager implements Manager
 	ModuleManager<Process> processModuleManager = new ModuleManager<>("processes", NAMESPACE_PROCESS, true);
 	
 	
-	/** This class is used as a TermPipelineAccessor, and this variable stores
-	  * the result of the TermPipeline run for that term. */
-	protected String pipelineOutput = null;
-
-	
 	/** Construct a Manager using the specified Index
 	  * Throws IllegalArgumentException if the specified index is null
 	  * @param _index The index to use in this manage
@@ -577,7 +566,6 @@ public class LocalManager implements Manager
 		if (_index == null)
 			throw new IllegalArgumentException("Null index specified to manager. Did the index load?");
 		this.useThisIndex(_index);
-		this.load_pipeline();
 		this.load_controls_allowed();
 		this.load_controls_default();
 	}
@@ -620,17 +608,6 @@ public class LocalManager implements Manager
 		}
 		//String def_c = null;
 		Defaults_Size = Default_Controls.size();
-	}
-
-	/** load in the term pipeline */
-	protected void load_pipeline()
-	{
-		final String[] pipes = ApplicationSetup.getProperty(
-				"termpipelines", "Stopwords,PorterStemmer").trim()
-				.split("\\s*,\\s*");
-		synchronized (this) {
-			tpa = new BaseTermPipelineAccessor(pipes);
-		}		
 	}
 
 	/** this allows processes to invoke other processes. 
@@ -967,9 +944,10 @@ public class LocalManager implements Manager
 		
 		//obtaining the weighting model information
 		Model wmodel = getWeightingModel(rq);
-		final String param = rq.getControl("c");
-		if (rq.getControl("c_set").equals("true") && param.length() > 0)
-			wmodel.setParameter(Double.parseDouble(param));
+		if (rq.getControl("c_set").equals("true"))
+		{
+			logger.warn("Control 'c' has been removed. Please use appropriate controls for each weighting model to set parameters");
+		}
 		info.append(wmodel.getInfo());
 		
 		info.append(srq.getControl("runname"));

@@ -38,7 +38,6 @@ import org.terrier.structures.IndexUtil;
 import org.terrier.structures.MetaIndex;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.Files;
-import org.terrier.utility.HeapSort;
 import org.terrier.utility.StaTools;
 /** Provides a way to integrate a static (query independent) document (prior) feature 
  * into the document scores. The feature scores are loaded from a file. The filename
@@ -325,7 +324,7 @@ public class SimpleStaticScoreModifier implements DocumentScoreModifier
 		}
 		
 		logger.info("Altered " + altered + " doc scores");
-		HeapSort.descendingHeapSort(scores, docids, set.getOccurrences(), set.getResultSize());
+		set.sort();
 		return true;
 	}
 	/** {@inheritDoc}*/@Override

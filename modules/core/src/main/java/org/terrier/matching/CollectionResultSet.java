@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.terrier.utility.HeapSort;
+import org.terrier.utility.StableSort;
 
 //import org.apache.log4j.Logger;
 /**
@@ -357,6 +357,6 @@ public class CollectionResultSet implements ResultSet, Serializable{
 
 	@Override
 	public void sort(int topDocs) {
-		HeapSort.descendingHeapSort(getScores(), getDocids(), getOccurrences(), topDocs);
+		StableSort.sortDescending(getScores(), getDocids(), getOccurrences(), topDocs);
 	}
 }

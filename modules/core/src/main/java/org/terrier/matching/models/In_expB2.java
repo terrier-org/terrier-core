@@ -32,7 +32,7 @@ package org.terrier.matching.models;
  * used for classic ad-hoc tasks.
  * @author Gianni Amati, Ben He, Vassilis Plachouras
   */
-public class In_expB2 extends WeightingModel {
+public class In_expB2 extends DFRNorm2BaseModel {
 	private static final long serialVersionUID = 1L;
 	/** 
 	 * A default constructor. This must be followed 

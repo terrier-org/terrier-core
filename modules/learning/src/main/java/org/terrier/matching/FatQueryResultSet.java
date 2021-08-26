@@ -37,7 +37,7 @@ import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.EntryStatistics;
 import org.terrier.structures.postings.WritablePosting;
 import org.terrier.structures.postings.Posting;
-import org.terrier.utility.HeapSort;
+import org.terrier.utility.StableSort;
 
 /** An implementation of {@link FatResultSet}.
  * 
@@ -152,7 +152,7 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 	public void sort(int topDocs) {
 		int[] oldDocids = new int[getDocids().length];
 		System.arraycopy(getDocids(), 0, oldDocids, 0, getDocids().length);
-		HeapSort.descendingHeapSort(getScores(), getDocids(), getOccurrences(), topDocs);
+		StableSort.sortDescending(getScores(), getDocids(), getOccurrences(), topDocs);
 		TIntIntHashMap sortedOrder = new TIntIntHashMap(postings.length);
 		for(int i=0;i<docids.length;i++)
 		{
