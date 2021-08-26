@@ -22,6 +22,12 @@ Controls are methods for configuring retrieval. Controls are set using the setCo
 | `site`         | off      | Performs hostname suffix matching as a PostFilter, like on web search engines. Requires the ResultSet to be decorated with "url" metadata |
 | `labels`       | off      | Adds the labels to documents in the ResultSet, using org.terrier.learning.LabelDecorator. Require the qrels file to have been set, using property `learning.labels.file`. | 
 
+## Weighting Models
+
+| Control Name   | Default  | Description                                                                   |
+|----------------|----------|-------------------------------------------------------------------------------|
+| `bm25.b`       |    0.75  | Length normalisation parameter of [BM25](http://terrier.org/docs/current/javadoc/org/terrier/matching/models/BM25.html)                                        | 
+| `dfr.c`        |    1     | Length normalisation parameter of [DFR weighting models](http://terrier.org/docs/current/javadoc/org/terrier/matching/models/PL2.html) based on Norm2, e.g. PL2   | 
 
 ## Query Expansion
 

@@ -4,10 +4,13 @@ What's New in Terrier
 Terrier 5.6 - xx/xx/2021
 ------------------------
 
-Under development.
+Minor update, making configuration from [PyTerrier](https://github.com/terrier-org/pyterrier) easier, particularly use of the [Terrier Data Repository](http://data.terrier.org/), and addressing small inconsistencies. Note that the method of configuring weighting model paraleters has now changed - see the relevant documentation.
 
 ## Retrieval
  - [#182](https://github.com/terrier-org/terrier-core/issues/182) QueryParserException message should give parser's Exception message (with thanks to Eugene Yang and Sean MacAvaney)
+ - [#177](https://github.com/terrier-org/terrier-core/issues/177) [#185](https://github.com/terrier-org/terrier-core/pulls/185) use stable sort when sorting result set
+ - [#177](https://github.com/terrier-org/terrier-core/issues/179) models configuration from controls
+ - [#122](https://github.com/terrier-org/terrier-core/issues/122) [#181](https://github.com/terrier-org/terrier-core/pull/181) Determine termpipeline configuration (stemming etc) from the index
 
 Terrier 5.5 - 20/05/2021
 ------------------------

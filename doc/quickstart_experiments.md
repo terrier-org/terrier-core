@@ -18,13 +18,13 @@ Step by Step Unix Installation
 
 After having downloaded Terrier, copy the file to the directory where you want to install Terrier. Navigate to this directory and execute the following command to decompress the distribution:
 
-    tar -zxvf terrier-project-5.3-bin.tar.gz
+    tar -zxvf terrier-project-5.6-bin.tar.gz
 
 This will result in the creation of a `terrier-project` directory in your current directory. Terrier will use the java command in your $PATH, if there is one, or otherwise will resort to looking in $JAVA_HOME. To check that java is in your path, type:
 
     java -version
     
-We are looking for Java version 11 or greater. If the java command is not found, you may have to install the Java, or ensure that the $JAVA_HOME directory to point to your Java installation. If your system does not meet these requirements you can download a Java 1.8 or newer from the [Java download website](https://www.java.com/en/download/). If necessary, set the environment variable by including the following line either in your ~/.bashrc file:
+We are looking for Java version 11 or greater. If the java command is not found, you may have to install the Java, or ensure that the $JAVA_HOME directory to point to your Java installation. If your system does not meet these requirements you can download Java from the [Java](https://www.java.com/en/download/) or [OpenJDK](https://openjdk.java.net/) websites. If necessary, set the environment variable by including the following line either in your ~/.bashrc file:
 
     export JAVA_HOME=<absolute-path-of-java-installation>
 
@@ -35,7 +35,7 @@ e.g.
 Step by Step Windows Installation
 ---------------------------------
 
-In order to be able to use Terrier on Windows you simply have to extract the contents of the downloaded .zip file into a directory of your choice. Terrier requires Java version 11 or higher. If your system does not meet this requirement you can download an appropriate version from the [JRE download website](https://www.java.com/en/download/). Finally, Terrier assumes that java.exe is on the path, so you should use the System applet in the control panel, to ensure that your [Java\\bin folder is in your PATH environment variable](http://www.oracle.com/technetwork/java/javase/install-windows-189425.html#Environment).
+In order to be able to use Terrier on Windows you simply have to extract the contents of the downloaded .zip file into a directory of your choice. Terrier requires Java version 11 or higher. If your system does not meet this requirement you can download an appropriate version from the [Java](https://www.java.com/en/download/) or [OpenJDK](https://openjdk.java.net/) websites. Finally, Terrier assumes that java.exe is on the path, so you should use the System applet in the control panel, to ensure that your [Java\\bin folder is in your PATH environment variable](http://www.oracle.com/technetwork/java/javase/install-windows-189425.html#Environment).
 
 **The following instructions are equally applicable to Windows, with the exception that the script filenames are suffixed by .bat**.
 
@@ -45,7 +45,7 @@ Using Terrier
 Terrier has a number of in-built commands. All of these can be accessed through the in-built `terrier` command-line script. While in Terrier's directory, type `bin/terrier` to see the available commands (`bin\terrier.bat` on Windows):
 
 	$ bin/terrier 
-	Terrier version 5.3
+	Terrier version 5.6
 	No command specified. You must specify a command.
 	Popular commands:
 		batchevaluate	evaluate all run result files in the results directory
@@ -80,7 +80,7 @@ This allows you to easily index, retrieve, and evaluate results on TREC collecti
 
 ### Interactive Terrier
 
-This allows you to to do interactive retrieval. This is a quick way to test Terrier. If you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive` command. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` command. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](http://terrier.org/docs/v5.2/javadoc/org/terrier/applications/InteractiveQuerying.html) class.
+This allows you to to do interactive retrieval. This is a quick way to test Terrier. If you have installed Terrier on Windows, you can start Interactive Terrier by executing the `bin/terrier.bat interactive` command. On a Unix system or Mac, you can run interactive Terrier by executing the `bin/terrier interactive` command. You can configure the retrieval functionalities of Interactive Terrier using properties described in the [InteractiveQuerying](http://terrier.org/docs/current/javadoc/org/terrier/applications/InteractiveQuerying.html) class.
 
 ### Desktop Terrier
 
@@ -100,7 +100,7 @@ This guide will provide step-by-step instructions for using Terrier to index a T
 1. Go to the Terrier folder.
 
 ```shell
-    cd terrier-project-5.3
+    cd terrier-project-5.6
 ```
 
 2. Setup Terrier for using a TREC test collection by using the `trec_setup` script (`trec_setup.bat` on Windows)
@@ -216,10 +216,12 @@ This will result in a `.res` file in the `var/results` directory called `DPH_0.r
 
 You can also configure more options on the command-line, including arbitrary properties using the `-D` option to any Terrier command. So the following two commands are equivalent:
 
-    $bin/terrier batchretrieve -w BM25 -c c:0.4 -t share/vaswani_npl/query-text.trec
-    $bin/terrier batchretrieve -Dtrec.model=BM25 -c c:0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
+    $bin/terrier batchretrieve -w BM25 -c bm25.b:0.4 -t share/vaswani_npl/query-text.trec
+    $bin/terrier batchretrieve -Dtrec.model=BM25 -c bm25.b:0.4 -Dtrec.topics=share/vaswani_npl/query-text.trec
 
-We have instructed Terrier to perform retrieval using the BM25 weighting model -- BM25 is a classical Okapi model firstly defined by Stephen Robertson, instead of the default DPH, which is a Divergence From Randomness weighting model (to learn more, see [the description of the DFR framework](dfr_description.md)).  `-c c:0.4` instructs Terrier to use the value 0.4 as the parameter value for the weighting model. Note - if you do not specify `c:0.4`, then the default parameter value will be used for that weighting model.
+We have instructed Terrier to perform retrieval using the BM25 weighting model -- BM25 is a classical Okapi model firstly defined by Stephen Robertson, instead of the default DPH, which is a Divergence From Randomness weighting model (to learn more, see [the description of the DFR framework](dfr_description.md)).  `-c bm25.b:0.4` instructs Terrier to use the value 0.4 as the b parameter value for the weighting model. Note - if you do not specify `bm25.b:0.4`, then the default parameter value will be used for that weighting model.
+
+The parameters of NB: The parameters of other weighting models can be set using other similar controls - for instance, some DFR weighting models will respond to a "dfr.c" control.
 
 3. Now we will evaluate the obtained results by using the `batchevaluate` command:
 
