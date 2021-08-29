@@ -146,7 +146,7 @@ public class ApplyTermPipeline implements Process {
 		synchronized(this) {
 			lastPipeline = tp;
 			info = tp;
-			return load_pipeline(tp);
+			return lastTpa = load_pipeline(tp);
 		}
 		
 	}
