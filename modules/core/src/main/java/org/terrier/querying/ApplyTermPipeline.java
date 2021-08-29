@@ -140,6 +140,7 @@ public class ApplyTermPipeline implements Process {
 		}
 		if (tp.equals(lastPipeline))
 		{
+			assert lastTpa != null;
 			return lastTpa;
 		}
 		synchronized(this) {
