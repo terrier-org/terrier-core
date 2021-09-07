@@ -197,6 +197,11 @@ public abstract class BaseMatching implements Matching
 	}
 	
 	protected void finalise(MatchingState state)
+        {
+                finalise(state, true);
+        }
+
+	protected void finalise(MatchingState state, boolean sort)
 	{
 		MatchingQueryTerms queryTerms = state.queryTerms;
 		
@@ -216,9 +221,11 @@ public abstract class BaseMatching implements Matching
 		//sets the actual size of the result set.
 		state.resultSet.setResultSize(set_size);
 		
-		state.resultSet.sort(set_size);
+                // we don't always need to re-sort here (e.g., DAAT is already sorted)
+                if (sort)
+		        state.resultSet.sort(set_size);
 		//long sortingEnd = System.currentTimeMillis();
-		
+                
 		/*we apply the query dependent document score modifiers first and then 
 		we apply the application dependent ones. This is to ensure that the 
 		BooleanFallback modifier is applied last. If there are more than 

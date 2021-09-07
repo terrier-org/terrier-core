@@ -26,6 +26,7 @@
  */
 package org.terrier.matching.daat;
 import java.util.Objects;
+import java.util.Comparator;
 /** A class used to when maintaining a top-k candidate documents ResultSet.
  * 
  * @author Nicola Tonnelotto
@@ -37,6 +38,9 @@ public class CandidateResult implements Comparable<CandidateResult>
 	private int docid;
 	private double score;
 	private short occurrence;
+
+	// different sort for final result list; see more details in CandidateResultSet.java
+	static final Comparator<CandidateResult> resultListComparator = Comparator.comparingDouble(CandidateResult::getScore).reversed().thenComparingInt(CandidateResult::getDocId);
 
 	/** Make a new CandidateResult for a ResultSet based on the
 	 * specified docid.

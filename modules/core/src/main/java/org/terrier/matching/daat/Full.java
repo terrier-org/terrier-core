@@ -183,14 +183,14 @@ public class Full extends BaseMatching
         // Fifth, we build the result set
         state.resultSet = makeResultSet(state, candidateResultList);
         state.numberOfRetrievedDocuments = state.resultSet.getScores().length;
-        finalise(state);
+        finalise(state, /*sort=*/false); // we don't need to sort here because state.resultSet is already sorted
 		return state.resultSet;
 	}
 
 	protected CandidateResultSet makeResultSet(
 			final DAATFullMatchingState state,
 			final Queue<CandidateResult> candidateResultList) {
-		return new CandidateResultSet(candidateResultList);
+                return new CandidateResultSet(candidateResultList);
 	}
 
 	protected CandidateResult makeCandidateResult(final DAATFullMatchingState state, final int currentDocId) {
