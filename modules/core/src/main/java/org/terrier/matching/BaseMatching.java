@@ -195,7 +195,8 @@ public abstract class BaseMatching implements Matching
 		MATCH_EMPTY_QUERY    = Boolean.parseBoolean(ApplicationSetup.getProperty("match.empty.query","false"));
 		return state;
 	}
-	
+        
+	@Deprecated
 	protected void finalise(MatchingState state)
         {
                 finalise(state, true);
