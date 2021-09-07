@@ -169,18 +169,18 @@ public class TestFatFullMatching extends TestMatching {
 		assertTrue(rs instanceof FatCandidateResultSet);
 		Posting[] postings = ((FatCandidateResultSet)rs).getPostings()[0];
 		assertEquals(2, postings.length);
+		assertEquals(0, postings[0].getId());
+		assertEquals(1, postings[0].getFrequency());
+		assertEquals(9, postings[0].getDocumentLength());
+		assertNull(postings[1]);
+		postings = ((FatCandidateResultSet)rs).getPostings()[1];
+		assertEquals(2, postings.length);
 		assertEquals(1, postings[0].getId());
 		assertEquals(1, postings[0].getFrequency());
 		assertEquals(8, postings[0].getDocumentLength());
 		assertEquals(1, postings[1].getId());
 		assertEquals(1, postings[1].getFrequency());
 		assertEquals(8, postings[1].getDocumentLength());
-		postings = ((FatCandidateResultSet)rs).getPostings()[1];
-		assertEquals(2, postings.length);
-		assertEquals(0, postings[0].getId());
-		assertEquals(1, postings[0].getFrequency());
-		assertEquals(9, postings[0].getDocumentLength());
-		assertNull(postings[1]);
 	}
 
 	

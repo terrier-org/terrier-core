@@ -25,7 +25,8 @@
  *   
  */
 package org.terrier.matching.daat;
-
+import java.util.Objects;
+import java.util.Comparator;
 /** A class used to when maintaining a top-k candidate documents ResultSet.
  * 
  * @author Nicola Tonnelotto
@@ -37,6 +38,9 @@ public class CandidateResult implements Comparable<CandidateResult>
 	private int docid;
 	private double score;
 	private short occurrence;
+
+	// different sort for final result list; see more details in CandidateResultSet.java
+	static final Comparator<CandidateResult> resultListComparator = Comparator.comparingDouble(CandidateResult::getScore).reversed().thenComparingInt(CandidateResult::getDocId);
 
 	/** Make a new CandidateResult for a ResultSet based on the
 	 * specified docid.
@@ -51,30 +55,36 @@ public class CandidateResult implements Comparable<CandidateResult>
 	
 	/** {@inheritDoc}. Enforces a sort by <i>ascending</i> score. */
 	@Override
-	public int compareTo(final CandidateResult o) 
+	public int compareTo(final CandidateResult that) 
 	{
-		if (this.score < o.score)
+		if (this.score < that.score)
 			return -1;
-		else if (this.score > o.score)
+		else if (this.score > that.score)
 			return 1;
 		else
-			return 0;
+			return Integer.compare(that.docid, this.docid);
 	}	
-	
+
 	/** {@inheritDoc} */
 	@Override
-	public boolean equals(Object obj) {
-		if (! (obj instanceof CandidateResult))
+	public boolean equals(Object that) 
+	{
+		if (that == this)
+			return true;
+		if (!(that instanceof CandidateResult)) {
 			return false;
-		return Double.compare(((CandidateResult)obj).score, this.score) == 0;
+		}
+		CandidateResult candidateResult = (CandidateResult) that;
+		return docid == candidateResult.docid && score == candidateResult.score;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public int hashCode() {
-		return getDocId();
-    }
-
+	public int hashCode() 
+	{
+		return Objects.hash(docid, score);
+	}
+	
 	/** Returns the docid of this result */
 	public int    getDocId() 	  { return docid;      }
 	

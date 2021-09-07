@@ -93,6 +93,32 @@ public abstract class TestMatching extends ApplicationSetupBasedTest {
 		assertTrue(rs.getScores()[1] > 0);
 	}
 
+	@Test public void testTieResultSize() throws Exception {
+
+		Index index = IndexTestUtils.makeIndex(
+				new String[]{"doc1", "doc2", "doc3"}, 
+				new String[]{"dog", "dog", "dog dog"});
+		System.err.println("testTieStableDocId: " + index.toString());
+		assertNotNull(index);
+		assertEquals(3, index.getCollectionStatistics().getNumberOfDocuments());
+		Matching matching = makeMatching(index);
+		assertNotNull(matching);
+		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		mqt.setTermProperty("dog", 1);
+		mqt.setDefaultTermWeightingModel(new Tf());
+                mqt.setMatchingRequestSize(2);
+		ResultSet rs = matching.match("query1", mqt);
+		assertNotNull(rs);
+		assertEquals(2, rs.getResultSize());
+		//if two documents are identical, the lower docid should be the first one,
+                //make sure this is also true when a document with a higher score is encountered later
+		//System.err.println(java.util.Arrays.toString( rs.getDocids()));
+		assertEquals(2, rs.getDocids()[0]);
+		assertEquals(2.0, rs.getScores()[0], 1e-5);
+		assertEquals(0, rs.getDocids()[1]); // early docid
+		assertEquals(1.0, rs.getScores()[1], 1e-5);
+	}
+
 	@Test public void testSingleDocumentIndexMatching() throws Exception
 	{
 		_testSingleDocumentIndexMatching();

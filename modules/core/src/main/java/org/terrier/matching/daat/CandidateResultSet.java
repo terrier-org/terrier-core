@@ -84,7 +84,10 @@ public class CandidateResultSet implements ResultSet, Serializable
 	public CandidateResultSet(Collection<CandidateResult> _q)
 	{
 		lock = new ReentrantLock();
-		Collection<CandidateResult> q = _q.stream().filter( res -> res.getScore() != Double.NEGATIVE_INFINITY).collect(Collectors.toList());
+		// Fully sort the result list (the PriorityQueue only guarantees the min element is at [0]).
+		// Note that sorting here is by descending score and then by ascending docid for stability reasons;
+		// the natural sort for CandidateResult is different (descending score then descending docid) for DAAT to work properly
+		Collection<CandidateResult> q = _q.stream().filter( res -> res.getScore() != Double.NEGATIVE_INFINITY).sorted(CandidateResult.resultListComparator).collect(Collectors.toList());
 		resultSize = q.size();
 		exactResultSize = resultSize;
 
@@ -106,7 +109,8 @@ public class CandidateResultSet implements ResultSet, Serializable
 	public CandidateResultSet(List<CandidateResult> _q)
 	{
 		lock = new ReentrantLock();
-		Collection<CandidateResult> q = _q.stream().filter( res -> res.getScore() != Double.NEGATIVE_INFINITY).collect(Collectors.toList());
+		// see comment above about sorting
+		Collection<CandidateResult> q = _q.stream().filter( res -> res.getScore() != Double.NEGATIVE_INFINITY).sorted(CandidateResult.resultListComparator).collect(Collectors.toList());
 		resultSize = q.size();
 		exactResultSize = resultSize;
 
