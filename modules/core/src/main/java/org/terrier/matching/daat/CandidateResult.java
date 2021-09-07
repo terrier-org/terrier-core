@@ -51,30 +51,36 @@ public class CandidateResult implements Comparable<CandidateResult>
 	
 	/** {@inheritDoc}. Enforces a sort by <i>ascending</i> score. */
 	@Override
-	public int compareTo(final CandidateResult o) 
+	public int compareTo(final CandidateResult that) 
 	{
 		if (this.score < o.score)
 			return -1;
 		else if (this.score > o.score)
 			return 1;
 		else
-			return 0;
+			return Integer.compare(this.docid, that.docid)
 	}	
-	
+
 	/** {@inheritDoc} */
 	@Override
-	public boolean equals(Object obj) {
-		if (! (obj instanceof CandidateResult))
+	public boolean equals(Object that) 
+	{
+		if (that == this)
+			return true;
+		if (!(that instanceof CandidateResult)) {
 			return false;
-		return Double.compare(((CandidateResult)obj).score, this.score) == 0;
+		}
+		CandidateResult candidateResult = (CandidateResult) that;
+		return docid == candidateResult.docid && score == candidateResult.score;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public int hashCode() {
-		return getDocId();
-    }
-
+	public int hashCode() 
+	{
+		return Objects.hash(docid, score);
+	}
+	
 	/** Returns the docid of this result */
 	public int    getDocId() 	  { return docid;      }
 	
