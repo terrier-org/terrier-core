@@ -25,7 +25,7 @@
  *   
  */
 package org.terrier.matching.daat;
-
+import java.util.Objects;
 /** A class used to when maintaining a top-k candidate documents ResultSet.
  * 
  * @author Nicola Tonnelotto
@@ -53,12 +53,12 @@ public class CandidateResult implements Comparable<CandidateResult>
 	@Override
 	public int compareTo(final CandidateResult that) 
 	{
-		if (this.score < o.score)
+		if (this.score < that.score)
 			return -1;
-		else if (this.score > o.score)
+		else if (this.score > that.score)
 			return 1;
 		else
-			return Integer.compare(this.docid, that.docid)
+			return Integer.compare(that.docid, this.docid);
 	}	
 
 	/** {@inheritDoc} */
