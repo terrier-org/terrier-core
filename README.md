@@ -1,5 +1,5 @@
-Terrier IR Platform - Terabyte Retriever v5.5
------------------------------------
+Terrier IR Platform - Terabyte Retriever v5.6
+---------------------------------------------
 ![Terrier Maven CI](https://github.com/terrier-org/terrier-core/workflows/Terrier%20Maven%20CI/badge.svg) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.terrier/terrier-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.terrier/terrier-platform) 
 
 :mag: [Terrier](http://terrier.org) is a highly flexible, efficient, and effective open source search engine, readily deployable on large-scale collections of documents. Terrier implements state-of-the-art indexing and retrieval functionalities, and provides an ideal platform for the rapid development and evaluation of large-scale retrieval applications.
