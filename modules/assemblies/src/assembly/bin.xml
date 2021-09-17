@@ -65,9 +65,6 @@
 			<source>../../.gitignore</source>
 		</file>
 		<file>
-			<source>../../.travis.yml</source>
-		</file>
-		<file>
 			<source>../../LICENSE.txt</source>
 		</file>
 		<file>
