@@ -1,16 +1,20 @@
 What's New in Terrier
 =====================
 
-Terrier 5.6 - xx/xx/2021
+Terrier 5.6 - 17/09/2021
 ------------------------
 
 Minor update, making configuration from [PyTerrier](https://github.com/terrier-org/pyterrier) easier, particularly use of the [Terrier Data Repository](http://data.terrier.org/), and addressing small inconsistencies. Note that the method of configuring weighting model paraleters has now changed - see the relevant documentation.
 
 ## Retrieval
  - [#182](https://github.com/terrier-org/terrier-core/issues/182) QueryParserException message should give parser's Exception message (with thanks to Eugene Yang and Sean MacAvaney)
- - [#177](https://github.com/terrier-org/terrier-core/issues/177) [#185](https://github.com/terrier-org/terrier-core/pulls/185) use stable sort when sorting result set
- - [#177](https://github.com/terrier-org/terrier-core/issues/179) models configuration from controls
+ - [#177](https://github.com/terrier-org/terrier-core/issues/177) [#185](https://github.com/terrier-org/terrier-core/pulls/185) use stable sort when sorting result set; make DAAT retrieval stable too (with thanks to Sean Macavaney and Nicola Tonellotto)
+ - [#179](https://github.com/terrier-org/terrier-core/issues/179) models configuration from controls
  - [#122](https://github.com/terrier-org/terrier-core/issues/122) [#181](https://github.com/terrier-org/terrier-core/pull/181) Determine termpipeline configuration (stemming etc) from the index
+
+## Other 
+ - [#187](https://github.com/terrier-org/terrier-core/pull/#187), [#178](https://github.com/terrier-org/terrier-core/issue/178), [#176](https://github.com/terrier-org/terrier-core/issue/176) [#175](https://github.com/terrier-org/terrier-core/issue/175), [#174](https://github.com/terrier-org/terrier-core/issue/174), [#173](https://github.com/terrier-org/terrier-core/issue/173), [#172](https://github.com/terrier-org/terrier-core/issue/172), [#170](https://github.com/terrier-org/terrier-core/issue/170) Dependencies vulnerabilities
+-  [#166](https://github.com/terrier-org/terrier-core/pull/#166) Fix wrong Class Name in Quickstart Documentation (thanks to Dante from Zurich)
 
 Terrier 5.5 - 20/05/2021
 ------------------------
@@ -52,7 +56,7 @@ Minor update addressing bugs identified through usage from PyTerrier and others.
  - [#145](https://github.com/terrier-org/terrier-core/issues/145) checks required for words do not occur in the feedback documents in query expansion-based retrieval, with thanks to Sarawoot Kongyoung, University of Glasgow
 
 ## Other 
- - [#132](https://github.com/terrier-org/terrier-core/issues/#132), [#136](https://github.com/terrier-org/terrier-core/issues/136) Dependencies vulnerabilities
+ - [#132](https://github.com/terrier-org/terrier-core/pull/#132), [#136](https://github.com/terrier-org/terrier-core/pull/136) Dependencies vulnerabilities
 
 Terrier 5.3 - 24/6/2020
 -----------------------
