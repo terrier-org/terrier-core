@@ -112,6 +112,17 @@ public class PerFieldNormWeightingModel extends WeightingModel {
 	@Override
 	public void prepare() {
 		super.prepare();
+		for(int fi=0;fi<fieldCount;fi++)
+		{
+			String weightControlName = "w." + fi;
+			if (rq.hasControl(weightControlName)) {
+				fieldWeights[fi] = Double.parseDouble(rq.getControl(weightControlName)); 
+			}
+			String paramControlName = "c." + fi;
+			if (rq.hasControl(paramControlName)) {
+				this.fieldNormalisations[fi].setParameter(Double.parseDouble(rq.getControl(paramControlName)) );
+			}
+		}
 	}
 
 	@Override
