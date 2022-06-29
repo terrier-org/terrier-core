@@ -14,7 +14,7 @@
 	<properties>
 		<jetty.version>9.3.29.v20201019</jetty.version>
 		<pdfbox.version>2.0.24</pdfbox.version>
-        <poi.version>3.8</poi.version>
+        <poi.version>4.1.1</poi.version>
 	</properties>
 
 	<dependencies>
