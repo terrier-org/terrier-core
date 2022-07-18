@@ -396,6 +396,11 @@ public abstract class Indexer
 		fileNameNoExtension = path + ApplicationSetup.FILE_SEPARATOR + prefix;
 	}
 
+	/** Indexes document as provided by the specified iterator.
+	 * Used internally by createDirectIndex(Collection collection), but
+	 * can be used externally too.
+	 * @param iterDocs an iterator
+	  */	
 	public abstract long indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs);
 
 	/** Merge a series of numbered indices in the same path/prefix area. New merged index
