@@ -34,6 +34,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.indexing.Collection;
+import org.terrier.indexing.CollectionFactory;
 import org.terrier.indexing.Document;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.BasicDocumentIndexEntry;
@@ -201,9 +202,14 @@ public abstract class Indexer
 	/**
 	 * An abstract method for creating the direct index, the document index
 	 * and the lexicon for the given collections.
-	 * @param collections Collection[] An array of collections to index
+	 * @param collection Collection An collection to index
 	 */
-	public abstract void createDirectIndex(Collection[] collections);
+	public abstract void createDirectIndex(Collection collection);
+
+	@Deprecated
+	public void createDirectIndex(Collection[] collections) {
+		createDirectIndex(CollectionFactory.compose(collections));
+	}
 	/**
 	 * An abstract method for creating the inverted index, given that the
 	 * the direct index, the document index and the lexicon have
@@ -343,6 +349,10 @@ public abstract class Indexer
 		if (BUILDER_BOUNDARY_DOCUMENTS.size() > 0)
 			logger.info("Watching for "+BUILDER_BOUNDARY_DOCUMENTS.size()+ " documents that force index builder boundaries.");
 	}
+
+	public void index(Collection[] collections) {
+		index(CollectionFactory.compose(collections));
+	}
 	
 	/**
 	 * Creates the data structures for a set of collections. 
@@ -352,21 +362,18 @@ public abstract class Indexer
 	 * the generated data structures.
 	 * @param collections The document collection objects to index.
 	 */
-	public void index(Collection[] collections) {
-		//the number of collections to index
-		final int numOfCollections = collections.length;
+	public void index(Collection collection) {
 		int counter = 0;
 		final String oldIndexPrefix = prefix;
 		
-		//while (collections[numOfCollections-1].hasNext()) {
-		while (! collections[numOfCollections-1].endOfCollection()) {	
+		while (! collection.endOfCollection()) {	
 			counter++;
 			
 			prefix = oldIndexPrefix + "_" + counter;
 			fileNameNoExtension = path + ApplicationSetup.FILE_SEPARATOR + prefix;
 			//ApplicationSetup.setupFilenames();
 			logger.info("creating the data structures " + prefix);
-			this.createDirectIndex(collections);
+			this.createDirectIndex(collection);
 			this.createInvertedIndex();
 		}
 		
@@ -385,10 +392,10 @@ public abstract class Indexer
 		}
 		//restore the prefix
 		prefix = oldIndexPrefix;
-		//ApplicationSetup.TERRIER_INDEX_PREFIX=oldIndexPrefix;
-		//ApplicationSetup.setupFilenames();
 		fileNameNoExtension = path + ApplicationSetup.FILE_SEPARATOR + prefix;
 	}
+
+	//public abstract void indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList> iterDocs);
 
 	/** Merge a series of numbered indices in the same path/prefix area. New merged index
 	  * will be stored at mpath/mprefix_highest+1.

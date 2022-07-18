@@ -208,7 +208,7 @@ public class BasicIndexer extends Indexer
 	 * @param collections Collection[] the collections to be indexed.
 	 */
 	
-	public void createDirectIndex(Collection[] collections)
+	public void createDirectIndex(Collection collection)
 	{
 		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
 		final boolean FIELDS = FieldScore.FIELDS_COUNT > 0;
@@ -233,99 +233,94 @@ public class BasicIndexer extends Indexer
 		//int LexiconCount = 0;
 		int numberOfDocuments = 0; int numberOfTokens = 0;
 		//final long startBunchOfDocuments = System.currentTimeMillis();
-		final int collections_length = collections.length;
 		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
 		boolean stopIndexing = false;
-		for(int collectionNo = 0; ! stopIndexing && collectionNo < collections_length; collectionNo++)
-		{
-			final Collection collection = collections[collectionNo];
-			long startCollection = System.currentTimeMillis();
-			boolean notLastDoc = false;
-			//while(notLastDoc = collection.hasNext()) {
-			while ((notLastDoc = collection.nextDocument())) {
-				//get the next document from the collection
+		long startCollection = System.currentTimeMillis();
+		boolean notLastDoc = false;
+		//while(notLastDoc = collection.hasNext()) {
+		while ((notLastDoc = collection.nextDocument())) {
+			//get the next document from the collection
 
-				Document doc = collection.getDocument();
-				
-				if (doc == null) {
-					logger.warn("skipping null document"); continue;
-				}
-				numberOfDocuments++; 
-				/* setup for parsing */
-				createDocumentPostings();
-				String term; //term we're currently processing
-				numOfTokensInDocument = 0;
-	
-				//get each term in the document
-				while (!doc.endOfDocument()) {
-					if ((term = doc.getNextTerm())!=null && !term.equals("")) {
-						termFields = doc.getFields();
-						/* pass term into TermPipeline (stop, stem etc) */
-						pipeline_first.processTerm(term);
-						/* the term pipeline will eventually add the term to this object. */
-					}
-					if (MAX_TOKENS_IN_DOCUMENT > 0 && 
-							numOfTokensInDocument > MAX_TOKENS_IN_DOCUMENT)
-							break;
-				}
-				//if we didn't index all tokens from document,
-				//we need to get to the end of the document.
-				while (!doc.endOfDocument()) 
-					doc.getNextTerm();
-				
-				pipeline_first.reset();
-				/* we now have all terms in the DocumentTree, so we save the document tree */
-				try
-				{
-					if (termsInDocument.getDocumentLength() == 0)
-					{	/* this document is empty, add the minimum to the document index */
-						indexEmpty(doc.getAllProperties());
-					}
-					else
-					{	/* index this docuent */
-						numberOfTokens += numOfTokensInDocument;
-						indexDocument(doc.getAllProperties(), termsInDocument);
-					}
-				}
-				catch (Exception ioe)
-				{
-					logger.error("Failed to index "+doc.getProperty("docno"),ioe);
-					throw new RuntimeException(ioe);
-				}
-				
-				if (MAX_DOCS_PER_BUILDER>0 && numberOfDocuments >= MAX_DOCS_PER_BUILDER)
-				{
-					stopIndexing = true;
-					break;
-				}
-
-				if (boundaryDocsEnabled && BUILDER_BOUNDARY_DOCUMENTS.contains(doc.getProperty("docno")))
-				{
-					logger.warn("Document "+doc.getProperty("docno")+" is a builder boundary document. Boundary forced.");
-					stopIndexing = true;
-					break;
-				}
+			Document doc = collection.getDocument();
+			
+			if (doc == null) {
+				logger.warn("skipping null document"); continue;
 			}
+			numberOfDocuments++; 
+			/* setup for parsing */
+			createDocumentPostings();
+			String term; //term we're currently processing
+			numOfTokensInDocument = 0;
 
-
-			if (! notLastDoc)
+			//get each term in the document
+			while (!doc.endOfDocument()) {
+				if ((term = doc.getNextTerm())!=null && !term.equals("")) {
+					termFields = doc.getFields();
+					/* pass term into TermPipeline (stop, stem etc) */
+					pipeline_first.processTerm(term);
+					/* the term pipeline will eventually add the term to this object. */
+				}
+				if (MAX_TOKENS_IN_DOCUMENT > 0 && 
+						numOfTokensInDocument > MAX_TOKENS_IN_DOCUMENT)
+						break;
+			}
+			//if we didn't index all tokens from document,
+			//we need to get to the end of the document.
+			while (!doc.endOfDocument()) 
+				doc.getNextTerm();
+			
+			pipeline_first.reset();
+			/* we now have all terms in the DocumentTree, so we save the document tree */
+			try
 			{
-				try{
-					collection.close();
-				} catch (IOException e) {
-					logger.warn("Couldnt close collection", e);
+				if (termsInDocument.getDocumentLength() == 0)
+				{	/* this document is empty, add the minimum to the document index */
+					indexEmpty(doc.getAllProperties());
+				}
+				else
+				{	/* index this docuent */
+					numberOfTokens += numOfTokensInDocument;
+					indexDocument(doc.getAllProperties(), termsInDocument);
 				}
 			}
+			catch (Exception ioe)
+			{
+				logger.error("Failed to index "+doc.getProperty("docno"),ioe);
+				throw new RuntimeException(ioe);
+			}
+			
+			if (MAX_DOCS_PER_BUILDER>0 && numberOfDocuments >= MAX_DOCS_PER_BUILDER)
+			{
+				stopIndexing = true;
+				break;
+			}
 
-			long endCollection = System.currentTimeMillis();
-			long secs = ((endCollection-startCollection)/1000);
-			logger.info("Collection #"+collectionNo+ " took "+secs+" seconds to index "
-				+"("+numberOfDocuments+" documents)");
-			if (secs > 3600)
-				 logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
-			if (emptyDocCount > 0)
-				logger.warn("Indexed " + emptyDocCount + " empty documents");
+			if (boundaryDocsEnabled && BUILDER_BOUNDARY_DOCUMENTS.contains(doc.getProperty("docno")))
+			{
+				logger.warn("Document "+doc.getProperty("docno")+" is a builder boundary document. Boundary forced.");
+				stopIndexing = true;
+				break;
+			}
 		}
+
+
+		if (! notLastDoc)
+		{
+			try{
+				collection.close();
+			} catch (IOException e) {
+				logger.warn("Couldnt close collection", e);
+			}
+		}
+
+		long endCollection = System.currentTimeMillis();
+		long secs = ((endCollection-startCollection)/1000);
+		logger.info("Collection took "+secs+" seconds to index "
+			+"("+numberOfDocuments+" documents)");
+		if (secs > 3600)
+				logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
+		if (emptyDocCount > 0)
+			logger.warn("Indexed " + emptyDocCount + " empty documents");
 		finishedDirectIndexBuild();
 		/*end of all the collections has been reached */
 		/* flush the index buffers */

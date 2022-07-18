@@ -130,75 +130,71 @@ public class MemoryIndexer extends Indexer {
 	private int numberOfDocuments;
 	
 	/** FIXME */
-	public void createDirectIndex(Collection[] collections) {
-		final int collections_length = collections.length;
+	public void createDirectIndex(Collection collection) {
 		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
 		boolean stopIndexing = false;
 		numFields = FieldScore.FIELDS_COUNT;
 		
-		for (int collectionNo = 0; !stopIndexing
-				&& collectionNo < collections_length; collectionNo++) {
-			final Collection collection = collections[collectionNo];
-			long startCollection = System.currentTimeMillis();
-			boolean notLastDoc = false;
-			while ((notLastDoc = collection.nextDocument())) {
-				Document doc = collection.getDocument();
-				if (doc == null)
-					continue;
-				numberOfDocuments++;
-				createDocumentPostings();
-				String term;
-				while (!doc.endOfDocument()) {
-					if ((term = doc.getNextTerm()) != null && !term.equals("")) {
-						termFields = doc.getFields();
-						pipeline_first.processTerm(term);
-						
-					}
-					if (MAX_TOKENS_IN_DOCUMENT > 0
-							&& numOfTokensInDocument > MAX_TOKENS_IN_DOCUMENT)
-						break;
+		
+		long startCollection = System.currentTimeMillis();
+		boolean notLastDoc = false;
+		while ((notLastDoc = collection.nextDocument())) {
+			Document doc = collection.getDocument();
+			if (doc == null)
+				continue;
+			numberOfDocuments++;
+			createDocumentPostings();
+			String term;
+			while (!doc.endOfDocument()) {
+				if ((term = doc.getNextTerm()) != null && !term.equals("")) {
+					termFields = doc.getFields();
+					pipeline_first.processTerm(term);
+					
 				}
-				while (!doc.endOfDocument())
-					doc.getNextTerm();
-				pipeline_first.reset();
-				try {
-					memIndex.indexDocument(doc.getAllProperties(), termsInDocument);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (MAX_DOCS_PER_BUILDER > 0
-						&& numberOfDocuments >= MAX_DOCS_PER_BUILDER) {
-					stopIndexing = true;
+				if (MAX_TOKENS_IN_DOCUMENT > 0
+						&& numOfTokensInDocument > MAX_TOKENS_IN_DOCUMENT)
 					break;
-				}
-				if (boundaryDocsEnabled
-						&& BUILDER_BOUNDARY_DOCUMENTS.contains(doc
-								.getProperty("docno"))) {
-					logger.warn("Document "
-							+ doc.getProperty("docno")
-							+ " is a builder boundary document. Boundary forced.");
-					stopIndexing = true;
-					break;
-				}
 			}
-			if (!notLastDoc) {
-				try {
-					collection.close();
-				} catch (IOException e) {
-					logger.warn("Couldnt close collection", e);
-				}
+			while (!doc.endOfDocument())
+				doc.getNextTerm();
+			pipeline_first.reset();
+			try {
+				memIndex.indexDocument(doc.getAllProperties(), termsInDocument);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			long endCollection = System.currentTimeMillis();
-			long secs = ((endCollection - startCollection) / 1000);
-			logger.info("Collection #" + collectionNo + " took " + secs
-					+ " seconds to index " + "(" + numberOfDocuments
-					+ " documents)");
-			if (secs > 3600)
-				logger.info("Rate: "
-						+ ((double) numberOfDocuments / ((double) secs / 3600.0d))
-						+ " docs/hour");
+			if (MAX_DOCS_PER_BUILDER > 0
+					&& numberOfDocuments >= MAX_DOCS_PER_BUILDER) {
+				stopIndexing = true;
+				break;
+			}
+			if (boundaryDocsEnabled
+					&& BUILDER_BOUNDARY_DOCUMENTS.contains(doc
+							.getProperty("docno"))) {
+				logger.warn("Document "
+						+ doc.getProperty("docno")
+						+ " is a builder boundary document. Boundary forced.");
+				stopIndexing = true;
+				break;
+			}
 		}
+		if (!notLastDoc) {
+			try {
+				collection.close();
+			} catch (IOException e) {
+				logger.warn("Couldnt close collection", e);
+			}
+		}
+		long endCollection = System.currentTimeMillis();
+		long secs = ((endCollection - startCollection) / 1000);
+		logger.info("Collection took " + secs
+				+ " seconds to index " + "(" + numberOfDocuments
+				+ " documents)");
+		if (secs > 3600)
+			logger.info("Rate: "
+					+ ((double) numberOfDocuments / ((double) secs / 3600.0d))
+					+ " docs/hour");
 
 	}
 
