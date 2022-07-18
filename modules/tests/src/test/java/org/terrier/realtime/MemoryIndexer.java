@@ -31,6 +31,8 @@ import gnu.trove.TIntHashSet;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.Map;
+import java.util.Iterator;
 
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
@@ -128,6 +130,22 @@ public class MemoryIndexer extends Indexer {
 
 	/** FIXME */
 	private int numberOfDocuments;
+
+	public long indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs)
+	{
+		long toks = 0;
+		while(iterDocs.hasNext()) {
+			var me = iterDocs.next();
+			toks += me.getValue().getDocumentLength();
+			try{
+				memIndex.indexDocument(me.getKey(), me.getValue());
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return toks;
+	}
+
 	
 	/** FIXME */
 	public void createDirectIndex(Collection collection) {
