@@ -29,6 +29,7 @@
 package org.terrier.structures.indexing.singlepass;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -163,7 +164,41 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 	public void createInvertedIndex(){}
 
 
+	public long indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs) {
+		long numberOfTokens = 0;
+		while(iterDocs.hasNext()) {
+			Map.Entry<Map<String,String>, DocumentPostingList> me = iterDocs.next();
+			if (me == null) {
+				continue;
+			}
+			DocumentPostingList _termsInDocument = me.getValue();
+			Map<String,String> props = me.getKey();
 
+			try
+			{
+				if (_termsInDocument.getDocumentLength() == 0)
+				{	/* this document is empty, add the minimum to the document index */
+					indexEmpty(props);
+					if (IndexEmptyDocuments)
+					{
+						currentId++;
+						numberOfDocuments++;
+					}
+				}
+				else
+				{	/* index this docuent */
+					numberOfTokens += numOfTokensInDocument;
+					indexDocument(props, _termsInDocument);
+				}
+			}
+			catch (Exception ioe)
+			{
+				logger.error("Failed to index "+props.get("docno"),ioe);
+				throw new RuntimeException(ioe);
+			}
+		}
+		return numberOfTokens;
+	}
 
 	/**
 	 *  Builds the inverted file and lexicon file for the given collections
@@ -193,86 +228,16 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		memoryAfterFlush = runtime.freeMemory();
 		logger.debug("Starting free memory: "+memoryAfterFlush/1000000+"M");
 		startCollection = System.currentTimeMillis();
-		while(collection.nextDocument())
-		//while(collection.hasNext())
-		{
-			/* get the next document from the collection */
-			//Document doc = collection./next();
-			Document doc = collection.getDocument();
-			if (doc == null)
-				continue;
-			//numberOfDocuments++;
-			/* setup for parsing */
-			createDocumentPostings();
 
-			String term; //term we're currently processing
-			numOfTokensInDocument = 0;
-			//get each term in the document
-			while (!doc.endOfDocument()) {
-
-				if ((term = doc.getNextTerm())!=null && !term.equals("")) {
-					termFields = doc.getFields();
-					/* pass term into TermPipeline (stop, stem etc) */
-					pipeline_first.processTerm(term);
-					/* the term pipeline will eventually add the term to this object. */
-				}
-				if (MAX_TOKENS_IN_DOCUMENT > 0 &&
-						numOfTokensInDocument > MAX_TOKENS_IN_DOCUMENT)
-					break;
-			}
-			//if we didn't index all tokens from document,
-			//we need to get to the end of the document.
-			while (!doc.endOfDocument())
-				doc.getNextTerm();
-			
-			pipeline_first.reset();
-			/* we now have all terms in the DocumentTree, so we save the document tree */
-			try
-			{
-				if (termsInDocument.getDocumentLength() == 0)
-				{	/* this document is empty, add the minimum to the document index */
-					indexEmpty(doc.getAllProperties());
-					if (IndexEmptyDocuments)
-					{
-						currentId++;
-						numberOfDocuments++;
-					}
-				}
-				else
-				{	/* index this document */
-					numberOfTokens += numOfTokensInDocument;
-					indexDocument(doc.getAllProperties(), termsInDocument);
-				}
-			}
-			catch (Exception ioe)
-			{
-				logger.error("Failed to index "+doc.getProperty("docno"),ioe);
-				throw new RuntimeException(ioe);
-			}
-
-			if (MAX_DOCS_PER_BUILDER>0 && numberOfDocuments >= MAX_DOCS_PER_BUILDER)
-			{
-				stopIndexing = true;
-				break;
-			}
-
-			if (boundaryDocsEnabled && BUILDER_BOUNDARY_DOCUMENTS.contains(doc.getProperty("docno")))
-			{
-				logger.warn("Document "+doc.getProperty("docno")+" is a builder boundary document. Boundary forced.");
-				stopIndexing = true;
-				break;
-			}
-			termsInDocument.clear();
-		}
-		
+		CollectionConsumer iterDocs = new CollectionConsumer(collection);
+		numberOfTokens = indexDocuments(iterDocs);
+				
 		try{
 			forceFlush();
 			endCollection = System.currentTimeMillis();
 			long partialTime = (endCollection-startCollection)/1000;
 			logger.info("Collection took "+partialTime+ " seconds to build the runs for "+numberOfDocuments+" documents\n");
-						
-			
-			
+									
 			docIndexBuilder.finishedCollections();
 			if (FieldScore.FIELDS_COUNT > 0)
 			{

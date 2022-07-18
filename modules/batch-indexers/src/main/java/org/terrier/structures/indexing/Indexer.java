@@ -28,6 +28,7 @@ import gnu.trove.TObjectIntHashMap;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -395,7 +396,7 @@ public abstract class Indexer
 		fileNameNoExtension = path + ApplicationSetup.FILE_SEPARATOR + prefix;
 	}
 
-	//public abstract void indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList> iterDocs);
+	public abstract long indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs);
 
 	/** Merge a series of numbered indices in the same path/prefix area. New merged index
 	  * will be stored at mpath/mprefix_highest+1.
