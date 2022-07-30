@@ -29,7 +29,8 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * A Tokeniser implementation that returns the input as is.
+ * A Tokeniser implementation that tokenises only on whitespace, i.e.
+ * as defined by Character.isWhitespace(int) method in the JRE.
  * 
  * @author Craig Macdonald
  */
