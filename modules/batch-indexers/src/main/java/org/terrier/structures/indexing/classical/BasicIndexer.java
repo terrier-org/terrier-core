@@ -202,7 +202,26 @@ public class BasicIndexer extends Indexer
 		return new BasicTermProcessor();
 	}
 
-	public long indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs) {
+	public void indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs) {
+		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
+		final boolean FIELDS = FieldScore.FIELDS_COUNT > 0;
+		lexiconBuilder = FIELDS
+			? new LexiconBuilder(currentIndex, "lexicon", 
+					new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
+					FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"",
+					termCodes)
+			: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName(), termCodes);
+		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
+
+		try{
+			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
+				currentIndex.getPath() + ApplicationSetup.FILE_SEPARATOR + currentIndex.getPrefix() + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
+		} catch (Exception ioe) {
+			logger.error("Cannot make PostingOutputStream:", ioe);
+		}
+		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
+		metaBuilder = createMetaIndexBuilder();
+
 		long numberOfTokens = 0;
 		while(iterDocs.hasNext()) {
 			Map.Entry<Map<String,String>, DocumentPostingList> me = iterDocs.next();
@@ -230,7 +249,48 @@ public class BasicIndexer extends Indexer
 				throw new RuntimeException(ioe);
 			}
 		}
-		return numberOfTokens;
+
+		finishedDirectIndexBuild();
+		/*end of all the collections has been reached */
+		/* flush the index buffers */
+		compressionDirectConfig.writeIndexProperties(currentIndex, "document-inputstream");
+
+		directIndexBuilder.close();
+		docIndexBuilder.finishedCollections();
+		
+		if (FIELDS)
+		{
+			currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
+		}
+		else
+		{
+			currentIndex.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
+		}
+		try{
+			metaBuilder.close();
+		} catch (IOException ioe) {
+			logger.error("Could not finish MetaIndexBuilder: ", ioe);
+		}
+	
+		/* and then merge all the temporary lexicons */
+		lexiconBuilder.finishedDirectIndexBuild();
+		currentIndex.setIndexProperty("num.Tokens", ""+numberOfTokens);
+		currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
+		if (FieldScore.FIELDS_COUNT > 0)
+		{
+			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
+		}
+		/* reset the in-memory mapping of terms to term codes.*/
+		termCodes.reset();
+		/* and clear them out of memory */
+		System.gc();
+		/* record the fact that these data structures are complete */
+		try{
+			currentIndex.flush();
+		} catch (IOException ioe) {
+			logger.error("Problem flushing changes to index", ioe);
+		};
+		createInvertedIndex();
 	}
 
 	protected class CollectionConsumer implements Iterator<Map.Entry<Map<String,String>, DocumentPostingList>>
@@ -318,46 +378,15 @@ public class BasicIndexer extends Indexer
 	
 	public void createDirectIndex(Collection collection)
 	{
-		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
-		final boolean FIELDS = FieldScore.FIELDS_COUNT > 0;
-		lexiconBuilder = FIELDS
-			? new LexiconBuilder(currentIndex, "lexicon", 
-					new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
-					FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"",
-					termCodes)
-			: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName(), termCodes);
-		
-		try{
-			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
-				currentIndex.getPath() + ApplicationSetup.FILE_SEPARATOR + currentIndex.getPrefix() + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
-		} catch (Exception ioe) {
-			logger.error("Cannot make PostingOutputStream:", ioe);
-		}
-			//	new DirectIndexBuilder(currentIndex, "direct");
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
-		metaBuilder = createMetaIndexBuilder();
-		
 		// this iterator consumes the Collection object
 		CollectionConsumer iterDocs = new CollectionConsumer(collection);
-		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
 						
 		boolean stopIndexing = false;
 		long startCollection = System.currentTimeMillis();
 		
 		// this performs the actual indexing
-		long numberOfTokens = indexDocuments(iterDocs);
+		indexDocuments(iterDocs);
 		int numberOfDocuments = iterDocs.numberOfDocuments; 
-
-		if (! collection.endOfCollection())
-		{
-			try{
-				System.err.println("Closing a collection");
-				collection.close();
-			} catch (IOException e) {
-				logger.warn("Couldnt close collection", e);
-			}
-		}
-
 		long endCollection = System.currentTimeMillis();
 		long secs = ((endCollection-startCollection)/1000);
 		logger.info("Collection took "+secs+" seconds to index "
@@ -366,46 +395,7 @@ public class BasicIndexer extends Indexer
 				logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
 		if (emptyDocCount > 0)
 			logger.warn("Indexed " + emptyDocCount + " empty documents");
-		finishedDirectIndexBuild();
-		/*end of all the collections has been reached */
-		/* flush the index buffers */
-		compressionDirectConfig.writeIndexProperties(currentIndex, "document-inputstream");
-
-		directIndexBuilder.close();
-		docIndexBuilder.finishedCollections();
 		
-		if (FIELDS)
-		{
-			currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
-		}
-		else
-		{
-			currentIndex.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
-		}
-		try{
-			metaBuilder.close();
-		} catch (IOException ioe) {
-			logger.error("Could not finish MetaIndexBuilder: ", ioe);
-		}
-	
-		/* and then merge all the temporary lexicons */
-		lexiconBuilder.finishedDirectIndexBuild();
-		currentIndex.setIndexProperty("num.Tokens", ""+numberOfTokens);
-		currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
-		if (FieldScore.FIELDS_COUNT > 0)
-		{
-			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
-		}
-		/* reset the in-memory mapping of terms to term codes.*/
-		termCodes.reset();
-		/* and clear them out of memory */
-		System.gc();
-		/* record the fact that these data structures are complete */
-		try{
-			currentIndex.flush();
-		} catch (IOException ioe) {
-			logger.error("Problem flushing changes to index", ioe);
-		}
 		
 	}
 	
@@ -460,7 +450,6 @@ public class BasicIndexer extends Indexer
 			logger.error("Index has no documents. Inverted index creation aborted.");
 			return;
 		}
-
 
 		//generate the inverted index
 		invertedIndexBuilder = new InvertedIndexBuilder(currentIndex, "inverted", compressionInvertedConfig);

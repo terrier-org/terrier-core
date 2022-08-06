@@ -155,16 +155,30 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		super(a,b,c);
 	}
 
-
 	@Override
 	public void createDirectIndex(Collection collection) {
 		createInvertedIndex(collection);
 	}
-	@Override
-	public void createInvertedIndex(){}
 
+	public void indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs) {
+		
+		logger.info("Creating IF (no direct file)..");
+		final boolean FIELDS = (FieldScore.FIELDS_COUNT > 0);
+		long startCollection, endCollection;
+		fileNames = new LinkedList<String[]>();	
+		numberOfDocuments = currentId = numberOfDocsSinceCheck = numberOfDocsSinceFlush = numberOfUniqueTerms = 0;
+		numberOfTokens = numberOfPointers = 0;
+		createMemoryPostings();
+		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
+		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
+		metaBuilder = createMetaIndexBuilder();
 
-	public long indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs) {
+		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new SimpleDocumentIndexEntry();
+		
+		boolean stopIndexing = false;
+		memoryAfterFlush = runtime.freeMemory();
+		logger.debug("Starting free memory: "+memoryAfterFlush/1000000+"M");
+		startCollection = System.currentTimeMillis();
 		long numberOfTokens = 0;
 		while(iterDocs.hasNext()) {
 			Map.Entry<Map<String,String>, DocumentPostingList> me = iterDocs.next();
@@ -197,41 +211,7 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 				throw new RuntimeException(ioe);
 			}
 		}
-		return numberOfTokens;
-	}
 
-	/**
-	 *  Builds the inverted file and lexicon file for the given collections
-	 * Loops through each document in each of the collections,
-	 * extracting terms and pushing these through the Term Pipeline
-	 * (eg stemming, stopping, lowercase).
-	 *  @param collection Collection the collection to be indexed.
-	 */
-	public void createInvertedIndex(Collection collection) {
-		logger.info("Creating IF (no direct file)..");
-		final boolean FIELDS = (FieldScore.FIELDS_COUNT > 0);
-		long startCollection, endCollection;
-		fileNames = new LinkedList<String[]>();	
-		numberOfDocuments = currentId = numberOfDocsSinceCheck = numberOfDocsSinceFlush = numberOfUniqueTerms = 0;
-		numberOfTokens = numberOfPointers = 0;
-		createMemoryPostings();
-		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
-		metaBuilder = createMetaIndexBuilder();
-		
-		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new SimpleDocumentIndexEntry();
-		
-		MAX_DOCS_PER_BUILDER = UnitUtils.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "0"));
-		maxMemory = UnitUtils.parseLong(ApplicationSetup.getProperty("indexing.singlepass.max.postings.memory", "0"));
-		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
-		boolean stopIndexing = false;
-		memoryAfterFlush = runtime.freeMemory();
-		logger.debug("Starting free memory: "+memoryAfterFlush/1000000+"M");
-		startCollection = System.currentTimeMillis();
-
-		CollectionConsumer iterDocs = new CollectionConsumer(collection);
-		numberOfTokens = indexDocuments(iterDocs);
-				
 		try{
 			forceFlush();
 			endCollection = System.currentTimeMillis();
@@ -258,16 +238,34 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 			currentIndex.flush();
 			endCollection = System.currentTimeMillis();
 			logger.info("Collection took "+((endCollection-startCollection)/1000)+" seconds to merge\n ");
-			logger.info("Collection total time "+( (endCollection-startCollection)/1000+partialTime));
-			long secs = ((endCollection-startCollection)/1000);
-			if (secs > 3600)
-					logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
+			
 			if (emptyDocCount > 0)
 				logger.warn("Indexed " + emptyDocCount + " empty documents");
 		} catch (Exception e) {
 			logger.error("Problem finishing index", e);
 		}
 		finishedInvertedIndexBuild();
+	}
+
+	/**
+	 *  Builds the inverted file and lexicon file for the given collections
+	 * Loops through each document in each of the collections,
+	 * extracting terms and pushing these through the Term Pipeline
+	 * (eg stemming, stopping, lowercase).
+	 *  @param collection Collection the collection to be indexed.
+	 */
+	public void createInvertedIndex(Collection collection) {
+		
+		long startCollection, endCollection;
+		startCollection = System.currentTimeMillis();
+		CollectionConsumer iterDocs = new CollectionConsumer(collection);
+		indexDocuments(iterDocs);
+		endCollection = System.currentTimeMillis();
+				
+		logger.info("Collection total time "+( (endCollection-startCollection)/1000));
+		long secs = ((endCollection-startCollection)/1000);
+		if (secs > 3600)
+				logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
 	}
 
 	/** check to see if a flush is required, and perform if necessary */
@@ -460,6 +458,10 @@ public class BasicSinglePassIndexer extends BasicIndexer{
 		maxDocsPerFlush = Integer.parseInt(ApplicationSetup.getProperty("indexing.singlepass.max.documents.flush", "0"));
 		memoryCheck = new RuntimeMemoryChecker();
 		logger.info("Checking memory usage every " + docsPerCheck + " maxDocPerFlush=" + maxDocsPerFlush);
+
+		MAX_DOCS_PER_BUILDER = UnitUtils.parseInt(ApplicationSetup.getProperty("indexing.max.docs.per.builder", "0"));
+		maxMemory = UnitUtils.parseLong(ApplicationSetup.getProperty("indexing.singlepass.max.postings.memory", "0"));
+
 	}
 
 

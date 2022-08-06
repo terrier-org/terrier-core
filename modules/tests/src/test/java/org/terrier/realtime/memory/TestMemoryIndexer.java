@@ -48,7 +48,6 @@ public class TestMemoryIndexer extends TestIndexers {
 	protected Index doIndexing(Indexer indexer, boolean fieldsExpected,	Document[] sourceDocs) {
 		Collection col = new CollectionDocumentList(sourceDocs);
 		indexer.createDirectIndex(new Collection[] { col });
-		indexer.createInvertedIndex();
 		return ((MemoryIndexer) indexer).getIndex();
 	}
 

@@ -216,7 +216,7 @@ public abstract class Indexer
 	 * the direct index, the document index and the lexicon have
 	 * already been created.
 	 */
-	public abstract void createInvertedIndex();
+	//public abstract void createInvertedIndex();
 	
 	/**
 	 * An abstract method that returns the last component 
@@ -375,7 +375,6 @@ public abstract class Indexer
 			//ApplicationSetup.setupFilenames();
 			logger.info("creating the data structures " + prefix);
 			this.createDirectIndex(collection);
-			this.createInvertedIndex();
 		}
 		
 		//merge the data structures
@@ -401,7 +400,7 @@ public abstract class Indexer
 	 * can be used externally too.
 	 * @param iterDocs an iterator
 	  */	
-	public abstract long indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs);
+	public abstract void indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs);
 
 	/** Merge a series of numbered indices in the same path/prefix area. New merged index
 	  * will be stored at mpath/mprefix_highest+1.

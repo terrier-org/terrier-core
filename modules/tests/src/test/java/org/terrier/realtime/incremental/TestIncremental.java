@@ -133,7 +133,6 @@ public class TestIncremental extends ApplicationSetupBasedTest {
 						+ String.valueOf(prefix));
 		assertNotNull(indexer);
 		indexer.createDirectIndex(new Collection[] { coll });
-		indexer.createInvertedIndex();
 		IndexOnDisk index = IndexOnDisk.createIndex(
 				ApplicationSetup.TERRIER_INDEX_PATH,
 				ApplicationSetup.TERRIER_INDEX_PREFIX + "-"

@@ -102,7 +102,6 @@ public class TestUtils {
 		MemoryIndexer indexer = new MemoryIndexer();
 		assertNotNull(indexer);
 		indexer.createDirectIndex(new Collection[] { collection });
-		indexer.createInvertedIndex();
 		MemoryIndex index = (MemoryIndex) indexer.getIndex();
 		assertNotNull(index);
 		return index;
@@ -120,7 +119,6 @@ public class TestUtils {
 		MemoryIndexer indexer = new MemoryIndexer(true);
 		assertNotNull(indexer);
 		indexer.createDirectIndex(new Collection[] { collection });
-		indexer.createInvertedIndex();
 		MemoryIndex index = (MemoryIndex) indexer.getIndex();
 		assertTrue("Failed to create a memory fields index",index instanceof MemoryFieldsIndex);
 		

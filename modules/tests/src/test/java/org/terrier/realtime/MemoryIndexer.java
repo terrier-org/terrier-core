@@ -131,19 +131,16 @@ public class MemoryIndexer extends Indexer {
 	/** FIXME */
 	private int numberOfDocuments;
 
-	public long indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs)
+	public void indexDocuments(Iterator<Map.Entry<Map<String,String>, DocumentPostingList>> iterDocs)
 	{
-		long toks = 0;
 		while(iterDocs.hasNext()) {
 			var me = iterDocs.next();
-			toks += me.getValue().getDocumentLength();
 			try{
 				memIndex.indexDocument(me.getKey(), me.getValue());
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
-		return toks;
 	}
 
 	
@@ -214,10 +211,6 @@ public class MemoryIndexer extends Indexer {
 					+ ((double) numberOfDocuments / ((double) secs / 3600.0d))
 					+ " docs/hour");
 
-	}
-
-	/** FIXME */
-	public void createInvertedIndex() {
 	}
 
 	/** FIXME */
