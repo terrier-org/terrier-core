@@ -380,6 +380,12 @@ public class TRECCollection extends MultiDocumentFileCollection {
 					propertyIndex++;
 				}
 			} catch (IOException ioe) {
+
+				// if we are on the last file, then probably all files failed. make this exception fatal
+				if (FileNumber == FilesToProcess.size() -1 )
+				{
+					throw new RuntimeException("Error reading last file" + currentFilename + " : " + ioe,  ioe);
+				}
 				
 				logger.warn("Error Reading "
 					+ currentFilename + " : " + ioe

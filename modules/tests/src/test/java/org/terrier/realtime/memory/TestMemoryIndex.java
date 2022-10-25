@@ -404,7 +404,6 @@ public class TestMemoryIndex extends ApplicationSetupBasedTest {
 				.getNumberOfDocuments());
 		assertEquals(0, indexer.getIndex().getLexicon().numberOfEntries());
 		indexer.createDirectIndex(new Collection[] { collection });
-		indexer.createInvertedIndex();
 		assertEquals(2, indexer.getIndex().getDocumentIndex()
 				.getNumberOfDocuments());
 		assertEquals(4, indexer.getIndex().getLexicon().numberOfEntries());

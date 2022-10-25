@@ -30,6 +30,7 @@ import gnu.trove.THashSet;
 import gnu.trove.TIntHashSet;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -82,13 +83,13 @@ import org.terrier.utility.TermCodes;
  * </ul>
  * @author Craig Macdonald, Vassilis Plachouras, Rodrygo Santos
  */
-public class BlockIndexer extends Indexer {
+public class BlockIndexer extends BasicIndexer {
 	
 	/** This class implements an end of a TermPipeline that adds the
 	 *  term to the DocumentTree. This TermProcessor does NOT have field
 	 *  support.
 	 */	 
-	protected class BasicTermProcessor implements TermPipeline {
+	protected class BlockTermProcessor implements TermPipeline {
 		public void processTerm(String t) {
 			//	null means the term has been filtered out (eg stopwords)
 			if (t != null) {
@@ -111,7 +112,7 @@ public class BlockIndexer extends Indexer {
 	 * term to the DocumentTree. This TermProcessor does have field
 	 * support.
 	 */
-	protected class FieldTermProcessor implements TermPipeline {
+	protected class BlockFieldTermProcessor implements TermPipeline {
 		final TIntHashSet fields = new TIntHashSet(numFields);
 		final boolean ELSE_ENABLED = fieldNames.containsKey("ELSE");
 		final int ELSE_FIELD_ID = fieldNames.get("ELSE") -1;
@@ -251,21 +252,10 @@ public class BlockIndexer extends Indexer {
 		}
 	}
 
-	/** The number of tokens in the current document so far. */
-	protected int numOfTokensInDocument = 0;
 	/** The number of tokens in the current block of the current document. */
 	protected int numOfTokensInBlock = 0;
 	/** The block number of the current document. */
 	protected int blockId;
-	/** The fields that are set for the current term. */
-	protected Set<String> termFields = null;
-	/** The list of terms in this document, and for each, the block occurrences. */
-	protected DocumentPostingList termsInDocument = null;
-	/**
-	 * Mapping of terms 2 termids
-	 */
-	protected TermCodes termCodes = new TermCodes();
-	
 	
 	/** The maximum number of terms allowed in a block. See Property <tt>blocks.size</tt> */
 	protected int BLOCK_SIZE;
@@ -275,11 +265,6 @@ public class BlockIndexer extends Indexer {
 	 * See Property <tt>blocks.max</tt>. */
 	protected int MAX_BLOCKS;
 	
-	/** The compression configuration for the direct index */
-	protected CompressionConfiguration compressionDirectConfig;
-	
-	/** The compression configuration for the inverted index */
-	protected CompressionConfiguration compressionInvertedConfig;
 
 	/** Constructs an instance of this class, where the created data structures
 	  * are stored in the given path, with the given prefix on the filenames.
@@ -319,172 +304,9 @@ public class BlockIndexer extends Indexer {
 				: new DelimTermProcessor(delims, indexDelims, countDelims);
 		}
 		else if (FieldScore.USE_FIELD_INFORMATION) {
-			return new FieldTermProcessor();
+			return new BlockFieldTermProcessor();
 		}
-		return new BasicTermProcessor();
-	}
-	
-	
-
-	/**
-	 * For the given collection, it iterates through the documents and
-	 * creates the direct index, document index and lexicon, using 
-	 * information about blocks and possibly fields.
-	 * @param collections Collection[] the collection to index.
-	 * @see org.terrier.structures.indexing.Indexer#createDirectIndex(org.terrier.indexing.Collection[])
-	 */
-	//TODO if this class extends BasicIndexer, then perhaps this method could be inherited
-	public void createDirectIndex(Collection[] collections) {
-		logger.info("BlockIndexer creating direct index"+ 
-			(Boolean.parseBoolean(ApplicationSetup.getProperty("block.delimiters.enabled", "false"))
-			? " delimited-block indexing enabled" : ""));
-		final boolean FIELDS = FieldScore.FIELDS_COUNT > 0;
-		currentIndex = IndexOnDisk.createNewIndex(path, prefix);
-		lexiconBuilder = FIELDS
-				? new LexiconBuilder(currentIndex, "lexicon", 
-						new FieldLexiconMap(FieldScore.FIELDS_COUNT), 
-						FieldLexiconEntry.class.getName(), "java.lang.String", "\""+ FieldScore.FIELDS_COUNT + "\"", 
-						termCodes)
-				: new LexiconBuilder(currentIndex, "lexicon", new LexiconMap(), BasicLexiconEntry.class.getName(), termCodes);
-
-		try{
-			directIndexBuilder = compressionDirectConfig.getPostingOutputStream(
-					currentIndex.getPath() + ApplicationSetup.FILE_SEPARATOR + currentIndex.getPrefix() + "." + "direct" + compressionDirectConfig.getStructureFileExtension());
-		} catch (Exception ioe) {
-			logger.error("Cannot make DirectInvertedOutputStream:", ioe);
-		}
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document", FIELDS);
-		metaBuilder = createMetaIndexBuilder();
-		emptyDocIndexEntry = FIELDS ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
-		
-		int numberOfDocuments = 0;
-		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
-		boolean stopIndexing = false;
-		for(int collectionNo = 0; !stopIndexing && collectionNo < collections.length; collectionNo++)
-		{
-			Collection collection = collections[collectionNo];
-			long startCollection = System.currentTimeMillis();
-			boolean notLastDoc = false;
-			//while(notLastDoc = collection.hasNext()) {
-			while ((notLastDoc = collection.nextDocument())) {
-				//get the next document from the collection
-				
-				//String docid = collection.getDocid();
-				//Document doc = collection.next();
-				Document doc = collection.getDocument();
-				
-				if (doc == null)
-					continue;
-				
-				numberOfDocuments++;
-				//setup for parsing
-				createDocumentPostings();
-				String term;
-				numOfTokensInDocument = 0;
-				numOfTokensInBlock = 0;
-				blockId = 0;
-				//get each term in the document
-				while (!doc.endOfDocument()) {
-					if ((term = doc.getNextTerm()) != null && 
-						!term.equals("")) {
-						termFields = doc.getFields();
-						//pass term into TermPipeline (stop, stem etc)
-						pipeline_first.processTerm(term);
-						//the term pipeline will eventually add the term to this
-						// object.
-					}
-					if (MAX_TOKENS_IN_DOCUMENT > 0 && 
-						numOfTokensInDocument > MAX_TOKENS_IN_DOCUMENT)
-						break;
-				}
-				//if we didn't index all tokens from document,
-				//we need to get to the end of the document.
-				while (!doc.endOfDocument()) 
-					doc.getNextTerm();
-				//we now have all terms in the DocumentTree
-	
-				pipeline_first.reset();
-				//process DocumentTree (tree of terms)
-				try
-				{
-					if (termsInDocument.getDocumentLength() == 0) { 
-						//this document is empty, add the
-						// minimum to the document index
-						indexEmpty(doc.getAllProperties());
-					} else { /* index this docuent */
-						//numberOfTokens += numOfTokensInDocument;
-						indexDocument(doc.getAllProperties(), termsInDocument);
-					}
-				}
-				catch (Exception ioe)
-				{
-					logger.error("Failed to index "+doc.getProperty("docno"),ioe);
-					throw new RuntimeException(ioe);
-				}
-				if (MAX_DOCS_PER_BUILDER>0 && numberOfDocuments >= MAX_DOCS_PER_BUILDER)
-				{
-					stopIndexing = true;
-					break;
-				}
-
-				if (boundaryDocsEnabled && BUILDER_BOUNDARY_DOCUMENTS.contains(doc.getProperty("docno")))
-				{
-					stopIndexing = true;
-					break;
-				}
-			}
-			long endCollection = System.currentTimeMillis();
-			long secs = ((endCollection-startCollection)/1000);
-			logger.info("Collection #"+collectionNo+ " took "+secs+"seconds to index "
-				+"("+numberOfDocuments+" documents)\n");
-			if (secs > 3600)
-				 logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour");
-			if (emptyDocCount > 0)
-				logger.warn("Indexed " + emptyDocCount + " empty documents");
-			if (! notLastDoc)
-			{
-				try{
-					collection.close();
-				} catch (IOException e) {
-					logger.warn("Couldnt close collection", e);
-				}
-			}
-		}
-
-		/* end of the collection has been reached */
-		finishedDirectIndexBuild();
-		compressionDirectConfig.writeIndexProperties(currentIndex, "document-inputstream");
-		if (FIELDS)
-		{
-			currentIndex.addIndexStructure("document-factory", FieldDocumentIndexEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
-		}
-		else
-		{
-			currentIndex.addIndexStructure("document-factory", BasicDocumentIndexEntry.Factory.class.getName(), "", "");
-		}
-		currentIndex.setIndexProperty("termpipelines", ApplicationSetup.getProperty("termpipelines", "Stopwords,PorterStemmer"));
-		/* flush the index buffers */
-		directIndexBuilder.close();
-		docIndexBuilder.finishedCollections();
-		/* and then merge all the temporary lexicons */
-		lexiconBuilder.finishedDirectIndexBuild();
-		try {
-			metaBuilder.close();
-		} catch (IOException ioe) {
-			logger.error("Could not finish MetaIndexBuilder: ", ioe);
-		}
-		if (FIELDS)
-		{
-			currentIndex.addIndexStructure("lexicon-valuefactory", FieldLexiconEntry.Factory.class.getName(), "java.lang.String", "${index.direct.fields.count}");
-		}
-		/* reset the in-memory mapping of terms to term codes.*/
-		termCodes.reset();
-		System.gc();
-		try {
-			currentIndex.flush();
-		} catch (IOException ioe) {
-			logger.error("Could not flush index properties: ", ioe);
-		}
+		return new BlockTermProcessor();
 	}
 
 	/** 

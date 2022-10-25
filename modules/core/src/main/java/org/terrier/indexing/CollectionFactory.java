@@ -126,6 +126,73 @@ public class CollectionFactory
 		
 	}
 
+	/** Composes multiple Collection objects into a single Collection. Simplifies other legacy indexing code */
+	public static Collection compose(final Collection[] colls) {
+		final int collCount = colls.length;
+		if (colls.length == 0){
+			return colls[0];
+		}
+		
+		return new Collection() {
+			int collPos = 0;
+			/** 
+			 * Move the collection to the start of the next document.
+			 * @return boolean true if there exists another document in the collection,
+			 *         otherwise it returns false. 
+			 */
+			public boolean nextDocument() {
+				if (colls[collPos].nextDocument())
+				{
+					return true;
+				}
+				// this collection has ended, was this the last collection
+				if (collPos < collCount -1) {
+					// no, not the last collection, lets move to the next collection
+					collPos++;
+					return nextDocument();
+				}
+				return false;
+			}
+			
+			/** 
+			 * Get the document object representing the current document.
+			 * @return Document the current document;
+			 */
+			public Document getDocument() {
+				return colls[collPos].getDocument();
+			}
+			
+			/** 
+			 * Returns true if the end of the collection has been reached
+			 * @return boolean true if the end of collection has been reached, 
+			 *         otherwise it returns false.
+			 */
+			public boolean endOfCollection()
+			{
+				// is this the last collection, and have we completed this collection?
+				return collPos == collCount -1 && colls[collPos].endOfCollection();
+			}
+			
+			/** 
+			 * Resets the Collection iterator to the start of the collection.
+			 */
+			public void reset() {
+				for (int i=0;i<collCount;i++){
+					colls[i].reset();
+				}
+				collPos = 0;
+			}
+
+			public void close() throws IOException {
+				for (int i=0;i<collCount;i++){
+					colls[i].close();
+				}
+			}
+		};
+
+	}
+
+
 	/** Load collection(s) of the specified name. Uses default constructor of innermost Collection. Returns null on error */
 	public static Collection loadCollections(final String[] collNames)
 	{

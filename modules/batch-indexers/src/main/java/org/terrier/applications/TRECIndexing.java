@@ -141,7 +141,7 @@ public class TRECIndexing extends BatchIndexing {
 			}
 		}
 
-		loadIndexer(path, prefix).index(new Collection[] {collectionTREC});
+		loadIndexer(path, prefix).index(collectionTREC);
 		try{
 			collectionTREC.close();
 		} catch (Exception e) {

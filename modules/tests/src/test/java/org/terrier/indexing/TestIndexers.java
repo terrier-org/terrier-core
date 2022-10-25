@@ -164,7 +164,6 @@ public class TestIndexers extends ApplicationSetupBasedTest {
 		
 		Collection col = new CollectionDocumentList(sourceDocs);
 		indexer.createDirectIndex(new Collection[]{col});
-		indexer.createInvertedIndex();
 		
 		Index index = null;
 		
