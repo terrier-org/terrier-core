@@ -17,14 +17,15 @@
  *
  * The Original Code is MemoryIndexer.java.
  *
- * The Original Code is Copyright (C) 2004-2020 the University of Glasgow.
+ * The Original Code is Copyright (C) 2004-2022 the University of Glasgow.
  * All Rights Reserved.
  *
  * Contributor(s):
  *   Richard McCreadie <richard.mccreadie@glasgow.ac.uk>
  *   Stuart Mackie <s.mackie.1@research.gla.ac.uk>
+ *   Craig Macdonald 
  */
-package org.terrier.python;
+package org.terrier.realtime.memory;
 
 import gnu.trove.TIntHashSet;
 import java.io.IOException;
@@ -33,8 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
-import org.terrier.realtime.memory.MemoryIndex;
-import org.terrier.realtime.memory.fields.MemoryFieldsIndex;
 import org.terrier.structures.Index;
 import org.terrier.structures.indexing.DocumentPostingList;
 import org.terrier.structures.indexing.FieldDocumentPostingList;
@@ -43,7 +42,8 @@ import org.terrier.terms.TermPipeline;
 import org.terrier.utility.FieldScore;
 
 /**
- * FIXME
+ * An Indexer class that uses a MemoryIndex. This class was migrated from terrier-python-helper.
+ * @since 5.7
  */
 public class MemoryIndexer extends Indexer {
 
@@ -77,7 +77,6 @@ public class MemoryIndexer extends Indexer {
 		}
 	}
 	
-	/** FIXME */
 	class FieldTermProcessor implements TermPipeline {
 		final TIntHashSet fields = new TIntHashSet(numFields);
 		final boolean ELSE_ENABLED = fieldNames.containsKey("ELSE");
@@ -112,20 +111,15 @@ public class MemoryIndexer extends Indexer {
 		}
 	}
 
-	/** FIXME */
 	private MemoryIndex memIndex;
 
-	/** FIXME */
 	private DocumentPostingList termsInDocument;
 
-	/** FIXME */
 	private Set<String> termFields;
 
-	/** FIXME */
 	private int numOfTokensInDocument = 0;
 
-	/** FIXME */
-    private int numberOfDocuments;
+	private int numberOfDocuments;
 
 	@Override
 	public void indexDocuments(Iterator<Map.Entry<Map<String,String>,DocumentPostingList>> iterDocs)
@@ -148,7 +142,6 @@ public class MemoryIndexer extends Indexer {
 		this.createInvertedIndex();
     }
 	
-	/** FIXME */
 	public void createDirectIndex(Collection collection) {
 		numFields = FieldScore.FIELDS_COUNT;
 		
@@ -199,11 +192,9 @@ public class MemoryIndexer extends Indexer {
 
 	}
 
-	/** FIXME */
 	public void createInvertedIndex() {
 	}
 
-	/** FIXME */
 	protected TermPipeline getEndOfPipeline() {
 		if (fieldNames.size()>0) {
 			return new FieldTermProcessor();
@@ -213,7 +204,6 @@ public class MemoryIndexer extends Indexer {
 		}
 	}
 
-	/** FIXME */
 	void createDocumentPostings() {
 		if (numFields>0) termsInDocument = new FieldDocumentPostingList(numFields);
 		else termsInDocument = new DocumentPostingList();
