@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
+import org.terrier.realtime.memory.fields.MemoryFieldsIndex;
 import org.terrier.structures.Index;
 import org.terrier.structures.indexing.DocumentPostingList;
 import org.terrier.structures.indexing.FieldDocumentPostingList;
