@@ -1,6 +1,23 @@
 What's New in Terrier
 =====================
 
+Terrier 5.7 - 10/11/2022
+------------------------
+
+Significant update, making configuration from [PyTerrier](https://github.com/terrier-org/pyterrier) easier for pre-tokenised indices easier.
+
+
+## Indexing
+ - [#212](https://github.com/terrier-org/terrier-core/issues/212) Move MemoryIndexer into terrier-core from terrier-python-helper 
+ - [#205](https://github.com/terrier-org/terrier-core/issues/205) A whitespace tokeniser
+ - [#204](https://github.com/terrier-org/terrier-core/issues/205) expose low-level indexing API
+
+## Retrieval
+ - [#196](https://github.com/terrier-org/terrier-core/issues/196) change charset to UTF-8 in search JSP pages, thanks to [@monika-1315](https://github.com/monika-1315)
+
+## Other 
+ - [#210](https://github.com/terrier-org/terrier-core/issues/210) [#209](https://github.com/terrier-org/terrier-core/issues/209) [#208](https://github.com/terrier-org/terrier-core/issues/208) [#207](https://github.com/terrier-org/terrier-core/issues/207) [#206](https://github.com/terrier-org/terrier-core/issues/206) [#201](https://github.com/terrier-org/terrier-core/issues/201) Dependencies vulnerabilities
+
 Terrier 5.6 - 17/09/2021
 ------------------------
 
