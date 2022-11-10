@@ -117,7 +117,7 @@ public class DocumentPostingList implements Writable,Serializable{
     public void insert(final int tf, final String term)
     {
         occurrences.adjustOrPutValue(term,tf,tf);
-        documentLength++;
+        documentLength += tf;
     }
 
     /** Return a DocumentIndexEntry for this document */ 
@@ -135,13 +135,6 @@ public class DocumentPostingList implements Writable,Serializable{
     	this.occurrences.forEachEntry(proc);
     }
     
-    /** Used by getPostings() and getPostings2() to obtain the term id of the term.
-     * This implementation uses the TermCodes class. */
-//    protected int getTermId(String term)
-//    {
-//    	return TermCodes.getCode(term);
-//    }
-
 	/** Returns the postings suitable to be written into the direct index.
 	 * During this, TermIds are assigned. */
 	public int[][] getPostings(final TermCodes termCodes)
