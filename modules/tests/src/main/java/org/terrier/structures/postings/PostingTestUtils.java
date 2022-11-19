@@ -35,6 +35,7 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
 
@@ -157,7 +158,7 @@ public class PostingTestUtils {
 	
 	  public static String writeBlockPostingsToFile(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
 	    {
-	        File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
+	        File tmpFile = Files.createTempFile("tmp", BitIn.USUAL_EXTENSION).toFile();
 	        DirectInvertedOutputStream dios = new BlockDirectInvertedOutputStream(tmpFile.toString());
 	        for(Iterator<Posting> iterator : iterators)
 	        {
@@ -185,7 +186,7 @@ public class PostingTestUtils {
 	     
 	    public static String writeFieldPostingsToFile(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
 	    {
-	        File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
+	        File tmpFile = Files.createTempFile("tmp", BitIn.USUAL_EXTENSION).toFile();
 	        DirectInvertedOutputStream dios = new FieldDirectInvertedOutputStream(tmpFile.toString());
 	        for(Iterator<Posting> iterator : iterators)
 	        {
@@ -213,7 +214,7 @@ public class PostingTestUtils {
 	     
 	    public static String writeBlockFieldPostingsToFile(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
 	    {
-	        File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
+	        File tmpFile = Files.createTempFile("tmp", BitIn.USUAL_EXTENSION).toFile();
 	        DirectInvertedOutputStream dios = new BlockFieldDirectInvertedOutputStream(tmpFile.toString());
 	        for(Iterator<Posting> iterator : iterators)
 	        {
@@ -242,7 +243,7 @@ public class PostingTestUtils {
 	
 	public static String writePostingsToFile(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
 	{
-		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
+		File tmpFile = Files.createTempFile("tmp", BitIn.USUAL_EXTENSION).toFile();
 		DirectInvertedOutputStream dios = new DirectInvertedOutputStream(tmpFile.toString());
 		for(Iterator<Posting> iterator : iterators)
 	 	{
@@ -271,7 +272,7 @@ public class PostingTestUtils {
 	
 	public static String writePostingsToFileDocidOnly(Iterator<Posting>[] iterators, List<BitIndexPointer> pointerList) throws Exception
 	{
-		File tmpFile = File.createTempFile("tmp", BitIn.USUAL_EXTENSION);
+		File tmpFile = Files.createTempFile("tmp", BitIn.USUAL_EXTENSION).toFile();
 		DirectInvertedOutputStream dios = new DirectInvertedDocidOnlyOuptutStream(tmpFile.toString());
 		for(Iterator<Posting> iterator : iterators)
 	 	{
