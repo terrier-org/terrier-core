@@ -16,8 +16,6 @@ import org.terrier.indexing.tokenisation.Tokeniser;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 
@@ -61,7 +59,7 @@ public class FlatJSONDocument implements Document {
 		initalize(json.toString());
 	}
     
-    public FlatJSONDocument(String rawJson) throws JsonParseException, JsonMappingException, IOException {
+    public FlatJSONDocument(String rawJson) {
     	initalize(rawJson);
     }
     
@@ -100,7 +98,7 @@ public class FlatJSONDocument implements Document {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException("Could not parse JSON document", e);
 		}
     }
     
