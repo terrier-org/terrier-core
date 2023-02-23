@@ -25,15 +25,19 @@
  */
 package org.terrier.terms;
 
+import java.util.List;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.utility.ApplicationSetup;
+import org.terrier.structures.IndexConfigurable;
+import org.terrier.structures.Index;
 /** A base implementation for TermPipelineAccessor
  * @since 3.0
  * @author Craig Macondald
  */
 public class BaseTermPipelineAccessor 
-implements TermPipeline, TermPipelineAccessor 
+	implements TermPipeline, TermPipelineAccessor, IndexConfigurable
 {
 	protected static final Logger logger = LoggerFactory.getLogger(BaseTermPipelineAccessor.class);
 	private static Class<?>[] constructor_array_termpipeline = new Class[]{TermPipeline.class};
@@ -42,6 +46,7 @@ implements TermPipeline, TermPipelineAccessor
 	public final static String NAMESPACE_PIPELINE = "org.terrier.terms.";
 	
 	TermPipeline pipeline_first;
+	List<TermPipeline> pipeline_all = new ArrayList<>();
 	
 	/** This class is used as a TermPipelineAccessor, and this variable stores
 	  * the result of the TermPipeline run for that term. */
@@ -66,6 +71,7 @@ implements TermPipeline, TermPipelineAccessor
 				tmp = (TermPipeline) (pipeClass.getConstructor(
 						constructor_array_termpipeline)
 						.newInstance(new Object[] {next}));
+				pipeline_all.add(tmp);
 				next = tmp;
 			}catch (Exception e){
 				logger.error("TermPipeline object "+NAMESPACE_PIPELINE+pipes[i]+" not found",e);
@@ -77,6 +83,15 @@ implements TermPipeline, TermPipelineAccessor
 			pipeline_first = new SkipTermPipeline(next, last);
 		else
 			pipeline_first = next;
+	}
+
+	/** index configurable implementation */
+	public void setIndex(Index index) {
+		for (TermPipeline tp : pipeline_all) {
+			if (tp instanceof IndexConfigurable) {
+				((IndexConfigurable)tp).setIndex(index);
+			}
+		}
 	}
 
 	/* -------------------term pipeline implementation --------------------*/
