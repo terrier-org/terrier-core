@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
 
 import junit.framework.TestCase;
 
@@ -40,7 +41,7 @@ public class TestAdhocEvaluation extends TestCase {
 
 	protected String makeRun(String qids[], String[][] docnos) throws Exception
 	{
-		final File tmpFile = File.createTempFile("/tmp", "tmp.res");
+		final File tmpFile = Files.createTempFile("/tmp", "tmp.res").toFile();
 		final PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(tmpFile)));
 		int queryIndex = 0;
 		for(String[] docnosByQ : docnos)
@@ -63,7 +64,7 @@ public class TestAdhocEvaluation extends TestCase {
 	
 	protected String makeQrels(String qids[], String[][] rel_docnos) throws Exception
 	{
-		final File tmpFile = File.createTempFile("/tmp", "tmp.qrels");
+		final File tmpFile = Files.createTempFile("/tmp", "tmp.qrels").toFile();
 		final PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(tmpFile)));
 		int queryIndex = 0;
 		for(String[] docnosByQ : rel_docnos)

@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -589,7 +590,7 @@ public class SimpleXMLCollection implements Collection
 				}
 				
 				
-				File temp = File.createTempFile("simpleXMLcollection", ".xml");
+				File temp = Files.createTempFile("simpleXMLcollection", ".xml").toFile();
 				Files.copyFile(new File(filename), temp);
 				
 				if(logger.isDebugEnabled()){
