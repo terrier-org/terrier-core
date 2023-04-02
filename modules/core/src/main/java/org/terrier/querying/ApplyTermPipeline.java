@@ -38,6 +38,7 @@ import org.terrier.matching.matchops.Operator;
 import org.terrier.matching.matchops.SingleTermOp;
 import org.terrier.terms.BaseTermPipelineAccessor;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexConfigurable;
 import org.terrier.structures.PropertiesIndex;
 import org.terrier.terms.TermPipelineAccessor;
 import org.terrier.utility.ApplicationSetup;
@@ -146,7 +147,11 @@ public class ApplyTermPipeline implements Process {
 		synchronized(this) {
 			lastPipeline = tp;
 			info = tp;
-			return lastTpa = load_pipeline(tp);
+			lastTpa = load_pipeline(tp);
+			if (index != null && lastTpa instanceof IndexConfigurable) {
+				((IndexConfigurable)lastTpa).setIndex(index);
+			}
+			return lastTpa;
 		}
 		
 	}
