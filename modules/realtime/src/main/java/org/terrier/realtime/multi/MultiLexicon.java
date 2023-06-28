@@ -245,8 +245,6 @@ public class MultiLexicon extends Lexicon<String> {
 					uniqueTerms.add(t);
 				Collections.sort(uniqueTerms);
 			}
-
-
 		}
 
 		@Override

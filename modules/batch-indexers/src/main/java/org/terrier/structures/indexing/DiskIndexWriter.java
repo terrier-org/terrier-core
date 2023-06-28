@@ -52,7 +52,6 @@ public class DiskIndexWriter {
     @SuppressWarnings("unchecked")
     public IndexOnDisk write(Index source) throws IOException {
         IndexOnDisk target = IndexOnDisk.createNewIndex(path, prefix);
-
         CompressionConfiguration compressionDirectConfig = null;
         
 
@@ -135,6 +134,7 @@ public class DiskIndexWriter {
         AbstractPostingOutputStream invOut = compressionInvertedConfig.getPostingOutputStream(
 				path + ApplicationSetup.FILE_SEPARATOR + prefix + "." + "inverted" + compressionInvertedConfig.getStructureFileExtension());
 
+        int tid = 0;
         while (lexIN.hasNext()) {
 
             // Read in-memory lexicon and postings.
@@ -144,10 +144,17 @@ public class DiskIndexWriter {
             // Write on-disk lexicon and postings.
             BitIndexPointer pointer = invOut.writePostings(postings);
             LexiconEntry le = leFactory.newInstance();
+            //set maxtf to 0, so that it can be updated
+            le.setMaxFrequencyInDocuments(0);
             le.add(term.getValue());
-            le.setTermId(term.getValue().getTermId());
+            // we only need to preserve termids if we are creating a direct index
+            if (direct)
+                le.setTermId(term.getValue().getTermId());
+            else
+                le.setTermId(tid);
             le.setPointer(pointer);
             lexOUT.writeNextEntry(term.getKey(), le);
+            tid++;
         }
 
         IndexUtil.close(lexIN);

@@ -32,22 +32,26 @@ import gnu.trove.TIntHashSet;
 
 import java.io.IOException;
 import java.util.Set;
-
+import java.util.Map;
+import java.util.Iterator;
 
 import org.junit.Test;
 import org.terrier.indexing.IndexTestUtils;
 import org.terrier.realtime.TestUtils;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
+import org.terrier.structures.DocumentIndexEntry;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.Lexicon;
 import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.PostingIndex;
+import org.terrier.structures.PostingIndexInputStream;
 import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.structures.postings.PostingUtil;
-
+import org.terrier.structures.indexing.DiskIndexWriter;
 import org.terrier.tests.ApplicationSetupBasedTest;
 import org.terrier.utility.ApplicationSetup;
 
@@ -55,21 +59,7 @@ import com.google.common.collect.Sets;
 
 public class TestMultiIndex extends ApplicationSetupBasedTest {
 
-	/*
-	 * Test MultiIndex.
-	 */
-	@SuppressWarnings("unchecked")
-	@Test
-	public void test_MultiIndex() throws Exception {
-		ApplicationSetup.setProperty("termpipelines", "");
-		ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
-		ApplicationSetup.setProperty("indexer.meta.forward.keylens", "100");
-		ApplicationSetup.setProperty("indexer.meta.reverse.keys", "filename");
-		Index i1 = IndexTestUtils.makeIndex(new String[]{"0"},new String[]{"one two three"});
-		Index i2 = IndexTestUtils.makeIndex(new String[]{"1"},new String[]{"two three four"});
-		Index i3 = IndexTestUtils.makeIndex(new String[]{"2"},new String[]{"three four five"});
-		MultiIndex mindex = new MultiIndex(new Index[]{i1,i2,i3}, false, false); 
-		assertNotNull(mindex);
+	private void verifyIndex(Index mindex, boolean check_direct) throws IOException {
 		Lexicon<String> lexicon = (Lexicon<String>) mindex.getIndexStructure("lexicon");
 		assertNotNull(lexicon);
 		
@@ -90,13 +80,137 @@ public class TestMultiIndex extends ApplicationSetupBasedTest {
 		CollectionStatistics stats = mindex.getCollectionStatistics();
 		assertNotNull(stats);
 		
-		PostingIndex<?> direct =  mindex.getDirectIndex();
-		assertNotNull(direct);
-		
-		checkDoc(direct.getPostings(docindex.getDocumentEntry(0)), lexicon, Sets.newHashSet("one", "two", "three"));
-		checkDoc(direct.getPostings(docindex.getDocumentEntry(1)), lexicon, Sets.newHashSet("two", "three", "four"));
-		checkDoc(direct.getPostings(docindex.getDocumentEntry(2)), lexicon, Sets.newHashSet("three", "four", "five"));
-		
+		if (check_direct)
+		{
+			PostingIndex<?> direct =  mindex.getDirectIndex();
+			assertNotNull(direct);
+				
+			checkDoc(direct.getPostings(docindex.getDocumentEntry(0)), lexicon, Sets.newHashSet("one", "two", "three"));
+			checkDoc(direct.getPostings(docindex.getDocumentEntry(1)), lexicon, Sets.newHashSet("two", "three", "four"));
+			checkDoc(direct.getPostings(docindex.getDocumentEntry(2)), lexicon, Sets.newHashSet("three", "four", "five"));
+		}
+
+		Iterator<DocumentIndexEntry> iterDocs = (Iterator<DocumentIndexEntry>) mindex.getIndexStructureInputStream("document");
+		DocumentIndexEntry die;
+		assertNotNull(iterDocs);
+		assertTrue(iterDocs.hasNext());
+		//0
+		die = iterDocs.next();
+		assertNotNull(die);
+		assertEquals(3, die.getDocumentLength());
+		assertTrue(iterDocs.hasNext());
+		//1
+		die = iterDocs.next();
+		assertNotNull(die);
+		assertEquals(3, die.getDocumentLength());
+		assertTrue(iterDocs.hasNext());
+		//2
+		die = iterDocs.next();
+		assertNotNull(die);
+		assertEquals(3, die.getDocumentLength());
+		assertFalse(iterDocs.hasNext());
+
+		Iterator<String[]> iterMeta = (Iterator<String[]>) mindex.getIndexStructureInputStream("meta");
+		String[] metaEntry;
+		assertNotNull(iterMeta);
+		assertTrue(iterMeta.hasNext());
+		//0
+		metaEntry = iterMeta.next();
+		assertNotNull(metaEntry);
+		assertEquals("0", metaEntry[0]);
+		assertTrue(iterMeta.hasNext());
+		//1
+		metaEntry = iterMeta.next();
+		assertNotNull(metaEntry);
+		assertEquals("1", metaEntry[0]);
+		assertTrue(iterMeta.hasNext());
+		//2
+		metaEntry = iterMeta.next();
+		assertNotNull(metaEntry);
+		assertEquals("2", metaEntry[0]);
+		assertFalse(iterMeta.hasNext());
+
+		Iterator<Map.Entry<String,LexiconEntry>> iterLex = (Iterator<Map.Entry<String,LexiconEntry>>) mindex.getIndexStructureInputStream("lexicon");
+		Map.Entry<String,LexiconEntry> lee;
+		assertNotNull(iterLex);
+
+		assertTrue(iterLex.hasNext());
+		//five
+		lee = iterLex.next();
+		assertNotNull(lee);
+		assertEquals("five", lee.getKey());
+		assertTrue(iterLex.hasNext());
+		//four
+		lee = iterLex.next();
+		assertNotNull(lee);
+		assertEquals("four", lee.getKey());
+		assertTrue(iterLex.hasNext());
+		//one
+		lee = iterLex.next();
+		assertNotNull(lee);
+		assertEquals("one", lee.getKey());
+		assertEquals(1, lee.getValue().getFrequency());
+		//three
+		lee = iterLex.next();
+		assertNotNull(lee);
+		assertEquals("three", lee.getKey());
+		assertEquals(3, lee.getValue().getFrequency());		
+		//two
+		lee = iterLex.next();
+		assertNotNull(lee);
+		assertEquals("two", lee.getKey());
+		assertFalse(iterLex.hasNext());
+
+		PostingIndexInputStream piis = (PostingIndexInputStream) mindex.getIndexStructureInputStream("inverted");
+		IterablePosting ip;
+		assertNotNull(piis);
+
+		assertTrue(piis.hasNext());
+		//five
+		ip = piis.next();
+		assertNotNull(ip);
+		assertTrue(piis.hasNext());
+		//four
+		ip = piis.next();
+		assertNotNull(ip);
+		assertTrue(piis.hasNext());
+		//one
+		ip = piis.next();
+		assertNotNull(ip);
+		assertEquals(1, ((LexiconEntry) piis.getCurrentPointer()).getFrequency());
+		//three
+		ip = piis.next();
+		assertNotNull(ip);
+		assertEquals(3, ((LexiconEntry) piis.getCurrentPointer()).getFrequency());		
+		//two
+		ip = piis.next();
+		assertNotNull(ip);
+		assertFalse(piis.hasNext());
+
+	}
+
+	/*
+	 * Test MultiIndex.
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test_MultiIndex() throws Exception {
+		ApplicationSetup.setProperty("termpipelines", "");
+		ApplicationSetup.setProperty("indexer.meta.forward.keys", "filename");
+		ApplicationSetup.setProperty("indexer.meta.forward.keylens", "100");
+		ApplicationSetup.setProperty("indexer.meta.reverse.keys", "filename");
+		Index i1 = IndexTestUtils.makeIndex(new String[]{"0"},new String[]{"one two three"});
+		Index i2 = IndexTestUtils.makeIndex(new String[]{"1"},new String[]{"two three four"});
+		Index i3 = IndexTestUtils.makeIndex(new String[]{"2"},new String[]{"three four five"});
+		MultiIndex mindex = new MultiIndex(new Index[]{i1,i2,i3}, false, false); 
+		assertNotNull(mindex);
+		verifyIndex(mindex, true);
+
+		String destIndex = super.writeTemporaryFolder("written_index");
+		DiskIndexWriter writer = new DiskIndexWriter(destIndex, "data");
+		writer.write(mindex);
+		Index diskIndex = IndexOnDisk.createIndex(destIndex, "data");
+		verifyIndex(diskIndex, false);
 	}
 	
 	private void checkDoc(IterablePosting ip, Lexicon<String> lexicon, Set<String> terms) throws IOException {

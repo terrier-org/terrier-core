@@ -54,5 +54,24 @@ public interface PostingIndexInputStream extends Closeable, Iterator<IterablePos
 	int getEntriesSkipped();
 
 	/** Renders the entire structure to stdout */
-	void print();
+	default void print() {
+		try{
+			int entryIndex = 0;
+			while(this.hasNext())
+			{
+				IterablePosting ip = this.next();
+				entryIndex += this.getEntriesSkipped();
+				System.out.print(entryIndex + " ");
+				while(ip.next() != IterablePosting.EOL)
+				{
+					System.out.print(ip.toString());
+					System.out.print(" ");
+				}
+				System.out.println();
+				entryIndex++;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
