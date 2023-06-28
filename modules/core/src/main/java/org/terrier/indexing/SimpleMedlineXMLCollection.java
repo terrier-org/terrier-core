@@ -29,7 +29,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 import org.terrier.utility.ApplicationSetup;
@@ -176,7 +175,7 @@ public class SimpleMedlineXMLCollection extends SimpleXMLCollection
 				}
 				
 				
-				File temp = Files.createTempFile("simpleMedlineXMLcollection", ".xml").toFile();
+				File temp = java.nio.file.Files.createTempFile("simpleMedlineXMLcollection", ".xml").toFile();
 				Files.copyFile(new File(filename), temp);
 				
 				//if(logger.isDebugEnabled()){
