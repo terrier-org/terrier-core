@@ -144,7 +144,6 @@ public class MultiTermQuery extends Query {
 	}
 
 	public void obtainQueryTerms(QueryTermsParameter parameters) {
-		System.err.println(parameters.getWeight());
 	    for (Query child : v)
 	      child.obtainQueryTerms(
 			new QueryTermsParameter(
@@ -153,30 +152,6 @@ public class MultiTermQuery extends Query {
 				parameters.getWeight() == null ? 1 : parameters.getWeight())
 			);
 	  }
-	
-//	/**
-//	 * Prepares the query for matching by transforming
-//	 * the query objects to a set of query terms.
-//	 * @param terms MatchingQueryTerms the object which holds the 
-//	 *		query terms and their modifiers.
-//	 */
-//	public void obtainQueryTerms(final MatchingQueryTerms terms) {
-//		for(Query child : v)
-//			child.obtainQueryTerms(terms);
-//	}
-//	
-//	/**
-//	 * Prepares the query for matching by transforming
-//	 * the query objects to a set of query terms.
-//	 * @param terms MatchingQueryTerms the object which holds the 
-//	 *		query terms and their modifiers.
-//	 * @param required boolean indicates whether the field query
-//	 *		is required or not.	 
-//	 */
-//	public void obtainQueryTerms(final MatchingQueryTerms terms, final boolean required) {
-//		for(Query child : v)
-//			child.obtainQueryTerms(terms, required);
-//	}
 	
 	/**
 	 * Adds all the subqueries and single-term queries to 
