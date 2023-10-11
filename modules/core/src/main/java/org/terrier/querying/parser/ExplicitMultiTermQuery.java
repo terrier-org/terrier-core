@@ -51,9 +51,8 @@ public class ExplicitMultiTermQuery extends MultiTermQuery {
 		Double newWeight = this.weight;
 		if (parameters.getWeight() != null)
 		{
-			newWeight = parameters.getWeight() * parameters.getWeight();
+			newWeight *= parameters.getWeight();
 		}
-		
 		super.obtainQueryTerms(new QueryTermsParameter(parameters.getTerms(), parameters.lowercase(), parameters.getField(),
 				parameters.isRequired(), newWeight));
 	}
