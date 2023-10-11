@@ -366,6 +366,18 @@ public class TestQueryParser {
 		assertEquals("first", mqt.getTerms()[1]);
 		assertEquals(1.5d, mqt.getTermWeights()[0], 0);
 		assertEquals(0.5d, mqt.getTermWeights()[1], 0);
+
+		q = QueryParser.parseQuery("(america^2 first)^0.5");
+		terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		
+		mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		assertEquals(2, mqt.getTerms().length);
+		assertEquals("america", mqt.getTerms()[0]);
+		assertEquals("first", mqt.getTerms()[1]);
+		assertEquals(1d, mqt.getTermWeights()[0], 0);
+		assertEquals(0.5d, mqt.getTermWeights()[1], 0);
 	}
 
 	
