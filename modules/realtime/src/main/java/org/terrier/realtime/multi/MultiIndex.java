@@ -30,17 +30,23 @@ package org.terrier.realtime.multi;
 import java.io.IOException;
 import java.io.Flushable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.iterators.IteratorChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terrier.realtime.matching.IncrementalSelectiveMatching;
 import org.terrier.querying.IndexRef;
+import org.terrier.structures.collections.IteratorUtils;
+import org.terrier.structures.collections.MapEntry;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.Index;
 import org.terrier.structures.IndexFactory;
 import org.terrier.structures.Lexicon;
+import org.terrier.structures.LexiconEntry;
 import org.terrier.structures.MetaIndex;
 import org.terrier.structures.Pointer;
 import org.terrier.structures.PostingIndex;
@@ -215,9 +221,49 @@ public class MultiIndex extends Index {
 		return false;
 	}
 
-	/** Not implemented. */
+	List<Iterator<?>> getIndexStructureInputStream_Iterators(String structureName) {
+		List<Iterator<?>> iters = new ArrayList<>();
+		for (Index index : selectiveMatchingPolicy.getSelectedIndices(indices)) {
+			Iterator<?> iter = (Iterator<?>) index.getIndexStructureInputStream(structureName);
+			if (iter == null) {
+				return null;
+			}
+			iters.add(iter);
+		}
+		return iters;
+	}
+
+	/** Returns an IteratorChain of the underlying constituent index structures */
 	public Object getIndexStructureInputStream(String structureName) {
-		return null;
+
+		// use special class for an invert index input stream
+		if (structureName.equals("inverted"))
+		{
+			return new MultiInvertedIndexInputStream(
+				(Iterator<Map.Entry<String,LexiconEntry>>) getIndexStructureInputStream("lexicon"), 
+				this);
+		}
+
+		// get iterators for each subindex
+		List<Iterator<?>> iters = getIndexStructureInputStream_Iterators(structureName);
+
+		// now merge the iterators. how they are merged depends on the particular index structure
+
+		// support document-wise structures for now
+		if (structureName.equals("document") || structureName.equals("meta"))
+			return new IteratorChain(iters);
+
+		if (structureName.equals("lexicon"))
+			return IteratorUtils.merge(  
+				// comparator
+				(Map.Entry<String,LexiconEntry> term1, Map.Entry<String,LexiconEntry> term2) -> term1.getKey().compareTo(term2.getKey()), 
+				// merger
+				(Map.Entry<String,LexiconEntry> term1, Map.Entry<String,LexiconEntry> term2) -> new MapEntry(  
+					term1.getKey(), 
+					new MultiLexiconEntry(new LexiconEntry[]{term1.getValue(), term2.getValue()}, 0)),
+				// iterators
+				(Iterator<Map.Entry<String,LexiconEntry>>[]) iters.toArray(new Iterator<?>[iters.size()]));
+		throw new UnsupportedOperationException("I dont know how to merge the input streams of " + structureName);
 	}
 
 	/** {@inheritDoc} */
