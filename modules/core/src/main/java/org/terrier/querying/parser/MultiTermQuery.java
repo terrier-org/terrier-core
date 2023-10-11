@@ -45,17 +45,6 @@ public class MultiTermQuery extends Query {
 	protected String prefix = "";
 	protected String suffix = "";
 	
-	/** The weight of this "term". */
-	double weight = 1.0d;
-	
-	/**
-	 * Sets the weight of the disjunctive "term".
-	 * @param w double the weight of the disjunctive "term".
-	 */
-	public void setWeight(double w) {
-		weight = w;
-	}
-	
 	/**
 	 * 
 	 */
@@ -156,33 +145,13 @@ public class MultiTermQuery extends Query {
 
 	public void obtainQueryTerms(QueryTermsParameter parameters) {
 	    for (Query child : v)
-	      child.obtainQueryTerms(new QueryTermsParameter(parameters.getTerms(), parameters.lowercase(), parameters.getField(),
-				parameters.isRequired(), parameters.getWeight() == null ? this.weight : this.weight*parameters.getWeight()));
+	      child.obtainQueryTerms(
+			new QueryTermsParameter(
+				parameters.getTerms(), parameters.lowercase(), parameters.getField(),
+				parameters.isRequired(), 
+				parameters.getWeight() == null ? 1 : parameters.getWeight())
+			);
 	  }
-	
-//	/**
-//	 * Prepares the query for matching by transforming
-//	 * the query objects to a set of query terms.
-//	 * @param terms MatchingQueryTerms the object which holds the 
-//	 *		query terms and their modifiers.
-//	 */
-//	public void obtainQueryTerms(final MatchingQueryTerms terms) {
-//		for(Query child : v)
-//			child.obtainQueryTerms(terms);
-//	}
-//	
-//	/**
-//	 * Prepares the query for matching by transforming
-//	 * the query objects to a set of query terms.
-//	 * @param terms MatchingQueryTerms the object which holds the 
-//	 *		query terms and their modifiers.
-//	 * @param required boolean indicates whether the field query
-//	 *		is required or not.	 
-//	 */
-//	public void obtainQueryTerms(final MatchingQueryTerms terms, final boolean required) {
-//		for(Query child : v)
-//			child.obtainQueryTerms(terms, required);
-//	}
 	
 	/**
 	 * Adds all the subqueries and single-term queries to 
@@ -314,8 +283,6 @@ public class MultiTermQuery extends Query {
 				s.append(",");			
 		}
 		s.append(')');
-		if (weight != 1.0d) 
-			s.append("^" + weight);
 		return s.toString();
 	}
 }

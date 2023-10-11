@@ -316,26 +316,70 @@ public class TestQueryParser {
 	
 	@Test public void testTwoTermWeightExplicitMultiTerm() throws Exception
 	{
-		Query q = QueryParser.parseQuery("(a b)^2");
-		List<Query> terms = new ArrayList<Query>();
+		Query q;
+		List<Query> terms;
+		MatchingQueryTerms mqt;
+		
+		q = QueryParser.parseQuery("(a b)^2");
+		terms = new ArrayList<Query>();
 		q.getTerms(terms);
 		assertEquals(2, terms.size());
 		assertEquals("a", ((SingleTermQuery)terms.get(0)).getTerm());
 		assertEquals("b", ((SingleTermQuery)terms.get(1)).getTerm());
 		assertEquals("(a b)^2.0", q.toString());
 		
-		MatchingQueryTerms mqt = new MatchingQueryTerms();
+		mqt = new MatchingQueryTerms();
 		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
 		assertEquals(2, mqt.getTerms().length);
 		assertEquals("a", mqt.getTerms()[0]);
 		assertEquals("b", mqt.getTerms()[1]);
 		assertEquals(2d, mqt.getTermWeights()[0], 0);
 		assertEquals(2d, mqt.getTermWeights()[1], 0);
+
+		q = QueryParser.parseQuery("mexico (america first)^0");
+		terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		assertEquals(3, terms.size());
+		assertEquals("mexico", ((SingleTermQuery)terms.get(0)).getTerm());
+		assertEquals("america", ((SingleTermQuery)terms.get(1)).getTerm());
+		assertEquals("first", ((SingleTermQuery)terms.get(2)).getTerm());
+		assertEquals("mexico (america first)^0.0", q.toString());
 		
+		mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		assertEquals(3, mqt.getTerms().length);
+		assertEquals("mexico", mqt.getTerms()[0]);
+		assertEquals("america", mqt.getTerms()[1]);
+		assertEquals("first", mqt.getTerms()[2]);
+		assertEquals(1d, mqt.getTermWeights()[0], 0);
+		assertEquals(0d, mqt.getTermWeights()[1], 0);
+		assertEquals(0d, mqt.getTermWeights()[2], 0);
+
+		q = QueryParser.parseQuery("america (america first)^0.5");
+		terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		
+		mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		assertEquals(2, mqt.getTerms().length);
+		assertEquals("america", mqt.getTerms()[0]);
+		assertEquals("first", mqt.getTerms()[1]);
+		assertEquals(1.5d, mqt.getTermWeights()[0], 0);
+		assertEquals(0.5d, mqt.getTermWeights()[1], 0);
+
+		q = QueryParser.parseQuery("(america^2 first)^0.5");
+		terms = new ArrayList<Query>();
+		q.getTerms(terms);
+		
+		mqt = new MatchingQueryTerms();
+		q.obtainQueryTerms(QueryTermsParameter.of(mqt, true));
+		assertEquals(2, mqt.getTerms().length);
+		assertEquals("america", mqt.getTerms()[0]);
+		assertEquals("first", mqt.getTerms()[1]);
+		assertEquals(1d, mqt.getTermWeights()[0], 0);
+		assertEquals(0.5d, mqt.getTermWeights()[1], 0);
 	}
-	
-	
-	
+
 	
 	@Test public void testTwoTermQueryRequirement() throws Exception
 	{

@@ -242,8 +242,8 @@ Query disjunctiveQuery() :
 
 Query explicitMultiTermQuery() : 
 {
-	 MultiTermQuery mtq = new ExplicitMultiTermQuery(); Query child = null;
-	 Token weight = null;
+	ExplicitMultiTermQuery mtq = new ExplicitMultiTermQuery(); Query child = null;
+	Token weight = null;
 }
 {
 	<OPEN_PAREN>
