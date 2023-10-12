@@ -20,6 +20,7 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         architecture: ${{ matrix.architecture }}
+        distribution: 'zulu'
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
