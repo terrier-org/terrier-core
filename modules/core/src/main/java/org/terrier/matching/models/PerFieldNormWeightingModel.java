@@ -27,6 +27,9 @@ package org.terrier.matching.models;
 
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.terrier.matching.models.basicmodel.BasicModel;
 import org.terrier.matching.models.normalisation.Normalisation;
 import org.terrier.structures.CollectionStatistics;
