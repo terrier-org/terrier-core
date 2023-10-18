@@ -27,6 +27,9 @@ package org.terrier.matching.models;
 
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.terrier.matching.models.basicmodel.BasicModel;
 import org.terrier.matching.models.normalisation.Normalisation;
 import org.terrier.structures.CollectionStatistics;
@@ -56,6 +59,7 @@ import org.terrier.utility.StaTools;
 public class PerFieldNormWeightingModel extends WeightingModel {
 
 	private static final long serialVersionUID = 1L;
+	protected static final Logger logger = LoggerFactory.getLogger(PerFieldNormWeightingModel.class);
 
 	protected String[] params;
 	protected BasicModel basicModel;
@@ -149,7 +153,10 @@ public class PerFieldNormWeightingModel extends WeightingModel {
 		super.setCollectionStatistics(_cs);
 		fieldCount = _cs.getNumberOfFields();
 		WeightingModelLibrary.checkForFields(_cs);
-				
+		if (fieldCount == 1) {
+			logger.warn("Weighting model " + this.getClass().getSimpleName() + " is invoked on an index with only 1 field - this is probably incorrect.");
+		}
+
 		basicModel.setNumberOfDocuments(_cs.getNumberOfDocuments());
 		basicModel.setNumberOfTokens(_cs.getNumberOfTokens());
 		

@@ -91,6 +91,15 @@ public class FSADocumentIndex extends FSArrayFile<DocumentIndexEntry> implements
 	{
 		logger.debug("Loading document lengths for " + structureName + " structure into memory. NB: The following stacktrace IS NOT AN Exception", new Exception("THIS IS **NOT** AN EXCEPTION"));
 		int numEntries = this.size();
+
+		// warn if this index has >1 fields (BM25F is pointless for 1 field)
+		if (index.getCollectionStatistics().getNumberOfFields() > 1) {
+			logger.warn("This index has fields, but FSADocumentIndex is used (which stores fields lengths on disk); "
+				+"If using field-based models such as BM25F, change to index."+structureName+".class in the index "
+				+" properties file to FSAFieldDocumentIndex or FSADocumentIndexInMemFields to support efficient retrieval." 
+				+" If you don't use (e.g.) BM25F, this warning can be ignored");
+		}
+		
 		final long size = (long) numEntries * (long) Integer.BYTES;
 		final long free = freeMem();
 		logger.info("Document index requires "+  BinaryByteUnit.format(size) +" remaining heap is " +  BinaryByteUnit.format(free));
