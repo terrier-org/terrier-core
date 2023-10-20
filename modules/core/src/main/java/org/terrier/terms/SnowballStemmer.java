@@ -28,7 +28,7 @@ package org.terrier.terms;
 
 import java.lang.reflect.Method;
 
-import org.tartarus.snowball.SnowballProgram;
+import org.terrier.tartarus.snowball.SnowballProgram;
 import org.terrier.utility.ApplicationSetup;
 
   /** Classic Snowball stemmer implmented by Snowball.
@@ -52,7 +52,7 @@ abstract public class SnowballStemmer extends StemmerTermPipeline {
 	{
 		super(next);
 		try{
-			Class<? extends SnowballProgram> stemClass = ApplicationSetup.getClass("org.tartarus.snowball.ext." + StemLanguage + "Stemmer").asSubclass(SnowballProgram.class);
+			Class<? extends SnowballProgram> stemClass = ApplicationSetup.getClass("org.terrier.tartarus.snowball.ext." + StemLanguage + "Stemmer").asSubclass(SnowballProgram.class);
 			stemmer = (SnowballProgram) stemClass.newInstance();
 			stemMethod = stemClass.getMethod("stem", new Class[0]);
 		}catch(Exception e){
