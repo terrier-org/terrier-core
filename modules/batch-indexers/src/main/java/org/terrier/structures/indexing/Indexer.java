@@ -361,7 +361,7 @@ public abstract class Indexer
 	 * <tt>indexing.max.docs.per.builder</tt>, if the value of 
 	 * this property is greater than zero, and then it mertges
 	 * the generated data structures.
-	 * @param collections The document collection objects to index.
+	 * @param collection The document collection object to index.
 	 */
 	public void index(Collection collection) {
 		int counter = 0;
