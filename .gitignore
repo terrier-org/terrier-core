@@ -3,9 +3,13 @@
 /target/
 /logs/
 /target/
+modules/*/bin/
 modules/*/target/
 .DS_Store
 .classpath
 .settings
 .project
 pom.xml.versionsBackup
+*.class
+overview.html
+package.html
