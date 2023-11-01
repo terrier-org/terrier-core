@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>terrier-platform</artifactId>
 		<groupId>org.terrier</groupId>
-		<version>5.8-SNAPSHOT</version>
+		<version>5.8</version>
 		<relativePath>../../</relativePath>
 	</parent>
 

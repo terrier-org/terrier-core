@@ -1,6 +1,29 @@
 What's New in Terrier
 =====================
 
+Terrier 5.8 - 1/11/2023
+-----------------------
+
+Minor update, making configuration from [PyTerrier](https://github.com/terrier-org/pyterrier) easier for changing stopwords, etc.
+
+## Indexing
+* addresses #215 about FLATJsonDocument error handling by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/216
+* addresses issue #225 - MultiIndex does not expose index structures inputstreams by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/226
+
+
+## Retrieval
+* make TermPipelines IndexConfigurable at querying time by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/218
+* Fix weight propagation for ExplicitMultiTermQuery by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/229
+
+## Other
+* Bump jackson-databind from 2.13.4.1 to 2.13.4.2 in /modules/core by @dependabot in https://github.com/terrier-org/terrier-core/pull/220
+* Fix Temporary File Information Disclosure Vulnerability
+ by @JLLeitschuh in https://github.com/terrier-org/terrier-core/pull/213
+* Bump guava from 29.0-jre to 32.0.0-jre in /modules/core by @dependabot in https://github.com/terrier-org/terrier-core/pull/224
+* bump GHA versions by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/231
+* emit warning for fielded indices by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/232
+* include a shaded version of snowball in Terrier by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/230
+
 Terrier 5.7 - 10/11/2022
 ------------------------
 
