@@ -442,11 +442,22 @@ public class InvertedIndexBuilder {
 				long localAllocated =  runtime.totalMemory()-runtime.freeMemory();
 				logger.debug("Memory: already allocated in use is " + BinaryByteUnit.format(localAllocated));
 				free = runtime.maxMemory() - localAllocated - ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS;
+				if (free < 0) {
+					// we get enough information in the warn on line 455.
+					free = 0;
+				}
 			}
 			logger.debug("Memory: free is " +  BinaryByteUnit.format(free) + " / " + getExternalParalllism() + " threads");
 			free = free / getExternalParalllism();
 			//we need _at least_ 5MB free
 			assert free > 5 * 1024*1024;
+			if (free < 5 * 1024*1024) {
+				logger.warn("Detected < 0 bytes ("+free+") 'free memory':"+ 
+						" runtime.maxMemory()=" + runtime.maxMemory() +
+						" localAllocated=" + (runtime.totalMemory() - runtime.freeMemory()) + 
+						" ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS=" + ApplicationSetup.MEMORY_THRESHOLD_SINGLEPASS + 
+						". InvertedIndex likely to progress slowly.");
+			}
 			memThreshold = (long) (heapusage * free);
 			logger.debug("Memory threshold is " + BinaryByteUnit.format(memThreshold));
 			projectedPointerCount = (long) (memThreshold / pointerSize());
