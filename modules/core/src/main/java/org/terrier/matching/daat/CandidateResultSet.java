@@ -81,11 +81,11 @@ public class CandidateResultSet implements ResultSet, Serializable
 	/** Create a ResultSet from the specified list of results. The list MUST be sorted
 	 * by descending score, with ties broken by ascending docid. See daat.Full#makeResultSet() for an example.
 	 */
-	public CandidateResultSet(List<CandidateResult> q)
+	public CandidateResultSet(List<CandidateResult> resultList)
 	{
 		lock = new ReentrantLock();
 		
-		resultSize = q.size();
+		resultSize = resultList.size();
 		exactResultSize = resultSize;
 
 		docids	    = new int[resultSize];
@@ -94,7 +94,7 @@ public class CandidateResultSet implements ResultSet, Serializable
 		
 		int i = 0;
 		double lastScore = Double.POSITIVE_INFINITY;
-		for (CandidateResult cc: q)
+		for (CandidateResult cc: resultList)
 		{
 			docids[i] 	   = cc.getDocId();
 			scores[i] 	   = cc.getScore();

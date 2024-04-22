@@ -47,7 +47,8 @@ import org.terrier.structures.postings.WritablePosting;
 import org.terrier.utility.StableSort;
 
 @SuppressWarnings("serial")
-/** A version of {@link CandidateResultSet} suitable for use within the Fat framework
+/** A version of {@link CandidateResultSet} suitable for use within the Fat framework. This stores the postings
+ * for each retrieved document.
  * 
  * @author Eric Sutherland, Craig Macdonald
  * @since 4.0
@@ -68,8 +69,8 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 	}	
 	
 	@Deprecated
-	public FatCandidateResultSet(List<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, Set<String>[] tags) {
-		super(q);
+	public FatCandidateResultSet(List<CandidateResult> resultList, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, Set<String>[] tags) {
+		super(resultList);
 		this.queryTerms = queryTerms;
 		this.entryStats = entryStats;
 		this.keyFrequency = keyFrequency;
@@ -77,8 +78,8 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 		this.tags = tags;
 		int i=0;
 
-		postings = new WritablePosting[q.size()][];
-		for (CandidateResult cc: q)
+		postings = new WritablePosting[resultList.size()][];
+		for (CandidateResult cc: resultList)
 		{
 			postings[i] = ((FatCandidateResult) cc).getPostings();
 			assert verify(postings[i], cc.getDocId()) : "FatCandidateResult at position " + i + " had an id mismatch";
