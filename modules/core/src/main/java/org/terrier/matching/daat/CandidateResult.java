@@ -43,7 +43,6 @@ public class CandidateResult implements Comparable<CandidateResult>
 	private double score;
 	private short occurrence;
 
-	
 	/** Make a new CandidateResult for a ResultSet based on the
 	 * specified docid.
 	 * @param docid of the document
