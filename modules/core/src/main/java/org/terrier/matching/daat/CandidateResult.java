@@ -27,6 +27,10 @@
 package org.terrier.matching.daat;
 import java.util.Objects;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Queue;
+import java.util.stream.Collectors;
+
 /** A class used to when maintaining a top-k candidate documents ResultSet.
  * 
  * @author Nicola Tonnelotto
@@ -39,9 +43,7 @@ public class CandidateResult implements Comparable<CandidateResult>
 	private double score;
 	private short occurrence;
 
-	// different sort for final result list; see more details in CandidateResultSet.java
-	static final Comparator<CandidateResult> resultListComparator = Comparator.comparingDouble(CandidateResult::getScore).reversed().thenComparingInt(CandidateResult::getDocId);
-
+	
 	/** Make a new CandidateResult for a ResultSet based on the
 	 * specified docid.
 	 * @param docid of the document
@@ -102,4 +104,18 @@ public class CandidateResult implements Comparable<CandidateResult>
 	 * @param update Mask to OR with current occurrence
 	 */
 	public void updateOccurrence(short update) { this.occurrence |= update; }
+
+	// different sort for final result list
+	static final Comparator<CandidateResult> resultListComparator = Comparator.comparingDouble(CandidateResult::getScore).reversed().thenComparingInt(CandidateResult::getDocId);
+
+	/** 
+	 * Fully sort the result queue into a list (the PriorityQueue only guarantees the min element is at [0]).
+	 * Note that sorting here is by descending score and then by ascending docid for stability reasons;
+	 * The natural sort for CandidateResult is different (descending score then descending docid) for DAAT to work properly.
+	 */
+	public static List<CandidateResult> sortQueueIntoResultList(Queue<CandidateResult> candidateResultQueue) {
+		return candidateResultQueue.stream()
+			.filter( res -> res.getScore() != Double.NEGATIVE_INFINITY)
+			.sorted(CandidateResult.resultListComparator).collect(Collectors.toList());
+	}
 }
