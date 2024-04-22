@@ -1,6 +1,12 @@
 What's New in Terrier
 =====================
 
+Terrier 5.9 - XX/XX/XXX
+-----------------------
+
+## Retrieval
+ * Fix problem with FatFull misassociating postings to documents [#246](https://github.com/terrier-org/terrier-core/pull/246). In PyTerrier, this makes the retrieval results/effectivenesss of `BatchRetrieve >> FeaturesBatchRetrieve` identical to `FeaturesBatchRetrieve(..., wmodel=...)`. 
+
 Terrier 5.8 - 1/11/2023
 -----------------------
 
