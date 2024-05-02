@@ -57,9 +57,10 @@ public class TestMavenResolution extends ApplicationSetupBasedTest {
 	
 	@Test public void testImportSingleIndirectWithClassifier() throws Exception
 	{
-		//this test fails on Alpine linux on Docker.
+		// this test fails on Alpine linux on Docker.
 		assumeTrue(! new File("/etc/alpine-release").exists());
-		new MavenResolver().initialise("org.nd4j:nd4j-native-platform:0.8.0,org.nd4j:nd4j-native:0.8.0");
+		// 1.0.0-M2 also has macos-arm64 binaries
+		new MavenResolver().initialise("org.nd4j:nd4j-native-platform:1.0.0-M2,org.nd4j:nd4j-native:1.0.0-M2");
 		Class<?> clz = Thread.currentThread().getContextClassLoader().loadClass("org.nd4j.linalg.factory.Nd4j");
 		assertNotNull(clz);
 		Object instance = clz.newInstance();
