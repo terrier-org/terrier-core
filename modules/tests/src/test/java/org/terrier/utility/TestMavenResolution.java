@@ -26,7 +26,7 @@
 package org.terrier.utility;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 
 import java.util.Properties;
@@ -59,9 +59,9 @@ public class TestMavenResolution extends ApplicationSetupBasedTest {
 	@Test public void testImportSingleIndirectWithClassifier() throws Exception
 	{
 		// this test fails on Alpine linux on Docker.
-		assumeFalse(new File("/etc/alpine-release").exists());
+		assumeFalse(! new File("/etc/alpine-release").exists());
 		// this test fails on MacOS M1 arm
-		assumeFalse(System.getProperty("os.name").equals("Mac OS X") && System.getProperty("os.arch").equals("aarch64"));
+		assumeFalse(! (System.getProperty("os.name").equals("Mac OS X") && System.getProperty("os.arch").equals("aarch64")));
 		new MavenResolver().initialise("org.nd4j:nd4j-native-platform:1.0.0-M2,org.nd4j:nd4j-native:1.0.0-M2");
 		Class<?> clz = Thread.currentThread().getContextClassLoader().loadClass("org.nd4j.linalg.factory.Nd4j");
 		assertNotNull(clz);
