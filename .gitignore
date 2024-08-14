@@ -13,3 +13,4 @@ pom.xml.versionsBackup
 *.class
 overview.html
 package.html
+.vscode/settings.json
