@@ -174,12 +174,14 @@ public class ScoringMatching extends AbstractScoringMatching {
 		if (numScored == getFinalResultSet().getResultSize())
 		{
 			rs_input = getFinalResultSet();
-			rs_input.sort();
+			if (sort)
+				rs_input.sort();
 		}
 		else
 		{
 			rs_input = getFinalResultSet();
-			rs_input.sort(numScored);
+			if (sort)
+				rs_input.sort(numScored);
 			rs_input = rs_input.getResultSet(0, numScored);
 		}
 	}

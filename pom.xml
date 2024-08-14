@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.terrier</groupId>
 	<artifactId>terrier-platform</artifactId>
-	<version>5.9</version>
+	<version>5.10-SNAPSHOT</version>
 	<name>Terrier Information Retrieval Platform</name>
 	<description>Terrier IR platform</description>
 	<url>http://terrier.org</url>
@@ -73,6 +73,7 @@
 		<module>modules/concurrent</module>
 		<module>modules/realtime</module>
 		<module>modules/rest-server</module>
+		<module>modules/docvectors</module>
 		<module>modules/assemblies</module>
 	</modules>
 

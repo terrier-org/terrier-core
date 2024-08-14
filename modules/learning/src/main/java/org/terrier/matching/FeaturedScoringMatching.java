@@ -25,7 +25,7 @@ import org.terrier.utility.Files;
 
 public abstract class FeaturedScoringMatching extends FilterMatching {
 	
-	protected static Logger logger = LoggerFactory.getLogger(FatFeaturedScoringMatching.class);
+	protected static Logger logger = LoggerFactory.getLogger(FeaturedScoringMatching.class);
 	protected Index index;
 	protected AbstractScoringMatching[] wModels;
 	protected String[] wModelNames;
@@ -184,7 +184,6 @@ public abstract class FeaturedScoringMatching extends FilterMatching {
 				AbstractScoringMatching fsm = scoringMatchingImpl
 						.getConstructor(Index.class, Matching.class, WeightingModel.class, Predicate.class)
 						.newInstance(null, parent, wm, filter);
-				//		new FatScoringMatching(null, parent, wm, filter);
 				fsm.sort = false;
 				_childrenWmodels.add(fsm);
 				_childrenWmodelNames.add(featureNames[i]);
