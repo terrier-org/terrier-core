@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>terrier-platform</artifactId>
 		<groupId>org.terrier</groupId>
-		<version>5.9</version>
+		<version>5.10-SNAPSHOT</version>
 		<relativePath>../../</relativePath>
 	</parent>
 
@@ -101,6 +101,13 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>terrier-concurrent</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>terrier-docvectors</artifactId>
 			<version>${project.version}</version>
 			<!-- <scope>provided</scope> -->
 		</dependency>
