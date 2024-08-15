@@ -1,16 +1,22 @@
 # terrier-docvectors
 
-This is an module contains an alternative to the Fat framework for calculating more query dependent features. This framework has an additional advantage in that it can use rewriters to make additional query formulations, e.g. using [QueryExpansion](http://terrier.org/docs/current/javadoc/org/terrier/querying/QueryExpansion.html) upon the candidate set of ranked documents.
+This is an module contains an alternative to the Fat framework for calculating more query dependent features. 
 
-## Installation
+Similar to fat's ([FatFeaturedScoringMatching](http://terrier.org/docs/current/javadoc/org/terrier/matching/FatFeaturedScoringMatching.html) class, there is a requirement of a list of features (usually features.list). 
 
-	git clone /path/to/git
-	cd terrier-docvectors
-	mvn install
-	
-## Usage
+## Recommended Usage
 
-Similar to fat's ([FatFeaturedScoringMatching](http://terrier.org/docs/v5.1/javadoc/org/terrier/matching/FatFeaturedScoringMatching.html) class, there is a requirement of a list of features (usually features.list). However, DVFeaturedScoringMatching also has an extra file, a list of rewriters. Rewriters are Process classes that alter the query, and expected to extend [MQTRewritingProcess](http://terrier.org/docs/current/javadoc/org/terrier/querying/MQTRewritingProcess.html) (this includes the classical [QueryExpansion](http://terrier.org/docs/current/javadoc/org/terrier/querying/QueryExpansion.html) class). For example:
+This class is available through PyTerrier, using  pt.FeaturesBatchRetrieve, where method is set to `'dv'`:
+```python
+retr = pt.FeaturesBatchRetrieve("./tests/fixtures/index/", ["WMODEL:PL2", "WMODEL:Tf"], wmodel="DPH", method='dv')
+```
+
+## Advanced Usage
+
+This framework has an additional advantage in that it can use rewriters to make additional query formulations, e.g. using [QueryExpansion](http://terrier.org/docs/current/javadoc/org/terrier/querying/QueryExpansion.html) upon the candidate set of ranked documents.
+
+
+However, DVFeaturedScoringMatching also has an extra file, a list of rewriters. Rewriters are Process classes that alter the query, and expected to extend [MQTRewritingProcess](http://terrier.org/docs/current/javadoc/org/terrier/querying/MQTRewritingProcess.html) (this includes the classical [QueryExpansion](http://terrier.org/docs/current/javadoc/org/terrier/querying/QueryExpansion.html) class). For example:
 
 	qeBo1:QueryExpansion(DFRBagExpansionTerms,Bo1)
 	qeKL:QueryExpansion(DFRBagExpansionTerms,KL)
