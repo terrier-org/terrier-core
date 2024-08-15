@@ -56,7 +56,7 @@ public class Direct2InvIndex  {
 				TIntArrayList poscount = term2poscount.get(termid);
 				TIntArrayList allpos = term2allpos.get(termid);
 				
-				if (ids == null)
+				if (ids == null) //defaultdict impementation :-)
 				{
 					assert freqs == null;
 					term2docids.put(termid, ids = new TIntArrayList());
