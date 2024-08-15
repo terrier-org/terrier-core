@@ -22,7 +22,8 @@ import org.terrier.structures.postings.BlockPosting;
 import org.terrier.structures.postings.IterablePosting;
 import org.terrier.utility.ApplicationSetup;
 
-/** Uses Direct2InvIndex to make a mock InvertedIndex (from a DirectIndex) for rescoring documents for computing additional features.
+/** Implements the DocVectors style of computing additional features. Uses Direct2InvIndex to make a mock InvertedIndex 
+ * (from a DirectIndex) for rescoring documents for computing additional features.
  * Behaves the same way as FatFeaturedScoringMatching. This class can also support retrieval for only some "tagged" query terms.
  */
 public class DVFeaturedScoringMatching extends FeaturedScoringMatching {
