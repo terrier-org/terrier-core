@@ -35,6 +35,11 @@ public abstract class FilterIndex extends Index {
 	}
 
 	@Override
+	public boolean hasIndexStructure(String structureName) {
+        return parent.hasIndexStructure(structureName);
+    }
+
+	@Override
 	public Object getIndexStructure(String structureName) {
 		return parent.getIndexStructure(structureName);
 	}
