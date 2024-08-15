@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import gnu.trove.TIntDoubleHashMap;
+
 import org.terrier.learning.FeaturedQueryResultSet;
 import org.terrier.matching.matchops.Operator;
 import org.terrier.matching.models.WeightingModel;
@@ -106,7 +108,7 @@ public class DVFeaturedScoringMatching extends FeaturedScoringMatching {
 			return rtr;
 		}
 		
-		int[] docids = res.getDocids().clone();
+		final int[] docids = res.getDocids().clone();
 		
 		
 		boolean fields = index.getCollectionStatistics().getNumberOfFields() > 0;
@@ -157,7 +159,9 @@ public class DVFeaturedScoringMatching extends FeaturedScoringMatching {
 			wModels[fid].index = dvIndex;
 			MatchingQueryTerms mqtLocal = queryTerms.clone();
 			final ResultSet thinChild = wModels[fid].doMatch(queryNumber, mqtLocal, res.getResultSet(0, res.getResultSize()), false);
-			rtr.putFeatureScores(wModelNames[fid], thinChild.getScores());
+			// restore any sort back to the expected ordering
+			final double[] sortedScores = sortById(resultsToMap(thinChild), docids);
+			rtr.putFeatureScores(wModelNames[fid], sortedScores);
 			featureCount++;
 		}
 		
@@ -206,6 +210,27 @@ public class DVFeaturedScoringMatching extends FeaturedScoringMatching {
 		logger.info("Finished decorating " + queryNumber + " with " + featureCount + " features");
 		return rtr;
 		
+	}
+
+	static final TIntDoubleHashMap resultsToMap(final ResultSet rs) {
+		
+		final int l = rs.getResultSize();
+		final int[] docids = rs.getDocids();
+		final double[] scores = rs.getScores();
+		final TIntDoubleHashMap rtr = new TIntDoubleHashMap(l);
+		for(int i=0;i<l;i++)
+			rtr.put(docids[i], scores[i]);
+		return rtr;
+	}
+
+	static final double[] sortById(final TIntDoubleHashMap docid2score, final int[] docids) {
+		final int l = docid2score.size();
+		assert l == docids.length;
+		final double[] rtr = new double[l];
+		for(int i=0;i<l;i++) {
+			rtr[i] = docid2score.get(docids[i]);
+		} 
+		return rtr;
 	}
 
 }
