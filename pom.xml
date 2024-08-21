@@ -15,6 +15,7 @@
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+		<logback.version>1.2.13</logback.version>
 	</properties>
 
 	<organization>
