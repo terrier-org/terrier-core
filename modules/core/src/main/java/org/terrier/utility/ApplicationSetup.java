@@ -314,6 +314,8 @@ public class ApplicationSetup {
 	public static void bootstrapInitialisation()
 	{
 		useContext = Boolean.parseBoolean(System.getProperty("terrier.usecontext", "false"));
+		// we dont have a logger configured at this stage, so we can use this System property
+		boolean debug = Boolean.parseBoolean(System.getProperty("terrier.debug.config", "false"));
 
 		String propertiesFile = null;
 		String terrier_home = null;
@@ -346,13 +348,14 @@ public class ApplicationSetup {
 			else //we will need to hunt for the terrier.properties file
 			{
 				terrier_home = System.getProperty("terrier.home", ".");
-
 				terrier_etc = System.getProperty("terrier.etc", terrier_home +FILE_SEPARATOR+"etc");
 				propertiesFile = System.getProperty("terrier.setup", terrier_etc + FILE_SEPARATOR+"terrier.properties");
 			}
 			
 			if (new File(propertiesFile).exists())
 			{
+				if (debug)
+					System.err.println("Using terrier.properties file at" + propertiesFile + " for configuration");
 				clearAllProperties();
 				TERRIER_HOME = getProperty("terrier.home", terrier_home);
 				FileInputStream in = new FileInputStream(propertiesFile);
@@ -364,7 +367,8 @@ public class ApplicationSetup {
 				terrier_etc = System.getProperty("terrier.etc", ".");
 				ClassLoader clz = ApplicationSetup.class.getClassLoader(); 
 				List<InputStream> resources = loadResources("terrier.default.properties", clz);
-				System.err.println("No etc/terrier.properties, using terrier.default.properties for bootstrap configuration.");
+				if (debug)
+					System.err.println("No etc/terrier.properties, using terrier.default.properties for bootstrap configuration.");
 				configure(resources.toArray(new InputStream[0]));
 				for(InputStream in : resources) {
 					in.close();
