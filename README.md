@@ -1,5 +1,5 @@
-Terrier IR Platform - Terabyte Retriever v5.9
----------------------------------------------
+Terrier IR Platform - Terabyte Retriever v5.10
+----------------------------------------------
 ![Terrier Maven CI](https://github.com/terrier-org/terrier-core/workflows/Terrier%20Maven%20CI/badge.svg) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.terrier/terrier-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.terrier/terrier-platform) 
 
 :mag: [Terrier](http://terrier.org) is a highly flexible, efficient, and effective open source search engine, readily deployable on large-scale collections of documents. Terrier implements state-of-the-art indexing and retrieval functionalities, and provides an ideal platform for the rapid development and evaluation of large-scale retrieval applications.
@@ -10,7 +10,7 @@ Terrier is open source, and is a comprehensive, flexible and transparent platfor
 
 The latest version of Terrier can be found at https://github.com/terrier-org/terrier-core/
 
-:new: :snake: New in 2020, Terrier has Python bindings called [PyTerrier](https://github.com/terrier-org/pyterrier). PyTerrier allows experiments to be conducted in a succinct, declarative manner, including in Jupyter or Colab notebooks, while benefiting from the flexibility of Terrier.
+:snake: Since 2020, Terrier has Python bindings called [PyTerrier](https://github.com/terrier-org/pyterrier). PyTerrier allows experiments to be conducted in a succinct, declarative manner, including in Jupyter or Colab notebooks, while benefiting from the flexibility of Terrier, as well as other IR toolkits. We highly recommend using PyTerrier as means of conducting retrieval research.
 
 ### Open Source Licence
 

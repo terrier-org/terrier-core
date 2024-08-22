@@ -1,6 +1,21 @@
 What's New in Terrier
 =====================
 
+Terrier 5.10 - ?/8/2024
+-----------------------
+
+Minor update, adding functionality useful for PyTerrier use cases, and other small minor improvements.
+
+## Retrieval
+
+ * Include RM1 and RM3 query expansion models, originally authored by @ntonellotto, and previously included in the separate [terrier-prf package](https://github.com/terrierteam/terrier-prf). This integration aims to simplify the usage in PyTerrier [#250](https://github.com/terrier-org/terrier-core/pull/250), [#253](https://github.com/terrier-org/terrier-core/pull/253). Thanks to @mam10eks for RM3 improvements.
+ * Include previously unreleased doc-vectors module authored by @cmacdonald [#249](https://github.com/terrier-org/terrier-core/pull/249), which allows calculation of additional weighting model features using direct index rather than the inverted index access provided by Fat. For more information, see the relevant [README](https://github.com/terrier-org/terrier-core/blob/5.x/modules/docvectors/README.md). This functionality can be accessed through PyTerrier for the purposes of learning-to-rank pipelines by using `FeaturesBatchRetrieve(..., method='dv')`.
+
+## Other 
+
+ * Bump slf4j and logback versions due to logging conflict with Anserini in PyTerrier [#251](https://github.com/terrier-org/terrier-core/pull/251).
+ * suppress "No etc/terrier.properties message" that always appears at PyTerrier startup [#252](https://github.com/terrier-org/terrier-core/pull/252).
+
 Terrier 5.9 - 2/5/2024
 -----------------------
 
