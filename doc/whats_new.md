@@ -1,10 +1,10 @@
 What's New in Terrier
 =====================
 
-Terrier 5.10 - ?/8/2024
------------------------
+Terrier 5.10 - 22/8/2024
+------------------------
 
-Minor update, adding functionality useful for PyTerrier use cases, and other small minor improvements.
+Significant update, adding functionality useful for PyTerrier use cases, and some other small minor improvements.
 
 ## Retrieval
 
