@@ -47,7 +47,10 @@ public class FlatJSONDocument implements Document {
     Map<String,Set<String>> fieldSet;
     
     // static properties
-    protected String[] fieldsToProcess = ArrayUtils.parseCommaDelimitedString(ApplicationSetup.getProperty("FieldTags.process", "text"));
+    protected String[] fieldsToProcess = ArrayUtils.parseCommaDelimitedString(
+		ApplicationSetup.getProperty("FlatJSONDocument.process", 
+			ApplicationSetup.getProperty("FieldTags.process", "text"))
+	);
     
     // state
     protected int fieldIndex = 0;
