@@ -40,7 +40,7 @@ public class ConcurrentBitPostingIndexUtilities {
 		if (bis instanceof ConcurrentBitFileBuffered)
 			return true;
 		if (bis instanceof BitFileInMemoryLarge)
-			return false;
+			return true;
 		if (bis instanceof BitFileInMemory)
 			return true;
 		return false;
@@ -59,7 +59,8 @@ public class ConcurrentBitPostingIndexUtilities {
 					BitFileChannel newFile = BitFileChannel.of(theFile);
 					bpi.file[i] = newFile;
 				} else if (bis instanceof BitFileInMemoryLarge) {
-					throw new UnsupportedOperationException("Cannot make BitFileInMemoryLarge thread-safe");
+					System.err.println("BitFileInMemoryLarge already re-entrant");
+					//throw new UnsupportedOperationException("Cannot make BitFileInMemoryLarge thread-safe");
 				}
 			}
 			else
@@ -70,7 +71,8 @@ public class ConcurrentBitPostingIndexUtilities {
 					ConcurrentBitFileBuffered newFile = ConcurrentBitFileBuffered.of(theFile);
 					bpi.file[i] = newFile;
 				} else if (bis instanceof BitFileInMemoryLarge) {
-					throw new UnsupportedOperationException("Cannot make BitFileInMemoryLarge thread-safe");
+					System.err.println("BitFileInMemoryLarge already re-entrant");
+					//throw new UnsupportedOperationException("Cannot make BitFileInMemoryLarge thread-safe");
 				}
 			}
 		}
