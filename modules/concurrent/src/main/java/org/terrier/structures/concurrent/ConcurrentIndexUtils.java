@@ -26,6 +26,7 @@
 package org.terrier.structures.concurrent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terrier.structures.BaseCompressingMetaIndex;
 import org.terrier.structures.ConcurrentReadable;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.FieldDocumentIndex;
@@ -129,6 +130,13 @@ public class ConcurrentIndexUtils {
 		if (index.hasIndexStructure("meta") && ! index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class) )
 		{
 			MetaIndex oldmeta = index.getMetaIndex();
+			if (oldmeta instanceof BaseCompressingMetaIndex) {
+				// BaseCompressingMetaIndex already compliant if its loaded in memory
+				if (BaseCompressingMetaIndex.isConcurrent((BaseCompressingMetaIndex)oldmeta)) {
+					System.err.println("Metaindex already concurrent");
+					return index;
+				}
+			}
 			logger.debug("Upgrading meta index "+oldmeta.getClass().getName()+" to be concurrent");
 			//logger.debug(String.valueOf(index.getMetaIndex().getClass().isAnnotationPresent(ConcurrentReadable.class)));
 			MetaIndex newmeta = new ConcurrentMetaIndex(oldmeta);
@@ -144,7 +152,7 @@ public class ConcurrentIndexUtils {
 				assert newmeta.getClass().isAnnotationPresent(ConcurrentReadable.class);
 				IndexUtil.forceStructure(index, "meta", newmeta);
 			}
-		
+		// NB: dont add anything else here, as return at line 138
 		return index;
 	}
 	
