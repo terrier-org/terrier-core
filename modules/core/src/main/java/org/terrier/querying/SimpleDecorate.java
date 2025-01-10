@@ -59,7 +59,7 @@ public class SimpleDecorate implements PostFilter {
 			final String[] values = meta.getItems(decorateKeys, docid);
 			for(int j=0;j<decorateKeys.length;j++)
 			{
-				results.addMetaItem(decorateKeys[j], rank, values[i]);
+				results.addMetaItem(decorateKeys[j], rank, values[j]);
 			}
 			return PostFilter.FILTER_OK;
 		} catch (Exception e) {
