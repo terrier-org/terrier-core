@@ -57,7 +57,7 @@ public class SimpleDecorateProcess implements Process {
 				: ArrayUtils.parseCommaDelimitedString(q.getControl("decorate"));
 			logger.debug("Decorating for " + java.util.Arrays.toString(decorateKeys));
 			if (decorateKeys.length == 0){
-				logger.warn("SimpleDecorate called, but no meta keys detected - either metaindex is empty, or decorate control is empty");
+				logger.warn("SimpleDecorate called, but no meta keys detected - either metaindex is empty, or decorate control is empty");
 				return;
 			}
 			ResultSet res = q.getResultSet();
@@ -69,9 +69,7 @@ public class SimpleDecorateProcess implements Process {
 				String[] finalmeta = new String[num_docs];
 				for (int i=0;i<num_docs;i++)
 				{
-					String value = meta[i][j];
-					controlNonVisibleCharactersMatcher.reset(value);
-					finalmeta[i] = controlNonVisibleCharactersMatcher.replaceAll("");
+					finalmeta[i] = meta[i][j];
 				}
 				res.addMetaItems(decorateKeys[j], finalmeta);
 			}
