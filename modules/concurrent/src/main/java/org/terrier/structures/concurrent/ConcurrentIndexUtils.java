@@ -149,7 +149,7 @@ public class ConcurrentIndexUtils {
 			if (oldmeta instanceof BaseCompressingMetaIndex) {
 				// BaseCompressingMetaIndex already compliant if its loaded in memory
 				if (BaseCompressingMetaIndex.isConcurrent((BaseCompressingMetaIndex)oldmeta)) {
-					System.err.println("Metaindex already concurrent");
+					logger.debug("Metaindex already concurrent");
 					return index;
 				}
 			}

@@ -25,12 +25,15 @@
  */
 package org.terrier.structures.bit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terrier.compression.bit.*;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.bit.BitPostingIndex;
 
 public class ConcurrentBitPostingIndexUtilities {
 
+	static Logger logger = LoggerFactory.getLogger(ConcurrentBitPostingIndexUtilities.class);
 	private static final boolean USE_CHANNEL = true;
 
 	public static boolean isConcurrent(BitPostingIndex bpi) {
@@ -58,9 +61,9 @@ public class ConcurrentBitPostingIndexUtilities {
 					BitFileBuffered theFile = (BitFileBuffered)bis;
 					BitFileChannel newFile = BitFileChannel.of(theFile);
 					bpi.file[i] = newFile;
+					logger.debug("Changing BitFileBuffered to BitFileChannel");
 				} else if (bis instanceof BitFileInMemoryLarge) {
-					System.err.println("BitFileInMemoryLarge already re-entrant");
-					//throw new UnsupportedOperationException("Cannot make BitFileInMemoryLarge thread-safe");
+					logger.debug("BitFileInMemoryLarge already re-entrant");
 				}
 			}
 			else
@@ -70,9 +73,9 @@ public class ConcurrentBitPostingIndexUtilities {
 					BitFileBuffered theFile = (BitFileBuffered)bis;
 					ConcurrentBitFileBuffered newFile = ConcurrentBitFileBuffered.of(theFile);
 					bpi.file[i] = newFile;
+					logger.debug("Changing BitFileBuffered to ConcurrentBitFileBuffered");
 				} else if (bis instanceof BitFileInMemoryLarge) {
-					System.err.println("BitFileInMemoryLarge already re-entrant");
-					//throw new UnsupportedOperationException("Cannot make BitFileInMemoryLarge thread-safe");
+					logger.debug("BitFileInMemoryLarge already re-entrant");
 				}
 			}
 		}
