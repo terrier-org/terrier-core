@@ -37,13 +37,11 @@ import org.terrier.structures.MetaIndex;
 public class SimpleDecorate implements PostFilter {
 
 	static Logger logger = LoggerFactory.getLogger(SimpleDecorate.class);
-	protected static final Pattern controlNonVisibleCharacters = Pattern.compile("[\\p{Cntrl}\uFFFD\uFFFF]|[^\\p{Graph}\\p{Space}]");
 	
 	MetaIndex meta = null;
 	String[] decorateKeys = null;
 	boolean any = false;
 	
-	Matcher controlNonVisibleCharactersMatcher = controlNonVisibleCharacters.matcher("");
 	/** 
 	 * Adds all the metadata for the specified document occurring at the specified
 	 * rank to the ResultSet
@@ -61,8 +59,7 @@ public class SimpleDecorate implements PostFilter {
 			final String[] values = meta.getItems(decorateKeys, docid);
 			for(int j=0;j<decorateKeys.length;j++)
 			{
-				controlNonVisibleCharactersMatcher.reset(values[j]);
-				results.addMetaItem(decorateKeys[j], rank, controlNonVisibleCharactersMatcher.replaceAll(""));
+				results.addMetaItem(decorateKeys[j], rank, values[j]);
 			}
 			return PostFilter.FILTER_OK;
 		} catch (Exception e) {
