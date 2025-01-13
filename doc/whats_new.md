@@ -1,6 +1,22 @@
 What's New in Terrier
 =====================
 
+Terrier 5.11 - 13/01/2025
+
+Minor update - some improvements for PyTerrier's IterDictIndexer; and some efficiency improvements, particularly for multi-threaded retrieval.
+
+## Indexing
+
+* allow indexing fields to be separated from FlatJSONDocument parsing by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/257
+
+## Retrieval
+
+* Remove controlNonVisibleCharacters by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/260
+* Improvements for concurrent indices by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/259
+
+## Minor:
+* Bump most JDK version tested in GHA to 21 by @cmacdonald in https://github.com/terrier-org/terrier-core/pull/254
+
 Terrier 5.10 - 22/8/2024
 ------------------------
 
