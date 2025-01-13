@@ -36,6 +36,7 @@ import org.terrier.structures.ConcurrentIndexLoader;
 import org.terrier.structures.concurrent.ConcurrentIndexUtils;
 import org.terrier.structures.ConcurrentReadable;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.IndexFactory;
 import org.terrier.tests.ApplicationSetupBasedTest;
 
@@ -46,6 +47,30 @@ public class TestConcurrentIndexLoader extends ApplicationSetupBasedTest {
 		Index index = IndexTestUtils.makeIndex(new String[]{"doc1", "doc2"}, new String[]{"the quick fox", "and all that stuff"});
 		IndexRef ref = index.getIndexRef();
 		assertTrue(IndexFactory.isLoaded(ref));
+		assertFalse(ConcurrentIndexUtils.isConcurrent(index));
+		System.out.println(ref.toString());
+
+		IndexRef concRef = ConcurrentIndexLoader.makeConcurrent(ref);
+		System.out.println(concRef.toString());
+		Index concurrent = IndexFactory.of(concRef);
+		assertNotNull(concurrent);
+		assertTrue(ConcurrentIndexUtils.isConcurrent(concurrent));
+		assertTrue(concurrent.getLexicon().getClass().isAnnotationPresent(ConcurrentReadable.class));
+	}
+
+	@Test public void testNewIndex_Mem() throws Exception
+	{
+		Index index = IndexTestUtils.makeIndex(new String[]{"doc1", "doc2"}, new String[]{"the quick fox", "and all that stuff"});
+		IndexOnDisk iod = (IndexOnDisk) index;
+		iod.setIndexProperty("index.inverted.data-source", "fileinmem");
+		iod.flush();
+		//IndexRef ref = iod.getIndexRef();
+		IndexRef ref = IndexRef.of(iod.getIndexRef().toString());
+		iod.close();
+		
+		assertFalse(IndexFactory.isLoaded(ref));
+		index = IndexFactory.of(ref);
+		System.out.println(((IndexOnDisk) index).getIndexProperty("index.inverted.data-source", null));
 		assertFalse(ConcurrentIndexUtils.isConcurrent(index));
 		System.out.println(ref.toString());
 

@@ -667,6 +667,7 @@ public abstract class BaseCompressingMetaIndex implements MetaIndex {
 	protected final String prefix;
 	
 	protected final ByteAccessor dataSource;
+	protected boolean threadSafe = false;
 	protected Map<Text,IntWritable>[] reverseMetaMaps;
 	protected FixedSizeWriteableFactory<Text>[] keyFactories;
 	
@@ -707,6 +708,7 @@ public abstract class BaseCompressingMetaIndex implements MetaIndex {
 				final DataInputStream di = new DataInputStream(Files.openFileStream(dataFilename));
 				_dataSource = new RandomDataInputAccessor(new RandomDataInputMemory(di, dataFileLength));
 				di.close();
+				threadSafe = true;
 			} catch (OutOfMemoryError oome) {
 				logger.warn("OutOfMemoryError: Structure "+ structureName + " reading data file directly from disk");
 				//logger.debug("Metadata will be read directly from disk");
@@ -1089,6 +1091,11 @@ public abstract class BaseCompressingMetaIndex implements MetaIndex {
 			i++;
 		}
 	}
+
+	public static boolean isConcurrent(BaseCompressingMetaIndex m) {
+		return m.threadSafe; 
+	}
+
 	/** 
 	 * main
 	 * @param args

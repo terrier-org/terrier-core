@@ -47,9 +47,8 @@ class ConcurrentDocumentIndex implements DocumentIndex {
 	}
 
 	public int getDocumentLength(int docid) throws IOException {
-		synchronized (parent) {
-			return parent.getDocumentLength(docid);
-		}		
+		// we dont synchronize on getDocumentLength() - we assume this is always in memory and reentrant
+		return parent.getDocumentLength(docid);	
 	}
 
 	public int getNumberOfDocuments() {

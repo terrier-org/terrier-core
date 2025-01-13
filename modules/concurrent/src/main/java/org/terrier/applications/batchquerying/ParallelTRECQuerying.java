@@ -116,15 +116,11 @@ public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 	public ParallelTRECQuerying() {
 		super();
 		pool = Executors.newFixedThreadPool(NUM_PROC);
-		if (! (super.printer instanceof NullOutputFormat))
-			super.printer = new SynchronizedOutputFormat(super.printer);
 	}
 
 	public ParallelTRECQuerying(IndexRef i) {
 		super(i);
 		pool = Executors.newFixedThreadPool(NUM_PROC);
-		if (! (super.printer instanceof NullOutputFormat))
-			super.printer = new SynchronizedOutputFormat(super.printer);
 	}
 
 	@Deprecated
@@ -133,8 +129,14 @@ public class ParallelTRECQuerying extends TRECQuerying implements Closeable {
 		pool = Executors.newFixedThreadPool(NUM_PROC);
 		if (_queryexpansion)
 			controls.put("qe", "on");
-		if (! (super.printer instanceof NullOutputFormat))
-			super.printer = new SynchronizedOutputFormat(super.printer);
+		
+	}
+
+	protected OutputFormat getOutputFormat() {
+		OutputFormat rtr = super.getOutputFormat();
+		if (! (rtr instanceof NullOutputFormat))
+			rtr = new SynchronizedOutputFormat(rtr);
+		return rtr;
 	}
 	
 	@Override
