@@ -1,4 +1,4 @@
-Terrier IR Platform - Terabyte Retriever v5.10
+Terrier IR Platform - Terabyte Retriever v5.11
 ----------------------------------------------
 ![Terrier Maven CI](https://github.com/terrier-org/terrier-core/workflows/Terrier%20Maven%20CI/badge.svg) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.terrier/terrier-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.terrier/terrier-platform) 
 
