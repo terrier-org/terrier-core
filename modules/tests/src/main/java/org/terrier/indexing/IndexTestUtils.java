@@ -36,7 +36,9 @@ import java.util.Map;
 
 import org.terrier.indexing.tokenisation.EnglishTokeniser;
 import org.terrier.indexing.tokenisation.Tokeniser;
+import org.terrier.querying.IndexRef;
 import org.terrier.structures.Index;
+import org.terrier.structures.IndexFactory;
 import org.terrier.structures.IndexOnDisk;
 import org.terrier.structures.indexing.Indexer;
 import org.terrier.structures.indexing.classical.BasicIndexer;
@@ -122,8 +124,9 @@ public class IndexTestUtils {
 			sourceDocs[i] = makeDocumentFromText(documents[i], docProperties);
 		}
 		Collection col = makeCollection(docnos, documents);
-		indexer.index(new Collection[]{col});		
-		Index index = Index.createIndex(path, prefix);
+		IndexRef ref = indexer.index(new Collection[]{col});
+		assertNotNull(ref);
+		Index index = IndexFactory.of(ref);
 		assertNotNull(index);
 		assertEquals(sourceDocs.length, index.getCollectionStatistics().getNumberOfDocuments());
 		return index;
@@ -143,8 +146,9 @@ public class IndexTestUtils {
 			sourceDocs[i] = new TaggedDocument(new ByteArrayInputStream(documents[i].getBytes()), docProperties, new EnglishTokeniser());
 		}
 		Collection col = new CollectionDocumentList(sourceDocs);
-		indexer.index(new Collection[]{col});		
-		Index index = Index.createIndex(path, prefix);
+		IndexRef ref = indexer.index(new Collection[]{col});
+		assertNotNull(ref);
+		Index index = IndexFactory.of(ref);
 		assertNotNull(index);
 		assertEquals(sourceDocs.length, index.getCollectionStatistics().getNumberOfDocuments());
 		return index;
