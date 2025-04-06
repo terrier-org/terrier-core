@@ -35,6 +35,7 @@ import java.util.Set;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Document;
 import org.terrier.realtime.memory.fields.MemoryFieldsIndex;
+import org.terrier.querying.IndexRef;
 import org.terrier.structures.Index;
 import org.terrier.structures.indexing.DocumentPostingList;
 import org.terrier.structures.indexing.FieldDocumentPostingList;
@@ -138,9 +139,10 @@ public class MemoryIndexer extends Indexer {
 	}
     
 	@Override
-    public void index(Collection collection) {
+    public IndexRef index(Collection collection) {
         this.createDirectIndex(collection);
 		this.createInvertedIndex();
+		return this.memIndex.getIndexRef();
     }
 	
 	public void createDirectIndex(Collection collection) {

@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.CollectionFactory;
 import org.terrier.indexing.Document;
+import org.terrier.querying.IndexRef;
 import org.terrier.structures.AbstractPostingOutputStream;
 import org.terrier.structures.BasicDocumentIndexEntry;
 import org.terrier.structures.DocumentIndexEntry;
@@ -351,8 +352,8 @@ public abstract class Indexer
 			logger.info("Watching for "+BUILDER_BOUNDARY_DOCUMENTS.size()+ " documents that force index builder boundaries.");
 	}
 
-	public void index(Collection[] collections) {
-		index(CollectionFactory.compose(collections));
+	public IndexRef index(Collection[] collections) {
+		return index(CollectionFactory.compose(collections));
 	}
 	
 	/**
@@ -363,7 +364,7 @@ public abstract class Indexer
 	 * the generated data structures.
 	 * @param collection The document collection object to index.
 	 */
-	public void index(Collection collection) {
+	public IndexRef index(Collection collection) {
 		int counter = 0;
 		final String oldIndexPrefix = prefix;
 		
@@ -393,6 +394,7 @@ public abstract class Indexer
 		//restore the prefix
 		prefix = oldIndexPrefix;
 		fileNameNoExtension = path + ApplicationSetup.FILE_SEPARATOR + prefix;
+		return IndexRef.of(path, prefix);
 	}
 
 	/** Indexes document as provided by the specified iterator.
