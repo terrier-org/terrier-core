@@ -3,27 +3,122 @@
 Examples of using Terrier to index TREC collections: WT2G & Blogs06
 ===================================================================
 
-Terrier can index all known TREC test collections. We refer readers to the [Terrier wiki](http://ir.dcs.gla.ac.uk/wiki/Terrier) for latest configuration for indexing various collections:
+Terrier can index all known TREC test collections. The configuration pages on the Terrier wiki are no longer online, so the settings recovered from them (originally archived by the [Internet Archive](https://web.archive.org/web/20200217002834/http://ir.dcs.gla.ac.uk/wiki/Terrier)) are given below. Unless stated otherwise, properties go in `etc/terrier.properties`, after running `bin/trec_setup`.
 
--   [Disks1&2](http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1&2)
+### Disks 1 & 2
 
--   [Disks4&5](http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks4&5)
+Only one property needs to be altered from the default created by `trec_setup`:
 
--   [WT2G](http://ir.dcs.gla.ac.uk/wiki/Terrier/WT2G)
+```properties
+#skip indexing some tags for these corpora
+TrecDocTags.process=TEXT,TITLE,HEAD,HL
+```
 
--   [WT10G](http://ir.dcs.gla.ac.uk/wiki/Terrier/WT10G)
+### Disks 4 & 5
 
--   [DOTGOV](http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV) – see also the [learning to rank](learning.md) documentation page.
+Only one property needs to be altered from the default created by `trec_setup`:
 
--   [DOTGOV2](http://ir.dcs.gla.ac.uk/wiki/Terrier/DOTGOV2)
+```properties
+#skip indexing some tags for these corpora
+TrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL
+```
 
--   [Blogs06](http://ir.dcs.gla.ac.uk/wiki/Terrier/Blogs06)
+The Congressional Record is typically not included when indexing this collection.
 
--   [Blogs08](http://ir.dcs.gla.ac.uk/wiki/Terrier/Blogs08)
+### Compressed Disks 1, 2, 4 & 5
 
--   [ClueWeb09-B](http://ir.dcs.gla.ac.uk/wiki/Terrier/ClueWeb09-B)
+Files compressed with `.gz` extensions can be read by Terrier directly. Files compressed with `.Z` (or `.z`) extensions need additional configuration (Terrier 5.2 onwards):
 
--   [ClueWeb12](http://ir.dcs.gla.ac.uk/wiki/Terrier/ClueWeb12)
+```properties
+terrier.mvn.coords=org.apache.commons:commons-compress:1.18
+files.mappings=Z:org.apache.commons.compress.compressors.z.ZCompressorInputStream:null,z:org.apache.commons.compress.compressors.z.ZCompressorInputStream:null
+```
+
+### WT2G, WT10G, DOTGOV
+
+No properties need to be altered from the default created by `trec_setup`. If you wish URLs in your index, set the following properties:
+
+```properties
+trec.collection.class=TRECWebCollection
+indexer.meta.forward.keys=docno,url
+indexer.meta.forward.keylens=26,256
+```
+
+See also the [learning to rank](learning.md) documentation page for DOTGOV, and [Web-based Terrier](terrier_http.md) for building a Web search engine for these collections.
+
+### DOTGOV2
+
+No properties need to be altered from the default created by `trec_setup`. Single-pass indexing is recommended (`bin/terrier batchindexing -j`); on a modern machine indexing takes around 24 hours. If you wish URLs in your index, set the following properties:
+
+```properties
+trec.collection.class=TRECWebCollection
+indexer.meta.forward.keys=docno,url
+indexer.meta.forward.keylens=26,256
+ignore.low.idf.terms=false
+```
+
+### Blogs06 and Blogs08
+
+Terrier can index the permalinks (blog posts only) of these collections with very little changes:
+
+```properties
+TrecDocTags.doctag=DOC
+TrecDocTags.idtag=DOCNO
+#remove some more non-content bearing tags
+TrecDocTags.skip=DOCHDR,FEEDNO,FEEDURL,BLOGHPNO,BLOGHPURL,PERMALINK,DATE_XML
+indexing.singlepass.max.postings.memory=500000000
+indexer.meta.forward.keys=docno
+indexer.meta.forward.keylens=31
+#if you want to lookup keys in reverse, disable for faster indexing
+indexer.meta.reverse.keys=docno
+```
+
+If you wish URLs in your index, set the following properties:
+
+```properties
+trec.collection.class=TRECWebCollection
+indexer.meta.forward.keys=docno,url
+indexer.meta.forward.keylens=31,256
+```
+
+Blogs08 is much larger: indexing took about three days with single-pass indexing on a single machine, so give Terrier as much physical memory as possible using the `TERRIER_HEAP_MEM` environment variable.
+
+### ClueWeb09-B
+
+ClueWeb09 is a corpus of general Web documents; the B subset is the `ClueWeb09_English_1` folder, approximately 50M documents. Single-pass indexing takes just over one day on a modern machine. Depending on available memory, you may need to increase the maximum number of open files. Ensure `-XX:-UseGCOverheadLimit` is on the java command line, as it can cause spurious OutOfMemory errors.
+
+```properties
+trec.collection.class=WARC018Collection
+indexer.meta.forward.keys=docno,url
+indexer.meta.forward.keylens=26,256
+indexer.meta.reverse.keys=docno
+metaindex.compressed.crop.long=true
+#ignore scripts and CSS stylesheets (optional)
+TrecDocTags.skip=SCRIPT,STYLE
+```
+
+The meta index for ClueWeb09 and ClueWeb12 is big, so Terrier keeps it on disk by default and logs warnings about reading it directly from disk (slow). For faster retrieval, edit the index's `data.properties` file to load it into memory:
+
+```properties
+#index.meta.index-source=file
+#index.meta.data-source=file
+index.meta.index-source=fileinmem
+index.meta.data-source=fileinmem
+```
+
+### ClueWeb12
+
+Follow the ClueWeb09-B configuration, with these differences:
+
+```properties
+trec.collection.class=WARC10Collection
+indexer.meta.forward.keys=docno,url
+indexer.meta.forward.keylens=26,512
+indexer.meta.reverse.keys=docno
+TrecDocTags.skip=SCRIPT,STYLE
+```
+
+The notes on retrieval speed for ClueWeb09-B also apply.
 
 TREC WT2G Collection
 --------------------
